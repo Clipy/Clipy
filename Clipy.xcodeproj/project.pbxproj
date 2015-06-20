@@ -34,6 +34,8 @@
 		FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5A1B35E14500C06102 /* NMLoginItems.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5D1B35E1C300C06102 /* CPYClip.swift */; };
 		FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */; };
+		FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E611B35EA4E00C06102 /* CPYFolder.swift */; };
+		FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E631B35EA6800C06102 /* CPYSnippet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +103,8 @@
 		FAC43E5A1B35E14500C06102 /* NMLoginItems.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NMLoginItems.m; path = Clipy/Libraries/NMLoginItems/NMLoginItems.m; sourceTree = SOURCE_ROOT; };
 		FAC43E5D1B35E1C300C06102 /* CPYClip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClip.swift; sourceTree = "<group>"; };
 		FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClipData.swift; sourceTree = "<group>"; };
+		FAC43E611B35EA4E00C06102 /* CPYFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolder.swift; sourceTree = "<group>"; };
+		FAC43E631B35EA6800C06102 /* CPYSnippet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,6 +288,8 @@
 			children = (
 				FAC43E5D1B35E1C300C06102 /* CPYClip.swift */,
 				FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */,
+				FAC43E611B35EA4E00C06102 /* CPYFolder.swift */,
+				FAC43E631B35EA6800C06102 /* CPYSnippet.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -428,6 +434,8 @@
 			files = (
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
+				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
+				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
 				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
 				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
