@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 //
 
-// MARK: - Application
+// Application Keys
 internal let kClipyIdentifier                                   = "Clipy"
 
 internal let kClipMenuIdentifier                                = "ClipMenu"
@@ -21,3 +21,26 @@ internal let kSnippets                                          = "snippets"
 internal let kContent                                           = "content"
 internal let kDefaultSnippetName                                = "untitled snippet"
 internal let kSelector                                          = "selector"
+
+
+// NSUserDefault Keys
+internal let kCPYPrefHotKeysKey                                 = "kCPYPrefHotKeysKey"
+internal let kCPYPrefMenuIconSizeKey                            = "kCPYPrefMenuIconSizeKey"
+internal let kCPYPrefMaxHistorySizeKey                          = "kCPYPrefMaxHistorySizeKey"
+internal let kCPYPrefTimeIntervalKey                            = "kCPYPrefTimeIntervalKey"
+internal let kCPYPrefStoreTypesKey                              = "kCPYPrefStoreTypesKey"
+internal let kCPYPrefExcludeAppsKey                             = "kCPYPrefExcludeAppsKey"
+internal let kCPYPrefInputPasteCommandKey                       = "kCPYPrefInputPasteCommandKey"
+internal let kCPYPrefShowIconInTheMenuKey                       = "kCPYPrefShowIconInTheMenuKey"
+internal let kCPYPrefNumberOfItemsPlaceInlineKey                = "kCPYPrefNumberOfItemsPlaceInlineKey"
+internal let kCPYPrefNumberOfItemsPlaceInsideFolderKey          = "kCPYPrefNumberOfItemsPlaceInsideFolderKey"
+internal let kCPYPrefMaxMenuItemTitleLengthKey                  = "kCPYPrefMaxMenuItemTitleLengthKey"
+internal let kCPYPrefMenuItemsTitleStartWithZeroKey             = "kCPYPrefMenuItemsTitleStartWithZeroKey"
+internal let kCPYPrefReorderClipsAfterPasting                   = "kCPYPrefReorderClipsAfterPasting"
+internal let kCPYPrefAddClearHistoryMenuItemKey                 = "kCPYPrefAddClearHistoryMenuItemKey"
+internal let kCPYPrefShowAlertBeforeClearHistoryKey             = "kCPYPrefShowAlertBeforeClearHistoryKey"
+internal let kCPYPrefMenuItemsAreMarkedWithNumbersKey           = "menuItemsAreMarkedWithNumbers"
+internal let kCPYPrefShowToolTipOnMenuItemKey                   = "showToolTipOnMenuItem"
+internal let kCPYPrefShowImageInTheMenuKey                      = "showImageInTheMenu"
+internal let kCPYPrefAddNumericKeyEquivalentsKey                = "addNumericKeyEquivalents"
+internal let kCPYPrefMaxLengthOfToolTipKey                      = "maxLengthOfToolTipKey"
