@@ -24,6 +24,9 @@
 		FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
 		FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
 		FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FAC43E1F1B35DF9500C06102 /* BWToolkitFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; };
+		FAC43E201B35DF9A00C06102 /* BWToolkitFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; };
+		FAC43E211B35DF9A00C06102 /* BWToolkitFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +47,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */,
+				FAC43E211B35DF9A00C06102 /* BWToolkitFramework.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,6 +86,7 @@
 		FAC43E101B35DE7D00C06102 /* SRValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRValidator.m; sourceTree = "<group>"; };
 		FAC43E171B35DE9400C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RLMSupport.swift; sourceTree = "<group>"; };
 		FAC43E191B35DF2500C06102 /* PTHotKey.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PTHotKey.framework; sourceTree = "<group>"; };
+		FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BWToolkitFramework.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAC43E201B35DF9A00C06102 /* BWToolkitFramework.framework in Frameworks */,
 				FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */,
+				FAC43E1F1B35DF9500C06102 /* BWToolkitFramework.framework in Frameworks */,
 				FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */,
 				314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */,
 			);
@@ -108,6 +115,7 @@
 		2CB0F71AAC48A392535FD3B0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */,
 				FAC43E191B35DF2500C06102 /* PTHotKey.framework */,
 				8FD02AEC500E951DF3566C0B /* libPods.a */,
 			);
