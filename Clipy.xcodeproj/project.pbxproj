@@ -32,6 +32,8 @@
 		FAC43E551B35E13000C06102 /* SRValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E501B35E13000C06102 /* SRValidator.m */; };
 		FAC43E581B35E13D00C06102 /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E571B35E13D00C06102 /* DBPrefsWindowController.m */; };
 		FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5A1B35E14500C06102 /* NMLoginItems.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5D1B35E1C300C06102 /* CPYClip.swift */; };
+		FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +99,8 @@
 		FAC43E571B35E13D00C06102 /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DBPrefsWindowController.m; path = Clipy/Libraries/DBPrefsWindowController/DBPrefsWindowController.m; sourceTree = SOURCE_ROOT; };
 		FAC43E591B35E14500C06102 /* NMLoginItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NMLoginItems.h; path = Clipy/Libraries/NMLoginItems/NMLoginItems.h; sourceTree = SOURCE_ROOT; };
 		FAC43E5A1B35E14500C06102 /* NMLoginItems.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NMLoginItems.m; path = Clipy/Libraries/NMLoginItems/NMLoginItems.m; sourceTree = SOURCE_ROOT; };
+		FAC43E5D1B35E1C300C06102 /* CPYClip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClip.swift; sourceTree = "<group>"; };
+		FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClipData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,10 +178,11 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43DFC1B35DDE700C06102 /* Libraries */,
+				FAC43E5C1B35E1A100C06102 /* Models */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
 				FAC43DCF1B35D8B100C06102 /* Images.xcassets */,
 				FAC43DD11B35D8B100C06102 /* Main.storyboard */,
+				FAC43DFC1B35DDE700C06102 /* Libraries */,
 				FAC43DC91B35D8B100C06102 /* Supporting Files */,
 			);
 			path = Clipy;
@@ -272,6 +277,15 @@
 				FAC43E441B35E12900C06102 /* RLMSupport.swift */,
 			);
 			path = Realm;
+			sourceTree = "<group>";
+		};
+		FAC43E5C1B35E1A100C06102 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FAC43E5D1B35E1C300C06102 /* CPYClip.swift */,
+				FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -414,9 +428,11 @@
 			files = (
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
+				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
 				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
+				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
 				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,
 				FAC43E551B35E13000C06102 /* SRValidator.m in Sources */,
