@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD02AEC500E951DF3566C0B /* libPods.a */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DCE1B35D8B100C06102 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCD1B35D8B100C06102 /* ViewController.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
@@ -25,6 +26,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8FD02AEC500E951DF3566C0B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		95188F89C10FD1FC6DB0F825 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		E2265F0B70723AFEA6D247B6 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -41,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,12 +59,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2CB0F71AAC48A392535FD3B0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8FD02AEC500E951DF3566C0B /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		613917866A675237A79A4556 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E2265F0B70723AFEA6D247B6 /* Pods.debug.xcconfig */,
+				95188F89C10FD1FC6DB0F825 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		FAC43DBD1B35D8B100C06102 = {
 			isa = PBXGroup;
 			children = (
 				FAC43DC81B35D8B100C06102 /* Clipy */,
 				FAC43DDB1B35D8B100C06102 /* ClipyTests */,
 				FAC43DC71B35D8B100C06102 /* Products */,
+				613917866A675237A79A4556 /* Pods */,
+				2CB0F71AAC48A392535FD3B0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,9 +140,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAC43DE21B35D8B100C06102 /* Build configuration list for PBXNativeTarget "Clipy" */;
 			buildPhases = (
+				1322803958BEE0411B7E81CF /* Check Pods Manifest.lock */,
 				FAC43DC21B35D8B100C06102 /* Sources */,
 				FAC43DC31B35D8B100C06102 /* Frameworks */,
 				FAC43DC41B35D8B100C06102 /* Resources */,
+				A5423A032C243BC92F38902D /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -202,6 +228,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1322803958BEE0411B7E81CF /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A5423A032C243BC92F38902D /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FAC43DC21B35D8B100C06102 /* Sources */ = {
@@ -325,6 +384,7 @@
 		};
 		FAC43DE31B35D8B100C06102 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E2265F0B70723AFEA6D247B6 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -336,6 +396,7 @@
 		};
 		FAC43DE41B35D8B100C06102 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 95188F89C10FD1FC6DB0F825 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -400,6 +461,7 @@
 				FAC43DE41B35D8B100C06102 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FAC43DE51B35D8B100C06102 /* Build configuration list for PBXNativeTarget "ClipyTests" */ = {
 			isa = XCConfigurationList;
@@ -408,6 +470,7 @@
 				FAC43DE71B35D8B100C06102 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,0 +1,15 @@
+PODS:
+  - Realm (0.93.2):
+    - Realm/Headers (= 0.93.2)
+  - Realm/Headers (0.93.2)
+  - Sparkle (1.10.0)
+
+DEPENDENCIES:
+  - Realm
+  - Sparkle
+
+SPEC CHECKSUMS:
+  Realm: 2fdd0ae74f730e190384e0338d8a0d3654df8220
+  Sparkle: c859bf5283b9f12aa45bceccf8e25ebb4c008eb2
+
+COCOAPODS: 0.37.2
