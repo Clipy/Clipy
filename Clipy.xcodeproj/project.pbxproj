@@ -21,6 +21,9 @@
 		FAC43E141B35DE7D00C06102 /* SRRecorderControl.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E0E1B35DE7D00C06102 /* SRRecorderControl.m */; };
 		FAC43E151B35DE7D00C06102 /* SRValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E101B35DE7D00C06102 /* SRValidator.m */; };
 		FAC43E181B35DE9400C06102 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E171B35DE9400C06102 /* RLMSupport.swift */; };
+		FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
+		FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
+		FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +35,20 @@
 			remoteInfo = Clipy;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FAC43E1D1B35DF4A00C06102 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		8FD02AEC500E951DF3566C0B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,6 +81,7 @@
 		FAC43E0F1B35DE7D00C06102 /* SRValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRValidator.h; sourceTree = "<group>"; };
 		FAC43E101B35DE7D00C06102 /* SRValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRValidator.m; sourceTree = "<group>"; };
 		FAC43E171B35DE9400C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RLMSupport.swift; sourceTree = "<group>"; };
+		FAC43E191B35DF2500C06102 /* PTHotKey.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PTHotKey.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +89,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */,
+				FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */,
 				314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,6 +108,7 @@
 		2CB0F71AAC48A392535FD3B0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAC43E191B35DF2500C06102 /* PTHotKey.framework */,
 				8FD02AEC500E951DF3566C0B /* libPods.a */,
 			);
 			name = Frameworks;
@@ -236,6 +257,7 @@
 				FAC43DC31B35D8B100C06102 /* Frameworks */,
 				FAC43DC41B35D8B100C06102 /* Resources */,
 				A5423A032C243BC92F38902D /* Copy Pods Resources */,
+				FAC43E1D1B35DF4A00C06102 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -500,6 +522,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Clipy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -517,6 +543,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Clipy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
