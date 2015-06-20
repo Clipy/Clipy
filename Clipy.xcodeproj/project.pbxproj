@@ -24,14 +24,14 @@
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
 		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
-		FAC43E2D1B35E08200C06102 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E2C1B35E08200C06102 /* RLMSupport.swift */; };
-		FAC43E391B35E08F00C06102 /* SRCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E301B35E08F00C06102 /* SRCommon.m */; };
-		FAC43E3A1B35E08F00C06102 /* SRKeyCodeTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E321B35E08F00C06102 /* SRKeyCodeTransformer.m */; };
-		FAC43E3B1B35E08F00C06102 /* SRRecorderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E341B35E08F00C06102 /* SRRecorderCell.m */; };
-		FAC43E3C1B35E08F00C06102 /* SRRecorderControl.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E361B35E08F00C06102 /* SRRecorderControl.m */; };
-		FAC43E3D1B35E08F00C06102 /* SRValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E381B35E08F00C06102 /* SRValidator.m */; };
-		FAC43E401B35E09C00C06102 /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E3F1B35E09C00C06102 /* DBPrefsWindowController.m */; };
-		FAC43E431B35E0A600C06102 /* NMLoginItems.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E421B35E0A600C06102 /* NMLoginItems.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E441B35E12900C06102 /* RLMSupport.swift */; };
+		FAC43E511B35E13000C06102 /* SRCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E481B35E13000C06102 /* SRCommon.m */; };
+		FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E4A1B35E13000C06102 /* SRKeyCodeTransformer.m */; };
+		FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E4C1B35E13000C06102 /* SRRecorderCell.m */; };
+		FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E4E1B35E13000C06102 /* SRRecorderControl.m */; };
+		FAC43E551B35E13000C06102 /* SRValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E501B35E13000C06102 /* SRValidator.m */; };
+		FAC43E581B35E13D00C06102 /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E571B35E13D00C06102 /* DBPrefsWindowController.m */; };
+		FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5A1B35E14500C06102 /* NMLoginItems.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,22 +81,22 @@
 		FAC43E261B35DFD300C06102 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		FAC43E2C1B35E08200C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RLMSupport.swift; path = Clipy/Librarys/Realm/RLMSupport.swift; sourceTree = SOURCE_ROOT; };
-		FAC43E2E1B35E08F00C06102 /* ShortcutRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShortcutRecorder.h; path = Clipy/Librarys/ShortcutRecorder/ShortcutRecorder.h; sourceTree = SOURCE_ROOT; };
-		FAC43E2F1B35E08F00C06102 /* SRCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRCommon.h; path = Clipy/Librarys/ShortcutRecorder/SRCommon.h; sourceTree = SOURCE_ROOT; };
-		FAC43E301B35E08F00C06102 /* SRCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRCommon.m; path = Clipy/Librarys/ShortcutRecorder/SRCommon.m; sourceTree = SOURCE_ROOT; };
-		FAC43E311B35E08F00C06102 /* SRKeyCodeTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRKeyCodeTransformer.h; path = Clipy/Librarys/ShortcutRecorder/SRKeyCodeTransformer.h; sourceTree = SOURCE_ROOT; };
-		FAC43E321B35E08F00C06102 /* SRKeyCodeTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRKeyCodeTransformer.m; path = Clipy/Librarys/ShortcutRecorder/SRKeyCodeTransformer.m; sourceTree = SOURCE_ROOT; };
-		FAC43E331B35E08F00C06102 /* SRRecorderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRRecorderCell.h; path = Clipy/Librarys/ShortcutRecorder/SRRecorderCell.h; sourceTree = SOURCE_ROOT; };
-		FAC43E341B35E08F00C06102 /* SRRecorderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRRecorderCell.m; path = Clipy/Librarys/ShortcutRecorder/SRRecorderCell.m; sourceTree = SOURCE_ROOT; };
-		FAC43E351B35E08F00C06102 /* SRRecorderControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRRecorderControl.h; path = Clipy/Librarys/ShortcutRecorder/SRRecorderControl.h; sourceTree = SOURCE_ROOT; };
-		FAC43E361B35E08F00C06102 /* SRRecorderControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRRecorderControl.m; path = Clipy/Librarys/ShortcutRecorder/SRRecorderControl.m; sourceTree = SOURCE_ROOT; };
-		FAC43E371B35E08F00C06102 /* SRValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRValidator.h; path = Clipy/Librarys/ShortcutRecorder/SRValidator.h; sourceTree = SOURCE_ROOT; };
-		FAC43E381B35E08F00C06102 /* SRValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRValidator.m; path = Clipy/Librarys/ShortcutRecorder/SRValidator.m; sourceTree = SOURCE_ROOT; };
-		FAC43E3E1B35E09C00C06102 /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DBPrefsWindowController.h; path = Clipy/Librarys/DBPrefsWindowController/DBPrefsWindowController.h; sourceTree = SOURCE_ROOT; };
-		FAC43E3F1B35E09C00C06102 /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DBPrefsWindowController.m; path = Clipy/Librarys/DBPrefsWindowController/DBPrefsWindowController.m; sourceTree = SOURCE_ROOT; };
-		FAC43E411B35E0A600C06102 /* NMLoginItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NMLoginItems.h; path = Clipy/Librarys/NMLoginItems/NMLoginItems.h; sourceTree = SOURCE_ROOT; };
-		FAC43E421B35E0A600C06102 /* NMLoginItems.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NMLoginItems.m; path = Clipy/Librarys/NMLoginItems/NMLoginItems.m; sourceTree = SOURCE_ROOT; };
+		FAC43E441B35E12900C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RLMSupport.swift; path = Clipy/Libraries/Realm/RLMSupport.swift; sourceTree = SOURCE_ROOT; };
+		FAC43E461B35E13000C06102 /* ShortcutRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShortcutRecorder.h; path = Clipy/Libraries/ShortcutRecorder/ShortcutRecorder.h; sourceTree = SOURCE_ROOT; };
+		FAC43E471B35E13000C06102 /* SRCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRCommon.h; path = Clipy/Libraries/ShortcutRecorder/SRCommon.h; sourceTree = SOURCE_ROOT; };
+		FAC43E481B35E13000C06102 /* SRCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRCommon.m; path = Clipy/Libraries/ShortcutRecorder/SRCommon.m; sourceTree = SOURCE_ROOT; };
+		FAC43E491B35E13000C06102 /* SRKeyCodeTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRKeyCodeTransformer.h; path = Clipy/Libraries/ShortcutRecorder/SRKeyCodeTransformer.h; sourceTree = SOURCE_ROOT; };
+		FAC43E4A1B35E13000C06102 /* SRKeyCodeTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRKeyCodeTransformer.m; path = Clipy/Libraries/ShortcutRecorder/SRKeyCodeTransformer.m; sourceTree = SOURCE_ROOT; };
+		FAC43E4B1B35E13000C06102 /* SRRecorderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRRecorderCell.h; path = Clipy/Libraries/ShortcutRecorder/SRRecorderCell.h; sourceTree = SOURCE_ROOT; };
+		FAC43E4C1B35E13000C06102 /* SRRecorderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRRecorderCell.m; path = Clipy/Libraries/ShortcutRecorder/SRRecorderCell.m; sourceTree = SOURCE_ROOT; };
+		FAC43E4D1B35E13000C06102 /* SRRecorderControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRRecorderControl.h; path = Clipy/Libraries/ShortcutRecorder/SRRecorderControl.h; sourceTree = SOURCE_ROOT; };
+		FAC43E4E1B35E13000C06102 /* SRRecorderControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRRecorderControl.m; path = Clipy/Libraries/ShortcutRecorder/SRRecorderControl.m; sourceTree = SOURCE_ROOT; };
+		FAC43E4F1B35E13000C06102 /* SRValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRValidator.h; path = Clipy/Libraries/ShortcutRecorder/SRValidator.h; sourceTree = SOURCE_ROOT; };
+		FAC43E501B35E13000C06102 /* SRValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRValidator.m; path = Clipy/Libraries/ShortcutRecorder/SRValidator.m; sourceTree = SOURCE_ROOT; };
+		FAC43E561B35E13D00C06102 /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DBPrefsWindowController.h; path = Clipy/Libraries/DBPrefsWindowController/DBPrefsWindowController.h; sourceTree = SOURCE_ROOT; };
+		FAC43E571B35E13D00C06102 /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DBPrefsWindowController.m; path = Clipy/Libraries/DBPrefsWindowController/DBPrefsWindowController.m; sourceTree = SOURCE_ROOT; };
+		FAC43E591B35E14500C06102 /* NMLoginItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NMLoginItems.h; path = Clipy/Libraries/NMLoginItems/NMLoginItems.h; sourceTree = SOURCE_ROOT; };
+		FAC43E5A1B35E14500C06102 /* NMLoginItems.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NMLoginItems.m; path = Clipy/Libraries/NMLoginItems/NMLoginItems.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,7 +174,7 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43DFC1B35DDE700C06102 /* Librarys */,
+				FAC43DFC1B35DDE700C06102 /* Libraries */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
 				FAC43DCF1B35D8B100C06102 /* Images.xcassets */,
 				FAC43DD11B35D8B100C06102 /* Main.storyboard */,
@@ -218,7 +218,7 @@
 			name = AppDelegate;
 			sourceTree = "<group>";
 		};
-		FAC43DFC1B35DDE700C06102 /* Librarys */ = {
+		FAC43DFC1B35DDE700C06102 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
 				FAC43E161B35DE8800C06102 /* Realm */,
@@ -226,15 +226,15 @@
 				FAC43E011B35DE5C00C06102 /* DBPrefsWindowController */,
 				FAC43DFD1B35DE0500C06102 /* NMLoginItems */,
 			);
-			name = Librarys;
+			name = Libraries;
 			path = Library;
 			sourceTree = "<group>";
 		};
 		FAC43DFD1B35DE0500C06102 /* NMLoginItems */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43E411B35E0A600C06102 /* NMLoginItems.h */,
-				FAC43E421B35E0A600C06102 /* NMLoginItems.m */,
+				FAC43E591B35E14500C06102 /* NMLoginItems.h */,
+				FAC43E5A1B35E14500C06102 /* NMLoginItems.m */,
 			);
 			path = NMLoginItems;
 			sourceTree = "<group>";
@@ -242,8 +242,8 @@
 		FAC43E011B35DE5C00C06102 /* DBPrefsWindowController */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43E3E1B35E09C00C06102 /* DBPrefsWindowController.h */,
-				FAC43E3F1B35E09C00C06102 /* DBPrefsWindowController.m */,
+				FAC43E561B35E13D00C06102 /* DBPrefsWindowController.h */,
+				FAC43E571B35E13D00C06102 /* DBPrefsWindowController.m */,
 			);
 			path = DBPrefsWindowController;
 			sourceTree = "<group>";
@@ -251,17 +251,17 @@
 		FAC43E051B35DE7500C06102 /* ShortcutRecorder */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43E2E1B35E08F00C06102 /* ShortcutRecorder.h */,
-				FAC43E2F1B35E08F00C06102 /* SRCommon.h */,
-				FAC43E301B35E08F00C06102 /* SRCommon.m */,
-				FAC43E311B35E08F00C06102 /* SRKeyCodeTransformer.h */,
-				FAC43E321B35E08F00C06102 /* SRKeyCodeTransformer.m */,
-				FAC43E331B35E08F00C06102 /* SRRecorderCell.h */,
-				FAC43E341B35E08F00C06102 /* SRRecorderCell.m */,
-				FAC43E351B35E08F00C06102 /* SRRecorderControl.h */,
-				FAC43E361B35E08F00C06102 /* SRRecorderControl.m */,
-				FAC43E371B35E08F00C06102 /* SRValidator.h */,
-				FAC43E381B35E08F00C06102 /* SRValidator.m */,
+				FAC43E461B35E13000C06102 /* ShortcutRecorder.h */,
+				FAC43E471B35E13000C06102 /* SRCommon.h */,
+				FAC43E481B35E13000C06102 /* SRCommon.m */,
+				FAC43E491B35E13000C06102 /* SRKeyCodeTransformer.h */,
+				FAC43E4A1B35E13000C06102 /* SRKeyCodeTransformer.m */,
+				FAC43E4B1B35E13000C06102 /* SRRecorderCell.h */,
+				FAC43E4C1B35E13000C06102 /* SRRecorderCell.m */,
+				FAC43E4D1B35E13000C06102 /* SRRecorderControl.h */,
+				FAC43E4E1B35E13000C06102 /* SRRecorderControl.m */,
+				FAC43E4F1B35E13000C06102 /* SRValidator.h */,
+				FAC43E501B35E13000C06102 /* SRValidator.m */,
 			);
 			path = ShortcutRecorder;
 			sourceTree = "<group>";
@@ -269,7 +269,7 @@
 		FAC43E161B35DE8800C06102 /* Realm */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43E2C1B35E08200C06102 /* RLMSupport.swift */,
+				FAC43E441B35E12900C06102 /* RLMSupport.swift */,
 			);
 			path = Realm;
 			sourceTree = "<group>";
@@ -412,15 +412,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAC43E3A1B35E08F00C06102 /* SRKeyCodeTransformer.m in Sources */,
-				FAC43E391B35E08F00C06102 /* SRCommon.m in Sources */,
-				FAC43E3B1B35E08F00C06102 /* SRRecorderCell.m in Sources */,
-				FAC43E431B35E0A600C06102 /* NMLoginItems.m in Sources */,
-				FAC43E3C1B35E08F00C06102 /* SRRecorderControl.m in Sources */,
+				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
+				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
+				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
+				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
+				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
-				FAC43E2D1B35E08200C06102 /* RLMSupport.swift in Sources */,
-				FAC43E3D1B35E08F00C06102 /* SRValidator.m in Sources */,
-				FAC43E401B35E09C00C06102 /* DBPrefsWindowController.m in Sources */,
+				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,
+				FAC43E551B35E13000C06102 /* SRValidator.m in Sources */,
+				FAC43E581B35E13D00C06102 /* DBPrefsWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
