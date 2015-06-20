@@ -27,6 +27,11 @@
 		FAC43E1F1B35DF9500C06102 /* BWToolkitFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; };
 		FAC43E201B35DF9A00C06102 /* BWToolkitFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; };
 		FAC43E211B35DF9A00C06102 /* BWToolkitFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
+		FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E241B35DFD000C06102 /* AppKit.framework */; };
+		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
+		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
+		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +92,11 @@
 		FAC43E171B35DE9400C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RLMSupport.swift; sourceTree = "<group>"; };
 		FAC43E191B35DF2500C06102 /* PTHotKey.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PTHotKey.framework; sourceTree = "<group>"; };
 		FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BWToolkitFramework.framework; sourceTree = "<group>"; };
+		FAC43E221B35DFC800C06102 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FAC43E241B35DFD000C06102 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		FAC43E261B35DFD300C06102 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +104,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */,
+				FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */,
+				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
+				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
+				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
 				FAC43E201B35DF9A00C06102 /* BWToolkitFramework.framework in Frameworks */,
 				FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */,
 				FAC43E1F1B35DF9500C06102 /* BWToolkitFramework.framework in Frameworks */,
@@ -115,6 +130,11 @@
 		2CB0F71AAC48A392535FD3B0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAC43E2A1B35DFDF00C06102 /* WebKit.framework */,
+				FAC43E281B35DFDA00C06102 /* Cocoa.framework */,
+				FAC43E261B35DFD300C06102 /* Carbon.framework */,
+				FAC43E241B35DFD000C06102 /* AppKit.framework */,
+				FAC43E221B35DFC800C06102 /* Foundation.framework */,
 				FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */,
 				FAC43E191B35DF2500C06102 /* PTHotKey.framework */,
 				8FD02AEC500E951DF3566C0B /* libPods.a */,
