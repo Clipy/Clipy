@@ -10,6 +10,7 @@ import Cocoa
 
 class CPYClip: RLMObject {
 
+    // MARK: - Properties
     dynamic var dataPath    = ""
     dynamic var title       = ""
     dynamic var dataHash    = ""

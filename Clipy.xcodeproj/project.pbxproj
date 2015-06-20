@@ -40,6 +40,7 @@
 		FAC43E691B35EC6200C06102 /* CPYClipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E681B35EC6200C06102 /* CPYClipManager.swift */; };
 		FAC43E6B1B35EC7000C06102 /* CPYSnippetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */; };
 		FAC43E6D1B35EC8900C06102 /* CPYHtoKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6C1B35EC8900C06102 /* CPYHtoKeyManager.swift */; };
+		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,7 @@
 		FAC43E681B35EC6200C06102 /* CPYClipManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClipManager.swift; sourceTree = "<group>"; };
 		FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetManager.swift; sourceTree = "<group>"; };
 		FAC43E6C1B35EC8900C06102 /* CPYHtoKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHtoKeyManager.swift; sourceTree = "<group>"; };
+		FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYConstants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,11 +192,13 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
+				FAC43E6E1B35F36E00C06102 /* Utility */,
 				FAC43E651B35EC4200C06102 /* Managers */,
 				FAC43E5C1B35E1A100C06102 /* Models */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
 				FAC43DCF1B35D8B100C06102 /* Images.xcassets */,
 				FAC43DD11B35D8B100C06102 /* Main.storyboard */,
+				FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */,
 				FAC43DFC1B35DDE700C06102 /* Libraries */,
 				FAC43DC91B35D8B100C06102 /* Supporting Files */,
 			);
@@ -312,6 +316,13 @@
 				FAC43E6C1B35EC8900C06102 /* CPYHtoKeyManager.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		FAC43E6E1B35F36E00C06102 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utility;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -458,6 +469,7 @@
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* CPYMenuManager.swift in Sources */,
 				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
+				FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */,
 				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
 				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
