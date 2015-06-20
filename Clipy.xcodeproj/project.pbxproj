@@ -13,6 +13,14 @@
 		FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DD11B35D8B100C06102 /* Main.storyboard */; };
 		FAC43DDF1B35D8B100C06102 /* ClipyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */; };
 		FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DF91B35DD4300C06102 /* Localizable.strings */; };
+		FAC43E001B35DE1100C06102 /* NMLoginItems.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DFF1B35DE1100C06102 /* NMLoginItems.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		FAC43E041B35DE6600C06102 /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E031B35DE6600C06102 /* DBPrefsWindowController.m */; };
+		FAC43E111B35DE7D00C06102 /* SRCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E081B35DE7D00C06102 /* SRCommon.m */; };
+		FAC43E121B35DE7D00C06102 /* SRKeyCodeTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E0A1B35DE7D00C06102 /* SRKeyCodeTransformer.m */; };
+		FAC43E131B35DE7D00C06102 /* SRRecorderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E0C1B35DE7D00C06102 /* SRRecorderCell.m */; };
+		FAC43E141B35DE7D00C06102 /* SRRecorderControl.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E0E1B35DE7D00C06102 /* SRRecorderControl.m */; };
+		FAC43E151B35DE7D00C06102 /* SRValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E101B35DE7D00C06102 /* SRValidator.m */; };
+		FAC43E181B35DE9400C06102 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E171B35DE9400C06102 /* RLMSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +48,22 @@
 		FAC43DE81B35DAA400C06102 /* Clipy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clipy-Bridging-Header.h"; sourceTree = "<group>"; };
 		FAC43DF81B35DD4300C06102 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FAC43DFA1B35DD5200C06102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FAC43DFE1B35DE1100C06102 /* NMLoginItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NMLoginItems.h; sourceTree = "<group>"; };
+		FAC43DFF1B35DE1100C06102 /* NMLoginItems.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NMLoginItems.m; sourceTree = "<group>"; };
+		FAC43E021B35DE6600C06102 /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBPrefsWindowController.h; sourceTree = "<group>"; };
+		FAC43E031B35DE6600C06102 /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBPrefsWindowController.m; sourceTree = "<group>"; };
+		FAC43E061B35DE7D00C06102 /* ShortcutRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShortcutRecorder.h; sourceTree = "<group>"; };
+		FAC43E071B35DE7D00C06102 /* SRCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRCommon.h; sourceTree = "<group>"; };
+		FAC43E081B35DE7D00C06102 /* SRCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRCommon.m; sourceTree = "<group>"; };
+		FAC43E091B35DE7D00C06102 /* SRKeyCodeTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRKeyCodeTransformer.h; sourceTree = "<group>"; };
+		FAC43E0A1B35DE7D00C06102 /* SRKeyCodeTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRKeyCodeTransformer.m; sourceTree = "<group>"; };
+		FAC43E0B1B35DE7D00C06102 /* SRRecorderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRRecorderCell.h; sourceTree = "<group>"; };
+		FAC43E0C1B35DE7D00C06102 /* SRRecorderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRRecorderCell.m; sourceTree = "<group>"; };
+		FAC43E0D1B35DE7D00C06102 /* SRRecorderControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRRecorderControl.h; sourceTree = "<group>"; };
+		FAC43E0E1B35DE7D00C06102 /* SRRecorderControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRRecorderControl.m; sourceTree = "<group>"; };
+		FAC43E0F1B35DE7D00C06102 /* SRValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRValidator.h; sourceTree = "<group>"; };
+		FAC43E101B35DE7D00C06102 /* SRValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRValidator.m; sourceTree = "<group>"; };
+		FAC43E171B35DE9400C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RLMSupport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +125,7 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
+				FAC43DFC1B35DDE700C06102 /* Library */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
 				FAC43DCF1B35D8B100C06102 /* Images.xcassets */,
 				FAC43DD11B35D8B100C06102 /* Main.storyboard */,
@@ -142,6 +167,61 @@
 				FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */,
 			);
 			name = AppDelegate;
+			sourceTree = "<group>";
+		};
+		FAC43DFC1B35DDE700C06102 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				FAC43E161B35DE8800C06102 /* Realm */,
+				FAC43E051B35DE7500C06102 /* ShortcutRecorder */,
+				FAC43E011B35DE5C00C06102 /* DBPrefsWindowController */,
+				FAC43DFD1B35DE0500C06102 /* NMLoginItems */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		FAC43DFD1B35DE0500C06102 /* NMLoginItems */ = {
+			isa = PBXGroup;
+			children = (
+				FAC43DFE1B35DE1100C06102 /* NMLoginItems.h */,
+				FAC43DFF1B35DE1100C06102 /* NMLoginItems.m */,
+			);
+			path = NMLoginItems;
+			sourceTree = "<group>";
+		};
+		FAC43E011B35DE5C00C06102 /* DBPrefsWindowController */ = {
+			isa = PBXGroup;
+			children = (
+				FAC43E021B35DE6600C06102 /* DBPrefsWindowController.h */,
+				FAC43E031B35DE6600C06102 /* DBPrefsWindowController.m */,
+			);
+			path = DBPrefsWindowController;
+			sourceTree = "<group>";
+		};
+		FAC43E051B35DE7500C06102 /* ShortcutRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				FAC43E061B35DE7D00C06102 /* ShortcutRecorder.h */,
+				FAC43E071B35DE7D00C06102 /* SRCommon.h */,
+				FAC43E081B35DE7D00C06102 /* SRCommon.m */,
+				FAC43E091B35DE7D00C06102 /* SRKeyCodeTransformer.h */,
+				FAC43E0A1B35DE7D00C06102 /* SRKeyCodeTransformer.m */,
+				FAC43E0B1B35DE7D00C06102 /* SRRecorderCell.h */,
+				FAC43E0C1B35DE7D00C06102 /* SRRecorderCell.m */,
+				FAC43E0D1B35DE7D00C06102 /* SRRecorderControl.h */,
+				FAC43E0E1B35DE7D00C06102 /* SRRecorderControl.m */,
+				FAC43E0F1B35DE7D00C06102 /* SRValidator.h */,
+				FAC43E101B35DE7D00C06102 /* SRValidator.m */,
+			);
+			path = ShortcutRecorder;
+			sourceTree = "<group>";
+		};
+		FAC43E161B35DE8800C06102 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				FAC43E171B35DE9400C06102 /* RLMSupport.swift */,
+			);
+			path = Realm;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -281,7 +361,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAC43E131B35DE7D00C06102 /* SRRecorderCell.m in Sources */,
+				FAC43E181B35DE9400C06102 /* RLMSupport.swift in Sources */,
+				FAC43E141B35DE7D00C06102 /* SRRecorderControl.m in Sources */,
+				FAC43E041B35DE6600C06102 /* DBPrefsWindowController.m in Sources */,
+				FAC43E151B35DE7D00C06102 /* SRValidator.m in Sources */,
+				FAC43E121B35DE7D00C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
+				FAC43E001B35DE1100C06102 /* NMLoginItems.m in Sources */,
+				FAC43E111B35DE7D00C06102 /* SRCommon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
