@@ -5,6 +5,7 @@
 // framework
 #import <PTHotKey/PTHotKey.h>
 #import <PTHotKey/PTHotKeyCenter.h>
+#import <BWToolkitFramework/BWToolkitFramework.h>
 
 // Library
 #import "NMLoginItems.h"
