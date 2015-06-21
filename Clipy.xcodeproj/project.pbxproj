@@ -42,6 +42,7 @@
 		FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */; };
 		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
+		FAC43E751B36E9A000C06102 /* CPYUtilitiesObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,8 @@
 		FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHotKeyManager.swift; sourceTree = "<group>"; };
 		FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYConstants.swift; sourceTree = "<group>"; };
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
+		FAC43E731B36E9A000C06102 /* CPYUtilitiesObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPYUtilitiesObjC.h; sourceTree = "<group>"; };
+		FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPYUtilitiesObjC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -324,6 +327,8 @@
 			isa = PBXGroup;
 			children = (
 				FAC43E711B36D0A600C06102 /* CPYUtilities.swift */,
+				FAC43E731B36E9A000C06102 /* CPYUtilitiesObjC.h */,
+				FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -469,6 +474,7 @@
 				FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */,
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
+				FAC43E751B36E9A000C06102 /* CPYUtilitiesObjC.m in Sources */,
 				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* CPYMenuManager.swift in Sources */,

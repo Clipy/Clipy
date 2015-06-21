@@ -52,4 +52,7 @@ internal let kCPYPrefShowImageInTheMenuKey                      = "showImageInTh
 internal let kCPYPrefAddNumericKeyEquivalentsKey                = "addNumericKeyEquivalents"
 internal let kCPYPrefMaxLengthOfToolTipKey                      = "maxLengthOfToolTipKey"
 internal let kCPYPrefLoginItemKey                               = "loginItem"
-internal let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginItem" 
+internal let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginItem"
+
+internal let kEmptyString                                       = ""
+internal let kSingleSpace                                       = " "

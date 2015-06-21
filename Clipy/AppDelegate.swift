@@ -20,13 +20,7 @@ class AppDelegate: NSObject {
         super.awakeFromNib()
         self.initController()
     }
-    
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObserver(self, forKeyPath: kCPYEnableAutomaticCheckPreReleaseKey)
-    }
-    
+
     private func initController() {
         CPYUtilities.registerUserDefaultKeys()
         
@@ -40,6 +34,12 @@ class AppDelegate: NSObject {
         // Notification
         let notificationCenter = NSNotificationCenter.defaultCenter()
         // notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.removeObserver(self, forKeyPath: kCPYEnableAutomaticCheckPreReleaseKey)
     }
 
     // MARK: - Override Methods
