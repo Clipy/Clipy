@@ -22,6 +22,13 @@ internal let kContent                                           = "content"
 internal let kDefaultSnippetName                                = "untitled snippet"
 internal let kSelector                                          = "selector"
 
+// Update App
+internal let kCPYEnableAutomaticCheckPreReleaseKey              = "kCPYEnableAutomaticCheckPreReleaseKey"
+internal let kCPYCheckNewRelease                                = "new"
+
+// Exclude List
+internal let kCPYBundleIdentifierKey                            = "bundleIdentifier"
+internal let kCPYNameKey                                        = "name"
 
 // NSUserDefault Keys
 internal let kCPYPrefHotKeysKey                                 = "kCPYPrefHotKeysKey"
@@ -44,3 +51,5 @@ internal let kCPYPrefShowToolTipOnMenuItemKey                   = "showToolTipOn
 internal let kCPYPrefShowImageInTheMenuKey                      = "showImageInTheMenu"
 internal let kCPYPrefAddNumericKeyEquivalentsKey                = "addNumericKeyEquivalents"
 internal let kCPYPrefMaxLengthOfToolTipKey                      = "maxLengthOfToolTipKey"
+internal let kCPYPrefLoginItemKey                               = "loginItem"
+internal let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginItem" 

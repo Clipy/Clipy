@@ -5,3 +5,17 @@
   Created by 古林俊佑 on 2015/06/21.
   Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 */
+
+"Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?"
+
+"You can change this setting in the Preferences if you want." = "この設定はいつでも変更できます"
+
+"Launch on system startup" = "起動する"
+
+"Don't Launch" = "起動しない"
+
+"Clear History" = "履歴をクリア"
+
+"Are you sure you want to clear your clipboard history?" = "本当にクリップボード履歴をクリアしますか？"
+
+"Cancel" = "キャンセル"

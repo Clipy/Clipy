@@ -41,6 +41,7 @@
 		FAC43E6B1B35EC7000C06102 /* CPYSnippetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */; };
 		FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */; };
 		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
+		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +116,7 @@
 		FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetManager.swift; sourceTree = "<group>"; };
 		FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHotKeyManager.swift; sourceTree = "<group>"; };
 		FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYConstants.swift; sourceTree = "<group>"; };
+		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -321,6 +323,7 @@
 		FAC43E6E1B35F36E00C06102 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				FAC43E711B36D0A600C06102 /* CPYUtilities.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -465,6 +468,7 @@
 			files = (
 				FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */,
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
+				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
 				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* CPYMenuManager.swift in Sources */,
