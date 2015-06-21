@@ -33,7 +33,25 @@ class CPYHotKeyManager: NSObject {
     
     // MARK: - Init
     override init() {
-        
+        super.init()
+        self.initManager()
+    }
+    
+    private func initManager() {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.addObserver(self, forKeyPath: kCPYPrefHotKeysKey, options: NSKeyValueObservingOptions.New, context: nil)
+    }
+    
+    deinit {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.removeObserver(self, forKeyPath: kCPYPrefHotKeysKey)
+    }
+    
+    // MARK: - KVO
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        if keyPath == kCPYPrefHotKeysKey {
+            self.registerHotKeys()
+        }
     }
     
     // MARK: - Class Methods
@@ -101,15 +119,15 @@ class CPYHotKeyManager: NSObject {
     
     // MARK: - HotKey Action Methods
     internal func popUpClipMenu(sender: AnyObject) {
-        
+        // CPYMenuManager.sharedManager.popUpMenuForType(PopUpMenuType.Main)
     }
     
     internal func popUpHistoryMenu(sender: AnyObject) {
-        
+        // CPYMenuManager.sharedManager.popUpMenuForType(PopUpMenuType.History)
     }
     
     internal func popUpSnippetsMenu(sender: AnyObject) {
-        
+        // CPYMenuManager.sharedManager.popUpMenuForType(PopUpMenuType.Snippets)
     }
     
 }
