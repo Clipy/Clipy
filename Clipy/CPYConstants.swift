@@ -8,10 +8,13 @@
 
 // Application Keys
 internal let kClipyIdentifier                                   = "Clipy"
+internal let kApplicationName                                   = "Clipy"
 
 internal let kClipMenuIdentifier                                = "ClipMenu"
 internal let kHistoryMenuIdentifier                             = "HistoryMenu"
 internal let kSnippetsMenuIdentifier                            = "SnippetsMenu"
+
+internal let kClipsSaveDataName                                 = "clips.data"
 
 internal let kEnabled                                           = "enabled"
 internal let kIndex                                             = "index"
@@ -54,5 +57,27 @@ internal let kCPYPrefMaxLengthOfToolTipKey                      = "maxLengthOfTo
 internal let kCPYPrefLoginItemKey                               = "loginItem"
 internal let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginItem"
 
+// SnippetEditor
+internal let kCPYSnippetEditorWillCloseNotification             = "kCPYSnippetEditorWillCloseNotification"
+
+// PrefrenceWindow
+internal let kCPYPreferencePanelWillCloseNotification           = "kCPYPreferencePanelWillCloseNotification"
+internal let kCPYChangeContentsNotification                     = "kCPYChangeContentsNotification"
+
+// Drag and Drop
+internal let kDraggedDataType                                   = "DraggedDataType"
+
+// xml
+internal let kXMLFileType                                       = "xml"
+internal let kType                                              = "type"
+internal let kRootElement                                       = "folders"
+internal let kFolderElement                                     = "folder"
+internal let kSnippetElement                                    = "snippet"
+internal let kTitleElement                                      = "title"
+internal let kSnippetsElement                                   = "snippets"
+internal let kContentElement                                    = "content"
+
+// Other
 internal let kEmptyString                                       = ""
 internal let kSingleSpace                                       = " "
+
