@@ -102,7 +102,8 @@ class CPYHotKeyManager: NSObject {
             
             let hotKey = PTHotKey(identifier: key, keyCombo: keyCombo)
             
-            let selectorName = self.hotkeyMap[kSelector] as! String
+            let hotKeyDict = self.hotkeyMap[key] as! [String: AnyObject]
+            let selectorName = hotKeyDict[kSelector] as! String
             hotKey.setTarget(self)
             hotKey.setAction(Selector(selectorName))
             
@@ -119,15 +120,15 @@ class CPYHotKeyManager: NSObject {
     
     // MARK: - HotKey Action Methods
     internal func popUpClipMenu(sender: AnyObject) {
-        // CPYMenuManager.sharedManager.popUpMenuForType(PopUpMenuType.Main)
+        CPYMenuManager.sharedManager.popUpMenuForType(.Main)
     }
     
     internal func popUpHistoryMenu(sender: AnyObject) {
-        // CPYMenuManager.sharedManager.popUpMenuForType(PopUpMenuType.History)
+        CPYMenuManager.sharedManager.popUpMenuForType(.History)
     }
     
     internal func popUpSnippetsMenu(sender: AnyObject) {
-        // CPYMenuManager.sharedManager.popUpMenuForType(PopUpMenuType.Snippets)
+        CPYMenuManager.sharedManager.popUpMenuForType(.Snippets)
     }
     
 }

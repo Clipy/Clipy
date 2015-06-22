@@ -11,22 +11,18 @@ import Cocoa
 class CPYUtilities: NSObject {
 
     static func registerUserDefaultKeys() {
-        /*
         var defaultValues = [String: AnyObject]()
         
-        defaultValues.updateValue(self.defaultHotKeyCombos(), forKey: kCPYPrefHotKeysKey)
+        defaultValues.updateValue(CPYHotKeyManager.defaultHotKeyCombos(), forKey: kCPYPrefHotKeysKey)
         /* General */
         defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefLoginItemKey)
         defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefSuppressAlertForLoginItemKey)
         defaultValues.updateValue(NSNumber(integer: 30), forKey: kCPYPrefMaxHistorySizeKey)
-        defaultValues.updateValue(NSNumber(integer: 1800), forKey: kCPYPrefAutosaveDelayKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefSaveHistoryOnQuitKey)
-        defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
+//        defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
         defaultValues.updateValue(NSNumber(float: 0.75), forKey: kCPYPrefTimeIntervalKey)
-        defaultValues.updateValue(self.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
-        defaultValues.updateValue(self.defaultExcludeList(), forKey: kCPYPrefExcludeAppsKey)
+        defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
+        defaultValues.updateValue(AppDelegate.defaultExcludeList(), forKey: kCPYPrefExcludeAppsKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefInputPasteCommandKey)
-        defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefTagOfSeparatorForExportHistoryToFileKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefReorderClipsAfterPasting)
         
         /* Menu */
@@ -80,8 +76,46 @@ class CPYUtilities: NSObject {
         
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
-
-        */
     }
     
+    static func paste() -> Bool {
+        if !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefInputPasteCommandKey) {
+            return false
+        }
+        return CPYUtilitiesObjC.postCommandV()
+    }
+    
+    static func applicationSupportFolder() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+        var basePath: String!
+        if paths.count > 0 {
+            basePath = paths.first as! String
+        } else {
+            basePath = NSTemporaryDirectory()
+        }
+        
+        return basePath!.stringByAppendingPathComponent(kApplicationName)
+    }
+    
+    static func prepareSaveToPath(path: String) -> Bool {
+        let fileManager = NSFileManager.defaultManager()
+        var isDir: ObjCBool = false
+        
+        if (fileManager.fileExistsAtPath(path, isDirectory: &isDir) && isDir) == false {
+            if !fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil, error: nil) {
+                return false
+            }
+        }
+        return true
+    }
+    
+    static func deleteData(path: String) {
+        let fileManager = NSFileManager.defaultManager()
+        var isDir: ObjCBool = false
+        var error: NSError?
+        
+        if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
+            fileManager.removeItemAtPath(path, error: &error)
+        }
+    }
 }

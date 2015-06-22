@@ -8,6 +8,10 @@
 
 import Cocoa
 
+internal enum PopUpMenuType {
+    case Main, History, Snippets
+}
+
 class CPYMenuManager: NSObject {
 
     // MARK: - Properties
@@ -21,10 +25,6 @@ class CPYMenuManager: NSObject {
     internal var folderIcon: NSImage?
     internal var openFolderIcon: NSImage?
     internal var snippetIcon: NSImage?
-    
-    enum PopUpMenuType {
-        case Main, History, Snippets
-    }
 
     private let kMaxKeyEquivalents = 10
     private let SHORTEN_SYMBOL = "..."
@@ -40,20 +40,20 @@ class CPYMenuManager: NSObject {
     private func initManager() {
         self.shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         
-        // self.createMenu()
+        self.createMenu()
         
         self.dummyWindow = NSWindow(contentRect: NSZeroRect, styleMask: NSBorderlessWindowMask, backing: NSBackingStoreType.Buffered, defer: true)
         self.dummyWindow.collectionBehavior = NSWindowCollectionBehavior.CanJoinAllSpaces
         
-        // self.resetIconCaches()
+        self.resetIconCaches()
         
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.addObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey, options: NSKeyValueObservingOptions.New, context: nil)
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
-//        notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
-//        notificationCenter.addObserver(self, selector: "handleSnippetEditorWillClose:", name: kCPYSnippetEditorWillCloseNotification, object: nil)
-//        notificationCenter.addObserver(self, selector: "updateStatusItem", name: kCPYChangeContentsNotification, object: nil)
+        notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
+        notificationCenter.addObserver(self, selector: "handleSnippetEditorWillClose:", name: kCPYSnippetEditorWillCloseNotification, object: nil)
+        notificationCenter.addObserver(self, selector: "updateStatusItem", name: kCPYChangeContentsNotification, object: nil)
     }
 
     deinit {
@@ -71,7 +71,7 @@ class CPYMenuManager: NSObject {
     // MARK: - KVO
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefMenuIconSizeKey {
-            // self.resetMenuIconSize()
+             self.resetMenuIconSize()
         }
     }
     
@@ -214,7 +214,7 @@ class CPYMenuManager: NSObject {
         var subMenuCount = numberOfItemsPlaceInLine
         var subMenuIndex = (0 < menu.numberOfItems) ? menu.numberOfItems : 0
         subMenuIndex += numberOfItemsPlaceInLine
-        
+
         if let clips = CPYClipManager.sharedManager.loadSortedClips() {
             let currentSize = Int(clips.count)
             var i = 0
@@ -302,7 +302,6 @@ class CPYMenuManager: NSObject {
                 }
             }
         }
-        
     }
     
     private func makeMenuItemForClip(clip: CPYClip, count: NSInteger, listNumber: NSInteger) -> NSMenuItem {
@@ -333,7 +332,7 @@ class CPYMenuManager: NSObject {
         let title = self.trimTitle(clipString)
         let titleWithMark = self.menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
-        let menuItem = NSMenuItem(title: titleWithMark, action: "selectMenuItem:", keyEquivalent: keyEquivalent)
+        let menuItem = NSMenuItem(title: titleWithMark, action: "selectClipMenuItem:", keyEquivalent: keyEquivalent)
         menuItem.tag = count
         
         if isShowToolTip {
@@ -426,7 +425,7 @@ class CPYMenuManager: NSObject {
         self.removeStatusItem()
         
         // メニューバーのアイコンを指定
-        var statusIcon = NSImage(named: "StatusMenuIcon-black")
+        var statusIcon = NSImage(named: "statusbar_menu_white")
         statusIcon?.setTemplate(true)
         
         let statusBar = NSStatusBar.systemStatusBar()

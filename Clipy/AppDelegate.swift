@@ -25,7 +25,7 @@ class AppDelegate: NSObject {
         CPYUtilities.registerUserDefaultKeys()
         
         // Show menubar icon
-        // CPYMenuManager.sharedManager.createStatusItem()
+        CPYMenuManager.sharedManager.createStatusItem()
         
         // KVO
         let defaults = NSUserDefaults.standardUserDefaults()
@@ -33,7 +33,7 @@ class AppDelegate: NSObject {
         
         // Notification
         let notificationCenter = NSNotificationCenter.defaultCenter()
-        // notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
+        notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
     }
     
     deinit {
@@ -46,12 +46,11 @@ class AppDelegate: NSObject {
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         let action = menuItem.action
         if action == Selector("clearAllHistory") {
-            /*
             if let numberOfClips = CPYClipManager.sharedManager.loadClips()?.count {
                 if numberOfClips == 0 {
                     return false
                 }
-            }*/
+            }
         }
         return true
     }
@@ -59,8 +58,10 @@ class AppDelegate: NSObject {
     // MARK: - KVO
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYEnableAutomaticCheckPreReleaseKey {
+            /*
             let checkPreRelease = object[kCPYCheckNewRelease] as! NSString
             self.toggleCheckPreReleaseUpdates(checkPreRelease.boolValue)
+            */
         }
     }
     
@@ -113,25 +114,25 @@ class AppDelegate: NSObject {
             }
         }
         
-        //CPYClipManager.sharedManager.clearAll()
+        CPYClipManager.sharedManager.clearAll()
     }
     
     internal func selectClipMenuItem(sender: NSMenuItem) {
-//        CPYClipManager.sharedManager.copyClipToPasteboardAtIndex(sender.tag)
-//        CPYUtil.paste()
+        CPYClipManager.sharedManager.copyClipToPasteboardAtIndex(sender.tag)
+        CPYUtilities.paste()
     }
     
     internal func selectSnippetMenuItem(sender: AnyObject) {
-//        let snippet = sender.representedObject
-//        if snippet == nil {
-//            NSBeep()
-//            return
-//        }
-//        
-//        if let content = (snippet as? CPYSnippet)?.content {
-//            CPYClipManager.sharedManager.copyStringToPasteboard(content)
-//            CPYUtil.paste()
-//        }
+        let snippet = sender.representedObject
+        if snippet == nil {
+            NSBeep()
+            return
+        }
+        
+        if let content = (snippet as? CPYSnippet)?.content {
+            CPYClipManager.sharedManager.copyStringToPasteboard(content)
+            CPYUtilities.paste()
+        }
     }
     
     // MARK: - Login Item Methods
