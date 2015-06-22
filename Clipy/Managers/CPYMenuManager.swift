@@ -204,8 +204,7 @@ class CPYMenuManager: NSObject {
         let numberOfItemsPlaceInsideFolder = defaluts.integerForKey(kCPYPrefNumberOfItemsPlaceInsideFolderKey)
         let maxHistory = defaluts.integerForKey(kCPYPrefMaxHistorySizeKey)
         
-        let labelItem = NSMenuItem.allocWithZone(NSMenu.menuZone())
-        labelItem.title = NSLocalizedString("History", comment: "")
+        let labelItem = NSMenuItem(title: NSLocalizedString("History", comment: ""), action: "", keyEquivalent: kEmptyString)
         labelItem.enabled = false
         menu.addItem(labelItem)
         
@@ -370,9 +369,7 @@ class CPYMenuManager: NSObject {
         let title = self.trimTitle(snippet.title)
         let titleWithMark = self.menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
-        let menuItem = NSMenuItem.allocWithZone(NSMenu.menuZone())
-        menuItem.title = titleWithMark
-        menuItem.action = Selector("selectSnippetMenuItem:")
+        let menuItem = NSMenuItem(title: titleWithMark, action: Selector("selectSnippetMenuItem:"), keyEquivalent: kEmptyString)
         menuItem.representedObject = snippet
         menuItem.toolTip = snippet.content
         
