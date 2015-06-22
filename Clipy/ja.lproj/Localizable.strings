@@ -6,26 +6,26 @@
   Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 */
 
-"Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?"
+"Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?";
 
-"You can change this setting in the Preferences if you want." = "この設定はいつでも変更できます"
+"You can change this setting in the Preferences if you want." = "この設定はいつでも変更できます";
 
-"Launch on system startup" = "起動する"
+"Launch on system startup" = "起動する";
 
-"Don't Launch" = "起動しない"
+"Don't Launch" = "起動しない";
 
-"Clear History" = "履歴をクリア"
+"Clear History" = "履歴をクリア";
 
-"Are you sure you want to clear your clipboard history?" = "本当にクリップボード履歴をクリアしますか？"
+"Are you sure you want to clear your clipboard history?" = "本当にクリップボード履歴をクリアしますか？";
 
-"Cancel" = "キャンセル"
+"Cancel" = "キャンセル";
 
-"Edit Snippets..." = "スニペットを編集..."
+"Edit Snippets..." = "スニペットを編集...";
 
-"Preferences..." = "環境設定..."
+"Preferences..." = "環境設定...";
 
-"Quit ClipMenu" = "Clipyを終了"
+"Quit ClipMenu" = "Clipyを終了";
 
-"History" = "履歴"
+"History" = "履歴";
 
-"Snippet" = "スニペット"
+"Snippet" = "スニペット";

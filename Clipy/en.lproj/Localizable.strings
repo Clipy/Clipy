@@ -6,26 +6,26 @@
   Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 */
 
-"Launch Clipy on system startup?" = "Launch Clipy on system startup?"
+"Launch Clipy on system startup?" = "Launch Clipy on system startup?";
 
-"You can change this setting in the Preferences if you want." = "You can change this setting in the Preferences if you want."
+"You can change this setting in the Preferences if you want." = "You can change this setting in the Preferences if you want.";
 
-"Launch on system startup" = "Launch on system startup"
+"Launch on system startup" = "Launch on system startup";
 
-"Don't Launch" = "Don't Launch"
+"Don't Launch" = "Don't Launch";
 
-"Clear History" = "Clear History"
+"Clear History" = "Clear History";
 
-"Are you sure you want to clear your clipboard history?" = "Are you sure you want to clear your clipboard history?"
+"Are you sure you want to clear your clipboard history?" = "Are you sure you want to clear your clipboard history?";
 
-"Cancel" = "Cancel"
+"Cancel" = "Cancel";
 
-"Edit Snippets..." = "Edit Snippets..."
+"Edit Snippets..." = "Edit Snippets...";
 
-"Preferences..." = "Preferences..."
+"Preferences..." = "Preferences...";
 
-"Quit ClipMenu" = "Quit ClipMenu"
+"Quit ClipMenu" = "Quit ClipMenu";
 
 "History" = "History";
 
-"Snippet" = "Snippet"
+"Snippet" = "Snippet";
