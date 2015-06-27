@@ -18,7 +18,6 @@ class CPYMenuManager: NSObject {
     static let sharedManager = CPYMenuManager()
     
     private var clipMenu: NSMenu?
-    private var dummyWindow: NSWindow!
     private var statusItem: NSStatusItem?
     private var highlightedMenuItem: NSMenuItem?
     
@@ -41,9 +40,6 @@ class CPYMenuManager: NSObject {
         self.shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         
         self.createMenu()
-        
-        self.dummyWindow = NSWindow(contentRect: NSZeroRect, styleMask: NSBorderlessWindowMask, backing: NSBackingStoreType.Buffered, defer: true)
-        self.dummyWindow.collectionBehavior = NSWindowCollectionBehavior.CanJoinAllSpaces
         
         self.resetIconCaches()
         
@@ -90,21 +86,8 @@ class CPYMenuManager: NSObject {
     }
     
     internal func popUpMenuForType(type: PopUpMenuType) {
-        let currentEvent = NSApplication.sharedApplication().currentEvent
-        let locationInWindow = currentEvent?.locationInWindow
-        var mouseLocation: NSPoint?
-        var mousePoint: NSPoint?
-        var newEvent: NSEvent?
-        
-        self.dummyWindow.makeKeyAndOrderFront(self)
-        self.dummyWindow.setFrameOrigin(locationInWindow!)
-        let windowNumber = self.dummyWindow.windowNumber
-        
+
         var menu: NSMenu?
-        
-        let mouseRect = self.dummyWindow.convertRectFromScreen(NSMakeRect(locationInWindow!.x, locationInWindow!.y, 0, 0))
-        mousePoint = NSMakePoint(mouseRect.origin.x, mouseRect.origin.y)
-        newEvent = self.makeEventFromCurrentEvent(currentEvent!, mousePoint: mousePoint!, windowNumber: windowNumber)
         
         switch type {
         case .Main:
@@ -118,9 +101,8 @@ class CPYMenuManager: NSObject {
         default:
             break
         }
-        
-        CPYUtilitiesObjC.popupMenu(menu!, event: newEvent!)
-        self.dummyWindow.orderOut(self)
+
+        menu?.popUpMenuPositioningItem(nil, atLocation: NSEvent.mouseLocation(), inView: nil)
     }
     
     // MARK: - Menu Methods

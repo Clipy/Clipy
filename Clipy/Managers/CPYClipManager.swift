@@ -16,6 +16,7 @@ class CPYClipManager: NSObject {
     private var storeTypes = [String: NSNumber]()
     private var excludeIdentifiers = Set<String>()
     private var cachedChangeCount: NSInteger = 0
+    private let copyLock = NSLock()
     // Timer
     private var pasteboardObservingTimer: NSTimer?
     
@@ -191,6 +192,8 @@ class CPYClipManager: NSObject {
             return
         }
         
+        self.copyLock.lock()
+        
         if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
             
             let realm = RLMRealm.defaultRealm()
@@ -223,6 +226,8 @@ class CPYClipManager: NSObject {
             
             NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
         }
+        
+        self.copyLock.unlock()
     }
     
     // MARK: - Timer Methods
