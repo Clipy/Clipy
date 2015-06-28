@@ -98,8 +98,4 @@ static NSInteger vKeyCode = 0;
     
 }
 
-+ (void)popupMenu:(NSMenu *)menu event:(NSEvent *)event {
-    [NSMenu popUpContextMenu:menu withEvent:event forView:nil];
-}
-
 @end

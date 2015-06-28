@@ -13,6 +13,5 @@
 
 + (BOOL)postCommandV;
 + (NSString *)transformKeyCode:(NSInteger)keyCode;
-+ (void)popupMenu:(NSMenu *)menu event:(NSEvent *)event;
 
 @end
