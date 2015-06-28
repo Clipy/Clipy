@@ -13,7 +13,7 @@ import Sparkle
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    // lazy var snippetEditorController = CPYSnippetEditorWindowController.windowController()
+    lazy var snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
     
     // MARK: - Init
     override func awakeFromNib() {
@@ -87,7 +87,7 @@ class AppDelegate: NSObject {
     }
     
     internal func showSnippetEditorWindow() {
-        // self.snippetEditorController.showWindow(self)
+        self.snippetEditorController.showWindow(self)
     }
     
     internal func clearAllHistory() {

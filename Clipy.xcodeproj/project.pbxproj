@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD02AEC500E951DF3566C0B /* libPods.a */; };
+		FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */; };
+		FA3B95F71B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */; };
+		FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */; };
+		FA3B95FB1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA3B95F91B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib */; };
+		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
+		FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */; };
+		FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
 		FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DD11B35D8B100C06102 /* Main.storyboard */; };
@@ -16,9 +23,6 @@
 		FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
 		FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
 		FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		FAC43E1F1B35DF9500C06102 /* BWToolkitFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; };
-		FAC43E201B35DF9A00C06102 /* BWToolkitFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; };
-		FAC43E211B35DF9A00C06102 /* BWToolkitFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
 		FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E241B35DFD000C06102 /* AppKit.framework */; };
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
@@ -63,7 +67,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */,
-				FAC43E211B35DF9A00C06102 /* BWToolkitFramework.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +77,13 @@
 		8FD02AEC500E951DF3566C0B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		95188F89C10FD1FC6DB0F825 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		E2265F0B70723AFEA6D247B6 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferenceWindowController.swift; sourceTree = "<group>"; };
+		FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
+		FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetEditorWindowController.swift; sourceTree = "<group>"; };
+		FA3B95F91B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
+		FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYImageAndTextCell.swift; sourceTree = "<group>"; };
+		FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolderTableView.swift; sourceTree = "<group>"; };
+		FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetTableView.swift; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -86,7 +96,6 @@
 		FAC43DF81B35DD4300C06102 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FAC43DFA1B35DD5200C06102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FAC43E191B35DF2500C06102 /* PTHotKey.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PTHotKey.framework; sourceTree = "<group>"; };
-		FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BWToolkitFramework.framework; sourceTree = "<group>"; };
 		FAC43E221B35DFC800C06102 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FAC43E241B35DFD000C06102 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		FAC43E261B35DFD300C06102 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -132,9 +141,7 @@
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
 				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
-				FAC43E201B35DF9A00C06102 /* BWToolkitFramework.framework in Frameworks */,
 				FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */,
-				FAC43E1F1B35DF9500C06102 /* BWToolkitFramework.framework in Frameworks */,
 				FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */,
 				314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */,
 			);
@@ -158,7 +165,6 @@
 				FAC43E261B35DFD300C06102 /* Carbon.framework */,
 				FAC43E241B35DFD000C06102 /* AppKit.framework */,
 				FAC43E221B35DFC800C06102 /* Foundation.framework */,
-				FAC43E1E1B35DF9500C06102 /* BWToolkitFramework.framework */,
 				FAC43E191B35DF2500C06102 /* PTHotKey.framework */,
 				8FD02AEC500E951DF3566C0B /* libPods.a */,
 			);
@@ -172,6 +178,43 @@
 				95188F89C10FD1FC6DB0F825 /* Pods.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */ = {
+			isa = PBXGroup;
+			children = (
+				FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */,
+				FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */,
+				FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */,
+				FA3B95F91B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib */,
+			);
+			path = WindowControllers;
+			sourceTree = "<group>";
+		};
+		FA3B96001B3FD47000B61FF0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FA3B96021B3FD48B00B61FF0 /* TableViewCell */,
+				FA3B96011B3FD47E00B61FF0 /* TableViews */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FA3B96011B3FD47E00B61FF0 /* TableViews */ = {
+			isa = PBXGroup;
+			children = (
+				FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */,
+				FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */,
+			);
+			path = TableViews;
+			sourceTree = "<group>";
+		};
+		FA3B96021B3FD48B00B61FF0 /* TableViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */,
+			);
+			path = TableViewCell;
 			sourceTree = "<group>";
 		};
 		FAC43DBD1B35D8B100C06102 = {
@@ -198,6 +241,8 @@
 			isa = PBXGroup;
 			children = (
 				FAC43E6E1B35F36E00C06102 /* Utility */,
+				FA3B96001B3FD47000B61FF0 /* Views */,
+				FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */,
 				FAC43E651B35EC4200C06102 /* Managers */,
 				FAC43E5C1B35E1A100C06102 /* Models */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
@@ -421,6 +466,8 @@
 				FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */,
 				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
 				FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */,
+				FA3B95FB1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib in Resources */,
+				FA3B95F71B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,18 +521,23 @@
 				FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */,
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
+				FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */,
 				FAC43E751B36E9A000C06102 /* CPYUtilitiesObjC.m in Sources */,
 				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
+				FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* CPYMenuManager.swift in Sources */,
 				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
 				FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */,
 				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
+				FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */,
 				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
+				FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */,
+				FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */,
 				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,
 				FAC43E6B1B35EC7000C06102 /* CPYSnippetManager.swift in Sources */,
 				FAC43E551B35E13000C06102 /* SRValidator.m in Sources */,
