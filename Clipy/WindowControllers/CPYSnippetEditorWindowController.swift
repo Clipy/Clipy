@@ -51,12 +51,12 @@ class CPYSnippetEditorWindowController: NSWindowController {
     
     // MARK: - Override Methods
     override func showWindow(sender: AnyObject?) {
-        NSApp.activateIgnoringOtherApps(true)
+        super.showWindow(sender)
         if let window = self.window {
             window.center()
-            self.window?.makeKeyAndOrderFront(true)
         }
-        super.showWindow(sender)
+        NSApp.activateIgnoringOtherApps(true)
+        self.window?.makeKeyAndOrderFront(true)
     }
     
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {

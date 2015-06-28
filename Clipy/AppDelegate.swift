@@ -83,7 +83,7 @@ class AppDelegate: NSObject {
     
     // MARK: - Menu Actions
     internal func showPreferenceWindow() {
-        // CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(nil)
+        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(nil)
     }
     
     internal func showSnippetEditorWindow() {

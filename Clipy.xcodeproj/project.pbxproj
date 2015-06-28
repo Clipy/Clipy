@@ -11,10 +11,10 @@
 		FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */; };
 		FA3B95F71B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */; };
 		FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */; };
-		FA3B95FB1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA3B95F91B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib */; };
 		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
 		FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */; };
 		FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */; };
+		FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
 		FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DD11B35D8B100C06102 /* Main.storyboard */; };
@@ -80,10 +80,11 @@
 		FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferenceWindowController.swift; sourceTree = "<group>"; };
 		FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 		FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetEditorWindowController.swift; sourceTree = "<group>"; };
-		FA3B95F91B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYImageAndTextCell.swift; sourceTree = "<group>"; };
 		FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolderTableView.swift; sourceTree = "<group>"; };
 		FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetTableView.swift; sourceTree = "<group>"; };
+		FA823D771B4042F200009614 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
+		FA823D7B1B40439500009614 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -186,7 +187,7 @@
 				FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */,
 				FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */,
 				FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */,
-				FA3B95F91B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib */,
+				FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */,
 			);
 			path = WindowControllers;
 			sourceTree = "<group>";
@@ -466,7 +467,7 @@
 				FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */,
 				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
 				FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */,
-				FA3B95FB1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.xib in Resources */,
+				FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */,
 				FA3B95F71B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -565,6 +566,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA823D771B4042F200009614 /* en */,
+				FA823D7B1B40439500009614 /* ja */,
+			);
+			name = CPYSnippetEditorWindowController.xib;
+			sourceTree = "<group>";
+		};
 		FAC43DD11B35D8B100C06102 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

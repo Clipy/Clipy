@@ -5,7 +5,20 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="CPYPreferenceWindowController" customModule="Clipy" customModuleProvider="target"/>
+        <customObject id="-2" userLabel="File's Owner" customClass="CPYPreferenceWindowController" customModule="Clipy" customModuleProvider="target">
+            <connections>
+                <outlet property="excludeListPanel" destination="lfy-wK-M6b" id="qFw-so-ztF"/>
+                <outlet property="excludeTableView" destination="bBa-xY-pS0" id="trY-ml-V2K"/>
+                <outlet property="generalPreferenceView" destination="ERS-Xy-12L" id="fAy-5g-bYM"/>
+                <outlet property="historyShortcutRecorder" destination="J7u-lP-dP4" id="zJ0-WZ-zv2"/>
+                <outlet property="mainShortcutRecorder" destination="k0Z-nw-xjO" id="TxL-pe-U5C"/>
+                <outlet property="menuPreferenceView" destination="eva-t6-d1S" id="rxD-dC-Nig"/>
+                <outlet property="shortcutPreferenceView" destination="alt-bX-F2w" id="pmO-d2-KwH"/>
+                <outlet property="snippetsShortcutRecorder" destination="yBo-UZ-ih2" id="ZWF-G8-Vtq"/>
+                <outlet property="typePreferenceView" destination="TpB-41-wwb" id="J4M-uG-Ebj"/>
+                <outlet property="updatePreferenceView" destination="UHl-4Q-PZG" id="nr3-Ax-d1b"/>
+            </connections>
+        </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="ERS-Xy-12L" userLabel="General">
@@ -90,10 +103,10 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Sbe-WS-BX5">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" id="UFV-WN-p9B">
                             <items>
-                                <menuItem state="on" image="statusbar_menu_black" tag="1" id="iEx-lf-eOo">
+                                <menuItem image="statusbar_menu_black" tag="1" id="iEx-lf-eOo">
                                     <modifierMask key="keyEquivalentModifierMask"/>
                                 </menuItem>
                                 <menuItem image="statusbar_menu_white" tag="2" id="1on-AP-kYv">
@@ -165,6 +178,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="openExcludeOptions:" target="-2" id="yXG-ic-VNq"/>
+                    </connections>
                 </button>
             </subviews>
             <point key="canvasLocation" x="571" y="646"/>
@@ -632,6 +648,9 @@
 Gw
 </string>
                         </buttonCell>
+                        <connections>
+                            <action selector="cancelExcludeListPanel:" target="-2" id="DVc-2m-ZA6"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="3ck-SR-Q5i">
                         <rect key="frame" x="21" y="55" width="21" height="21"/>
@@ -640,6 +659,9 @@ Gw
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="addToExcludeList:" target="-2" id="WX5-GT-iTA"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="rXO-Xc-pRG">
                         <rect key="frame" x="41" y="55" width="21" height="21"/>
@@ -648,6 +670,9 @@ Gw
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="removeToExcludeList:" target="-2" id="hAH-y2-2N5"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="qlr-hJ-L4O">
                         <rect key="frame" x="292" y="12" width="105" height="32"/>
@@ -656,6 +681,9 @@ Gw
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="doneExcludeListPanel:" target="-2" id="Xly-qU-Gng"/>
+                        </connections>
                     </button>
                     <scrollView focusRingType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="di8-Z8-ZB7">
                         <rect key="frame" x="21" y="83" width="370" height="192"/>
@@ -677,7 +705,7 @@ Gw
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
                                             </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="JM9-KD-TYU" customClass="CPYImageTextCell" customModule="Clipy" customModuleProvider="target">
+                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="JM9-KD-TYU" customClass="CPYImageAndTextCell" customModule="Clipy" customModuleProvider="target">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -689,11 +717,11 @@ Gw
                             </subviews>
                             <nil key="backgroundColor"/>
                         </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="V4U-UY-Db5">
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="V4U-UY-Db5">
                             <rect key="frame" x="-100" y="-100" width="114" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="KgZ-Nl-p2g">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="KgZ-Nl-p2g">
                             <rect key="frame" x="380" y="17" width="15" height="223"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>

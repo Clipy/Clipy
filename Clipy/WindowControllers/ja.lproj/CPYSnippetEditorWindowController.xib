@@ -15,7 +15,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Snippet Editor" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="FDp-gz-veO">
+        <window title="スニペット編集" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="FDp-gz-veO">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="640" height="480"/>
@@ -40,14 +40,14 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnSelection="YES" autosaveColumns="NO" rowHeight="20" headerView="WL5-Md-34g" id="TE8-qr-1Xp" customClass="CPYFolderTableView" customModule="Clipy" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="193" height="22"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="190.5" height="22"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
                                                         <tableColumn width="187.5" minWidth="40" maxWidth="1000" id="aRF-2g-gBu">
-                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Folder">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="フォルダー">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -123,12 +123,12 @@
                                                     <menu key="menu" id="U9E-IP-KmQ">
                                                         <items>
                                                             <menuItem state="on" image="NSActionTemplate" hidden="YES" id="iw9-CH-0gE"/>
-                                                            <menuItem title="Import Snippets..." id="buu-D6-Bl3">
+                                                            <menuItem title="スニペットを読み込む..." id="buu-D6-Bl3">
                                                                 <connections>
                                                                     <action selector="importSnippets:" target="-2" id="LWP-YV-dOE"/>
                                                                 </connections>
                                                             </menuItem>
-                                                            <menuItem title="Export Snippets..." id="eou-wZ-TO3">
+                                                            <menuItem title="スニペットを書き出す..." id="eou-wZ-TO3">
                                                                 <connections>
                                                                     <action selector="exportSnippets:" target="-2" id="U6f-EU-HxT"/>
                                                                 </connections>
@@ -161,14 +161,14 @@
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" alternatingRowBackgroundColors="YES" columnResizing="NO" autosaveColumns="NO" rowHeight="20" headerView="K3y-7c-oFO" id="Y0Y-UT-dzf" customClass="CPYSnippetTableView" customModule="Clipy" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="447" height="22"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="444.5" height="22"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                                     <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                                     <tableColumns>
                                                                         <tableColumn width="441.5" minWidth="40" maxWidth="1000" id="jwc-iv-m6l">
-                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
+                                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="タイトル">
                                                                                 <font key="font" metaFont="smallSystem"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -253,17 +253,17 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="3DE85096-022F-4C41-AD52-2925DD0CE064" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="C65-nd-NcY">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="DCB13310-380C-44AE-B0AF-7E532B4AA8C2" explicitItemIdentifier="AddSnippet" label="Add Snippet" paletteLabel="Add Snippet" tag="-1" image="AddSnippet" id="77a-vz-4KL">
+                    <toolbarItem implicitItemIdentifier="DCB13310-380C-44AE-B0AF-7E532B4AA8C2" explicitItemIdentifier="AddSnippet" label="スニペットを追加" paletteLabel="スニペットを追加" tag="-1" image="AddSnippet" id="77a-vz-4KL">
                         <connections>
                             <action selector="addSnippet:" target="-2" id="3gH-nB-62C"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="C5624353-12C4-444C-AFD2-2ADE7AE8BE23" explicitItemIdentifier="DeleteSnippet" label="Delete Snippet" paletteLabel="Delete Snippet" tag="-1" image="DeleteSnippet" id="5D0-eB-vj2">
+                    <toolbarItem implicitItemIdentifier="C5624353-12C4-444C-AFD2-2ADE7AE8BE23" explicitItemIdentifier="DeleteSnippet" label="スニペットを削除" paletteLabel="スニペットを削除" tag="-1" image="DeleteSnippet" id="5D0-eB-vj2">
                         <connections>
                             <action selector="removeSnippet:" target="-2" id="qLX-J7-6Sm"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="EFE9D337-DFD0-42D0-A5DE-68D2B40153CD" explicitItemIdentifier="CheckSnippet" label="Enable/Disable" paletteLabel="Enable/Disable" tag="-1" image="CheckSnippet" id="wuy-R2-dPZ">
+                    <toolbarItem implicitItemIdentifier="EFE9D337-DFD0-42D0-A5DE-68D2B40153CD" explicitItemIdentifier="CheckSnippet" label="有効/無効" paletteLabel="有効/無効" tag="-1" image="CheckSnippet" id="wuy-R2-dPZ">
                         <connections>
                             <action selector="toggleSnippetEnable:" target="-2" id="KFj-QH-qBh"/>
                         </connections>

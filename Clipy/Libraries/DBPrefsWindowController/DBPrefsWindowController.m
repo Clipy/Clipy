@@ -27,7 +27,7 @@
 
 // Subclasses can override this to use a nib with a different name.
 + (NSString *)nibName{
-   return @"Preferences";
+   return @"CPYPreferenceWindowController";
 }
 
 
