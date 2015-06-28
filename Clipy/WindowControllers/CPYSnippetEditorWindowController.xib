@@ -7,6 +7,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYSnippetEditorWindowController" customModule="Clipy" customModuleProvider="target">
             <connections>
+                <outlet property="folderTableView" destination="TE8-qr-1Xp" id="9QF-SC-gpb"/>
+                <outlet property="snippetContentTextView" destination="TSw-dG-UgH" id="EUK-qW-i7O"/>
+                <outlet property="snippetTableView" destination="Y0Y-UT-dzf" id="qTg-eJ-g3n"/>
                 <outlet property="window" destination="FDp-gz-veO" id="TxT-pb-H9t"/>
             </connections>
         </customObject>
@@ -36,20 +39,20 @@
                                             <rect key="frame" x="1" y="17" width="190.5" height="438"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnSelection="YES" autosaveColumns="NO" rowHeight="20" headerView="WL5-Md-34g" id="TE8-qr-1Xp">
-                                                    <rect key="frame" x="0.0" y="0.0" width="193" height="438"/>
+                                                <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnSelection="YES" autosaveColumns="NO" rowHeight="20" headerView="WL5-Md-34g" id="TE8-qr-1Xp" customClass="CPYFolderTableView" customModule="Clipy" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="0.0" width="193" height="22"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn width="190" minWidth="40" maxWidth="1000" id="aRF-2g-gBu">
+                                                        <tableColumn width="187.5" minWidth="40" maxWidth="1000" id="aRF-2g-gBu">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Folder">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                             </tableHeaderCell>
-                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="a6C-RE-T8o">
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="a6C-RE-T8o" customClass="CPYImageAndTextCell" customModule="Clipy" customModuleProvider="target">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -61,11 +64,11 @@
                                             </subviews>
                                             <nil key="backgroundColor"/>
                                         </clipView>
-                                        <scroller key="horizontalScroller" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="rEs-3r-zqH">
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="rEs-3r-zqH">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="3NH-2n-aim">
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="3NH-2n-aim">
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -85,6 +88,9 @@
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
+                                                <connections>
+                                                    <action selector="addFolder:" target="-2" id="Qgw-3h-iJl"/>
+                                                </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" id="6O4-lw-Tde">
                                                 <rect key="frame" x="31" y="-1" width="32" height="26"/>
@@ -93,6 +99,9 @@
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
+                                                <connections>
+                                                    <action selector="removeFolder:" target="-2" id="pb6-Gm-sF8"/>
+                                                </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" id="NLV-YC-Xao">
                                                 <rect key="frame" x="62" y="-1" width="32" height="26"/>
@@ -101,18 +110,29 @@
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
+                                                <connections>
+                                                    <action selector="toggleFolderEnabled:" target="-2" id="k0j-ip-xlT"/>
+                                                </connections>
                                             </button>
                                             <popUpButton verticalHuggingPriority="750" id="yCg-ZF-t6Y">
                                                 <rect key="frame" x="93" y="-1" width="32" height="26"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                <popUpButtonCell key="cell" type="smallSquare" bezelStyle="smallSquare" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="uh5-hz-Q48">
+                                                <popUpButtonCell key="cell" type="smallSquare" bezelStyle="smallSquare" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="eou-wZ-TO3" id="uh5-hz-Q48">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="menu"/>
                                                     <menu key="menu" id="U9E-IP-KmQ">
                                                         <items>
                                                             <menuItem state="on" image="NSActionTemplate" hidden="YES" id="iw9-CH-0gE"/>
-                                                            <menuItem title="Import Snippets..." id="buu-D6-Bl3"/>
-                                                            <menuItem title="Export Snippets..." id="eou-wZ-TO3"/>
+                                                            <menuItem title="Import Snippets..." id="buu-D6-Bl3">
+                                                                <connections>
+                                                                    <action selector="importSnippets:" target="-2" id="LWP-YV-dOE"/>
+                                                                </connections>
+                                                            </menuItem>
+                                                            <menuItem title="Export Snippets..." id="eou-wZ-TO3">
+                                                                <connections>
+                                                                    <action selector="exportSnippets:" target="-2" id="U6f-EU-HxT"/>
+                                                                </connections>
+                                                            </menuItem>
                                                         </items>
                                                     </menu>
                                                 </popUpButtonCell>
@@ -140,20 +160,20 @@
                                                             <rect key="frame" x="1" y="17" width="444.5" height="215.5"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" alternatingRowBackgroundColors="YES" columnResizing="NO" autosaveColumns="NO" rowHeight="20" headerView="K3y-7c-oFO" id="Y0Y-UT-dzf">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="447" height="215.5"/>
+                                                                <tableView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" alternatingRowBackgroundColors="YES" columnResizing="NO" autosaveColumns="NO" rowHeight="20" headerView="K3y-7c-oFO" id="Y0Y-UT-dzf" customClass="CPYSnippetTableView" customModule="Clipy" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="447" height="22"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                                     <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                                     <tableColumns>
-                                                                        <tableColumn width="444" minWidth="40" maxWidth="1000" id="jwc-iv-m6l">
+                                                                        <tableColumn width="441.5" minWidth="40" maxWidth="1000" id="jwc-iv-m6l">
                                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
                                                                                 <font key="font" metaFont="smallSystem"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                             </tableHeaderCell>
-                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="CvK-T0-GtR">
+                                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="CvK-T0-GtR" customClass="CPYImageAndTextCell" customModule="Clipy" customModuleProvider="target">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -165,11 +185,11 @@
                                                             </subviews>
                                                             <nil key="backgroundColor"/>
                                                         </clipView>
-                                                        <scroller key="horizontalScroller" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="yPJ-af-lCf">
+                                                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="yPJ-af-lCf">
                                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </scroller>
-                                                        <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="9ed-ji-Jco">
+                                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="9ed-ji-Jco">
                                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </scroller>
@@ -195,10 +215,10 @@
                                                                     <rect key="frame" x="0.0" y="0.0" width="446" height="243"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    <size key="minSize" width="444.5" height="243"/>
+                                                                    <size key="minSize" width="444" height="243"/>
                                                                     <size key="maxSize" width="463" height="10000000"/>
                                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                    <size key="minSize" width="444.5" height="243"/>
+                                                                    <size key="minSize" width="444" height="243"/>
                                                                     <size key="maxSize" width="463" height="10000000"/>
                                                                 </textView>
                                                             </subviews>
@@ -233,9 +253,21 @@
             </view>
             <toolbar key="toolbar" implicitIdentifier="3DE85096-022F-4C41-AD52-2925DD0CE064" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="C65-nd-NcY">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="DCB13310-380C-44AE-B0AF-7E532B4AA8C2" explicitItemIdentifier="AddSnippet" label="Add Snippet" paletteLabel="Add Snippet" tag="-1" image="AddSnippet" id="77a-vz-4KL"/>
-                    <toolbarItem implicitItemIdentifier="C5624353-12C4-444C-AFD2-2ADE7AE8BE23" explicitItemIdentifier="DeleteSnippet" label="Delete Snippet" paletteLabel="Delete Snippet" tag="-1" image="DeleteSnippet" id="5D0-eB-vj2"/>
-                    <toolbarItem implicitItemIdentifier="EFE9D337-DFD0-42D0-A5DE-68D2B40153CD" explicitItemIdentifier="CheckSnippet" label="Enable/Disable" paletteLabel="Enable/Disable" tag="-1" image="CheckSnippet" id="wuy-R2-dPZ"/>
+                    <toolbarItem implicitItemIdentifier="DCB13310-380C-44AE-B0AF-7E532B4AA8C2" explicitItemIdentifier="AddSnippet" label="Add Snippet" paletteLabel="Add Snippet" tag="-1" image="AddSnippet" id="77a-vz-4KL">
+                        <connections>
+                            <action selector="addSnippet:" target="-2" id="3gH-nB-62C"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="C5624353-12C4-444C-AFD2-2ADE7AE8BE23" explicitItemIdentifier="DeleteSnippet" label="Delete Snippet" paletteLabel="Delete Snippet" tag="-1" image="DeleteSnippet" id="5D0-eB-vj2">
+                        <connections>
+                            <action selector="removeSnippet:" target="-2" id="qLX-J7-6Sm"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="EFE9D337-DFD0-42D0-A5DE-68D2B40153CD" explicitItemIdentifier="CheckSnippet" label="Enable/Disable" paletteLabel="Enable/Disable" tag="-1" image="CheckSnippet" id="wuy-R2-dPZ">
+                        <connections>
+                            <action selector="toggleSnippetEnable:" target="-2" id="KFj-QH-qBh"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="77a-vz-4KL"/>
