@@ -18,7 +18,7 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefLoginItemKey)
         defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefSuppressAlertForLoginItemKey)
         defaultValues.updateValue(NSNumber(integer: 30), forKey: kCPYPrefMaxHistorySizeKey)
-//        defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
+        defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
         defaultValues.updateValue(NSNumber(float: 0.75), forKey: kCPYPrefTimeIntervalKey)
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
         defaultValues.updateValue(AppDelegate.defaultExcludeList(), forKey: kCPYPrefExcludeAppsKey)
@@ -39,41 +39,16 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowToolTipOnMenuItemKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowImageInTheMenuKey)
         defaultValues.updateValue(NSNumber(integer: 200), forKey: kCPYPrefMaxLengthOfToolTipKey)
-        
-        /* Snippet */
-        
+    
         /* Updates */
         defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYEnableAutomaticCheckPreReleaseKey)
         
         /*
-        /* General */
-        [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:CMPrefExportHistoryAsSingleFileKey];
-        
-        /* Menu */
-        
-        [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:CMPrefShowLabelsInMenuKey];
-        [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:CMPrefAddClearHistoryMenuItemKey];
-        
-        
-        [defaultValues setObject:[NSNumber numberWithBool:NO] forKey:CMPrefChangeFontSizeKey];
-        [defaultValues setObject:[NSNumber numberWithInteger:0] forKey:CMPrefHowToChangeFontSizeKey];
-        [defaultValues setObject:[NSNumber numberWithUnsignedInteger:14] forKey:CMPrefSelectedFontSizeKey];
-        
-        [defaultValues setObject:[NSNumber numberWithUnsignedInteger:100] forKey:CMPrefThumbnailWidthKey];
-        [defaultValues setObject:[NSNumber numberWithUnsignedInteger:32] forKey:CMPrefThumbnailHeightKey];
-        
-        /* Snippet */
-        [defaultValues setObject:[NSNumber numberWithInteger:CMPositionOfSnippetsBelowClips] forKey:CMPrefPositionOfSnippetsKey];
         /* Updates */
         [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:CMEnableAutomaticCheckKey];
         [defaultValues setObject:[NSNumber numberWithInteger:86400] forKey:CMUpdateCheckIntervalKey]; // daily
-        
-        [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
-        
         */
-        
-        //println(defaultValues)
-        
+
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
     }
