@@ -86,9 +86,7 @@ class CPYMenuManager: NSObject {
     }
     
     internal func popUpMenuForType(type: PopUpMenuType) {
-
         var menu: NSMenu?
-        
         switch type {
         case .Main:
             self.createMenu()
@@ -101,7 +99,6 @@ class CPYMenuManager: NSObject {
         default:
             break
         }
-
         menu?.popUpMenuPositioningItem(nil, atLocation: NSEvent.mouseLocation(), inView: nil)
     }
     
@@ -210,13 +207,13 @@ class CPYMenuManager: NSObject {
                     var indexOfSubMenu = subMenuIndex
                     
                     if let subMenu = menu.itemAtIndex(indexOfSubMenu)?.submenu {
-                        let menuItem = self.makeMenuItemForClip(clip as! CPYClip, count: i, listNumber: listNumber)
+                        let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
                         subMenu.addItem(menuItem)
                         listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInsideFolder, start: firstIndex)
                     }
                     
                 } else {
-                    let menuItem = self.makeMenuItemForClip(clip as! CPYClip, count: i, listNumber: listNumber)
+                    let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
                     menu.addItem(menuItem)
                     
                     listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInLine, start: firstIndex)
@@ -285,7 +282,7 @@ class CPYMenuManager: NSObject {
         }
     }
     
-    private func makeMenuItemForClip(clip: CPYClip, count: NSInteger, listNumber: NSInteger) -> NSMenuItem {
+    private func makeMenuItemForClip(clip: CPYClip, clipIndex: NSInteger, listNumber: NSInteger) -> NSMenuItem {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         let isMarkWithNumber = defaults.boolForKey(kCPYPrefMenuItemsAreMarkedWithNumbersKey)
@@ -296,10 +293,10 @@ class CPYMenuManager: NSObject {
         
         var keyEquivalent = kEmptyString
         
-        if addNumbericKeyEquivalents && (count <= kMaxKeyEquivalents) {
+        if addNumbericKeyEquivalents && (clipIndex <= kMaxKeyEquivalents) {
             let isStartFromZero = defaults.boolForKey(kCPYPrefMenuItemsTitleStartWithZeroKey)
             
-            var shortCutNumber = (isStartFromZero) ? count : count + 1
+            var shortCutNumber = (isStartFromZero) ? clipIndex : clipIndex + 1
             if shortCutNumber == kMaxKeyEquivalents {
                 shortCutNumber = 0
             }
@@ -314,13 +311,12 @@ class CPYMenuManager: NSObject {
         let titleWithMark = self.menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
         let menuItem = NSMenuItem(title: titleWithMark, action: "selectClipMenuItem:", keyEquivalent: keyEquivalent)
-        menuItem.tag = count
+        menuItem.tag = clipIndex
         
         if isShowToolTip {
             let maxLengthOfToolTip = defaults.integerForKey(kCPYPrefMaxLengthOfToolTipKey)
-            /*
             let toIndex = (count(clipString) < maxLengthOfToolTip) ? count(clipString) : maxLengthOfToolTip
-            menuItem.toolTip = clipString.substringToIndex(toIndex)*/
+            menuItem.toolTip = (clipString as NSString).substringToIndex(toIndex)
         }
         
         if primaryPboardType == NSTIFFPboardType {

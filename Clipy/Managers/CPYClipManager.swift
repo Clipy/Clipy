@@ -175,25 +175,29 @@ class CPYClipManager: NSObject {
     }
     
     internal func copyClipToPasteboardAtIndex(index: NSInteger) {
-        let clip = self.loadSortedClips()!.objectAtIndex(UInt(index)) as! CPYClip
-        self.copyClipToPasteboard(clip)
+        if let result = self.loadSortedClips() {
+            if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
+                self.copyClipToPasteboard(clip)
+            }
+        }
     }
     
     // MARK: - Clip Methods
     internal func updateClips(sender: NSTimer) {
         
+        self.copyLock.lock()
+        
         let pasteBoard = NSPasteboard.generalPasteboard()
         if pasteBoard.changeCount == self.cachedChangeCount {
+            self.copyLock.unlock()
             return
         }
         self.cachedChangeCount = pasteBoard.changeCount
         
         if self.frontProcessIsInExcludeList() {
+            self.copyLock.unlock()
             return
         }
-        
-        self.copyLock.lock()
-        
         if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
             
             let realm = RLMRealm.defaultRealm()
@@ -203,7 +207,7 @@ class CPYClipManager: NSObject {
             // DB格納
             let unixTime = Int(floor(NSDate().timeIntervalSince1970))
             let unixTimeString = String("\(unixTime)")
-            let path = CPYUtilities.applicationSupportFolder() + "/" + unixTimeString + ".data"
+            let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
             let title = clipData.stringValue
             
             let clip = CPYClip()
