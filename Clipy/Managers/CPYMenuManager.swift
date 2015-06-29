@@ -44,7 +44,8 @@ class CPYMenuManager: NSObject {
         self.resetIconCaches()
         
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.addObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey, options: NSKeyValueObservingOptions.New, context: nil)
+        defaults.addObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey, options: .New, context: nil)
+        defaults.addObserver(self, forKeyPath: kCPYPrefShowStatusItemKey, options: .New, context: nil)
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
         notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
@@ -57,6 +58,7 @@ class CPYMenuManager: NSObject {
         
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.removeObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey)
+        defaults.removeObserver(self, forKeyPath: kCPYPrefShowStatusItemKey)
         
         if self.statusItem != nil {
             NSStatusBar.systemStatusBar().removeStatusItem(self.statusItem!)
@@ -68,6 +70,14 @@ class CPYMenuManager: NSObject {
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefMenuIconSizeKey {
              self.resetMenuIconSize()
+        } else if keyPath == kCPYPrefShowStatusItemKey {
+            if let new = change["new"] as? Int {
+                if new == 0 {
+                    self.removeStatusItem()
+                } else {
+                    self.changeStatusItem()
+                }
+            }
         }
     }
     
@@ -399,8 +409,22 @@ class CPYMenuManager: NSObject {
     private func changeStatusItem() {
         self.removeStatusItem()
         
-        // メニューバーのアイコンを指定
-        var statusIcon = NSImage(named: "statusbar_menu_white")
+        println("AAAAA")
+        
+        let itemIndex = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefShowStatusItemKey)
+        if itemIndex == 0 {
+            return
+        }
+        
+        var statusIcon: NSImage?
+        switch itemIndex {
+        case 1:
+            statusIcon = NSImage(named: "statusbar_menu_black")
+        case 2:
+            statusIcon = NSImage(named: "statusbar_menu_white")
+        default:
+            statusIcon = NSImage(named: "statusbar_menu_black")
+        }
         statusIcon?.setTemplate(true)
         
         let statusBar = NSStatusBar.systemStatusBar()

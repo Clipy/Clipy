@@ -25,7 +25,7 @@ class AppDelegate: NSObject {
         CPYUtilities.registerUserDefaultKeys()
         
         // Show menubar icon
-        CPYMenuManager.sharedManager.createStatusItem()
+        CPYMenuManager.sharedManager
         
         // KVO
         let defaults = NSUserDefaults.standardUserDefaults()
