@@ -330,8 +330,6 @@ class CPYClipManager: NSObject {
         let typeDict = CPYClipData.availableTypesDictinary()
         if let key = typeDict[type] {
             if let number = self.storeTypes[key] {
-                println(key)
-                println(number)
                 return number.boolValue
             }
         }

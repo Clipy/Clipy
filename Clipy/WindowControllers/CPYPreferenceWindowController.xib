@@ -244,8 +244,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.showToolTipOnMenuItem" id="akq-LK-7fL"/>
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.maxLengthOfToolTipKey" id="Wpq-Rq-aPj"/>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.showToolTipOnMenuItem" id="akq-LK-7fL"/>
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="xfC-Ad-IIo">
@@ -366,8 +366,8 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.menuItemsAreMarkedWithNumbers" id="jfR-Kw-oWi"/>
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefMenuItemsTitleStartWithZeroKey" id="LaM-Ov-CiM"/>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.menuItemsAreMarkedWithNumbers" id="jfR-Kw-oWi"/>
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="NH4-GQ-Z0F">
@@ -548,6 +548,9 @@
                             <customView id="J7u-lP-dP4" customClass="SRRecorderControl">
                                 <rect key="frame" x="172" y="41" width="169" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="-2" id="AuN-wu-cjM"/>
+                                </connections>
                             </customView>
                             <textField verticalHuggingPriority="750" id="23q-Ji-kYj">
                                 <rect key="frame" x="15" y="75" width="152" height="17"/>
@@ -561,6 +564,9 @@
                             <customView id="k0Z-nw-xjO" customClass="SRRecorderControl">
                                 <rect key="frame" x="172" y="71" width="169" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="-2" id="YXx-zK-1Cx"/>
+                                </connections>
                             </customView>
                             <textField verticalHuggingPriority="750" id="7xQ-gY-Pmw">
                                 <rect key="frame" x="15" y="17" width="152" height="17"/>
@@ -574,6 +580,9 @@
                             <customView id="yBo-UZ-ih2" customClass="SRRecorderControl">
                                 <rect key="frame" x="172" y="13" width="169" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="-2" id="Cts-j9-ejr"/>
+                                </connections>
                             </customView>
                         </subviews>
                     </view>
