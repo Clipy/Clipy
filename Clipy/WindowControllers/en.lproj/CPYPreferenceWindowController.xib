@@ -108,7 +108,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" id="8rV-y3-van">
-                    <rect key="frame" x="249" y="154" width="71" height="26"/>
+                    <rect key="frame" x="249" y="154" width="78" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Sbe-WS-BX5">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -593,7 +593,7 @@
             <point key="canvasLocation" x="1122" y="840.5"/>
         </customView>
         <customView id="UHl-4Q-PZG" userLabel="Update">
-            <rect key="frame" x="0.0" y="5" width="460" height="143"/>
+            <rect key="frame" x="0.0" y="7" width="460" height="122"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="mcw-9R-p5A">
@@ -605,6 +605,9 @@
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="DeX-nb-MuN" name="value" keyPath="lastUpdateCheckDate" id="WUW-jA-kyu"/>
+                    </connections>
                 </textField>
                 <button verticalHuggingPriority="750" id="J8T-Em-UhC">
                     <rect key="frame" x="164" y="42" width="132" height="32"/>
@@ -613,41 +616,45 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="checkForUpdates:" target="DeX-nb-MuN" id="mhy-ma-GmI"/>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.kCPYEnableAutomaticCheckKey" id="oGA-s5-JCO"/>
+                    </connections>
                 </button>
                 <button id="6QG-Yc-57m">
-                    <rect key="frame" x="51" y="104" width="241" height="18"/>
+                    <rect key="frame" x="51" y="83" width="241" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Automatically check for updates:" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pQn-Uj-iDc">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYEnableAutomaticCheckKey" id="KXU-8X-KQv"/>
+                    </connections>
                 </button>
                 <popUpButton verticalHuggingPriority="750" id="MDx-MG-SUU">
-                    <rect key="frame" x="295" y="99" width="116" height="26"/>
+                    <rect key="frame" x="295" y="78" width="116" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Daily" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="86400" imageScaling="proportionallyDown" inset="2" selectedItem="tJH-mf-hC9" id="DXC-e4-PJT">
+                    <popUpButtonCell key="cell" type="push" title="Monthly" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2592000" imageScaling="proportionallyDown" inset="2" selectedItem="8hK-q5-36U" id="DXC-e4-PJT">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="n4w-h1-1Uh">
                             <items>
-                                <menuItem title="Daily" state="on" tag="86400" id="tJH-mf-hC9"/>
+                                <menuItem title="Daily" tag="86400" id="tJH-mf-hC9"/>
                                 <menuItem title="Weekly" tag="604800" id="hPg-Ep-Htl"/>
-                                <menuItem title="Monthly" tag="2592000" id="8hK-q5-36U"/>
+                                <menuItem title="Monthly" state="on" tag="2592000" id="8hK-q5-36U"/>
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.kCPYEnableAutomaticCheckKey" id="daZ-vk-pnc"/>
+                        <binding destination="2Lc-6R-cnC" name="selectedTag" keyPath="values.kCPYUpdateCheckIntervalKey" id="iAE-wX-tVM"/>
+                    </connections>
                 </popUpButton>
-                <button id="DEo-28-Hcl">
-                    <rect key="frame" x="66" y="84" width="241" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Include pre-releases" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Dsl-JT-32L">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                </button>
             </subviews>
-            <point key="canvasLocation" x="1122" y="1074.5"/>
+            <point key="canvasLocation" x="1122" y="1064"/>
         </customView>
+        <customObject id="DeX-nb-MuN" customClass="SUUpdater"/>
         <window title="Exclude Apps" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="lfy-wK-M6b" userLabel="ExcludeListPanel (Window)" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>

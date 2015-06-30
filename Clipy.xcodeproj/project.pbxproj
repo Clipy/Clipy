@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD02AEC500E951DF3566C0B /* libPods.a */; };
+		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
 		FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */; };
-		FA3B95F71B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */; };
 		FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */; };
 		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
 		FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */; };
@@ -47,6 +47,7 @@
 		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
 		FAC43E751B36E9A000C06102 /* CPYUtilitiesObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */; };
+		FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,8 +78,8 @@
 		8FD02AEC500E951DF3566C0B /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		95188F89C10FD1FC6DB0F825 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		E2265F0B70723AFEA6D247B6 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferenceWindowController.swift; sourceTree = "<group>"; };
-		FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 		FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetEditorWindowController.swift; sourceTree = "<group>"; };
 		FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYImageAndTextCell.swift; sourceTree = "<group>"; };
 		FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolderTableView.swift; sourceTree = "<group>"; };
@@ -130,6 +131,8 @@
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
 		FAC43E731B36E9A000C06102 /* CPYUtilitiesObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPYUtilitiesObjC.h; sourceTree = "<group>"; };
 		FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPYUtilitiesObjC.m; sourceTree = "<group>"; };
+		FAF1DA0B1B41888F00E15D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
+		FAF1DA0F1B41889800E15D16 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,7 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */,
-				FA3B95F51B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib */,
+				FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */,
 				FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */,
 				FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */,
 			);
@@ -259,6 +262,7 @@
 		FAC43DC91B35D8B100C06102 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FA0C027E1B42C2B2009A558D /* dsa_pub.pem */,
 				FAC43DCA1B35D8B100C06102 /* Info.plist */,
 				FAC43DE81B35DAA400C06102 /* Clipy-Bridging-Header.h */,
 				FAC43DF91B35DD4300C06102 /* Localizable.strings */,
@@ -465,10 +469,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */,
+				FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */,
 				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
 				FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */,
 				FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */,
-				FA3B95F71B3FB9FD00B61FF0 /* CPYPreferenceWindowController.xib in Resources */,
+				FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,6 +595,15 @@
 				FAC43DFA1B35DD5200C06102 /* en */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAF1DA0B1B41888F00E15D16 /* en */,
+				FAF1DA0F1B41889800E15D16 /* ja */,
+			);
+			name = CPYPreferenceWindowController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
