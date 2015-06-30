@@ -5,8 +5,8 @@ PODS:
   - Sparkle (1.10.0)
 
 DEPENDENCIES:
-  - Realm
-  - Sparkle
+  - Realm (= 0.93.2)
+  - Sparkle (= 1.10.0)
 
 SPEC CHECKSUMS:
   Realm: 2fdd0ae74f730e190384e0338d8a0d3654df8220
