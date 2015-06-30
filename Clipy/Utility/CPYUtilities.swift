@@ -41,13 +41,8 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(integer: 200), forKey: kCPYPrefMaxLengthOfToolTipKey)
     
         /* Updates */
-        defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYEnableAutomaticCheckPreReleaseKey)
-        
-        /*
-        /* Updates */
-        [defaultValues setObject:[NSNumber numberWithBool:YES] forKey:CMEnableAutomaticCheckKey];
-        [defaultValues setObject:[NSNumber numberWithInteger:86400] forKey:CMUpdateCheckIntervalKey]; // daily
-        */
+        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYEnableAutomaticCheckKey)
+        defaultValues.updateValue(NSNumber(int: 86400), forKey: kCPYUpdateCheckIntervalKey)
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()

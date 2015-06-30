@@ -13,7 +13,8 @@ import Sparkle
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    lazy var snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
+    var snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
+    var preferenceController = CPYPreferenceWindowController.sharedPrefsWindowController()
     
     // MARK: - Init
     override func awakeFromNib() {
@@ -27,10 +28,6 @@ class AppDelegate: NSObject {
         // Show menubar icon
         CPYMenuManager.sharedManager
         
-        // KVO
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.addObserver(self, forKeyPath: kCPYEnableAutomaticCheckPreReleaseKey, options: NSKeyValueObservingOptions.New, context: nil)
-        
         // Notification
         let notificationCenter = NSNotificationCenter.defaultCenter()
         notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
@@ -38,8 +35,6 @@ class AppDelegate: NSObject {
     
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObserver(self, forKeyPath: kCPYEnableAutomaticCheckPreReleaseKey)
     }
 
     // MARK: - Override Methods
@@ -53,16 +48,6 @@ class AppDelegate: NSObject {
             }
         }
         return true
-    }
-    
-    // MARK: - KVO
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-        if keyPath == kCPYEnableAutomaticCheckPreReleaseKey {
-            /*
-            let checkPreRelease = object[kCPYCheckNewRelease] as! NSString
-            self.toggleCheckPreReleaseUpdates(checkPreRelease.boolValue)
-            */
-        }
     }
     
     // MARK: - Class Methods
@@ -83,7 +68,7 @@ class AppDelegate: NSObject {
     
     // MARK: - Menu Actions
     internal func showPreferenceWindow() {
-        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(nil)
+        self.preferenceController.showWindow(self)
     }
     
     internal func showSnippetEditorWindow() {
@@ -179,16 +164,11 @@ class AppDelegate: NSObject {
     }
     
     // MARK: - Version Up Methods
-    private func toggleCheckPreReleaseUpdates(enable: Bool) {
-        /*
-        NSString *feed = (flag)
-        ? [CMUtilities infoValueForKey:@"SUPreReleaseFeedURL"]
-        : [CMUtilities infoValueForKey:@"SUFeedURL"];
-        
-        NSURL *feedURL = [[NSURL alloc] initWithString:feed];
-        [[SUUpdater sharedUpdater] setFeedURL:feedURL];
-        [feedURL release], feedURL = nil;
-        */
+    private func checkUpdates() {
+        let feed = "http://clipy-app.com/appcast.xml"
+        if let feedURL = NSURL(string: feed) {
+            SUUpdater.sharedUpdater().feedURL = feedURL
+        }
     }
 
 }
@@ -211,16 +191,12 @@ extension AppDelegate: NSApplicationDelegate {
             self.promptToAddLoginItems()
         }
         
-        /*
         // Sparkleでアップデート確認
         let updater = SUUpdater.sharedUpdater()
-        self.toggleCheckPreReleaseUpdates(defaults.boolForKey(kCPYEnableAutomaticCheckPreReleaseKey))
-        updater.automaticallyChecksForUpdates = true // [defaults boolForKey:CMEnableAutomaticCheckKey]
-        //updater.updateCheckInterval = [defaults integerForKey:CMUpdateCheckIntervalKey]
-        */
-        
-        defaults.addObserver(self, forKeyPath: kCPYEnableAutomaticCheckPreReleaseKey, options: NSKeyValueObservingOptions.New, context: nil)
-        
+        self.checkUpdates()
+        updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
+        updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
+    
         queue.waitUntilAllOperationsAreFinished()
     }
     

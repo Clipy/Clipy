@@ -26,8 +26,8 @@ internal let kDefaultSnippetName                                = "untitled snip
 internal let kSelector                                          = "selector"
 
 // Update App
-internal let kCPYEnableAutomaticCheckPreReleaseKey              = "kCPYEnableAutomaticCheckPreReleaseKey"
-internal let kCPYCheckNewRelease                                = "new"
+internal let kCPYEnableAutomaticCheckKey                        = "kCPYEnableAutomaticCheckKey"
+internal let kCPYUpdateCheckIntervalKey                         = "kCPYUpdateCheckIntervalKey"
 
 // Exclude List
 internal let kCPYBundleIdentifierKey                            = "bundleIdentifier"

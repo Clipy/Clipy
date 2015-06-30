@@ -408,9 +408,7 @@ class CPYMenuManager: NSObject {
     // MARK: - StatusItem Manage Methods
     private func changeStatusItem() {
         self.removeStatusItem()
-        
-        println("AAAAA")
-        
+                
         let itemIndex = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefShowStatusItemKey)
         if itemIndex == 0 {
             return
