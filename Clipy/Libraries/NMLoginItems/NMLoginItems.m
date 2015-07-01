@@ -154,8 +154,7 @@
 				}
 			}
 		}
-		
-		CFRelease(itemURL);
+		// CFRelease(itemURL);
 	}
 	
 	[loginItems release], loginItems = nil;

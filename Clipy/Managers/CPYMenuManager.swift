@@ -48,7 +48,6 @@ class CPYMenuManager: NSObject {
         defaults.addObserver(self, forKeyPath: kCPYPrefShowStatusItemKey, options: .New, context: nil)
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
-        notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
         notificationCenter.addObserver(self, selector: "handleSnippetEditorWillClose:", name: kCPYSnippetEditorWillCloseNotification, object: nil)
         notificationCenter.addObserver(self, selector: "updateStatusItem", name: kCPYChangeContentsNotification, object: nil)
     }
@@ -488,10 +487,6 @@ class CPYMenuManager: NSObject {
     }
     
     // MARK: - NSNotificationCenter Methods
-    internal func handlePreferencePanelWillClose(notification: NSNotification) {
-        self.resetIconCaches()
-    }
-    
     internal func handleSnippetEditorWillClose(notification: NSNotification) {
         self.updateStatusItem()
     }

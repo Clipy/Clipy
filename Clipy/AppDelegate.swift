@@ -27,13 +27,22 @@ class AppDelegate: NSObject {
         // Show menubar icon
         CPYMenuManager.sharedManager
         
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
+        
         // Notification
         let notificationCenter = NSNotificationCenter.defaultCenter()
-        notificationCenter.addObserver(self, selector: "handlePreferencePanelWillClose:", name: kCPYPreferencePanelWillCloseNotification, object: nil)
     }
     
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    // MARK: - KVO 
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        if keyPath == kCPYPrefLoginItemKey {
+            self.toggleLoginItemState()
+        }
     }
 
     // MARK: - Override Methods
@@ -157,11 +166,6 @@ class AppDelegate: NSObject {
     private func toggleLoginItemState() {
         let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefLoginItemKey)
         self.toggleAddingToLoginItems(isInLoginItems)
-    }
-    
-    // MARK: - NSNotificationCenter Methods
-    internal func handlePreferencePanelWillClose(notification: NSNotification) {
-        self.toggleLoginItemState()
     }
     
     // MARK: - Version Up Methods

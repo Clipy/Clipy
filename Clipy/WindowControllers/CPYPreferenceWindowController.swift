@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class CPYPreferenceWindowController: DBPrefsWindowController {
+class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
 
     // MARK: - Propertis
     // Views
@@ -49,8 +49,8 @@ class CPYPreferenceWindowController: DBPrefsWindowController {
         if let window = self.window {
             window.delegate = self
             window.center()
+            window.releasedWhenClosed = false
         }
-        
         self.prepareHotKeys()
         self.excludeList = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefExcludeAppsKey) as! [AnyObject]
     }
@@ -217,10 +217,7 @@ class CPYPreferenceWindowController: DBPrefsWindowController {
         }
     }
 
-}
-
-// MARK: - NSWindow Delegate
-extension CPYPreferenceWindowController: NSWindowDelegate {
+    
     func windowWillClose(notification: NSNotification) {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(self.storeTypes, forKey: kCPYPrefStoreTypesKey)
@@ -231,8 +228,8 @@ extension CPYPreferenceWindowController: NSWindowDelegate {
             }
         }
         NSApp.deactivate()
-        NSNotificationCenter.defaultCenter().postNotificationName(kCPYPreferencePanelWillCloseNotification, object: nil)
     }
+    
 }
 
 // MARK: - NSTableView DataSource
