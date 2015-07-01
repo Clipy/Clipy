@@ -17,6 +17,13 @@ __Distribution Site__ : <http://clipy-app.com>
 2. Open Clipy.xcworkspace on Xcode.
 3. build.
 
+### Contributing
+1. Fork it ( https://github.com/Clipy/Clipy/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
+
 ### Licence
 Clipy is available under the MIT license. See the LICENSE file for more info.
 
