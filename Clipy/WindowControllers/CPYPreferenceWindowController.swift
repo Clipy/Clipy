@@ -245,7 +245,6 @@ extension CPYPreferenceWindowController: NSTableViewDataSource {
     
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
         if tableColumn?.identifier == "ImageAndTextCellColumn" {
-            let workSpace = NSWorkspace.sharedWorkspace()
             if let appInfo = self.excludeList[row] as? [String: String] {
                 if let appName = appInfo[kCPYNameKey] {
                     return appName
