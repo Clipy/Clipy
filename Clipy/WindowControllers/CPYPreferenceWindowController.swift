@@ -48,9 +48,9 @@ class CPYPreferenceWindowController: DBPrefsWindowController {
         super.windowDidLoad()
         if let window = self.window {
             window.delegate = self
-            window.collectionBehavior = .CanJoinAllSpaces
-            
+            window.center()
         }
+        
         self.prepareHotKeys()
         self.excludeList = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefExcludeAppsKey) as! [AnyObject]
     }
@@ -58,10 +58,9 @@ class CPYPreferenceWindowController: DBPrefsWindowController {
     // MARK: - Override Methods
     override func showWindow(sender: AnyObject?) {
         super.showWindow(sender)
-        NSApp.activateIgnoringOtherApps(true)
         self.window?.makeKeyAndOrderFront(self)
     }
-    
+
     override func setupToolbar() {
         if let image = NSImage(named: NSImageNamePreferencesGeneral) {
             self.addView(self.generalPreferenceView, label: NSLocalizedString("General", comment: ""), image: image)

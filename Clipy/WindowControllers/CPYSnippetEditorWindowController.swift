@@ -40,7 +40,11 @@ class CPYSnippetEditorWindowController: NSWindowController {
     // MARK: - View Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
-        self.window?.collectionBehavior = NSWindowCollectionBehavior.CanJoinAllSpaces
+    
+        if let window = self.window {
+            window.center()
+        }
+        
         if let results = CPYSnippetManager.sharedManager.loadFolders() {
             if results.count != 0 {
                 self.folderTableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
@@ -52,12 +56,9 @@ class CPYSnippetEditorWindowController: NSWindowController {
     // MARK: - Override Methods
     override func showWindow(sender: AnyObject?) {
         super.showWindow(sender)
-        if let window = self.window {
-            window.center()
-        }
-        NSApp.activateIgnoringOtherApps(true)
-        self.window?.makeKeyAndOrderFront(true)
+        self.window?.makeKeyAndOrderFront(self)
     }
+
     
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
         let itemIdentifier = theItem.itemIdentifier
