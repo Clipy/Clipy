@@ -64,21 +64,21 @@ class CPYPreferenceWindowController: DBPrefsWindowController {
     
     override func setupToolbar() {
         if let image = NSImage(named: NSImageNamePreferencesGeneral) {
-            self.addView(self.generalPreferenceView, label: "General", image: image)
+            self.addView(self.generalPreferenceView, label: NSLocalizedString("General", comment: ""), image: image)
         }
         if let image = NSImage(named: "Menu") {
-            self.addView(self.menuPreferenceView, label: "Menu", image: image)
+            self.addView(self.menuPreferenceView, label: NSLocalizedString("Menu", comment: ""), image: image)
         }
         
         let image = NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericApplicationIcon)))
         image.size = NSMakeSize(32, 32)
-        self.addView(self.typePreferenceView, label: "Type", image: image)
+        self.addView(self.typePreferenceView, label: NSLocalizedString("Type", comment: ""), image: image)
         
         if let image = NSImage(named: "PTKeyboardIcon") {
-            self.addView(self.shortcutPreferenceView, label: "Shortcuts", image: image)
+            self.addView(self.shortcutPreferenceView, label: NSLocalizedString("Shortcuts", comment: ""), image: image)
         }
         if let image = NSImage(named: "SparkleIcon") {
-            self.addView(self.updatePreferenceView, label: "Updates", image: image)
+            self.addView(self.updatePreferenceView, label: NSLocalizedString("Updates", comment: ""), image: image)
         }
         
         self.crossFade = true

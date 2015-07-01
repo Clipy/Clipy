@@ -13,8 +13,7 @@ import Sparkle
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    var snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
-    var preferenceController = CPYPreferenceWindowController.sharedPrefsWindowController()
+    lazy var snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
     
     // MARK: - Init
     override func awakeFromNib() {
@@ -68,7 +67,7 @@ class AppDelegate: NSObject {
     
     // MARK: - Menu Actions
     internal func showPreferenceWindow() {
-        self.preferenceController.showWindow(self)
+        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
     
     internal func showSnippetEditorWindow() {
