@@ -17,6 +17,14 @@ __Distribution Site__ : <http://clipy-app.com>
 2. Open Clipy.xcworkspace on Xcode.
 3. build.
 
+### Dependencies
+The source code is dependent on some libraries. 
+* [PTHotKey](https://github.com/keith/PTHotKeyTest)
+* [Shortcut Recorder](https://github.com/iKorich/shortcutrecorder) 
+* [Sparkle](https://github.com/sparkle-project/Sparkle)
+* [DBPrefsWindowController](https://github.com/kgn/DBPrefsWindowController)
+* [Realm](https://realm.io/)
+
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
