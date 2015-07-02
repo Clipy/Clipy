@@ -35,8 +35,9 @@ The source code is dependent on some libraries.
 ### Distribution
 If you distribute derived work, especially in the Mac App Store, I ask you to follow two rules:
 
-Don't use "Clipy" and "ClipMenu" as your product name.
-Follow the MIT license terms.
+1. Don't use "Clipy" and "ClipMenu" as your product name.
+2. Follow the MIT license terms.
+
 Thank you for your cooperation.
 
 
