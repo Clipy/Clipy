@@ -32,6 +32,15 @@ The source code is dependent on some libraries.
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
+### Distribution
+If you distribute derived work, especially in the Mac App Store, I ask you to follow two rules:
+
+Don't use "Clipy" and "ClipMenu" as your product name.
+Follow the MIT license terms.
+Thank you for your cooperation.
+
+
+
 ### Licence
 Clipy is available under the MIT license. See the LICENSE file for more info.
 
