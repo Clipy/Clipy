@@ -7,6 +7,8 @@ __Requirement__: OS X Mavericks or higher
 
 __Distribution Site__ : <http://clipy-app.com>
 
+<img src="http://clipy-app.com/img/screenshot1.png" width="400">
+
 ### Development Environment
 * OS X Yosemite
 * Xcode 6.3
