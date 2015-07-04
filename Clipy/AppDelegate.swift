@@ -25,7 +25,7 @@ class AppDelegate: NSObject {
         CPYUtilities.registerUserDefaultKeys()
         
         // Show menubar icon
-        CPYMenuManager.sharedManager.createStatusItem()
+        CPYMenuManager.sharedManager
         
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)

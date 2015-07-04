@@ -40,6 +40,7 @@ class CPYMenuManager: NSObject {
         self.shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         
         self.createMenu()
+        self.createStatusItem()
         
         self.resetIconCaches()
         
