@@ -14,10 +14,10 @@
 		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
 		FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */; };
 		FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */; };
+		FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */; };
 		FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
-		FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DD11B35D8B100C06102 /* Main.storyboard */; };
 		FAC43DDF1B35D8B100C06102 /* ClipyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */; };
 		FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DF91B35DD4300C06102 /* Localizable.strings */; };
 		FAC43E1A1B35DF2500C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
@@ -84,13 +84,13 @@
 		FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYImageAndTextCell.swift; sourceTree = "<group>"; };
 		FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolderTableView.swift; sourceTree = "<group>"; };
 		FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetTableView.swift; sourceTree = "<group>"; };
+		FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		FA823D771B4042F200009614 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA823D7B1B40439500009614 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FAC43DCF1B35D8B100C06102 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		FAC43DD21B35D8B100C06102 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FAC43DD81B35D8B100C06102 /* ClipyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DDD1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipyTests.swift; sourceTree = "<group>"; };
@@ -251,7 +251,7 @@
 				FAC43E5C1B35E1A100C06102 /* Models */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
 				FAC43DCF1B35D8B100C06102 /* Images.xcassets */,
-				FAC43DD11B35D8B100C06102 /* Main.storyboard */,
+				FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */,
 				FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */,
 				FAC43DFC1B35DDE700C06102 /* Libraries */,
 				FAC43DC91B35D8B100C06102 /* Supporting Files */,
@@ -471,8 +471,8 @@
 				FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */,
 				FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */,
 				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
-				FAC43DD31B35D8B100C06102 /* Main.storyboard in Resources */,
 				FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */,
+				FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */,
 				FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -578,14 +578,6 @@
 				FA823D7B1B40439500009614 /* ja */,
 			);
 			name = CPYSnippetEditorWindowController.xib;
-			sourceTree = "<group>";
-		};
-		FAC43DD11B35D8B100C06102 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				FAC43DD21B35D8B100C06102 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		FAC43DF91B35DD4300C06102 /* Localizable.strings */ = {
