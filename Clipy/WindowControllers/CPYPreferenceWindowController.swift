@@ -68,11 +68,9 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         if let image = NSImage(named: "Menu") {
             self.addView(self.menuPreferenceView, label: NSLocalizedString("Menu", comment: ""), image: image)
         }
-        
-        let image = NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericApplicationIcon)))
-        image.size = NSMakeSize(32, 32)
-        self.addView(self.typePreferenceView, label: NSLocalizedString("Type", comment: ""), image: image)
-        
+        if let image = NSImage(named: "icon_application") {
+            self.addView(self.typePreferenceView, label: NSLocalizedString("Type", comment: ""), image: image)
+        }
         if let image = NSImage(named: "PTKeyboardIcon") {
             self.addView(self.shortcutPreferenceView, label: NSLocalizedString("Shortcuts", comment: ""), image: image)
         }

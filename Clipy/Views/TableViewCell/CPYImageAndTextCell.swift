@@ -87,7 +87,6 @@ class CPYImageAndTextCell: NSTextFieldCell {
             NSImage(named: "icon_text")?.drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         } else if self.cellImageType == .Application {
             imageFrame.size = NSMakeSize(16.0, 16.0)
-            //NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericApplicationIcon))).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         }
         var newFrame = cellFrame;
         newFrame.origin.x += CGFloat(kTextOriginXOffset)
