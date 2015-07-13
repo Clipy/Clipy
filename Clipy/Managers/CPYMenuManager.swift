@@ -21,13 +21,11 @@ class CPYMenuManager: NSObject {
     private var statusItem: NSStatusItem?
     private var highlightedMenuItem: NSMenuItem?
     
-    internal var folderIcon: NSImage?
-    internal var openFolderIcon: NSImage?
-    internal var snippetIcon: NSImage?
+    internal var folderIcon = NSImage(named: "icon_folder")
+    internal var snippetIcon = NSImage(named: "icon_text")
 
     private let kMaxKeyEquivalents = 10
     private let SHORTEN_SYMBOL = "..."
-    private var menuIconSize: NSInteger = 0
     private var shortVersion = ""
     
     // MARK: - Init
@@ -39,10 +37,14 @@ class CPYMenuManager: NSObject {
     private func initManager() {
         self.shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         
+        self.folderIcon?.setTemplate(true)
+        self.folderIcon?.size = NSMakeSize(15, 13)
+    
+        self.snippetIcon?.setTemplate(true)
+        self.snippetIcon?.size = NSMakeSize(12, 13)
+        
         self.createMenu()
         self.createStatusItem()
-        
-        self.resetIconCaches()
         
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.addObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey, options: .New, context: nil)
@@ -68,9 +70,7 @@ class CPYMenuManager: NSObject {
     
     // MARK: - KVO
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-        if keyPath == kCPYPrefMenuIconSizeKey {
-             self.resetMenuIconSize()
-        } else if keyPath == kCPYPrefShowStatusItemKey {
+        if keyPath == kCPYPrefShowStatusItemKey {
             if let new = change["new"] as? Int {
                 if new == 0 {
                     self.removeStatusItem()
@@ -361,8 +361,7 @@ class CPYMenuManager: NSObject {
         menuItem.representedObject = snippet
         menuItem.toolTip = snippet.content
         
-        if icon != nil {
-            icon!.size = NSMakeSize(CGFloat(menuIconSize), CGFloat(menuIconSize))
+        if icon != nil {aaaaa
             menuItem.image = icon
         }
         
@@ -372,37 +371,6 @@ class CPYMenuManager: NSObject {
     // MARK: - Icon Manage Methods
     private func iconForSnippet() -> NSImage? {
         return self.snippetIcon
-    }
-    
-    private func cacheFolderIcon() {
-        let icon = NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericFolderIcon)))
-        self.folderIcon = icon
-        self.folderIcon!.size = NSMakeSize(CGFloat(self.menuIconSize), CGFloat(self.menuIconSize))
-    }
-    
-    private func cacheOpenFolderIcon() {
-        let icon = NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kOpenFolderIcon)))
-        icon.size = NSMakeSize(CGFloat(self.menuIconSize), CGFloat(self.menuIconSize))
-        self.openFolderIcon = icon
-    }
-    
-    private func cacheSnippetIcon() {
-        let icon = NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kClippingTextTypeIcon)))
-        self.snippetIcon = icon
-        self.snippetIcon!.size = NSMakeSize(CGFloat(self.menuIconSize), CGFloat(self.menuIconSize))
-    }
-    
-    private func resetMenuIconSize() {
-        self.menuIconSize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMenuIconSizeKey)
-    }
-    
-    private func resetIconCaches() {
-        if NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefShowIconInTheMenuKey) {
-            self.resetMenuIconSize()
-            self.cacheFolderIcon()
-            self.cacheOpenFolderIcon()
-            self.cacheSnippetIcon()
-        }
     }
     
     // MARK: - StatusItem Manage Methods
@@ -510,9 +478,8 @@ extension CPYMenuManager: NSMenuDelegate {
             return
         }
         
-        if item?.image != nil && self.openFolderIcon != nil {
+        if item?.image != nil {
             self.highlightedMenuItem = item
-            item?.image = self.openFolderIcon
         }
     }
     
