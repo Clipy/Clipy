@@ -98,15 +98,16 @@ class AppDelegate: NSObject {
             alert.showsSuppressionButton = true
             
             NSApp.activateIgnoringOtherApps(true)
-            
-            if alert.suppressionButton?.state == NSOnState {
-                defaults.setBool(false, forKey: kCPYPrefShowAlertBeforeClearHistoryKey)
-            }
-            
+        
             let result = alert.runModal()
             if result != NSAlertFirstButtonReturn {
                 return
             }
+            
+            if alert.suppressionButton?.state == NSOnState {
+                defaults.setBool(false, forKey: kCPYPrefShowAlertBeforeClearHistoryKey)
+            }
+            defaults.synchronize()
         }
         
         CPYClipManager.sharedManager.clearAll()
