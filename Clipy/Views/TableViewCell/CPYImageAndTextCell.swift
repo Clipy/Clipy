@@ -10,10 +10,10 @@ import Cocoa
 
 private let kIconImageSize      = 16.0
 private let kImageOriginXOffset = 5
-private let kImageOriginYOffset = -2
+private let kImageOriginYOffset = -3
 
 private let kTextOriginXOffset	= 4
-private let kTextOriginYOffset	= 1
+private let kTextOriginYOffset	= 0
 private let kTextHeightAdjust	= 0
 
 class CPYImageAndTextCell: NSTextFieldCell {
@@ -74,18 +74,20 @@ class CPYImageAndTextCell: NSTextFieldCell {
     
     override func drawWithFrame(var cellFrame: NSRect, inView controlView: NSView) {
         var imageFrame = NSZeroRect
-        NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + 16.0, NSMinXEdge)
+        NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + 15.0, NSMinXEdge)
         
         imageFrame.origin.x += CGFloat(kImageOriginXOffset)
         imageFrame.origin.y -= CGFloat(kImageOriginYOffset)
-        imageFrame.size = NSMakeSize(16.0, 16.0)
         
         if self.cellImageType == .Folder {
-            NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericFolderIcon))).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
+            imageFrame.size = NSMakeSize(15.0, 13.0)
+            NSImage(named: "icon_folder")?.drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         } else if self.cellImageType == .File {
-            NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kClippingTextTypeIcon))).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
+            imageFrame.size = NSMakeSize(12.0, 13.0)
+            NSImage(named: "icon_text")?.drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         } else if self.cellImageType == .Application {
-            NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericApplicationIcon))).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
+            imageFrame.size = NSMakeSize(16.0, 16.0)
+            //NSWorkspace.sharedWorkspace().iconForFileType(NSFileTypeForHFSTypeCode(OSType(kGenericApplicationIcon))).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         }
         var newFrame = cellFrame;
         newFrame.origin.x += CGFloat(kTextOriginXOffset)

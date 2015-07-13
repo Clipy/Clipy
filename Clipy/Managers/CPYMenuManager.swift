@@ -361,7 +361,7 @@ class CPYMenuManager: NSObject {
         menuItem.representedObject = snippet
         menuItem.toolTip = snippet.content
         
-        if icon != nil {aaaaa
+        if icon != nil {
             menuItem.image = icon
         }
         
