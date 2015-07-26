@@ -195,10 +195,12 @@ class CPYClipManager: NSObject {
             clip.primaryType = clipData.primaryType ?? ""
             
             // Save thumbnail image
-            if let image = clipData.image {
-                if let thumbnailImage = image.resizeImage(100, 32) {
-                    PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
-                    clip.thumbnailPath = String(unixTime)
+            if clipData.primaryType == NSTIFFPboardType {
+                if let image = clipData.image {
+                    if let thumbnailImage = image.resizeImage(100, 32) {
+                        PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
+                        clip.thumbnailPath = String(unixTime)
+                    }
                 }
             }
             
