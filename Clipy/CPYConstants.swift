@@ -56,6 +56,8 @@ internal let kCPYPrefMaxLengthOfToolTipKey                      = "maxLengthOfTo
 internal let kCPYPrefLoginItemKey                               = "loginItem"
 internal let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginItem"
 internal let kCPYPrefShowStatusItemKey                          = "kCPYPrefShowStatusItemKey"
+internal let kCPYPrefThumbnailWidthKey                          = "thumbnailWidth"
+internal let kCPYPrefThumbnailHeightKey                         = "thumbnailHeight"
 
 // SnippetEditor
 internal let kCPYSnippetEditorWillCloseNotification             = "kCPYSnippetEditorWillCloseNotification"
