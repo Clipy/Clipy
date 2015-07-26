@@ -28,11 +28,11 @@ class CPYSnippetManager: NSObject {
     }
     
     // MARK: - Public Methods
-    internal func loadFolders() -> RLMResults? {
+    internal func loadFolders() -> RLMResults {
         return CPYFolder.allObjects()
     }
     
-    internal func loadSortedFolders() -> RLMResults? {
+    internal func loadSortedFolders() -> RLMResults {
         return CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true)
     }
     
@@ -47,7 +47,7 @@ class CPYSnippetManager: NSObject {
         let folder = CPYFolder()
         folder.title = title ?? "untitled folder"
         
-        if let lastFolder = self.loadSortedFolders()?.lastObject() as? CPYFolder {
+        if let lastFolder = self.loadSortedFolders().lastObject() as? CPYFolder {
             folder.index = lastFolder.index + 1
         } else {
             folder.index = 0
@@ -128,27 +128,26 @@ class CPYSnippetManager: NSObject {
         }
         
         var folders = [CPYFolder]()
-        if let reuslts = CPYSnippetManager.sharedManager.loadSortedFolders() {
-            var index = 0
-            var updateFolder: CPYFolder!
-            for folder in reuslts {
-                if index != selectIndexes.firstIndex {
-                    folders.append(folder as! CPYFolder)
-                } else {
-                    updateFolder = folder as! CPYFolder
-                }
-                index = index + 1
+        let reuslts = CPYSnippetManager.sharedManager.loadSortedFolders()
+        var index = 0
+        var updateFolder: CPYFolder!
+        for folder in reuslts {
+            if index != selectIndexes.firstIndex {
+                folders.append(folder as! CPYFolder)
+            } else {
+                updateFolder = folder as! CPYFolder
             }
-            folders.insert(updateFolder, atIndex: toIndex)
-            
-            index = 0
-            for folder in folders {
-                let realm = RLMRealm.defaultRealm()
-                realm.transactionWithBlock({ () -> Void in
-                    folder.index = index
-                })
-                index = index + 1
-            }
+            index = index + 1
+        }
+        folders.insert(updateFolder, atIndex: toIndex)
+        
+        index = 0
+        for folder in folders {
+            let realm = RLMRealm.defaultRealm()
+            realm.transactionWithBlock({ () -> Void in
+                folder.index = index
+            })
+            index = index + 1
         }
     }
     

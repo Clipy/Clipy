@@ -49,10 +49,9 @@ class AppDelegate: NSObject {
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         let action = menuItem.action
         if action == Selector("clearAllHistory") {
-            if let numberOfClips = CPYClipManager.sharedManager.loadClips()?.count {
-                if numberOfClips == 0 {
-                    return false
-                }
+            let numberOfClips = CPYClipManager.sharedManager.loadClips().count
+            if numberOfClips == 0 {
+                return false
             }
         }
         return true

@@ -61,38 +61,37 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - Public Methods
-    internal func loadClips() -> RLMResults? {
+    internal func loadClips() -> RLMResults {
         return CPYClip.allObjects()
     }
     
-    internal func loadSortedClips() -> RLMResults? {
+    internal func loadSortedClips() -> RLMResults {
         return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
     }
     
     internal func clearAll() {
-        if let results = self.loadClips() {
-            var paths = [String]()
-            for clip in results {
-                paths.append((clip as! CPYClip).dataPath)
-            }
-            for path in paths {
-                CPYUtilities.deleteData(path)
-            }
-            let realm = RLMRealm.defaultRealm()
-            realm.transactionWithBlock({ () -> Void in
-                realm.deleteObjects(results)
-            })
-            
-            NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
+        let results = self.loadClips()
+        var paths = [String]()
+        for clip in results {
+            paths.append((clip as! CPYClip).dataPath)
         }
+        for path in paths {
+            CPYUtilities.deleteData(path)
+        }
+        let realm = RLMRealm.defaultRealm()
+        realm.transactionWithBlock({ () -> Void in
+            realm.deleteObjects(results)
+        })
+        
+        NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
     }
     
     internal func clipAtIndex(index: NSInteger) -> CPYClip {
-        return self.loadSortedClips()!.objectAtIndex(UInt(index)) as! CPYClip
+        return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
     }
     
     internal func removeClipAtIndex(index: NSInteger) -> Bool {
-        let clip = self.loadSortedClips()!.objectAtIndex(UInt(index)) as! CPYClip
+        let clip = self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
         return self.removeClip(clip)
     }
     
@@ -158,10 +157,9 @@ class CPYClipManager: NSObject {
     }
     
     internal func copyClipToPasteboardAtIndex(index: NSInteger) {
-        if let result = self.loadSortedClips() {
-            if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
-                self.copyClipToPasteboard(clip)
-            }
+        let result = self.loadSortedClips()
+        if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
+            self.copyClipToPasteboard(clip)
         }
     }
     
@@ -318,28 +316,27 @@ class CPYClipManager: NSObject {
     private func trimHistorySize() {
         
         let realm = RLMRealm.defaultRealm()
-        if let clips = self.loadSortedClips() {
+        let clips = self.loadSortedClips()
             
-            let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
-            if maxHistorySize < Int(clips.count) {
-                
-                let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as! CPYClip
-                let lastUsedAt = lastClip.updateTime
-                if let results = self.loadClips()?.objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt)) {
-                    var paths = [String]()
-                    for clip in results {
-                        paths.append((clip as! CPYClip).dataPath)
-                    }
-                    for path in paths {
-                        CPYUtilities.deleteData(path)
-                    }
-                    realm.transactionWithBlock({ () -> Void in
-                        realm.deleteObjects(results)
-                    })
+        let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
+        if maxHistorySize < Int(clips.count) {
+            
+            let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as! CPYClip
+            let lastUsedAt = lastClip.updateTime
+            if let results = self.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt)) {
+                var paths = [String]()
+                for clip in results {
+                    paths.append((clip as! CPYClip).dataPath)
                 }
+                for path in paths {
+                    CPYUtilities.deleteData(path)
+                }
+                realm.transactionWithBlock({ () -> Void in
+                    realm.deleteObjects(results)
+                })
             }
-            
         }
+    
     }
     
 }

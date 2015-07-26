@@ -35,30 +35,23 @@ class CPYFolderTableView: NSTableView {
 // MARK: - NSTableView DataSource
 extension CPYFolderTableView: NSTableViewDataSource {
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        if let count = CPYSnippetManager.sharedManager.loadFolders()?.count {
-            return Int(count)
-        } else {
-            return 0
-        }
+        return Int(CPYSnippetManager.sharedManager.loadFolders().count)
     }
     
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
         
-        if let folders = CPYSnippetManager.sharedManager.loadSortedFolders() {
-            let folder = folders.objectAtIndex(UInt(row)) as! CPYFolder
-            
-            if let dataCell = tableColumn?.dataCellForRow(row) as? CPYImageAndTextCell {
-                if folder.enable {
-                    dataCell.textColor = NSColor.blackColor()
-                } else {
-                    dataCell.textColor = NSColor.lightGrayColor()
-                }
+        let folders = CPYSnippetManager.sharedManager.loadSortedFolders()
+        let folder = folders.objectAtIndex(UInt(row)) as! CPYFolder
+        
+        if let dataCell = tableColumn?.dataCellForRow(row) as? CPYImageAndTextCell {
+            if folder.enable {
+                dataCell.textColor = NSColor.blackColor()
+            } else {
+                dataCell.textColor = NSColor.lightGrayColor()
             }
-            
-            return folder.title
         }
         
-        return ""
+        return folder.title
     }
     
     func tableView(tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
@@ -77,7 +70,7 @@ extension CPYFolderTableView: NSTableViewDelegate {
         if let text = fieldEditor.string {
             if count(text.utf16) != 0 {
                 if let tableView = control as? NSTableView {
-                    let folder = CPYSnippetManager.sharedManager.loadSortedFolders()?.objectAtIndex(UInt(tableView.selectedRow)) as! CPYFolder
+                    let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(tableView.selectedRow)) as! CPYFolder
                     let realm = RLMRealm.defaultRealm()
                     realm.transactionWithBlock({ () -> Void in
                         folder.title = text
