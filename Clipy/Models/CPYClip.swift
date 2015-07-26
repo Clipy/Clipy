@@ -16,6 +16,7 @@ class CPYClip: RLMObject {
     dynamic var dataHash    = ""
     dynamic var primaryType = ""
     dynamic var updateTime  = 0
+    dynamic var thumbnailPath = ""
     
     // MARK: Primary Key
     override class func primaryKey() -> String {
