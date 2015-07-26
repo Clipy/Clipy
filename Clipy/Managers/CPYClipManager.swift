@@ -194,6 +194,14 @@ class CPYClipManager: NSObject {
             clip.updateTime = unixTime
             clip.primaryType = clipData.primaryType ?? ""
             
+            // Save thumbnail image
+            if let image = clipData.image {
+                if let thumbnailImage = image.resizeImage(100, 32) {
+                    PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
+                    clip.thumbnailPath = String(unixTime)
+                }
+            }
+            
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
                 if result {
@@ -201,11 +209,6 @@ class CPYClipManager: NSObject {
                         realm.addOrUpdateObject(clip)
                     })
                 }
-            }
-            
-            // Save thumbnail image
-            if let image = clipData.image {
-                
             }
             
             self.trimHistorySize()
@@ -226,8 +229,9 @@ class CPYClipManager: NSObject {
             timeInterval = 1.0
             defaults.setFloat(1.0, forKey: kCPYPrefTimeIntervalKey)
         }
-        
-        self.pasteboardObservingTimer = NSTimer.scheduledTimerWithTimeInterval(NSTimeInterval(timeInterval), target: self, selector: "updateClips:", userInfo: nil, repeats: true)
+ 
+        self.pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: "updateClips:", userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(self.pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
     }
     
     internal func stopPasteboardObservingTimer() {
