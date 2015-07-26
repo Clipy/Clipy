@@ -203,6 +203,11 @@ class CPYClipManager: NSObject {
                 }
             }
             
+            // Save thumbnail image
+            if let image = clipData.image {
+                
+            }
+            
             self.trimHistorySize()
             
             NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
