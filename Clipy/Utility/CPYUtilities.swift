@@ -21,7 +21,6 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
         defaultValues.updateValue(NSNumber(float: 0.75), forKey: kCPYPrefTimeIntervalKey)
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
-        defaultValues.updateValue(AppDelegate.defaultExcludeList(), forKey: kCPYPrefExcludeAppsKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefInputPasteCommandKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefReorderClipsAfterPasting)
         

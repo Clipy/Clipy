@@ -7,8 +7,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYPreferenceWindowController" customModule="Clipy" customModuleProvider="target">
             <connections>
-                <outlet property="excludeListPanel" destination="lfy-wK-M6b" id="qFw-so-ztF"/>
-                <outlet property="excludeTableView" destination="bBa-xY-pS0" id="trY-ml-V2K"/>
                 <outlet property="generalPreferenceView" destination="ERS-Xy-12L" id="fAy-5g-bYM"/>
                 <outlet property="historyShortcutRecorder" destination="J7u-lP-dP4" id="zJ0-WZ-zv2"/>
                 <outlet property="mainShortcutRecorder" destination="k0Z-nw-xjO" id="TxL-pe-U5C"/>
@@ -635,121 +633,9 @@
             <point key="canvasLocation" x="1122" y="1064"/>
         </customView>
         <customObject id="DeX-nb-MuN" customClass="SUUpdater"/>
-        <window title="Exclude Apps" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="lfy-wK-M6b" userLabel="ExcludeListPanel (Window)" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="272" y="172" width="410" height="320"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-            <view key="contentView" id="Vb4-Np-6Cx">
-                <rect key="frame" x="0.0" y="0.0" width="410" height="320"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <button verticalHuggingPriority="750" id="bPT-EG-nz5">
-                        <rect key="frame" x="187" y="12" width="105" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fFd-8M-Tvq">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="cancelExcludeListPanel:" target="-2" id="DVc-2m-ZA6"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="3ck-SR-Q5i">
-                        <rect key="frame" x="21" y="55" width="21" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="o6N-GM-JOw">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="addToExcludeList:" target="-2" id="WX5-GT-iTA"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="rXO-Xc-pRG">
-                        <rect key="frame" x="41" y="55" width="21" height="21"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2pl-en-X01">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="removeToExcludeList:" target="-2" id="hAH-y2-2N5"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="qlr-hJ-L4O">
-                        <rect key="frame" x="292" y="12" width="105" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="98O-Ho-ZAU">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="doneExcludeListPanel:" target="-2" id="Xly-qU-Gng"/>
-                        </connections>
-                    </button>
-                    <scrollView focusRingType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="di8-Z8-ZB7">
-                        <rect key="frame" x="21" y="83" width="370" height="192"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="ikp-vJ-bb9">
-                            <rect key="frame" x="1" y="1" width="368" height="190"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            <subviews>
-                                <tableView focusRingType="none" appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" alternatingRowBackgroundColors="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" id="bBa-xY-pS0">
-                                    <rect key="frame" x="0.0" y="0.0" width="368" height="22"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <size key="intercellSpacing" width="3" height="2"/>
-                                    <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                    <tableColumns>
-                                        <tableColumn identifier="ImageAndTextCellColumn" width="365" minWidth="40" maxWidth="1000" id="DWU-qo-5yN">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
-                                                <font key="font" metaFont="smallSystem"/>
-                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
-                                            </tableHeaderCell>
-                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="JM9-KD-TYU" customClass="CPYImageAndTextCell" customModule="Clipy" customModuleProvider="target">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                        </tableColumn>
-                                    </tableColumns>
-                                </tableView>
-                            </subviews>
-                            <nil key="backgroundColor"/>
-                        </clipView>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="V4U-UY-Db5">
-                            <rect key="frame" x="-100" y="-100" width="114" height="15"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="KgZ-Nl-p2g">
-                            <rect key="frame" x="380" y="17" width="15" height="223"/>
-                            <autoresizingMask key="autoresizingMask"/>
-                        </scroller>
-                    </scrollView>
-                    <textField verticalHuggingPriority="750" id="BeM-4j-h7L">
-                        <rect key="frame" x="18" y="283" width="376" height="17"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Exclude these applications:" id="Ild-ME-gIX">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                </subviews>
-            </view>
-            <point key="canvasLocation" x="1122" y="1411"/>
-        </window>
         <userDefaultsController representsSharedInstance="YES" id="2Lc-6R-cnC"/>
     </objects>
     <resources>
-        <image name="NSAddTemplate" width="11" height="11"/>
-        <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="statusbar_menu_black" width="18" height="18"/>
         <image name="statusbar_menu_white" width="18" height="18"/>
     </resources>

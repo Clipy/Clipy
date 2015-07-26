@@ -14,7 +14,6 @@ class CPYClipManager: NSObject {
     static let sharedManager = CPYClipManager()
     
     private var storeTypes = [String: NSNumber]()
-    private var excludeIdentifiers = Set<String>()
     private var cachedChangeCount: NSInteger = 0
     private let copyLock = NSLock()
     // Timer
@@ -30,21 +29,13 @@ class CPYClipManager: NSObject {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         self.storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
-        
-        let excludeList = defaults.objectForKey(kCPYPrefExcludeAppsKey) as! [AnyObject]
-        if let set = self.getExcludeBundleIdentifiersFromList(excludeList) {
-            self.excludeIdentifiers = set
-        } else {
-            self.excludeIdentifiers = Set<String>()
-        }
-        
+
         // Timer
         self.startPasteboardObservingTimer()
         
         defaults.addObserver(self, forKeyPath: kCPYPrefMaxHistorySizeKey, options: NSKeyValueObservingOptions.New, context: nil)
         defaults.addObserver(self, forKeyPath: kCPYPrefTimeIntervalKey, options: NSKeyValueObservingOptions.New, context: nil)
         defaults.addObserver(self, forKeyPath: kCPYPrefStoreTypesKey, options: NSKeyValueObservingOptions.New, context: nil)
-        defaults.addObserver(self, forKeyPath: kCPYPrefExcludeAppsKey, options: NSKeyValueObservingOptions.New, context: nil)
     }
     
     deinit {
@@ -52,7 +43,6 @@ class CPYClipManager: NSObject {
         defaults.removeObserver(self, forKeyPath: kCPYPrefMaxHistorySizeKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefTimeIntervalKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefStoreTypesKey)
-        defaults.removeObserver(self, forKeyPath: kCPYPrefExcludeAppsKey)
         if self.pasteboardObservingTimer != nil && self.pasteboardObservingTimer!.valid {
             self.pasteboardObservingTimer?.invalidate()
         }
@@ -67,13 +57,6 @@ class CPYClipManager: NSObject {
         } else if keyPath == kCPYPrefStoreTypesKey {
             let defaults = NSUserDefaults.standardUserDefaults()
             self.storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
-        } else if keyPath == kCPYPrefExcludeAppsKey {
-            let excludeList = change["new"] as! [AnyObject]
-            if let set = self.getExcludeBundleIdentifiersFromList(excludeList) {
-                self.excludeIdentifiers = set
-            } else {
-                self.excludeIdentifiers = Set<String>()
-            }
         }
     }
     
@@ -357,15 +340,6 @@ class CPYClipManager: NSObject {
             }
             
         }
-    }
-    
-    private func getExcludeBundleIdentifiersFromList(excludeList: [AnyObject]) -> Set<String>? {
-        if excludeList.isEmpty {
-            return nil
-        }
-        
-        let values = (excludeList as NSArray).valueForKey(kCPYBundleIdentifierKey) as! [String]
-        return Set(values)
     }
     
 }

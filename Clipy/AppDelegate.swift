@@ -59,12 +59,6 @@ class AppDelegate: NSObject {
     }
     
     // MARK: - Class Methods
-    static func defaultExcludeList() -> [AnyObject] {
-        let appInfo = [kCPYBundleIdentifierKey: "org.openoffice.script", kCPYNameKey: "OpenOffice.org"]
-        let excludeList = [appInfo]
-        return excludeList
-    }
-    
     static func storeTypesDictinary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
         for name in CPYClipData.availableTypesString() {
