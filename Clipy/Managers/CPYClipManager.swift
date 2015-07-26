@@ -194,10 +194,6 @@ class CPYClipManager: NSObject {
         }
         self.cachedChangeCount = pasteBoard.changeCount
         
-        if self.frontProcessIsInExcludeList() {
-            self.copyLock.unlock()
-            return
-        }
         if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
             
             let realm = RLMRealm.defaultRealm()
@@ -334,24 +330,6 @@ class CPYClipManager: NSObject {
             }
         }
         return false
-    }
-    
-    private func frontProcessIsInExcludeList() -> Bool {
-        var result = false
-        if self.excludeIdentifiers.isEmpty {
-            return result
-        }
-        
-        let apps = NSWorkspace.sharedWorkspace().runningApplications
-        for app in apps as! [NSRunningApplication] {
-            if let bundleIdentifier = app.bundleIdentifier {
-                if contains(self.excludeIdentifiers, bundleIdentifier) {
-                    result = true
-                }
-            }
-        }
-        
-        return result
     }
     
     private func trimHistorySize() {
