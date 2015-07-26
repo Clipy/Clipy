@@ -336,7 +336,7 @@ class CPYMenuManager: NSObject {
             menuItem.title = self.menuItemTitleWithString("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
         
-        if !clip.thumbnailPath.isEmpty {
+        if !clip.thumbnailPath.isEmpty && isShowImage {
             PINCache.sharedCache().objectForKey(clip.thumbnailPath, block: { (cache, key, object) -> Void in
                 if let image = object as? NSImage {
                     menuItem.image = image

@@ -198,11 +198,11 @@
             <point key="canvasLocation" x="571" y="617"/>
         </customView>
         <customView id="eva-t6-d1S" userLabel="Menu">
-            <rect key="frame" x="0.0" y="-5" width="460" height="264"/>
+            <rect key="frame" x="0.0" y="-6" width="460" height="286"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="jEd-7p-zOM">
-                    <rect key="frame" x="372" y="17" width="39" height="14"/>
+                    <rect key="frame" x="372" y="39" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="TH9-ne-sId">
                         <font key="font" size="11" name="HiraKakuProN-W3"/>
@@ -211,7 +211,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="MTS-hr-jxl">
-                    <rect key="frame" x="323" y="17" width="44" height="22"/>
+                    <rect key="frame" x="323" y="39" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="hpS-9g-c39">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="huL-Tf-6q5">
@@ -227,7 +227,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="xfC-Ad-IIo">
-                    <rect key="frame" x="68" y="20" width="250" height="17"/>
+                    <rect key="frame" x="68" y="42" width="250" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ツールチップに表示する文字列の長さ:" id="LQr-2B-dpY">
                         <font key="font" size="13" name="HiraKakuProN-W3"/>
@@ -236,7 +236,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="bY0-PQ-nRh">
-                    <rect key="frame" x="372" y="198" width="39" height="14"/>
+                    <rect key="frame" x="372" y="220" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="8mn-i8-FEH">
                         <font key="font" size="11" name="HiraKakuProN-W3"/>
@@ -245,7 +245,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="4cI-cd-s0X">
-                    <rect key="frame" x="372" y="170" width="39" height="14"/>
+                    <rect key="frame" x="372" y="192" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="fI7-4u-XKV">
                         <font key="font" size="11" name="HiraKakuProN-W3"/>
@@ -254,7 +254,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="Fhb-Ae-m4w">
-                    <rect key="frame" x="51" y="40" width="301" height="18"/>
+                    <rect key="frame" x="51" y="62" width="301" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="メニュー項目上にツールチップを表示" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="B7l-of-lUy">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -265,7 +265,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="pKu-T9-pjd">
-                    <rect key="frame" x="323" y="198" width="44" height="22"/>
+                    <rect key="frame" x="323" y="220" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="pY3-DO-wSk">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Gtl-SV-isl">
@@ -281,7 +281,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="40j-hG-ZIU">
-                    <rect key="frame" x="50" y="200" width="268" height="17"/>
+                    <rect key="frame" x="50" y="222" width="268" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="フォルダに内包する項目の数:" id="SDx-0Q-zra">
                         <font key="font" size="13" name="HiraKakuProN-W3"/>
@@ -290,7 +290,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="TiX-pI-JTx">
-                    <rect key="frame" x="323" y="225" width="44" height="22"/>
+                    <rect key="frame" x="323" y="247" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="7Qa-RB-blA">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="CZ8-if-ESY">
@@ -306,7 +306,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="CrK-Wg-0KE">
-                    <rect key="frame" x="50" y="227" width="268" height="17"/>
+                    <rect key="frame" x="50" y="249" width="268" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="インライン表示する項目の数:" id="Od6-r8-gVn">
                         <font key="font" size="13" name="HiraKakuProN-W3"/>
@@ -315,7 +315,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="57y-uN-VF2">
-                    <rect key="frame" x="51" y="104" width="297" height="18"/>
+                    <rect key="frame" x="51" y="126" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="数字キーを使ったショートカットを追加" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Xp9-Jm-9nP">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -326,7 +326,7 @@
                     </connections>
                 </button>
                 <button id="tyo-xD-1U1">
-                    <rect key="frame" x="51" y="144" width="297" height="18"/>
+                    <rect key="frame" x="51" y="166" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="メニュー項目の先頭に数字を付加" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="UhN-0c-3Z3">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -337,7 +337,7 @@
                     </connections>
                 </button>
                 <button id="QiN-Uk-gug">
-                    <rect key="frame" x="64" y="124" width="273" height="18"/>
+                    <rect key="frame" x="64" y="146" width="273" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="メニュー項目のタイトルを 0 で始める" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Vxc-sj-Dfh">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -349,7 +349,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="NH4-GQ-Z0F">
-                    <rect key="frame" x="323" y="170" width="44" height="22"/>
+                    <rect key="frame" x="323" y="192" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="tM7-PB-uOe">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="dlb-zS-Ip2">
@@ -364,7 +364,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="mNY-P1-oxx">
-                    <rect key="frame" x="50" y="172" width="276" height="17"/>
+                    <rect key="frame" x="50" y="194" width="276" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="メニューに表示する文字数:" id="i8w-kV-UeD">
                         <font key="font" size="13" name="HiraKakuProN-W3"/>
@@ -373,7 +373,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="3ze-SX-bc2">
-                    <rect key="frame" x="64" y="62" width="347" height="18"/>
+                    <rect key="frame" x="64" y="84" width="347" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="履歴クリアの前に警告パネルを表示" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="xWO-1T-CVB">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -385,7 +385,7 @@
                     </connections>
                 </button>
                 <button id="Hkc-oq-CF8">
-                    <rect key="frame" x="51" y="82" width="359" height="18"/>
+                    <rect key="frame" x="51" y="104" width="359" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="履歴をクリアするメニュー項目を追加" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1Qg-V9-Ymg">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -396,7 +396,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="tc7-oh-oTc">
-                    <rect key="frame" x="372" y="225" width="39" height="14"/>
+                    <rect key="frame" x="372" y="247" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="GaY-1l-xYm">
                         <font key="font" size="11" name="HiraKakuProN-W3"/>
@@ -404,8 +404,19 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button id="8Rs-6V-ZGK">
+                    <rect key="frame" x="51" y="18" width="301" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="画像を表示" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="9gz-Qy-emj">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.showImageInTheMenu" id="MU9-8E-lxQ"/>
+                    </connections>
+                </button>
             </subviews>
-            <point key="canvasLocation" x="571" y="1027"/>
+            <point key="canvasLocation" x="571" y="1038"/>
         </customView>
         <customView id="TpB-41-wwb" userLabel="Type">
             <rect key="frame" x="0.0" y="-5" width="460" height="218"/>
