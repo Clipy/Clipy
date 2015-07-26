@@ -11,12 +11,12 @@ import Cocoa
 class CPYClip: RLMObject {
 
     // MARK: - Properties
-    dynamic var dataPath    = ""
-    dynamic var title       = ""
-    dynamic var dataHash    = ""
-    dynamic var primaryType = ""
-    dynamic var updateTime  = 0
-    dynamic var thumbnailPath = ""
+    dynamic var dataPath        = ""
+    dynamic var title           = ""
+    dynamic var dataHash        = ""
+    dynamic var primaryType     = ""
+    dynamic var updateTime      = 0
+    dynamic var thumbnailPath   = ""
     
     // MARK: Primary Key
     override class func primaryKey() -> String {
