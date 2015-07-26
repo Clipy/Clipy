@@ -40,10 +40,6 @@ class CPYSnippetEditorWindowController: NSWindowController {
     // MARK: - View Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
-    
-        if let window = self.window {
-            window.center()
-        }
         
         if let results = CPYSnippetManager.sharedManager.loadFolders() {
             if results.count != 0 {
@@ -59,7 +55,6 @@ class CPYSnippetEditorWindowController: NSWindowController {
         self.window?.makeKeyAndOrderFront(self)
     }
 
-    
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
         let itemIdentifier = theItem.itemIdentifier
         
