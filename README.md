@@ -26,6 +26,7 @@ The source code is dependent on some libraries.
 * [Sparkle](https://github.com/sparkle-project/Sparkle)
 * [DBPrefsWindowController](https://github.com/kgn/DBPrefsWindowController)
 * [Realm](https://realm.io/)
+* [PINCache](https://github.com/pinterest/PINCache)
 
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )
