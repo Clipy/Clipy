@@ -21,7 +21,6 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
         defaultValues.updateValue(NSNumber(float: 0.75), forKey: kCPYPrefTimeIntervalKey)
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
-        defaultValues.updateValue(AppDelegate.defaultExcludeList(), forKey: kCPYPrefExcludeAppsKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefInputPasteCommandKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefReorderClipsAfterPasting)
         
@@ -39,7 +38,9 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowToolTipOnMenuItemKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowImageInTheMenuKey)
         defaultValues.updateValue(NSNumber(integer: 200), forKey: kCPYPrefMaxLengthOfToolTipKey)
-    
+        defaultValues.updateValue(NSNumber(integer: 100), forKey: kCPYPrefThumbnailWidthKey)
+        defaultValues.updateValue(NSNumber(integer: 32), forKey: kCPYPrefThumbnailHeightKey)
+        
         /* Updates */
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYEnableAutomaticCheckKey)
         defaultValues.updateValue(NSNumber(int: 86400), forKey: kCPYUpdateCheckIntervalKey)

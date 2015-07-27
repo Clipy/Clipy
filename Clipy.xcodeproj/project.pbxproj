@@ -16,6 +16,7 @@
 		FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */; };
 		FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */; };
 		FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */; };
+		FA8B8E681B65193F00AA65AF /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B8E671B65193F00AA65AF /* NSImage+Resize.swift */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
 		FAC43DDF1B35D8B100C06102 /* ClipyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */; };
@@ -87,6 +88,7 @@
 		FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		FA823D771B4042F200009614 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA823D7B1B40439500009614 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
+		FA8B8E671B65193F00AA65AF /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -221,6 +223,14 @@
 			path = TableViewCell;
 			sourceTree = "<group>";
 		};
+		FA8B8E661B65190800AA65AF /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FA8B8E671B65193F00AA65AF /* NSImage+Resize.swift */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
 		FAC43DBD1B35D8B100C06102 = {
 			isa = PBXGroup;
 			children = (
@@ -244,6 +254,7 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
+				FA8B8E661B65190800AA65AF /* Categories */,
 				FAC43E6E1B35F36E00C06102 /* Utility */,
 				FA3B96001B3FD47000B61FF0 /* Views */,
 				FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */,
@@ -542,6 +553,7 @@
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
+				FA8B8E681B65193F00AA65AF /* NSImage+Resize.swift in Sources */,
 				FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */,
 				FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */,
 				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,

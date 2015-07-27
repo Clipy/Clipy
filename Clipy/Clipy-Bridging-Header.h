@@ -11,6 +11,8 @@
 #import "DBPrefsWindowController.h"
 #import "ShortcutRecorder.h"
 #import "Realm.h"
+#import "PINCache.h"
 
 // Utilities
 #import "CPYUtilitiesObjC.h"
+

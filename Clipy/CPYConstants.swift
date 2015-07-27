@@ -39,7 +39,6 @@ internal let kCPYPrefMenuIconSizeKey                            = "kCPYPrefMenuI
 internal let kCPYPrefMaxHistorySizeKey                          = "kCPYPrefMaxHistorySizeKey"
 internal let kCPYPrefTimeIntervalKey                            = "kCPYPrefTimeIntervalKey"
 internal let kCPYPrefStoreTypesKey                              = "kCPYPrefStoreTypesKey"
-internal let kCPYPrefExcludeAppsKey                             = "kCPYPrefExcludeAppsKey"
 internal let kCPYPrefInputPasteCommandKey                       = "kCPYPrefInputPasteCommandKey"
 internal let kCPYPrefShowIconInTheMenuKey                       = "kCPYPrefShowIconInTheMenuKey"
 internal let kCPYPrefNumberOfItemsPlaceInlineKey                = "kCPYPrefNumberOfItemsPlaceInlineKey"
@@ -57,6 +56,8 @@ internal let kCPYPrefMaxLengthOfToolTipKey                      = "maxLengthOfTo
 internal let kCPYPrefLoginItemKey                               = "loginItem"
 internal let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginItem"
 internal let kCPYPrefShowStatusItemKey                          = "kCPYPrefShowStatusItemKey"
+internal let kCPYPrefThumbnailWidthKey                          = "thumbnailWidth"
+internal let kCPYPrefThumbnailHeightKey                         = "thumbnailHeight"
 
 // SnippetEditor
 internal let kCPYSnippetEditorWillCloseNotification             = "kCPYSnippetEditorWillCloseNotification"

@@ -203,41 +203,40 @@ class CPYMenuManager: NSObject {
         var subMenuIndex = (0 < menu.numberOfItems) ? menu.numberOfItems : 0
         subMenuIndex += numberOfItemsPlaceInLine
 
-        if let clips = CPYClipManager.sharedManager.loadSortedClips() {
-            let currentSize = Int(clips.count)
-            var i = 0
-            for clip in clips {
-                if (numberOfItemsPlaceInLine < 1) || (numberOfItemsPlaceInLine - 1) < i {
-                    if i == subMenuCount {
-                        let subMenuItem = self.makeSubmenuItemWithCount(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: numberOfItemsPlaceInsideFolder)
-                        menu.addItem(subMenuItem)
-                        listNumber = firstIndex
-                    }
-                    
-                    var indexOfSubMenu = subMenuIndex
-                    
-                    if let subMenu = menu.itemAtIndex(indexOfSubMenu)?.submenu {
-                        let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
-                        subMenu.addItem(menuItem)
-                        listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInsideFolder, start: firstIndex)
-                    }
-                    
-                } else {
+        let clips = CPYClipManager.sharedManager.loadSortedClips()
+        let currentSize = Int(clips.count)
+        var i = 0
+        for clip in clips {
+            if (numberOfItemsPlaceInLine < 1) || (numberOfItemsPlaceInLine - 1) < i {
+                if i == subMenuCount {
+                    let subMenuItem = self.makeSubmenuItemWithCount(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: numberOfItemsPlaceInsideFolder)
+                    menu.addItem(subMenuItem)
+                    listNumber = firstIndex
+                }
+                
+                var indexOfSubMenu = subMenuIndex
+                
+                if let subMenu = menu.itemAtIndex(indexOfSubMenu)?.submenu {
                     let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
-                    menu.addItem(menuItem)
-                    
-                    listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInLine, start: firstIndex)
+                    subMenu.addItem(menuItem)
+                    listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInsideFolder, start: firstIndex)
                 }
                 
-                i = i + 1
-                if i == (subMenuCount + numberOfItemsPlaceInsideFolder) {
-                    subMenuCount = subMenuCount + numberOfItemsPlaceInsideFolder
-                    subMenuIndex = subMenuIndex + 1
-                }
+            } else {
+                let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
+                menu.addItem(menuItem)
                 
-                if maxHistory <= i {
-                    break
-                }
+                listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInLine, start: firstIndex)
+            }
+            
+            i = i + 1
+            if i == (subMenuCount + numberOfItemsPlaceInsideFolder) {
+                subMenuCount = subMenuCount + numberOfItemsPlaceInsideFolder
+                subMenuIndex = subMenuIndex + 1
+            }
+            
+            if maxHistory <= i {
+                break
             }
         }
     }
@@ -245,7 +244,7 @@ class CPYMenuManager: NSObject {
     private func addSnippetsToMenu(menu: NSMenu, isBelowClips: Bool) {
         let snippetsManager = CPYSnippetManager.sharedManager
         let folders = CPYSnippetManager.sharedManager.loadSortedFolders()
-        if folders == nil || folders?.count < 1 {
+        if folders.count < 1 {
             return
         }
         
@@ -262,7 +261,7 @@ class CPYMenuManager: NSObject {
         var subMenuIndex = menu.numberOfItems - 1
         var firstIndex = self.firstIndexOfMenuItems()
         
-        for object in folders! {
+        for object in folders {
             let folder = object as! CPYFolder
             enabled = folder.enable
             if !enabled {
@@ -335,6 +334,14 @@ class CPYMenuManager: NSObject {
             menuItem.title = self.menuItemTitleWithString("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         } else if primaryPboardType == NSFilenamesPboardType && title == kEmptyString {
             menuItem.title = self.menuItemTitleWithString("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+        }
+        
+        if !clip.thumbnailPath.isEmpty && isShowImage {
+            PINCache.sharedCache().objectForKey(clip.thumbnailPath, block: { (cache, key, object) -> Void in
+                if let image = object as? NSImage {
+                    menuItem.image = image
+                }
+            })
         }
         
         return menuItem

@@ -14,7 +14,6 @@ class CPYClipManager: NSObject {
     static let sharedManager = CPYClipManager()
     
     private var storeTypes = [String: NSNumber]()
-    private var excludeIdentifiers = Set<String>()
     private var cachedChangeCount: NSInteger = 0
     private let copyLock = NSLock()
     // Timer
@@ -30,21 +29,13 @@ class CPYClipManager: NSObject {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         self.storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
-        
-        let excludeList = defaults.objectForKey(kCPYPrefExcludeAppsKey) as! [AnyObject]
-        if let set = self.getExcludeBundleIdentifiersFromList(excludeList) {
-            self.excludeIdentifiers = set
-        } else {
-            self.excludeIdentifiers = Set<String>()
-        }
-        
+
         // Timer
         self.startPasteboardObservingTimer()
         
         defaults.addObserver(self, forKeyPath: kCPYPrefMaxHistorySizeKey, options: NSKeyValueObservingOptions.New, context: nil)
         defaults.addObserver(self, forKeyPath: kCPYPrefTimeIntervalKey, options: NSKeyValueObservingOptions.New, context: nil)
         defaults.addObserver(self, forKeyPath: kCPYPrefStoreTypesKey, options: NSKeyValueObservingOptions.New, context: nil)
-        defaults.addObserver(self, forKeyPath: kCPYPrefExcludeAppsKey, options: NSKeyValueObservingOptions.New, context: nil)
     }
     
     deinit {
@@ -52,7 +43,6 @@ class CPYClipManager: NSObject {
         defaults.removeObserver(self, forKeyPath: kCPYPrefMaxHistorySizeKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefTimeIntervalKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefStoreTypesKey)
-        defaults.removeObserver(self, forKeyPath: kCPYPrefExcludeAppsKey)
         if self.pasteboardObservingTimer != nil && self.pasteboardObservingTimer!.valid {
             self.pasteboardObservingTimer?.invalidate()
         }
@@ -67,55 +57,64 @@ class CPYClipManager: NSObject {
         } else if keyPath == kCPYPrefStoreTypesKey {
             let defaults = NSUserDefaults.standardUserDefaults()
             self.storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
-        } else if keyPath == kCPYPrefExcludeAppsKey {
-            let excludeList = change["new"] as! [AnyObject]
-            if let set = self.getExcludeBundleIdentifiersFromList(excludeList) {
-                self.excludeIdentifiers = set
-            } else {
-                self.excludeIdentifiers = Set<String>()
-            }
         }
     }
     
     // MARK: - Public Methods
-    internal func loadClips() -> RLMResults? {
+    internal func loadClips() -> RLMResults {
         return CPYClip.allObjects()
     }
     
-    internal func loadSortedClips() -> RLMResults? {
+    internal func loadSortedClips() -> RLMResults {
         return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
     }
     
     internal func clearAll() {
-        if let results = self.loadClips() {
-            var paths = [String]()
-            for clip in results {
-                paths.append((clip as! CPYClip).dataPath)
-            }
-            for path in paths {
-                CPYUtilities.deleteData(path)
-            }
-            let realm = RLMRealm.defaultRealm()
-            realm.transactionWithBlock({ () -> Void in
-                realm.deleteObjects(results)
-            })
+        let results = self.loadClips()
+        var paths = [String]()
+        var imagePaths = [String]()
+        
+        for clipData in results {
+        
+            let clip = clipData as! CPYClip
+            paths.append(clip.dataPath)
             
-            NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
+            if !clip.thumbnailPath.isEmpty {
+                imagePaths.append(clip.thumbnailPath)
+            }
+            
         }
+        
+        for path in paths {
+            CPYUtilities.deleteData(path)
+        }
+        for path in imagePaths {
+            PINCache.sharedCache().removeObjectForKey(path)
+        }
+ 
+        let realm = RLMRealm.defaultRealm()
+        realm.transactionWithBlock({ () -> Void in
+            realm.deleteObjects(results)
+        })
+        
+        NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
     }
     
     internal func clipAtIndex(index: NSInteger) -> CPYClip {
-        return self.loadSortedClips()!.objectAtIndex(UInt(index)) as! CPYClip
+        return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
     }
     
     internal func removeClipAtIndex(index: NSInteger) -> Bool {
-        let clip = self.loadSortedClips()!.objectAtIndex(UInt(index)) as! CPYClip
+        let clip = self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
         return self.removeClip(clip)
     }
     
     internal func removeClip(clip: CPYClip) -> Bool {
         let path = clip.dataPath
         CPYUtilities.deleteData(path)
+        if !clip.thumbnailPath.isEmpty {
+            PINCache.sharedCache().removeObjectForKey(clip.thumbnailPath)
+        }
         
         let realm = RLMRealm.defaultRealm()
         realm.transactionWithBlock({ () -> Void in
@@ -175,10 +174,9 @@ class CPYClipManager: NSObject {
     }
     
     internal func copyClipToPasteboardAtIndex(index: NSInteger) {
-        if let result = self.loadSortedClips() {
-            if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
-                self.copyClipToPasteboard(clip)
-            }
+        let result = self.loadSortedClips()
+        if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
+            self.copyClipToPasteboard(clip)
         }
     }
     
@@ -194,10 +192,6 @@ class CPYClipManager: NSObject {
         }
         self.cachedChangeCount = pasteBoard.changeCount
         
-        if self.frontProcessIsInExcludeList() {
-            self.copyLock.unlock()
-            return
-        }
         if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
             
             let realm = RLMRealm.defaultRealm()
@@ -216,6 +210,20 @@ class CPYClipManager: NSObject {
             clip.dataHash = String(hash)
             clip.updateTime = unixTime
             clip.primaryType = clipData.primaryType ?? ""
+            
+            // Save thumbnail image
+            if clipData.primaryType == NSTIFFPboardType {
+                if let image = clipData.image {
+                    
+                    let thumbnailWidth = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailWidthKey)
+                    let thumbnailHeight = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailHeightKey)
+                    
+                    if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
+                        PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
+                        clip.thumbnailPath = String(unixTime)
+                    }
+                }
+            }
             
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
@@ -244,8 +252,9 @@ class CPYClipManager: NSObject {
             timeInterval = 1.0
             defaults.setFloat(1.0, forKey: kCPYPrefTimeIntervalKey)
         }
-        
-        self.pasteboardObservingTimer = NSTimer.scheduledTimerWithTimeInterval(NSTimeInterval(timeInterval), target: self, selector: "updateClips:", userInfo: nil, repeats: true)
+ 
+        self.pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: "updateClips:", userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(self.pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
     }
     
     internal func stopPasteboardObservingTimer() {
@@ -336,58 +345,41 @@ class CPYClipManager: NSObject {
         return false
     }
     
-    private func frontProcessIsInExcludeList() -> Bool {
-        var result = false
-        if self.excludeIdentifiers.isEmpty {
-            return result
-        }
-        
-        let apps = NSWorkspace.sharedWorkspace().runningApplications
-        for app in apps as! [NSRunningApplication] {
-            if let bundleIdentifier = app.bundleIdentifier {
-                if contains(self.excludeIdentifiers, bundleIdentifier) {
-                    result = true
-                }
-            }
-        }
-        
-        return result
-    }
-    
     private func trimHistorySize() {
         
         let realm = RLMRealm.defaultRealm()
-        if let clips = self.loadSortedClips() {
+        let clips = self.loadSortedClips()
             
-            let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
-            if maxHistorySize < Int(clips.count) {
-                
-                let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as! CPYClip
-                let lastUsedAt = lastClip.updateTime
-                if let results = self.loadClips()?.objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt)) {
-                    var paths = [String]()
-                    for clip in results {
-                        paths.append((clip as! CPYClip).dataPath)
+        let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
+        if maxHistorySize < Int(clips.count) {
+            
+            let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as! CPYClip
+            let lastUsedAt = lastClip.updateTime
+            if let results = self.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt)) {
+                var paths = [String]()
+                var imagePaths = [String]()
+                for clipData in results {
+                    
+                    let clip = clipData as! CPYClip
+                    paths.append(clip.dataPath)
+                    
+                    if !clip.thumbnailPath.isEmpty {
+                        imagePaths.append(clip.thumbnailPath)
                     }
-                    for path in paths {
-                        CPYUtilities.deleteData(path)
-                    }
-                    realm.transactionWithBlock({ () -> Void in
-                        realm.deleteObjects(results)
-                    })
+                    
                 }
+                for path in paths {
+                    CPYUtilities.deleteData(path)
+                }
+                for path in imagePaths {
+                    PINCache.sharedCache().removeObjectForKey(path)
+                }
+                realm.transactionWithBlock({ () -> Void in
+                    realm.deleteObjects(results)
+                })
             }
-            
         }
-    }
     
-    private func getExcludeBundleIdentifiersFromList(excludeList: [AnyObject]) -> Set<String>? {
-        if excludeList.isEmpty {
-            return nil
-        }
-        
-        let values = (excludeList as NSArray).valueForKey(kCPYBundleIdentifierKey) as! [String]
-        return Set(values)
     }
     
 }

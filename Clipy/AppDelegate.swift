@@ -24,6 +24,9 @@ class AppDelegate: NSObject {
     private func initController() {
         CPYUtilities.registerUserDefaultKeys()
         
+        // Migrate Realm
+        RLMRealm.setSchemaVersion(1, forRealmAtPath: RLMRealm.defaultRealmPath()) { (migrate, oldSchemaVersion) -> Void in }
+
         // Show menubar icon
         CPYMenuManager.sharedManager
         
@@ -49,22 +52,15 @@ class AppDelegate: NSObject {
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         let action = menuItem.action
         if action == Selector("clearAllHistory") {
-            if let numberOfClips = CPYClipManager.sharedManager.loadClips()?.count {
-                if numberOfClips == 0 {
-                    return false
-                }
+            let numberOfClips = CPYClipManager.sharedManager.loadClips().count
+            if numberOfClips == 0 {
+                return false
             }
         }
         return true
     }
     
     // MARK: - Class Methods
-    static func defaultExcludeList() -> [AnyObject] {
-        let appInfo = [kCPYBundleIdentifierKey: "org.openoffice.script", kCPYNameKey: "OpenOffice.org"]
-        let excludeList = [appInfo]
-        return excludeList
-    }
-    
     static func storeTypesDictinary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
         for name in CPYClipData.availableTypesString() {

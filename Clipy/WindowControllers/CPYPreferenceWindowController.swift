@@ -22,15 +22,6 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
     @IBOutlet weak var historyShortcutRecorder: SRRecorderControl!
     @IBOutlet weak var snippetsShortcutRecorder: SRRecorderControl!
     private var shortcutRecorders = [SRRecorderControl]()
-    // Exclude List
-    @IBOutlet var excludeListPanel: NSPanel!
-    @IBOutlet weak var excludeTableView: NSTableView! {
-        didSet {
-            self.excludeTableView.setDelegate(self)
-            self.excludeTableView.setDataSource(self)
-        }
-    }
-    internal var excludeList = [AnyObject]()
     internal var storeTypes: NSMutableDictionary!
     
     // MARK: - Init
@@ -52,7 +43,6 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
             window.releasedWhenClosed = false
         }
         self.prepareHotKeys()
-        self.excludeList = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefExcludeAppsKey) as! [AnyObject]
     }
     
     // MARK: - Override Methods
@@ -81,88 +71,7 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         self.crossFade = true
         self.shiftSlowsAnimation = false
     }
- 
-    // MARK: - Exclude List
-    @IBAction func openExcludeOptions(sender: AnyObject) {
-        NSApp.beginSheet(self.excludeListPanel, modalForWindow: self.window!, modalDelegate: self, didEndSelector: Selector("excludeListPanelDidEnd:returnCode:"), contextInfo: nil)
-    }
-    
-    internal func excludeListPanelDidEnd(sheet: NSPanel , returnCode: NSInteger) {
-        sheet.orderOut(self)
-    }
-    
-    @IBAction func addToExcludeList(sender: AnyObject) {
-        let openPanel = NSOpenPanel()
-        openPanel.allowedFileTypes = ["app"]
-        openPanel.allowsMultipleSelection = true
-        openPanel.resolvesAliases = true
-        openPanel.prompt = "Add"
-        
-        openPanel.beginSheetModalForWindow(self.excludeListPanel, completionHandler: { (result) -> Void in
-            if result == NSOKButton {
-                self.addToExcludeListPanelDidEnd(openPanel)
-            }
-            openPanel.orderOut(self)
-        })
-    }
-    
-    internal func addToExcludeListPanelDidEnd(sheet: NSOpenPanel) {
-        
-        var appInfo = [String: String]()
-        
-        for url in sheet.URLs {
-            if let bundle = NSBundle(URL: url as! NSURL), infoDict = bundle.infoDictionary {
-                
-                if let bundleIdentifier = infoDict[kCFBundleIdentifierKey as NSString] as? String {
-                    var appName: AnyObject? = infoDict[kCFBundleNameKey as NSString]
-                    if appName == nil {
-                        appName = infoDict[kCFBundleExecutableKey as NSString]
-                        if appName == nil {
-                            continue
-                        }
-                    }
-                    appInfo = [kCPYBundleIdentifierKey: bundleIdentifier, kCPYNameKey: appName as! String]
-                    self.addAppInfoToExcludeList(appInfo)
-                }
-            }
-        }
-    }
-    
-    @IBAction func removeToExcludeList(sender: AnyObject) {
-        let selectedRowIndexes = self.excludeTableView.selectedRowIndexes
-        if selectedRowIndexes.count == 0 {
-            return
-        }
-        self.excludeList.removeAtIndex(selectedRowIndexes.firstIndex)
-        self.excludeTableView.reloadData()
-    }
-    
-    @IBAction func doneExcludeListPanel(sender: AnyObject) {
-        NSApp.endSheet(self.excludeListPanel, returnCode: NSOKButton)
-        NSUserDefaults.standardUserDefaults().setObject(self.excludeList, forKey: kCPYPrefExcludeAppsKey)
-        NSUserDefaults.standardUserDefaults().synchronize()
-    }
-    
-    @IBAction func cancelExcludeListPanel(sender: AnyObject) {
-        NSApp.endSheet(self.excludeListPanel, returnCode: NSCancelButton)
-        self.excludeList = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefExcludeAppsKey) as! [AnyObject]
-        self.excludeTableView.reloadData()
-    }
-    
-    private func addAppInfoToExcludeList(appInfo: [String: String]) {
-        let excludeApps = (self.excludeList as! [[String: String]])
-        var isAlreadyExclude = false
-        for alreadyAppInfo in excludeApps {
-            if alreadyAppInfo[kCPYBundleIdentifierKey] == appInfo[kCPYBundleIdentifierKey] {
-                isAlreadyExclude = true
-            }
-        }
-        if !isAlreadyExclude {
-            self.excludeList.append(appInfo)
-            self.excludeTableView.reloadData()
-        }
-    }
-    
+  
     // MARK: - Private Methods
     private func prepareHotKeys() {
         self.shortcutRecorders = [self.mainShortcutRecorder, self.historyShortcutRecorder, self.snippetsShortcutRecorder]
@@ -228,34 +137,4 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         NSApp.deactivate()
     }
     
-}
-
-// MARK: - NSTableView DataSource
-extension CPYPreferenceWindowController: NSTableViewDataSource {
-    
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return self.excludeList.count
-    }
-    
-    func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
-        if tableColumn?.identifier == "ImageAndTextCellColumn" {
-            if let appInfo = self.excludeList[row] as? [String: String] {
-                if let appName = appInfo[kCPYNameKey] {
-                    return appName
-                }
-            }
-        }
-        return ""
-    }
-}
-
-// MARK: - NSTableView Delegate
-extension CPYPreferenceWindowController: NSTableViewDelegate {
-    func tableView(tableView: NSTableView, willDisplayCell cell: AnyObject, forTableColumn tableColumn: NSTableColumn?, row: Int) {
-        (cell as! CPYImageAndTextCell).cellImageType = .Application
-    }
-    
-    func tableView(tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-        return true
-    }
 }
