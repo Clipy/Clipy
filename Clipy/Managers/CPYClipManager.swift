@@ -204,8 +204,6 @@ class CPYClipManager: NSObject {
             let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
             let title = clipData.stringValue
             
-            println(path)
-            
             let clip = CPYClip()
             clip.dataPath = path
             clip.title = title

@@ -12,6 +12,13 @@ class CPYHistoryManager: NSObject {
 
     // MARK: - Properties
     static let sharedManager = CPYHistoryManager()
+    private var historyManageTimer: NSTimer!
+    
+    // MARK: - Init
+    override init() {
+        super.init()
+        self.startHistoryManageTimer()
+    }
     
     // MARK: Public Methods
     internal func trimHistorySize() {
@@ -53,7 +60,38 @@ class CPYHistoryManager: NSObject {
     }
     
     internal func cleanHistory() {
-        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+            let allClips = CPYClipManager.sharedManager.loadClips()
+            
+            let fileManager = NSFileManager.defaultManager()
+            var error: NSError?
+            if let dataPathList = fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder(), error: &error) as? [String] {
+                for path in dataPathList {
+                    var isExist = false
+                    for clipData in allClips {
+                        if let clip = clipData as? CPYClip where !clip.invalidated {
+                            if let clipPath = clip.dataPath.componentsSeparatedByString("/").last where clipPath == path {
+                                isExist = true
+                                break
+                            }
+                        }
+                    }
+                    // Delete Data
+                    if !isExist {
+                        CPYUtilities.deleteData(CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent(path))
+                    }
+                }
+            }
+        })
+
+    }
+    
+    // MARK: - Private Methods
+    private func startHistoryManageTimer() {
+        // Clean clip data history every 12 hour
+        self.historyManageTimer = NSTimer(timeInterval: 60 * 60 * 12, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(self.historyManageTimer, forMode: NSRunLoopCommonModes)
+        self.historyManageTimer.fire()
     }
     
 }
