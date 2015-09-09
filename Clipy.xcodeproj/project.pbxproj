@@ -15,6 +15,7 @@
 		FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */; };
 		FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */; };
 		FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */; };
+		FA71E3F81BA0A66300369F92 /* CPYHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */; };
 		FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */; };
 		FA8B8E681B65193F00AA65AF /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B8E671B65193F00AA65AF /* NSImage+Resize.swift */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
@@ -86,6 +87,7 @@
 		FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolderTableView.swift; sourceTree = "<group>"; };
 		FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetTableView.swift; sourceTree = "<group>"; };
 		FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHistoryManager.swift; sourceTree = "<group>"; };
 		FA823D771B4042F200009614 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA823D7B1B40439500009614 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA8B8E671B65193F00AA65AF /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 				FAC43E681B35EC6200C06102 /* CPYClipManager.swift */,
 				FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */,
 				FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */,
+				FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -549,6 +552,7 @@
 				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
 				FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */,
+				FA71E3F81BA0A66300369F92 /* CPYHistoryManager.swift in Sources */,
 				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,

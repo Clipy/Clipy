@@ -51,7 +51,7 @@ class CPYClipManager: NSObject {
     // MARK: - KVO
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefMaxHistorySizeKey {
-            self.trimHistorySize()
+            CPYHistoryManager.sharedManager.trimHistorySize()
         } else if keyPath == kCPYPrefTimeIntervalKey {
             self.startPasteboardObservingTimer()
         } else if keyPath == kCPYPrefStoreTypesKey {
@@ -204,6 +204,8 @@ class CPYClipManager: NSObject {
             let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
             let title = clipData.stringValue
             
+            println(path)
+            
             let clip = CPYClip()
             clip.dataPath = path
             clip.title = title
@@ -234,7 +236,7 @@ class CPYClipManager: NSObject {
                 }
             }
             
-            self.trimHistorySize()
+            CPYHistoryManager.sharedManager.trimHistorySize()
             
             NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
         }
@@ -343,43 +345,6 @@ class CPYClipManager: NSObject {
             }
         }
         return false
-    }
-    
-    private func trimHistorySize() {
-        
-        let realm = RLMRealm.defaultRealm()
-        let clips = self.loadSortedClips()
-            
-        let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
-        if maxHistorySize < Int(clips.count) {
-            
-            let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as! CPYClip
-            let lastUsedAt = lastClip.updateTime
-            if let results = self.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt)) {
-                var paths = [String]()
-                var imagePaths = [String]()
-                for clipData in results {
-                    
-                    let clip = clipData as! CPYClip
-                    paths.append(clip.dataPath)
-                    
-                    if !clip.thumbnailPath.isEmpty {
-                        imagePaths.append(clip.thumbnailPath)
-                    }
-                    
-                }
-                for path in paths {
-                    CPYUtilities.deleteData(path)
-                }
-                for path in imagePaths {
-                    PINCache.sharedCache().removeObjectForKey(path)
-                }
-                realm.transactionWithBlock({ () -> Void in
-                    realm.deleteObjects(results)
-                })
-            }
-        }
-    
     }
     
 }
