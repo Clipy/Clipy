@@ -161,27 +161,26 @@ class CPYSnippetManager: NSObject {
         }
         
         var snippets = [CPYSnippet]()
-        if let reuslts = folder!.snippets.sortedResultsUsingProperty("index", ascending: true) {
-            var index = 0
-            var updateSnippet: CPYSnippet!
-            for snippet in reuslts {
-                if index != selectIndexes.firstIndex {
-                    snippets.append(snippet as! CPYSnippet)
-                } else {
-                    updateSnippet = snippet as! CPYSnippet
-                }
-                index = index + 1
+        let reuslts = folder!.snippets.sortedResultsUsingProperty("index", ascending: true)
+        var index = 0
+        var updateSnippet: CPYSnippet!
+        for snippet in reuslts {
+            if index != selectIndexes.firstIndex {
+                snippets.append(snippet as! CPYSnippet)
+            } else {
+                updateSnippet = snippet as! CPYSnippet
             }
-            snippets.insert(updateSnippet, atIndex: toIndex)
-            
-            index = 0
-            for snippet in snippets {
-                let realm = RLMRealm.defaultRealm()
-                realm.transactionWithBlock({ () -> Void in
-                    snippet.index = index
-                })
-                index = index + 1
-            }
+            index = index + 1
+        }
+        snippets.insert(updateSnippet, atIndex: toIndex)
+        
+        index = 0
+        for snippet in snippets {
+            let realm = RLMRealm.defaultRealm()
+            realm.transactionWithBlock({ () -> Void in
+                snippet.index = index
+            })
+            index = index + 1
         }
         
     }

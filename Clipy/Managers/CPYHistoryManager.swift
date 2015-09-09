@@ -31,29 +31,27 @@ class CPYHistoryManager: NSObject {
                 if let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as? CPYClip where !lastClip.invalidated {
                     
                     let lastUsedAt = lastClip.updateTime
-                    if let results = CPYClipManager.sharedManager.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt)) {
-                        var paths = [String]()
-                        var imagePaths = [String]()
-                        for clipData in results {
-                            if let clip = clipData as? CPYClip where !clip.invalidated {
-                                paths.append(clip.dataPath)
-                                if !clip.thumbnailPath.isEmpty {
-                                    imagePaths.append(clip.thumbnailPath)
-                                }
+                    let results = CPYClipManager.sharedManager.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt))
+                    var paths = [String]()
+                    var imagePaths = [String]()
+                    for clipData in results {
+                        if let clip = clipData as? CPYClip where !clip.invalidated {
+                            paths.append(clip.dataPath)
+                            if !clip.thumbnailPath.isEmpty {
+                                imagePaths.append(clip.thumbnailPath)
                             }
                         }
-                        
-                        for path in paths {
-                            CPYUtilities.deleteData(path)
-                        }
-                        for path in imagePaths {
-                            PINCache.sharedCache().removeObjectForKey(path)
-                        }
-                        realm.transactionWithBlock({ () -> Void in
-                            realm.deleteObjects(results)
-                        })
                     }
                     
+                    for path in paths {
+                        CPYUtilities.deleteData(path)
+                    }
+                    for path in imagePaths {
+                        PINCache.sharedCache().removeObjectForKey(path)
+                    }
+                    realm.transactionWithBlock({ () -> Void in
+                        realm.deleteObjects(results)
+                    })
                 }
             }
         })
