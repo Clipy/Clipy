@@ -21,7 +21,7 @@ class CPYHistoryManager: NSObject {
     }
     
     // MARK: Public Methods
-    internal func trimHistorySize() {
+    func trimHistorySize() {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
             let realm = RLMRealm.defaultRealm()
             let clips = CPYClipManager.sharedManager.loadSortedClips()
@@ -57,7 +57,7 @@ class CPYHistoryManager: NSObject {
         })
     }
     
-    internal func cleanHistory() {
+    func cleanHistory() {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
             let allClips = CPYClipManager.sharedManager.loadClips()
             

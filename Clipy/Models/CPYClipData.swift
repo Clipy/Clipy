@@ -19,15 +19,15 @@ class CPYClipData: NSObject {
     private let kURLsKey        = "URL"
     private let kImageKey       = "image"
     
-    internal var types          = [String]()
-    internal var fileNames      = [String]()
-    internal var URLs           = [String]()
-    internal var stringValue    = ""
-    internal var RTFData:   NSData?
-    internal var PDF:       NSData?
-    internal var image:     NSImage?
+    var types          = [String]()
+    var fileNames      = [String]()
+    var URLs           = [String]()
+    var stringValue    = ""
+    var RTFData:   NSData?
+    var PDF:       NSData?
+    var image:     NSImage?
     
-    internal override var hash: Int {
+    override var hash: Int {
         var hash = 0
         hash = (self.types as NSArray).componentsJoinedByString("").hash
         if self.image != nil {
@@ -51,7 +51,7 @@ class CPYClipData: NSObject {
         }
         return hash
     }
-    internal var primaryType: String? {
+    var primaryType: String? {
         if self.types.count <= 0 {
             return nil
         }

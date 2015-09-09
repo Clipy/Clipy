@@ -61,15 +61,15 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - Public Methods
-    internal func loadClips() -> RLMResults {
+    func loadClips() -> RLMResults {
         return CPYClip.allObjects()
     }
     
-    internal func loadSortedClips() -> RLMResults {
+    func loadSortedClips() -> RLMResults {
         return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
     }
     
-    internal func clearAll() {
+    func clearAll() {
         let results = self.loadClips()
         var imagePaths = [String]()
         
@@ -94,16 +94,16 @@ class CPYClipManager: NSObject {
         NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
     }
     
-    internal func clipAtIndex(index: NSInteger) -> CPYClip {
+    func clipAtIndex(index: NSInteger) -> CPYClip {
         return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
     }
     
-    internal func removeClipAtIndex(index: NSInteger) -> Bool {
+    func removeClipAtIndex(index: NSInteger) -> Bool {
         let clip = self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
         return self.removeClip(clip)
     }
     
-    internal func removeClip(clip: CPYClip) -> Bool {
+    func removeClip(clip: CPYClip) -> Bool {
         let path = clip.dataPath
         CPYUtilities.deleteData(path)
         if !clip.thumbnailPath.isEmpty {
@@ -120,13 +120,13 @@ class CPYClipManager: NSObject {
         return true
     }
     
-    internal func copyStringToPasteboard(aString: String) {
+    func copyStringToPasteboard(aString: String) {
         let pboard = NSPasteboard.generalPasteboard()
         pboard.declareTypes([NSStringPboardType], owner: self)
         pboard.setString(aString, forType: NSStringPboardType)
     }
     
-    internal func copyClipToPasteboard(clip: CPYClip) {
+    func copyClipToPasteboard(clip: CPYClip) {
         
         if let loadData = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
             
@@ -167,7 +167,7 @@ class CPYClipManager: NSObject {
         
     }
     
-    internal func copyClipToPasteboardAtIndex(index: NSInteger) {
+    func copyClipToPasteboardAtIndex(index: NSInteger) {
         let result = self.loadSortedClips()
         if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
             self.copyClipToPasteboard(clip)
@@ -175,7 +175,7 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - Clip Methods
-    internal func updateClips(sender: NSTimer) {
+    func updateClips(sender: NSTimer) {
         
         self.copyLock.lock()
         
@@ -251,7 +251,7 @@ class CPYClipManager: NSObject {
         NSRunLoop.currentRunLoop().addTimer(self.pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
     }
     
-    internal func stopPasteboardObservingTimer() {
+    func stopPasteboardObservingTimer() {
         if self.pasteboardObservingTimer != nil && self.pasteboardObservingTimer!.valid {
             self.pasteboardObservingTimer?.invalidate()
         }

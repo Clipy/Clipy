@@ -17,7 +17,7 @@ import Cocoa
 class CPYFolderTableView: NSTableView {
     
     // MARK: - Properties
-    internal weak var tableDelegate: CPYFolderTableViewDelegate?
+    weak var tableDelegate: CPYFolderTableViewDelegate?
     private var folderIcon: NSImage?
     
     // MARK - Init

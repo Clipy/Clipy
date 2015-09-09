@@ -71,17 +71,17 @@ class AppDelegate: NSObject {
     
     
     // MARK: - Menu Actions
-    internal func showPreferenceWindow() {
+    func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
         CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
     
-    internal func showSnippetEditorWindow() {
+    func showSnippetEditorWindow() {
         NSApp.activateIgnoringOtherApps(true)
         self.snippetEditorController.showWindow(self)
     }
     
-    internal func clearAllHistory() {
+    func clearAllHistory() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         let isShowAlert = defaults.boolForKey(kCPYPrefShowAlertBeforeClearHistoryKey)
@@ -109,12 +109,12 @@ class AppDelegate: NSObject {
         CPYClipManager.sharedManager.clearAll()
     }
     
-    internal func selectClipMenuItem(sender: NSMenuItem) {
+    func selectClipMenuItem(sender: NSMenuItem) {
         CPYClipManager.sharedManager.copyClipToPasteboardAtIndex(sender.tag)
         CPYUtilities.paste()
     }
     
-    internal func selectSnippetMenuItem(sender: AnyObject) {
+    func selectSnippetMenuItem(sender: AnyObject) {
         let snippet = sender.representedObject
         if snippet == nil {
             NSBeep()

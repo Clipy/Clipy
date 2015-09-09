@@ -17,7 +17,7 @@ import Cocoa
 class CPYSnippetTableView: NSTableView {
 
     // MARK: - Properties
-    internal weak var tableDelegate: CPYSnippetTableViewDelegate?
+    weak var tableDelegate: CPYSnippetTableViewDelegate?
     private var snippetFolder: CPYFolder?
     private var fileIcon: NSImage?
     
@@ -36,7 +36,7 @@ class CPYSnippetTableView: NSTableView {
     }
     
     // MARK: - Self Methods
-    internal func setFolder(folder: CPYFolder?) {
+    func setFolder(folder: CPYFolder?) {
         self.snippetFolder = folder
         self.reloadData()
     }

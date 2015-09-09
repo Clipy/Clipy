@@ -13,7 +13,7 @@ class CPYHotKeyManager: NSObject {
     // MARK: - Properties
     static let sharedManager = CPYHotKeyManager()
     
-    internal var hotkeyMap: [String: AnyObject] {
+    var hotkeyMap: [String: AnyObject] {
         
         var map = [String: AnyObject]()
         var dict = [String: AnyObject]()
@@ -87,7 +87,7 @@ class CPYHotKeyManager: NSObject {
     }
     
     // MARK: - Public Methods
-    internal func registerHotKeys() {
+    func registerHotKeys() {
         let hotKeyCenter = PTHotKeyCenter.sharedCenter()
         
         let hotKeyCombs = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
@@ -111,7 +111,7 @@ class CPYHotKeyManager: NSObject {
         }
     }
     
-    internal func unRegisterHotKeys() {
+    func unRegisterHotKeys() {
         let hotKeyCenter = PTHotKeyCenter.sharedCenter()
         for hotKey in hotKeyCenter.allHotKeys() as! [PTHotKey] {
             hotKeyCenter.unregisterHotKey(hotKey)
@@ -119,15 +119,15 @@ class CPYHotKeyManager: NSObject {
     }
     
     // MARK: - HotKey Action Methods
-    internal func popUpClipMenu(sender: AnyObject) {
+    func popUpClipMenu(sender: AnyObject) {
         CPYMenuManager.sharedManager.popUpMenuForType(.Main)
     }
     
-    internal func popUpHistoryMenu(sender: AnyObject) {
+    func popUpHistoryMenu(sender: AnyObject) {
         CPYMenuManager.sharedManager.popUpMenuForType(.History)
     }
     
-    internal func popUpSnippetsMenu(sender: AnyObject) {
+    func popUpSnippetsMenu(sender: AnyObject) {
         CPYMenuManager.sharedManager.popUpMenuForType(.Snippets)
     }
     

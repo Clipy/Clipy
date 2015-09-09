@@ -22,7 +22,7 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
     @IBOutlet weak var historyShortcutRecorder: SRRecorderControl!
     @IBOutlet weak var snippetsShortcutRecorder: SRRecorderControl!
     private var shortcutRecorders = [SRRecorderControl]()
-    internal var storeTypes: NSMutableDictionary!
+    var storeTypes: NSMutableDictionary!
     
     // MARK: - Init
     override init(window: NSWindow?) {

@@ -19,7 +19,7 @@ private let kTextHeightAdjust	= 0
 class CPYImageAndTextCell: NSTextFieldCell {
 
     // MARK: - Properties
-    internal var cellImageType: ImageType = .Folder
+    var cellImageType: ImageType = .Folder
     enum ImageType {
         case Folder, File, Application
     }

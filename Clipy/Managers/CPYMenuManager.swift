@@ -8,7 +8,7 @@
 
 import Cocoa
 
-internal enum PopUpMenuType {
+enum PopUpMenuType {
     case Main, History, Snippets
 }
 
@@ -21,8 +21,8 @@ class CPYMenuManager: NSObject {
     private var statusItem: NSStatusItem?
     private var highlightedMenuItem: NSMenuItem?
     
-    internal var folderIcon = NSImage(named: "icon_folder")
-    internal var snippetIcon = NSImage(named: "icon_text")
+    var folderIcon = NSImage(named: "icon_folder")
+    var snippetIcon = NSImage(named: "icon_text")
 
     private let kMaxKeyEquivalents = 10
     private let SHORTEN_SYMBOL = "..."
@@ -82,20 +82,20 @@ class CPYMenuManager: NSObject {
     }
     
     // MARK: - Public Methods
-    internal func createStatusItem() {
+    func createStatusItem() {
         if self.statusItem == nil {
             self.changeStatusItem()
         }
     }
     
-    internal func updateStatusItem() {
+    func updateStatusItem() {
         if self.statusItem != nil {
             self.createMenu()
             self.statusItem?.menu = self.clipMenu
         }
     }
     
-    internal func popUpMenuForType(type: PopUpMenuType) {
+    func popUpMenuForType(type: PopUpMenuType) {
         var menu: NSMenu?
         switch type {
         case .Main:
@@ -463,7 +463,7 @@ class CPYMenuManager: NSObject {
     }
     
     // MARK: - NSNotificationCenter Methods
-    internal func handleSnippetEditorWillClose(notification: NSNotification) {
+    func handleSnippetEditorWillClose(notification: NSNotification) {
         self.updateStatusItem()
     }
 
