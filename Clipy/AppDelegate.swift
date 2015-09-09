@@ -154,6 +154,7 @@ class AppDelegate: NSObject {
     private func toggleAddingToLoginItems(enable: Bool) {
         let appPath = NSBundle.mainBundle().bundlePath
         if enable {
+            NMLoginItems.removePathFromLoginItems(appPath)
             NMLoginItems.addPathToLoginItems(appPath, hide: false)
         } else {
             NMLoginItems.removePathFromLoginItems(appPath)
