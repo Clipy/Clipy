@@ -74,7 +74,6 @@ class CPYHistoryManager: NSObject {
                             }
                         }
                     }
-                    // Delete Data
                     if !isExist {
                         CPYUtilities.deleteData(CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent(path))
                     }

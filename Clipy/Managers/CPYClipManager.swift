@@ -71,23 +71,15 @@ class CPYClipManager: NSObject {
     
     internal func clearAll() {
         let results = self.loadClips()
-        var paths = [String]()
         var imagePaths = [String]()
         
         for clipData in results {
-        
             let clip = clipData as! CPYClip
-            paths.append(clip.dataPath)
-            
             if !clip.thumbnailPath.isEmpty {
                 imagePaths.append(clip.thumbnailPath)
             }
-            
         }
         
-        for path in paths {
-            CPYUtilities.deleteData(path)
-        }
         for path in imagePaths {
             PINCache.sharedCache().removeObjectForKey(path)
         }
@@ -96,6 +88,8 @@ class CPYClipManager: NSObject {
         realm.transactionWithBlock({ () -> Void in
             realm.deleteObjects(results)
         })
+        
+        CPYHistoryManager.sharedManager.cleanHistory()
         
         NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
     }
