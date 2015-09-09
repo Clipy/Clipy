@@ -169,7 +169,7 @@ class CPYClipManager: NSObject {
     
     func copyClipToPasteboardAtIndex(index: NSInteger) {
         let result = self.loadSortedClips()
-        if let clip = result.objectAtIndex(UInt(index)) as? CPYClip {
+        if let clip = result.objectAtIndex(UInt(index)) as? CPYClip where !clip.invalidated {
             self.copyClipToPasteboard(clip)
         }
     }
