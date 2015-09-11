@@ -128,43 +128,47 @@ class CPYClipManager: NSObject {
     
     func copyClipToPasteboard(clip: CPYClip) {
         
-        if let loadData = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
-            
-            let types = loadData.types
-            
-            let pboard = NSPasteboard.generalPasteboard()
-            pboard.declareTypes(types, owner: self)
-            
-            for pbType in types {
-                if pbType == NSStringPboardType {
-                    let pbString = loadData.stringValue
-                    pboard.setString(pbString, forType: NSStringPboardType)
-                } else if pbType == NSRTFDPboardType {
-                    let rtfData = loadData.RTFData
-                    pboard.setData(rtfData!, forType: NSRTFDPboardType)
-                } else if pbType == NSRTFPboardType {
-                    let rtfData = loadData.RTFData
-                    pboard.setData(rtfData!, forType: NSRTFPboardType)
-                } else if pbType == NSPDFPboardType {
-                    let pdfData = loadData.PDF
-                    if let pdfRep = NSPDFImageRep(data: pdfData!) {
-                        pboard.setData(pdfRep.PDFRepresentation, forType: NSPDFPboardType)
-                    }
-                } else if pbType == NSFilenamesPboardType {
-                    let fileNames = loadData.fileNames
-                    pboard.setPropertyList(fileNames, forType: NSFilenamesPboardType)
-                } else if pbType == NSURLPboardType {
-                    let url = loadData.URLs
-                    pboard.setPropertyList(url, forType: NSURLPboardType)
-                } else if pbType == NSTIFFPboardType {
-                    let image = loadData.image
-                    if image != nil {
-                        pboard.setData(image!.TIFFRepresentation!, forType: NSTIFFPboardType)
+        autoreleasepool { () -> () in
+        
+            if let loadData = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
+                
+                let types = loadData.types
+                
+                let pboard = NSPasteboard.generalPasteboard()
+                pboard.declareTypes(types, owner: self)
+                
+                for pbType in types {
+                    if pbType == NSStringPboardType {
+                        let pbString = loadData.stringValue
+                        pboard.setString(pbString, forType: NSStringPboardType)
+                    } else if pbType == NSRTFDPboardType {
+                        let rtfData = loadData.RTFData
+                        pboard.setData(rtfData!, forType: NSRTFDPboardType)
+                    } else if pbType == NSRTFPboardType {
+                        let rtfData = loadData.RTFData
+                        pboard.setData(rtfData!, forType: NSRTFPboardType)
+                    } else if pbType == NSPDFPboardType {
+                        let pdfData = loadData.PDF
+                        if let pdfRep = NSPDFImageRep(data: pdfData!) {
+                            pboard.setData(pdfRep.PDFRepresentation, forType: NSPDFPboardType)
+                        }
+                    } else if pbType == NSFilenamesPboardType {
+                        let fileNames = loadData.fileNames
+                        pboard.setPropertyList(fileNames, forType: NSFilenamesPboardType)
+                    } else if pbType == NSURLPboardType {
+                        let url = loadData.URLs
+                        pboard.setPropertyList(url, forType: NSURLPboardType)
+                    } else if pbType == NSTIFFPboardType {
+                        let image = loadData.image
+                        if image != nil {
+                            pboard.setData(image!.TIFFRepresentation!, forType: NSTIFFPboardType)
+                        }
                     }
                 }
             }
+    
         }
-        
+
     }
     
     func copyClipToPasteboardAtIndex(index: NSInteger) {
@@ -184,7 +188,7 @@ class CPYClipManager: NSObject {
             }
             self.cachedChangeCount = pasteBoard.changeCount
     
-            dispatch_async(self.mainQueue, { () -> Void in
+            dispatch_async(self.mainQueue, { [unowned self] () -> Void in
                 self.createClip()
             })
             
@@ -192,54 +196,57 @@ class CPYClipManager: NSObject {
     }
     
     func createClip() {
-        let pasteBoard = NSPasteboard.generalPasteboard()
-        if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
-            
-            let realm = RLMRealm.defaultRealm()
-            let hash = clipData.hash
-            let clips = self.loadClips()
-            
-            // DB格納
-            let unixTime = Int(floor(NSDate().timeIntervalSince1970))
-            let unixTimeString = String("\(unixTime)")
-            let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
-            let title = clipData.stringValue
-            
-            let clip = CPYClip()
-            clip.dataPath = path
-            clip.title = title
-            clip.dataHash = String(hash)
-            clip.updateTime = unixTime
-            clip.primaryType = clipData.primaryType ?? ""
-            
-            // Save thumbnail image
-            if clipData.primaryType == NSTIFFPboardType {
-                if let image = clipData.image {
-                    
-                    let thumbnailWidth = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailWidthKey)
-                    let thumbnailHeight = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailHeightKey)
-                    
-                    if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
-                        PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
-                        clip.thumbnailPath = String(unixTime)
+        autoreleasepool { () -> () in
+        
+            let pasteBoard = NSPasteboard.generalPasteboard()
+            if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
+                
+                let realm = RLMRealm.defaultRealm()
+                let hash = clipData.hash
+                let clips = self.loadClips()
+                
+                // DB格納
+                let unixTime = Int(floor(NSDate().timeIntervalSince1970))
+                let unixTimeString = String("\(unixTime)")
+                let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
+                let title = clipData.stringValue
+                
+                let clip = CPYClip()
+                clip.dataPath = path
+                clip.title = title
+                clip.dataHash = String(hash)
+                clip.updateTime = unixTime
+                clip.primaryType = clipData.primaryType ?? ""
+                
+                // Save thumbnail image
+                if clipData.primaryType == NSTIFFPboardType {
+                    if let image = clipData.image {
+                        
+                        let thumbnailWidth = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailWidthKey)
+                        let thumbnailHeight = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailHeightKey)
+                        
+                        if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
+                            PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
+                            clip.thumbnailPath = String(unixTime)
+                        }
                     }
                 }
-            }
-            
-            if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
-                if result {
-                    realm.transactionWithBlock({ () -> Void in
-                        realm.addOrUpdateObject(clip)
-                    })
+                
+                if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
+                    let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
+                    if result {
+                        realm.transactionWithBlock({ () -> Void in
+                            realm.addOrUpdateObject(clip)
+                        })
+                    }
                 }
+                
+                CPYHistoryManager.sharedManager.trimHistorySize()
+                
+                NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
             }
             
-            CPYHistoryManager.sharedManager.trimHistorySize()
-            
-            NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
         }
-        
     }
     
     // MARK: - Timer Methods
