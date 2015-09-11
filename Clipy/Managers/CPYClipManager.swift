@@ -197,9 +197,8 @@ class CPYClipManager: NSObject {
     
     func createClip() {
         autoreleasepool { () -> () in
-        
-            let pasteBoard = NSPasteboard.generalPasteboard()
-            if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
+    
+            if let clipData = self.makeClipDataFromPasteboard() {
                 
                 let realm = RLMRealm.defaultRealm()
                 let hash = clipData.hash
@@ -271,11 +270,12 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: Private Methods
-    private func makeClipDataFromPasteboard(pboard: NSPasteboard) -> CPYClipData? {
+    private func makeClipDataFromPasteboard() -> CPYClipData? {
         
         let clipData = CPYClipData()
         
-        let types = self.makeTypesFromPasteboard(pboard)
+        let pboard = NSPasteboard.generalPasteboard()
+        let types = self.makeTypesFromPasteboard()
         
         if types.isEmpty {
             return nil
@@ -320,9 +320,10 @@ class CPYClipManager: NSObject {
         return clipData
     }
     
-    private func makeTypesFromPasteboard(pboard: NSPasteboard) -> [String] {
+    private func makeTypesFromPasteboard() -> [String] {
         var types = [String]()
         
+        let pboard = NSPasteboard.generalPasteboard()
         let pbTypes = pboard.types
         
         for dataType in pbTypes as! [String] {
