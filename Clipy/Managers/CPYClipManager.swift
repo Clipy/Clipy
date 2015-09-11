@@ -17,6 +17,7 @@ class CPYClipManager: NSObject {
     private var cachedChangeCount: NSInteger = 0
     private let copyLock = NSLock()
     // Timer
+    private let mainQueue = dispatch_get_main_queue()
     private var pasteboardObservingTimer: NSTimer?
     
     // MARK: - Init
@@ -176,64 +177,67 @@ class CPYClipManager: NSObject {
     
     // MARK: - Clip Methods
     func updateClips(sender: NSTimer) {
-        
-        self.copyLock.lock()
-        
-        let pasteBoard = NSPasteboard.generalPasteboard()
-        if pasteBoard.changeCount == self.cachedChangeCount {
-            self.copyLock.unlock()
-            return
-        }
-        self.cachedChangeCount = pasteBoard.changeCount
-        
-        if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
+        dispatch_async(self.mainQueue, { () -> Void in
             
-            let realm = RLMRealm.defaultRealm()
-            let hash = clipData.hash
-            let clips = self.loadClips()
+            self.copyLock.lock()
             
-            // DB格納
-            let unixTime = Int(floor(NSDate().timeIntervalSince1970))
-            let unixTimeString = String("\(unixTime)")
-            let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
-            let title = clipData.stringValue
+            let pasteBoard = NSPasteboard.generalPasteboard()
+            if pasteBoard.changeCount == self.cachedChangeCount {
+                self.copyLock.unlock()
+                return
+            }
+            self.cachedChangeCount = pasteBoard.changeCount
             
-            let clip = CPYClip()
-            clip.dataPath = path
-            clip.title = title
-            clip.dataHash = String(hash)
-            clip.updateTime = unixTime
-            clip.primaryType = clipData.primaryType ?? ""
-            
-            // Save thumbnail image
-            if clipData.primaryType == NSTIFFPboardType {
-                if let image = clipData.image {
-                    
-                    let thumbnailWidth = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailWidthKey)
-                    let thumbnailHeight = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailHeightKey)
-                    
-                    if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
-                        PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
-                        clip.thumbnailPath = String(unixTime)
+            if let clipData = self.makeClipDataFromPasteboard(pasteBoard) {
+                
+                let realm = RLMRealm.defaultRealm()
+                let hash = clipData.hash
+                let clips = self.loadClips()
+                
+                // DB格納
+                let unixTime = Int(floor(NSDate().timeIntervalSince1970))
+                let unixTimeString = String("\(unixTime)")
+                let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
+                let title = clipData.stringValue
+                
+                let clip = CPYClip()
+                clip.dataPath = path
+                clip.title = title
+                clip.dataHash = String(hash)
+                clip.updateTime = unixTime
+                clip.primaryType = clipData.primaryType ?? ""
+                
+                // Save thumbnail image
+                if clipData.primaryType == NSTIFFPboardType {
+                    if let image = clipData.image {
+                        
+                        let thumbnailWidth = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailWidthKey)
+                        let thumbnailHeight = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailHeightKey)
+                        
+                        if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
+                            PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
+                            clip.thumbnailPath = String(unixTime)
+                        }
                     }
                 }
-            }
-            
-            if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
-                if result {
-                    realm.transactionWithBlock({ () -> Void in
-                        realm.addOrUpdateObject(clip)
-                    })
+                
+                if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
+                    let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
+                    if result {
+                        realm.transactionWithBlock({ () -> Void in
+                            realm.addOrUpdateObject(clip)
+                        })
+                    }
                 }
+                
+                CPYHistoryManager.sharedManager.trimHistorySize()
+                
+                NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
             }
             
-            CPYHistoryManager.sharedManager.trimHistorySize()
-            
-            NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
-        }
-        
-        self.copyLock.unlock()
+            self.copyLock.unlock()
+    
+        })
     }
     
     // MARK: - Timer Methods
