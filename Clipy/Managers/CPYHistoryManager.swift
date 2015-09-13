@@ -32,20 +32,15 @@ class CPYHistoryManager: NSObject {
                     
                     let lastUsedAt = lastClip.updateTime
                     let results = CPYClipManager.sharedManager.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt))
-                    var paths = [String]()
                     var imagePaths = [String]()
                     for clipData in results {
                         if let clip = clipData as? CPYClip where !clip.invalidated {
-                            paths.append(clip.dataPath)
                             if !clip.thumbnailPath.isEmpty {
                                 imagePaths.append(clip.thumbnailPath)
                             }
                         }
                     }
-                    
-                    for path in paths {
-                        CPYUtilities.deleteData(path)
-                    }
+    
                     for path in imagePaths {
                         PINCache.sharedCache().removeObjectForKey(path)
                     }
@@ -54,6 +49,7 @@ class CPYHistoryManager: NSObject {
                     })
                 }
             }
+            
         })
     }
     
@@ -85,8 +81,8 @@ class CPYHistoryManager: NSObject {
     
     // MARK: - Private Methods
     private func startHistoryManageTimer() {
-        // Clean clip data history every 12 hour
-        self.historyManageTimer = NSTimer(timeInterval: 60 * 60 * 12, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
+        // Clean clip data history every 30 minutes
+        self.historyManageTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(self.historyManageTimer, forMode: NSRunLoopCommonModes)
         self.historyManageTimer.fire()
     }
