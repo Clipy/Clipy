@@ -53,7 +53,18 @@ class CPYUtilities: NSObject {
         if !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefInputPasteCommandKey) {
             return false
         }
-        return CPYUtilitiesObjC.postCommandV()
+    
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            var keyVDown : CGEvent = CGEventCreateKeyboardEvent (nil, CGKeyCode(9), true).takeUnretainedValue()
+            CGEventSetFlags(keyVDown, UInt64(kCGEventFlagMaskCommand))
+            CGEventPost(UInt32(kCGHIDEventTap), keyVDown)
+            
+            var keyVUp : CGEvent = CGEventCreateKeyboardEvent (nil, CGKeyCode(9), false).takeUnretainedValue()
+            CGEventSetFlags(keyVUp, UInt64(kCGEventFlagMaskCommand))
+            CGEventPost(UInt32(kCGHIDEventTap), keyVUp)
+        })
+        
+        return true
     }
     
     static func applicationSupportFolder() -> String {
