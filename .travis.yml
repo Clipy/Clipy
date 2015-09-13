@@ -1,0 +1,12 @@
+language: objective-c
+osx_image: xcode6
+xcode_workspace: Clipy.xcworkspace
+xcode_scheme:
+  - Clipy
+script: xctool -workspace Clipy.xcworkspace -scheme "Clipy" build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+before_install:
+  - gem install cocoapods
+
+# enable container-based infrastructure
+sudo: false
+cache: bundler
