@@ -97,29 +97,7 @@ class CPYClipManager: NSObject {
     func clipAtIndex(index: NSInteger) -> CPYClip {
         return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
     }
-    
-    func removeClipAtIndex(index: NSInteger) -> Bool {
-        let clip = self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
-        return self.removeClip(clip)
-    }
-    
-    func removeClip(clip: CPYClip) -> Bool {
-        let path = clip.dataPath
-        CPYUtilities.deleteData(path)
-        if !clip.thumbnailPath.isEmpty {
-            PINCache.sharedCache().removeObjectForKey(clip.thumbnailPath)
-        }
         
-        let realm = RLMRealm.defaultRealm()
-        realm.transactionWithBlock({ () -> Void in
-            realm.deleteObject(clip)
-        })
-        
-        NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
-        
-        return true
-    }
-    
     func copyStringToPasteboard(aString: String) {
         let pboard = NSPasteboard.generalPasteboard()
         pboard.declareTypes([NSStringPboardType], owner: self)
