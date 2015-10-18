@@ -95,13 +95,15 @@ class CPYUtilities: NSObject {
     }
     
     static func deleteData(path: String) {
-        let fileManager = NSFileManager.defaultManager()
-        var isDir: ObjCBool = false
-        
-        if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
-            do {
-                try fileManager.removeItemAtPath(path)
-            } catch { }
+        autoreleasepool { () -> () in
+            let fileManager = NSFileManager.defaultManager()
+            var isDir: ObjCBool = false
+            
+            if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
+                do {
+                    try fileManager.removeItemAtPath(path)
+                } catch { }
+            }
         }
     }
 }
