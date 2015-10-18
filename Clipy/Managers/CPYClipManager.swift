@@ -232,7 +232,7 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - Timer Methods
-    private func startPasteboardObservingTimer() {
+    func startPasteboardObservingTimer() {
         self.stopPasteboardObservingTimer()
         
         let defaults = NSUserDefaults.standardUserDefaults()
