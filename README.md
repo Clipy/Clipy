@@ -10,8 +10,8 @@ __Distribution Site__ : <http://clipy-app.com>
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
 ### Development Environment
-* OS X Yosemite
-* Xcode 6.3
+* OS X El Capitan
+* Xcode 7.0
 
 ### How to Build
 0. Install [CocoaPods](http://cocoapods.org) if you don't have it.
