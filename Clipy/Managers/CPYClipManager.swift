@@ -18,6 +18,7 @@ class CPYClipManager: NSObject {
     private let asyncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
     private let mainQueue = dispatch_get_main_queue()
     private var pasteboardObservingTimer: NSTimer?
+    private var isCopyingPsteboard = false
     
     // MARK: - Init
     override init() {
@@ -97,7 +98,7 @@ class CPYClipManager: NSObject {
     func clipAtIndex(index: NSInteger) -> CPYClip {
         return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
     }
-        
+    
     func copyStringToPasteboard(aString: String) {
         let pboard = NSPasteboard.generalPasteboard()
         pboard.declareTypes([NSStringPboardType], owner: self)
@@ -158,10 +159,15 @@ class CPYClipManager: NSObject {
     
     // MARK: - Clip Methods
     func updateClips(sender: NSTimer) {
+        if self.isCopyingPsteboard {
+            return
+        }
+        self.isCopyingPsteboard = true
         dispatch_async(self.asyncQueue, { [unowned self] () -> Void in
             
             let pasteBoard = NSPasteboard.generalPasteboard()
             if pasteBoard.changeCount == self.cachedChangeCount {
+                self.isCopyingPsteboard = false
                 return
             }
             self.cachedChangeCount = pasteBoard.changeCount
@@ -221,6 +227,7 @@ class CPYClipManager: NSObject {
                 NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
             }
             
+            self.isCopyingPsteboard = false
         }
     }
     
