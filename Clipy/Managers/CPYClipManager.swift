@@ -49,7 +49,7 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - KVO
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefMaxHistorySizeKey {
             CPYHistoryManager.sharedManager.trimHistorySize()
         } else if keyPath == kCPYPrefTimeIntervalKey {
@@ -202,12 +202,10 @@ class CPYClipManager: NSObject {
                 
                 let realm = RLMRealm.defaultRealm()
                 let hash = clipData.hash
-                let clips = self.loadClips()
                 
                 // DB格納
                 let unixTime = Int(floor(NSDate().timeIntervalSince1970))
-                let unixTimeString = String("\(unixTime)")
-                let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
+                let path = (CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
                 let title = clipData.stringValue
                 
                 let clip = CPYClip()
@@ -281,7 +279,7 @@ class CPYClipManager: NSObject {
             return nil
         }
         
-        if !contains(self.storeTypes.values, NSNumber(bool: true)) {
+        if !self.storeTypes.values.contains(NSNumber(bool: true)) {
             return nil
         }
         
@@ -324,20 +322,20 @@ class CPYClipManager: NSObject {
         var types = [String]()
         
         let pboard = NSPasteboard.generalPasteboard()
-        let pbTypes = pboard.types
-        
-        for dataType in pbTypes as! [String] {
-            if !self.storeType(dataType) {
-                continue
-            }
-            
-            if dataType == NSTIFFPboardType {
-                if contains(types, NSTIFFPboardType) {
+        if let pbTypes = pboard.types {
+            for dataType in pbTypes {
+                if !self.storeType(dataType) {
                     continue
                 }
-                types.append(NSTIFFPboardType)
-            } else {
-                types.append(dataType)
+                
+                if dataType == NSTIFFPboardType {
+                    if types.contains(NSTIFFPboardType) {
+                        continue
+                    }
+                    types.append(NSTIFFPboardType)
+                } else {
+                    types.append(dataType)
+                }
             }
         }
         return types

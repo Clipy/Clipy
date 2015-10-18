@@ -37,10 +37,10 @@ class CPYMenuManager: NSObject {
     private func initManager() {
         self.shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         
-        self.folderIcon?.setTemplate(true)
+        self.folderIcon?.template = true
         self.folderIcon?.size = NSMakeSize(15, 13)
     
-        self.snippetIcon?.setTemplate(true)
+        self.snippetIcon?.template = true
         self.snippetIcon?.size = NSMakeSize(12, 13)
         
         self.createMenu()
@@ -69,8 +69,8 @@ class CPYMenuManager: NSObject {
     }
     
     // MARK: - KVO
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-        if keyPath == kCPYPrefShowStatusItemKey {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        if let change = change where keyPath == kCPYPrefShowStatusItemKey {
             if let new = change["new"] as? Int {
                 if new == 0 {
                     self.removeStatusItem()
@@ -106,16 +106,13 @@ class CPYMenuManager: NSObject {
             menu = self.makeHistoryMenu()
         case .Snippets:
             menu = self.makeSnippetsMenu()
-        default:
-            break
         }
         menu?.popUpMenuPositioningItem(nil, atLocation: NSEvent.mouseLocation(), inView: nil)
     }
     
     // MARK: - Menu Methods
     private func createMenu() {
-        let newMenu = NSMenu.allocWithZone(NSMenu.menuZone())
-        newMenu.title = kClipyIdentifier
+        let newMenu = NSMenu(title: kClipyIdentifier)
         newMenu.delegate = self
         
         self.addClipsToMenu(newMenu)
@@ -143,14 +140,14 @@ class CPYMenuManager: NSObject {
     }
     
     private func makeHistoryMenu() -> NSMenu {
-        let newMenu = NSMenu.allocWithZone(NSMenu.menuZone())
+        let newMenu = NSMenu(title: "")
         newMenu.delegate = self
         self.addClipsToMenu(newMenu)
         return newMenu
     }
     
     private func makeSnippetsMenu() -> NSMenu {
-        let newMenu = NSMenu.allocWithZone(NSMenu.menuZone())
+        let newMenu = NSMenu(title: "")
         newMenu.delegate = self
         newMenu.title = kSnippetsMenuIdentifier
         self.addSnippetsToMenu(newMenu, isBelowClips: false)
@@ -177,7 +174,7 @@ class CPYMenuManager: NSObject {
     }
     
     private func makeSubmenuItemWithTitle(title: String) -> NSMenuItem {
-        let subMenu = NSMenu.allocWithZone(NSMenu.menuZone())
+        let subMenu = NSMenu(title: "")
         let subMenuItem = NSMenuItem(title: title, action: nil, keyEquivalent: kEmptyString)
         subMenuItem.submenu = subMenu
         if NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefShowIconInTheMenuKey) && self.folderIcon != nil {
@@ -214,7 +211,7 @@ class CPYMenuManager: NSObject {
                     listNumber = firstIndex
                 }
                 
-                var indexOfSubMenu = subMenuIndex
+                let indexOfSubMenu = subMenuIndex
                 
                 if let subMenu = menu.itemAtIndex(indexOfSubMenu)?.submenu {
                     let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
@@ -242,7 +239,6 @@ class CPYMenuManager: NSObject {
     }
     
     private func addSnippetsToMenu(menu: NSMenu, isBelowClips: Bool) {
-        let snippetsManager = CPYSnippetManager.sharedManager
         let folders = CPYSnippetManager.sharedManager.loadSortedFolders()
         if folders.count < 1 {
             return
@@ -252,14 +248,14 @@ class CPYMenuManager: NSObject {
             menu.addItem(NSMenuItem.separatorItem())
         }
         
-        let snippetsLabelItem = NSMenuItem.allocWithZone(NSMenu.menuZone())
+        let snippetsLabelItem = NSMenuItem()
         snippetsLabelItem.title = NSLocalizedString("Snippet", comment: "")
         snippetsLabelItem.enabled = false
         menu.addItem(snippetsLabelItem)
         
         var enabled = false
         var subMenuIndex = menu.numberOfItems - 1
-        var firstIndex = self.firstIndexOfMenuItems()
+        let firstIndex = self.firstIndexOfMenuItems()
         
         for object in folders {
             let folder = object as! CPYFolder
@@ -296,7 +292,6 @@ class CPYMenuManager: NSObject {
         
         let isMarkWithNumber = defaults.boolForKey(kCPYPrefMenuItemsAreMarkedWithNumbersKey)
         let isShowToolTip = defaults.boolForKey(kCPYPrefShowToolTipOnMenuItemKey)
-        let isShowIcon = defaults.boolForKey(kCPYPrefShowIconInTheMenuKey)
         let isShowImage = defaults.boolForKey(kCPYPrefShowImageInTheMenuKey)
         let addNumbericKeyEquivalents = defaults.boolForKey(kCPYPrefAddNumericKeyEquivalentsKey)
         
@@ -313,8 +308,7 @@ class CPYMenuManager: NSObject {
         }
         
         let primaryPboardType = clip.primaryType
-        var icon: NSImage?
-        
+
         let clipString = clip.title
         let title = self.trimTitle(clipString)
         let titleWithMark = self.menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
@@ -324,7 +318,7 @@ class CPYMenuManager: NSObject {
         
         if isShowToolTip {
             let maxLengthOfToolTip = defaults.integerForKey(kCPYPrefMaxLengthOfToolTipKey)
-            let toIndex = (count(clipString) < maxLengthOfToolTip) ? count(clipString) : maxLengthOfToolTip
+            let toIndex = (clipString.characters.count < maxLengthOfToolTip) ? clipString.characters.count : maxLengthOfToolTip
             menuItem.toolTip = (clipString as NSString).substringToIndex(toIndex)
         }
         
@@ -352,8 +346,6 @@ class CPYMenuManager: NSObject {
         let defaults = NSUserDefaults.standardUserDefaults()
         let isMarkWithNumber = defaults.boolForKey(kCPYPrefMenuItemsAreMarkedWithNumbersKey)
         let isShowIcon = defaults.boolForKey(kCPYPrefShowIconInTheMenuKey)
-        
-        var keyEquivalent = kEmptyString
         
         var icon: NSImage?
         
@@ -398,7 +390,7 @@ class CPYMenuManager: NSObject {
         default:
             statusIcon = NSImage(named: "statusbar_menu_black")
         }
-        statusIcon?.setTemplate(true)
+        statusIcon?.template = true
         
         let statusBar = NSStatusBar.systemStatusBar()
         self.statusItem = statusBar.statusItemWithLength(-1)
@@ -445,18 +437,18 @@ class CPYMenuManager: NSObject {
         }
         let theString = clipString!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as NSString
         
-        var aRange = NSMakeRange(0, 0)
+        let aRange = NSMakeRange(0, 0)
         var lineStart = 0, lineEnd = 0, contentsEnd = 0
         theString.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, forRange: aRange)
         
         var titleString = (lineEnd == theString.length) ? theString : theString.substringToIndex(contentsEnd)
         
         var maxMenuItemTitleLength = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxMenuItemTitleLengthKey)
-        if maxMenuItemTitleLength < count(SHORTEN_SYMBOL.utf16) {
-            maxMenuItemTitleLength = count(SHORTEN_SYMBOL.utf16)
+        if maxMenuItemTitleLength < SHORTEN_SYMBOL.characters.count {
+            maxMenuItemTitleLength = SHORTEN_SYMBOL.characters.count
         }
         if titleString.length > maxMenuItemTitleLength {
-            titleString = titleString.substringToIndex(maxMenuItemTitleLength - count(SHORTEN_SYMBOL.utf16)) + SHORTEN_SYMBOL
+            titleString = titleString.substringToIndex(maxMenuItemTitleLength - SHORTEN_SYMBOL.characters.count) + SHORTEN_SYMBOL
         }
         
         return titleString as String

@@ -55,13 +55,14 @@ class CPYUtilities: NSObject {
         }
     
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            var keyVDown : CGEvent = CGEventCreateKeyboardEvent (nil, CGKeyCode(9), true).takeUnretainedValue()
-            CGEventSetFlags(keyVDown, UInt64(kCGEventFlagMaskCommand))
-            CGEventPost(UInt32(kCGHIDEventTap), keyVDown)
             
-            var keyVUp : CGEvent = CGEventCreateKeyboardEvent (nil, CGKeyCode(9), false).takeUnretainedValue()
-            CGEventSetFlags(keyVUp, UInt64(kCGEventFlagMaskCommand))
-            CGEventPost(UInt32(kCGHIDEventTap), keyVUp)
+            let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
+            CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
+            CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVDown)
+            
+            let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
+            CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
+            CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVUp)
         })
         
         return true
@@ -71,12 +72,12 @@ class CPYUtilities: NSObject {
         let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomainMask.UserDomainMask, true)
         var basePath: String!
         if paths.count > 0 {
-            basePath = paths.first as! String
+            basePath = paths.first
         } else {
             basePath = NSTemporaryDirectory()
         }
-        
-        return basePath!.stringByAppendingPathComponent(kApplicationName)
+
+        return (basePath as NSString).stringByAppendingPathComponent(kApplicationName)
     }
     
     static func prepareSaveToPath(path: String) -> Bool {
@@ -84,7 +85,9 @@ class CPYUtilities: NSObject {
         var isDir: ObjCBool = false
         
         if (fileManager.fileExistsAtPath(path, isDirectory: &isDir) && isDir) == false {
-            if !fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil, error: nil) {
+            do {
+                try fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
                 return false
             }
         }
@@ -94,10 +97,11 @@ class CPYUtilities: NSObject {
     static func deleteData(path: String) {
         let fileManager = NSFileManager.defaultManager()
         var isDir: ObjCBool = false
-        var error: NSError?
         
         if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
-            fileManager.removeItemAtPath(path, error: &error)
+            do {
+                try fileManager.removeItemAtPath(path)
+            } catch { }
         }
     }
 }

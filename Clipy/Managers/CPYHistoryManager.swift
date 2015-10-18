@@ -58,8 +58,9 @@ class CPYHistoryManager: NSObject {
             let allClips = CPYClipManager.sharedManager.loadClips()
             
             let fileManager = NSFileManager.defaultManager()
-            var error: NSError?
-            if let dataPathList = fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder(), error: &error) as? [String] {
+  
+            do {
+                let dataPathList = try fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder())
                 for path in dataPathList {
                     var isExist = false
                     for clipData in allClips {
@@ -71,9 +72,11 @@ class CPYHistoryManager: NSObject {
                         }
                     }
                     if !isExist {
-                        CPYUtilities.deleteData(CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent(path))
+                        CPYUtilities.deleteData((CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent(path))
                     }
                 }
+            } catch {
+                
             }
         })
 

@@ -119,7 +119,7 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
     
     // MARK: - SRRecoederControl Delegate
     func shortcutRecorder(aRecorder: SRRecorderControl!, keyComboDidChange newKeyCombo: KeyCombo) {
-        if contains(self.shortcutRecorders, aRecorder) {
+        if self.shortcutRecorders.contains(aRecorder) {
             self.changeHotKeyByShortcutRecorder(aRecorder, keyCombo: newKeyCombo)
         }
     }

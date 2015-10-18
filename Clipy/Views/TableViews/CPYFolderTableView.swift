@@ -68,7 +68,7 @@ extension CPYFolderTableView: NSTableViewDelegate {
     
     func control(control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         if let text = fieldEditor.string {
-            if count(text.utf16) != 0 {
+            if text.characters.count != 0 {
                 if let tableView = control as? NSTableView {
                     let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(tableView.selectedRow)) as! CPYFolder
                     let realm = RLMRealm.defaultRealm()
