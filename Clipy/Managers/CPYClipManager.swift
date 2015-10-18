@@ -185,7 +185,13 @@ class CPYClipManager: NSObject {
             if let clipData = self.makeClipDataFromPasteboard() {
                 
                 let realm = RLMRealm.defaultRealm()
-                let hash = clipData.hash
+                let isOverwriteHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefOverwriteSameHistroy)
+                let hash: Int
+                if isOverwriteHistory {
+                    hash = clipData.hash
+                } else {
+                    hash = Int(arc4random() % 1000000)
+                }
                 
                 // DB格納
                 let unixTime = Int(floor(NSDate().timeIntervalSince1970))

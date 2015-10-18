@@ -79,7 +79,6 @@ class CPYHistoryManager: NSObject {
                 
             }
         })
-
     }
     
     // MARK: - Private Methods
