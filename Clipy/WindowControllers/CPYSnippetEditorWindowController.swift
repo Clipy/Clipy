@@ -237,12 +237,11 @@ class CPYSnippetEditorWindowController: NSWindowController {
             return
         }
         
-        if let url = fileURLs[0] as? NSURL {
-            self.parseXMLFileAtURL(url)
+        let url = fileURLs[0]
+        self.parseXMLFileAtURL(url)
             
-            if !self.foldersFromFile.isEmpty {
-                self.addImportedFolders(self.foldersFromFile)
-            }
+        if !self.foldersFromFile.isEmpty {
+            self.addImportedFolders(self.foldersFromFile)
         }
         
     }
@@ -270,8 +269,7 @@ class CPYSnippetEditorWindowController: NSWindowController {
                 let snippetElement = NSXMLNode.elementWithName(kSnippetElement) as! NSXMLElement
                 snippetElement.addChild(NSXMLNode.elementWithName(kTitleElement, stringValue: snippetTitle) as! NSXMLNode)
                 
-                
-                let contentElement = NSXMLElement(kind: .NSXMLElementKind, options: Int(NSXMLNodePreserveWhitespace))
+                let contentElement = NSXMLElement(kind: .ElementKind, options: Int(NSXMLNodePreserveWhitespace))
                 contentElement.name = kContentElement
                 contentElement.stringValue = content
                 
@@ -314,7 +312,7 @@ class CPYSnippetEditorWindowController: NSWindowController {
     
     // MARK: - Private Methods
     private func endEditingForWindow() -> Bool {
-        var editingEnded = self.window!.makeFirstResponder(self.window)
+        let editingEnded = self.window!.makeFirstResponder(self.window)
         if !editingEnded {
             return false
         }
@@ -373,18 +371,19 @@ extension CPYSnippetEditorWindowController: CPYSnippetTableViewDelegate {
 // MARK: - NSTextView Delegate
 extension CPYSnippetEditorWindowController: NSTextViewDelegate {
     
-    func textView(textView: NSTextView, shouldChangeTextInRange affectedCharRange: NSRange, replacementString: String) -> Bool {
-        
-        let string = (textView.string! as NSString).stringByReplacingCharactersInRange(affectedCharRange, withString: replacementString)
-        
-        if self.folderTableView.selectedRow != -1 && self.snippetTableView.selectedRow != -1 {
+    func textView(textView: NSTextView, shouldChangeTextInRange affectedCharRange: NSRange, replacementString: String?) -> Bool {
+        if let replacementString = replacementString {
+            let string = (textView.string! as NSString).stringByReplacingCharactersInRange(affectedCharRange, withString: replacementString)
             
-            if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(self.folderTableView.selectedRow)) as? CPYFolder {
-                if let snippet = folder.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(self.snippetTableView.selectedRow)) as? CPYSnippet {
-                    CPYSnippetManager.sharedManager.updateSnipeetContent(snippet, content: string)
+            if self.folderTableView.selectedRow != -1 && self.snippetTableView.selectedRow != -1 {
+                
+                if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(self.folderTableView.selectedRow)) as? CPYFolder {
+                    if let snippet = folder.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(self.snippetTableView.selectedRow)) as? CPYSnippet {
+                        CPYSnippetManager.sharedManager.updateSnipeetContent(snippet, content: string)
+                    }
                 }
+                return true
             }
-            return true
         }
         
         return false
@@ -413,7 +412,7 @@ extension CPYSnippetEditorWindowController {
             return
         }
         
-        for folder in folders {
+        for folder in folders as! [[String: AnyObject]] {
             
             let folderModel = CPYFolder()
             
@@ -472,8 +471,8 @@ extension CPYSnippetEditorWindowController {
 // MARK: - NSXMLParser Delegate
 extension CPYSnippetEditorWindowController: NSXMLParserDelegate {
     
-    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [NSObject : AnyObject]) {
-        
+    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    
         self.currentElementContent = ""
         
         if elementName == kRootElement {
@@ -486,9 +485,9 @@ extension CPYSnippetEditorWindowController: NSXMLParserDelegate {
         
     }
     
-    func parser(parser: NSXMLParser, foundCharacters string: String?) {
-        if string != nil {
-            self.currentElementContent += string!
+    func parser(parser: NSXMLParser, foundCharacters string: String) {
+        if !string.isEmpty {
+            self.currentElementContent += string
         }
     }
     

@@ -48,7 +48,7 @@ class CPYHotKeyManager: NSObject {
     }
     
     // MARK: - KVO
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefHotKeysKey {
             self.registerHotKeys()
         }
@@ -93,7 +93,7 @@ class CPYHotKeyManager: NSObject {
         let hotKeyCombs = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
         
         let defaultHotKeyCombos = CPYHotKeyManager.defaultHotKeyCombos()
-        for (key, value) in defaultHotKeyCombos {
+        for (key, _) in defaultHotKeyCombos {
             var keyComboPlist: AnyObject? = hotKeyCombs[key]
             if keyComboPlist == nil {
                 keyComboPlist = defaultHotKeyCombos[key]

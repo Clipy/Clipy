@@ -13,7 +13,7 @@ import Sparkle
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    lazy var snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
+    let snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
     
     // MARK: - Init
     override func awakeFromNib() {
@@ -32,17 +32,15 @@ class AppDelegate: NSObject {
         
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
-        
-        // Notification
-        let notificationCenter = NSNotificationCenter.defaultCenter()
     }
     
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSWorkspace.sharedWorkspace().notificationCenter.removeObserver(self)
     }
     
     // MARK: - KVO 
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefLoginItemKey {
             self.toggleLoginItemState()
         }
@@ -200,11 +198,29 @@ extension AppDelegate: NSApplicationDelegate {
         updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
         updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
     
+        // スリープ時にタイマーを停止する
+        self.registSleepNotifications()
+        
         queue.waitUntilAllOperationsAreFinished()
     }
     
     func applicationWillTerminate(aNotification: NSNotification) {
         CPYHotKeyManager.sharedManager.unRegisterHotKeys()
     }
- 
+}
+
+// MARK: - NSNotificationCenter 
+extension AppDelegate {
+    private func registSleepNotifications() {
+        NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveSleepNotification", name: NSWorkspaceWillSleepNotification, object: nil)
+        NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveWakeNotification", name: NSWorkspaceDidWakeNotification, object: nil)
+    }
+    
+    func receiveSleepNotification() {
+        CPYClipManager.sharedManager.stopPasteboardObservingTimer()
+    }
+    
+    func receiveWakeNotification() {
+        CPYClipManager.sharedManager.startPasteboardObservingTimer()
+    }
 }

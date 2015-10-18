@@ -48,7 +48,6 @@
 		FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */; };
 		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
-		FAC43E751B36E9A000C06102 /* CPYUtilitiesObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */; };
 		FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */; };
 /* End PBXBuildFile section */
 
@@ -133,8 +132,6 @@
 		FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHotKeyManager.swift; sourceTree = "<group>"; };
 		FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYConstants.swift; sourceTree = "<group>"; };
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
-		FAC43E731B36E9A000C06102 /* CPYUtilitiesObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPYUtilitiesObjC.h; sourceTree = "<group>"; };
-		FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPYUtilitiesObjC.m; sourceTree = "<group>"; };
 		FAF1DA0B1B41888F00E15D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 		FAF1DA0F1B41889800E15D16 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -391,8 +388,6 @@
 			isa = PBXGroup;
 			children = (
 				FAC43E711B36D0A600C06102 /* CPYUtilities.swift */,
-				FAC43E731B36E9A000C06102 /* CPYUtilitiesObjC.h */,
-				FAC43E741B36E9A000C06102 /* CPYUtilitiesObjC.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -542,7 +537,6 @@
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
 				FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */,
-				FAC43E751B36E9A000C06102 /* CPYUtilitiesObjC.m in Sources */,
 				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */,

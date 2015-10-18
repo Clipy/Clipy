@@ -40,6 +40,7 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(integer: 200), forKey: kCPYPrefMaxLengthOfToolTipKey)
         defaultValues.updateValue(NSNumber(integer: 100), forKey: kCPYPrefThumbnailWidthKey)
         defaultValues.updateValue(NSNumber(integer: 32), forKey: kCPYPrefThumbnailHeightKey)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefOverwriteSameHistroy)
         
         /* Updates */
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYEnableAutomaticCheckKey)
@@ -53,19 +54,31 @@ class CPYUtilities: NSObject {
         if !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefInputPasteCommandKey) {
             return false
         }
-        return CPYUtilitiesObjC.postCommandV()
+    
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
+            CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
+            CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVDown)
+            
+            let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
+            CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
+            CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVUp)
+        })
+        
+        return true
     }
     
     static func applicationSupportFolder() -> String {
         let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomainMask.UserDomainMask, true)
         var basePath: String!
         if paths.count > 0 {
-            basePath = paths.first as! String
+            basePath = paths.first
         } else {
             basePath = NSTemporaryDirectory()
         }
-        
-        return basePath!.stringByAppendingPathComponent(kApplicationName)
+
+        return (basePath as NSString).stringByAppendingPathComponent(kApplicationName)
     }
     
     static func prepareSaveToPath(path: String) -> Bool {
@@ -73,7 +86,9 @@ class CPYUtilities: NSObject {
         var isDir: ObjCBool = false
         
         if (fileManager.fileExistsAtPath(path, isDirectory: &isDir) && isDir) == false {
-            if !fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil, error: nil) {
+            do {
+                try fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
                 return false
             }
         }
@@ -81,12 +96,15 @@ class CPYUtilities: NSObject {
     }
     
     static func deleteData(path: String) {
-        let fileManager = NSFileManager.defaultManager()
-        var isDir: ObjCBool = false
-        var error: NSError?
-        
-        if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
-            fileManager.removeItemAtPath(path, error: &error)
+        autoreleasepool { () -> () in
+            let fileManager = NSFileManager.defaultManager()
+            var isDir: ObjCBool = false
+            
+            if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
+                do {
+                    try fileManager.removeItemAtPath(path)
+                } catch { }
+            }
         }
     }
 }

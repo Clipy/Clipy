@@ -26,12 +26,12 @@ class CPYImageAndTextCell: NSTextFieldCell {
     
     
     // MARK: - Init
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.font = NSFont.systemFontOfSize(NSFont.systemFontSize())
     }
     
-    init(textCell aString: String) {
+    override init(textCell aString: String) {
         super.init(textCell: aString)
     }
     
@@ -46,7 +46,8 @@ class CPYImageAndTextCell: NSTextFieldCell {
         var imageFrame = NSZeroRect
         var cellRect = NSZeroRect
         
-        NSDivideRect(theRect, &imageFrame, &cellRect, 3 + 16.0, NSMinXEdge)
+        
+        NSDivideRect(theRect, &imageFrame, &cellRect, 3 + 16.0, .MinX)
         
         imageFrame.origin.x += CGFloat(kImageOriginXOffset)
         imageFrame.origin.y -= CGFloat(kImageOriginYOffset)
@@ -74,7 +75,7 @@ class CPYImageAndTextCell: NSTextFieldCell {
     
     override func drawWithFrame(var cellFrame: NSRect, inView controlView: NSView) {
         var imageFrame = NSZeroRect
-        NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + 15.0, NSMinXEdge)
+        NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + 15.0, .MinX)
         
         imageFrame.origin.x += CGFloat(kImageOriginXOffset)
         imageFrame.origin.y -= CGFloat(kImageOriginYOffset)

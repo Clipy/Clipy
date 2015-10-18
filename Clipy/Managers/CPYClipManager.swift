@@ -18,6 +18,7 @@ class CPYClipManager: NSObject {
     private let asyncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
     private let mainQueue = dispatch_get_main_queue()
     private var pasteboardObservingTimer: NSTimer?
+    private var isCopyingPsteboard = false
     
     // MARK: - Init
     override init() {
@@ -49,7 +50,7 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - KVO
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefMaxHistorySizeKey {
             CPYHistoryManager.sharedManager.trimHistorySize()
         } else if keyPath == kCPYPrefTimeIntervalKey {
@@ -96,28 +97,6 @@ class CPYClipManager: NSObject {
     
     func clipAtIndex(index: NSInteger) -> CPYClip {
         return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
-    }
-    
-    func removeClipAtIndex(index: NSInteger) -> Bool {
-        let clip = self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
-        return self.removeClip(clip)
-    }
-    
-    func removeClip(clip: CPYClip) -> Bool {
-        let path = clip.dataPath
-        CPYUtilities.deleteData(path)
-        if !clip.thumbnailPath.isEmpty {
-            PINCache.sharedCache().removeObjectForKey(clip.thumbnailPath)
-        }
-        
-        let realm = RLMRealm.defaultRealm()
-        realm.transactionWithBlock({ () -> Void in
-            realm.deleteObject(clip)
-        })
-        
-        NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
-        
-        return true
     }
     
     func copyStringToPasteboard(aString: String) {
@@ -180,10 +159,15 @@ class CPYClipManager: NSObject {
     
     // MARK: - Clip Methods
     func updateClips(sender: NSTimer) {
+        if self.isCopyingPsteboard {
+            return
+        }
+        self.isCopyingPsteboard = true
         dispatch_async(self.asyncQueue, { [unowned self] () -> Void in
             
             let pasteBoard = NSPasteboard.generalPasteboard()
             if pasteBoard.changeCount == self.cachedChangeCount {
+                self.isCopyingPsteboard = false
                 return
             }
             self.cachedChangeCount = pasteBoard.changeCount
@@ -201,13 +185,17 @@ class CPYClipManager: NSObject {
             if let clipData = self.makeClipDataFromPasteboard() {
                 
                 let realm = RLMRealm.defaultRealm()
-                let hash = clipData.hash
-                let clips = self.loadClips()
+                let isOverwriteHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefOverwriteSameHistroy)
+                let hash: Int
+                if isOverwriteHistory {
+                    hash = clipData.hash
+                } else {
+                    hash = Int(arc4random() % 1000000)
+                }
                 
                 // DB格納
                 let unixTime = Int(floor(NSDate().timeIntervalSince1970))
-                let unixTimeString = String("\(unixTime)")
-                let path = CPYUtilities.applicationSupportFolder().stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
+                let path = (CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
                 let title = clipData.stringValue
                 
                 let clip = CPYClip()
@@ -245,11 +233,12 @@ class CPYClipManager: NSObject {
                 NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
             }
             
+            self.isCopyingPsteboard = false
         }
     }
     
     // MARK: - Timer Methods
-    private func startPasteboardObservingTimer() {
+    func startPasteboardObservingTimer() {
         self.stopPasteboardObservingTimer()
         
         let defaults = NSUserDefaults.standardUserDefaults()
@@ -281,7 +270,7 @@ class CPYClipManager: NSObject {
             return nil
         }
         
-        if !contains(self.storeTypes.values, NSNumber(bool: true)) {
+        if !self.storeTypes.values.contains(NSNumber(bool: true)) {
             return nil
         }
         
@@ -324,20 +313,20 @@ class CPYClipManager: NSObject {
         var types = [String]()
         
         let pboard = NSPasteboard.generalPasteboard()
-        let pbTypes = pboard.types
-        
-        for dataType in pbTypes as! [String] {
-            if !self.storeType(dataType) {
-                continue
-            }
-            
-            if dataType == NSTIFFPboardType {
-                if contains(types, NSTIFFPboardType) {
+        if let pbTypes = pboard.types {
+            for dataType in pbTypes {
+                if !self.storeType(dataType) {
                     continue
                 }
-                types.append(NSTIFFPboardType)
-            } else {
-                types.append(dataType)
+                
+                if dataType == NSTIFFPboardType {
+                    if types.contains(NSTIFFPboardType) {
+                        continue
+                    }
+                    types.append(NSTIFFPboardType)
+                } else {
+                    types.append(dataType)
+                }
             }
         }
         return types

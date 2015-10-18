@@ -86,7 +86,7 @@ extension CPYSnippetTableView: NSTableViewDelegate {
     
     func control(control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
         if let text = fieldEditor.string {
-            if count(text.utf16) != 0 {
+            if text.characters.count != 0 {
                 if let tableView = control as? NSTableView {
                     let snippet = self.snippetFolder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(tableView.selectedRow)) as! CPYSnippet
                     let realm = RLMRealm.defaultRealm()
