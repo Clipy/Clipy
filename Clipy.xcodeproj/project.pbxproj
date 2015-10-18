@@ -440,6 +440,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = CPY;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Shunsuke Furubayashi";
 				TargetAttributes = {
