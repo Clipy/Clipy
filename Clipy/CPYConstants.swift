@@ -59,6 +59,7 @@ let kCPYPrefShowStatusItemKey                          = "kCPYPrefShowStatusItem
 let kCPYPrefThumbnailWidthKey                          = "thumbnailWidth"
 let kCPYPrefThumbnailHeightKey                         = "thumbnailHeight"
 let kCPYPrefOverwriteSameHistroy                       = "kCPYPrefOverwriteSameHistroy"
+let kCPYPrefCopySameHistroy                            = "kCPYPrefCopySameHistroy"
 
 // SnippetEditor
 let kCPYSnippetEditorWillCloseNotification             = "kCPYSnippetEditorWillCloseNotification"

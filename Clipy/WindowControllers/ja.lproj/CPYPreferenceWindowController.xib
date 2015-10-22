@@ -212,9 +212,144 @@
             <point key="canvasLocation" x="571" y="617"/>
         </customView>
         <customView id="eva-t6-d1S" userLabel="Menu">
-            <rect key="frame" x="0.0" y="0.0" width="460" height="333"/>
+            <rect key="frame" x="0.0" y="0.0" width="460" height="354"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
+                <textField verticalHuggingPriority="750" id="bY0-PQ-nRh">
+                    <rect key="frame" x="372" y="288" width="39" height="14"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="8mn-i8-FEH">
+                        <font key="font" size="11" name="HiraKakuProN-W3"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="4cI-cd-s0X">
+                    <rect key="frame" x="372" y="260" width="39" height="14"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="fI7-4u-XKV">
+                        <font key="font" size="11" name="HiraKakuProN-W3"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="pKu-T9-pjd">
+                    <rect key="frame" x="323" y="288" width="44" height="22"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="pY3-DO-wSk">
+                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Gtl-SV-isl">
+                            <real key="minimum" value="1"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInsideFolderKey" id="6Lh-r9-USd"/>
+                        <outlet property="nextKeyView" destination="NH4-GQ-Z0F" id="zmW-AV-pGe"/>
+                    </connections>
+                </textField>
+                <textField verticalHuggingPriority="750" id="40j-hG-ZIU">
+                    <rect key="frame" x="50" y="290" width="268" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="フォルダに内包する項目の数:" id="SDx-0Q-zra">
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="TiX-pI-JTx">
+                    <rect key="frame" x="323" y="315" width="44" height="22"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="7Qa-RB-blA">
+                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="CZ8-if-ESY">
+                            <integer key="minimum" value="0"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInlineKey" id="Jvo-br-Awe"/>
+                        <outlet property="nextKeyView" destination="pKu-T9-pjd" id="hgC-MK-cfw"/>
+                    </connections>
+                </textField>
+                <textField verticalHuggingPriority="750" id="CrK-Wg-0KE">
+                    <rect key="frame" x="50" y="317" width="268" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="インライン表示する項目の数:" id="Od6-r8-gVn">
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="NH4-GQ-Z0F">
+                    <rect key="frame" x="323" y="260" width="44" height="22"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="tM7-PB-uOe">
+                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="dlb-zS-Ip2">
+                            <decimal key="minimum" value="1"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefMaxMenuItemTitleLengthKey" id="Pfr-u4-oPv"/>
+                    </connections>
+                </textField>
+                <textField verticalHuggingPriority="750" id="mNY-P1-oxx">
+                    <rect key="frame" x="50" y="262" width="276" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="メニューに表示する文字数:" id="i8w-kV-UeD">
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="tc7-oh-oTc">
+                    <rect key="frame" x="372" y="315" width="39" height="14"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="GaY-1l-xYm">
+                        <font key="font" size="11" name="HiraKakuProN-W3"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button id="7Tq-lv-Mmn">
+                    <rect key="frame" x="51" y="236" width="297" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <buttonCell key="cell" type="check" title="重複した履歴をコピーする" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="n9U-Df-Kfp">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefCopySameHistroy" id="zh7-xU-1WR"/>
+                    </connections>
+                </button>
+                <button id="4pU-Oq-J31">
+                    <rect key="frame" x="64" y="216" width="297" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <buttonCell key="cell" type="check" title="重複した履歴を上書きする" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="LCR-cb-Skw">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.kCPYPrefCopySameHistroy" id="z3z-Lk-BoA"/>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="zQT-5g-N5R"/>
+                    </connections>
+                </button>
                 <textField verticalHuggingPriority="750" id="jEd-7p-zOM">
                     <rect key="frame" x="372" y="67" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -252,26 +387,6 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" id="bY0-PQ-nRh">
-                    <rect key="frame" x="372" y="267" width="39" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="8mn-i8-FEH">
-                        <font key="font" size="11" name="HiraKakuProN-W3"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" id="4cI-cd-s0X">
-                    <rect key="frame" x="372" y="239" width="39" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="fI7-4u-XKV">
-                        <font key="font" size="11" name="HiraKakuProN-W3"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <button id="Fhb-Ae-m4w">
                     <rect key="frame" x="51" y="90" width="301" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -284,60 +399,6 @@
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.showToolTipOnMenuItem" id="LBv-Hf-gUe"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" id="pKu-T9-pjd">
-                    <rect key="frame" x="323" y="267" width="44" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="pY3-DO-wSk">
-                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Gtl-SV-isl">
-                            <real key="minimum" value="1"/>
-                        </numberFormatter>
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInsideFolderKey" id="6Lh-r9-USd"/>
-                        <outlet property="nextKeyView" destination="NH4-GQ-Z0F" id="zmW-AV-pGe"/>
-                    </connections>
-                </textField>
-                <textField verticalHuggingPriority="750" id="40j-hG-ZIU">
-                    <rect key="frame" x="50" y="269" width="268" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="フォルダに内包する項目の数:" id="SDx-0Q-zra">
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" id="TiX-pI-JTx">
-                    <rect key="frame" x="323" y="294" width="44" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="7Qa-RB-blA">
-                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="CZ8-if-ESY">
-                            <integer key="minimum" value="0"/>
-                        </numberFormatter>
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInlineKey" id="Jvo-br-Awe"/>
-                        <outlet property="nextKeyView" destination="pKu-T9-pjd" id="hgC-MK-cfw"/>
-                    </connections>
-                </textField>
-                <textField verticalHuggingPriority="750" id="CrK-Wg-0KE">
-                    <rect key="frame" x="50" y="296" width="268" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="インライン表示する項目の数:" id="Od6-r8-gVn">
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <button id="57y-uN-VF2">
                     <rect key="frame" x="51" y="154" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -375,32 +436,6 @@
                         <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.menuItemsAreMarkedWithNumbers" id="jfR-Kw-oWi"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" id="NH4-GQ-Z0F">
-                    <rect key="frame" x="323" y="239" width="44" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="tM7-PB-uOe">
-                        <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="dlb-zS-Ip2">
-                            <decimal key="minimum" value="1"/>
-                        </numberFormatter>
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefMaxMenuItemTitleLengthKey" id="Pfr-u4-oPv"/>
-                    </connections>
-                </textField>
-                <textField verticalHuggingPriority="750" id="mNY-P1-oxx">
-                    <rect key="frame" x="50" y="241" width="276" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="メニューに表示する文字数:" id="i8w-kV-UeD">
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <button id="3ze-SX-bc2">
                     <rect key="frame" x="64" y="112" width="347" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -426,16 +461,6 @@
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="XL9-y3-yJD"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" id="tc7-oh-oTc">
-                    <rect key="frame" x="372" y="294" width="39" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="GaY-1l-xYm">
-                        <font key="font" size="11" name="HiraKakuProN-W3"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <button id="8Rs-6V-ZGK">
                     <rect key="frame" x="51" y="46" width="301" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -524,21 +549,9 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button id="7Tq-lv-Mmn">
-                    <rect key="frame" x="51" y="215" width="297" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <buttonCell key="cell" type="check" title="重複した履歴を上書きする" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="n9U-Df-Kfp">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="Jqc-y2-Zt8"/>
-                    </connections>
-                </button>
             </subviews>
             <animations/>
-            <point key="canvasLocation" x="571" y="1061.5"/>
+            <point key="canvasLocation" x="571" y="1075"/>
         </customView>
         <customView id="TpB-41-wwb" userLabel="Type">
             <rect key="frame" x="0.0" y="0.0" width="460" height="218"/>
