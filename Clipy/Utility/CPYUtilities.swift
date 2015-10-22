@@ -40,8 +40,8 @@ class CPYUtilities: NSObject {
         defaultValues.updateValue(NSNumber(integer: 200), forKey: kCPYPrefMaxLengthOfToolTipKey)
         defaultValues.updateValue(NSNumber(integer: 100), forKey: kCPYPrefThumbnailWidthKey)
         defaultValues.updateValue(NSNumber(integer: 32), forKey: kCPYPrefThumbnailHeightKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefOverwriteSameHistroy)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefCopySameHistroy)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefOverwriteSameHistroyKey)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefCopySameHistroyKey)
         
         /* Updates */
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYEnableAutomaticCheckKey)

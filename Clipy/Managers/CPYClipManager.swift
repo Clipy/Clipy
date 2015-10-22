@@ -185,14 +185,14 @@ class CPYClipManager: NSObject {
             if let clipData = self.makeClipDataFromPasteboard() {
                 
                 let realm = RLMRealm.defaultRealm()
-                let isCopySameHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefCopySameHistroy)
+                let isCopySameHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefCopySameHistroyKey)
                 // Search same history
                 if let _ = CPYClip(forPrimaryKey: String(clipData.hash)) where !isCopySameHistory {
                     self.isCopyingPsteboard = false
                     return
                 }
                 
-                let isOverwriteHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefOverwriteSameHistroy)
+                let isOverwriteHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefOverwriteSameHistroyKey)
                 let hash: Int
                 if isOverwriteHistory {
                     hash = clipData.hash
