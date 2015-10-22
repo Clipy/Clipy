@@ -24,7 +24,7 @@ class CPYHistoryManager: NSObject {
     func trimHistorySize() {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
             let realm = RLMRealm.defaultRealm()
-            let clips = CPYClipManager.sharedManager.loadSortedClips()
+            let clips = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
             
             let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
             if maxHistorySize < Int(clips.count) {

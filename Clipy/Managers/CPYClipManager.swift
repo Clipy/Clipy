@@ -67,7 +67,8 @@ class CPYClipManager: NSObject {
     }
     
     func loadSortedClips() -> RLMResults {
-        return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
+        let ascending = !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefReorderClipsAfterPasting)
+        return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: ascending)
     }
     
     func clearAll() {
@@ -93,10 +94,6 @@ class CPYClipManager: NSObject {
         CPYHistoryManager.sharedManager.cleanHistory()
         
         NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
-    }
-    
-    func clipAtIndex(index: NSInteger) -> CPYClip {
-        return self.loadSortedClips().objectAtIndex(UInt(index)) as! CPYClip
     }
     
     func copyStringToPasteboard(aString: String) {
