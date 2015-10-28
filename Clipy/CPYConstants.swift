@@ -58,7 +58,8 @@ let kCPYPrefSuppressAlertForLoginItemKey               = "suppressAlertForLoginI
 let kCPYPrefShowStatusItemKey                          = "kCPYPrefShowStatusItemKey"
 let kCPYPrefThumbnailWidthKey                          = "thumbnailWidth"
 let kCPYPrefThumbnailHeightKey                         = "thumbnailHeight"
-let kCPYPrefOverwriteSameHistroy                       = "kCPYPrefOverwriteSameHistroy"
+let kCPYPrefOverwriteSameHistroyKey                    = "kCPYPrefOverwriteSameHistroy"
+let kCPYPrefCopySameHistroyKey                         = "kCPYPrefCopySameHistroy"
 
 // SnippetEditor
 let kCPYSnippetEditorWillCloseNotification             = "kCPYSnippetEditorWillCloseNotification"

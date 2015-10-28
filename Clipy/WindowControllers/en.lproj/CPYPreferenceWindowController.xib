@@ -21,11 +21,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="ERS-Xy-12L" userLabel="General">
-            <rect key="frame" x="0.0" y="0.0" width="460" height="300"/>
+            <rect key="frame" x="0.0" y="0.0" width="460" height="318"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button id="3py-yf-Y3a">
-                    <rect key="frame" x="50" y="239" width="297" height="18"/>
+                    <rect key="frame" x="50" y="257" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Launch on Login" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="vsU-At-ctl">
@@ -37,7 +37,7 @@
                     </connections>
                 </button>
                 <button id="wzC-O8-fEe">
-                    <rect key="frame" x="50" y="219" width="297" height="18"/>
+                    <rect key="frame" x="50" y="237" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Input &quot;⌘ + V&quot; after menu item selection" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="yNP-hK-Qg1">
@@ -49,7 +49,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="zgd-fH-aql">
-                    <rect key="frame" x="50" y="263" width="210" height="17"/>
+                    <rect key="frame" x="50" y="281" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Behavior" id="e1w-67-twp">
@@ -59,7 +59,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="Mrs-UB-Y0Y">
-                    <rect key="frame" x="50" y="188" width="210" height="17"/>
+                    <rect key="frame" x="50" y="206" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Clipboard History" id="f8F-5d-QWn">
@@ -69,7 +69,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="j6b-D4-jgS">
-                    <rect key="frame" x="362" y="158" width="39" height="14"/>
+                    <rect key="frame" x="362" y="176" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="items" id="KYp-fI-2Vs">
@@ -79,7 +79,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="pp2-Es-AhF">
-                    <rect key="frame" x="313" y="158" width="44" height="22"/>
+                    <rect key="frame" x="313" y="176" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="LT0-kd-TOQ">
@@ -95,7 +95,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="2vU-48-THv">
-                    <rect key="frame" x="50" y="160" width="253" height="17"/>
+                    <rect key="frame" x="50" y="178" width="253" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Max clipboard history size:" id="HrW-aw-R6X">
@@ -104,6 +104,35 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <textField verticalHuggingPriority="750" id="pZO-mK-R9z">
+                    <rect key="frame" x="51" y="153" width="253" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Sort history order by:" id="ZuL-e9-LIz">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="o50-iV-NUw">
+                    <rect key="frame" x="249" y="144" width="150" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <popUpButtonCell key="cell" type="push" title="Last Used" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="7Ax-4b-ffX" id="Agk-uD-30l">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="Td8-IC-6gD">
+                            <items>
+                                <menuItem title="Date Created" id="LTO-UV-4n6"/>
+                                <menuItem title="Last Used" state="on" id="7Ax-4b-ffX"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values" id="6Lc-vV-M9Z"/>
+                        <binding destination="2Lc-6R-cnC" name="selectedIndex" keyPath="values.kCPYPrefReorderClipsAfterPasting" id="dpB-iP-bYh"/>
+                    </connections>
+                </popUpButton>
                 <textField verticalHuggingPriority="750" id="OZl-Rn-v5E">
                     <rect key="frame" x="50" y="128" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -209,14 +238,14 @@
                 </textField>
             </subviews>
             <animations/>
-            <point key="canvasLocation" x="571" y="617"/>
+            <point key="canvasLocation" x="571" y="626"/>
         </customView>
         <customView id="eva-t6-d1S" userLabel="Menu">
-            <rect key="frame" x="0.0" y="0.0" width="460" height="333"/>
+            <rect key="frame" x="0.0" y="0.0" width="460" height="352"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField verticalHuggingPriority="750" id="jEd-7p-zOM">
-                    <rect key="frame" x="372" y="70" width="39" height="14"/>
+                    <rect key="frame" x="372" y="67" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="chars" id="TH9-ne-sId">
@@ -226,7 +255,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="MTS-hr-jxl">
-                    <rect key="frame" x="323" y="70" width="44" height="22"/>
+                    <rect key="frame" x="323" y="67" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="hpS-9g-c39">
@@ -243,7 +272,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="xfC-Ad-IIo">
-                    <rect key="frame" x="68" y="73" width="250" height="17"/>
+                    <rect key="frame" x="68" y="70" width="250" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Max length of tool tip string:" id="LQr-2B-dpY">
@@ -253,7 +282,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="bY0-PQ-nRh">
-                    <rect key="frame" x="372" y="267" width="39" height="14"/>
+                    <rect key="frame" x="372" y="286" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="items" id="8mn-i8-FEH">
@@ -263,7 +292,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="4cI-cd-s0X">
-                    <rect key="frame" x="372" y="239" width="39" height="14"/>
+                    <rect key="frame" x="372" y="258" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="chars" id="fI7-4u-XKV">
@@ -273,7 +302,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="Fhb-Ae-m4w">
-                    <rect key="frame" x="51" y="93" width="301" height="18"/>
+                    <rect key="frame" x="51" y="90" width="301" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show tool tip on a menu item" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="B7l-of-lUy">
@@ -285,7 +314,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="pKu-T9-pjd">
-                    <rect key="frame" x="323" y="267" width="44" height="22"/>
+                    <rect key="frame" x="323" y="286" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="pY3-DO-wSk">
@@ -302,7 +331,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="40j-hG-ZIU">
-                    <rect key="frame" x="50" y="269" width="268" height="17"/>
+                    <rect key="frame" x="50" y="288" width="268" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Number of items place inside a folder:" id="SDx-0Q-zra">
@@ -312,7 +341,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="TiX-pI-JTx">
-                    <rect key="frame" x="323" y="294" width="44" height="22"/>
+                    <rect key="frame" x="323" y="313" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="7Qa-RB-blA">
@@ -329,7 +358,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="CrK-Wg-0KE">
-                    <rect key="frame" x="50" y="296" width="268" height="17"/>
+                    <rect key="frame" x="50" y="315" width="268" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Number of items place inline:" id="Od6-r8-gVn">
@@ -339,7 +368,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="57y-uN-VF2">
-                    <rect key="frame" x="51" y="157" width="297" height="18"/>
+                    <rect key="frame" x="51" y="154" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Add key equivalents to numeric keys" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Xp9-Jm-9nP">
@@ -351,7 +380,7 @@
                     </connections>
                 </button>
                 <button id="tyo-xD-1U1">
-                    <rect key="frame" x="51" y="197" width="297" height="18"/>
+                    <rect key="frame" x="51" y="194" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Mark menu items with numbers" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="UhN-0c-3Z3">
@@ -363,19 +392,19 @@
                     </connections>
                 </button>
                 <button id="ehj-GX-5BR">
-                    <rect key="frame" x="51" y="217" width="297" height="18"/>
+                    <rect key="frame" x="51" y="236" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
-                    <buttonCell key="cell" type="check" title="Overwrite the same history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="p4i-oa-Aoc">
+                    <buttonCell key="cell" type="check" title="Copy the same history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="p4i-oa-Aoc">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="tEn-bU-DUd"/>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefCopySameHistroy" id="eLv-Hs-R1B"/>
                     </connections>
                 </button>
                 <button id="QiN-Uk-gug">
-                    <rect key="frame" x="64" y="177" width="273" height="18"/>
+                    <rect key="frame" x="64" y="174" width="273" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Menu items' title starts with 0" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Vxc-sj-Dfh">
@@ -388,7 +417,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="NH4-GQ-Z0F">
-                    <rect key="frame" x="323" y="239" width="44" height="22"/>
+                    <rect key="frame" x="323" y="258" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="tM7-PB-uOe">
@@ -404,7 +433,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="mNY-P1-oxx">
-                    <rect key="frame" x="50" y="241" width="276" height="17"/>
+                    <rect key="frame" x="50" y="260" width="276" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Number of characters in the menu:" id="i8w-kV-UeD">
@@ -414,7 +443,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="3ze-SX-bc2">
-                    <rect key="frame" x="64" y="115" width="347" height="18"/>
+                    <rect key="frame" x="64" y="112" width="347" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show alert panel before clear history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="xWO-1T-CVB">
@@ -427,7 +456,7 @@
                     </connections>
                 </button>
                 <button id="Hkc-oq-CF8">
-                    <rect key="frame" x="51" y="135" width="359" height="18"/>
+                    <rect key="frame" x="51" y="132" width="359" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Add a menu item to clear clipboard history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1Qg-V9-Ymg">
@@ -439,7 +468,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="tc7-oh-oTc">
-                    <rect key="frame" x="372" y="294" width="39" height="14"/>
+                    <rect key="frame" x="372" y="313" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="items" id="GaY-1l-xYm">
@@ -449,7 +478,7 @@
                     </textFieldCell>
                 </textField>
                 <button id="ScC-SE-AgC">
-                    <rect key="frame" x="51" y="49" width="301" height="18"/>
+                    <rect key="frame" x="51" y="46" width="301" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show Image" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="gbf-Sc-STH">
@@ -461,7 +490,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" id="V8q-v4-qNg">
-                    <rect key="frame" x="339" y="23" width="32" height="14"/>
+                    <rect key="frame" x="339" y="20" width="32" height="14"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="pixel" id="pkk-jb-sp3">
@@ -471,7 +500,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="YDi-oz-Qns">
-                    <rect key="frame" x="188" y="23" width="32" height="14"/>
+                    <rect key="frame" x="188" y="20" width="32" height="14"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="pixel" id="rWf-ff-Efr">
@@ -481,7 +510,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="G5D-zP-A0y">
-                    <rect key="frame" x="140" y="21" width="43" height="22"/>
+                    <rect key="frame" x="140" y="18" width="43" height="22"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="I8E-ul-v1c">
@@ -499,7 +528,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="LCU-g5-Npe">
-                    <rect key="frame" x="291" y="20" width="43" height="22"/>
+                    <rect key="frame" x="291" y="17" width="43" height="22"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="Vtt-6m-TYj">
@@ -517,7 +546,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="8mu-yy-AYp">
-                    <rect key="frame" x="235" y="23" width="51" height="17"/>
+                    <rect key="frame" x="235" y="20" width="51" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Height:" id="EcT-ne-kkh">
@@ -527,7 +556,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" id="aKI-jH-3fc">
-                    <rect key="frame" x="90" y="23" width="51" height="17"/>
+                    <rect key="frame" x="90" y="20" width="51" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Width:" id="GyW-mI-ie8">
@@ -536,9 +565,22 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button id="jzO-ZM-6bC">
+                    <rect key="frame" x="64" y="216" width="297" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
+                    <buttonCell key="cell" type="check" title="Overwrite the same history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="sfs-rm-zf3">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.kCPYPrefCopySameHistroy" id="SWs-NX-Cgf"/>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="4Nj-Ul-vWq"/>
+                    </connections>
+                </button>
             </subviews>
             <animations/>
-            <point key="canvasLocation" x="571" y="1061.5"/>
+            <point key="canvasLocation" x="571" y="1071"/>
         </customView>
         <customView id="TpB-41-wwb" userLabel="Type">
             <rect key="frame" x="0.0" y="-5" width="460" height="218"/>

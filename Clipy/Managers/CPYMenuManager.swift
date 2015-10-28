@@ -21,8 +21,8 @@ class CPYMenuManager: NSObject {
     private var statusItem: NSStatusItem?
     private var highlightedMenuItem: NSMenuItem?
     
-    var folderIcon = NSImage(named: "icon_folder")
-    var snippetIcon = NSImage(named: "icon_text")
+    var folderIcon = NSImage(assetIdentifier: .IconFolder)
+    var snippetIcon = NSImage(assetIdentifier: .IconText)
 
     private let kMaxKeyEquivalents = 10
     private let SHORTEN_SYMBOL = "..."
@@ -384,11 +384,11 @@ class CPYMenuManager: NSObject {
         var statusIcon: NSImage?
         switch itemIndex {
         case 1:
-            statusIcon = NSImage(named: "statusbar_menu_black")
+            statusIcon = NSImage(assetIdentifier: .MenuBlack)
         case 2:
-            statusIcon = NSImage(named: "statusbar_menu_white")
+            statusIcon = NSImage(assetIdentifier: .MenuWhite)
         default:
-            statusIcon = NSImage(named: "statusbar_menu_black")
+            statusIcon = NSImage(assetIdentifier: .MenuBlack)
         }
         statusIcon?.template = true
         

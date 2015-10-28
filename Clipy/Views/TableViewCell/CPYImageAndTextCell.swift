@@ -82,10 +82,10 @@ class CPYImageAndTextCell: NSTextFieldCell {
         
         if self.cellImageType == .Folder {
             imageFrame.size = NSMakeSize(15.0, 13.0)
-            NSImage(named: "icon_folder")?.drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
+            NSImage(assetIdentifier: .IconFolder).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         } else if self.cellImageType == .File {
             imageFrame.size = NSMakeSize(12.0, 13.0)
-            NSImage(named: "icon_text")?.drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
+            NSImage(assetIdentifier: .IconText).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
         } else if self.cellImageType == .Application {
             imageFrame.size = NSMakeSize(16.0, 16.0)
         }

@@ -55,16 +55,16 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         if let image = NSImage(named: NSImageNamePreferencesGeneral) {
             self.addView(self.generalPreferenceView, label: NSLocalizedString("General", comment: ""), image: image)
         }
-        if let image = NSImage(named: "Menu") {
+        if let image = NSImage(assetIdentifier: .Menu) {
             self.addView(self.menuPreferenceView, label: NSLocalizedString("Menu", comment: ""), image: image)
         }
-        if let image = NSImage(named: "icon_application") {
+        if let image = NSImage(assetIdentifier: .IconApplication) {
             self.addView(self.typePreferenceView, label: NSLocalizedString("Type", comment: ""), image: image)
         }
-        if let image = NSImage(named: "PTKeyboardIcon") {
+        if let image = NSImage(assetIdentifier: .IconKeyboard) {
             self.addView(self.shortcutPreferenceView, label: NSLocalizedString("Shortcuts", comment: ""), image: image)
         }
-        if let image = NSImage(named: "SparkleIcon") {
+        if let image = NSImage(assetIdentifier: .IconSparkle) {
             self.addView(self.updatePreferenceView, label: NSLocalizedString("Updates", comment: ""), image: image)
         }
         
