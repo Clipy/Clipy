@@ -15,7 +15,6 @@
                 <outlet property="shortcutPreferenceView" destination="alt-bX-F2w" id="pmO-d2-KwH"/>
                 <outlet property="snippetsShortcutRecorder" destination="yBo-UZ-ih2" id="ZWF-G8-Vtq"/>
                 <outlet property="typePreferenceView" destination="TpB-41-wwb" id="J4M-uG-Ebj"/>
-                <outlet property="updatePreferenceView" destination="UHl-4Q-PZG" id="nr3-Ax-d1b"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -764,73 +763,6 @@
             </subviews>
             <animations/>
             <point key="canvasLocation" x="1122" y="840.5"/>
-        </customView>
-        <customView id="UHl-4Q-PZG" userLabel="Update">
-            <rect key="frame" x="0.0" y="0.0" width="460" height="123"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <subviews>
-                <textField verticalHuggingPriority="750" id="mcw-9R-p5A">
-                    <rect key="frame" x="50" y="20" width="361" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="date" id="Bcd-uX-vgc">
-                        <dateFormatter key="formatter" dateStyle="full" timeStyle="medium" id="vRV-Fl-HYR"/>
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="DeX-nb-MuN" name="value" keyPath="lastUpdateCheckDate" id="WUW-jA-kyu"/>
-                    </connections>
-                </textField>
-                <button verticalHuggingPriority="750" id="J8T-Em-UhC">
-                    <rect key="frame" x="164" y="42" width="132" height="32"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <buttonCell key="cell" type="push" title="今すぐチェック" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BEH-Zl-Y6z">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="checkForUpdates:" target="DeX-nb-MuN" id="mhy-ma-GmI"/>
-                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.kCPYEnableAutomaticCheckKey" id="LB5-5V-IfS"/>
-                    </connections>
-                </button>
-                <button id="6QG-Yc-57m">
-                    <rect key="frame" x="51" y="84" width="241" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <buttonCell key="cell" type="check" title="アップデートを自動的にチェック:" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pQn-Uj-iDc">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYEnableAutomaticCheckKey" id="Rum-bv-GXO"/>
-                    </connections>
-                </button>
-                <popUpButton verticalHuggingPriority="750" id="MDx-MG-SUU">
-                    <rect key="frame" x="295" y="79" width="116" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="DXC-e4-PJT">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="n4w-h1-1Uh">
-                            <items>
-                                <menuItem title="毎日" tag="86400" id="tJH-mf-hC9"/>
-                                <menuItem title="毎週" tag="604800" id="hPg-Ep-Htl"/>
-                                <menuItem title="毎月" tag="2592000" id="8hK-q5-36U"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values.kCPYEnableAutomaticCheckKey" id="0AU-Qu-sEx"/>
-                        <binding destination="2Lc-6R-cnC" name="selectedTag" keyPath="values.kCPYUpdateCheckIntervalKey" id="yIc-ol-BAK"/>
-                    </connections>
-                </popUpButton>
-            </subviews>
-            <animations/>
-            <point key="canvasLocation" x="1120" y="1064.5"/>
         </customView>
         <customObject id="DeX-nb-MuN" customClass="SUUpdater"/>
         <userDefaultsController representsSharedInstance="YES" id="2Lc-6R-cnC"/>

@@ -44,9 +44,11 @@ class CPYHistoryManager: NSObject {
                     for path in imagePaths {
                         PINCache.sharedCache().removeObjectForKey(path)
                     }
-                    realm.transactionWithBlock({ () -> Void in
-                        realm.deleteObjects(results)
-                    })
+                    do {
+                        try realm.transactionWithBlock({ () -> Void in
+                            realm.deleteObjects(results)
+                        })
+                    } catch {}
                 }
             }
             
