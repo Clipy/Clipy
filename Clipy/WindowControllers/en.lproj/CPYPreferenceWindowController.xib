@@ -763,7 +763,6 @@
             <animations/>
             <point key="canvasLocation" x="1122" y="840.5"/>
         </customView>
-        <customObject id="DeX-nb-MuN" customClass="SUUpdater"/>
         <userDefaultsController representsSharedInstance="YES" id="2Lc-6R-cnC"/>
     </objects>
     <resources>
