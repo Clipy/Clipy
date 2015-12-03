@@ -188,6 +188,7 @@ extension AppDelegate: NSApplicationDelegate {
             self.promptToAddLoginItems()
         }
         
+        
         // スリープ時にタイマーを停止する
         self.registSleepNotifications()
         

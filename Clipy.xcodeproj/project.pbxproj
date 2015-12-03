@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD02AEC500E951DF3566C0B /* libPods.a */; };
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
-		FA268B381C0E383B009C5325 /* deleteLoginItem.scpt in Resources */ = {isa = PBXBuildFile; fileRef = FA268B361C0E383B009C5325 /* deleteLoginItem.scpt */; settings = {ASSET_TAGS = (); }; };
-		FA268B391C0E383B009C5325 /* addLoginItem.scpt in Resources */ = {isa = PBXBuildFile; fileRef = FA268B371C0E383B009C5325 /* addLoginItem.scpt */; settings = {ASSET_TAGS = (); }; };
 		FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */; };
 		FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */; };
 		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
@@ -83,8 +81,6 @@
 		E2265F0B70723AFEA6D247B6 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA268B341C0E326B009C5325 /* Clipy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Clipy.entitlements; sourceTree = "<group>"; };
-		FA268B361C0E383B009C5325 /* deleteLoginItem.scpt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = deleteLoginItem.scpt; sourceTree = "<group>"; };
-		FA268B371C0E383B009C5325 /* addLoginItem.scpt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = addLoginItem.scpt; sourceTree = "<group>"; };
 		FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferenceWindowController.swift; sourceTree = "<group>"; };
 		FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetEditorWindowController.swift; sourceTree = "<group>"; };
 		FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYImageAndTextCell.swift; sourceTree = "<group>"; };
@@ -189,15 +185,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		FA268B351C0E382E009C5325 /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				FA268B361C0E383B009C5325 /* deleteLoginItem.scpt */,
-				FA268B371C0E383B009C5325 /* addLoginItem.scpt */,
-			);
-			path = Scripts;
-			sourceTree = "<group>";
-		};
 		FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -278,7 +265,6 @@
 				FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */,
 				FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */,
 				FAC43DFC1B35DDE700C06102 /* Libraries */,
-				FA268B351C0E382E009C5325 /* Scripts */,
 				FAC43DC91B35D8B100C06102 /* Supporting Files */,
 			);
 			path = Clipy;
@@ -493,9 +479,7 @@
 			files = (
 				FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */,
 				FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */,
-				FA268B391C0E383B009C5325 /* addLoginItem.scpt in Resources */,
 				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
-				FA268B381C0E383B009C5325 /* deleteLoginItem.scpt in Resources */,
 				FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */,
 				FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */,
 				FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */,
