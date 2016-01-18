@@ -152,21 +152,9 @@ class AppDelegate: NSObject {
         defaults.synchronize()
     }
     
-    private func toggleAddingToLoginItems(enable: Bool) {
-        /*
-        let appPath = NSBundle.mainBundle().bundlePath
-        if enable {
-            NMLoginItems.removePathFromLoginItems(appPath)
-            NMLoginItems.addPathToLoginItems(appPath, hide: false)
-        } else {
-            NMLoginItems.removePathFromLoginItems(appPath)
-        }
-        */
-    }
-    
     private func toggleLoginItemState() {
         let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefLoginItemKey)
-        self.toggleAddingToLoginItems(isInLoginItems)
+        CPYLoginItemManager.launchAtLoginEnabled(isInLoginItems)
     }
 }
 

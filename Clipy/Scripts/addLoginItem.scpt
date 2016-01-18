@@ -1,3 +1,3 @@
 tell application "System Events"
-    make login item at end with properties {path:"%@", kind:application}
+make login item at end with properties {path:"%@", name:"%@"}
 end tell

@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		314FDE9A4D3E3E721CE4CA43 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD02AEC500E951DF3566C0B /* libPods.a */; };
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
-		FA268B381C0E383B009C5325 /* deleteLoginItem.scpt in Resources */ = {isa = PBXBuildFile; fileRef = FA268B361C0E383B009C5325 /* deleteLoginItem.scpt */; settings = {ASSET_TAGS = (); }; };
-		FA268B391C0E383B009C5325 /* addLoginItem.scpt in Resources */ = {isa = PBXBuildFile; fileRef = FA268B371C0E383B009C5325 /* addLoginItem.scpt */; settings = {ASSET_TAGS = (); }; };
+		FA268B381C0E383B009C5325 /* deleteLoginItem.scpt in Resources */ = {isa = PBXBuildFile; fileRef = FA268B361C0E383B009C5325 /* deleteLoginItem.scpt */; };
+		FA268B391C0E383B009C5325 /* addLoginItem.scpt in Resources */ = {isa = PBXBuildFile; fileRef = FA268B371C0E383B009C5325 /* addLoginItem.scpt */; };
 		FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */; };
 		FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */; };
 		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
@@ -49,7 +49,8 @@
 		FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */; };
 		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
-		FADAF7BA1BD946E8006DB2D0 /* NSImage+AssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADAF7B91BD946E8006DB2D0 /* NSImage+AssetCatalog.swift */; settings = {ASSET_TAGS = (); }; };
+		FADAF7BA1BD946E8006DB2D0 /* NSImage+AssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADAF7B91BD946E8006DB2D0 /* NSImage+AssetCatalog.swift */; };
+		FAEBC9EB1C4D2FFA00B191DF /* CPYLoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEBC9EA1C4D2FFA00B191DF /* CPYLoginItemManager.swift */; };
 		FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */; };
 /* End PBXBuildFile section */
 
@@ -136,6 +137,7 @@
 		FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYConstants.swift; sourceTree = "<group>"; };
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
 		FADAF7B91BD946E8006DB2D0 /* NSImage+AssetCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+AssetCatalog.swift"; sourceTree = "<group>"; };
+		FAEBC9EA1C4D2FFA00B191DF /* CPYLoginItemManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYLoginItemManager.swift; sourceTree = "<group>"; };
 		FAF1DA0B1B41888F00E15D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 		FAF1DA0F1B41889800E15D16 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -386,6 +388,7 @@
 				FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */,
 				FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */,
 				FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */,
+				FAEBC9EA1C4D2FFA00B191DF /* CPYLoginItemManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
+				FAEBC9EB1C4D2FFA00B191DF /* CPYLoginItemManager.swift in Sources */,
 				FA8B8E681B65193F00AA65AF /* NSImage+Resize.swift in Sources */,
 				FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */,
 				FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */,
