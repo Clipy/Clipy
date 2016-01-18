@@ -86,10 +86,12 @@ class CPYClipManager: NSObject {
             PINCache.sharedCache().removeObjectForKey(path)
         }
  
-        let realm = RLMRealm.defaultRealm()
-        realm.transactionWithBlock({ () -> Void in
-            realm.deleteObjects(results)
-        })
+        do {
+            let realm = RLMRealm.defaultRealm()
+            try realm.transactionWithBlock({ () -> Void in
+                realm.deleteObjects(results)
+            })
+        } catch {}
         
         CPYHistoryManager.sharedManager.cleanHistory()
         
@@ -226,9 +228,11 @@ class CPYClipManager: NSObject {
                 if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                     let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
                     if result {
-                        realm.transactionWithBlock({ () -> Void in
-                            realm.addOrUpdateObject(clip)
-                        })
+                        do {
+                            try realm.transactionWithBlock({ () -> Void in
+                                realm.addOrUpdateObject(clip)
+                            })
+                        } catch {}
                     }
                 }
                 

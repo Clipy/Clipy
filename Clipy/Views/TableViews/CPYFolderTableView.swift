@@ -72,7 +72,7 @@ extension CPYFolderTableView: NSTableViewDelegate {
                 if let tableView = control as? NSTableView {
                     let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(tableView.selectedRow)) as! CPYFolder
                     let realm = RLMRealm.defaultRealm()
-                    realm.transactionWithBlock({ () -> Void in
+                    try! realm.transactionWithBlock({ () -> Void in
                         folder.title = text
                     })
                 }

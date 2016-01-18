@@ -16,7 +16,6 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
     @IBOutlet var menuPreferenceView: NSView!
     @IBOutlet var typePreferenceView: NSView!
     @IBOutlet var shortcutPreferenceView: NSView!
-    @IBOutlet var updatePreferenceView: NSView!
     // Hot Keys
     @IBOutlet weak var mainShortcutRecorder: SRRecorderControl!
     @IBOutlet weak var historyShortcutRecorder: SRRecorderControl!
@@ -63,9 +62,6 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         }
         if let image = NSImage(assetIdentifier: .IconKeyboard) {
             self.addView(self.shortcutPreferenceView, label: NSLocalizedString("Shortcuts", comment: ""), image: image)
-        }
-        if let image = NSImage(assetIdentifier: .IconSparkle) {
-            self.addView(self.updatePreferenceView, label: NSLocalizedString("Updates", comment: ""), image: image)
         }
         
         self.crossFade = true

@@ -77,7 +77,7 @@ class CPYHotKeyManager: NSObject {
         for (key, value) in hotKeyMap {
             if let dict = value as? [String: AnyObject] {
                 let indexNubmer = dict[kIndex] as! NSNumber
-                let index = indexNubmer.unsignedIntegerValue
+                let index = indexNubmer.integerValue
                 let newKeyCombo = newCombos[index]
                 hotKeyCombos.updateValue(newKeyCombo.plistRepresentation(), forKey: key)
             }

@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import Sparkle
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -25,8 +24,12 @@ class AppDelegate: NSObject {
         CPYUtilities.registerUserDefaultKeys()
         
         // Migrate Realm
-        RLMRealm.setSchemaVersion(1, forRealmAtPath: RLMRealm.defaultRealmPath()) { (migrate, oldSchemaVersion) -> Void in }
-
+        let config = RLMRealmConfiguration.defaultConfiguration()
+        config.schemaVersion = 2
+        config.migrationBlock = { (migrate, oldSchemaVersion) in }
+        RLMRealmConfiguration.setDefaultConfiguration(config)
+        RLMRealm.defaultRealm()
+        
         // Show menubar icon
         CPYMenuManager.sharedManager
         
@@ -149,29 +152,10 @@ class AppDelegate: NSObject {
         defaults.synchronize()
     }
     
-    private func toggleAddingToLoginItems(enable: Bool) {
-        let appPath = NSBundle.mainBundle().bundlePath
-        if enable {
-            NMLoginItems.removePathFromLoginItems(appPath)
-            NMLoginItems.addPathToLoginItems(appPath, hide: false)
-        } else {
-            NMLoginItems.removePathFromLoginItems(appPath)
-        }
-    }
-    
     private func toggleLoginItemState() {
         let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefLoginItemKey)
-        self.toggleAddingToLoginItems(isInLoginItems)
+        CPYLoginItemManager.launchAtLoginEnabled(isInLoginItems)
     }
-    
-    // MARK: - Version Up Methods
-    private func checkUpdates() {
-        let feed = "http://clipy-app.com/appcast.xml"
-        if let feedURL = NSURL(string: feed) {
-            SUUpdater.sharedUpdater().feedURL = feedURL
-        }
-    }
-
 }
 
 // MARK: - NSApplication Delegate
@@ -192,12 +176,6 @@ extension AppDelegate: NSApplicationDelegate {
             self.promptToAddLoginItems()
         }
         
-        // Sparkleでアップデート確認
-        let updater = SUUpdater.sharedUpdater()
-        self.checkUpdates()
-        updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
-        updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
-    
         // スリープ時にタイマーを停止する
         self.registSleepNotifications()
         
