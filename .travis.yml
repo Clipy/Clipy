@@ -6,9 +6,11 @@ xcode_scheme:
   - Clipy
 script: xctool -workspace Clipy.xcworkspace -scheme "Clipy" build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 before_install:
-  - gem install cocoapods -v '0.39.0'
-  - pod install
-  
+  - bundle install --path=vendor/bundle --binstubs=vendor/bin
+  - bundle exec pod install
 # enable container-based infrastructure
 sudo: false
-cache: bundler
+cache:
+  directories:
+    - vendor/bundle
+    - Pods
