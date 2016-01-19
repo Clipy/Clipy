@@ -15,10 +15,8 @@ class CPYClipManager: NSObject {
     
     private var storeTypes = [String: NSNumber]()
     private var cachedChangeCount: NSInteger = 0
-    private let asyncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-    private let mainQueue = dispatch_get_main_queue()
     private var pasteboardObservingTimer: NSTimer?
-    private var isCopyingPsteboard = false
+    private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     
     // MARK: - Init
     override init() {
@@ -156,24 +154,17 @@ class CPYClipManager: NSObject {
     
     // MARK: - Clip Methods
     func updateClips(sender: NSTimer) {
-        if self.isCopyingPsteboard {
+        self.lock.lock()
+        
+        let pasteBoard = NSPasteboard.generalPasteboard()
+        if pasteBoard.changeCount == self.cachedChangeCount {
+            self.lock.unlock()
             return
         }
-        self.isCopyingPsteboard = true
-        dispatch_async(self.asyncQueue, { [unowned self] () -> Void in
-            
-            let pasteBoard = NSPasteboard.generalPasteboard()
-            if pasteBoard.changeCount == self.cachedChangeCount {
-                self.isCopyingPsteboard = false
-                return
-            }
-            self.cachedChangeCount = pasteBoard.changeCount
-    
-            dispatch_async(self.mainQueue, { [unowned self] () -> Void in
-                self.createClip()
-            })
-            
-        })
+        self.cachedChangeCount = pasteBoard.changeCount
+        self.createClip()
+        
+        self.lock.unlock()
     }
     
     func createClip() {
@@ -184,10 +175,7 @@ class CPYClipManager: NSObject {
                 let realm = RLMRealm.defaultRealm()
                 let isCopySameHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefCopySameHistroyKey)
                 // Search same history
-                if let _ = CPYClip(forPrimaryKey: String(clipData.hash)) where !isCopySameHistory {
-                    self.isCopyingPsteboard = false
-                    return
-                }
+                if let _ = CPYClip(forPrimaryKey: String(clipData.hash)) where !isCopySameHistory { return }
                 
                 let isOverwriteHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefOverwriteSameHistroyKey)
                 let hash: Int
@@ -237,7 +225,6 @@ class CPYClipManager: NSObject {
                 NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
             }
             
-            self.isCopyingPsteboard = false
         }
     }
     
