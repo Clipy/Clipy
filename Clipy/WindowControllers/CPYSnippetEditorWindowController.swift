@@ -428,10 +428,12 @@ extension CPYSnippetEditorWindowController {
                 folderModel.index = 0
             }
             
-            let realm = RLMRealm.defaultRealm()
-            realm.transactionWithBlock( { () -> Void in
-                realm.addObject(folderModel)
-            })
+            do {
+                let realm = RLMRealm.defaultRealm()
+                try realm.transactionWithBlock( { () -> Void in
+                    realm.addObject(folderModel)
+                })
+            } catch {}
             
             if let snippets = folder[kSnippets] as? [AnyObject] {
                 for snippet in snippets as! [[String: String]] {
@@ -453,10 +455,12 @@ extension CPYSnippetEditorWindowController {
                         snippetModel.index = 0
                     }
                     
-                    let realm = RLMRealm.defaultRealm()
-                    realm.transactionWithBlock({ () -> Void in
-                        folderModel.snippets.addObject(snippetModel)
-                    })
+                    do {
+                        let realm = RLMRealm.defaultRealm()
+                        try realm.transactionWithBlock({ () -> Void in
+                            folderModel.snippets.addObject(snippetModel)
+                        })
+                    } catch {}
                 }
                 
                 self.foldersFromFile = [AnyObject]()

@@ -90,7 +90,7 @@ extension CPYSnippetTableView: NSTableViewDelegate {
                 if let tableView = control as? NSTableView {
                     let snippet = self.snippetFolder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(tableView.selectedRow)) as! CPYSnippet
                     let realm = RLMRealm.defaultRealm()
-                    realm.transactionWithBlock({ () -> Void in
+                    try! realm.transactionWithBlock({ () -> Void in
                         snippet.title = text
                     })
                 }
