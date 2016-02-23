@@ -24,11 +24,11 @@ class CPYSnippetTableView: NSTableView {
     // MARK - Init
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.setDelegate(self)
-        self.setDataSource(self)
+        setDelegate(self)
+        setDataSource(self)
         
-        self.registerForDraggedTypes([kDraggedDataType])
-        self.setDraggingSourceOperationMask(NSDragOperation.Move, forLocal: true)
+        registerForDraggedTypes([kDraggedDataType])
+        setDraggingSourceOperationMask(NSDragOperation.Move, forLocal: true)
     }
     
     override func drawRect(dirtyRect: NSRect) {
@@ -37,8 +37,8 @@ class CPYSnippetTableView: NSTableView {
     
     // MARK: - Self Methods
     func setFolder(folder: CPYFolder?) {
-        self.snippetFolder = folder
-        self.reloadData()
+        snippetFolder = folder
+        reloadData()
     }
     
 }
@@ -46,8 +46,8 @@ class CPYSnippetTableView: NSTableView {
 // MARK: - NSTableView DataSource
 extension CPYSnippetTableView: NSTableViewDataSource {
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        if self.snippetFolder != nil {
-            return Int(self.snippetFolder!.snippets.count)
+        if snippetFolder != nil {
+            return Int(snippetFolder!.snippets.count)
         } else {
             return 0
         }
@@ -73,7 +73,7 @@ extension CPYSnippetTableView: NSTableViewDataSource {
     }
     
     func tableView(tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-        self.tableDelegate?.selectSnippet?(row, folder: self.snippetFolder)
+        tableDelegate?.selectSnippet?(row, folder: snippetFolder)
         return true
     }
 }
@@ -88,7 +88,7 @@ extension CPYSnippetTableView: NSTableViewDelegate {
         if let text = fieldEditor.string {
             if text.characters.count != 0 {
                 if let tableView = control as? NSTableView {
-                    let snippet = self.snippetFolder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(tableView.selectedRow)) as! CPYSnippet
+                    let snippet = snippetFolder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(tableView.selectedRow)) as! CPYSnippet
                     let realm = RLMRealm.defaultRealm()
                     try! realm.transactionWithBlock({ () -> Void in
                         snippet.title = text
@@ -139,14 +139,14 @@ extension CPYSnippetTableView: NSTableViewDelegate {
                     return false
                 }
                 
-                CPYSnippetManager.sharedManager.updateSnippetIndex(row, selectIndexes: rowIndexes, folder: self.snippetFolder)
-                self.reloadData()
+                CPYSnippetManager.sharedManager.updateSnippetIndex(row, selectIndexes: rowIndexes, folder: snippetFolder)
+                reloadData()
                 if row > rowIndexes.firstIndex {
-                    self.selectRowIndexes(NSIndexSet(index: row - 1), byExtendingSelection: false)
-                    self.tableDelegate?.selectSnippet?(row - 1, folder: self.snippetFolder)
+                    selectRowIndexes(NSIndexSet(index: row - 1), byExtendingSelection: false)
+                    tableDelegate?.selectSnippet?(row - 1, folder: snippetFolder)
                 } else {
-                    self.selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
-                    self.tableDelegate?.selectSnippet?(row, folder: self.snippetFolder)
+                    selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
+                    tableDelegate?.selectSnippet?(row, folder: snippetFolder)
                 }
             }
         }

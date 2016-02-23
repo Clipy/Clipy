@@ -17,20 +17,19 @@ class CPYClipManager: NSObject {
     private var cachedChangeCount: NSInteger = 0
     private var pasteboardObservingTimer: NSTimer?
     private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
+    private let defaults = NSUserDefaults.standardUserDefaults()
     
     // MARK: - Init
     override init() {
         super.init()
-        self.initManager()
+        initManager()
     }
     
     private func initManager() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
-        self.storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
+        storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
 
         // Timer
-        self.startPasteboardObservingTimer()
+        startPasteboardObservingTimer()
         
         defaults.addObserver(self, forKeyPath: kCPYPrefMaxHistorySizeKey, options: NSKeyValueObservingOptions.New, context: nil)
         defaults.addObserver(self, forKeyPath: kCPYPrefTimeIntervalKey, options: NSKeyValueObservingOptions.New, context: nil)
@@ -38,12 +37,11 @@ class CPYClipManager: NSObject {
     }
     
     deinit {
-        let defaults = NSUserDefaults.standardUserDefaults()
         defaults.removeObserver(self, forKeyPath: kCPYPrefMaxHistorySizeKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefTimeIntervalKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefStoreTypesKey)
-        if self.pasteboardObservingTimer != nil && self.pasteboardObservingTimer!.valid {
-            self.pasteboardObservingTimer?.invalidate()
+        if pasteboardObservingTimer != nil && pasteboardObservingTimer!.valid {
+            pasteboardObservingTimer?.invalidate()
         }
     }
     
@@ -52,10 +50,9 @@ class CPYClipManager: NSObject {
         if keyPath == kCPYPrefMaxHistorySizeKey {
             CPYHistoryManager.sharedManager.trimHistorySize()
         } else if keyPath == kCPYPrefTimeIntervalKey {
-            self.startPasteboardObservingTimer()
+            startPasteboardObservingTimer()
         } else if keyPath == kCPYPrefStoreTypesKey {
-            let defaults = NSUserDefaults.standardUserDefaults()
-            self.storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
+            storeTypes = defaults.objectForKey(kCPYPrefStoreTypesKey) as! [String: NSNumber]
         }
     }
     
@@ -65,12 +62,12 @@ class CPYClipManager: NSObject {
     }
     
     func loadSortedClips() -> RLMResults {
-        let ascending = !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefReorderClipsAfterPasting)
+        let ascending = !defaults.boolForKey(kCPYPrefReorderClipsAfterPasting)
         return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: ascending)
     }
     
     func clearAll() {
-        let results = self.loadClips()
+        let results = loadClips()
         var imagePaths = [String]()
         
         for clipData in results {
@@ -149,38 +146,38 @@ class CPYClipManager: NSObject {
     }
     
     func copyClipToPasteboardAtIndex(index: NSInteger) {
-        let result = self.loadSortedClips()
+        let result = loadSortedClips()
         if let clip = result.objectAtIndex(UInt(index)) as? CPYClip where !clip.invalidated {
-            self.copyClipToPasteboard(clip)
+            copyClipToPasteboard(clip)
         }
     }
     
     // MARK: - Clip Methods
     func updateClips(sender: NSTimer) {
-        self.lock.lock()
+        lock.lock()
         
         let pasteBoard = NSPasteboard.generalPasteboard()
-        if pasteBoard.changeCount == self.cachedChangeCount {
-            self.lock.unlock()
+        if pasteBoard.changeCount == cachedChangeCount {
+            lock.unlock()
             return
         }
-        self.cachedChangeCount = pasteBoard.changeCount
-        self.createClip()
+        cachedChangeCount = pasteBoard.changeCount
+        createClip()
         
-        self.lock.unlock()
+        lock.unlock()
     }
     
     func createClip() {
         autoreleasepool { () -> () in
     
-            if let clipData = self.makeClipDataFromPasteboard() {
+            if let clipData = makeClipDataFromPasteboard() {
                 
                 let realm = RLMRealm.defaultRealm()
-                let isCopySameHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefCopySameHistroyKey)
+                let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
                 // Search same history
                 if let _ = CPYClip(forPrimaryKey: String(clipData.hash)) where !isCopySameHistory { return }
                 
-                let isOverwriteHistory = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefOverwriteSameHistroyKey)
+                let isOverwriteHistory = defaults.boolForKey(kCPYPrefOverwriteSameHistroyKey)
                 let hash: Int
                 if isOverwriteHistory {
                     hash = clipData.hash
@@ -204,8 +201,8 @@ class CPYClipManager: NSObject {
                 if clipData.primaryType == NSTIFFPboardType {
                     if let image = clipData.image {
                         
-                        let thumbnailWidth = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailWidthKey)
-                        let thumbnailHeight = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefThumbnailHeightKey)
+                        let thumbnailWidth = defaults.integerForKey(kCPYPrefThumbnailWidthKey)
+                        let thumbnailHeight = defaults.integerForKey(kCPYPrefThumbnailHeightKey)
                         
                         if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
                             PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
@@ -236,22 +233,21 @@ class CPYClipManager: NSObject {
     
     // MARK: - Timer Methods
     func startPasteboardObservingTimer() {
-        self.stopPasteboardObservingTimer()
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
+        stopPasteboardObservingTimer()
+
         var timeInterval = defaults.floatForKey(kCPYPrefTimeIntervalKey)
         if timeInterval > 1.0 {
             timeInterval = 1.0
             defaults.setFloat(1.0, forKey: kCPYPrefTimeIntervalKey)
         }
  
-        self.pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: "updateClips:", userInfo: nil, repeats: true)
-        NSRunLoop.currentRunLoop().addTimer(self.pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
+        pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: "updateClips:", userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
     }
     
     func stopPasteboardObservingTimer() {
-        if self.pasteboardObservingTimer != nil && self.pasteboardObservingTimer!.valid {
-            self.pasteboardObservingTimer?.invalidate()
+        if pasteboardObservingTimer != nil && pasteboardObservingTimer!.valid {
+            pasteboardObservingTimer?.invalidate()
         }
     }
     
@@ -261,13 +257,13 @@ class CPYClipManager: NSObject {
         let clipData = CPYClipData()
         
         let pboard = NSPasteboard.generalPasteboard()
-        let types = self.makeTypesFromPasteboard()
+        let types = makeTypesFromPasteboard()
         
         if types.isEmpty {
             return nil
         }
         
-        if !self.storeTypes.values.contains(NSNumber(bool: true)) {
+        if !storeTypes.values.contains(NSNumber(bool: true)) {
             return nil
         }
         
@@ -312,7 +308,7 @@ class CPYClipManager: NSObject {
         let pboard = NSPasteboard.generalPasteboard()
         if let pbTypes = pboard.types {
             for dataType in pbTypes {
-                if !self.storeType(dataType) {
+                if !storeType(dataType) {
                     continue
                 }
                 
@@ -332,7 +328,7 @@ class CPYClipManager: NSObject {
     private func storeType(type: String) -> Bool {
         let typeDict = CPYClipData.availableTypesDictinary()
         if let key = typeDict[type] {
-            if let number = self.storeTypes[key] {
+            if let number = storeTypes[key] {
                 return number.boolValue
             }
         }

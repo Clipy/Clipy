@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class CPYUtilities: NSObject {
+final class CPYUtilities {
 
     static func registerUserDefaultKeys() {
         var defaultValues = [String: AnyObject]()
@@ -49,6 +49,15 @@ class CPYUtilities: NSObject {
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
+    }
+
+    static func migrationRealm() {
+
+        let config = RLMRealmConfiguration.defaultConfiguration()
+        config.schemaVersion = 2
+        config.migrationBlock = { (migrate, oldSchemaVersion) in }
+        RLMRealmConfiguration.setDefaultConfiguration(config)
+        RLMRealm.defaultRealm()
     }
     
     static func paste() -> Bool {
@@ -100,7 +109,6 @@ class CPYUtilities: NSObject {
         autoreleasepool { () -> () in
             let fileManager = NSFileManager.defaultManager()
             var isDir: ObjCBool = false
-            
             if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
                 do {
                     try fileManager.removeItemAtPath(path)

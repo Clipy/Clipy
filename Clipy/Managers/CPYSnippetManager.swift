@@ -16,7 +16,7 @@ class CPYSnippetManager: NSObject {
     // MARK: - Init
     override init() {
         super.init()
-        self.initManager()
+        initManager()
     }
     
     private func initManager() {
@@ -49,7 +49,7 @@ class CPYSnippetManager: NSObject {
         let folder = CPYFolder()
         folder.title = title ?? "untitled folder"
         
-        if let lastFolder = self.loadSortedFolders().lastObject() as? CPYFolder {
+        if let lastFolder = loadSortedFolders().lastObject() as? CPYFolder {
             folder.index = lastFolder.index + 1
         } else {
             folder.index = 0

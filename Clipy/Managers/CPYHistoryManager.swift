@@ -17,7 +17,7 @@ class CPYHistoryManager: NSObject {
     // MARK: - Init
     override init() {
         super.init()
-        self.startHistoryManageTimer()
+        startHistoryManageTimer()
     }
     
     // MARK: Public Methods
@@ -86,9 +86,9 @@ class CPYHistoryManager: NSObject {
     // MARK: - Private Methods
     private func startHistoryManageTimer() {
         // Clean clip data history every 30 minutes
-        self.historyManageTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
-        NSRunLoop.currentRunLoop().addTimer(self.historyManageTimer, forMode: NSRunLoopCommonModes)
-        self.historyManageTimer.fire()
+        historyManageTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(historyManageTimer, forMode: NSRunLoopCommonModes)
+        historyManageTimer.fire()
     }
     
 }

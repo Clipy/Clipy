@@ -28,7 +28,7 @@ class CPYImageAndTextCell: NSTextFieldCell {
     // MARK: - Init
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.font = NSFont.systemFontOfSize(NSFont.systemFontSize())
+        font = NSFont.systemFontOfSize(NSFont.systemFontSize())
     }
     
     override init(textCell aString: String) {
@@ -38,7 +38,7 @@ class CPYImageAndTextCell: NSTextFieldCell {
     // MARK: - Override Methods
     override func copyWithZone(zone: NSZone) -> AnyObject {
         let cell = super.copyWithZone(zone) as! CPYImageAndTextCell
-        cell.cellImageType = self.cellImageType
+        cell.cellImageType = cellImageType
         return cell
     }
     
@@ -64,12 +64,12 @@ class CPYImageAndTextCell: NSTextFieldCell {
     }
     
     override func editWithFrame(aRect: NSRect, inView controlView: NSView, editor textObj: NSText, delegate anObject: AnyObject?, event theEvent: NSEvent) {
-        let textFrame = self.titleRectForBounds(aRect)
+        let textFrame = titleRectForBounds(aRect)
         super.editWithFrame(textFrame, inView: controlView, editor: textObj, delegate: anObject, event: theEvent)
     }
     
     override func selectWithFrame(aRect: NSRect, inView controlView: NSView, editor textObj: NSText, delegate anObject: AnyObject?, start selStart: Int, length selLength: Int) {
-        let textFrame = self.titleRectForBounds(aRect)
+        let textFrame = titleRectForBounds(aRect)
         super.selectWithFrame(textFrame, inView: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
     }
     
@@ -80,13 +80,13 @@ class CPYImageAndTextCell: NSTextFieldCell {
         imageFrame.origin.x += CGFloat(kImageOriginXOffset)
         imageFrame.origin.y -= CGFloat(kImageOriginYOffset)
         
-        if self.cellImageType == .Folder {
+        if cellImageType == .Folder {
             imageFrame.size = NSMakeSize(15.0, 13.0)
             NSImage(assetIdentifier: .IconFolder).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
-        } else if self.cellImageType == .File {
+        } else if cellImageType == .File {
             imageFrame.size = NSMakeSize(12.0, 13.0)
             NSImage(assetIdentifier: .IconText).drawInRect(imageFrame, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
-        } else if self.cellImageType == .Application {
+        } else if cellImageType == .Application {
             imageFrame.size = NSMakeSize(16.0, 16.0)
         }
         var newFrame = cellFrame;

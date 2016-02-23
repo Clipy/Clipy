@@ -34,7 +34,7 @@ class CPYHotKeyManager: NSObject {
     // MARK: - Init
     override init() {
         super.init()
-        self.initManager()
+        initManager()
     }
     
     private func initManager() {
@@ -50,7 +50,7 @@ class CPYHotKeyManager: NSObject {
     // MARK: - KVO
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefHotKeysKey {
-            self.registerHotKeys()
+            registerHotKeys()
         }
     }
     
@@ -73,7 +73,7 @@ class CPYHotKeyManager: NSObject {
         keyCombo = PTKeyCombo(keyCode: 11, modifiers: 768)
         newCombos.append(keyCombo)
         
-        let hotKeyMap = self.sharedManager.hotkeyMap
+        let hotKeyMap = sharedManager.hotkeyMap
         for (key, value) in hotKeyMap {
             if let dict = value as? [String: AnyObject] {
                 let indexNubmer = dict[kIndex] as! NSNumber
@@ -102,7 +102,7 @@ class CPYHotKeyManager: NSObject {
             
             let hotKey = PTHotKey(identifier: key, keyCombo: keyCombo)
             
-            let hotKeyDict = self.hotkeyMap[key] as! [String: AnyObject]
+            let hotKeyDict = hotkeyMap[key] as! [String: AnyObject]
             let selectorName = hotKeyDict[kSelector] as! String
             hotKey.setTarget(self)
             hotKey.setAction(Selector(selectorName))

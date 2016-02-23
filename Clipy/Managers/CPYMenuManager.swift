@@ -24,6 +24,7 @@ class CPYMenuManager: NSObject {
     var folderIcon = NSImage(assetIdentifier: .IconFolder)
     var snippetIcon = NSImage(assetIdentifier: .IconText)
 
+    private let defaults = NSUserDefaults.standardUserDefaults()
     private let kMaxKeyEquivalents = 10
     private let SHORTEN_SYMBOL = "..."
     private var shortVersion = ""
@@ -31,22 +32,21 @@ class CPYMenuManager: NSObject {
     // MARK: - Init
     override init() {
         super.init()
-        self.initManager()
+        initManager()
     }
     
     private func initManager() {
-        self.shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
+        shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as! String
         
-        self.folderIcon?.template = true
-        self.folderIcon?.size = NSMakeSize(15, 13)
+        folderIcon?.template = true
+        folderIcon?.size = NSMakeSize(15, 13)
     
-        self.snippetIcon?.template = true
-        self.snippetIcon?.size = NSMakeSize(12, 13)
+        snippetIcon?.template = true
+        snippetIcon?.size = NSMakeSize(12, 13)
         
-        self.createMenu()
-        self.createStatusItem()
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
+        createMenu()
+        createStatusItem()
+
         defaults.addObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey, options: .New, context: nil)
         defaults.addObserver(self, forKeyPath: kCPYPrefShowStatusItemKey, options: .New, context: nil)
         
@@ -57,14 +57,13 @@ class CPYMenuManager: NSObject {
 
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
+
         defaults.removeObserver(self, forKeyPath: kCPYPrefMenuIconSizeKey)
         defaults.removeObserver(self, forKeyPath: kCPYPrefShowStatusItemKey)
         
-        if self.statusItem != nil {
-            NSStatusBar.systemStatusBar().removeStatusItem(self.statusItem!)
-            self.statusItem = nil
+        if statusItem != nil {
+            NSStatusBar.systemStatusBar().removeStatusItem(statusItem!)
+            statusItem = nil
         }
     }
     
@@ -73,9 +72,9 @@ class CPYMenuManager: NSObject {
         if let change = change where keyPath == kCPYPrefShowStatusItemKey {
             if let new = change["new"] as? Int {
                 if new == 0 {
-                    self.removeStatusItem()
+                    removeStatusItem()
                 } else {
-                    self.changeStatusItem()
+                    changeStatusItem()
                 }
             }
         }
@@ -83,15 +82,15 @@ class CPYMenuManager: NSObject {
     
     // MARK: - Public Methods
     func createStatusItem() {
-        if self.statusItem == nil {
-            self.changeStatusItem()
+        if statusItem == nil {
+            changeStatusItem()
         }
     }
     
     func updateStatusItem() {
-        if self.statusItem != nil {
-            self.createMenu()
-            self.statusItem?.menu = self.clipMenu
+        if statusItem != nil {
+            createMenu()
+            statusItem?.menu = clipMenu
         }
     }
     
@@ -99,13 +98,13 @@ class CPYMenuManager: NSObject {
         var menu: NSMenu?
         switch type {
         case .Main:
-            self.createMenu()
-            menu = self.clipMenu
+            createMenu()
+            menu = clipMenu
             break
         case .History:
-            menu = self.makeHistoryMenu()
+            menu = makeHistoryMenu()
         case .Snippets:
-            menu = self.makeSnippetsMenu()
+            menu = makeSnippetsMenu()
         }
         menu?.popUpMenuPositioningItem(nil, atLocation: NSEvent.mouseLocation(), inView: nil)
     }
@@ -115,20 +114,20 @@ class CPYMenuManager: NSObject {
         let newMenu = NSMenu(title: kClipyIdentifier)
         newMenu.delegate = self
         
-        self.addClipsToMenu(newMenu)
-        self.addSnippetsToMenu(newMenu, isBelowClips: true)
+        addClipsToMenu(newMenu)
+        addSnippetsToMenu(newMenu, isBelowClips: true)
         newMenu.addItem(NSMenuItem.separatorItem())
         
         if NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefAddClearHistoryMenuItemKey) {
-            newMenu.addItem(self.makeMenuItemWithTitle(NSLocalizedString("Clear History", comment: ""), action: "clearAllHistory"))
+            newMenu.addItem(makeMenuItemWithTitle(NSLocalizedString("Clear History", comment: ""), action: "clearAllHistory"))
         }
-        newMenu.addItem(self.makeMenuItemWithTitle(NSLocalizedString("Edit Snippets...", comment: ""), action: "showSnippetEditorWindow"))
-        newMenu.addItem(self.makeMenuItemWithTitle(NSLocalizedString("Preferences...", comment: ""), action: "showPreferenceWindow"))
+        newMenu.addItem(makeMenuItemWithTitle(NSLocalizedString("Edit Snippets...", comment: ""), action: "showSnippetEditorWindow"))
+        newMenu.addItem(makeMenuItemWithTitle(NSLocalizedString("Preferences...", comment: ""), action: "showPreferenceWindow"))
         newMenu.addItem(NSMenuItem.separatorItem())
         
-        newMenu.addItem(self.makeMenuItemWithTitle(NSLocalizedString("Quit ClipMenu", comment: ""), action: "terminate:"))
+        newMenu.addItem(makeMenuItemWithTitle(NSLocalizedString("Quit ClipMenu", comment: ""), action: "terminate:"))
         
-        self.clipMenu = newMenu
+        clipMenu = newMenu
     }
     
     private func makeMenuItemWithTitle(title: String, action: Selector) -> NSMenuItem {
@@ -142,7 +141,7 @@ class CPYMenuManager: NSObject {
     private func makeHistoryMenu() -> NSMenu {
         let newMenu = NSMenu(title: "")
         newMenu.delegate = self
-        self.addClipsToMenu(newMenu)
+        addClipsToMenu(newMenu)
         return newMenu
     }
     
@@ -150,7 +149,7 @@ class CPYMenuManager: NSObject {
         let newMenu = NSMenu(title: "")
         newMenu.delegate = self
         newMenu.title = kSnippetsMenuIdentifier
-        self.addSnippetsToMenu(newMenu, isBelowClips: false)
+        addSnippetsToMenu(newMenu, isBelowClips: false)
         return newMenu
     }
     
@@ -170,15 +169,15 @@ class CPYMenuManager: NSObject {
             lastNumber = end
         }
         let menuItemTitle = String(count + 1) + " - " + String(lastNumber)
-        return self.makeSubmenuItemWithTitle(menuItemTitle)
+        return makeSubmenuItemWithTitle(menuItemTitle)
     }
     
     private func makeSubmenuItemWithTitle(title: String) -> NSMenuItem {
         let subMenu = NSMenu(title: "")
         let subMenuItem = NSMenuItem(title: title, action: nil, keyEquivalent: kEmptyString)
         subMenuItem.submenu = subMenu
-        if NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefShowIconInTheMenuKey) && self.folderIcon != nil {
-            subMenuItem.image = self.folderIcon
+        if NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefShowIconInTheMenuKey) && folderIcon != nil {
+            subMenuItem.image = folderIcon
         }
         
         return subMenuItem
@@ -194,7 +193,7 @@ class CPYMenuManager: NSObject {
         labelItem.enabled = false
         menu.addItem(labelItem)
         
-        let firstIndex = self.firstIndexOfMenuItems()
+        let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = numberOfItemsPlaceInLine
         var subMenuIndex = (0 < menu.numberOfItems) ? menu.numberOfItems : 0
@@ -206,7 +205,7 @@ class CPYMenuManager: NSObject {
         for clip in clips {
             if (numberOfItemsPlaceInLine < 1) || (numberOfItemsPlaceInLine - 1) < i {
                 if i == subMenuCount {
-                    let subMenuItem = self.makeSubmenuItemWithCount(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: numberOfItemsPlaceInsideFolder)
+                    let subMenuItem = makeSubmenuItemWithCount(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: numberOfItemsPlaceInsideFolder)
                     menu.addItem(subMenuItem)
                     listNumber = firstIndex
                 }
@@ -214,16 +213,16 @@ class CPYMenuManager: NSObject {
                 let indexOfSubMenu = subMenuIndex
                 
                 if let subMenu = menu.itemAtIndex(indexOfSubMenu)?.submenu {
-                    let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
+                    let menuItem = makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
-                    listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInsideFolder, start: firstIndex)
+                    listNumber = incrementListNumber(listNumber, max: numberOfItemsPlaceInsideFolder, start: firstIndex)
                 }
                 
             } else {
-                let menuItem = self.makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
+                let menuItem = makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
                 menu.addItem(menuItem)
                 
-                listNumber = self.incrementListNumber(listNumber, max: numberOfItemsPlaceInLine, start: firstIndex)
+                listNumber = incrementListNumber(listNumber, max: numberOfItemsPlaceInLine, start: firstIndex)
             }
             
             i = i + 1
@@ -255,7 +254,7 @@ class CPYMenuManager: NSObject {
         
         var enabled = false
         var subMenuIndex = menu.numberOfItems - 1
-        let firstIndex = self.firstIndexOfMenuItems()
+        let firstIndex = firstIndexOfMenuItems()
         
         for object in folders {
             let folder = object as! CPYFolder
@@ -265,7 +264,7 @@ class CPYMenuManager: NSObject {
             }
             
             let folderTitle = folder.title
-            let subMenuItem = self.makeSubmenuItemWithTitle(folderTitle)
+            let subMenuItem = makeSubmenuItemWithTitle(folderTitle)
             menu.addItem(subMenuItem)
             subMenuIndex = subMenuIndex + 1
             
@@ -277,7 +276,7 @@ class CPYMenuManager: NSObject {
                     continue
                 }
                 
-                let menuItem = self.makeMenuItemForSnippet(snippet, listNumber: i)
+                let menuItem = makeMenuItemForSnippet(snippet, listNumber: i)
                 
                 if let subMenu = menu.itemAtIndex(subMenuIndex)?.submenu {
                     subMenu.addItem(menuItem)
@@ -310,8 +309,8 @@ class CPYMenuManager: NSObject {
         let primaryPboardType = clip.primaryType
 
         let clipString = clip.title
-        let title = self.trimTitle(clipString)
-        let titleWithMark = self.menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+        let title = trimTitle(clipString)
+        let titleWithMark = menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
         let menuItem = NSMenuItem(title: titleWithMark, action: "selectClipMenuItem:", keyEquivalent: keyEquivalent)
         menuItem.tag = clipIndex
@@ -323,11 +322,11 @@ class CPYMenuManager: NSObject {
         }
         
         if primaryPboardType == NSTIFFPboardType {
-            menuItem.title = self.menuItemTitleWithString("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+            menuItem.title = menuItemTitleWithString("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         } else if primaryPboardType == NSPDFPboardType {
-            menuItem.title = self.menuItemTitleWithString("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+            menuItem.title = menuItemTitleWithString("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         } else if primaryPboardType == NSFilenamesPboardType && title == kEmptyString {
-            menuItem.title = self.menuItemTitleWithString("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+            menuItem.title = menuItemTitleWithString("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
         
         if !clip.thumbnailPath.isEmpty && isShowImage {
@@ -350,11 +349,11 @@ class CPYMenuManager: NSObject {
         var icon: NSImage?
         
         if isShowIcon {
-            icon = self.iconForSnippet()
+            icon = iconForSnippet()
         }
         
-        let title = self.trimTitle(snippet.title)
-        let titleWithMark = self.menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+        let title = trimTitle(snippet.title)
+        let titleWithMark = menuItemTitleWithString(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
         let menuItem = NSMenuItem(title: titleWithMark, action: Selector("selectSnippetMenuItem:"), keyEquivalent: kEmptyString)
         menuItem.representedObject = snippet
@@ -369,12 +368,12 @@ class CPYMenuManager: NSObject {
     
     // MARK: - Icon Manage Methods
     private func iconForSnippet() -> NSImage? {
-        return self.snippetIcon
+        return snippetIcon
     }
     
     // MARK: - StatusItem Manage Methods
     private func changeStatusItem() {
-        self.removeStatusItem()
+        removeStatusItem()
                 
         let itemIndex = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefShowStatusItemKey)
         if itemIndex == 0 {
@@ -393,26 +392,26 @@ class CPYMenuManager: NSObject {
         statusIcon?.template = true
         
         let statusBar = NSStatusBar.systemStatusBar()
-        self.statusItem = statusBar.statusItemWithLength(-1)
-        self.statusItem?.image = statusIcon
-        self.statusItem?.highlightMode = true
-        self.statusItem?.toolTip = kClipyIdentifier + self.shortVersion
+        statusItem = statusBar.statusItemWithLength(-1)
+        statusItem?.image = statusIcon
+        statusItem?.highlightMode = true
+        statusItem?.toolTip = kClipyIdentifier + shortVersion
         
-        if self.clipMenu != nil {
-            self.statusItem?.menu = self.clipMenu
+        if clipMenu != nil {
+            statusItem?.menu = clipMenu
         }
     }
     
     private func removeStatusItem() {
-        if self.statusItem != nil {
-            NSStatusBar.systemStatusBar().removeStatusItem(self.statusItem!)
-            self.statusItem = nil
+        if statusItem != nil {
+            NSStatusBar.systemStatusBar().removeStatusItem(statusItem!)
+            statusItem = nil
         }
     }
     
     private func unhighlightMenuItem() {
-        self.highlightedMenuItem?.image = folderIcon
-        self.highlightedMenuItem = nil
+        highlightedMenuItem?.image = folderIcon
+        highlightedMenuItem = nil
     }
     
     // MARK: - Private Methods
@@ -456,7 +455,7 @@ class CPYMenuManager: NSObject {
     
     // MARK: - NSNotificationCenter Methods
     func handleSnippetEditorWillClose(notification: NSNotification) {
-        self.updateStatusItem()
+        updateStatusItem()
     }
 
 }
@@ -465,11 +464,11 @@ class CPYMenuManager: NSObject {
 extension CPYMenuManager: NSMenuDelegate {
     func menu(menu: NSMenu, willHighlightItem item: NSMenuItem?) {
         
-        if self.highlightedMenuItem != nil {
+        if highlightedMenuItem != nil {
             if item == nil {
-                self.unhighlightMenuItem()
-            } else if !item!.isEqualTo(self.highlightedMenuItem) {
-                self.unhighlightMenuItem()
+                unhighlightMenuItem()
+            } else if !item!.isEqualTo(highlightedMenuItem) {
+                unhighlightMenuItem()
             }
         }
         
@@ -478,13 +477,13 @@ extension CPYMenuManager: NSMenuDelegate {
         }
         
         if item?.image != nil {
-            self.highlightedMenuItem = item
+            highlightedMenuItem = item
         }
     }
     
     func menuDidClose(menu: NSMenu) {
-        if self.highlightedMenuItem != nil {
-            self.unhighlightMenuItem()
+        if highlightedMenuItem != nil {
+            unhighlightMenuItem()
         }
     }
 }
