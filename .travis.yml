@@ -1,16 +1,12 @@
 language: objective-c
 osx_image: xcode7.2
 os: osx
-xcode_workspace: Clipy.xcworkspace
-xcode_scheme:
-  - Clipy
-script: xctool -workspace Clipy.xcworkspace -scheme "Clipy" build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+script: bundle exec fastlane test
 before_install:
   - bundle install --path=vendor/bundle --binstubs=vendor/bin
-  - bundle exec pod install
-# enable container-based infrastructure
-sudo: false
 cache:
   directories:
     - vendor/bundle
     - Pods
+notification:
+  email: false
