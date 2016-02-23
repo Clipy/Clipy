@@ -17,6 +17,7 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
     @IBOutlet var typePreferenceView: NSView!
     @IBOutlet var shortcutPreferenceView: NSView!
     @IBOutlet var updatePreferenceView: NSView!
+    @IBOutlet weak var versionTextField: NSTextField!
     // Hot Keys
     @IBOutlet weak var mainShortcutRecorder: SRRecorderControl!
     @IBOutlet weak var historyShortcutRecorder: SRRecorderControl!
@@ -43,6 +44,9 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
             window.releasedWhenClosed = false
         }
         prepareHotKeys()
+        if let versionString = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as? String {
+            versionTextField.stringValue = "v\(versionString)"
+        }
     }
     
     // MARK: - Override Methods
