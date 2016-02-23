@@ -159,7 +159,7 @@ class AppDelegate: NSObject {
     
     // MARK: - Version Up Methods
     private func checkUpdates() {
-        let feed = "http://clipy-app.com/appcast.xml"
+        let feed = "https://clipy-app.com/appcast.xml"
         if let feedURL = NSURL(string: feed) {
             SUUpdater.sharedUpdater().feedURL = feedURL
         }
