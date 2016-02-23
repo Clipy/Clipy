@@ -6,6 +6,11 @@ sudo gem install fastlane
 ```
 # Available Actions
 ## Mac
+### mac setup
+```
+fastlane mac setup
+```
+Setup development
 ### mac test
 ```
 fastlane mac test

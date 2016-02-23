@@ -45,4 +45,5 @@ Carthage/Builda
 # https://github.com/fastlane/fastlane/blob/master/docs/Gitignore.md
 
 fastlane/report.xml
+fastlane/test_output/
 fastlane/screenshots

@@ -3,19 +3,56 @@ fastlane_version "1.62.0"
 default_platform :mac
 
 platform :mac do
+
+  ############################ PRE ############################
+
   before_all do
-    # cocoapods
   end
+
+  ######################## SETUP LANES ########################
+
+  desc "Setup development"
+  lane :setup do
+    setup_libraries
+  end
+
+  ####################### PUBLIC LANES ########################
 
   desc "Runs all the tests"
   lane :test do
-    scan
+    slack(message: "Start Testing")
+    setup_libraries
+    scan_clipy
+    slack(message: "Passed All Tests")
   end
 
+  ####################### PRIVATE LANES ########################
+
+  private_lane :setup_libraries do
+    # Cocoapods
+    cocoapods
+  end
+
+  private_lane :scan_clipy do
+    scan(
+      workspace: "Clipy.xcworkspace",
+      scheme: "Clipy",
+      clean: true
+    )
+  end
+
+  ############################ POST ############################
+
   after_all do |lane|
+
   end
 
   error do |lane, exception|
-
+    if lane == :scan_clipy
+      slack(
+        message: "Failed Tests: " + ENV['FL_REPORT_PATH'],
+        success: false
+      )
+    end
   end
 end
