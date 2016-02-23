@@ -203,7 +203,7 @@ extension AppDelegate: NSApplicationDelegate {
         updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
     
         // スリープ時にタイマーを停止する
-        self.registSleepNotifications()
+        self.addSleepNotifications()
         
         queue.waitUntilAllOperationsAreFinished()
     }
@@ -215,7 +215,7 @@ extension AppDelegate: NSApplicationDelegate {
 
 // MARK: - NSNotificationCenter 
 extension AppDelegate {
-    private func registSleepNotifications() {
+    private func addSleepNotifications() {
         NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveSleepNotification", name: NSWorkspaceWillSleepNotification, object: nil)
         NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveWakeNotification", name: NSWorkspaceDidWakeNotification, object: nil)
     }
