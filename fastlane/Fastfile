@@ -1,0 +1,21 @@
+fastlane_version "1.62.0"
+
+default_platform :mac
+
+platform :mac do
+  before_all do
+    # cocoapods
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    scan
+  end
+
+  after_all do |lane|
+  end
+
+  error do |lane, exception|
+
+  end
+end
