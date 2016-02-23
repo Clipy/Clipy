@@ -1,18 +1,25 @@
 PODS:
-  - PINCache (2.0)
-  - Realm (0.94.1):
-    - Realm/Headers (= 0.94.1)
-  - Realm/Headers (0.94.1)
-  - Sparkle (1.11.0)
+  - Crashlytics (3.7.0):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.6)
+  - PINCache (2.2.1)
+  - Realm (0.98.2):
+    - Realm/Headers (= 0.98.2)
+  - Realm/Headers (0.98.2)
+  - Sparkle (1.13.1)
 
 DEPENDENCIES:
-  - PINCache (= 2.0)
-  - Realm (= 0.94.1)
-  - Sparkle (= 1.11.0)
+  - Crashlytics
+  - Fabric
+  - PINCache
+  - Realm
+  - Sparkle
 
 SPEC CHECKSUMS:
-  PINCache: ca953ba93ce1edde056fdd99121ee65b295a08c9
-  Realm: d999a6cf0b41577a077349c9cc9d496cc62a7d17
-  Sparkle: cf10103ef35fd89caa35373bfd772c5d6f9c7d73
+  Crashlytics: c3a2333dea9e2733d2777f730910321fc9e25c0d
+  Fabric: 1abc1e59f11fa39ede6f690ef7309d8563e3ec59
+  PINCache: ed1f07a85cc6fbf488f8ecc1980b07b49b7b85b5
+  Realm: 88a147fe04b8f07191a676b15c779b2b448991de
+  Sparkle: 2fbd47b869621d1e679c7554e3e19dda02104818
 
-COCOAPODS: 0.37.2
+COCOAPODS: 0.39.0

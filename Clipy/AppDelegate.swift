@@ -8,29 +8,31 @@
 
 import Cocoa
 import Sparkle
+import Fabric
+import Crashlytics
 
 @NSApplicationMain
 class AppDelegate: NSObject {
 
     // MARK: - Properties
     let snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
+    let defaults = NSUserDefaults.standardUserDefaults()
     
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.initController()
+        initController()
     }
 
     private func initController() {
         CPYUtilities.registerUserDefaultKeys()
         
         // Migrate Realm
-        RLMRealm.setSchemaVersion(1, forRealmAtPath: RLMRealm.defaultRealmPath()) { (migrate, oldSchemaVersion) -> Void in }
+        CPYUtilities.migrationRealm()
 
         // Show menubar icon
         CPYMenuManager.sharedManager
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
+
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
     }
     
@@ -42,16 +44,14 @@ class AppDelegate: NSObject {
     // MARK: - KVO 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if keyPath == kCPYPrefLoginItemKey {
-            self.toggleLoginItemState()
+            toggleLoginItemState()
         }
     }
 
     // MARK: - Override Methods
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        let action = menuItem.action
-        if action == Selector("clearAllHistory") {
-            let numberOfClips = CPYClipManager.sharedManager.loadClips().count
-            if numberOfClips == 0 {
+        if menuItem.action == Selector("clearAllHistory") {
+            if CPYClipManager.sharedManager.loadClips().count == 0 {
                 return false
             }
         }
@@ -60,14 +60,13 @@ class AppDelegate: NSObject {
     
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
-        var storeTypes = [String: NSNumber]()
-        for name in CPYClipData.availableTypesString() {
-            storeTypes[name] = NSNumber(bool: true)
+        let storeTypes = CPYClipData.availableTypesString().reduce([String: NSNumber]()) { (var dict, type) in
+            dict[type] = NSNumber(bool: true)
+            return dict
         }
         return storeTypes
     }
-    
-    
+
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
@@ -76,12 +75,10 @@ class AppDelegate: NSObject {
     
     func showSnippetEditorWindow() {
         NSApp.activateIgnoringOtherApps(true)
-        self.snippetEditorController.showWindow(self)
+        snippetEditorController.showWindow(self)
     }
     
     func clearAllHistory() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
         let isShowAlert = defaults.boolForKey(kCPYPrefShowAlertBeforeClearHistoryKey)
         if isShowAlert {
             let alert = NSAlert()
@@ -94,9 +91,7 @@ class AppDelegate: NSObject {
             NSApp.activateIgnoringOtherApps(true)
         
             let result = alert.runModal()
-            if result != NSAlertFirstButtonReturn {
-                return
-            }
+            if result != NSAlertFirstButtonReturn { return }
             
             if alert.suppressionButton?.state == NSOnState {
                 defaults.setBool(false, forKey: kCPYPrefShowAlertBeforeClearHistoryKey)
@@ -134,13 +129,11 @@ class AppDelegate: NSObject {
         alert.addButtonWithTitle(NSLocalizedString("Don't Launch", comment: ""))
         alert.showsSuppressionButton = true
         NSApp.activateIgnoringOtherApps(true)
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
+
         // 起動する選択時
         if alert.runModal() == NSAlertFirstButtonReturn {
             defaults.setBool(true, forKey: kCPYPrefLoginItemKey)
-            self.toggleLoginItemState()
+            toggleLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSOnState {
@@ -161,12 +154,12 @@ class AppDelegate: NSObject {
     
     private func toggleLoginItemState() {
         let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefLoginItemKey)
-        self.toggleAddingToLoginItems(isInLoginItems)
+        toggleAddingToLoginItems(isInLoginItems)
     }
     
     // MARK: - Version Up Methods
     private func checkUpdates() {
-        let feed = "http://clipy-app.com/appcast.xml"
+        let feed = "https://clipy-app.com/appcast.xml"
         if let feedURL = NSURL(string: feed) {
             SUUpdater.sharedUpdater().feedURL = feedURL
         }
@@ -178,28 +171,31 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
+        // Fabric
+        defaults.registerDefaults(["NSApplicationCrashOnExceptions": true])
+        Fabric.with([Answers.self, Crashlytics.self])
+        Answers.logCustomEventWithName("applicationDidFinishLaunching", customAttributes: nil)
+        
         CPYUtilities.registerUserDefaultKeys()
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
+
         let queue = NSOperationQueue()
         // Regist Hotkeys
-        queue.addOperationWithBlock { () -> Void in
+        queue.addOperationWithBlock {
             CPYHotKeyManager.sharedManager.registerHotKeys()
         }
         // Show Login Item
         if !defaults.boolForKey(kCPYPrefLoginItemKey) && !defaults.boolForKey(kCPYPrefSuppressAlertForLoginItemKey) {
-            self.promptToAddLoginItems()
+            promptToAddLoginItems()
         }
         
         // Sparkleでアップデート確認
         let updater = SUUpdater.sharedUpdater()
-        self.checkUpdates()
+        checkUpdates()
         updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
         updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
     
         // スリープ時にタイマーを停止する
-        self.registSleepNotifications()
+        addSleepNotifications()
         
         queue.waitUntilAllOperationsAreFinished()
     }
@@ -211,7 +207,7 @@ extension AppDelegate: NSApplicationDelegate {
 
 // MARK: - NSNotificationCenter 
 extension AppDelegate {
-    private func registSleepNotifications() {
+    private func addSleepNotifications() {
         NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveSleepNotification", name: NSWorkspaceWillSleepNotification, object: nil)
         NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveWakeNotification", name: NSWorkspaceDidWakeNotification, object: nil)
     }

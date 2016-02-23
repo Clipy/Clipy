@@ -17,7 +17,7 @@ class CPYHistoryManager: NSObject {
     // MARK: - Init
     override init() {
         super.init()
-        self.startHistoryManageTimer()
+        startHistoryManageTimer()
     }
     
     // MARK: Public Methods
@@ -44,9 +44,11 @@ class CPYHistoryManager: NSObject {
                     for path in imagePaths {
                         PINCache.sharedCache().removeObjectForKey(path)
                     }
-                    realm.transactionWithBlock({ () -> Void in
-                        realm.deleteObjects(results)
-                    })
+                    do {
+                        try realm.transactionWithBlock({ () -> Void in
+                            realm.deleteObjects(results)
+                        })
+                    } catch {}
                 }
             }
             
@@ -58,7 +60,6 @@ class CPYHistoryManager: NSObject {
             let allClips = CPYClipManager.sharedManager.loadClips()
             
             let fileManager = NSFileManager.defaultManager()
-  
             do {
                 let dataPathList = try fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder())
                 for path in dataPathList {
@@ -75,18 +76,16 @@ class CPYHistoryManager: NSObject {
                         CPYUtilities.deleteData((CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent(path))
                     }
                 }
-            } catch {
-                
-            }
+            } catch { }
         })
     }
     
     // MARK: - Private Methods
     private func startHistoryManageTimer() {
         // Clean clip data history every 30 minutes
-        self.historyManageTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
-        NSRunLoop.currentRunLoop().addTimer(self.historyManageTimer, forMode: NSRunLoopCommonModes)
-        self.historyManageTimer.fire()
+        historyManageTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(historyManageTimer, forMode: NSRunLoopCommonModes)
+        historyManageTimer.fire()
     }
     
 }

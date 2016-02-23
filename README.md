@@ -11,18 +11,19 @@ __Distribution Site__ : <http://clipy-app.com>
 
 ### Development Environment
 * OS X El Capitan
-* Xcode 7.0
+* Xcode 7.2
 
 ### How to Build
-0. Install [CocoaPods](http://cocoapods.org) if you don't have it.
-1. Move to the project root directory and run `pod install` on your terminal.
+0. Move to the project root directory
+1. Install [CocoaPods](http://cocoapods.org) and [fastlane](https://github.com/fastlane/fastlane) using Bundler. Run `bundle install --path=vendor/bundle`
+2. Run `pod install` on your terminal.
 2. Open Clipy.xcworkspace on Xcode.
 3. build.
 
 ### Dependencies
-The source code is dependent on some libraries. 
+The source code is dependent on some libraries.
 * [PTHotKey](https://github.com/keith/PTHotKeyTest)
-* [Shortcut Recorder](https://github.com/iKorich/shortcutrecorder) 
+* [Shortcut Recorder](https://github.com/iKorich/shortcutrecorder)
 * [Sparkle](https://github.com/sparkle-project/Sparkle)
 * [DBPrefsWindowController](https://github.com/kgn/DBPrefsWindowController)
 * [Realm](https://realm.io/)
@@ -42,8 +43,6 @@ If you distribute derived work, especially in the Mac App Store, I ask you to fo
 2. Follow the MIT license terms.
 
 Thank you for your cooperation.
-
-
 
 ### Licence
 Clipy is available under the MIT license. See the LICENSE file for more info.

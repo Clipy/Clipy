@@ -23,11 +23,11 @@ class CPYFolderTableView: NSTableView {
     // MARK - Init
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.setDelegate(self)
-        self.setDataSource(self)
+        setDelegate(self)
+        setDataSource(self)
         
-        self.registerForDraggedTypes([kDraggedDataType])
-        self.setDraggingSourceOperationMask(NSDragOperation.Move, forLocal: true)
+        registerForDraggedTypes([kDraggedDataType])
+        setDraggingSourceOperationMask(NSDragOperation.Move, forLocal: true)
     }
     
 }
@@ -55,7 +55,7 @@ extension CPYFolderTableView: NSTableViewDataSource {
     }
     
     func tableView(tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-        self.tableDelegate?.selectFolder?(row)
+        tableDelegate?.selectFolder?(row)
         return true
     }
 }
@@ -72,7 +72,7 @@ extension CPYFolderTableView: NSTableViewDelegate {
                 if let tableView = control as? NSTableView {
                     let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(tableView.selectedRow)) as! CPYFolder
                     let realm = RLMRealm.defaultRealm()
-                    realm.transactionWithBlock({ () -> Void in
+                    try! realm.transactionWithBlock({ () -> Void in
                         folder.title = text
                     })
                 }
@@ -122,15 +122,14 @@ extension CPYFolderTableView: NSTableViewDelegate {
                 }
                 
                 CPYSnippetManager.sharedManager.updateFolderIndex(row, selectIndexes: rowIndexes)
-                self.reloadData()
+                reloadData()
                 if row > rowIndexes.firstIndex {
-                    self.selectRowIndexes(NSIndexSet(index: row - 1), byExtendingSelection: false)
-                    self.tableDelegate?.selectFolder?(row - 1)
+                    selectRowIndexes(NSIndexSet(index: row - 1), byExtendingSelection: false)
+                    tableDelegate?.selectFolder?(row - 1)
                 } else {
-                    self.selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
-                    self.tableDelegate?.selectFolder?(row)
+                    selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
+                    tableDelegate?.selectFolder?(row)
                 }
-                
                 
             }
         }
