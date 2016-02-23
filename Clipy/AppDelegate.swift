@@ -77,7 +77,6 @@ class AppDelegate: NSObject {
     }
     
     func clearAllHistory() {
-        
         let isShowAlert = defaults.boolForKey(kCPYPrefShowAlertBeforeClearHistoryKey)
         if isShowAlert {
             let alert = NSAlert()
@@ -90,9 +89,7 @@ class AppDelegate: NSObject {
             NSApp.activateIgnoringOtherApps(true)
         
             let result = alert.runModal()
-            if result != NSAlertFirstButtonReturn {
-                return
-            }
+            if result != NSAlertFirstButtonReturn { return }
             
             if alert.suppressionButton?.state == NSOnState {
                 defaults.setBool(false, forKey: kCPYPrefShowAlertBeforeClearHistoryKey)

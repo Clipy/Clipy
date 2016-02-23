@@ -16,15 +16,6 @@ class CPYSnippetManager: NSObject {
     // MARK: - Init
     override init() {
         super.init()
-        initManager()
-    }
-    
-    private func initManager() {
-        
-    }
-    
-    deinit {
-        
     }
     
     // MARK: - Public Methods

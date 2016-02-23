@@ -66,7 +66,6 @@ final class CPYUtilities {
         }
     
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
             let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
             CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
             CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVDown)

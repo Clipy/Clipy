@@ -21,9 +21,9 @@ class CPYMenuManager: NSObject {
     private var statusItem: NSStatusItem?
     private var highlightedMenuItem: NSMenuItem?
     
-    var folderIcon = NSImage(assetIdentifier: .IconFolder)
-    var snippetIcon = NSImage(assetIdentifier: .IconText)
-
+    private var folderIcon = NSImage(assetIdentifier: .IconFolder)
+    private var snippetIcon = NSImage(assetIdentifier: .IconText)
+    
     private let defaults = NSUserDefaults.standardUserDefaults()
     private let kMaxKeyEquivalents = 10
     private let SHORTEN_SYMBOL = "..."
@@ -463,7 +463,6 @@ class CPYMenuManager: NSObject {
 // MARK: - NSMenu Delegate
 extension CPYMenuManager: NSMenuDelegate {
     func menu(menu: NSMenu, willHighlightItem item: NSMenuItem?) {
-        
         if highlightedMenuItem != nil {
             if item == nil {
                 unhighlightMenuItem()

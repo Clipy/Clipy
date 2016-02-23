@@ -60,7 +60,6 @@ class CPYHistoryManager: NSObject {
             let allClips = CPYClipManager.sharedManager.loadClips()
             
             let fileManager = NSFileManager.defaultManager()
-  
             do {
                 let dataPathList = try fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder())
                 for path in dataPathList {
@@ -77,9 +76,7 @@ class CPYHistoryManager: NSObject {
                         CPYUtilities.deleteData((CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent(path))
                     }
                 }
-            } catch {
-                
-            }
+            } catch { }
         })
     }
     
