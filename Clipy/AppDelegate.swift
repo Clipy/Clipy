@@ -8,6 +8,8 @@
 
 import Cocoa
 import Sparkle
+import Fabric
+import Crashlytics
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -169,6 +171,11 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
+        // Fabric
+        defaults.registerDefaults(["NSApplicationCrashOnExceptions": true])
+        Fabric.with([Answers.self, Crashlytics.self])
+        Answers.logCustomEventWithName("applicationDidFinishLaunching", customAttributes: nil)
+        
         CPYUtilities.registerUserDefaultKeys()
 
         let queue = NSOperationQueue()
