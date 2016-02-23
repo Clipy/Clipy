@@ -71,7 +71,7 @@ class AppDelegate: NSObject {
         return storeTypes
     }
     
-    
+
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
