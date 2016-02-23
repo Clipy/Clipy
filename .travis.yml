@@ -5,6 +5,6 @@ script: bundle exec fastlane test
 cache:
   - bundler
   directories:
-    - ./Pods
+    - Pods
 notification:
   email: false
