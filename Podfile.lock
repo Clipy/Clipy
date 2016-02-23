@@ -1,18 +1,18 @@
 PODS:
-  - PINCache (2.1.2)
-  - Realm (0.96.2):
-    - Realm/Headers (= 0.96.2)
-  - Realm/Headers (0.96.2)
+  - PINCache (2.2.1)
+  - Realm (0.98.2):
+    - Realm/Headers (= 0.98.2)
+  - Realm/Headers (0.98.2)
   - Sparkle (1.13.1)
 
 DEPENDENCIES:
-  - PINCache (= 2.1.2)
-  - Realm (= 0.96.2)
-  - Sparkle (= 1.13.1)
+  - PINCache
+  - Realm
+  - Sparkle
 
 SPEC CHECKSUMS:
-  PINCache: 9e70271f1bdd60c0465b7208adcc4b6acc1fc376
-  Realm: 3ce8448151c571e90b85002d984d7f93f54fc8a3
+  PINCache: ed1f07a85cc6fbf488f8ecc1980b07b49b7b85b5
+  Realm: 88a147fe04b8f07191a676b15c779b2b448991de
   Sparkle: 2fbd47b869621d1e679c7554e3e19dda02104818
 
 COCOAPODS: 0.39.0
