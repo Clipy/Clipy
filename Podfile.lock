@@ -6,6 +6,9 @@ PODS:
   - Realm (0.98.2):
     - Realm/Headers (= 0.98.2)
   - Realm/Headers (0.98.2)
+  - RxCocoa (2.2.0):
+    - RxSwift (~> 2.2)
+  - RxSwift (2.2.0)
   - Sparkle (1.13.1)
 
 DEPENDENCIES:
@@ -13,6 +16,8 @@ DEPENDENCIES:
   - Fabric
   - PINCache
   - Realm
+  - RxCocoa
+  - RxSwift
   - Sparkle
 
 SPEC CHECKSUMS:
@@ -20,6 +25,8 @@ SPEC CHECKSUMS:
   Fabric: 1abc1e59f11fa39ede6f690ef7309d8563e3ec59
   PINCache: ed1f07a85cc6fbf488f8ecc1980b07b49b7b85b5
   Realm: 88a147fe04b8f07191a676b15c779b2b448991de
+  RxCocoa: 42efb7a7145a8d1d5878e94ce48a580d29e0c796
+  RxSwift: b8a749f2204c6c7a5c29b306a9c3bc11d5b87c5b
   Sparkle: 2fbd47b869621d1e679c7554e3e19dda02104818
 
 COCOAPODS: 0.39.0
