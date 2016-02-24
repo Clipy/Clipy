@@ -20,6 +20,7 @@ class CPYClipManager: NSObject {
     private var pasteboardObservingTimer: NSTimer?
     private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     private let defaults = NSUserDefaults.standardUserDefaults()
+    private let realm = RLMRealm.defaultRealm()
     
     // MARK: - Init
     override init() {
@@ -84,7 +85,6 @@ class CPYClipManager: NSObject {
         }
  
         do {
-            let realm = RLMRealm.defaultRealm()
             try realm.transactionWithBlock({ () -> Void in
                 realm.deleteObjects(results)
             })
@@ -168,7 +168,6 @@ class CPYClipManager: NSObject {
     
             if let clipData = makeClipDataFromPasteboard() {
                 
-                let realm = RLMRealm.defaultRealm()
                 let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
                 // Search same history
                 if let _ = CPYClip(forPrimaryKey: String(clipData.hash)) where !isCopySameHistory { return }
