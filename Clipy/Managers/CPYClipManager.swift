@@ -103,48 +103,42 @@ class CPYClipManager: NSObject {
     }
     
     func copyClipToPasteboard(clip: CPYClip) {
-        
-        autoreleasepool { () -> () in
-        
-            if let loadData = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
-                
-                let types = loadData.types
-                
-                let pboard = NSPasteboard.generalPasteboard()
-                pboard.declareTypes(types, owner: self)
-                
-                for pbType in types {
-                    if pbType == NSStringPboardType {
-                        let pbString = loadData.stringValue
-                        pboard.setString(pbString, forType: NSStringPboardType)
-                    } else if pbType == NSRTFDPboardType {
-                        let rtfData = loadData.RTFData
-                        pboard.setData(rtfData!, forType: NSRTFDPboardType)
-                    } else if pbType == NSRTFPboardType {
-                        let rtfData = loadData.RTFData
-                        pboard.setData(rtfData!, forType: NSRTFPboardType)
-                    } else if pbType == NSPDFPboardType {
-                        let pdfData = loadData.PDF
-                        if let pdfRep = NSPDFImageRep(data: pdfData!) {
-                            pboard.setData(pdfRep.PDFRepresentation, forType: NSPDFPboardType)
-                        }
-                    } else if pbType == NSFilenamesPboardType {
-                        let fileNames = loadData.fileNames
-                        pboard.setPropertyList(fileNames, forType: NSFilenamesPboardType)
-                    } else if pbType == NSURLPboardType {
-                        let url = loadData.URLs
-                        pboard.setPropertyList(url, forType: NSURLPboardType)
-                    } else if pbType == NSTIFFPboardType {
-                        let image = loadData.image
-                        if image != nil {
-                            pboard.setData(image!.TIFFRepresentation!, forType: NSTIFFPboardType)
-                        }
+        if let loadData = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
+            
+            let types = loadData.types
+            
+            let pboard = NSPasteboard.generalPasteboard()
+            pboard.declareTypes(types, owner: self)
+            
+            for pbType in types {
+                if pbType == NSStringPboardType {
+                    let pbString = loadData.stringValue
+                    pboard.setString(pbString, forType: NSStringPboardType)
+                } else if pbType == NSRTFDPboardType {
+                    let rtfData = loadData.RTFData
+                    pboard.setData(rtfData!, forType: NSRTFDPboardType)
+                } else if pbType == NSRTFPboardType {
+                    let rtfData = loadData.RTFData
+                    pboard.setData(rtfData!, forType: NSRTFPboardType)
+                } else if pbType == NSPDFPboardType {
+                    let pdfData = loadData.PDF
+                    if let pdfRep = NSPDFImageRep(data: pdfData!) {
+                        pboard.setData(pdfRep.PDFRepresentation, forType: NSPDFPboardType)
+                    }
+                } else if pbType == NSFilenamesPboardType {
+                    let fileNames = loadData.fileNames
+                    pboard.setPropertyList(fileNames, forType: NSFilenamesPboardType)
+                } else if pbType == NSURLPboardType {
+                    let url = loadData.URLs
+                    pboard.setPropertyList(url, forType: NSURLPboardType)
+                } else if pbType == NSTIFFPboardType {
+                    let image = loadData.image
+                    if image != nil {
+                        pboard.setData(image!.TIFFRepresentation!, forType: NSTIFFPboardType)
                     }
                 }
             }
-    
         }
-
     }
     
     func copyClipToPasteboardAtIndex(index: NSInteger) {
