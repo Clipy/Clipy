@@ -7,7 +7,7 @@ target 'Clipy' do
  
   pod 'PINCache'
   pod 'Sparkle'
-  pod 'RealmSwift'
+  pod 'Realm'
   pod 'Fabric'
   pod 'Crashlytics'
 

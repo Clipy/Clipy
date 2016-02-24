@@ -7,11 +7,10 @@
 //
 
 import Cocoa
-import RealmSwift
 
 // MARK: - CPYSnippetTableView Protocol
-protocol CPYSnippetTableViewDelegate: class {
-    func selectSnippet(row: Int, folder: CPYFolder?)
+@objc protocol CPYSnippetTableViewDelegate {
+    optional func selectSnippet(row: Int, folder: CPYFolder?)
 }
 
 // MARK: - CPYSnippetTableView
@@ -56,9 +55,8 @@ extension CPYSnippetTableView: NSTableViewDataSource {
     
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
         
-        if let folder = snippetFolder {
-            
-            let snippet = folder.snippets.sorted("index", ascending: true)[row]
+        if snippetFolder != nil {
+            let snippet = snippetFolder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(row)) as! CPYSnippet
             
             if let dataCell = tableColumn?.dataCellForRow(row) as? CPYImageAndTextCell {
                 if snippet.enable {
@@ -75,7 +73,7 @@ extension CPYSnippetTableView: NSTableViewDataSource {
     }
     
     func tableView(tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-        tableDelegate?.selectSnippet(row, folder: snippetFolder)
+        tableDelegate?.selectSnippet?(row, folder: snippetFolder)
         return true
     }
 }
@@ -90,11 +88,11 @@ extension CPYSnippetTableView: NSTableViewDelegate {
         if let text = fieldEditor.string {
             if text.characters.count != 0 {
                 if let tableView = control as? NSTableView {
-                    let snippet = snippetFolder!.snippets.sorted("index", ascending: true)[tableView.selectedRow]
-                    let realm = try! Realm()
-                    try! realm.write {
+                    let snippet = snippetFolder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(tableView.selectedRow)) as! CPYSnippet
+                    let realm = RLMRealm.defaultRealm()
+                    try! realm.transactionWithBlock({ () -> Void in
                         snippet.title = text
-                    }
+                    })
                 }
                 return true
             }
@@ -145,10 +143,10 @@ extension CPYSnippetTableView: NSTableViewDelegate {
                 reloadData()
                 if row > rowIndexes.firstIndex {
                     selectRowIndexes(NSIndexSet(index: row - 1), byExtendingSelection: false)
-                    tableDelegate?.selectSnippet(row - 1, folder: snippetFolder)
+                    tableDelegate?.selectSnippet?(row - 1, folder: snippetFolder)
                 } else {
                     selectRowIndexes(NSIndexSet(index: row), byExtendingSelection: false)
-                    tableDelegate?.selectSnippet(row, folder: snippetFolder)
+                    tableDelegate?.selectSnippet?(row, folder: snippetFolder)
                 }
             }
         }

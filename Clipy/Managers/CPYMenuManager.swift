@@ -213,13 +213,13 @@ class CPYMenuManager: NSObject {
                 let indexOfSubMenu = subMenuIndex
                 
                 if let subMenu = menu.itemAtIndex(indexOfSubMenu)?.submenu {
-                    let menuItem = makeMenuItemForClip(clip, clipIndex: i, listNumber: listNumber)
+                    let menuItem = makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
                     listNumber = incrementListNumber(listNumber, max: numberOfItemsPlaceInsideFolder, start: firstIndex)
                 }
                 
             } else {
-                let menuItem = makeMenuItemForClip(clip, clipIndex: i, listNumber: listNumber)
+                let menuItem = makeMenuItemForClip(clip as! CPYClip, clipIndex: i, listNumber: listNumber)
                 menu.addItem(menuItem)
                 
                 listNumber = incrementListNumber(listNumber, max: numberOfItemsPlaceInLine, start: firstIndex)
@@ -257,7 +257,7 @@ class CPYMenuManager: NSObject {
         let firstIndex = firstIndexOfMenuItems()
         
         for object in folders {
-            let folder = object
+            let folder = object as! CPYFolder
             enabled = folder.enable
             if !enabled {
                 continue
@@ -269,8 +269,8 @@ class CPYMenuManager: NSObject {
             subMenuIndex = subMenuIndex + 1
             
             var i = firstIndex
-            for snippetObject in folder.snippets.sorted("index", ascending: true) {
-                let snippet = snippetObject
+            for snippetObject in folder.snippets.sortedResultsUsingProperty("index", ascending: true) {
+                let snippet = snippetObject as! CPYSnippet
                 enabled = snippet.enable
                 if !enabled {
                     continue

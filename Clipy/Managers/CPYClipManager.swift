@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import RealmSwift
 
 class CPYClipManager: NSObject {
 
@@ -58,15 +57,13 @@ class CPYClipManager: NSObject {
     }
     
     // MARK: - Public Methods
-    func loadClips() -> Results<CPYClip> {
-        let realm = try! Realm()
-        return realm.objects(CPYClip)
+    func loadClips() -> RLMResults {
+        return CPYClip.allObjects()
     }
     
-    func loadSortedClips() -> Results<CPYClip> {
+    func loadSortedClips() -> RLMResults {
         let ascending = !defaults.boolForKey(kCPYPrefReorderClipsAfterPasting)
-        let realm = try! Realm()
-        return realm.objects(CPYClip).sorted("updateTime", ascending: ascending)
+        return CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: ascending)
     }
     
     func clearAll() {
@@ -74,7 +71,7 @@ class CPYClipManager: NSObject {
         var imagePaths = [String]()
         
         for clipData in results {
-            let clip = clipData
+            let clip = clipData as! CPYClip
             if !clip.thumbnailPath.isEmpty {
                 imagePaths.append(clip.thumbnailPath)
             }
@@ -85,10 +82,10 @@ class CPYClipManager: NSObject {
         }
  
         do {
-            let realm = try Realm()
-            try realm.write {
-                realm.delete(results)
-            }
+            let realm = RLMRealm.defaultRealm()
+            try realm.transactionWithBlock({ () -> Void in
+                realm.deleteObjects(results)
+            })
         } catch {}
 
         
@@ -150,8 +147,7 @@ class CPYClipManager: NSObject {
     
     func copyClipToPasteboardAtIndex(index: NSInteger) {
         let result = loadSortedClips()
-        let clip = result[index]
-        if !clip.invalidated {
+        if let clip = result.objectAtIndex(UInt(index)) as? CPYClip where !clip.invalidated {
             copyClipToPasteboard(clip)
         }
     }
@@ -176,10 +172,10 @@ class CPYClipManager: NSObject {
     
             if let clipData = makeClipDataFromPasteboard() {
                 
-                let realm = try! Realm()
+                let realm = RLMRealm.defaultRealm()
                 let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
                 // Search same history
-                if let _ = realm.objectForPrimaryKey(CPYClip.self, key: String(clipData.hash)) where !isCopySameHistory { return }
+                if let _ = CPYClip(forPrimaryKey: String(clipData.hash)) where !isCopySameHistory { return }
                 
                 let isOverwriteHistory = defaults.boolForKey(kCPYPrefOverwriteSameHistroyKey)
                 let hash: Int
@@ -219,9 +215,9 @@ class CPYClipManager: NSObject {
                     let result = NSKeyedArchiver.archiveRootObject(clipData, toFile: path)
                     if result {
                         do {
-                            try realm.write {
-                                realm.add(clip, update: true)
-                            }
+                            try realm.transactionWithBlock({ () -> Void in
+                                realm.addOrUpdateObject(clip)
+                            })
                         } catch {}
                     }
                 }

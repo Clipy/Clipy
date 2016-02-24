@@ -6,15 +6,13 @@ PODS:
   - Realm (0.98.2):
     - Realm/Headers (= 0.98.2)
   - Realm/Headers (0.98.2)
-  - RealmSwift (0.98.2):
-    - Realm (= 0.98.2)
   - Sparkle (1.13.1)
 
 DEPENDENCIES:
   - Crashlytics
   - Fabric
   - PINCache
-  - RealmSwift
+  - Realm
   - Sparkle
 
 SPEC CHECKSUMS:
@@ -22,7 +20,6 @@ SPEC CHECKSUMS:
   Fabric: 1abc1e59f11fa39ede6f690ef7309d8563e3ec59
   PINCache: ed1f07a85cc6fbf488f8ecc1980b07b49b7b85b5
   Realm: 88a147fe04b8f07191a676b15c779b2b448991de
-  RealmSwift: 9907c7415b3e19ef2ab9f89878fc890f03f93aea
   Sparkle: 2fbd47b869621d1e679c7554e3e19dda02104818
 
 COCOAPODS: 0.39.0

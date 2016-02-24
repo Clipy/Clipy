@@ -7,14 +7,13 @@
 //
 
 import Cocoa
-import RealmSwift
 
-class CPYFolder: Object {
+class CPYFolder: RLMObject {
 
     // MARK: - Properties
     dynamic var index       = 0
     dynamic var enable      = true
     dynamic var title       = ""
-    let snippets            = List<CPYSnippet>()
+    dynamic var snippets    = RLMArray(objectClassName: CPYSnippet.className())
     
 }

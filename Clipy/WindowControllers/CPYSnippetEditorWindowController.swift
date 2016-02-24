@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import RealmSwift
 
 private let ADD_SNIPPET_IDENTIFIER      = "AddSnippet"
 private let DELETE_SNIPPET_IDENTIFIER   = "DeleteSnippet"
@@ -64,8 +63,9 @@ class CPYSnippetEditorWindowController: NSWindowController {
         } else if itemIdentifier == CHECK_SNIPPET_IDENTIFIER || itemIdentifier == DELETE_SNIPPET_IDENTIFIER {
             let folders = CPYSnippetManager.sharedManager.loadSortedFolders()
             if folders.count > 0 && folderTableView.selectedRow != -1 {
-                let folder = folders[folderTableView.selectedRow]
-                return (folder.snippets.count > 0)
+                if let folder = folders.objectAtIndex(UInt(folderTableView.selectedRow)) as? CPYFolder {
+                    return (folder.snippets.count > 0)
+                }
             }
             return false
         }
@@ -77,15 +77,16 @@ class CPYSnippetEditorWindowController: NSWindowController {
             return
         }
         
-        let folder = CPYSnippetManager.sharedManager.loadSortedFolders()[folderTableView.selectedRow]
+        if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(folderTableView.selectedRow)) as? CPYFolder {
             
-        CPYSnippetManager.sharedManager.addSnippet(nil, folder: folder)
-        snippetTableView.reloadData()
-        
-        let rowIndex = Int(folder.snippets.count - 1)
-        snippetTableView.selectRowIndexes(NSIndexSet(index: rowIndex), byExtendingSelection: false)
-        selectSnippet(rowIndex, folder: folder)
-        snippetTableView.editColumn(0, row: rowIndex, withEvent: nil, select: true)
+            CPYSnippetManager.sharedManager.addSnippet(nil, folder: folder)
+            snippetTableView.reloadData()
+            
+            let rowIndex = Int(folder.snippets.count - 1)
+            snippetTableView.selectRowIndexes(NSIndexSet(index: rowIndex), byExtendingSelection: false)
+            selectSnippet(rowIndex, folder: folder)
+            snippetTableView.editColumn(0, row: rowIndex, withEvent: nil, select: true)
+        }
     }
     
     @IBAction func removeSnippet(sender: AnyObject) {
@@ -94,32 +95,34 @@ class CPYSnippetEditorWindowController: NSWindowController {
             return
         }
         
-        let folder = CPYSnippetManager.sharedManager.loadSortedFolders()[folderTableView.selectedRow]
+        if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(folderTableView.selectedRow)) as? CPYFolder {
             
-        var snippets = [CPYSnippet]()
-        selectIndexPaths.enumerateIndexesUsingBlock { (index, stop) -> Void in
-            let snippet = folder.snippets.sorted("index", ascending: true)[index]
-            snippets.append(snippet)
-        }
-        
-        CPYSnippetManager.sharedManager.removeSnippets(snippets)
-        snippetTableView.reloadData()
-        
-        // FIXME: やり方強引すぎ
-        var indexSet: NSIndexSet!
-        if Int(folder.snippets.count) >= selectIndexPaths.firstIndex {
-            indexSet = NSIndexSet(index: Int(selectIndexPaths.firstIndex - 1))
-        } else {
-            indexSet = NSIndexSet(index: Int(folder.snippets.count - 1))
-        }
-        if indexSet.firstIndex == -1 {
-            indexSet = NSIndexSet(index: 0)
-        }
-        if folder.snippets.count != 0 {
-            snippetTableView.selectRowIndexes(indexSet, byExtendingSelection: false)
-            selectSnippet(indexSet.firstIndex, folder: folder)
-        } else {
-            snippetContentTextView.string = ""
+            var snippets = [RLMObject]()
+            selectIndexPaths.enumerateIndexesUsingBlock { (index, stop) -> Void in
+                let snippet = folder.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(index)) as! CPYSnippet
+                snippets.append(snippet)
+            }
+            
+            CPYSnippetManager.sharedManager.removeSnippets(snippets)
+            snippetTableView.reloadData()
+            
+            // FIXME: やり方強引すぎ
+            var indexSet: NSIndexSet!
+            if Int(folder.snippets.count) >= selectIndexPaths.firstIndex {
+                indexSet = NSIndexSet(index: Int(selectIndexPaths.firstIndex - 1))
+            } else {
+                indexSet = NSIndexSet(index: Int(folder.snippets.count - 1))
+            }
+            if indexSet.firstIndex == -1 {
+                indexSet = NSIndexSet(index: 0)
+            }
+            if folder.snippets.count != 0 {
+                snippetTableView.selectRowIndexes(indexSet, byExtendingSelection: false)
+                selectSnippet(indexSet.firstIndex, folder: folder)
+            } else {
+                snippetContentTextView.string = ""
+            }
+            
         }
         
         NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
@@ -131,16 +134,17 @@ class CPYSnippetEditorWindowController: NSWindowController {
             return
         }
         
-        let folder = CPYSnippetManager.sharedManager.loadSortedFolders()[folderTableView.selectedRow]
+        if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(folderTableView.selectedRow)) as? CPYFolder {
             
-        var snippets = [CPYSnippet]()
-        selectIndexPaths.enumerateIndexesUsingBlock { (index, stop) -> Void in
-            let snippet = folder.snippets.sorted("index", ascending: true)[index]
-            snippets.append(snippet)
+            var snippets = [RLMObject]()
+            selectIndexPaths.enumerateIndexesUsingBlock { (index, stop) -> Void in
+                let snippet = folder.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(index)) as! CPYSnippet
+                snippets.append(snippet)
+            }
+            
+            CPYSnippetManager.sharedManager.updateSnippetEnable(snippets)
+            snippetTableView.reloadData()
         }
-        
-        CPYSnippetManager.sharedManager.updateSnippetEnable(snippets)
-        snippetTableView.reloadData()
     }
     
     @IBAction func toggleFolderEnabled(sender: AnyObject) {
@@ -149,10 +153,10 @@ class CPYSnippetEditorWindowController: NSWindowController {
             return
         }
         
-        var folders = [CPYFolder]()
+        var folders = [RLMObject]()
         let results = CPYSnippetManager.sharedManager.loadSortedFolders()
         selectIndexPaths.enumerateIndexesUsingBlock { (index, stop) -> Void in
-            let folder = results[index]
+            let folder = results.objectAtIndex(UInt(index)) as! CPYFolder
             folders.append(folder)
         }
         
@@ -166,10 +170,10 @@ class CPYSnippetEditorWindowController: NSWindowController {
             return
         }
         
-        var folders = [CPYFolder]()
+        var folders = [RLMObject]()
         let folderResults = CPYSnippetManager.sharedManager.loadSortedFolders()
         selectIndexPaths.enumerateIndexesUsingBlock { (index, stop) -> Void in
-            let folder = folderResults[index]
+            let folder = folderResults.objectAtIndex(UInt(index)) as! CPYFolder
             folders.append(folder)
         }
         
@@ -247,16 +251,18 @@ class CPYSnippetEditorWindowController: NSWindowController {
         let results = CPYSnippetManager.sharedManager.loadSortedFolders()
         let rootElement = NSXMLNode.elementWithName(kRootElement) as! NSXMLElement
         
-        for folder in results {
+        for object in results {
+            let folder = object as! CPYFolder
             let folderTitle = folder.title
-            let snippets = folder.snippets.sorted("index", ascending: true)
+            let snippets = folder.snippets.sortedResultsUsingProperty("index", ascending: true)
             
             let folderElement = NSXMLNode.elementWithName(kFolderElement) as! NSXMLElement
             folderElement.addChild(NSXMLNode.elementWithName(kTitleElement, stringValue: folderTitle) as! NSXMLNode)
             
             let snippetsElement = NSXMLNode.elementWithName(kSnippetsElement) as! NSXMLElement
             
-            for snippet in snippets {
+            for snippetObject in snippets {
+                let snippet = snippetObject as! CPYSnippet
                 let snippetTitle = snippet.title
                 let content = snippet.content
                 
@@ -335,13 +341,14 @@ extension CPYSnippetEditorWindowController: CPYFolderTableViewDelegate {
         if row < 0 {
             return
         }
-        let folder = CPYSnippetManager.sharedManager.loadSortedFolders()[row]
-        snippetTableView.setFolder(folder)
-        if folder.snippets.count != 0 {
-            selectSnippet(0, folder: folder)
-            snippetTableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
-        } else {
-            snippetContentTextView.string = ""
+        if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(row)) as? CPYFolder {
+            snippetTableView.setFolder(folder)
+            if folder.snippets.count != 0 {
+                selectSnippet(0, folder: folder)
+                snippetTableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
+            } else {
+                snippetContentTextView.string = ""
+            }
         }
     }
     
@@ -354,8 +361,9 @@ extension CPYSnippetEditorWindowController: CPYSnippetTableViewDelegate {
             return
         }
         if folder != nil {
-            let snippet = folder!.snippets.sorted("index", ascending: true)[row]
-            snippetContentTextView.string = snippet.content
+            if let snippet = folder!.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(row)) as? CPYSnippet {
+                snippetContentTextView.string = snippet.content
+            }
         }
     }
 }
@@ -369,9 +377,11 @@ extension CPYSnippetEditorWindowController: NSTextViewDelegate {
             
             if folderTableView.selectedRow != -1 && snippetTableView.selectedRow != -1 {
                 
-                let folder = CPYSnippetManager.sharedManager.loadSortedFolders()[folderTableView.selectedRow]
-                let snippet = folder.snippets.sorted("index", ascending: true)[snippetTableView.selectedRow]
-                CPYSnippetManager.sharedManager.updateSnipeetContent(snippet, content: string)
+                if let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(folderTableView.selectedRow)) as? CPYFolder {
+                    if let snippet = folder.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(snippetTableView.selectedRow)) as? CPYSnippet {
+                        CPYSnippetManager.sharedManager.updateSnipeetContent(snippet, content: string)
+                    }
+                }
                 return true
             }
         }
@@ -412,17 +422,17 @@ extension CPYSnippetEditorWindowController {
                 folderModel.title = "untitled folder"
             }
             
-            if let lastFolder = CPYSnippetManager.sharedManager.loadSortedFolders().last {
+            if let lastFolder = CPYSnippetManager.sharedManager.loadSortedFolders().lastObject() as? CPYFolder {
                 folderModel.index = lastFolder.index + 1
             } else {
                 folderModel.index = 0
             }
             
             do {
-                let realm = try Realm()
-                try realm.write {
-                    realm.add(folderModel, update: true)
-                }
+                let realm = RLMRealm.defaultRealm()
+                try realm.transactionWithBlock( { () -> Void in
+                    realm.addObject(folderModel)
+                })
             } catch {}
             
             if let snippets = folder[kSnippets] as? [AnyObject] {
@@ -439,17 +449,17 @@ extension CPYSnippetEditorWindowController {
                         snippetModel.content = snippetContent
                     }
                     
-                    if let lastSnippet = folderModel.snippets.sorted("index", ascending: true).last {
+                    if let lastSnippet = folderModel.snippets.sortedResultsUsingProperty("index", ascending: true).lastObject() as? CPYSnippet {
                         snippetModel.index = lastSnippet.index + 1
                     } else {
                         snippetModel.index = 0
                     }
                     
                     do {
-                        let realm = try Realm()
-                        try realm.write {
-                            folderModel.snippets.append(snippetModel)
-                        }
+                        let realm = RLMRealm.defaultRealm()
+                        try realm.transactionWithBlock({ () -> Void in
+                            folderModel.snippets.addObject(snippetModel)
+                        })
                     } catch {}
                 }
                 

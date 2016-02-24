@@ -8,10 +8,9 @@
 //
 
 import Cocoa
-import RealmSwift
 
-class CPYSnippet: Object {
-
+class CPYSnippet: RLMObject {
+    
     // MARK: - Properties
     dynamic var index   = 0
     dynamic var enable  = true
