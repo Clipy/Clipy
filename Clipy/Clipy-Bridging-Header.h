@@ -10,6 +10,5 @@
 #import "NMLoginItems.h"
 #import "DBPrefsWindowController.h"
 #import "ShortcutRecorder.h"
-#import <Realm/Realm.h>
 #import "PINCache.h"
 

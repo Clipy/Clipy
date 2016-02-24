@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import RealmSwift
 
 class CPYHistoryManager: NSObject {
 
@@ -23,21 +24,20 @@ class CPYHistoryManager: NSObject {
     // MARK: Public Methods
     func trimHistorySize() {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-            let realm = RLMRealm.defaultRealm()
-            let clips = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
+            let realm = try! Realm()
+            let clips = realm.objects(CPYClip).sorted("updateTime", ascending: false)
             
             let maxHistorySize = NSUserDefaults.standardUserDefaults().integerForKey(kCPYPrefMaxHistorySizeKey)
-            if maxHistorySize < Int(clips.count) {
-                if let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as? CPYClip where !lastClip.invalidated {
+            if maxHistorySize < clips.count {
+                let lastClip = clips[maxHistorySize - 1]
+                if !lastClip.invalidated {
                     
                     let lastUsedAt = lastClip.updateTime
-                    let results = CPYClipManager.sharedManager.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt))
+                    let results = CPYClipManager.sharedManager.loadClips().filter(NSPredicate(format: "updateTime < %d",lastUsedAt))
                     var imagePaths = [String]()
-                    for clipData in results {
-                        if let clip = clipData as? CPYClip where !clip.invalidated {
-                            if !clip.thumbnailPath.isEmpty {
-                                imagePaths.append(clip.thumbnailPath)
-                            }
+                    for clip in results {
+                        if !clip.invalidated && !clip.thumbnailPath.isEmpty{
+                            imagePaths.append(clip.thumbnailPath)
                         }
                     }
     
@@ -45,9 +45,9 @@ class CPYHistoryManager: NSObject {
                         PINCache.sharedCache().removeObjectForKey(path)
                     }
                     do {
-                        try realm.transactionWithBlock({ () -> Void in
-                            realm.deleteObjects(results)
-                        })
+                        try realm.write {
+                            realm.delete(results)
+                        }
                     } catch {}
                 }
             }
@@ -64,8 +64,8 @@ class CPYHistoryManager: NSObject {
                 let dataPathList = try fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder())
                 for path in dataPathList {
                     var isExist = false
-                    for clipData in allClips {
-                        if let clip = clipData as? CPYClip where !clip.invalidated {
+                    for clip in allClips {
+                        if !clip.invalidated {
                             if let clipPath = clip.dataPath.componentsSeparatedByString("/").last where clipPath == path {
                                 isExist = true
                                 break

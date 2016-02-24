@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import RealmSwift
 
 // MARK: - CPYFolderTableView Protocol
 @objc protocol CPYFolderTableViewDelegate {
@@ -41,7 +42,7 @@ extension CPYFolderTableView: NSTableViewDataSource {
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
         
         let folders = CPYSnippetManager.sharedManager.loadSortedFolders()
-        let folder = folders.objectAtIndex(UInt(row)) as! CPYFolder
+        let folder = folders[row]
         
         if let dataCell = tableColumn?.dataCellForRow(row) as? CPYImageAndTextCell {
             if folder.enable {
@@ -70,11 +71,11 @@ extension CPYFolderTableView: NSTableViewDelegate {
         if let text = fieldEditor.string {
             if text.characters.count != 0 {
                 if let tableView = control as? NSTableView {
-                    let folder = CPYSnippetManager.sharedManager.loadSortedFolders().objectAtIndex(UInt(tableView.selectedRow)) as! CPYFolder
-                    let realm = RLMRealm.defaultRealm()
-                    try! realm.transactionWithBlock({ () -> Void in
+                    let folder = CPYSnippetManager.sharedManager.loadSortedFolders()[tableView.selectedRow]
+                    let realm = try! Realm()
+                    try! realm.write {
                         folder.title = text
-                    })
+                    }
                 }
                 return true
             }

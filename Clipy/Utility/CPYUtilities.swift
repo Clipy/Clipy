@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import RealmSwift
 
 final class CPYUtilities {
 
@@ -52,12 +53,8 @@ final class CPYUtilities {
     }
 
     static func migrationRealm() {
-
-        let config = RLMRealmConfiguration.defaultConfiguration()
-        config.schemaVersion = 2
-        config.migrationBlock = { (migrate, oldSchemaVersion) in }
-        RLMRealmConfiguration.setDefaultConfiguration(config)
-        RLMRealm.defaultRealm()
+        let config = Realm.Configuration(schemaVersion: 3, migrationBlock: { (migration, oldSchemaVersion) -> Void in })
+        Realm.Configuration.defaultConfiguration = config
     }
     
     static func paste() -> Bool {
