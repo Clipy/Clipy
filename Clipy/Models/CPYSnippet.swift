@@ -8,6 +8,7 @@
 //
 
 import Cocoa
+import Realm
 
 class CPYSnippet: RLMObject {
     

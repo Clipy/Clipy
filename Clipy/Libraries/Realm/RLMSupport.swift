@@ -15,6 +15,7 @@
 // limitations under the License.
 //
 ////////////////////////////////////////////////////////////////////////////
+import Realm
 
 extension RLMObject {
     // Swift query convenience functions

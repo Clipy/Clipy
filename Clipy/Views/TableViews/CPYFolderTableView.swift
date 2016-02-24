@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Realm
 
 // MARK: - CPYFolderTableView Protocol
 @objc protocol CPYFolderTableViewDelegate {

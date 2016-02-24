@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Realm
 
 final class CPYUtilities {
 
@@ -52,7 +53,6 @@ final class CPYUtilities {
     }
 
     static func migrationRealm() {
-
         let config = RLMRealmConfiguration.defaultConfiguration()
         config.schemaVersion = 2
         config.migrationBlock = { (migrate, oldSchemaVersion) in }

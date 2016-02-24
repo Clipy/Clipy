@@ -7,6 +7,8 @@
 //
 
 import Cocoa
+import Realm
+import PINCache
 
 class CPYHistoryManager: NSObject {
 

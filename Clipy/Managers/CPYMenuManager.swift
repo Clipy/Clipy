@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import PINCache
 
 enum PopUpMenuType {
     case Main, History, Snippets
