@@ -103,6 +103,7 @@ class AppDelegate: NSObject {
     }
     
     func selectClipMenuItem(sender: NSMenuItem) {
+        Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
         CPYClipManager.sharedManager.copyClipToPasteboardAtIndex(sender.tag)
         CPYUtilities.paste()
     }
