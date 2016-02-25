@@ -55,7 +55,6 @@
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
 		FAC4E62D1C7F270900200271 /* CPYPreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */; };
 		FAC4E62E1C7F270900200271 /* CPYPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */; };
-		FAC4E6311C7F293800200271 /* CPYToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6301C7F293800200271 /* CPYToolbarItem.swift */; };
 		FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */; };
 		FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */; };
 		FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */; };
@@ -147,7 +146,6 @@
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
 		FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferencesWindowController.swift; sourceTree = "<group>"; };
 		FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
-		FAC4E6301C7F293800200271 /* CPYToolbarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYToolbarItem.swift; sourceTree = "<group>"; };
 		FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Clipy.swift"; sourceTree = "<group>"; };
 		FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
 		FAF1DA0B1B41888F00E15D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
@@ -431,7 +429,6 @@
 		FAC4E62F1C7F291300200271 /* ToolbarItem */ = {
 			isa = PBXGroup;
 			children = (
-				FAC4E6301C7F293800200271 /* CPYToolbarItem.swift */,
 			);
 			path = ToolbarItem;
 			sourceTree = "<group>";
@@ -631,7 +628,6 @@
 				FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* CPYMenuManager.swift in Sources */,
 				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
-				FAC4E6311C7F293800200271 /* CPYToolbarItem.swift in Sources */,
 				FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */,
 				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,

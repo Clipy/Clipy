@@ -20,14 +20,96 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="374"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="DB4-0I-ThE">
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DB4-0I-ThE">
                         <rect key="frame" x="0.0" y="318" width="480" height="56"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="RKs-Gr-vpv" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Eo5-Xw-WPV">
+                                <rect key="frame" x="0.0" y="0.0" width="55" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="arX-EY-hyL">
+                                        <rect key="frame" x="11" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_general_on" id="P1q-MO-KQp"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pIA-o7-RyT">
+                                        <rect key="frame" x="6" y="8" width="46" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="General" id="s07-IQ-9lM">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oZv-f1-ez4">
+                                <rect key="frame" x="55" y="0.0" width="50" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4a4-Fi-8TZ">
+                                        <rect key="frame" x="7" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_menu" id="KdK-Rp-f56"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fhw-2u-YyS">
+                                        <rect key="frame" x="0.0" y="8" width="50" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Menu" id="tpJ-kz-DJg">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qLI-td-kAj">
+                                <rect key="frame" x="105" y="0.0" width="50" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o3h-5z-gAo">
+                                        <rect key="frame" x="7" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_type" id="Eps-iS-lme"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xpa-FO-oHS">
+                                        <rect key="frame" x="0.0" y="8" width="50" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Type" id="wvl-Yj-mBC">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tm1-Ve-7A5">
+                                <rect key="frame" x="155" y="0.0" width="70" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rws-24-H8e">
+                                        <rect key="frame" x="17" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_shortcut" id="cul-XG-yve"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T5S-2F-PhB">
+                                        <rect key="frame" x="8" y="8" width="56" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Shortcuts" id="Dmq-zp-GQh">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bgn-yY-thR">
+                                <rect key="frame" x="225" y="0.0" width="60" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="miw-wN-6dz">
+                                        <rect key="frame" x="12" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_update" id="DuC-vy-RB1"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UjI-ec-6AJ">
+                                        <rect key="frame" x="6" y="8" width="49" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Updates" id="7Ts-vW-8w5">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RKs-Gr-vpv" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="1"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="V2G-gO-v5h"/>
-                                </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
                                         <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
@@ -35,19 +117,8 @@
                                 </userDefinedRuntimeAttributes>
                             </customView>
                         </subviews>
-                        <constraints>
-                            <constraint firstAttribute="bottom" secondItem="RKs-Gr-vpv" secondAttribute="bottom" id="Djg-IQ-2qe"/>
-                            <constraint firstItem="RKs-Gr-vpv" firstAttribute="leading" secondItem="DB4-0I-ThE" secondAttribute="leading" id="Ysg-Vo-Eoc"/>
-                            <constraint firstAttribute="trailing" secondItem="RKs-Gr-vpv" secondAttribute="trailing" id="Zze-oc-0qk"/>
-                            <constraint firstAttribute="height" constant="56" id="lJk-Qa-xn6"/>
-                        </constraints>
                     </customView>
                 </subviews>
-                <constraints>
-                    <constraint firstAttribute="trailing" secondItem="DB4-0I-ThE" secondAttribute="trailing" id="ebT-SA-Qwr"/>
-                    <constraint firstItem="DB4-0I-ThE" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="hKg-Jc-z4S"/>
-                    <constraint firstItem="DB4-0I-ThE" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="iCb-98-DwT"/>
-                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
@@ -55,4 +126,11 @@
             <point key="canvasLocation" x="676" y="559"/>
         </window>
     </objects>
+    <resources>
+        <image name="pref_general_on" width="35" height="23"/>
+        <image name="pref_menu" width="36" height="24"/>
+        <image name="pref_shortcut" width="36" height="24"/>
+        <image name="pref_type" width="36" height="24"/>
+        <image name="pref_update" width="36" height="24"/>
+    </resources>
 </document>
