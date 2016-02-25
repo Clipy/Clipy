@@ -7,6 +7,22 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYPreferencesWindowController" customModule="Clipy" customModuleProvider="target">
             <connections>
+                <outlet property="generalButton" destination="LsG-fK-vSu" id="etb-5P-mCh"/>
+                <outlet property="generalImageView" destination="arX-EY-hyL" id="BKJ-fg-esP"/>
+                <outlet property="generalTextField" destination="emt-MG-SUM" id="KHb-5e-3lL"/>
+                <outlet property="menuButton" destination="1S4-RQ-oLh" id="0H5-IZ-sVd"/>
+                <outlet property="menuImageView" destination="4a4-Fi-8TZ" id="vRC-fC-W4s"/>
+                <outlet property="menuTextField" destination="GXW-AF-We2" id="UBd-gP-ESu"/>
+                <outlet property="shortcutsButton" destination="iGA-ys-nmA" id="tZr-ZR-VPv"/>
+                <outlet property="shortcutsImageView" destination="Rws-24-H8e" id="xRi-2I-gQg"/>
+                <outlet property="shortcutsTextField" destination="1CN-v1-FRq" id="JBc-gQ-Mep"/>
+                <outlet property="toolBar" destination="DB4-0I-ThE" id="1UW-2V-JTB"/>
+                <outlet property="typeButton" destination="re2-ih-xqq" id="amJ-Th-Owc"/>
+                <outlet property="typeImageView" destination="o3h-5z-gAo" id="vLK-jc-GxL"/>
+                <outlet property="typeTextField" destination="Atd-Sw-OzP" id="SjP-de-eOc"/>
+                <outlet property="updatesButton" destination="qwu-rn-gk4" id="zHW-sn-OKa"/>
+                <outlet property="updatesImageView" destination="miw-wN-6dz" id="ZFr-xp-Tg0"/>
+                <outlet property="updatesTextField" destination="bGH-iV-ocf" id="gY0-IQ-Nhm"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -20,7 +36,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="374"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DB4-0I-ThE">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="DB4-0I-ThE">
                         <rect key="frame" x="0.0" y="318" width="480" height="56"/>
                         <subviews>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Eo5-Xw-WPV">
@@ -30,82 +46,132 @@
                                         <rect key="frame" x="11" y="24" width="36" height="24"/>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_general_on" id="P1q-MO-KQp"/>
                                     </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pIA-o7-RyT">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="emt-MG-SUM">
                                         <rect key="frame" x="6" y="8" width="46" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="General" id="s07-IQ-9lM">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="General" id="qS1-uo-9im">
                                             <font key="font" size="9" name="HiraKakuProN-W6"/>
-                                            <color key="textColor" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LsG-fK-vSu">
+                                        <rect key="frame" x="0.0" y="0.0" width="55" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="aQo-u1-q0k">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="QYp-yf-8LV"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oZv-f1-ez4">
                                 <rect key="frame" x="55" y="0.0" width="50" height="56"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4a4-Fi-8TZ">
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="4a4-Fi-8TZ">
                                         <rect key="frame" x="7" y="24" width="36" height="24"/>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_menu" id="KdK-Rp-f56"/>
                                     </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fhw-2u-YyS">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GXW-AF-We2">
                                         <rect key="frame" x="0.0" y="8" width="50" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Menu" id="tpJ-kz-DJg">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Menu" id="vEM-JU-92T">
                                             <font key="font" size="9" name="HiraKakuProN-W6"/>
-                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="1S4-RQ-oLh">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="pI8-IA-S1g">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="lG7-hC-IIF"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qLI-td-kAj">
                                 <rect key="frame" x="105" y="0.0" width="50" height="56"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o3h-5z-gAo">
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="o3h-5z-gAo">
                                         <rect key="frame" x="7" y="24" width="36" height="24"/>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_type" id="Eps-iS-lme"/>
                                     </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xpa-FO-oHS">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Atd-Sw-OzP">
                                         <rect key="frame" x="0.0" y="8" width="50" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Type" id="wvl-Yj-mBC">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Type" id="avh-w8-RcC">
                                             <font key="font" size="9" name="HiraKakuProN-W6"/>
-                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="re2-ih-xqq">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="CiV-ve-1lk">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="4kz-xg-k5x"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tm1-Ve-7A5">
                                 <rect key="frame" x="155" y="0.0" width="70" height="56"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rws-24-H8e">
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="Rws-24-H8e">
                                         <rect key="frame" x="17" y="24" width="36" height="24"/>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_shortcut" id="cul-XG-yve"/>
                                     </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T5S-2F-PhB">
-                                        <rect key="frame" x="8" y="8" width="56" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Shortcuts" id="Dmq-zp-GQh">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1CN-v1-FRq">
+                                        <rect key="frame" x="7" y="8" width="56" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Shortcuts" id="qx8-Vm-eow">
                                             <font key="font" size="9" name="HiraKakuProN-W6"/>
-                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="iGA-ys-nmA">
+                                        <rect key="frame" x="0.0" y="0.0" width="70" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="RAI-xu-L7b">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="gaL-zA-2D0"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bgn-yY-thR">
                                 <rect key="frame" x="225" y="0.0" width="60" height="56"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="miw-wN-6dz">
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="miw-wN-6dz">
                                         <rect key="frame" x="12" y="24" width="36" height="24"/>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_update" id="DuC-vy-RB1"/>
                                     </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UjI-ec-6AJ">
-                                        <rect key="frame" x="6" y="8" width="49" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Updates" id="7Ts-vW-8w5">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bGH-iV-ocf">
+                                        <rect key="frame" x="5" y="8" width="50" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Updates" id="N5e-ba-0Q0">
                                             <font key="font" size="9" name="HiraKakuProN-W6"/>
-                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="qwu-rn-gk4">
+                                        <rect key="frame" x="0.0" y="0.0" width="60" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="WqD-9f-VJc">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="2zD-TS-O5b"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RKs-Gr-vpv" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
@@ -117,8 +183,30 @@
                                 </userDefinedRuntimeAttributes>
                             </customView>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="56" id="zEv-xk-Ocs"/>
+                        </constraints>
                     </customView>
+                    <textField horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KFD-K3-E8i">
+                        <rect key="frame" x="170" y="159" width="140" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="17" id="jFw-zK-V8j"/>
+                            <constraint firstAttribute="width" constant="136" id="nOG-Ch-nWk"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="No Pane is Selected." usesSingleLineMode="YES" id="Vy6-Ui-lLf">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="KFD-K3-E8i" firstAttribute="centerY" secondItem="se5-gp-TjO" secondAttribute="centerY" constant="20" id="Abt-bL-b11"/>
+                    <constraint firstItem="KFD-K3-E8i" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="FzC-gC-or0"/>
+                    <constraint firstItem="DB4-0I-ThE" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="Nzb-3f-1Td"/>
+                    <constraint firstItem="DB4-0I-ThE" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="QsI-Mc-SwG"/>
+                    <constraint firstAttribute="trailing" secondItem="DB4-0I-ThE" secondAttribute="trailing" id="cBK-LD-HoY"/>
+                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>

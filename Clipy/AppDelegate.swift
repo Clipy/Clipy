@@ -16,7 +16,6 @@ class AppDelegate: NSObject {
 
     // MARK: - Properties
     let snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
-    let preferencesWindowController = CPYPreferencesWindowController(windowNibName: "CPYPreferencesWindowController")
     let defaults = NSUserDefaults.standardUserDefaults()
     
     // MARK: - Init
@@ -71,7 +70,7 @@ class AppDelegate: NSObject {
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
-        preferencesWindowController.showWindow(self)
+        CPYPreferencesWindowController.sharedController.showWindow(self)
 //        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
     
