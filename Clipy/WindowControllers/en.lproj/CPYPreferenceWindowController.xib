@@ -538,7 +538,7 @@
             <point key="canvasLocation" x="571" y="1071"/>
         </customView>
         <customView id="TpB-41-wwb" userLabel="Type">
-            <rect key="frame" x="0.0" y="-5" width="460" height="218"/>
+            <rect key="frame" x="0.0" y="0.0" width="460" height="218"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <box title="Select clipboard types to store:" id="Fkj-B3-dPT">
@@ -763,7 +763,7 @@
                     <rect key="frame" x="161" y="10" width="140" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="v1.0.0" id="LtD-Yx-kcg">
-                        <font key="font" metaFont="system" size="11"/>
+                        <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
