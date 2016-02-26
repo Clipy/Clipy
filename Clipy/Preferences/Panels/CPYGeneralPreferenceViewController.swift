@@ -9,7 +9,11 @@
 import Cocoa
 
 class CPYGeneralPreferenceViewController: NSViewController {
-
-   
     
+    // MARK: - Properties
+    
+    // MARK: - Initialize
+    override func loadView() {
+        super.loadView()
+    }
 }
