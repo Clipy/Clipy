@@ -32,6 +32,7 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet weak var shortcutsButton: NSButton!
     @IBOutlet weak var updatesButton: NSButton!
     // ViewController
+    private let defaults = NSUserDefaults.standardUserDefaults()
     private let viewController: [NSViewController] = [CPYGeneralPreferenceViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
                                     CPYMenuPreferenceViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
                                     CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
@@ -71,6 +72,7 @@ extension CPYPreferencesWindowController {
 // MARK: - NSWindow Delegate
 extension CPYPreferencesWindowController: NSWindowDelegate {
     func windowWillClose(notification: NSNotification) {
+        defaults.synchronize()
         //defaults.setObject(storeTypes, forKey: kCPYPrefStoreTypesKey)
         if let window = window where !window.makeFirstResponder(window){
             window.endEditingFor(nil)
