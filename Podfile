@@ -12,5 +12,7 @@ target 'Clipy' do
   pod 'Crashlytics'
   pod 'RxCocoa'
   pod 'RxSwift'
+  pod 'NSObject+Rx'
+  pod "RxOptional"
 
 end

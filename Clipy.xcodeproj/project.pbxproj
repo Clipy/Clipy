@@ -22,8 +22,8 @@
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA71E3F81BA0A66300369F92 /* CPYHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */; };
 		FA72A8601C807D4500D120B3 /* CPYDesignableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA72A85F1C807D4500D120B3 /* CPYDesignableButton.swift */; };
-		FA72A8641C808F0700D120B3 /* ObservableType+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA72A8631C808F0700D120B3 /* ObservableType+Clipy.swift */; };
-		FA72A8671C808F3700D120B3 /* OptionalType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA72A8661C808F3700D120B3 /* OptionalType.swift */; };
+		FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */; };
+		FA78E7991C8C6F4500B6BA8C /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */; };
 		FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
@@ -112,8 +112,8 @@
 		FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
 		FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHistoryManager.swift; sourceTree = "<group>"; };
 		FA72A85F1C807D4500D120B3 /* CPYDesignableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableButton.swift; sourceTree = "<group>"; };
-		FA72A8631C808F0700D120B3 /* ObservableType+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ObservableType+Clipy.swift"; sourceTree = "<group>"; };
-		FA72A8661C808F3700D120B3 /* OptionalType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalType.swift; sourceTree = "<group>"; };
+		FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Initialize.swift"; sourceTree = "<group>"; };
+		FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		FA823D771B4042F200009614 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA823D7B1B40439500009614 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,7 +271,7 @@
 				FA5900E41C7B79D900E84E23 /* NSImage+Resize.swift */,
 				FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */,
 				FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */,
-				FA72A8631C808F0700D120B3 /* ObservableType+Clipy.swift */,
+				FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */,
 			);
 			name = Extensions;
 			path = Clipy/Extensions;
@@ -280,7 +280,6 @@
 		FA72A8651C808F2B00D120B3 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				FA72A8661C808F3700D120B3 /* OptionalType.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -445,6 +444,7 @@
 			isa = PBXGroup;
 			children = (
 				FAC43E711B36D0A600C06102 /* CPYUtilities.swift */,
+				FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -674,6 +674,7 @@
 			files = (
 				FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */,
 				FAC4E6461C7F513800200271 /* CPYShortcutsPreferenceViewController.swift in Sources */,
+				FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */,
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC4E6421C7F512500200271 /* CPYTypePreferenceViewController.swift in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
@@ -685,6 +686,7 @@
 				FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */,
+				FA78E7991C8C6F4500B6BA8C /* LocalizedString.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* CPYMenuManager.swift in Sources */,
 				FAC4E63A1C7F50EF00200271 /* CPYGeneralPreferenceViewController.swift in Sources */,
 				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
@@ -699,7 +701,6 @@
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
-				FA72A8641C808F0700D120B3 /* ObservableType+Clipy.swift in Sources */,
 				FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */,
 				FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */,
 				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,
@@ -708,7 +709,6 @@
 				FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */,
 				FAC43E691B35EC6200C06102 /* CPYClipManager.swift in Sources */,
 				FAC43E581B35E13D00C06102 /* DBPrefsWindowController.m in Sources */,
-				FA72A8671C808F3700D120B3 /* OptionalType.swift in Sources */,
 				FA5900E71C7B79D900E84E23 /* NSImage+Resize.swift in Sources */,
 				FAC4E63E1C7F511500200271 /* CPYMenuPreferenceViewController.swift in Sources */,
 			);
