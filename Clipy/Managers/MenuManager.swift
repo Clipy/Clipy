@@ -1,9 +1,9 @@
 //
-//  CPYMenuManager.swift
+//  MenuManager.swift
 //  Clipy
 //
-//  Created by 古林俊佑 on 2015/06/21.
-//  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
+//  Created by 古林俊佑 on 2016/03/08.
+//  Copyright (c) 2016年 Shunsuke Furubayashi. All rights reserved.
 //
 
 import Cocoa
