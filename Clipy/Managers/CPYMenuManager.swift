@@ -209,7 +209,7 @@ private extension MenuManager {
         let maxHistory = defaults.integerForKey(kCPYPrefMaxHistorySizeKey)
         
         // History title
-        let labelItem = NSMenuItem(title: LocalizedString.History.value, action: "", keyEquivalent: kEmptyString)
+        let labelItem = NSMenuItem(title: LocalizedString.History.value, action: "")
         labelItem.enabled = false
         menu.addItem(labelItem)
         
