@@ -5,9 +5,9 @@ PODS:
   - NSObject+Rx (1.2.1):
     - RxSwift (~> 2.1)
   - PINCache (2.2.1)
-  - Realm (0.98.2):
-    - Realm/Headers (= 0.98.2)
-  - Realm/Headers (0.98.2)
+  - Realm (0.98.3):
+    - Realm/Headers (= 0.98.3)
+  - Realm/Headers (0.98.3)
   - RxCocoa (2.2.0):
     - RxSwift (~> 2.2)
   - RxOptional (1.2.0):
@@ -32,7 +32,7 @@ SPEC CHECKSUMS:
   Fabric: 1abc1e59f11fa39ede6f690ef7309d8563e3ec59
   NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
   PINCache: ed1f07a85cc6fbf488f8ecc1980b07b49b7b85b5
-  Realm: 88a147fe04b8f07191a676b15c779b2b448991de
+  Realm: c6a7d00221a2d5177810a674aebd40c5e0b70b0f
   RxCocoa: 42efb7a7145a8d1d5878e94ce48a580d29e0c796
   RxOptional: f98a09c3b5bd853651eb7822cf0ffa847908f1c1
   RxSwift: b8a749f2204c6c7a5c29b306a9c3bc11d5b87c5b
