@@ -120,15 +120,15 @@ class CPYHotKeyManager: NSObject {
     
     // MARK: - HotKey Action Methods
     func popUpClipMenu(sender: AnyObject) {
-        CPYMenuManager.sharedManager.popUpMenuForType(.Main)
+        MenuManager.sharedManager.popUpMenu(.Main)
     }
     
     func popUpHistoryMenu(sender: AnyObject) {
-        CPYMenuManager.sharedManager.popUpMenuForType(.History)
+        MenuManager.sharedManager.popUpMenu(.History)
     }
     
     func popUpSnippetsMenu(sender: AnyObject) {
-        CPYMenuManager.sharedManager.popUpMenuForType(.Snippets)
+        MenuManager.sharedManager.popUpMenu(.Snippet)
     }
     
 }

@@ -31,7 +31,7 @@ class AppDelegate: NSObject {
         CPYUtilities.migrationRealm()
 
         // Show menubar icon
-        CPYMenuManager.sharedManager
+        MenuManager.sharedManager.setup()
 
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
     }
