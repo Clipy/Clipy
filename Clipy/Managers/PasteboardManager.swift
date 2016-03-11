@@ -66,5 +66,3 @@ extension PasteboardManager {
         lock.unlock()
     }
 }
-
-// MARK: - Paste
