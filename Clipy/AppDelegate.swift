@@ -33,7 +33,8 @@ class AppDelegate: NSObject {
         // Show menubar icon
         MenuManager.sharedManager.setup()
         ClipManager.sharedManager.setup()
-
+        HistoryManager.sharedManager.setup()
+        
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
     }
     

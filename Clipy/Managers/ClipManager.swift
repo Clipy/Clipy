@@ -59,7 +59,7 @@ extension ClipManager {
     
         imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
         realm.transaction { realm.deleteObjects(clipResults) }
-        CPYHistoryManager.sharedManager.cleanHistory()
+        HistoryManager.sharedManager.cleanDatas()
     }
 }
 

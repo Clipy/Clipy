@@ -20,7 +20,7 @@
 		FA5900E81C7B79D900E84E23 /* NSLock+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */; };
 		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
-		FA71E3F81BA0A66300369F92 /* CPYHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */; };
+		FA71E3F81BA0A66300369F92 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA71E3F71BA0A66300369F92 /* HistoryManager.swift */; };
 		FA72A8601C807D4500D120B3 /* CPYDesignableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA72A85F1C807D4500D120B3 /* CPYDesignableButton.swift */; };
 		FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */; };
 		FA78E7991C8C6F4500B6BA8C /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */; };
@@ -112,7 +112,7 @@
 		FA5900E31C7B79D900E84E23 /* NSImage+AssetCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+AssetCatalog.swift"; sourceTree = "<group>"; };
 		FA5900E41C7B79D900E84E23 /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
-		FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHistoryManager.swift; sourceTree = "<group>"; };
+		FA71E3F71BA0A66300369F92 /* HistoryManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
 		FA72A85F1C807D4500D120B3 /* CPYDesignableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableButton.swift; sourceTree = "<group>"; };
 		FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Initialize.swift"; sourceTree = "<group>"; };
 		FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
@@ -439,9 +439,9 @@
 				FAC43E661B35EC5400C06102 /* MenuManager.swift */,
 				FAEAB1FA1C930AAA005C3A10 /* PasteboardManager.swift */,
 				FAC43E681B35EC6200C06102 /* ClipManager.swift */,
-				FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */,
+				FA71E3F71BA0A66300369F92 /* HistoryManager.swift */,
 				FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */,
-				FA71E3F71BA0A66300369F92 /* CPYHistoryManager.swift */,
+				FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -704,7 +704,7 @@
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
 				FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */,
 				FA5900E81C7B79D900E84E23 /* NSLock+Clipy.swift in Sources */,
-				FA71E3F81BA0A66300369F92 /* CPYHistoryManager.swift in Sources */,
+				FA71E3F81BA0A66300369F92 /* HistoryManager.swift in Sources */,
 				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
 				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
