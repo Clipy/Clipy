@@ -33,7 +33,7 @@ class CPYHistoryManager: NSObject {
                 if let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as? CPYClip where !lastClip.invalidated {
                     
                     let lastUsedAt = lastClip.updateTime
-                    let results = CPYClipManager.sharedManager.loadClips().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt))
+                    let results = CPYClip.allObjects().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt))
                     var imagePaths = [String]()
                     for clipData in results {
                         if let clip = clipData as? CPYClip where !clip.invalidated {
@@ -59,7 +59,7 @@ class CPYHistoryManager: NSObject {
     
     func cleanHistory() {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-            let allClips = CPYClipManager.sharedManager.loadClips()
+            let allClips = CPYClip.allObjects()
             
             let fileManager = NSFileManager.defaultManager()
             do {

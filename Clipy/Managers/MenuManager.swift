@@ -279,7 +279,7 @@ private extension MenuManager {
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
         let menuItem = NSMenuItem(title: titleWithMark, action: "selectClipMenuItem:", keyEquivalent: keyEquivalent)
-        menuItem.tag = index
+        menuItem.representedObject = clip
         
         if isShowToolTip {
             let maxLengthOfToolTip = defaults.integerForKey(kCPYPrefMaxLengthOfToolTipKey)
