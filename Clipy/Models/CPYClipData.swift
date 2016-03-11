@@ -66,13 +66,15 @@ final class CPYClipData: NSObject {
         super.init()
     }
     
-    init?(pasteboard: NSPasteboard, types: [String]) {
+    init(pasteboard: NSPasteboard, types: [String]) {
         super.init()
         self.types = types
         types.forEach { type in
             switch type {
             case NSStringPboardType:
-                stringValue = pasteboard.stringForType(NSStringPboardType) ?? ""
+                if let pbString = pasteboard.stringForType(NSStringPboardType) {
+                    stringValue = pbString
+                }
             case NSRTFDPboardType:
                 RTFData = pasteboard.dataForType(NSRTFDPboardType)
             case NSRTFPboardType where RTFData == nil:
@@ -80,9 +82,13 @@ final class CPYClipData: NSObject {
             case NSPDFPboardType:
                 PDF = pasteboard.dataForType(NSPDFPboardType)
             case NSFilenamesPboardType:
-                fileNames = pasteboard.propertyListForType(NSFilenamesPboardType) as? [String] ?? []
+                if let fileNames = pasteboard.propertyListForType(NSFilenamesPboardType) as? [String] {
+                    self.fileNames = fileNames
+                }
             case NSURLPboardType:
-                URLs = pasteboard.propertyListForType(NSURLPboardType) as? [String] ?? []
+                if let url = pasteboard.propertyListForType(NSURLPboardType) as? [String] {
+                    URLs = url
+                }
             case NSTIFFPboardType:
                 if NSImage.canInitWithPasteboard(pasteboard) {
                     image =  NSImage(pasteboard: pasteboard)

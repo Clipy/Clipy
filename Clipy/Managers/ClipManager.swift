@@ -128,43 +128,42 @@ private extension ClipManager {
         if types.isEmpty { return }
         if !storeTypes.values.contains(NSNumber(bool: true)) { return }
         
-        if let data = CPYClipData(pasteboard: pasteboard, types: types) {
-            let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
-            // Search same history
-            if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
-            
-            let isOverwriteHistory = defaults.boolForKey(kCPYPrefOverwriteSameHistroyKey)
-            let hash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
+        let data = CPYClipData(pasteboard: pasteboard, types: types) 
+        let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
+        // Search same history
+        if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
+        
+        let isOverwriteHistory = defaults.boolForKey(kCPYPrefOverwriteSameHistroyKey)
+        let hash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
 
-            // Save DB 
-            let unixTime = Int(floor(NSDate().timeIntervalSince1970))
-            let path = (CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
-            let title = data.stringValue
+        // Save DB 
+        let unixTime = Int(floor(NSDate().timeIntervalSince1970))
+        let path = (CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
+        let title = data.stringValue
+        
+        let clip = CPYClip()
+        clip.dataPath = path
+        clip.title = title
+        clip.dataHash = "\(hash)"
+        clip.updateTime = unixTime
+        clip.primaryType = data.primaryType ?? ""
+        
+        // Save thumbnail image
+        if let image = data.image where data.primaryType == NSTIFFPboardType {
+            let thumbnailWidth = defaults.integerForKey(kCPYPrefThumbnailWidthKey)
+            let thumbnailHeight = defaults.integerForKey(kCPYPrefThumbnailHeightKey)
             
-            let clip = CPYClip()
-            clip.dataPath = path
-            clip.title = title
-            clip.dataHash = "\(hash)"
-            clip.updateTime = unixTime
-            clip.primaryType = data.primaryType ?? ""
-            
-            // Save thumbnail image
-            if let image = data.image where data.primaryType == NSTIFFPboardType {
-                let thumbnailWidth = defaults.integerForKey(kCPYPrefThumbnailWidthKey)
-                let thumbnailHeight = defaults.integerForKey(kCPYPrefThumbnailHeightKey)
-                
-                if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
-                    PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
-                    clip.thumbnailPath = String(unixTime)
-                }
+            if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
+                PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
+                clip.thumbnailPath = String(unixTime)
             }
+        }
 
-            if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                if NSKeyedArchiver.archiveRootObject(data, toFile: path) {
-                   realm.transaction {
-                        realm.addOrUpdateObject(clip)
-                   }
-                }
+        if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
+            if NSKeyedArchiver.archiveRootObject(data, toFile: path) {
+               realm.transaction {
+                    realm.addOrUpdateObject(clip)
+               }
             }
         }
     }
@@ -175,7 +174,7 @@ private extension ClipManager {
             for dataType in pbTypes {
                 if !isClipType(dataType) { continue }
                 if dataType == NSTIFFPboardType && types.contains(NSTIFFPboardType) { continue }
-                types.append(NSTIFFPboardType)
+                types.append(dataType)
             }
         }
         return types
