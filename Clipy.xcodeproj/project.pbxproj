@@ -244,7 +244,6 @@
 			isa = PBXGroup;
 			children = (
 				FAC4E6341C7F309E00200271 /* DesignableView */,
-				FAC4E62F1C7F291300200271 /* ToolbarItem */,
 				FA3B96021B3FD48B00B61FF0 /* TableViewCell */,
 				FA3B96011B3FD47E00B61FF0 /* TableViews */,
 			);
@@ -463,13 +462,6 @@
 				FAC4E6371C7F50A200200271 /* Panels */,
 			);
 			path = Preferences;
-			sourceTree = "<group>";
-		};
-		FAC4E62F1C7F291300200271 /* ToolbarItem */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ToolbarItem;
 			sourceTree = "<group>";
 		};
 		FAC4E6341C7F309E00200271 /* DesignableView */ = {
