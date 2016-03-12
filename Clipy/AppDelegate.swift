@@ -32,7 +32,9 @@ class AppDelegate: NSObject {
 
         // Show menubar icon
         MenuManager.sharedManager.setup()
-
+        ClipManager.sharedManager.setup()
+        HistoryManager.sharedManager.setup()
+        
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
     }
     
@@ -51,7 +53,7 @@ class AppDelegate: NSObject {
     // MARK: - Override Methods
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         if menuItem.action == Selector("clearAllHistory") {
-            if CPYClipManager.sharedManager.loadClips().count == 0 {
+            if CPYClip.allObjects().count == 0 {
                 return false
             }
         }
@@ -60,7 +62,7 @@ class AppDelegate: NSObject {
     
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
-        let storeTypes = CPYClipData.availableTypesString().reduce([String: NSNumber]()) { (var dict, type) in
+        let storeTypes = CPYClipData.availableTypesString.reduce([String: NSNumber]()) { (var dict, type) in
             dict[type] = NSNumber(bool: true)
             return dict
         }
@@ -100,25 +102,25 @@ class AppDelegate: NSObject {
             defaults.synchronize()
         }
         
-        CPYClipManager.sharedManager.clearAll()
+        ClipManager.sharedManager.clearAll()
     }
     
     func selectClipMenuItem(sender: NSMenuItem) {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
-        CPYClipManager.sharedManager.copyClipToPasteboardAtIndex(sender.tag)
-        CPYUtilities.paste()
+        if let clip = sender.representedObject as? CPYClip where !clip.invalidated {
+            PasteboardManager.sharedManager.copyClipToPasteboard(clip)
+            CPYUtilities.paste()
+        } else {
+            NSBeep()
+        }
     }
     
     func selectSnippetMenuItem(sender: AnyObject) {
-        let snippet = sender.representedObject
-        if snippet == nil {
-            NSBeep()
-            return
-        }
-        
-        if let content = (snippet as? CPYSnippet)?.content {
-            CPYClipManager.sharedManager.copyStringToPasteboard(content)
+        if let snippet = sender.representedObject as? CPYSnippet {
+            PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
             CPYUtilities.paste()
+        } else {
+            NSBeep()
         }
     }
     
@@ -215,10 +217,10 @@ extension AppDelegate {
     }
     
     func receiveSleepNotification() {
-        CPYClipManager.sharedManager.stopPasteboardObservingTimer()
+        ClipManager.sharedManager.stopTimer()
     }
     
     func receiveWakeNotification() {
-        CPYClipManager.sharedManager.startPasteboardObservingTimer()
+        ClipManager.sharedManager.startTimer()
     }
 }
