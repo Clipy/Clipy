@@ -57,19 +57,19 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
 
     override func setupToolbar() {
         if let image = NSImage(named: NSImageNamePreferencesGeneral) {
-            addView(generalPreferenceView, label: LocalizedString.General.value, image: image)
+            addView(generalPreferenceView, label: LocalizedString.TabGeneral.value, image: image)
         }
         if let image = NSImage(assetIdentifier: .Menu) {
-            addView(menuPreferenceView, label: LocalizedString.Menu.value, image: image)
+            addView(menuPreferenceView, label: LocalizedString.TabMenu.value, image: image)
         }
         if let image = NSImage(assetIdentifier: .IconApplication) {
-            addView(typePreferenceView, label: LocalizedString.Type.value, image: image)
+            addView(typePreferenceView, label: LocalizedString.TabType.value, image: image)
         }
         if let image = NSImage(assetIdentifier: .IconKeyboard) {
-            addView(shortcutPreferenceView, label: LocalizedString.Shortcuts.value, image: image)
+            addView(shortcutPreferenceView, label: LocalizedString.TabShortcuts.value, image: image)
         }
         if let image = NSImage(assetIdentifier: .IconSparkle) {
-            addView(updatePreferenceView, label: LocalizedString.Updates.value, image: image)
+            addView(updatePreferenceView, label: LocalizedString.TabUpdates.value, image: image)
         }
         
         crossFade = true

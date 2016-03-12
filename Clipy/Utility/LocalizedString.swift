@@ -22,11 +22,11 @@ enum LocalizedString: String {
     case LaunchOnStartup        = "Launch on system startup"
     case DontLaunch             = "Don't Launch"
 
-    case General                = "General"
-    case Menu                   = "Menu"
-    case Type                   = "Type"
-    case Shortcuts              = "Shortcuts"
-    case Updates                = "Updates"
+    case TabGeneral             = "General"
+    case TabMenu                = "Menu"
+    case TabType                = "Type"
+    case TabShortcuts           = "Shortcuts"
+    case TabUpdates             = "Updates"
 
     var value: String {
         return NSLocalizedString(rawValue, comment: "")
