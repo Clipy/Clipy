@@ -33,11 +33,11 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet weak var updatesButton: NSButton!
     // ViewController
     private let defaults = NSUserDefaults.standardUserDefaults()
-    private let viewController: [NSViewController] = [CPYGeneralPreferenceViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
-                                    CPYMenuPreferenceViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
-                                    CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
-                                    CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
-                                    CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!]
+    private let viewController: [NSViewController] = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
+                                                    NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
+                                                    NSViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
+                                                    CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
+                                                    NSViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!]
     
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
@@ -90,11 +90,11 @@ private extension CPYPreferencesWindowController {
         shortcutsImageView.image    = NSImage(assetIdentifier: .ShortcutsOff)
         updatesImageView.image      = NSImage(assetIdentifier: .UpdatesOff)
         
-        generalTextField.textColor      = NSColor.titleColor()
-        menuTextField.textColor         = NSColor.titleColor()
-        typeTextField.textColor         = NSColor.titleColor()
-        shortcutsTextField.textColor    = NSColor.titleColor()
-        updatesTextField.textColor      = NSColor.titleColor()
+        generalTextField.textColor      = NSColor.tabTitleColor()
+        menuTextField.textColor         = NSColor.tabTitleColor()
+        typeTextField.textColor         = NSColor.tabTitleColor()
+        shortcutsTextField.textColor    = NSColor.tabTitleColor()
+        updatesTextField.textColor      = NSColor.tabTitleColor()
     }
     
     private func selectedTab(index: Int) {

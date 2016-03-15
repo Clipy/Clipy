@@ -34,7 +34,7 @@
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="374"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="DB4-0I-ThE">
                         <rect key="frame" x="0.0" y="318" width="480" height="56"/>
@@ -215,7 +215,7 @@
         </window>
     </objects>
     <resources>
-        <image name="pref_general_on" width="35" height="23"/>
+        <image name="pref_general_on" width="36" height="24"/>
         <image name="pref_menu" width="36" height="24"/>
         <image name="pref_shortcut" width="36" height="24"/>
         <image name="pref_type" width="36" height="24"/>

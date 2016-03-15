@@ -59,15 +59,11 @@
 		FAC4E62E1C7F270900200271 /* CPYPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */; };
 		FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */; };
 		FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */; };
-		FAC4E63A1C7F50EF00200271 /* CPYGeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6381C7F50EF00200271 /* CPYGeneralPreferenceViewController.swift */; };
 		FAC4E63B1C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6391C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib */; };
-		FAC4E63E1C7F511500200271 /* CPYMenuPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E63C1C7F511500200271 /* CPYMenuPreferenceViewController.swift */; };
 		FAC4E63F1C7F511500200271 /* CPYMenuPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E63D1C7F511500200271 /* CPYMenuPreferenceViewController.xib */; };
-		FAC4E6421C7F512500200271 /* CPYTypePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6401C7F512500200271 /* CPYTypePreferenceViewController.swift */; };
 		FAC4E6431C7F512500200271 /* CPYTypePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6411C7F512500200271 /* CPYTypePreferenceViewController.xib */; };
 		FAC4E6461C7F513800200271 /* CPYShortcutsPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */; };
 		FAC4E6471C7F513800200271 /* CPYShortcutsPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6451C7F513800200271 /* CPYShortcutsPreferenceViewController.xib */; };
-		FAC4E64A1C7F515300200271 /* CPYUpdatesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6481C7F515300200271 /* CPYUpdatesPreferenceViewController.swift */; };
 		FAC4E64B1C7F515300200271 /* CPYUpdatesPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6491C7F515300200271 /* CPYUpdatesPreferenceViewController.xib */; };
 		FAEAB1F91C9309BA005C3A10 /* Realm+NoCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEAB1F81C9309BA005C3A10 /* Realm+NoCatch.swift */; };
 		FAEAB1FB1C930AAA005C3A10 /* PasteboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEAB1FA1C930AAA005C3A10 /* PasteboardManager.swift */; };
@@ -164,15 +160,11 @@
 		FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
 		FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Clipy.swift"; sourceTree = "<group>"; };
 		FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
-		FAC4E6381C7F50EF00200271 /* CPYGeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYGeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC4E6391C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAC4E63C1C7F511500200271 /* CPYMenuPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYMenuPreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC4E63D1C7F511500200271 /* CPYMenuPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAC4E6401C7F512500200271 /* CPYTypePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYTypePreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC4E6411C7F512500200271 /* CPYTypePreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
 		FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYShortcutsPreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC4E6451C7F513800200271 /* CPYShortcutsPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAC4E6481C7F515300200271 /* CPYUpdatesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUpdatesPreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC4E6491C7F515300200271 /* CPYUpdatesPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAEAB1F81C9309BA005C3A10 /* Realm+NoCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+NoCatch.swift"; sourceTree = "<group>"; };
 		FAEAB1FA1C930AAA005C3A10 /* PasteboardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasteboardManager.swift; sourceTree = "<group>"; };
@@ -476,15 +468,11 @@
 		FAC4E6371C7F50A200200271 /* Panels */ = {
 			isa = PBXGroup;
 			children = (
-				FAC4E6381C7F50EF00200271 /* CPYGeneralPreferenceViewController.swift */,
 				FAC4E6391C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib */,
-				FAC4E63C1C7F511500200271 /* CPYMenuPreferenceViewController.swift */,
 				FAC4E63D1C7F511500200271 /* CPYMenuPreferenceViewController.xib */,
-				FAC4E6401C7F512500200271 /* CPYTypePreferenceViewController.swift */,
 				FAC4E6411C7F512500200271 /* CPYTypePreferenceViewController.xib */,
 				FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */,
 				FAC4E6451C7F513800200271 /* CPYShortcutsPreferenceViewController.xib */,
-				FAC4E6481C7F515300200271 /* CPYUpdatesPreferenceViewController.swift */,
 				FAC4E6491C7F515300200271 /* CPYUpdatesPreferenceViewController.xib */,
 			);
 			path = Panels;
@@ -674,7 +662,6 @@
 				FAC4E6461C7F513800200271 /* CPYShortcutsPreferenceViewController.swift in Sources */,
 				FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */,
 				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
-				FAC4E6421C7F512500200271 /* CPYTypePreferenceViewController.swift in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
 				FA5900E61C7B79D900E84E23 /* NSImage+AssetCatalog.swift in Sources */,
 				FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */,
@@ -687,10 +674,8 @@
 				FA78E7991C8C6F4500B6BA8C /* LocalizedString.swift in Sources */,
 				FAEAB1FB1C930AAA005C3A10 /* PasteboardManager.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* MenuManager.swift in Sources */,
-				FAC4E63A1C7F50EF00200271 /* CPYGeneralPreferenceViewController.swift in Sources */,
 				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
 				FAEAB1F91C9309BA005C3A10 /* Realm+NoCatch.swift in Sources */,
-				FAC4E64A1C7F515300200271 /* CPYUpdatesPreferenceViewController.swift in Sources */,
 				FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */,
 				FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */,
 				FAC43E5B1B35E14500C06102 /* NMLoginItems.m in Sources */,
@@ -710,7 +695,6 @@
 				FAC43E691B35EC6200C06102 /* ClipManager.swift in Sources */,
 				FAC43E581B35E13D00C06102 /* DBPrefsWindowController.m in Sources */,
 				FA5900E71C7B79D900E84E23 /* NSImage+Resize.swift in Sources */,
-				FAC4E63E1C7F511500200271 /* CPYMenuPreferenceViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
