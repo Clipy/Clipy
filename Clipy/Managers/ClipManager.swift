@@ -143,7 +143,7 @@ private extension ClipManager {
         
         let clip = CPYClip()
         clip.dataPath = path
-        clip.title = title
+        clip.title = title.trimTitle(10000)
         clip.dataHash = "\(hash)"
         clip.updateTime = unixTime
         clip.primaryType = data.primaryType ?? ""
