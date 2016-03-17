@@ -538,7 +538,7 @@
             <point key="canvasLocation" x="571" y="1071"/>
         </customView>
         <customView id="TpB-41-wwb" userLabel="Type">
-            <rect key="frame" x="0.0" y="-5" width="460" height="218"/>
+            <rect key="frame" x="0.0" y="0.0" width="460" height="218"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <box title="Select clipboard types to store:" id="Fkj-B3-dPT">
@@ -581,17 +581,6 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.RTFD" id="wAf-8r-gn8"/>
                                 </connections>
                             </button>
-                            <button id="Ywg-uY-Ylr">
-                                <rect key="frame" x="14" y="72" width="238" height="18"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <buttonCell key="cell" type="check" title="PDF" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Avz-YC-1lQ">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="titleBar" size="12"/>
-                                </buttonCell>
-                                <connections>
-                                    <binding destination="-2" name="value" keyPath="storeTypes.PDF" id="4ZZ-6R-ve0"/>
-                                </connections>
-                            </button>
                             <button id="Rwr-QS-J6z">
                                 <rect key="frame" x="14" y="52" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask"/>
@@ -623,6 +612,17 @@
                                 </buttonCell>
                                 <connections>
                                     <binding destination="-2" name="value" keyPath="storeTypes.TIFF" id="c3K-uV-PPG"/>
+                                </connections>
+                            </button>
+                            <button id="Ywg-uY-Ylr">
+                                <rect key="frame" x="14" y="72" width="238" height="18"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <buttonCell key="cell" type="check" title="PDF" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Avz-YC-1lQ">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.PDF" id="4ZZ-6R-ve0"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -763,7 +763,7 @@
                     <rect key="frame" x="161" y="10" width="140" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="v1.0.0" id="LtD-Yx-kcg">
-                        <font key="font" metaFont="system" size="11"/>
+                        <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>

@@ -31,8 +31,10 @@ class AppDelegate: NSObject {
         CPYUtilities.migrationRealm()
 
         // Show menubar icon
-        CPYMenuManager.sharedManager
-
+        MenuManager.sharedManager.setup()
+        ClipManager.sharedManager.setup()
+        HistoryManager.sharedManager.setup()
+        
         defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
     }
     
@@ -51,7 +53,7 @@ class AppDelegate: NSObject {
     // MARK: - Override Methods
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         if menuItem.action == Selector("clearAllHistory") {
-            if CPYClipManager.sharedManager.loadClips().count == 0 {
+            if CPYClip.allObjects().count == 0 {
                 return false
             }
         }
@@ -60,7 +62,7 @@ class AppDelegate: NSObject {
     
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
-        let storeTypes = CPYClipData.availableTypesString().reduce([String: NSNumber]()) { (var dict, type) in
+        let storeTypes = CPYClipData.availableTypesString.reduce([String: NSNumber]()) { (var dict, type) in
             dict[type] = NSNumber(bool: true)
             return dict
         }
@@ -70,6 +72,7 @@ class AppDelegate: NSObject {
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
+        //CPYPreferencesWindowController.sharedController.showWindow(self)
         CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
     
@@ -82,10 +85,10 @@ class AppDelegate: NSObject {
         let isShowAlert = defaults.boolForKey(kCPYPrefShowAlertBeforeClearHistoryKey)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = NSLocalizedString("Clear History", comment: "")
-            alert.informativeText = NSLocalizedString("Are you sure you want to clear your clipboard history?", comment: "")
-            alert.addButtonWithTitle(NSLocalizedString("Clear History", comment: ""))
-            alert.addButtonWithTitle(NSLocalizedString("Cancel", comment: ""))
+            alert.messageText = LocalizedString.ClearHistory.value
+            alert.informativeText = LocalizedString.ConfirmClearHistory.value
+            alert.addButtonWithTitle(LocalizedString.ClearHistory.value)
+            alert.addButtonWithTitle(LocalizedString.Cancel.value)
             alert.showsSuppressionButton = true
             
             NSApp.activateIgnoringOtherApps(true)
@@ -99,35 +102,35 @@ class AppDelegate: NSObject {
             defaults.synchronize()
         }
         
-        CPYClipManager.sharedManager.clearAll()
+        ClipManager.sharedManager.clearAll()
     }
     
     func selectClipMenuItem(sender: NSMenuItem) {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
-        CPYClipManager.sharedManager.copyClipToPasteboardAtIndex(sender.tag)
-        CPYUtilities.paste()
+        if let clip = sender.representedObject as? CPYClip where !clip.invalidated {
+            PasteboardManager.sharedManager.copyClipToPasteboard(clip)
+            CPYUtilities.paste()
+        } else {
+            NSBeep()
+        }
     }
     
     func selectSnippetMenuItem(sender: AnyObject) {
-        let snippet = sender.representedObject
-        if snippet == nil {
-            NSBeep()
-            return
-        }
-        
-        if let content = (snippet as? CPYSnippet)?.content {
-            CPYClipManager.sharedManager.copyStringToPasteboard(content)
+        if let snippet = sender.representedObject as? CPYSnippet {
+            PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
             CPYUtilities.paste()
+        } else {
+            NSBeep()
         }
     }
     
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = NSLocalizedString("Launch Clipy on system startup?", comment: "")
-        alert.informativeText = NSLocalizedString("You can change this setting in the Preferences if you want.", comment: "")
-        alert.addButtonWithTitle(NSLocalizedString("Launch on system startup", comment: ""))
-        alert.addButtonWithTitle(NSLocalizedString("Don't Launch", comment: ""))
+        alert.messageText = LocalizedString.LaunchClipy.value
+        alert.informativeText = LocalizedString.LaunchSettingInfo.value
+        alert.addButtonWithTitle(LocalizedString.LaunchOnStartup.value)
+        alert.addButtonWithTitle(LocalizedString.DontLaunch.value)
         alert.showsSuppressionButton = true
         NSApp.activateIgnoringOtherApps(true)
 
@@ -214,10 +217,10 @@ extension AppDelegate {
     }
     
     func receiveSleepNotification() {
-        CPYClipManager.sharedManager.stopPasteboardObservingTimer()
+        ClipManager.sharedManager.stopTimer()
     }
     
     func receiveWakeNotification() {
-        CPYClipManager.sharedManager.startPasteboardObservingTimer()
+        ClipManager.sharedManager.startTimer()
     }
 }
