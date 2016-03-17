@@ -35,9 +35,9 @@ final class CPYPreferencesWindowController: NSWindowController {
     private let defaults = NSUserDefaults.standardUserDefaults()
     private let viewController: [NSViewController] = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
                                                     NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
-                                                    NSViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
+                                                    CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
                                                     CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
-                                                    NSViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!]
+                                                    CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!]
     
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
@@ -72,8 +72,10 @@ extension CPYPreferencesWindowController {
 // MARK: - NSWindow Delegate
 extension CPYPreferencesWindowController: NSWindowDelegate {
     func windowWillClose(notification: NSNotification) {
-        defaults.synchronize()
-        //defaults.setObject(storeTypes, forKey: kCPYPrefStoreTypesKey)
+        if let viewController = viewController[2] as? CPYTypePreferenceViewController {
+           defaults.setObject(viewController.storeTypes, forKey: kCPYPrefStoreTypesKey)
+            defaults.synchronize()
+        }
         if let window = window where !window.makeFirstResponder(window){
             window.endEditingFor(nil)
         }

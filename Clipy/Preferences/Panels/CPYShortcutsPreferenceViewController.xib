@@ -7,6 +7,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYShortcutsPreferenceViewController" customModule="Clipy" customModuleProvider="target">
             <connections>
+                <outlet property="historyShortcutRecorder" destination="EOu-Gk-Fs3" id="EqH-QM-23y"/>
+                <outlet property="mainShortcutRecorder" destination="wmV-Yb-1d8" id="Sfi-5x-bCj"/>
+                <outlet property="snippetsShortcutRecorder" destination="fzi-bS-9At" id="4zh-Up-UuC"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -29,6 +32,9 @@
                         </textField>
                         <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EOu-Gk-Fs3" customClass="SRRecorderControl">
                             <rect key="frame" x="172" y="41" width="169" height="25"/>
+                            <connections>
+                                <outlet property="delegate" destination="-2" id="zYB-o2-xk5"/>
+                            </connections>
                         </customView>
                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oYq-Bg-KGQ">
                             <rect key="frame" x="15" y="75" width="152" height="17"/>
@@ -40,6 +46,9 @@
                         </textField>
                         <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wmV-Yb-1d8" customClass="SRRecorderControl">
                             <rect key="frame" x="172" y="71" width="169" height="25"/>
+                            <connections>
+                                <outlet property="delegate" destination="-2" id="nkb-qh-kp2"/>
+                            </connections>
                         </customView>
                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ixj-RO-bKW">
                             <rect key="frame" x="15" y="17" width="152" height="17"/>
@@ -51,6 +60,9 @@
                         </textField>
                         <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fzi-bS-9At" customClass="SRRecorderControl">
                             <rect key="frame" x="172" y="13" width="169" height="25"/>
+                            <connections>
+                                <outlet property="delegate" destination="-2" id="Vkx-mc-0Jg"/>
+                            </connections>
                         </customView>
                     </subviews>
                 </view>

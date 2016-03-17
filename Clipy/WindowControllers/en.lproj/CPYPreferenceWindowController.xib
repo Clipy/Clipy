@@ -581,17 +581,6 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.RTFD" id="wAf-8r-gn8"/>
                                 </connections>
                             </button>
-                            <button id="Ywg-uY-Ylr">
-                                <rect key="frame" x="14" y="72" width="238" height="18"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <buttonCell key="cell" type="check" title="PDF" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Avz-YC-1lQ">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="titleBar" size="12"/>
-                                </buttonCell>
-                                <connections>
-                                    <binding destination="-2" name="value" keyPath="storeTypes.PDF" id="4ZZ-6R-ve0"/>
-                                </connections>
-                            </button>
                             <button id="Rwr-QS-J6z">
                                 <rect key="frame" x="14" y="52" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask"/>
@@ -623,6 +612,17 @@
                                 </buttonCell>
                                 <connections>
                                     <binding destination="-2" name="value" keyPath="storeTypes.TIFF" id="c3K-uV-PPG"/>
+                                </connections>
+                            </button>
+                            <button id="Ywg-uY-Ylr">
+                                <rect key="frame" x="14" y="72" width="238" height="18"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <buttonCell key="cell" type="check" title="PDF" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Avz-YC-1lQ">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.PDF" id="4ZZ-6R-ve0"/>
                                 </connections>
                             </button>
                         </subviews>

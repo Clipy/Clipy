@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYUpdatesPreferenceViewController" customModule="Clipy" customModuleProvider="target">
             <connections>
+                <outlet property="versionTextField" destination="IJH-aY-lUJ" id="6Rg-gc-H50"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -24,6 +25,9 @@
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="BFl-Kb-QuK" name="value" keyPath="lastUpdateCheckDate" id="RZL-GJ-KxE"/>
+                    </connections>
                 </textField>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bnR-ek-Gzp">
                     <rect key="frame" x="174" y="62" width="132" height="32"/>
@@ -31,6 +35,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="checkForUpdates:" target="BFl-Kb-QuK" id="i13-OM-Vnw"/>
+                    </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="evV-Ot-cOb">
                     <rect key="frame" x="61" y="103" width="241" height="18"/>
@@ -38,6 +45,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="Z9l-MW-Uqh" name="value" keyPath="values.kCPYEnableAutomaticCheckKey" id="tjj-eC-R6d"/>
+                    </connections>
                 </button>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NFR-pd-uFi">
                     <rect key="frame" x="305" y="98" width="116" height="26"/>
@@ -52,6 +62,10 @@
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <binding destination="Z9l-MW-Uqh" name="enabled" keyPath="values.kCPYEnableAutomaticCheckKey" id="OR6-xP-VwT"/>
+                        <binding destination="Z9l-MW-Uqh" name="selectedTag" keyPath="values.kCPYUpdateCheckIntervalKey" id="QmO-Rj-lIC"/>
+                    </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IJH-aY-lUJ">
                     <rect key="frame" x="171" y="12" width="140" height="17"/>
@@ -64,5 +78,7 @@
             </subviews>
             <point key="canvasLocation" x="629" y="589"/>
         </customView>
+        <userDefaultsController representsSharedInstance="YES" id="Z9l-MW-Uqh"/>
+        <customObject id="BFl-Kb-QuK" customClass="SUUpdater"/>
     </objects>
 </document>

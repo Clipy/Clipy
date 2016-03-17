@@ -5,7 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="CPYMenuPreferenceViewController" customModule="Clipy" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner">
             <connections>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -34,6 +34,10 @@
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showToolTipOnMenuItem" id="tC1-6q-BC3"/>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.maxLengthOfToolTipKey" id="gea-Vm-HOS"/>
+                    </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2T3-BG-g7l">
                     <rect key="frame" x="77" y="64" width="250" height="18"/>
@@ -65,6 +69,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.showToolTipOnMenuItem" id="TCl-6q-6kq"/>
+                    </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rsu-Zk-X7V">
                     <rect key="frame" x="332" y="294" width="44" height="22"/>
@@ -77,6 +84,7 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInsideFolderKey" id="Lge-bq-vWe"/>
                         <outlet property="nextKeyView" destination="bGf-i1-1r5" id="s9c-hO-b64"/>
                     </connections>
                 </textField>
@@ -99,6 +107,7 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInlineKey" id="VPQ-ET-cAh"/>
                         <outlet property="nextKeyView" destination="Rsu-Zk-X7V" id="yKb-UP-bKV"/>
                     </connections>
                 </textField>
@@ -108,6 +117,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.addNumericKeyEquivalents" id="rCG-vo-hje"/>
+                    </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SDZ-lD-qrD" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="60" y="198" width="297" height="18"/>
@@ -115,6 +127,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.menuItemsAreMarkedWithNumbers" id="GiJ-CB-9D3"/>
+                    </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4d2-gO-mQL" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="60" y="242" width="297" height="18"/>
@@ -122,6 +137,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefCopySameHistroy" id="FnM-O4-Gux"/>
+                    </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f8D-H1-7Jd" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="73" y="176" width="273" height="18"/>
@@ -129,6 +147,10 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.menuItemsAreMarkedWithNumbers" id="mGb-wL-lqg"/>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefMenuItemsTitleStartWithZeroKey" id="Xhi-86-8gg"/>
+                    </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bGf-i1-1r5">
                     <rect key="frame" x="332" y="268" width="44" height="22"/>
@@ -140,6 +162,9 @@
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefMaxMenuItemTitleLengthKey" id="I5e-3b-oza"/>
+                    </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mlw-2I-UqA">
                     <rect key="frame" x="59" y="270" width="276" height="18"/>
@@ -155,6 +180,10 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="ZFv-qw-hES"/>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefShowAlertBeforeClearHistoryKey" id="8Qb-te-GAX"/>
+                    </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YdM-Mx-09r" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="60" y="132" width="359" height="18"/>
@@ -162,6 +191,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="91A-bL-l4H"/>
+                    </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yYi-yV-tx0">
                     <rect key="frame" x="381" y="320" width="39" height="14"/>
@@ -177,6 +209,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.showImageInTheMenu" id="RRj-Ss-acq"/>
+                    </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qce-ab-3AD">
                     <rect key="frame" x="348" y="14" width="32" height="14"/>
@@ -205,6 +240,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showImageInTheMenu" id="i0t-9f-Xbc"/>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.thumbnailWidth" id="q4g-pn-nsq"/>
                         <outlet property="nextKeyView" destination="kOL-Rl-V5A" id="9hb-oO-278"/>
                     </connections>
                 </textField>
@@ -219,6 +256,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showImageInTheMenu" id="gLy-Aj-mHO"/>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.thumbnailHeight" id="VKA-Bc-0FY"/>
                         <outlet property="nextKeyView" destination="tuV-pN-F85" id="Zaf-pl-In5"/>
                     </connections>
                 </textField>
@@ -244,6 +283,10 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.kCPYPrefCopySameHistroy" id="tpo-sZ-UZ5"/>
+                        <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="Eod-Mq-mMy"/>
+                    </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lIt-bQ-WCb">
                     <rect key="frame" x="59" y="322" width="268" height="18"/>
@@ -256,5 +299,6 @@
             </subviews>
             <point key="canvasLocation" x="623" y="588"/>
         </customView>
+        <userDefaultsController representsSharedInstance="YES" id="vgf-2t-abs"/>
     </objects>
 </document>
