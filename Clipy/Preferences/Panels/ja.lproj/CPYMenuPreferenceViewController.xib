@@ -16,7 +16,7 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="352"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PFI-zO-zS6">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="PFI-zO-zS6">
                     <rect key="frame" x="381" y="62" width="39" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="nzx-q5-ifH">
                         <font key="font" metaFont="smallSystem"/>
@@ -39,7 +39,7 @@
                         <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showToolTipOnMenuItem" id="tC1-6q-BC3"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2T3-BG-g7l">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="246" translatesAutoresizingMaskIntoConstraints="NO" id="2T3-BG-g7l">
                     <rect key="frame" x="77" y="64" width="250" height="18"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="メニューに表示する文字数:" id="QFO-xC-Z3p">
                         <font key="font" metaFont="system"/>
@@ -47,7 +47,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IZt-J4-aJO">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="IZt-J4-aJO">
                     <rect key="frame" x="381" y="294" width="39" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="Ovp-if-Azp">
                         <font key="font" metaFont="smallSystem"/>
@@ -55,7 +55,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="im9-jV-Yhc">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="im9-jV-Yhc">
                     <rect key="frame" x="381" y="268" width="39" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文字" id="67F-2m-Txz">
                         <font key="font" metaFont="smallSystem"/>
@@ -88,7 +88,7 @@
                         <outlet property="nextKeyView" destination="bGf-i1-1r5" id="s9c-hO-b64"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ivJ-Zt-uak">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="ivJ-Zt-uak">
                     <rect key="frame" x="59" y="296" width="268" height="18"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="フォルダに内包する項目の数:" id="FP7-VI-YVJ">
                         <font key="font" metaFont="system"/>
@@ -166,7 +166,7 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefMaxMenuItemTitleLengthKey" id="I5e-3b-oza"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mlw-2I-UqA">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="272" translatesAutoresizingMaskIntoConstraints="NO" id="mlw-2I-UqA">
                     <rect key="frame" x="59" y="270" width="276" height="18"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="メニューに表示する文字数:" id="hBb-sd-DcP">
                         <font key="font" metaFont="system"/>
@@ -195,7 +195,7 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="91A-bL-l4H"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yYi-yV-tx0">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="yYi-yV-tx0">
                     <rect key="frame" x="381" y="320" width="39" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="4dH-7h-Ssv">
                         <font key="font" metaFont="smallSystem"/>
@@ -213,7 +213,7 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.showImageInTheMenu" id="RRj-Ss-acq"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qce-ab-3AD">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="28" translatesAutoresizingMaskIntoConstraints="NO" id="Qce-ab-3AD">
                     <rect key="frame" x="348" y="14" width="32" height="14"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="pixel" id="90g-HQ-9Ua">
                         <font key="font" metaFont="smallSystem"/>
@@ -221,7 +221,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f7b-VA-JAM">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="28" translatesAutoresizingMaskIntoConstraints="NO" id="f7b-VA-JAM">
                     <rect key="frame" x="197" y="14" width="32" height="14"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="pixel" id="2Ra-jY-ADW">
                         <font key="font" metaFont="smallSystem"/>
@@ -261,7 +261,7 @@
                         <outlet property="nextKeyView" destination="tuV-pN-F85" id="Zaf-pl-In5"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EoJ-78-fKD">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="47" translatesAutoresizingMaskIntoConstraints="NO" id="EoJ-78-fKD">
                     <rect key="frame" x="244" y="14" width="51" height="17"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="高さ:" id="WKb-6V-Q9w">
                         <font key="font" metaFont="system"/>
@@ -269,7 +269,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CX6-Le-95A">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="47" translatesAutoresizingMaskIntoConstraints="NO" id="CX6-Le-95A">
                     <rect key="frame" x="99" y="14" width="51" height="17"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="幅:" id="saf-vP-Qwl">
                         <font key="font" metaFont="system"/>
@@ -288,7 +288,7 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="Eod-Mq-mMy"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lIt-bQ-WCb">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="lIt-bQ-WCb">
                     <rect key="frame" x="59" y="322" width="268" height="18"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="インライン表示する項目の数:" id="wef-NB-6p6">
                         <font key="font" metaFont="system"/>
