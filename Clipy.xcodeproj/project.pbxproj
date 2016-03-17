@@ -284,13 +284,6 @@
 			path = Clipy/Extensions;
 			sourceTree = SOURCE_ROOT;
 		};
-		FA72A8651C808F2B00D120B3 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		FAC43DBD1B35D8B100C06102 = {
 			isa = PBXGroup;
 			children = (
@@ -316,7 +309,6 @@
 			children = (
 				FAC4E62A1C7F26D100200271 /* Preferences */,
 				FA5900E21C7B79D900E84E23 /* Extensions */,
-				FA72A8651C808F2B00D120B3 /* Protocols */,
 				FAC43E6E1B35F36E00C06102 /* Utility */,
 				FA3B96001B3FD47000B61FF0 /* Views */,
 				FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */,
