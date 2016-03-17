@@ -11,6 +11,8 @@
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
 		FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */; };
 		FA189C7B1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */; };
+		FA189C7C1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA189C7E1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib */; };
+		FA189C8B1C9AE584002C0312 /* CPYPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA189C8D1C9AE584002C0312 /* CPYPreferencesWindowController.xib */; };
 		FA3B95F61B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */; };
 		FA3B95FA1B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */; };
 		FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */; };
@@ -58,18 +60,16 @@
 		FAC43E701B35F51F00C06102 /* CPYConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */; };
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
 		FAC4E62D1C7F270900200271 /* CPYPreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */; };
-		FAC4E62E1C7F270900200271 /* CPYPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */; };
 		FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */; };
 		FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */; };
-		FAC4E63B1C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6391C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib */; };
-		FAC4E63F1C7F511500200271 /* CPYMenuPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E63D1C7F511500200271 /* CPYMenuPreferenceViewController.xib */; };
-		FAC4E6431C7F512500200271 /* CPYTypePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6411C7F512500200271 /* CPYTypePreferenceViewController.xib */; };
 		FAC4E6461C7F513800200271 /* CPYShortcutsPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */; };
-		FAC4E6471C7F513800200271 /* CPYShortcutsPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6451C7F513800200271 /* CPYShortcutsPreferenceViewController.xib */; };
-		FAC4E64B1C7F515300200271 /* CPYUpdatesPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC4E6491C7F515300200271 /* CPYUpdatesPreferenceViewController.xib */; };
 		FAEAB1F91C9309BA005C3A10 /* Realm+NoCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEAB1F81C9309BA005C3A10 /* Realm+NoCatch.swift */; };
 		FAEAB1FB1C930AAA005C3A10 /* PasteboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEAB1FA1C930AAA005C3A10 /* PasteboardManager.swift */; };
 		FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAF1DA0C1B41888F00E15D16 /* CPYPreferenceWindowController.xib */; };
+		FAFEF2031C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAFEF2051C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib */; };
+		FAFEF2091C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAFEF20B1C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib */; };
+		FAFEF20F1C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAFEF2111C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib */; };
+		FAFEF2151C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAFEF2171C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +103,8 @@
 		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUpdatesPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYTypePreferenceViewController.swift; sourceTree = "<group>"; };
+		FA189C871C9AE428002C0312 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
+		FA189C8C1C9AE584002C0312 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
 		FA3B95F41B3FB9FD00B61FF0 /* CPYPreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferenceWindowController.swift; sourceTree = "<group>"; };
 		FA3B95F81B3FBA1100B61FF0 /* CPYSnippetEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetEditorWindowController.swift; sourceTree = "<group>"; };
 		FA3B96031B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYImageAndTextCell.swift; sourceTree = "<group>"; };
@@ -161,19 +163,23 @@
 		FAC43E6F1B35F51F00C06102 /* CPYConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYConstants.swift; sourceTree = "<group>"; };
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
 		FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferencesWindowController.swift; sourceTree = "<group>"; };
-		FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
 		FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Clipy.swift"; sourceTree = "<group>"; };
 		FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
-		FAC4E6391C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAC4E63D1C7F511500200271 /* CPYMenuPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAC4E6411C7F512500200271 /* CPYTypePreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
 		FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYShortcutsPreferenceViewController.swift; sourceTree = "<group>"; };
-		FAC4E6451C7F513800200271 /* CPYShortcutsPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAC4E6491C7F515300200271 /* CPYUpdatesPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAEAB1F81C9309BA005C3A10 /* Realm+NoCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+NoCatch.swift"; sourceTree = "<group>"; };
 		FAEAB1FA1C930AAA005C3A10 /* PasteboardManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasteboardManager.swift; sourceTree = "<group>"; };
 		FAF1DA0B1B41888F00E15D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
 		FAF1DA0F1B41889800E15D16 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYPreferenceWindowController.xib; sourceTree = "<group>"; };
+		FAFEF2011C9AE92600B546E7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
+		FAFEF2021C9AEA1800B546E7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF2041C9AEA3400B546E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF2081C9AEB1D00B546E7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF20A1C9AEB4A00B546E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF20E1C9AEB7600B546E7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF2101C9AEB8E00B546E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF2141C9AEBB100B546E7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF2161C9AEBBC00B546E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAFEF21A1C9AEBE800B546E7 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -454,7 +460,7 @@
 			isa = PBXGroup;
 			children = (
 				FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */,
-				FAC4E62C1C7F270900200271 /* CPYPreferencesWindowController.xib */,
+				FA189C8D1C9AE584002C0312 /* CPYPreferencesWindowController.xib */,
 				FAC4E6371C7F50A200200271 /* Panels */,
 			);
 			path = Preferences;
@@ -472,14 +478,14 @@
 		FAC4E6371C7F50A200200271 /* Panels */ = {
 			isa = PBXGroup;
 			children = (
-				FAC4E6391C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib */,
-				FAC4E63D1C7F511500200271 /* CPYMenuPreferenceViewController.xib */,
+				FA189C7E1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib */,
+				FAFEF2051C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib */,
 				FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */,
-				FAC4E6411C7F512500200271 /* CPYTypePreferenceViewController.xib */,
+				FAFEF20B1C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib */,
 				FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */,
-				FAC4E6451C7F513800200271 /* CPYShortcutsPreferenceViewController.xib */,
+				FAFEF2111C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib */,
 				FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */,
-				FAC4E6491C7F515300200271 /* CPYUpdatesPreferenceViewController.xib */,
+				FAFEF2171C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib */,
 			);
 			path = Panels;
 			sourceTree = "<group>";
@@ -575,15 +581,15 @@
 				FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */,
 				FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */,
 				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
-				FAC4E6471C7F513800200271 /* CPYShortcutsPreferenceViewController.xib in Resources */,
+				FAFEF20F1C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib in Resources */,
 				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
-				FAC4E6431C7F512500200271 /* CPYTypePreferenceViewController.xib in Resources */,
+				FAFEF2091C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib in Resources */,
 				FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */,
-				FAC4E64B1C7F515300200271 /* CPYUpdatesPreferenceViewController.xib in Resources */,
-				FAC4E63B1C7F50EF00200271 /* CPYGeneralPreferenceViewController.xib in Resources */,
-				FAC4E62E1C7F270900200271 /* CPYPreferencesWindowController.xib in Resources */,
+				FAFEF2151C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib in Resources */,
+				FA189C7C1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib in Resources */,
+				FA189C8B1C9AE584002C0312 /* CPYPreferencesWindowController.xib in Resources */,
 				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
-				FAC4E63F1C7F511500200271 /* CPYMenuPreferenceViewController.xib in Resources */,
+				FAFEF2031C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib in Resources */,
 				FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */,
 				FAF1DA0A1B41888F00E15D16 /* CPYPreferenceWindowController.xib in Resources */,
 			);
@@ -725,6 +731,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		FA189C7E1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA189C871C9AE428002C0312 /* en */,
+				FAFEF2021C9AEA1800B546E7 /* ja */,
+			);
+			name = CPYGeneralPreferenceViewController.xib;
+			sourceTree = "<group>";
+		};
+		FA189C8D1C9AE584002C0312 /* CPYPreferencesWindowController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA189C8C1C9AE584002C0312 /* en */,
+				FAFEF2011C9AE92600B546E7 /* ja */,
+			);
+			name = CPYPreferencesWindowController.xib;
+			sourceTree = "<group>";
+		};
 		FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -750,6 +774,42 @@
 				FAF1DA0F1B41889800E15D16 /* ja */,
 			);
 			name = CPYPreferenceWindowController.xib;
+			sourceTree = "<group>";
+		};
+		FAFEF2051C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAFEF2041C9AEA3400B546E7 /* en */,
+				FAFEF2081C9AEB1D00B546E7 /* ja */,
+			);
+			name = CPYMenuPreferenceViewController.xib;
+			sourceTree = "<group>";
+		};
+		FAFEF20B1C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAFEF20A1C9AEB4A00B546E7 /* en */,
+				FAFEF20E1C9AEB7600B546E7 /* ja */,
+			);
+			name = CPYTypePreferenceViewController.xib;
+			sourceTree = "<group>";
+		};
+		FAFEF2111C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAFEF2101C9AEB8E00B546E7 /* en */,
+				FAFEF2141C9AEBB100B546E7 /* ja */,
+			);
+			name = CPYShortcutsPreferenceViewController.xib;
+			sourceTree = "<group>";
+		};
+		FAFEF2171C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FAFEF2161C9AEBBC00B546E7 /* en */,
+				FAFEF21A1C9AEBE800B546E7 /* ja */,
+			);
+			name = CPYUpdatesPreferenceViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

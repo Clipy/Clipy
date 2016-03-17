@@ -92,7 +92,7 @@
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8XZ-NR-0QN">
                     <rect key="frame" x="258" y="155" width="150" height="26"/>
-                    <popUpButtonCell key="cell" type="push" title="Date Created" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ju3-6a-6xj" id="OT4-9P-YiO">
+                    <popUpButtonCell key="cell" type="push" title="Last Used" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ju3-6a-6xj" id="OT4-9P-YiO">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="8EE-RI-YH4">

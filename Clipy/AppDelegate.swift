@@ -73,7 +73,7 @@ class AppDelegate: NSObject {
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
         CPYPreferencesWindowController.sharedController.showWindow(self)
-//        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
+        //CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
     
     func showSnippetEditorWindow() {

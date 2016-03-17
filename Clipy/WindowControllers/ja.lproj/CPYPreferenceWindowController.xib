@@ -47,15 +47,6 @@
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefInputPasteCommandKey" id="35G-ar-hCt"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" id="zgd-fH-aql">
-                    <rect key="frame" x="50" y="281" width="210" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="動作" id="e1w-67-twp">
-                        <font key="font" size="13" name="HiraKakuProN-W6"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <textField verticalHuggingPriority="750" id="Mrs-UB-Y0Y">
                     <rect key="frame" x="50" y="206" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -110,13 +101,13 @@
                 <popUpButton verticalHuggingPriority="750" id="daL-5R-VcK">
                     <rect key="frame" x="249" y="148" width="142" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="最終使用日" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Zpc-dd-33y" id="OuJ-1G-EJB">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="OuJ-1G-EJB">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="CDp-UD-fUB">
                             <items>
                                 <menuItem title="作成日" id="W0d-Hb-017"/>
-                                <menuItem title="最終使用日" state="on" id="Zpc-dd-33y"/>
+                                <menuItem title="最終使用日" id="Zpc-dd-33y"/>
                             </items>
                         </menu>
                     </popUpButtonCell>
@@ -133,30 +124,6 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <popUpButton verticalHuggingPriority="750" id="8rV-y3-van">
-                    <rect key="frame" x="249" y="96" width="78" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Sbe-WS-BX5">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="UFV-WN-p9B">
-                            <items>
-                                <menuItem image="statusbar_menu_black" tag="1" id="iEx-lf-eOo">
-                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                </menuItem>
-                                <menuItem image="statusbar_menu_white" tag="2" id="1on-AP-kYv">
-                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                </menuItem>
-                                <menuItem title="None" id="4nO-qH-ifb">
-                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                </menuItem>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="selectedTag" keyPath="values.kCPYPrefShowStatusItemKey" id="wgU-TA-j5L"/>
-                    </connections>
-                </popUpButton>
                 <textField verticalHuggingPriority="750" id="P8J-PI-53L">
                     <rect key="frame" x="50" y="103" width="197" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -218,6 +185,39 @@
                     <connections>
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefTimeIntervalKey" id="70c-bl-2J1"/>
                     </connections>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="8rV-y3-van">
+                    <rect key="frame" x="249" y="96" width="78" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Sbe-WS-BX5">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="UFV-WN-p9B">
+                            <items>
+                                <menuItem image="statusbar_menu_black" tag="1" id="iEx-lf-eOo">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem image="statusbar_menu_white" tag="2" id="1on-AP-kYv">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="None" id="4nO-qH-ifb">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="selectedTag" keyPath="values.kCPYPrefShowStatusItemKey" id="wgU-TA-j5L"/>
+                    </connections>
+                </popUpButton>
+                <textField verticalHuggingPriority="750" id="zgd-fH-aql">
+                    <rect key="frame" x="50" y="281" width="210" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="動作" id="e1w-67-twp">
+                        <font key="font" size="13" name="HiraKakuProN-W6"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
                 </textField>
             </subviews>
             <point key="canvasLocation" x="571" y="626"/>
@@ -310,7 +310,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" id="mNY-P1-oxx">
-                    <rect key="frame" x="50" y="262" width="276" height="17"/>
+                    <rect key="frame" x="50" y="263" width="276" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="メニューに表示する文字数:" id="i8w-kV-UeD">
                         <font key="font" size="13" name="HiraKakuProN-W3"/>
@@ -441,17 +441,6 @@
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefShowAlertBeforeClearHistoryKey" id="VXh-iM-qOq"/>
                     </connections>
                 </button>
-                <button id="Hkc-oq-CF8">
-                    <rect key="frame" x="51" y="132" width="359" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="履歴をクリアするメニュー項目を追加" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1Qg-V9-Ymg">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" size="13" name="HiraKakuProN-W3"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="XL9-y3-yJD"/>
-                    </connections>
-                </button>
                 <button id="8Rs-6V-ZGK">
                     <rect key="frame" x="51" y="46" width="301" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -533,6 +522,17 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button id="Hkc-oq-CF8">
+                    <rect key="frame" x="51" y="132" width="359" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="履歴をクリアするメニュー項目を追加" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="1Qg-V9-Ymg">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="13" name="HiraKakuProN-W3"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="XL9-y3-yJD"/>
+                    </connections>
+                </button>
             </subviews>
             <point key="canvasLocation" x="571" y="1075"/>
         </customView>
@@ -764,7 +764,7 @@
                     <rect key="frame" x="160" y="10" width="140" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="v1.0.0" id="16V-gs-UUs">
-                        <font key="font" metaFont="system" size="11"/>
+                        <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>

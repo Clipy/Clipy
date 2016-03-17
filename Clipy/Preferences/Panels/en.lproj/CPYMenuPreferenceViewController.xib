@@ -35,8 +35,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showToolTipOnMenuItem" id="tC1-6q-BC3"/>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.maxLengthOfToolTipKey" id="gea-Vm-HOS"/>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showToolTipOnMenuItem" id="tC1-6q-BC3"/>
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2T3-BG-g7l">
@@ -148,8 +148,8 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.menuItemsAreMarkedWithNumbers" id="mGb-wL-lqg"/>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefMenuItemsTitleStartWithZeroKey" id="Xhi-86-8gg"/>
+                        <binding destination="vgf-2t-abs" name="enabled" keyPath="values.menuItemsAreMarkedWithNumbers" id="mGb-wL-lqg"/>
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bGf-i1-1r5">
@@ -297,7 +297,7 @@
                     </textFieldCell>
                 </textField>
             </subviews>
-            <point key="canvasLocation" x="623" y="588"/>
+            <point key="canvasLocation" x="230" y="601"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="vgf-2t-abs"/>
     </objects>
