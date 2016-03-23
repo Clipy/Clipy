@@ -72,7 +72,6 @@ class AppDelegate: NSObject {
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
-        //CPYPreferencesWindowController.sharedController.showWindow(self)
         CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
     
@@ -111,6 +110,7 @@ class AppDelegate: NSObject {
             PasteboardManager.sharedManager.copyClipToPasteboard(clip)
             CPYUtilities.paste()
         } else {
+            Answers.logCustomEventWithName("Cann't fetch clip data", customAttributes: nil)
             NSBeep()
         }
     }
@@ -121,6 +121,7 @@ class AppDelegate: NSObject {
             PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
             CPYUtilities.paste()
         } else {
+            Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
             NSBeep()
         }
     }
@@ -193,13 +194,13 @@ extension AppDelegate: NSApplicationDelegate {
             promptToAddLoginItems()
         }
         
-        // Sparkleでアップデート確認
+        // Sparkle
         let updater = SUUpdater.sharedUpdater()
         checkUpdates()
         updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
         updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
     
-        // スリープ時にタイマーを停止する
+        // Sleep PC notifications
         addSleepNotifications()
         
         queue.waitUntilAllOperationsAreFinished()
