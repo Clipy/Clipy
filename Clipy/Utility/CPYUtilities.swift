@@ -54,8 +54,15 @@ final class CPYUtilities {
 
     static func migrationRealm() {
         let config = RLMRealmConfiguration.defaultConfiguration()
-        config.schemaVersion = 2
-        config.migrationBlock = { (migrate, oldSchemaVersion) in }
+        config.schemaVersion = 3
+        config.migrationBlock = { (migrate, oldSchemaVersion) in
+            if oldSchemaVersion <= 2 {
+                // Add identifier in CPYSnippet
+                migrate.enumerateObjects(CPYSnippet.className()) { (_, newObject) in
+                    newObject!["identifier"] = NSUUID().UUIDString
+                }
+            }
+        }
         RLMRealmConfiguration.setDefaultConfiguration(config)
         RLMRealm.defaultRealm()
     }
