@@ -76,9 +76,7 @@ extension HistoryManager {
                     }
                 }
                 
-                for path in imagePaths {
-                    PINCache.sharedCache().removeObjectForKey(path)
-                }
+                imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
                 realm.transaction {
                     realm.deleteObjects(results)
                 }
