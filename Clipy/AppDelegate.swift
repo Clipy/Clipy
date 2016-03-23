@@ -107,7 +107,7 @@ class AppDelegate: NSObject {
     
     func selectClipMenuItem(sender: NSMenuItem) {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
-        if let clip = sender.representedObject as? CPYClip where !clip.invalidated {
+        if let primaryKey = sender.representedObject as? String, let clip = CPYClip(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyClipToPasteboard(clip)
             CPYUtilities.paste()
         } else {
@@ -116,7 +116,8 @@ class AppDelegate: NSObject {
     }
     
     func selectSnippetMenuItem(sender: AnyObject) {
-        if let snippet = sender.representedObject as? CPYSnippet {
+        Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
+        if let primaryKey = sender.representedObject as? String, let snippet = CPYSnippet(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
             CPYUtilities.paste()
         } else {
