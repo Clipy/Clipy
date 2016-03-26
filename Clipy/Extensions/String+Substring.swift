@@ -9,16 +9,10 @@
 import Foundation
 
 extension String {
-    func trimTitle(index: Int) -> String {
-        let theString = stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as NSString
-        let aRange = NSMakeRange(0, 0)
-        var lineStart = 0, lineEnd = 0, contentsEnd = 0
-        theString.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, forRange: aRange)
+    subscript (r: Range<Int>) -> String {
+        let startIndex = self.startIndex.advancedBy(r.startIndex, limit:  self.endIndex)
+        let endIndex = self.startIndex.advancedBy(r.endIndex, limit: self.endIndex)
         
-        var titleString = (lineEnd == theString.length) ? theString : theString.substringToIndex(contentsEnd)
-        if titleString.length > index {
-            titleString = titleString.substringToIndex(index)
-        }
-        return titleString as String
+        return self[Range(start: startIndex, end: endIndex)]
     }
 }
