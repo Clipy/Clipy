@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Realm
 
 // MARK: - CPYSnippetTableView Protocol
 @objc protocol CPYSnippetTableViewDelegate {

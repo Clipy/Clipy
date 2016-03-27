@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="CPYTypePreferenceViewController" customModule="Clipy" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="195"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <box fixedFrame="YES" title="保存するクリップボードの種類を選択:" translatesAutoresizingMaskIntoConstraints="NO" id="lSu-gq-grM">
+                    <rect key="frame" x="76" y="8" width="329" height="175"/>
+                    <view key="contentView" id="kTH-wN-yAh">
+                        <rect key="frame" x="2" y="2" width="325" height="158"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hjR-M0-hZo" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                                <rect key="frame" x="14" y="132" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="プレーンテキスト" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="9wr-mR-kmC">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.String" id="f5i-QI-5o3"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xza-Mm-bci" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                                <rect key="frame" x="14" y="112" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="Rich Text Format (RTF)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="xyj-FL-88b">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.RTF" id="WhO-jO-eDv"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMv-K0-koZ" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                                <rect key="frame" x="14" y="92" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="Rich Text Format Directory (RTFD)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Nvy-pc-6hl">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.RTFD" id="u86-Vg-Rmf"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oOc-3g-cCd" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                                <rect key="frame" x="14" y="72" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="PDF" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="27s-8p-tdh">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.PDF" id="8uM-EG-QXe"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ItL-b5-KT6" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                                <rect key="frame" x="14" y="52" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="ファイル名" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="iO6-7x-OcH">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.Filenames" id="J1C-Pq-hAJ"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AzQ-w6-3Sl" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                                <rect key="frame" x="14" y="32" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="URL" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="oXv-rM-kj5">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.URL" id="z8D-08-Vwx"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rf8-b9-Ehw">
+                                <rect key="frame" x="15" y="11" width="238" height="18"/>
+                                <buttonCell key="cell" type="check" title="画像" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="lZ0-qQ-qWk">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="titleBar" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="storeTypes.TIFF" id="qV0-bb-2SN"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
+            </subviews>
+            <point key="canvasLocation" x="623" y="576.5"/>
+        </customView>
+        <userDefaultsController representsSharedInstance="YES" id="B2y-4u-3Av"/>
+    </objects>
+</document>

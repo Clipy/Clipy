@@ -25,6 +25,19 @@ extension NSImage {
         case IconApplication    = "icon_application"
         case IconKeyboard       = "PTKeyboardIcon"
         case IconSparkle        = "SparkleIcon"
+        
+        // Preferences
+        case GeneralOff     = "pref_general"
+        case MenuOff        = "pref_menu"
+        case TypeOff        = "pref_type"
+        case ShortcutsOff   = "pref_shortcut"
+        case UpdatesOff     = "pref_update"
+        
+        case GeneralOn      = "pref_general_on"
+        case MenuOn         = "pref_menu_on"
+        case TypeOn         = "pref_type_on"
+        case ShortcutsOn    = "pref_shortcut_on"
+        case UpdatesOn      = "pref_update_on"
     }
     
     // MARK: - Initialize

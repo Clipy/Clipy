@@ -29,6 +29,11 @@ The source code is dependent on some libraries.
 * [DBPrefsWindowController](https://github.com/kgn/DBPrefsWindowController)
 * [Realm](https://realm.io/)
 * [PINCache](https://github.com/pinterest/PINCache)
+* [Fabric](https://fabric.io)
+* [RxSwift](https://github.com/ReactiveX/RxSwift)
+* [RxCocoa](https://github.com/ReactiveX/RxSwift/tree/master/RxCocoa)
+* [NSObject+Rx](https://github.com/RxSwiftCommunity/NSObject-Rx)
+* [RxOptional](https://github.com/RxSwiftCommunity/RxOptional)
 
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )

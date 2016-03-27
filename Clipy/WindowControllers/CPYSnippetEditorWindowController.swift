@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Realm
 
 private let ADD_SNIPPET_IDENTIFIER      = "AddSnippet"
 private let DELETE_SNIPPET_IDENTIFIER   = "DeleteSnippet"

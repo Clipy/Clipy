@@ -7,11 +7,13 @@
 //
 
 import Cocoa
+import Realm
 
-class CPYSnippetManager: NSObject {
+final class CPYSnippetManager: NSObject {
 
     // MARK: - Properties
     static let sharedManager = CPYSnippetManager()
+    private let realm = RLMRealm.defaultRealm()
     
     // MARK: - Init
     override init() {
@@ -28,12 +30,9 @@ class CPYSnippetManager: NSObject {
     }
     
     func removeSnippet(snippet: CPYSnippet) {
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock( { () -> Void in
-                realm.deleteObject(snippet)
-            })
-        } catch {}
+        realm.transaction {
+            realm.deleteObject(snippet)
+        }
     }
     
     func addFolder(title: String?) {
@@ -46,12 +45,9 @@ class CPYSnippetManager: NSObject {
             folder.index = 0
         }
         
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock( { () -> Void in
-                realm.addObject(folder)
-            })
-        } catch {}
+        realm.transaction {
+            realm.addObject(folder)
+        }
     }
     
     func addSnippet(title: String?, folder: CPYFolder!) {
@@ -63,21 +59,15 @@ class CPYSnippetManager: NSObject {
             snippet.index = 0
         }
         
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock({ () -> Void in
-                folder.snippets.addObject(snippet)
-            })
-        } catch {}
+        realm.transaction {
+            folder.snippets.addObject(snippet)
+        }
     }
     
     func updateSnipeetContent(snippet: CPYSnippet, content: String) {
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock({ () -> Void in
-                snippet.content = content
-            })
-        } catch {}
+        realm.transaction { () -> Void in
+            snippet.content = content
+        }
     }
     
     func removeFolders(folders: [RLMObject]) {
@@ -88,44 +78,32 @@ class CPYSnippetManager: NSObject {
             }
         }
         
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock( { () -> Void in
-                realm.deleteObjects(snippets)
-                realm.deleteObjects(folders)
-            })
-        } catch {}
+        realm.transaction {
+            realm.deleteObjects(snippets)
+            realm.deleteObjects(folders)
+        }
     }
     
     func removeSnippets(snippets: [RLMObject]) {
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock( { () -> Void in
-                realm.deleteObjects(snippets)
-            })
-        } catch {}
+        realm.transaction {
+            realm.deleteObjects(snippets)
+        }
     }
     
     func updateFolderEnable(folders: [RLMObject]) {
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock( { () -> Void in
-                for folder in folders as! [CPYFolder] {
-                    folder.enable = !folder.enable
-                }
-            })
-        } catch {}
+        realm.transaction {
+            for folder in folders as! [CPYFolder] {
+                folder.enable = !folder.enable
+            }
+        }
     }
     
     func updateSnippetEnable(snippets: [RLMObject]) {
-        do {
-            let realm = RLMRealm.defaultRealm()
-            try realm.transactionWithBlock( { () -> Void in
-                for snippet in snippets as! [CPYSnippet] {
-                    snippet.enable = !snippet.enable
-                }
-            })
-        } catch {}
+        realm.transaction {
+            for snippet in snippets as! [CPYSnippet] {
+                snippet.enable = !snippet.enable
+            }
+        }
     }
     
     func updateFolderIndex(var toIndex: Int, selectIndexes: NSIndexSet) {
@@ -150,12 +128,9 @@ class CPYSnippetManager: NSObject {
         
         index = 0
         for folder in folders {
-            do {
-                let realm = RLMRealm.defaultRealm()
-                try realm.transactionWithBlock({ () -> Void in
-                    folder.index = index
-                })
-            } catch {}
+            realm.transaction {
+                folder.index = index
+            }
             index = index + 1
         }
     }
@@ -185,12 +160,9 @@ class CPYSnippetManager: NSObject {
         
         index = 0
         for snippet in snippets {
-            do {
-                let realm = RLMRealm.defaultRealm()
-                try realm.transactionWithBlock({ () -> Void in
-                    snippet.index = index
-                })
-            } catch {}
+            realm.transaction {
+                snippet.index = index
+            }
             index = index + 1
         }
         

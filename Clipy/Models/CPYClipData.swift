@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class CPYClipData: NSObject {
+final class CPYClipData: NSObject {
 
     // MARK: - Properties
     private let kTypesKey       = "types"
@@ -28,39 +28,74 @@ class CPYClipData: NSObject {
     var image:     NSImage?
     
     override var hash: Int {
-        var hash = 0
-        hash = (self.types as NSArray).componentsJoinedByString("").hash
-        if self.image != nil {
-            hash ^= self.image!.TIFFRepresentation!.length
+        var hash = types.joinWithSeparator("").hash
+        if let image = self.image {
+            hash ^= image.TIFFRepresentation!.length
         }
-        if !self.fileNames.isEmpty {
-            for fileName in self.fileNames {
-                hash ^= fileName.hash
-            }
+        if !fileNames.isEmpty {
+            fileNames.forEach { hash ^= $0.hash }
         } else if !self.URLs.isEmpty {
-            for aURL in self.URLs {
-                hash ^= aURL.hash
-            }
-        } else if self.PDF != nil {
-            hash ^= self.PDF!.length
-        } else if self.stringValue != "" {
-            hash ^= self.stringValue.hash
+            URLs.forEach { hash ^= $0.hash }
+        } else if let pdf = PDF {
+            hash ^= pdf.length
+        } else if !stringValue.isEmpty {
+            hash ^= stringValue.hash
         }
-        if self.RTFData != nil {
-            hash ^= self.RTFData!.length
+        if let data = RTFData {
+            hash ^= data.length
         }
         return hash
     }
     var primaryType: String? {
-        if self.types.count <= 0 {
-            return nil
-        }
-        return self.types[0]
+        return types.first
+    }
+    static var availableTypes: [String] {
+        return [NSStringPboardType, NSRTFPboardType, NSRTFDPboardType, NSPDFPboardType, NSFilenamesPboardType, NSURLPboardType, NSTIFFPboardType]
+    }
+    static var availableTypesString: [String] {
+        return ["String", "RTF", "RTFD", "PDF", "Filenames", "URL", "TIFF"]
+    }
+    static var availableTypesDictinary: [String: String] {
+        var availableTypes = [String: String]()
+        zip(CPYClipData.availableTypes, CPYClipData.availableTypesString).forEach { availableTypes[$0] = $1 }
+        return availableTypes
     }
     
     // MARK: - Init
     override init () {
         super.init()
+    }
+    
+    init(pasteboard: NSPasteboard, types: [String]) {
+        super.init()
+        self.types = types
+        types.forEach { type in
+            switch type {
+            case NSStringPboardType:
+                if let pbString = pasteboard.stringForType(NSStringPboardType) {
+                    stringValue = pbString
+                }
+            case NSRTFDPboardType:
+                RTFData = pasteboard.dataForType(NSRTFDPboardType)
+            case NSRTFPboardType where RTFData == nil:
+                RTFData = pasteboard.dataForType(NSRTFPboardType)
+            case NSPDFPboardType:
+                PDF = pasteboard.dataForType(NSPDFPboardType)
+            case NSFilenamesPboardType:
+                if let fileNames = pasteboard.propertyListForType(NSFilenamesPboardType) as? [String] {
+                    self.fileNames = fileNames
+                }
+            case NSURLPboardType:
+                if let url = pasteboard.propertyListForType(NSURLPboardType) as? [String] {
+                    URLs = url
+                }
+            case NSTIFFPboardType:
+                if NSImage.canInitWithPasteboard(pasteboard) {
+                    image =  NSImage(pasteboard: pasteboard)
+                }
+            default: break
+            }
+        }
     }
     
     deinit {
@@ -71,43 +106,23 @@ class CPYClipData: NSObject {
     
     // MARL- Archiving
     func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(self.types,         forKey: kTypesKey)
-        aCoder.encodeObject(self.stringValue,   forKey: kStringValueKey)
-        aCoder.encodeObject(self.RTFData,       forKey: kRTFDataKey)
-        aCoder.encodeObject(self.PDF,           forKey: kPDFKey)
-        aCoder.encodeObject(self.fileNames,     forKey: kFileNamesKey)
-        aCoder.encodeObject(self.URLs,          forKey: kURLsKey)
-        aCoder.encodeObject(self.image,         forKey: kImageKey)
+        aCoder.encodeObject(types,         forKey: kTypesKey)
+        aCoder.encodeObject(stringValue,   forKey: kStringValueKey)
+        aCoder.encodeObject(RTFData,       forKey: kRTFDataKey)
+        aCoder.encodeObject(PDF,           forKey: kPDFKey)
+        aCoder.encodeObject(fileNames,     forKey: kFileNamesKey)
+        aCoder.encodeObject(URLs,          forKey: kURLsKey)
+        aCoder.encodeObject(image,         forKey: kImageKey)
     }
     
     required init(coder aDecoder: NSCoder) {
-        self.types          = aDecoder.decodeObjectForKey(kTypesKey)        as! [String]
-        self.fileNames      = aDecoder.decodeObjectForKey(kFileNamesKey)    as! [String]
-        self.URLs           = aDecoder.decodeObjectForKey(kURLsKey)         as! [String]
-        self.stringValue    = aDecoder.decodeObjectForKey(kStringValueKey)  as! String
-        self.RTFData        = aDecoder.decodeObjectForKey(kRTFDataKey)      as? NSData
-        self.PDF            = aDecoder.decodeObjectForKey(kPDFKey)          as? NSData
-        self.image          = aDecoder.decodeObjectForKey(kImageKey)        as? NSImage
+        types          = aDecoder.decodeObjectForKey(kTypesKey)        as! [String]
+        fileNames      = aDecoder.decodeObjectForKey(kFileNamesKey)    as! [String]
+        URLs           = aDecoder.decodeObjectForKey(kURLsKey)         as! [String]
+        stringValue    = aDecoder.decodeObjectForKey(kStringValueKey)  as! String
+        RTFData        = aDecoder.decodeObjectForKey(kRTFDataKey)      as? NSData
+        PDF            = aDecoder.decodeObjectForKey(kPDFKey)          as? NSData
+        image          = aDecoder.decodeObjectForKey(kImageKey)        as? NSImage
         super.init()
     }
-    
-    // MARK: - Class Methods
-    static func availableTypes() -> [String] {
-        return [NSStringPboardType, NSRTFPboardType, NSRTFDPboardType, NSPDFPboardType, NSFilenamesPboardType, NSURLPboardType, NSTIFFPboardType]
-    }
-    
-    static func availableTypesString() -> [String] {
-        return ["String", "RTF", "RTFD", "PDF", "Filenames", "URL", "TIFF"]
-    }
-    
-    static func availableTypesDictinary() -> [String: String] {
-        var availableTypes = [String: String]()
-        for i in 0...6 {
-            let key = self.availableTypes()[i]
-            let object = self.availableTypesString()[i]
-            availableTypes[key] = object
-        }
-        return availableTypes
-    }
-    
 }

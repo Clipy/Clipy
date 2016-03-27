@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Realm
 
 class CPYFolder: RLMObject {
 

@@ -8,6 +8,7 @@
 //
 
 import Cocoa
+import Realm
 
 class CPYSnippet: RLMObject {
     
@@ -16,5 +17,10 @@ class CPYSnippet: RLMObject {
     dynamic var enable  = true
     dynamic var title   = ""
     dynamic var content = ""
+    dynamic var identifier = NSUUID().UUIDString
 
+    // MARK: Primary Key
+    override class func primaryKey() -> String {
+        return "identifier"
+    }
 }
