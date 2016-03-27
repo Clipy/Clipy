@@ -84,37 +84,30 @@ private extension MenuManager {
         // Realm Notification
         clipToken = CPYClip.allObjects()
                         .addNotificationBlock { [unowned self] (results, error)  in
-                            print("reload clip")
                             self.createClipMenu()
                         }
         // Menu icon
-        defaults.rx_observe(Int.self, kCPYPrefShowStatusItemKey, options: [.New])
+        defaults.rx_observe(Int.self, kCPYPrefShowStatusItemKey)
             .filterNil()
             .subscribeNext { [unowned self] key in
-                print("change status")
                 self.changeStatusItem(StatusType(rawValue: key) ?? .Black)
             }.addDisposableTo(rx_disposeBag)
         // Clear history menu
         defaults.rx_observe(Bool.self, kCPYPrefAddClearHistoryMenuItemKey, options: [.New])
             .filterNil()
-            .skip(1)
             .subscribeNext { [unowned self] enabled in
-                print("crear history")
                 self.createClipMenu()
             }.addDisposableTo(rx_disposeBag)
         // Sort clips
         defaults.rx_observe(Bool.self, kCPYPrefReorderClipsAfterPasting, options: [.New])
             .filterNil()
-            .skip(1)
             .subscribeNext { [unowned self] enabled in
-                print("reorder")
                 self.clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !enabled)
                 self.createClipMenu()
             }.addDisposableTo(rx_disposeBag)
         // Edit snippets
         notificationCenter.rx_notification(kCPYSnippetEditorWillCloseNotification)
             .subscribeNext { [unowned self] notification in
-                print("edit snippet")
                 self.createClipMenu()
             }.addDisposableTo(rx_disposeBag)
     }

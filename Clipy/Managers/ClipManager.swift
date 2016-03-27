@@ -75,14 +75,12 @@ private extension ClipManager {
         // Observe Interval
         defaults.rx_observe(Float.self, kCPYPrefTimeIntervalKey, options: [.New])
             .filterNil()
-            .skip(1)
             .subscribeNext { [unowned self] _ in
                 self.startTimer()
             }.addDisposableTo(rx_disposeBag)
         // Sort clips
         defaults.rx_observe(Bool.self, kCPYPrefReorderClipsAfterPasting, options: [.New])
             .filterNil()
-            .skip(1)
             .subscribeNext { [unowned self] enabled in
                 self.clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !enabled)
             }.addDisposableTo(rx_disposeBag)
