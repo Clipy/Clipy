@@ -10,6 +10,10 @@ import Cocoa
 import Sparkle
 import Fabric
 import Crashlytics
+import RxCocoa
+import RxSwift
+import RxOptional
+import NSObject_Rx
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -21,33 +25,8 @@ class AppDelegate: NSObject {
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
-        initController()
-    }
-
-    private func initController() {
-        CPYUtilities.registerUserDefaultKeys()
-        
         // Migrate Realm
         CPYUtilities.migrationRealm()
-
-        // Show menubar icon
-        MenuManager.sharedManager.setup()
-        ClipManager.sharedManager.setup()
-        HistoryManager.sharedManager.setup()
-        
-        defaults.addObserver(self, forKeyPath: kCPYPrefLoginItemKey, options: .New, context: nil)
-    }
-    
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSWorkspace.sharedWorkspace().notificationCenter.removeObserver(self)
-    }
-    
-    // MARK: - KVO 
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        if keyPath == kCPYPrefLoginItemKey {
-            toggleLoginItemState()
-        }
     }
 
     // MARK: - Override Methods
@@ -177,18 +156,15 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        // Fabric
-        defaults.registerDefaults(["NSApplicationCrashOnExceptions": true])
-        Fabric.with([Answers.self, Crashlytics.self])
-        Answers.logCustomEventWithName("applicationDidFinishLaunching", customAttributes: nil)
+        // SDKs
+        CPYUtilities.initSDKs()
         
+        // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
-
-        let queue = NSOperationQueue()
+        
         // Regist Hotkeys
-        queue.addOperationWithBlock {
-            CPYHotKeyManager.sharedManager.registerHotKeys()
-        }
+        CPYHotKeyManager.sharedManager.registerHotKeys()
+        
         // Show Login Item
         if !defaults.boolForKey(kCPYPrefLoginItemKey) && !defaults.boolForKey(kCPYPrefSuppressAlertForLoginItemKey) {
             promptToAddLoginItems()
@@ -200,10 +176,13 @@ extension AppDelegate: NSApplicationDelegate {
         updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
         updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
     
-        // Sleep PC notifications
-        addSleepNotifications()
+        // Binding Events
+        bind()
         
-        queue.waitUntilAllOperationsAreFinished()
+        // Managers
+        MenuManager.sharedManager.setup()
+        ClipManager.sharedManager.setup()
+        HistoryManager.sharedManager.setup()
     }
     
     func applicationWillTerminate(aNotification: NSNotification) {
@@ -211,18 +190,23 @@ extension AppDelegate: NSApplicationDelegate {
     }
 }
 
-// MARK: - NSNotificationCenter 
-extension AppDelegate {
-    private func addSleepNotifications() {
-        NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveSleepNotification", name: NSWorkspaceWillSleepNotification, object: nil)
-        NSWorkspace.sharedWorkspace().notificationCenter.addObserver(self, selector: "receiveWakeNotification", name: NSWorkspaceDidWakeNotification, object: nil)
-    }
-    
-    func receiveSleepNotification() {
-        ClipManager.sharedManager.stopTimer()
-    }
-    
-    func receiveWakeNotification() {
-        ClipManager.sharedManager.startTimer()
+// MARK: - Bind
+private extension AppDelegate {
+    private func bind() {
+        // Login Item
+        defaults.rx_observe(Bool.self, kCPYPrefLoginItemKey, options: [.New])
+            .filterNil()
+            .subscribeNext { [weak self] enabled in
+                self?.toggleLoginItemState()
+            }.addDisposableTo(rx_disposeBag)
+        // Sleep Notification
+        NSWorkspace.sharedWorkspace().notificationCenter.rx_notification(NSWorkspaceWillSleepNotification)
+            .subscribeNext { notification in
+                ClipManager.sharedManager.stopTimer()
+            }.addDisposableTo(rx_disposeBag)
+        NSWorkspace.sharedWorkspace().notificationCenter.rx_notification(NSWorkspaceDidWakeNotification)
+            .subscribeNext { notification in
+                ClipManager.sharedManager.startTimer()
+            }.addDisposableTo(rx_disposeBag)
     }
 }

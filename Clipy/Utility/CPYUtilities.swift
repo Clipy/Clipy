@@ -8,9 +8,18 @@
 
 import Cocoa
 import Realm
+import Fabric
+import Crashlytics
 
 final class CPYUtilities {
 
+    static func initSDKs() {
+        // Fabric
+        NSUserDefaults.standardUserDefaults().registerDefaults(["NSApplicationCrashOnExceptions": true])
+        Fabric.with([Answers.self, Crashlytics.self])
+        Answers.logCustomEventWithName("applicationDidFinishLaunching", customAttributes: nil)
+    }
+    
     static func registerUserDefaultKeys() {
         var defaultValues = [String: AnyObject]()
         
