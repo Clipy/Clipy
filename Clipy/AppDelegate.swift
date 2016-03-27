@@ -70,7 +70,7 @@ class AppDelegate: NSObject {
             alert.showsSuppressionButton = true
             
             NSApp.activateIgnoringOtherApps(true)
-        
+            
             let result = alert.runModal()
             if result != NSAlertFirstButtonReturn { return }
             
@@ -115,7 +115,7 @@ class AppDelegate: NSObject {
         alert.showsSuppressionButton = true
         NSApp.activateIgnoringOtherApps(true)
 
-        // 起動する選択時
+        //  Launch on system startup
         if alert.runModal() == NSAlertFirstButtonReturn {
             defaults.setBool(true, forKey: kCPYPrefLoginItemKey)
             toggleLoginItemState()
