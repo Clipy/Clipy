@@ -19,10 +19,10 @@ final class CPYUtilities {
         Fabric.with([Answers.self, Crashlytics.self])
         Answers.logCustomEventWithName("applicationDidFinishLaunching", customAttributes: nil)
     }
-    
+
     static func registerUserDefaultKeys() {
         var defaultValues = [String: AnyObject]()
-        
+
         defaultValues.updateValue(CPYHotKeyManager.defaultHotKeyCombos(), forKey: kCPYPrefHotKeysKey)
         /* General */
         defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefLoginItemKey)
@@ -33,7 +33,7 @@ final class CPYUtilities {
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefInputPasteCommandKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefReorderClipsAfterPasting)
-        
+
         /* Menu */
         defaultValues.updateValue(NSNumber(integer: 16), forKey: kCPYPrefMenuIconSizeKey)
         defaultValues.updateValue(NSNumber(integer: 20), forKey: kCPYPrefMaxMenuItemTitleLengthKey)
@@ -52,7 +52,7 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(integer: 32), forKey: kCPYPrefThumbnailHeightKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefOverwriteSameHistroyKey)
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefCopySameHistroyKey)
-        
+
         /* Updates */
         defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYEnableAutomaticCheckKey)
         defaultValues.updateValue(NSNumber(int: 86400), forKey: kCPYUpdateCheckIntervalKey)
@@ -75,27 +75,27 @@ final class CPYUtilities {
         RLMRealmConfiguration.setDefaultConfiguration(config)
         RLMRealm.defaultRealm()
     }
-    
+
     static func paste() -> Bool {
         if !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefInputPasteCommandKey) {
             return false
         }
-    
+
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
             CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
             CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVDown)
-            
+
             let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
             CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
             CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVUp)
         })
-        
+
         return true
     }
-    
+
     static func applicationSupportFolder() -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+        let paths = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)
         var basePath: String!
         if paths.count > 0 {
             basePath = paths.first
@@ -105,11 +105,11 @@ final class CPYUtilities {
 
         return (basePath as NSString).stringByAppendingPathComponent(kApplicationName)
     }
-    
+
     static func prepareSaveToPath(path: String) -> Bool {
         let fileManager = NSFileManager.defaultManager()
         var isDir: ObjCBool = false
-        
+
         if (fileManager.fileExistsAtPath(path, isDirectory: &isDir) && isDir) == false {
             do {
                 try fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
@@ -119,7 +119,7 @@ final class CPYUtilities {
         }
         return true
     }
-    
+
     static func deleteData(path: String) {
         autoreleasepool { () -> () in
             let fileManager = NSFileManager.defaultManager()

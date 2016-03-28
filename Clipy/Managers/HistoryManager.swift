@@ -23,7 +23,7 @@ final class HistoryManager: NSObject {
     deinit {
         stopTimer()
     }
-    
+
     func setup() {
         startTimer()
     }
@@ -35,7 +35,7 @@ extension HistoryManager {
         trimHistory()
         cleanDatas()
     }
-    
+
     func cleanDatas() {
         let allClips = CPYClip.allObjects()
         let fileManager = NSFileManager.defaultManager()
@@ -57,16 +57,16 @@ extension HistoryManager {
             }
         } catch { }
     }
-    
+
     private func trimHistory() {
         let clips = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
         let maxHistorySize = defaults.integerForKey(kCPYPrefMaxHistorySizeKey)
-        
+
         if maxHistorySize < Int(clips.count) {
             if let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as? CPYClip where !lastClip.invalidated {
-                
+
                 let lastUsedAt = lastClip.updateTime
-                let results = CPYClip.allObjects().objectsWithPredicate(NSPredicate(format: "updateTime < %d",lastUsedAt))
+                let results = CPYClip.allObjects().objectsWithPredicate(NSPredicate(format: "updateTime < %d", lastUsedAt))
                 var imagePaths = [String]()
                 for clipObject in results {
                     if let clip = clipObject as? CPYClip where !clip.invalidated {
@@ -75,7 +75,7 @@ extension HistoryManager {
                         }
                     }
                 }
-                
+
                 imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
                 realm.transaction {
                     realm.deleteObjects(results)
@@ -91,10 +91,14 @@ private extension HistoryManager {
     private func startTimer() {
         stopTimer()
         // Clean clip data history every 30 minutes
-        cleanHistotyTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: #selector(HistoryManager.cleanHistory), userInfo: nil, repeats: true)
+        cleanHistotyTimer = NSTimer(timeInterval: 60 * 30,
+                                    target: self,
+                                    selector: #selector(HistoryManager.cleanHistory),
+                                    userInfo: nil,
+                                    repeats: true)
         NSRunLoop.currentRunLoop().addTimer(cleanHistotyTimer!, forMode: NSRunLoopCommonModes)
     }
-    
+
     private func stopTimer() {
         if let timer = cleanHistotyTimer where timer.valid {
             cleanHistotyTimer?.invalidate()

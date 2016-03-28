@@ -18,15 +18,15 @@ final class CPYClipData: NSObject {
     private let kFileNamesKey   = "filenames"
     private let kURLsKey        = "URL"
     private let kImageKey       = "image"
-    
+
     var types          = [String]()
     var fileNames      = [String]()
     var URLs           = [String]()
     var stringValue    = ""
-    var RTFData:   NSData?
-    var PDF:       NSData?
-    var image:     NSImage?
-    
+    var RTFData: NSData?
+    var PDF: NSData?
+    var image: NSImage?
+
     override var hash: Int {
         var hash = types.joinWithSeparator("").hash
         if let image = self.image {
@@ -60,12 +60,12 @@ final class CPYClipData: NSObject {
         zip(CPYClipData.availableTypes, CPYClipData.availableTypesString).forEach { availableTypes[$0] = $1 }
         return availableTypes
     }
-    
+
     // MARK: - Init
     override init () {
         super.init()
     }
-    
+
     init(pasteboard: NSPasteboard, types: [String]) {
         super.init()
         self.types = types
@@ -97,29 +97,29 @@ final class CPYClipData: NSObject {
             }
         }
     }
-    
+
     deinit {
         self.RTFData = nil
         self.PDF = nil
         self.image = nil
     }
-    
+
     // MARL- Archiving
     func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(types,         forKey: kTypesKey)
-        aCoder.encodeObject(stringValue,   forKey: kStringValueKey)
-        aCoder.encodeObject(RTFData,       forKey: kRTFDataKey)
-        aCoder.encodeObject(PDF,           forKey: kPDFKey)
-        aCoder.encodeObject(fileNames,     forKey: kFileNamesKey)
-        aCoder.encodeObject(URLs,          forKey: kURLsKey)
-        aCoder.encodeObject(image,         forKey: kImageKey)
+        aCoder.encodeObject(types, forKey: kTypesKey)
+        aCoder.encodeObject(stringValue, forKey: kStringValueKey)
+        aCoder.encodeObject(RTFData, forKey: kRTFDataKey)
+        aCoder.encodeObject(PDF, forKey: kPDFKey)
+        aCoder.encodeObject(fileNames, forKey: kFileNamesKey)
+        aCoder.encodeObject(URLs, forKey: kURLsKey)
+        aCoder.encodeObject(image, forKey: kImageKey)
     }
-    
+
     required init(coder aDecoder: NSCoder) {
-        types          = aDecoder.decodeObjectForKey(kTypesKey)        as! [String]
-        fileNames      = aDecoder.decodeObjectForKey(kFileNamesKey)    as! [String]
-        URLs           = aDecoder.decodeObjectForKey(kURLsKey)         as! [String]
-        stringValue    = aDecoder.decodeObjectForKey(kStringValueKey)  as! String
+        types          = aDecoder.decodeObjectForKey(kTypesKey)        as? [String] ?? [String]()
+        fileNames      = aDecoder.decodeObjectForKey(kFileNamesKey)    as? [String] ?? [String]()
+        URLs           = aDecoder.decodeObjectForKey(kURLsKey)         as? [String] ?? [String]()
+        stringValue    = aDecoder.decodeObjectForKey(kStringValueKey)  as? String ?? ""
         RTFData        = aDecoder.decodeObjectForKey(kRTFDataKey)      as? NSData
         PDF            = aDecoder.decodeObjectForKey(kPDFKey)          as? NSData
         image          = aDecoder.decodeObjectForKey(kImageKey)        as? NSImage

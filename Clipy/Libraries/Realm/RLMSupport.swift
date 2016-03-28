@@ -23,7 +23,7 @@ extension RLMObject {
     public class func objectsWhere(predicateFormat: String, _ args: CVarArgType...) -> RLMResults {
         return objectsWithPredicate(NSPredicate(format: predicateFormat, arguments: getVaList(args)))
     }
-    
+
     public class func objectsInRealm(realm: RLMRealm, _ predicateFormat: String, _ args: CVarArgType...) -> RLMResults {
         return objectsInRealm(realm, withPredicate:NSPredicate(format: predicateFormat, arguments: getVaList(args)))
     }
@@ -31,11 +31,11 @@ extension RLMObject {
 
 public final class RLMGenerator: GeneratorType {
     private let generatorBase: NSFastGenerator
-    
+
     internal init(collection: RLMCollection) {
         generatorBase = NSFastGenerator(collection)
     }
-    
+
     public func next() -> RLMObject? {
         return generatorBase.next() as! RLMObject?
     }
@@ -46,12 +46,12 @@ extension RLMArray: SequenceType {
     public func generate() -> RLMGenerator {
         return RLMGenerator(collection: self)
     }
-    
+
     // Swift query convenience functions
     public func indexOfObjectWhere(predicateFormat: String, _ args: CVarArgType...) -> UInt {
         return indexOfObjectWithPredicate(NSPredicate(format: predicateFormat, arguments: getVaList(args)))
     }
-    
+
     public func objectsWhere(predicateFormat: String, _ args: CVarArgType...) -> RLMResults {
         return objectsWithPredicate(NSPredicate(format: predicateFormat, arguments: getVaList(args)))
     }
@@ -62,12 +62,12 @@ extension RLMResults: SequenceType {
     public func generate() -> RLMGenerator {
         return RLMGenerator(collection: self)
     }
-    
+
     // Swift query convenience functions
     public func indexOfObjectWhere(predicateFormat: String, _ args: CVarArgType...) -> UInt {
         return indexOfObjectWithPredicate(NSPredicate(format: predicateFormat, arguments: getVaList(args)))
     }
-    
+
     public func objectsWhere(predicateFormat: String, _ args: CVarArgType...) -> RLMResults {
         return objectsWithPredicate(NSPredicate(format: predicateFormat, arguments: getVaList(args)))
     }

@@ -1,4 +1,3 @@
-
 //
 //  CPYSnippet.swift
 //  Clipy
@@ -11,7 +10,7 @@ import Cocoa
 import Realm
 
 class CPYSnippet: RLMObject {
-    
+
     // MARK: - Properties
     dynamic var index   = 0
     dynamic var enable  = true

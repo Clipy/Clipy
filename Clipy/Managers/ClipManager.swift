@@ -28,18 +28,19 @@ final class ClipManager: NSObject {
     private let pasteboard = NSPasteboard.generalPasteboard()
     // Realm Result
     // TODO: メニューからこちらを参照する
-    private var clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefReorderClipsAfterPasting))
-    
+    private var clipResults: RLMResults
+
     // MARK: - Initialize
     override init() {
+        clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !defaults.boolForKey(kCPYPrefReorderClipsAfterPasting))
         super.init()
         startTimer()
     }
-    
+
     deinit {
         stopTimer()
     }
-    
+
     func setup() {
         bind()
     }
@@ -49,14 +50,13 @@ final class ClipManager: NSObject {
 extension ClipManager {
     func clearAll() {
         var imagePaths = [String]()
-        
+
         for clipObject in clipResults {
-            let clip = clipObject as! CPYClip
-            if !clip.thumbnailPath.isEmpty {
+            if let clip = clipObject as? CPYClip where !clip.thumbnailPath.isEmpty {
                 imagePaths.append(clip.thumbnailPath)
             }
         }
-    
+
         imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
         realm.transaction { realm.deleteObjects(clipResults) }
         HistoryManager.sharedManager.cleanDatas()
@@ -91,24 +91,28 @@ private extension ClipManager {
 extension ClipManager {
     func startTimer() {
         stopTimer()
-        
+
         var timeInterval = defaults.floatForKey(kCPYPrefTimeIntervalKey)
         if timeInterval > 1.0 {
             timeInterval = 1.0
             defaults.setFloat(1.0, forKey: kCPYPrefTimeIntervalKey)
         }
-        
-        pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: #selector(ClipManager.updateClips), userInfo: nil, repeats: true)
+
+        pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval),
+                                           target: self,
+                                           selector: #selector(ClipManager.updateClips),
+                                           userInfo: nil,
+                                           repeats: true)
         NSRunLoop.currentRunLoop().addTimer(pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
     }
-    
+
     func stopTimer() {
         if let timer = pasteboardObservingTimer where timer.valid {
             timer.invalidate()
             pasteboardObservingTimer = nil
         }
     }
-    
+
     func updateClips() {
         lock.lock()
         if pasteboard.changeCount != cachedChangeCount {
@@ -125,20 +129,20 @@ private extension ClipManager {
         let types = clipTypes(pasteboard)
         if types.isEmpty { return }
         if !storeTypes.values.contains(NSNumber(bool: true)) { return }
-        
-        let data = CPYClipData(pasteboard: pasteboard, types: types) 
+
+        let data = CPYClipData(pasteboard: pasteboard, types: types)
         let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
         // Search same history
         if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
-        
+
         let isOverwriteHistory = defaults.boolForKey(kCPYPrefOverwriteSameHistroyKey)
         let hash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
 
-        // Save DB 
+        // Save DB
         let unixTime = Int(floor(NSDate().timeIntervalSince1970))
         let path = (CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent("\(NSUUID().UUIDString).data")
         let title = data.stringValue
-        
+
         let clip = CPYClip()
         clip.dataPath = path
         // Trim Save Title
@@ -146,12 +150,12 @@ private extension ClipManager {
         clip.dataHash = "\(hash)"
         clip.updateTime = unixTime
         clip.primaryType = data.primaryType ?? ""
-        
+
         // Save thumbnail image
         if let image = data.image where data.primaryType == NSTIFFPboardType {
             let thumbnailWidth = defaults.integerForKey(kCPYPrefThumbnailWidthKey)
             let thumbnailHeight = defaults.integerForKey(kCPYPrefThumbnailHeightKey)
-            
+
             if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
                 PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))
                 clip.thumbnailPath = String(unixTime)
@@ -166,7 +170,7 @@ private extension ClipManager {
             }
         }
     }
-    
+
     private func clipTypes(pasteboard: NSPasteboard) -> [String] {
         var types = [String]()
         if let pbTypes = pasteboard.types {
@@ -178,7 +182,7 @@ private extension ClipManager {
         }
         return types
     }
-    
+
     private func isClipType(type: String) -> Bool {
         let typeDict = CPYClipData.availableTypesDictinary
         if let key = typeDict[type] {

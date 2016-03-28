@@ -20,5 +20,5 @@ class CPYUpdatesPreferenceViewController: NSViewController {
             versionTextField.stringValue = "v\(versionString)"
         }
     }
-    
+
 }

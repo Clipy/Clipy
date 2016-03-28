@@ -16,5 +16,5 @@ class CPYFolder: RLMObject {
     dynamic var enable      = true
     dynamic var title       = ""
     dynamic var snippets    = RLMArray(objectClassName: CPYSnippet.className())
-    
+
 }

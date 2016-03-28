@@ -24,13 +24,13 @@ extension PasteboardManager {
         pasteboard.setString(aString, forType: NSStringPboardType)
         lock.unlock()
     }
-    
+
     func copyClipToPasteboard(clip: CPYClip) {
         lock.lock()
         if let data = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
             let types = data.types
             pasteboard.declareTypes(types, owner: self)
-            
+
             types.forEach { type in
                 switch type {
                 case NSStringPboardType:
@@ -55,8 +55,8 @@ extension PasteboardManager {
                     let url = data.URLs
                     pasteboard.setPropertyList(url, forType: NSURLPboardType)
                 case NSTIFFPboardType:
-                    if let image = data.image {
-                        pasteboard.setData(image.TIFFRepresentation!, forType: NSTIFFPboardType)
+                    if let image = data.image, let imageData = image.TIFFRepresentation {
+                        pasteboard.setData(imageData, forType: NSTIFFPboardType)
                     }
                 default:
                     Answers.logCustomEventWithName("No suppert paste type \(type)", customAttributes: nil)
