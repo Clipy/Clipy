@@ -12,7 +12,8 @@ __Distribution Site__ : <http://clipy-app.com>
 
 ### Development Environment
 * OS X El Capitan
-* Xcode 7.2
+* Xcode 7.3
+* Swift 2.2
 
 ### How to Build
 0. Move to the project root directory
