@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode7.2
+osx_image: xcode7.3
 os: osx
 install: bundle install --without development --deployment --jobs=3 --retry=3
 script: bundle exec fastlane test

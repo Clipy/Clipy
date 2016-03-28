@@ -98,7 +98,7 @@ extension ClipManager {
             defaults.setFloat(1.0, forKey: kCPYPrefTimeIntervalKey)
         }
         
-        pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: "updateClips", userInfo: nil, repeats: true)
+        pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval), target: self, selector: #selector(ClipManager.updateClips), userInfo: nil, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(pasteboardObservingTimer!, forMode: NSRunLoopCommonModes)
     }
     

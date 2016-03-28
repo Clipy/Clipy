@@ -106,8 +106,8 @@ final class CPYSnippetManager: NSObject {
         }
     }
     
-    func updateFolderIndex(var toIndex: Int, selectIndexes: NSIndexSet) {
-        
+    func updateFolderIndex(toIndex: Int, selectIndexes: NSIndexSet) {
+        var toIndex = toIndex
         if toIndex > selectIndexes.firstIndex {
             toIndex = toIndex - 1
         }
@@ -135,11 +135,10 @@ final class CPYSnippetManager: NSObject {
         }
     }
     
-    func updateSnippetIndex(var toIndex: Int, selectIndexes: NSIndexSet, folder: CPYFolder?) {
-        if folder == nil {
-            return
-        }
+    func updateSnippetIndex(toIndex: Int, selectIndexes: NSIndexSet, folder: CPYFolder?) {
+        if folder == nil { return }
         
+        var toIndex = toIndex
         if toIndex > selectIndexes.firstIndex {
             toIndex = toIndex - 1
         }

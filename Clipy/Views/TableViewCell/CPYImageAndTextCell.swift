@@ -73,8 +73,9 @@ class CPYImageAndTextCell: NSTextFieldCell {
         super.selectWithFrame(textFrame, inView: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
     }
     
-    override func drawWithFrame(var cellFrame: NSRect, inView controlView: NSView) {
+    override func drawWithFrame(cellFrame: NSRect, inView controlView: NSView) {
         var imageFrame = NSZeroRect
+        var cellFrame = cellFrame
         NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + 15.0, .MinX)
         
         imageFrame.origin.x += CGFloat(kImageOriginXOffset)

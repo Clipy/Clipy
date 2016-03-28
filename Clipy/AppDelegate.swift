@@ -31,7 +31,7 @@ class AppDelegate: NSObject {
 
     // MARK: - Override Methods
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        if menuItem.action == Selector("clearAllHistory") {
+        if menuItem.action == #selector(AppDelegate.clearAllHistory) {
             if CPYClip.allObjects().count == 0 {
                 return false
             }
@@ -41,10 +41,8 @@ class AppDelegate: NSObject {
     
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
-        let storeTypes = CPYClipData.availableTypesString.reduce([String: NSNumber]()) { (var dict, type) in
-            dict[type] = NSNumber(bool: true)
-            return dict
-        }
+        var storeTypes = [String: NSNumber]()
+        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(bool: true) }
         return storeTypes
     }
 
