@@ -129,14 +129,14 @@ private extension MenuManager {
         clipMenu?.addItem(NSMenuItem.separatorItem())
 
         if defaults.boolForKey(kCPYPrefAddClearHistoryMenuItemKey) {
-            clipMenu?.addItem(NSMenuItem(title: LocalizedString.ClearHistory.value, action: "clearAllHistory"))
+            clipMenu?.addItem(NSMenuItem(title: LocalizedString.ClearHistory.value, action: #selector(AppDelegate.clearAllHistory)))
         }
         
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.EditSnippets.value, action: "showSnippetEditorWindow"))
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.Preference.value, action: "showPreferenceWindow"))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.EditSnippets.value, action: #selector(AppDelegate.showSnippetEditorWindow)))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.Preference.value, action: #selector(AppDelegate.showPreferenceWindow)))
         clipMenu?.addItem(NSMenuItem.separatorItem())
         clipMenu?.addItem(NSMenuItem(title: LocalizedString.QuitClipy.value, action: "terminate:"))
-        
+
         statusItem?.menu = clipMenu
     }
     
@@ -144,7 +144,8 @@ private extension MenuManager {
         return (isMarkWithNumber) ? "\(listNumber)\(kSingleSpace)\(title)" : title
     }
     
-    private func makeSubmenuItem(var count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
+    private func makeSubmenuItem(count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
+        var count = count
         if start == 0 {
             count = count - 1
         }
@@ -164,8 +165,8 @@ private extension MenuManager {
         return subMenuItem
     }
     
-    private func incrementListNumber(var listNumber: NSInteger, max: NSInteger, start: NSInteger) -> NSInteger {
-        listNumber = listNumber + 1
+    private func incrementListNumber(listNumber: NSInteger, max: NSInteger, start: NSInteger) -> NSInteger {
+        var listNumber = listNumber + 1
         if listNumber == max && max == 10 && start == 1 {
             listNumber = 0
         }
@@ -202,7 +203,7 @@ private extension MenuManager {
         let maxHistory = defaults.integerForKey(kCPYPrefMaxHistorySizeKey)
         
         // History title
-        let labelItem = NSMenuItem(title: LocalizedString.History.value, action: "")
+        let labelItem = NSMenuItem(title: LocalizedString.History.value, action: nil)
         labelItem.enabled = false
         menu.addItem(labelItem)
         
@@ -271,7 +272,7 @@ private extension MenuManager {
         let title = trimTitle(clipString)
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
-        let menuItem = NSMenuItem(title: titleWithMark, action: "selectClipMenuItem:", keyEquivalent: keyEquivalent)
+        let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.representedObject = clip.dataHash
         
         if isShowToolTip {
@@ -309,7 +310,7 @@ private extension MenuManager {
         }
             
         // Snippet title
-        let labelItem = NSMenuItem(title: LocalizedString.Snippet.value, action: "")
+        let labelItem = NSMenuItem(title: LocalizedString.Snippet.value, action: nil)
         labelItem.enabled = false
         menu.addItem(labelItem)
         
@@ -346,7 +347,7 @@ private extension MenuManager {
         let title = trimTitle(snippet.title)
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         
-        let menuItem = NSMenuItem(title: titleWithMark, action: Selector("selectSnippetMenuItem:"), keyEquivalent: kEmptyString)
+        let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: kEmptyString)
         menuItem.representedObject = snippet.identifier
         menuItem.toolTip = snippet.content
         menuItem.image = (isShowIcon) ? snippetIcon : nil

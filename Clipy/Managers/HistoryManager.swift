@@ -91,7 +91,7 @@ private extension HistoryManager {
     private func startTimer() {
         stopTimer()
         // Clean clip data history every 30 minutes
-        cleanHistotyTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: "cleanHistory", userInfo: nil, repeats: true)
+        cleanHistotyTimer = NSTimer(timeInterval: 60 * 30, target: self, selector: #selector(HistoryManager.cleanHistory), userInfo: nil, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(cleanHistotyTimer!, forMode: NSRunLoopCommonModes)
     }
     

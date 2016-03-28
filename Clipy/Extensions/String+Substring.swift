@@ -12,7 +12,7 @@ extension String {
     subscript (r: Range<Int>) -> String {
         let startIndex = self.startIndex.advancedBy(r.startIndex, limit:  self.endIndex)
         let endIndex = self.startIndex.advancedBy(r.endIndex, limit: self.endIndex)
-        
-        return self[Range(start: startIndex, end: endIndex)]
+
+        return self[startIndex..<endIndex]
     }
 }
