@@ -498,6 +498,7 @@
 				FA4A5CDC1C7CAEDD0031BCEF /* ShellScript */,
 				741C1DA155065DDF572C094E /* Embed Pods Frameworks */,
 				E1763D22BB204E0B1CCCCDC2 /* Copy Pods Resources */,
+				FAAD02201CA98E20007C6EEE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -656,6 +657,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "releaseConfig=\"Release\"\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${PODS_ROOT}/Fabric/run\" 4998ae84bce284505281a865e1d5c008c4cf005a 997285f167af87d3ebdb81f2082b53bb03c11f92fca9fc7e62c4052f1d288ab6\nfi";
+		};
+		FAAD02201CA98E20007C6EEE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
