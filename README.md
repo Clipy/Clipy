@@ -1,6 +1,9 @@
 Clipy
 =============================
 [![Build Status](https://travis-ci.org/Clipy/Clipy.svg?branch=master)](https://travis-ci.org/Clipy/Clipy)
+[![Release version](https://img.shields.io/github/release/Clipy/Clipy.svg)]()
+[![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/Clipy/Clipy/blob/master/LICENSE)
+
 
 Clipy is a Clipboard extension app for Mac OSX.
 
