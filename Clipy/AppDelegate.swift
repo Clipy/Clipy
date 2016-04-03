@@ -21,7 +21,7 @@ class AppDelegate: NSObject {
     // MARK: - Properties
     let snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
     let defaults = NSUserDefaults.standardUserDefaults()
-    
+
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -38,7 +38,7 @@ class AppDelegate: NSObject {
         }
         return true
     }
-    
+
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
@@ -51,12 +51,12 @@ class AppDelegate: NSObject {
         NSApp.activateIgnoringOtherApps(true)
         CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
     }
-    
+
     func showSnippetEditorWindow() {
         NSApp.activateIgnoringOtherApps(true)
         snippetEditorController.showWindow(self)
     }
-    
+
     func clearAllHistory() {
         let isShowAlert = defaults.boolForKey(kCPYPrefShowAlertBeforeClearHistoryKey)
         if isShowAlert {
@@ -66,21 +66,21 @@ class AppDelegate: NSObject {
             alert.addButtonWithTitle(LocalizedString.ClearHistory.value)
             alert.addButtonWithTitle(LocalizedString.Cancel.value)
             alert.showsSuppressionButton = true
-            
+
             NSApp.activateIgnoringOtherApps(true)
-            
+
             let result = alert.runModal()
             if result != NSAlertFirstButtonReturn { return }
-            
+
             if alert.suppressionButton?.state == NSOnState {
                 defaults.setBool(false, forKey: kCPYPrefShowAlertBeforeClearHistoryKey)
             }
             defaults.synchronize()
         }
-        
+
         ClipManager.sharedManager.clearAll()
     }
-    
+
     func selectClipMenuItem(sender: NSMenuItem) {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
         if let primaryKey = sender.representedObject as? String, let clip = CPYClip(forPrimaryKey: primaryKey) {
@@ -91,7 +91,7 @@ class AppDelegate: NSObject {
             NSBeep()
         }
     }
-    
+
     func selectSnippetMenuItem(sender: AnyObject) {
         Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
         if let primaryKey = sender.representedObject as? String, let snippet = CPYSnippet(forPrimaryKey: primaryKey) {
@@ -102,7 +102,7 @@ class AppDelegate: NSObject {
             NSBeep()
         }
     }
-    
+
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()
@@ -124,7 +124,7 @@ class AppDelegate: NSObject {
         }
         defaults.synchronize()
     }
-    
+
     private func toggleAddingToLoginItems(enable: Bool) {
         let appPath = NSBundle.mainBundle().bundlePath
         if enable {
@@ -134,12 +134,12 @@ class AppDelegate: NSObject {
             NMLoginItems.removePathFromLoginItems(appPath)
         }
     }
-    
+
     private func toggleLoginItemState() {
         let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefLoginItemKey)
         toggleAddingToLoginItems(isInLoginItems)
     }
-    
+
     // MARK: - Version Up Methods
     private func checkUpdates() {
         let feed = "https://clipy-app.com/appcast.xml"
@@ -156,33 +156,33 @@ extension AppDelegate: NSApplicationDelegate {
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // SDKs
         CPYUtilities.initSDKs()
-        
+
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
-        
+
         // Regist Hotkeys
         CPYHotKeyManager.sharedManager.registerHotKeys()
-        
+
         // Show Login Item
         if !defaults.boolForKey(kCPYPrefLoginItemKey) && !defaults.boolForKey(kCPYPrefSuppressAlertForLoginItemKey) {
             promptToAddLoginItems()
         }
-        
+
         // Sparkle
         let updater = SUUpdater.sharedUpdater()
         checkUpdates()
         updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
         updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
-    
+
         // Binding Events
         bind()
-        
+
         // Managers
         MenuManager.sharedManager.setup()
         ClipManager.sharedManager.setup()
         HistoryManager.sharedManager.setup()
     }
-    
+
     func applicationWillTerminate(aNotification: NSNotification) {
         CPYHotKeyManager.sharedManager.unRegisterHotKeys()
     }

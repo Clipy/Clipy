@@ -6,6 +6,8 @@
 //  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 //
 
+// swiftlint:disable variable_name
+
 // Application Keys
 let kClipyIdentifier                                   = "Clipy"
 let kApplicationName                                   = "Clipy"
@@ -85,3 +87,5 @@ let kContentElement                                    = "content"
 let kEmptyString                                       = ""
 let kSingleSpace                                       = " "
 
+
+// swiftlint:enable variable_name

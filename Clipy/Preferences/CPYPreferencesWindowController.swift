@@ -33,12 +33,12 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet weak var updatesButton: NSButton!
     // ViewController
     private let defaults = NSUserDefaults.standardUserDefaults()
-    private let viewController: [NSViewController] = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
-                                                    NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
-                                                    CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
-                                                    CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
-                                                    CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!]
-    
+    private let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
+                                  NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
+                                  CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
+                                  CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
+                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!]
+
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -54,7 +54,7 @@ final class CPYPreferencesWindowController: NSWindowController {
         shortcutsButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
         updatesButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
     }
- 
+
     override func showWindow(sender: AnyObject?) {
         super.showWindow(sender)
         window?.makeKeyAndOrderFront(self)
@@ -76,7 +76,7 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
            defaults.setObject(viewController.storeTypes, forKey: kCPYPrefStoreTypesKey)
             defaults.synchronize()
         }
-        if let window = window where !window.makeFirstResponder(window){
+        if let window = window where !window.makeFirstResponder(window) {
             window.endEditingFor(nil)
         }
         NSApp.deactivate()
@@ -91,17 +91,17 @@ private extension CPYPreferencesWindowController {
         typeImageView.image         = NSImage(assetIdentifier: .TypeOff)
         shortcutsImageView.image    = NSImage(assetIdentifier: .ShortcutsOff)
         updatesImageView.image      = NSImage(assetIdentifier: .UpdatesOff)
-        
+
         generalTextField.textColor      = NSColor.tabTitleColor()
         menuTextField.textColor         = NSColor.tabTitleColor()
         typeTextField.textColor         = NSColor.tabTitleColor()
         shortcutsTextField.textColor    = NSColor.tabTitleColor()
         updatesTextField.textColor      = NSColor.tabTitleColor()
     }
-    
+
     private func selectedTab(index: Int) {
         resetImages()
-        
+
         switch index {
         case 0:
             generalImageView.image = NSImage(assetIdentifier: .GeneralOn)
@@ -121,7 +121,7 @@ private extension CPYPreferencesWindowController {
         default: break
         }
     }
-    
+
     private func switchView(index: Int) {
         let newView = viewController[index].view
         // Remove current views without toolbar

@@ -14,42 +14,42 @@ final class CPYSnippetManager: NSObject {
     // MARK: - Properties
     static let sharedManager = CPYSnippetManager()
     private let realm = RLMRealm.defaultRealm()
-    
+
     // MARK: - Init
     override init() {
         super.init()
     }
-    
+
     // MARK: - Public Methods
     func loadFolders() -> RLMResults {
         return CPYFolder.allObjects()
     }
-    
+
     func loadSortedFolders() -> RLMResults {
         return CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true)
     }
-    
+
     func removeSnippet(snippet: CPYSnippet) {
         realm.transaction {
             realm.deleteObject(snippet)
         }
     }
-    
+
     func addFolder(title: String?) {
         let folder = CPYFolder()
         folder.title = title ?? "untitled folder"
-        
+
         if let lastFolder = loadSortedFolders().lastObject() as? CPYFolder {
             folder.index = lastFolder.index + 1
         } else {
             folder.index = 0
         }
-        
+
         realm.transaction {
             realm.addObject(folder)
         }
     }
-    
+
     func addSnippet(title: String?, folder: CPYFolder!) {
         let snippet = CPYSnippet()
         snippet.title = "untitled snippet"
@@ -58,74 +58,71 @@ final class CPYSnippetManager: NSObject {
         } else {
             snippet.index = 0
         }
-        
+
         realm.transaction {
             folder.snippets.addObject(snippet)
         }
     }
-    
+
     func updateSnipeetContent(snippet: CPYSnippet, content: String) {
         realm.transaction { () -> Void in
             snippet.content = content
         }
     }
-    
+
     func removeFolders(folders: [RLMObject]) {
         var snippets = [RLMObject]()
-        for folder in folders as! [CPYFolder]{
-            for snippet in folder.snippets {
-                snippets.append(snippet)
+        folders.flatMap { $0 as? CPYFolder }
+            .forEach { folder in
+                folder.snippets.forEach { snippets.append($0) }
             }
-        }
-        
         realm.transaction {
             realm.deleteObjects(snippets)
             realm.deleteObjects(folders)
         }
     }
-    
+
     func removeSnippets(snippets: [RLMObject]) {
         realm.transaction {
             realm.deleteObjects(snippets)
         }
     }
-    
+
     func updateFolderEnable(folders: [RLMObject]) {
         realm.transaction {
-            for folder in folders as! [CPYFolder] {
-                folder.enable = !folder.enable
-            }
+            folders.flatMap { $0 as? CPYFolder }
+                .forEach { $0.enable = !$0.enable }
         }
     }
-    
+
     func updateSnippetEnable(snippets: [RLMObject]) {
         realm.transaction {
-            for snippet in snippets as! [CPYSnippet] {
-                snippet.enable = !snippet.enable
-            }
+            snippets.flatMap { $0 as? CPYSnippet }
+                .forEach { $0.enable = !$0.enable }
         }
     }
-    
+
     func updateFolderIndex(toIndex: Int, selectIndexes: NSIndexSet) {
         var toIndex = toIndex
         if toIndex > selectIndexes.firstIndex {
             toIndex = toIndex - 1
         }
-        
+
         var folders = [CPYFolder]()
-        let reuslts = CPYSnippetManager.sharedManager.loadSortedFolders()
+        let folderResults = CPYSnippetManager.sharedManager.loadSortedFolders()
         var index = 0
         var updateFolder: CPYFolder!
-        for folder in reuslts {
+        let results = folderResults.flatMap { $0 as? CPYFolder }
+        for folder in results {
             if index != selectIndexes.firstIndex {
-                folders.append(folder as! CPYFolder)
+                folders.append(folder)
             } else {
-                updateFolder = folder as! CPYFolder
+                updateFolder = folder
             }
             index = index + 1
         }
         folders.insert(updateFolder, atIndex: toIndex)
-        
+
         index = 0
         for folder in folders {
             realm.transaction {
@@ -134,29 +131,30 @@ final class CPYSnippetManager: NSObject {
             index = index + 1
         }
     }
-    
+
     func updateSnippetIndex(toIndex: Int, selectIndexes: NSIndexSet, folder: CPYFolder?) {
         if folder == nil { return }
-        
+
         var toIndex = toIndex
         if toIndex > selectIndexes.firstIndex {
             toIndex = toIndex - 1
         }
-        
+
         var snippets = [CPYSnippet]()
-        let reuslts = folder!.snippets.sortedResultsUsingProperty("index", ascending: true)
+        let snippetResults = folder!.snippets.sortedResultsUsingProperty("index", ascending: true)
         var index = 0
         var updateSnippet: CPYSnippet!
-        for snippet in reuslts {
+        let results = snippetResults.flatMap { $0 as? CPYSnippet }
+        for snippet in results {
             if index != selectIndexes.firstIndex {
-                snippets.append(snippet as! CPYSnippet)
+                snippets.append(snippet)
             } else {
-                updateSnippet = snippet as! CPYSnippet
+                updateSnippet = snippet
             }
             index = index + 1
         }
         snippets.insert(updateSnippet, atIndex: toIndex)
-        
+
         index = 0
         for snippet in snippets {
             realm.transaction {
@@ -164,7 +162,6 @@ final class CPYSnippetManager: NSObject {
             }
             index = index + 1
         }
-        
+
     }
-    
 }

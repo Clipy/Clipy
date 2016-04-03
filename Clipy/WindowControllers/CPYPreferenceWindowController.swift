@@ -25,13 +25,17 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
     private var shortcutRecorders = [SRRecorderControl]()
     var storeTypes: NSMutableDictionary!
     private let defaults = NSUserDefaults.standardUserDefaults()
-    
+
     // MARK: - Init
     override init(window: NSWindow?) {
         super.init(window: window)
-        storeTypes = (defaults.objectForKey(kCPYPrefStoreTypesKey) as! NSMutableDictionary).mutableCopy() as! NSMutableDictionary
+        if let types = defaults.objectForKey(kCPYPrefStoreTypesKey)?.mutableCopy() as? NSMutableDictionary {
+            storeTypes = types
+        } else {
+            storeTypes = NSMutableDictionary()
+        }
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -44,11 +48,9 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
             window.releasedWhenClosed = false
         }
         prepareHotKeys()
-        if let versionString = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as? String {
-            versionTextField.stringValue = "v\(versionString)"
-        }
+        versionTextField.stringValue = "v\(NSBundle.mainBundle().appVersion ?? "")"
     }
-    
+
     // MARK: - Override Methods
     override func showWindow(sender: AnyObject?) {
         super.showWindow(sender)
@@ -71,36 +73,33 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         if let image = NSImage(assetIdentifier: .IconSparkle) {
             addView(updatePreferenceView, label: LocalizedString.TabUpdates.value, image: image)
         }
-        
+
         crossFade = true
         shiftSlowsAnimation = false
     }
-  
+
     // MARK: - Private Methods
     private func prepareHotKeys() {
         shortcutRecorders = [mainShortcutRecorder, historyShortcutRecorder, snippetsShortcutRecorder]
-        
+
         let hotKeyMap = CPYHotKeyManager.sharedManager.hotkeyMap
-        let hotKeyCombos = NSUserDefaults.standardUserDefaults().objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
-        for identifier in hotKeyCombos.keys {
-            
-            let keyComboPlist = hotKeyCombos[identifier] as! [String: AnyObject]
-            let keyCode = Int(keyComboPlist["keyCode"]! as! NSNumber)
-            let modifiers = UInt(keyComboPlist["modifiers"]! as! NSNumber)
-            
-            if let keys = hotKeyMap[identifier] as? [String: AnyObject] {
-                let index = keys[kIndex] as! Int
-                let recorder = shortcutRecorders[index]
-                let keyCombo = KeyCombo(flags: recorder.carbonToCocoaFlags(modifiers), code: keyCode)
-                recorder.keyCombo = keyCombo
-                recorder.animates = true
+        if let hotKeyCombos = defaults.objectForKey(kCPYPrefHotKeysKey) as? [String: AnyObject] {
+            for (identifier, keyCombo) in hotKeyCombos {
+                if let keyComboPlist = keyCombo as? [String: AnyObject], let keyCode = keyComboPlist["keyCode"] as? Int, let modifiers = keyComboPlist["modifiers"] as? UInt {
+                    if let keys = hotKeyMap[identifier] as? [String: AnyObject], let index = keys[kIndex] as? Int {
+                        let recorder = shortcutRecorders[index]
+                        let keyCombo = KeyCombo(flags: recorder.carbonToCocoaFlags(modifiers), code: keyCode)
+                        recorder.keyCombo = keyCombo
+                        recorder.animates = true
+                    }
+                }
             }
         }
     }
-    
+
     private func changeHotKeyByShortcutRecorder(aRecorder: SRRecorderControl!, keyCombo: KeyCombo) {
         let newKeyCombo = PTKeyCombo(keyCode: keyCombo.code, modifiers: aRecorder.cocoaToCarbonFlags(keyCombo.flags))
-        
+
         var identifier = ""
         if aRecorder == mainShortcutRecorder {
             identifier = kClipMenuIdentifier
@@ -109,17 +108,18 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         } else if aRecorder == snippetsShortcutRecorder {
             identifier = kSnippetsMenuIdentifier
         }
-        
+
         let hotKeyCenter = PTHotKeyCenter.sharedCenter()
         let oldHotKey = hotKeyCenter.hotKeyWithIdentifier(identifier)
         hotKeyCenter.unregisterHotKey(oldHotKey)
 
-        var hotKeyPrefs = defaults.objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
-        hotKeyPrefs.updateValue(newKeyCombo.plistRepresentation(), forKey: identifier)
-        defaults.setObject(hotKeyPrefs, forKey: kCPYPrefHotKeysKey)
-        defaults.synchronize()
+        if var hotKeyPrefs = defaults.objectForKey(kCPYPrefHotKeysKey) as? [String: AnyObject] {
+            hotKeyPrefs.updateValue(newKeyCombo.plistRepresentation(), forKey: identifier)
+            defaults.setObject(hotKeyPrefs, forKey: kCPYPrefHotKeysKey)
+            defaults.synchronize()
+        }
     }
-    
+
     // MARK: - SRRecoederControl Delegate
     func shortcutRecorder(aRecorder: SRRecorderControl!, keyComboDidChange newKeyCombo: KeyCombo) {
         if shortcutRecorders.contains(aRecorder) {
@@ -127,10 +127,9 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         }
     }
 
-    
     func windowWillClose(notification: NSNotification) {
         defaults.setObject(storeTypes, forKey: kCPYPrefStoreTypesKey)
-        
+
         if let window = window {
             if !window.makeFirstResponder(window) {
                 window.endEditingFor(nil)
@@ -138,5 +137,5 @@ class CPYPreferenceWindowController: DBPrefsWindowController, NSWindowDelegate {
         }
         NSApp.deactivate()
     }
-    
+
 }

@@ -10,7 +10,7 @@ import Foundation
 import Cocoa
 
 @IBDesignable class CPYDesignableView: NSView {
-    
+
     // MARK: - Properties
     @IBInspectable var backgroundColor: NSColor = NSColor.clearColor() {
         didSet {
@@ -35,18 +35,18 @@ import Cocoa
     override var wantsUpdateLayer: Bool {
         return true
     }
-    
+
     // MARK: - Initialize
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         wantsLayer = true
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         wantsLayer = true
     }
-    
+
     // MARK: - Update
     override func updateLayer() {
         layer?.backgroundColor = backgroundColor.CGColor
