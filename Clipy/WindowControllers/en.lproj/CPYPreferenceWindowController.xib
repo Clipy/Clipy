@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
         <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
@@ -107,24 +107,6 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <popUpButton verticalHuggingPriority="750" id="o50-iV-NUw">
-                    <rect key="frame" x="249" y="144" width="150" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Last Used" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="7Ax-4b-ffX" id="Agk-uD-30l">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="Td8-IC-6gD">
-                            <items>
-                                <menuItem title="Date Created" id="LTO-UV-4n6"/>
-                                <menuItem title="Last Used" state="on" id="7Ax-4b-ffX"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="2Lc-6R-cnC" name="enabled" keyPath="values" id="6Lc-vV-M9Z"/>
-                        <binding destination="2Lc-6R-cnC" name="selectedIndex" keyPath="values.kCPYPrefReorderClipsAfterPasting" id="dpB-iP-bYh"/>
-                    </connections>
-                </popUpButton>
                 <textField verticalHuggingPriority="750" id="OZl-Rn-v5E">
                     <rect key="frame" x="50" y="128" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -220,6 +202,23 @@
                         <binding destination="2Lc-6R-cnC" name="value" keyPath="values.kCPYPrefTimeIntervalKey" id="70c-bl-2J1"/>
                     </connections>
                 </textField>
+                <popUpButton verticalHuggingPriority="750" id="H8L-AB-vc2">
+                    <rect key="frame" x="257" y="144" width="142" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Last Used" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="lM0-4B-3Ex" id="9uw-ri-ytm">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="sbt-K2-Zu5">
+                            <items>
+                                <menuItem title="Date Created" id="Mfs-ms-uKg"/>
+                                <menuItem title="Last Used" state="on" id="lM0-4B-3Ex"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="2Lc-6R-cnC" name="selectedIndex" keyPath="values.kCPYPrefReorderClipsAfterPasting" id="6je-aa-a1h"/>
+                    </connections>
+                </popUpButton>
             </subviews>
             <point key="canvasLocation" x="571" y="626"/>
         </customView>
