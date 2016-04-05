@@ -2,6 +2,7 @@ PODS:
   - Crashlytics (3.7.0):
     - Fabric (~> 1.6.3)
   - Fabric (1.6.7)
+  - LoginServiceKit (0.0.1)
   - NSObject+Rx (1.2.1):
     - RxSwift (~> 2.1)
   - PINCache (2.2.2)
@@ -19,6 +20,7 @@ PODS:
 DEPENDENCIES:
   - Crashlytics
   - Fabric
+  - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
   - NSObject+Rx
   - PINCache
   - Realm
@@ -27,9 +29,19 @@ DEPENDENCIES:
   - RxSwift
   - Sparkle
 
+EXTERNAL SOURCES:
+  LoginServiceKit:
+    :git: https://github.com/Clipy/LoginServiceKit.git
+
+CHECKOUT OPTIONS:
+  LoginServiceKit:
+    :commit: b4529ef9e4a76366e89b0fe39669c1536ec3ae47
+    :git: https://github.com/Clipy/LoginServiceKit.git
+
 SPEC CHECKSUMS:
   Crashlytics: c3a2333dea9e2733d2777f730910321fc9e25c0d
   Fabric: caf7580c725e64db144f610ac65cd60956911dc7
+  LoginServiceKit: 92aee420b05d163e356f6c5cbef64dd23eef93e1
   NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
   PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
   Realm: 44803f35418c5d89b27825a564247fcd190de37e

@@ -14,6 +14,7 @@ import RxCocoa
 import RxSwift
 import RxOptional
 import NSObject_Rx
+import LoginServiceKit
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -127,11 +128,9 @@ class AppDelegate: NSObject {
 
     private func toggleAddingToLoginItems(enable: Bool) {
         let appPath = NSBundle.mainBundle().bundlePath
+        LoginServiceKit.removePathFromLoginItems(appPath)
         if enable {
-            NMLoginItems.removePathFromLoginItems(appPath)
-            NMLoginItems.addPathToLoginItems(appPath, hide: false)
-        } else {
-            NMLoginItems.removePathFromLoginItems(appPath)
+            LoginServiceKit.addPathToLoginItems(appPath)
         }
     }
 

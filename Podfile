@@ -14,5 +14,6 @@ target 'Clipy' do
   pod 'RxSwift'
   pod 'NSObject+Rx'
   pod "RxOptional"
+  pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
 
 end
