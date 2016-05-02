@@ -70,7 +70,7 @@ extension PasteboardManager {
 // MARK: -Paste
 extension PasteboardManager {
     static func paste() {
-        if !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefInputPasteCommandKey) { return }
+        if !NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.inputPasteCommand) { return }
 
         dispatch_async(dispatch_get_main_queue()) {
             let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)

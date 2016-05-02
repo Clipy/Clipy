@@ -32,7 +32,7 @@ final class ClipManager: NSObject {
 
     // MARK: - Initialize
     override init() {
-        clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !defaults.boolForKey(kCPYPrefReorderClipsAfterPasting))
+        clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !defaults.boolForKey(Constants.UserDefaults.reorderClipsAfterPasting))
         super.init()
         startTimer()
     }
@@ -67,19 +67,19 @@ extension ClipManager {
 private extension ClipManager {
     private func bind() {
         // Store Type
-        defaults.rx_observe([String: NSNumber].self, kCPYPrefStoreTypesKey)
+        defaults.rx_observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
             .filterNil()
             .subscribeNext { [unowned self] types in
                 self.storeTypes = types
             }.addDisposableTo(rx_disposeBag)
         // Observe Interval
-        defaults.rx_observe(Float.self, kCPYPrefTimeIntervalKey, options: [.New])
+        defaults.rx_observe(Float.self, Constants.UserDefaults.timeInterval, options: [.New])
             .filterNil()
             .subscribeNext { [unowned self] _ in
                 self.startTimer()
             }.addDisposableTo(rx_disposeBag)
         // Sort clips
-        defaults.rx_observe(Bool.self, kCPYPrefReorderClipsAfterPasting, options: [.New])
+        defaults.rx_observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.New])
             .filterNil()
             .subscribeNext { [unowned self] enabled in
                 self.clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !enabled)
@@ -92,10 +92,10 @@ extension ClipManager {
     func startTimer() {
         stopTimer()
 
-        var timeInterval = defaults.floatForKey(kCPYPrefTimeIntervalKey)
+        var timeInterval = defaults.floatForKey(Constants.UserDefaults.timeInterval)
         if timeInterval > 1.0 {
             timeInterval = 1.0
-            defaults.setFloat(1.0, forKey: kCPYPrefTimeIntervalKey)
+            defaults.setFloat(1.0, forKey: Constants.UserDefaults.timeInterval)
         }
 
         pasteboardObservingTimer = NSTimer(timeInterval: NSTimeInterval(timeInterval),
@@ -131,11 +131,11 @@ private extension ClipManager {
         if !storeTypes.values.contains(NSNumber(bool: true)) { return }
 
         let data = CPYClipData(pasteboard: pasteboard, types: types)
-        let isCopySameHistory = defaults.boolForKey(kCPYPrefCopySameHistroyKey)
+        let isCopySameHistory = defaults.boolForKey(Constants.UserDefaults.copySameHistory)
         // Search same history
         if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
 
-        let isOverwriteHistory = defaults.boolForKey(kCPYPrefOverwriteSameHistroyKey)
+        let isOverwriteHistory = defaults.boolForKey(Constants.UserDefaults.overwriteSameHistory)
         let hash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
 
         // Save DB
@@ -153,8 +153,8 @@ private extension ClipManager {
 
         // Save thumbnail image
         if let image = data.image where data.primaryType == NSTIFFPboardType {
-            let thumbnailWidth = defaults.integerForKey(kCPYPrefThumbnailWidthKey)
-            let thumbnailHeight = defaults.integerForKey(kCPYPrefThumbnailHeightKey)
+            let thumbnailWidth = defaults.integerForKey(Constants.UserDefaults.thumbnailWidth)
+            let thumbnailHeight = defaults.integerForKey(Constants.UserDefaults.thumbnailHeight)
 
             if let thumbnailImage = image.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) {
                 PINCache.sharedCache().setObject(thumbnailImage, forKey: String(unixTime))

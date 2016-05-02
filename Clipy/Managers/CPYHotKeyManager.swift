@@ -23,14 +23,14 @@ class CPYHotKeyManager: NSObject {
         var map = [String: AnyObject]()
         var dict = [String: AnyObject]()
 
-        dict = [kIndex: NSNumber(unsignedInteger: 0), kSelector: "popUpClipMenu:"]
-        map.updateValue(dict, forKey: kClipMenuIdentifier)
+        dict = [Constants.Common.index: NSNumber(unsignedInteger: 0), Constants.Common.selector: "popUpClipMenu:"]
+        map.updateValue(dict, forKey: Constants.Menu.clip)
 
-        dict = [kIndex: NSNumber(unsignedInteger: 1), kSelector: "popUpHistoryMenu:"]
-        map.updateValue(dict, forKey: kHistoryMenuIdentifier)
+        dict = [Constants.Common.index: NSNumber(unsignedInteger: 1), Constants.Common.selector: "popUpHistoryMenu:"]
+        map.updateValue(dict, forKey: Constants.Menu.history)
 
-        dict = [kIndex: NSNumber(unsignedInteger: 2), kSelector: "popUpSnippetsMenu:"]
-        map.updateValue(dict, forKey: kSnippetsMenuIdentifier)
+        dict = [Constants.Common.index: NSNumber(unsignedInteger: 2), Constants.Common.selector: "popUpSnippetsMenu:"]
+        map.updateValue(dict, forKey: Constants.Menu.snippet)
 
         return map
     }
@@ -62,7 +62,7 @@ class CPYHotKeyManager: NSObject {
 
         let hotKeyMap = sharedManager.hotkeyMap
         for (key, value) in hotKeyMap {
-            if let dict = value as? [String: AnyObject], let indexNumber = dict[kIndex] as? NSNumber {
+            if let dict = value as? [String: AnyObject], let indexNumber = dict[Constants.Common.index] as? NSNumber {
                 let index = indexNumber.integerValue
                 let newKeyCombo = newCombos[index]
                 hotKeyCombos.updateValue(newKeyCombo.plistRepresentation(), forKey: key)
@@ -77,7 +77,7 @@ class CPYHotKeyManager: NSObject {
     func registerHotKeys() {
         let hotKeyCenter = PTHotKeyCenter.sharedCenter()
 
-        let hotKeyCombs = defaults.objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
+        let hotKeyCombs = defaults.objectForKey(Constants.UserDefaults.hotKeys) as! [String: AnyObject]
 
         let defaultHotKeyCombos = CPYHotKeyManager.defaultHotKeyCombos()
         for (key, _) in defaultHotKeyCombos {
@@ -90,7 +90,7 @@ class CPYHotKeyManager: NSObject {
             let hotKey = PTHotKey(identifier: key, keyCombo: keyCombo)
 
             let hotKeyDict = hotkeyMap[key] as! [String: AnyObject]
-            let selectorName = hotKeyDict[kSelector] as! String
+            let selectorName = hotKeyDict[Constants.Common.selector] as! String
             hotKey.setTarget(self)
             hotKey.setAction(Selector(selectorName))
 
@@ -124,7 +124,7 @@ class CPYHotKeyManager: NSObject {
 // MARK: - Binding
 private extension CPYHotKeyManager {
     private func bind() {
-        defaults.rx_observe([String: AnyObject].self, kCPYPrefHotKeysKey, options: [.New])
+        defaults.rx_observe([String: AnyObject].self, Constants.UserDefaults.hotKeys, options: [.New])
             .filterNil()
             .subscribeNext { [weak self] keys in
                  self?.registerHotKeys()
