@@ -25,7 +25,6 @@ final class ClipManager: NSObject {
     // Other
     private let defaults = NSUserDefaults.standardUserDefaults()
     private let realm = RLMRealm.defaultRealm()
-    private let pasteboard = NSPasteboard.generalPasteboard()
     // Realm Result
     // TODO: メニューからこちらを参照する
     private var clipResults: RLMResults
@@ -115,9 +114,11 @@ extension ClipManager {
 
     func updateClips() {
         lock.lock()
+        let pasteboard = NSPasteboard.generalPasteboard()
         if pasteboard.changeCount != cachedChangeCount {
             cachedChangeCount = pasteboard.changeCount
-            createClip()
+            let copyPasteboard = NSPasteboard(byFilteringTypesInPasteboard: pasteboard)
+            createClip(copyPasteboard)
         }
         lock.unlock()
     }
@@ -125,7 +126,7 @@ extension ClipManager {
 
 // MARK: - Create Clips
 private extension ClipManager {
-    private func createClip() {
+    private func createClip(pasteboard: NSPasteboard) {
         let types = clipTypes(pasteboard)
         if types.isEmpty { return }
         if !storeTypes.values.contains(NSNumber(bool: true)) { return }
