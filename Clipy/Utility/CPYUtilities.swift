@@ -76,24 +76,6 @@ final class CPYUtilities {
         RLMRealm.defaultRealm()
     }
 
-    static func paste() -> Bool {
-        if !NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefInputPasteCommandKey) {
-            return false
-        }
-
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
-            CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
-            CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVDown)
-
-            let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
-            CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
-            CGEventPost(CGEventTapLocation.CGHIDEventTap, keyVUp)
-        })
-
-        return true
-    }
-
     static func applicationSupportFolder() -> String {
         let paths = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)
         var basePath: String!
