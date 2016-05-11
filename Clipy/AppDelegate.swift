@@ -86,7 +86,7 @@ class AppDelegate: NSObject {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
         if let primaryKey = sender.representedObject as? String, let clip = CPYClip(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyClipToPasteboard(clip)
-            CPYUtilities.paste()
+            PasteboardManager.paste()
         } else {
             Answers.logCustomEventWithName("Cann't fetch clip data", customAttributes: nil)
             NSBeep()
@@ -97,7 +97,7 @@ class AppDelegate: NSObject {
         Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
         if let primaryKey = sender.representedObject as? String, let snippet = CPYSnippet(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
-            CPYUtilities.paste()
+            PasteboardManager.paste()
         } else {
             Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
             NSBeep()
