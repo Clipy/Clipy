@@ -83,7 +83,7 @@ private extension MenuManager {
     private func bind() {
         // Realm Notification
         clipToken = CPYClip.allObjects()
-                        .addNotificationBlock { [unowned self] (results, error)  in
+                        .addNotificationBlock { [unowned self] (results, change, error) in
                             self.createClipMenu()
                         }
         // Menu icon

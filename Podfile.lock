@@ -6,15 +6,15 @@ PODS:
   - NSObject+Rx (1.2.1):
     - RxSwift (~> 2.1)
   - PINCache (2.2.2)
-  - Realm (0.98.6):
-    - Realm/Headers (= 0.98.6)
-  - Realm/Headers (0.98.6)
-  - RxCocoa (2.3.1):
-    - RxSwift (~> 2.3.1)
+  - Realm (0.102.0):
+    - Realm/Headers (= 0.102.0)
+  - Realm/Headers (0.102.0)
+  - RxCocoa (2.4):
+    - RxSwift (~> 2.4)
   - RxOptional (2.0.0):
     - RxCocoa (~> 2.0)
     - RxSwift (~> 2.0)
-  - RxSwift (2.3.1)
+  - RxSwift (2.4)
   - Sparkle (1.14.0)
 
 DEPENDENCIES:
@@ -44,10 +44,10 @@ SPEC CHECKSUMS:
   LoginServiceKit: 92aee420b05d163e356f6c5cbef64dd23eef93e1
   NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
   PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
-  Realm: 44803f35418c5d89b27825a564247fcd190de37e
-  RxCocoa: a2baaf3462b989559a51dce59d78fbebb8fe0afa
+  Realm: 5d219f9037e3ec2019c599b8227bfc95433cb10e
+  RxCocoa: 7d6cd877de99f5640306b3d6cf87f580c1d91b61
   RxOptional: b77fb47a0190213cf8a37c7a2b7fda28160b4563
-  RxSwift: 829b2843e9eddc77a02cb3f5117f0d55f8f646f1
+  RxSwift: 67b9ef4e8b34fb394e200e754c6a09cc16559f94
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
 
 COCOAPODS: 0.39.0
