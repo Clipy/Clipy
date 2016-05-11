@@ -32,7 +32,7 @@ private extension CPYShortcutsPreferenceViewController {
         shortcutRecorders = [mainShortcutRecorder, historyShortcutRecorder, snippetsShortcutRecorder]
 
         let hotKeyMap = CPYHotKeyManager.sharedManager.hotkeyMap
-        let hotKeyCombos = defaults.objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
+        let hotKeyCombos = defaults.objectForKey(Constants.UserDefaults.hotKeys) as! [String: AnyObject]
         for identifier in hotKeyCombos.keys {
 
             let keyComboPlist = hotKeyCombos[identifier] as! [String: AnyObject]
@@ -40,7 +40,7 @@ private extension CPYShortcutsPreferenceViewController {
             let modifiers = UInt(keyComboPlist["modifiers"]! as! NSNumber)
 
             if let keys = hotKeyMap[identifier] as? [String: AnyObject] {
-                let index = keys[kIndex] as! Int
+                let index = keys[Constants.Common.index] as! Int
                 let recorder = shortcutRecorders[index]
                 let keyCombo = KeyCombo(flags: recorder.carbonToCocoaFlags(modifiers), code: keyCode)
                 recorder.keyCombo = keyCombo
@@ -54,20 +54,20 @@ private extension CPYShortcutsPreferenceViewController {
 
         var identifier = ""
         if aRecorder == mainShortcutRecorder {
-            identifier = kClipMenuIdentifier
+            identifier = Constants.Menu.clip
         } else if aRecorder == historyShortcutRecorder {
-            identifier = kHistoryMenuIdentifier
+            identifier = Constants.Menu.history
         } else if aRecorder == snippetsShortcutRecorder {
-            identifier = kSnippetsMenuIdentifier
+            identifier = Constants.Menu.snippet
         }
 
         let hotKeyCenter = PTHotKeyCenter.sharedCenter()
         let oldHotKey = hotKeyCenter.hotKeyWithIdentifier(identifier)
         hotKeyCenter.unregisterHotKey(oldHotKey)
 
-        var hotKeyPrefs = defaults.objectForKey(kCPYPrefHotKeysKey) as! [String: AnyObject]
+        var hotKeyPrefs = defaults.objectForKey(Constants.UserDefaults.hotKeys) as! [String: AnyObject]
         hotKeyPrefs.updateValue(newKeyCombo.plistRepresentation(), forKey: identifier)
-        defaults.setObject(hotKeyPrefs, forKey: kCPYPrefHotKeysKey)
+        defaults.setObject(hotKeyPrefs, forKey: Constants.UserDefaults.hotKeys)
         defaults.synchronize()
     }
 }

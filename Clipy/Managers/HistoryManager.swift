@@ -60,7 +60,7 @@ extension HistoryManager {
 
     private func trimHistory() {
         let clips = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
-        let maxHistorySize = defaults.integerForKey(kCPYPrefMaxHistorySizeKey)
+        let maxHistorySize = defaults.integerForKey(Constants.UserDefaults.maxHistorySize)
 
         if maxHistorySize < Int(clips.count) {
             if let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as? CPYClip where !lastClip.invalidated {

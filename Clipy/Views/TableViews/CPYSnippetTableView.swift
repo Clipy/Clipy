@@ -28,7 +28,7 @@ class CPYSnippetTableView: NSTableView {
         setDelegate(self)
         setDataSource(self)
 
-        registerForDraggedTypes([kDraggedDataType])
+        registerForDraggedTypes([Constants.Common.draggedDataType])
         setDraggingSourceOperationMask(NSDragOperation.Move, forLocal: true)
     }
 
@@ -94,18 +94,18 @@ extension CPYSnippetTableView: NSTableViewDelegate {
     }
 
     func tableView(tableView: NSTableView, writeRowsWithIndexes rowIndexes: NSIndexSet, toPasteboard pboard: NSPasteboard) -> Bool {
-        let draggedTypes = [kDraggedDataType]
+        let draggedTypes = [Constants.Common.draggedDataType]
         pboard.declareTypes(draggedTypes, owner: self)
 
         let data = NSKeyedArchiver.archivedDataWithRootObject(rowIndexes)
-        pboard.setData(data, forType: kDraggedDataType)
+        pboard.setData(data, forType: Constants.Common.draggedDataType)
 
         return true
     }
 
     func tableView(tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableViewDropOperation) -> NSDragOperation {
         let pboard = info.draggingPasteboard()
-        let draggedTypes = [kDraggedDataType]
+        let draggedTypes = [Constants.Common.draggedDataType]
         let draggingSource: AnyObject? = info.draggingSource()
 
         if pboard.availableTypeFromArray(draggedTypes) != nil {
@@ -122,7 +122,7 @@ extension CPYSnippetTableView: NSTableViewDelegate {
     func tableView(tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableViewDropOperation) -> Bool {
 
         let pboard = info.draggingPasteboard()
-        if let data = pboard.dataForType(kDraggedDataType) {
+        if let data = pboard.dataForType(Constants.Common.draggedDataType) {
             if let rowIndexes = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? NSIndexSet {
                 if row == rowIndexes.firstIndex {
                     return false

@@ -23,39 +23,39 @@ final class CPYUtilities {
     static func registerUserDefaultKeys() {
         var defaultValues = [String: AnyObject]()
 
-        defaultValues.updateValue(CPYHotKeyManager.defaultHotKeyCombos(), forKey: kCPYPrefHotKeysKey)
+        defaultValues.updateValue(CPYHotKeyManager.defaultHotKeyCombos(), forKey: Constants.UserDefaults.hotKeys)
         /* General */
-        defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefLoginItemKey)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefSuppressAlertForLoginItemKey)
-        defaultValues.updateValue(NSNumber(integer: 30), forKey: kCPYPrefMaxHistorySizeKey)
-        defaultValues.updateValue(NSNumber(integer: 1), forKey: kCPYPrefShowStatusItemKey)
-        defaultValues.updateValue(NSNumber(float: 0.75), forKey: kCPYPrefTimeIntervalKey)
-        defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: kCPYPrefStoreTypesKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefInputPasteCommandKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefReorderClipsAfterPasting)
+        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.loginItem)
+        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+        defaultValues.updateValue(NSNumber(integer: 30), forKey: Constants.UserDefaults.maxHistorySize)
+        defaultValues.updateValue(NSNumber(integer: 1), forKey: Constants.UserDefaults.showStatusItem)
+        defaultValues.updateValue(NSNumber(float: 0.75), forKey: Constants.UserDefaults.timeInterval)
+        defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: Constants.UserDefaults.storeTypes)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.inputPasteCommand)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.reorderClipsAfterPasting)
 
         /* Menu */
-        defaultValues.updateValue(NSNumber(integer: 16), forKey: kCPYPrefMenuIconSizeKey)
-        defaultValues.updateValue(NSNumber(integer: 20), forKey: kCPYPrefMaxMenuItemTitleLengthKey)
-        defaultValues.updateValue(NSNumber(integer: 0), forKey: kCPYPrefNumberOfItemsPlaceInlineKey)
-        defaultValues.updateValue(NSNumber(integer: 10), forKey: kCPYPrefNumberOfItemsPlaceInsideFolderKey)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefMenuItemsTitleStartWithZeroKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowAlertBeforeClearHistoryKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefAddClearHistoryMenuItemKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowIconInTheMenuKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefMenuItemsAreMarkedWithNumbersKey)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: kCPYPrefAddNumericKeyEquivalentsKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowToolTipOnMenuItemKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefShowImageInTheMenuKey)
-        defaultValues.updateValue(NSNumber(integer: 200), forKey: kCPYPrefMaxLengthOfToolTipKey)
-        defaultValues.updateValue(NSNumber(integer: 100), forKey: kCPYPrefThumbnailWidthKey)
-        defaultValues.updateValue(NSNumber(integer: 32), forKey: kCPYPrefThumbnailHeightKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefOverwriteSameHistroyKey)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYPrefCopySameHistroyKey)
+        defaultValues.updateValue(NSNumber(integer: 16), forKey: Constants.UserDefaults.menuIconSize)
+        defaultValues.updateValue(NSNumber(integer: 20), forKey: Constants.UserDefaults.maxMenuItemTitleLength)
+        defaultValues.updateValue(NSNumber(integer: 0), forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
+        defaultValues.updateValue(NSNumber(integer: 10), forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
+        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.addClearHistoryMenuItem)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showIconInTheMenu)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
+        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.addNumericKeyEquivalents)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showToolTipOnMenuItem)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showImageInTheMenu)
+        defaultValues.updateValue(NSNumber(integer: 200), forKey: Constants.UserDefaults.maxLengthOfToolTip)
+        defaultValues.updateValue(NSNumber(integer: 100), forKey: Constants.UserDefaults.thumbnailWidth)
+        defaultValues.updateValue(NSNumber(integer: 32), forKey: Constants.UserDefaults.thumbnailHeight)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.overwriteSameHistory)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.copySameHistory)
 
         /* Updates */
-        defaultValues.updateValue(NSNumber(bool: true), forKey: kCPYEnableAutomaticCheckKey)
-        defaultValues.updateValue(NSNumber(int: 86400), forKey: kCPYUpdateCheckIntervalKey)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.Update.enableAutomaticCheck)
+        defaultValues.updateValue(NSNumber(int: 86400), forKey: Constants.Update.checkInterval)
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
@@ -85,7 +85,7 @@ final class CPYUtilities {
             basePath = NSTemporaryDirectory()
         }
 
-        return (basePath as NSString).stringByAppendingPathComponent(kApplicationName)
+        return (basePath as NSString).stringByAppendingPathComponent(Constants.Application.name)
     }
 
     static func prepareSaveToPath(path: String) -> Bool {
