@@ -48,7 +48,7 @@ class AppDelegate: NSObject {
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
-        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
+        CPYPreferencesWindowController.sharedController.showWindow(self)
     }
 
     func showSnippetEditorWindow() {
