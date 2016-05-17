@@ -7,6 +7,5 @@
 #import <PTHotKey/PTHotKeyCenter.h>
 
 // Library
-#import "DBPrefsWindowController.h"
 #import "ShortcutRecorder.h"
 
