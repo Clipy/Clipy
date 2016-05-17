@@ -125,8 +125,6 @@ class CPYSnippetEditorWindowController: NSWindowController {
             }
 
         }
-
-        NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
     }
 
     @IBAction func toggleSnippetEnable(sender: AnyObject) {
@@ -199,8 +197,6 @@ class CPYSnippetEditorWindowController: NSWindowController {
             snippetTableView.setFolder(nil)
             snippetContentTextView.string = ""
         }
-
-        NSNotificationCenter.defaultCenter().postNotificationName(kCPYChangeContentsNotification, object: nil)
     }
 
     @IBAction func addFolder(sender: AnyObject) {
@@ -218,7 +214,7 @@ class CPYSnippetEditorWindowController: NSWindowController {
     }
 
     @IBAction func importSnippets(sender: AnyObject) {
-        let fileTypes = [kXMLFileType]
+        let fileTypes = [Constants.Xml.fileType]
         let openPanel = NSOpenPanel()
         openPanel.allowsMultipleSelection = false
 
@@ -246,31 +242,31 @@ class CPYSnippetEditorWindowController: NSWindowController {
     }
 
     @IBAction func exportSnippets(sender: AnyObject) {
-        guard let rootElement = NSXMLNode.elementWithName(kRootElement) as? NSXMLElement else { return }
+        guard let rootElement = NSXMLNode.elementWithName(Constants.Xml.rootElement) as? NSXMLElement else { return }
         let results = CPYSnippetManager.sharedManager.loadSortedFolders().flatMap { $0 as? CPYFolder }
 
         for folder in results {
             let folderTitle = folder.title
             let snippets = folder.snippets.sortedResultsUsingProperty("index", ascending: true).flatMap { $0 as? CPYSnippet }
 
-            guard let folderElement = NSXMLNode.elementWithName(kFolderElement) as? NSXMLElement else { continue }
-            guard let folderNode = NSXMLNode.elementWithName(kTitleElement, stringValue: folderTitle) as? NSXMLNode else { continue }
+            guard let folderElement = NSXMLNode.elementWithName(Constants.Xml.folderElement) as? NSXMLElement else { continue }
+            guard let folderNode = NSXMLNode.elementWithName(Constants.Xml.titleElement, stringValue: folderTitle) as? NSXMLNode else { continue }
 
             folderElement.addChild(folderNode)
 
-            guard let snippetsElement = NSXMLNode.elementWithName(kSnippetsElement) as? NSXMLElement else { continue }
+            guard let snippetsElement = NSXMLNode.elementWithName(Constants.Xml.snippetsElement) as? NSXMLElement else { continue }
 
             for snippet in snippets {
                 let snippetTitle = snippet.title
                 let content = snippet.content
 
-                guard let snippetElement = NSXMLNode.elementWithName(kSnippetElement) as? NSXMLElement else { continue }
-                guard let snippetNode = NSXMLNode.elementWithName(kTitleElement, stringValue: snippetTitle) as? NSXMLNode else { continue }
+                guard let snippetElement = NSXMLNode.elementWithName(Constants.Xml.snippetElement) as? NSXMLElement else { continue }
+                guard let snippetNode = NSXMLNode.elementWithName(Constants.Xml.titleElement, stringValue: snippetTitle) as? NSXMLNode else { continue }
 
                 snippetElement.addChild(snippetNode)
 
                 let contentElement = NSXMLElement(kind: .ElementKind, options: Int(NSXMLNodePreserveWhitespace))
-                contentElement.name = kContentElement
+                contentElement.name = Constants.Xml.contentElement
                 contentElement.stringValue = content
 
                 snippetElement.addChild(contentElement)
@@ -289,7 +285,7 @@ class CPYSnippetEditorWindowController: NSWindowController {
         let savePanel = NSSavePanel()
         savePanel.accessoryView = nil
         savePanel.canSelectHiddenExtension = true
-        savePanel.allowedFileTypes = [kXMLFileType]
+        savePanel.allowedFileTypes = [Constants.Xml.fileType]
         savePanel.allowsOtherFileTypes = false
 
         var returnCode = 0
@@ -329,7 +325,7 @@ extension CPYSnippetEditorWindowController: NSWindowDelegate {
             }
         }
         NSApp.deactivate()
-        NSNotificationCenter.defaultCenter().postNotificationName(kCPYSnippetEditorWillCloseNotification, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(Constants.Notification.closeSnippetEditor, object: nil)
     }
 }
 
@@ -407,7 +403,7 @@ extension CPYSnippetEditorWindowController {
         folders.flatMap { $0 as? [String: AnyObject] }
             .forEach { folder in
                 let folderModel = CPYFolder()
-                folderModel.title = folder[kTitle] as? String ?? "untitled folder"
+                folderModel.title = folder[Constants.Common.title] as? String ?? "untitled folder"
 
                 if let lastFolder = CPYSnippetManager.sharedManager.loadSortedFolders().lastObject() as? CPYFolder {
                     folderModel.index = lastFolder.index + 1
@@ -420,12 +416,12 @@ extension CPYSnippetEditorWindowController {
                     realm.addObject(folderModel)
                 }
 
-                if let snippets = folder[kSnippets] as? [AnyObject] {
+                if let snippets = folder[Constants.Common.snippets] as? [AnyObject] {
                     snippets.flatMap { $0 as? [String: String] }
                         .forEach { snippet in
                             let snippetModel = CPYSnippet()
-                            snippetModel.title = snippet[kTitle] ?? "untitled snippet"
-                            snippetModel.content = snippet[kContent] ?? ""
+                            snippetModel.title = snippet[Constants.Common.title] ?? "untitled snippet"
+                            snippetModel.content = snippet[Constants.Common.content] ?? ""
 
                             if let lastSnippet = folderModel.snippets.sortedResultsUsingProperty("index", ascending: true).lastObject() as? CPYSnippet {
                                 snippetModel.index = lastSnippet.index + 1
@@ -451,12 +447,12 @@ extension CPYSnippetEditorWindowController: NSXMLParserDelegate {
     func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         currentElementContent = ""
 
-        if elementName == kRootElement {
+        if elementName == Constants.Xml.rootElement {
             foldersFromFile = [AnyObject]()
-        } else if elementName == kFolderElement {
-            currentFolder = [kType: kFolderElement, kSnippets: [String]()]
-        } else if elementName == kSnippetElement {
-            currentSnippet = [kType: kSnippetElement]
+        } else if elementName == Constants.Xml.folderElement {
+            currentFolder = [Constants.Xml.type: Constants.Xml.folderElement, Constants.Common.snippets: [String]()]
+        } else if elementName == Constants.Xml.snippetElement {
+            currentSnippet = [Constants.Xml.type: Constants.Xml.snippetElement]
         }
     }
 
@@ -467,20 +463,20 @@ extension CPYSnippetEditorWindowController: NSXMLParserDelegate {
     }
 
     func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        if elementName == kFolderElement {
+        if elementName == Constants.Xml.folderElement {
             foldersFromFile.append(currentFolder)
             currentFolder = [String: AnyObject]()
             return
-        } else if elementName == kSnippetElement {
-            if var snippets = currentFolder[kSnippets] as? [AnyObject] {
+        } else if elementName == Constants.Xml.snippetElement {
+            if var snippets = currentFolder[Constants.Common.snippets] as? [AnyObject] {
                 snippets.append(currentSnippet)
-                currentFolder.updateValue(snippets, forKey: kSnippets)
+                currentFolder.updateValue(snippets, forKey: Constants.Common.snippets)
             }
             currentSnippet = [String: String]()
             return
         }
 
-        if elementName == kTitleElement {
+        if elementName == Constants.Xml.titleElement {
             if currentElementContent.isEmpty {
                 return
             }
@@ -489,7 +485,7 @@ extension CPYSnippetEditorWindowController: NSXMLParserDelegate {
             } else {
                 currentFolder.updateValue(currentElementContent, forKey: elementName)
             }
-        } else if elementName == kContentElement {
+        } else if elementName == Constants.Xml.contentElement {
             if currentElementContent.isEmpty {
                 return
             }

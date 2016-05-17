@@ -14,6 +14,7 @@ import RxCocoa
 import RxSwift
 import RxOptional
 import NSObject_Rx
+import LoginServiceKit
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -32,9 +33,7 @@ class AppDelegate: NSObject {
     // MARK: - Override Methods
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            if CPYClip.allObjects().count == 0 {
-                return false
-            }
+            return (CPYClip.allObjects().count != 0)
         }
         return true
     }
@@ -49,7 +48,7 @@ class AppDelegate: NSObject {
     // MARK: - Menu Actions
     func showPreferenceWindow() {
         NSApp.activateIgnoringOtherApps(true)
-        CPYPreferenceWindowController.sharedPrefsWindowController().showWindow(self)
+        CPYPreferencesWindowController.sharedController.showWindow(self)
     }
 
     func showSnippetEditorWindow() {
@@ -58,7 +57,7 @@ class AppDelegate: NSObject {
     }
 
     func clearAllHistory() {
-        let isShowAlert = defaults.boolForKey(kCPYPrefShowAlertBeforeClearHistoryKey)
+        let isShowAlert = defaults.boolForKey(Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
             alert.messageText = LocalizedString.ClearHistory.value
@@ -73,7 +72,7 @@ class AppDelegate: NSObject {
             if result != NSAlertFirstButtonReturn { return }
 
             if alert.suppressionButton?.state == NSOnState {
-                defaults.setBool(false, forKey: kCPYPrefShowAlertBeforeClearHistoryKey)
+                defaults.setBool(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
             }
             defaults.synchronize()
         }
@@ -85,7 +84,7 @@ class AppDelegate: NSObject {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
         if let primaryKey = sender.representedObject as? String, let clip = CPYClip(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyClipToPasteboard(clip)
-            CPYUtilities.paste()
+            PasteboardManager.paste()
         } else {
             Answers.logCustomEventWithName("Cann't fetch clip data", customAttributes: nil)
             NSBeep()
@@ -96,7 +95,7 @@ class AppDelegate: NSObject {
         Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
         if let primaryKey = sender.representedObject as? String, let snippet = CPYSnippet(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
-            CPYUtilities.paste()
+            PasteboardManager.paste()
         } else {
             Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
             NSBeep()
@@ -115,39 +114,28 @@ class AppDelegate: NSObject {
 
         //  Launch on system startup
         if alert.runModal() == NSAlertFirstButtonReturn {
-            defaults.setBool(true, forKey: kCPYPrefLoginItemKey)
+            defaults.setBool(true, forKey: Constants.UserDefaults.loginItem)
             toggleLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSOnState {
-            defaults.setBool(true, forKey: kCPYPrefSuppressAlertForLoginItemKey)
+            defaults.setBool(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         }
         defaults.synchronize()
     }
 
     private func toggleAddingToLoginItems(enable: Bool) {
         let appPath = NSBundle.mainBundle().bundlePath
+        LoginServiceKit.removePathFromLoginItems(appPath)
         if enable {
-            NMLoginItems.removePathFromLoginItems(appPath)
-            NMLoginItems.addPathToLoginItems(appPath, hide: false)
-        } else {
-            NMLoginItems.removePathFromLoginItems(appPath)
+            LoginServiceKit.addPathToLoginItems(appPath)
         }
     }
 
     private func toggleLoginItemState() {
-        let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(kCPYPrefLoginItemKey)
+        let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
-
-    // MARK: - Version Up Methods
-    private func checkUpdates() {
-        let feed = "https://clipy-app.com/appcast.xml"
-        if let feedURL = NSURL(string: feed) {
-            SUUpdater.sharedUpdater().feedURL = feedURL
-        }
-    }
-
 }
 
 // MARK: - NSApplication Delegate
@@ -164,15 +152,15 @@ extension AppDelegate: NSApplicationDelegate {
         CPYHotKeyManager.sharedManager.registerHotKeys()
 
         // Show Login Item
-        if !defaults.boolForKey(kCPYPrefLoginItemKey) && !defaults.boolForKey(kCPYPrefSuppressAlertForLoginItemKey) {
+        if !defaults.boolForKey(Constants.UserDefaults.loginItem) && !defaults.boolForKey(Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
 
         // Sparkle
         let updater = SUUpdater.sharedUpdater()
-        checkUpdates()
-        updater.automaticallyChecksForUpdates = defaults.boolForKey(kCPYEnableAutomaticCheckKey)
-        updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(kCPYUpdateCheckIntervalKey))
+        updater.feedURL = Constants.Application.appcastURL
+        updater.automaticallyChecksForUpdates = defaults.boolForKey(Constants.Update.enableAutomaticCheck)
+        updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(Constants.Update.checkInterval))
 
         // Binding Events
         bind()
@@ -192,7 +180,7 @@ extension AppDelegate: NSApplicationDelegate {
 private extension AppDelegate {
     private func bind() {
         // Login Item
-        defaults.rx_observe(Bool.self, kCPYPrefLoginItemKey, options: [.New])
+        defaults.rx_observe(Bool.self, Constants.UserDefaults.loginItem, options: [.New])
             .filterNil()
             .subscribeNext { [weak self] enabled in
                 self?.toggleLoginItemState()

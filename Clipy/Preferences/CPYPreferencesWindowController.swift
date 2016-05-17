@@ -73,7 +73,7 @@ extension CPYPreferencesWindowController {
 extension CPYPreferencesWindowController: NSWindowDelegate {
     func windowWillClose(notification: NSNotification) {
         if let viewController = viewController[2] as? CPYTypePreferenceViewController {
-           defaults.setObject(viewController.storeTypes, forKey: kCPYPrefStoreTypesKey)
+           defaults.setObject(viewController.storeTypes, forKey: Constants.UserDefaults.storeTypes)
             defaults.synchronize()
         }
         if let window = window where !window.makeFirstResponder(window) {

@@ -31,7 +31,6 @@ The source code is dependent on some libraries.
 * [PTHotKey](https://github.com/keith/PTHotKeyTest)
 * [Shortcut Recorder](https://github.com/iKorich/shortcutrecorder)
 * [Sparkle](https://github.com/sparkle-project/Sparkle)
-* [DBPrefsWindowController](https://github.com/kgn/DBPrefsWindowController)
 * [Realm](https://realm.io/)
 * [PINCache](https://github.com/pinterest/PINCache)
 * [Fabric](https://fabric.io)
