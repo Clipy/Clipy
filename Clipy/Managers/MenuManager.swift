@@ -36,6 +36,7 @@ final class MenuManager: NSObject {
     private let folderResults = CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true)
     // Realm Token
     private var clipToken: RLMNotificationToken?
+    private var snippetToken: RLMNotificationToken?
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -73,6 +74,26 @@ extension MenuManager {
         }
         menu?.popUpMenuPositioningItem(nil, atLocation: NSEvent.mouseLocation(), inView: nil)
     }
+
+    func popUpSnippetFolder(folder: CPYFolder) {
+        let folderMenu = NSMenu(title: folder.title)
+        // Folder title
+        let labelItem = NSMenuItem(title: folder.title, action: nil)
+        labelItem.enabled = false
+        folderMenu.addItem(labelItem)
+        // Snippets
+        var index = firstIndexOfMenuItems()
+        folder.snippets
+            .sortedResultsUsingProperty("index", ascending: true)
+            .flatMap { $0 as? CPYSnippet }
+            .filter { $0.enable }
+            .forEach { snippet in
+                let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
+                folderMenu.addItem(subMenuItem)
+                index += 1
+            }
+        folderMenu.popUpMenuPositioningItem(nil, atLocation: NSEvent.mouseLocation(), inView: nil)
+    }
 }
 
 // MARK: - Binding
@@ -80,7 +101,11 @@ private extension MenuManager {
     private func bind() {
         // Realm Notification
         clipToken = CPYClip.allObjects()
-                        .addNotificationBlock { [unowned self] (results, change, error) in
+                        .addNotificationBlock { [unowned self] (_, _, _) in
+                            self.createClipMenu()
+                        }
+        snippetToken = CPYFolder.allObjects()
+                        .addNotificationBlock { [unowned self] (_, _, _) in
                             self.createClipMenu()
                         }
         // Menu icon

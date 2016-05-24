@@ -22,7 +22,6 @@ import RxScreeen
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    let snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
     let defaults = NSUserDefaults.standardUserDefaults()
     let screenshotObserver = ScreenShotObserver()
 
@@ -56,7 +55,7 @@ class AppDelegate: NSObject {
 
     func showSnippetEditorWindow() {
         NSApp.activateIgnoringOtherApps(true)
-        snippetEditorController.showWindow(self)
+        CPYSnippetsEditorWindowController.sharedController.showWindow(self)
     }
 
     func clearAllHistory() {
