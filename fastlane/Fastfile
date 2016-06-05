@@ -37,7 +37,8 @@ platform :mac do
     scan(
       workspace: "Clipy.xcworkspace",
       scheme: "Clipy",
-      clean: true
+      skip_build: true,
+      verbose: true
     )
   end
 
