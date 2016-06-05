@@ -35,6 +35,8 @@ class CPYSnippetEditorWindowController: NSWindowController {
     @IBOutlet var snippetContentTextView: NSTextView! {
         didSet {
             snippetContentTextView.delegate = self
+            snippetContentTextView.automaticQuoteSubstitutionEnabled = false
+            snippetContentTextView.enabledTextCheckingTypes = 0
         }
     }
 
