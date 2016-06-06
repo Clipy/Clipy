@@ -6,6 +6,8 @@
 //  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 //
 
+// swiftlint:disable file_length
+
 import Cocoa
 import Realm
 
@@ -497,3 +499,5 @@ extension CPYSnippetEditorWindowController: NSXMLParserDelegate {
         currentElementContent = ""
     }
 }
+
+// swiftlint:enable file_length

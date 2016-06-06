@@ -82,7 +82,7 @@ class AppDelegate: NSObject {
 
     func selectClipMenuItem(sender: NSMenuItem) {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
-        if let primaryKey = sender.representedObject as? String, let clip = CPYClip(forPrimaryKey: primaryKey) {
+        if let primaryKey = sender.representedObject as? String, clip = CPYClip(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyClipToPasteboard(clip)
             PasteboardManager.paste()
         } else {
@@ -93,13 +93,17 @@ class AppDelegate: NSObject {
 
     func selectSnippetMenuItem(sender: AnyObject) {
         Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
-        if let primaryKey = sender.representedObject as? String, let snippet = CPYSnippet(forPrimaryKey: primaryKey) {
+        if let primaryKey = sender.representedObject as? String, snippet = CPYSnippet(forPrimaryKey: primaryKey) {
             PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
             PasteboardManager.paste()
         } else {
             Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
             NSBeep()
         }
+    }
+
+    func terminateApplication() {
+        NSApplication.sharedApplication().terminate(nil)
     }
 
     // MARK: - Login Item Methods
