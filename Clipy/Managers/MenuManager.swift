@@ -135,7 +135,7 @@ private extension MenuManager {
         clipMenu?.addItem(NSMenuItem(title: LocalizedString.EditSnippets.value, action: #selector(AppDelegate.showSnippetEditorWindow)))
         clipMenu?.addItem(NSMenuItem(title: LocalizedString.Preference.value, action: #selector(AppDelegate.showPreferenceWindow)))
         clipMenu?.addItem(NSMenuItem.separatorItem())
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.QuitClipy.value, action: "terminate:"))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.QuitClipy.value, action: #selector(AppDelegate.terminateApplication)))
 
         statusItem?.menu = clipMenu
     }

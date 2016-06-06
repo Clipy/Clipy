@@ -17,7 +17,7 @@ __Distribution Site__ : <https://clipy-app.com>
 * OS X El Capitan
 * Xcode 7.3
 * Swift 2.2
-* swiftlint 0.9.2
+* swiftlint 0.10.0
 
 ### How to Build
 0. Move to the project root directory

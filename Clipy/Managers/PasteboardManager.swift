@@ -55,7 +55,7 @@ extension PasteboardManager {
                     let url = data.URLs
                     pasteboard.setPropertyList(url, forType: NSURLPboardType)
                 case NSTIFFPboardType:
-                    if let image = data.image, let imageData = image.TIFFRepresentation {
+                    if let image = data.image, imageData = image.TIFFRepresentation {
                         pasteboard.setData(imageData, forType: NSTIFFPboardType)
                     }
                 default:

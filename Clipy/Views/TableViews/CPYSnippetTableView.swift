@@ -79,7 +79,7 @@ extension CPYSnippetTableView: NSTableViewDelegate {
     }
 
     func control(control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-        if let text = fieldEditor.string, let folder = snippetFolder {
+        if let text = fieldEditor.string, folder = snippetFolder {
             if let tableView = control as? NSTableView where text.characters.count != 0 {
                 if let snippet = folder.snippets.sortedResultsUsingProperty("index", ascending: true).objectAtIndex(UInt(tableView.selectedRow)) as? CPYSnippet {
                     let realm = RLMRealm.defaultRealm()
