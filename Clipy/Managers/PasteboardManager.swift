@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 import Crashlytics
 
 final class PasteboardManager {

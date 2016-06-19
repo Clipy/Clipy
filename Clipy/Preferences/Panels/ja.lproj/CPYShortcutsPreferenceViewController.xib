@@ -1,68 +1,110 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYShortcutsPreferenceViewController" customModule="Clipy" customModuleProvider="target">
             <connections>
-                <outlet property="historyShortcutRecorder" destination="EOu-Gk-Fs3" id="EqH-QM-23y"/>
-                <outlet property="mainShortcutRecorder" destination="wmV-Yb-1d8" id="Sfi-5x-bCj"/>
-                <outlet property="snippetsShortcutRecorder" destination="fzi-bS-9At" id="4zh-Up-UuC"/>
+                <outlet property="historyShortcutRecordView" destination="ObT-2X-2Nx" id="K1d-uw-XA0"/>
+                <outlet property="mainShortcutRecordView" destination="Sfr-2C-NFo" id="973-fE-XHk"/>
+                <outlet property="snippetShortcutRecordView" destination="gcN-yW-VR1" id="X9O-us-LcL"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="129"/>
+            <rect key="frame" x="0.0" y="0.0" width="480" height="150"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uTq-IP-dYk">
-                    <rect key="frame" x="61" y="13" width="359" height="104"/>
+                    <rect key="frame" x="44" y="10" width="392" height="130"/>
                     <subviews>
                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vzz-Iq-77h">
-                            <rect key="frame" x="15" y="45" width="152" height="17"/>
+                            <rect key="frame" x="15" y="56" width="121" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="履歴メニュー:" id="Abl-cO-JwU">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
-                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EOu-Gk-Fs3" customClass="SRRecorderControl">
-                            <rect key="frame" x="172" y="41" width="169" height="25"/>
-                            <connections>
-                                <outlet property="delegate" destination="-2" id="zYB-o2-xk5"/>
-                            </connections>
-                        </customView>
                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oYq-Bg-KGQ">
-                            <rect key="frame" x="15" y="75" width="152" height="17"/>
+                            <rect key="frame" x="15" y="101" width="121" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="メインメニュー:" id="5sL-G8-1io">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
-                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wmV-Yb-1d8" customClass="SRRecorderControl">
-                            <rect key="frame" x="172" y="71" width="169" height="25"/>
-                            <connections>
-                                <outlet property="delegate" destination="-2" id="nkb-qh-kp2"/>
-                            </connections>
-                        </customView>
                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ixj-RO-bKW">
-                            <rect key="frame" x="15" y="17" width="152" height="17"/>
+                            <rect key="frame" x="15" y="12" width="121" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="スニペットメニュー:" id="fXr-ry-5ds">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
-                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fzi-bS-9At" customClass="SRRecorderControl">
-                            <rect key="frame" x="172" y="13" width="169" height="25"/>
-                            <connections>
-                                <outlet property="delegate" destination="-2" id="Vkx-mc-0Jg"/>
-                            </connections>
+                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sfr-2C-NFo" customClass="RecordView" customModule="KeyHolder">
+                            <rect key="frame" x="142" y="93" width="250" height="34"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
+                                    <color key="value" red="0.1647058824" green="0.51764705879999995" blue="0.82352941180000006" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                    <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                    <real key="value" value="17"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                    <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                    <real key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </customView>
+                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ObT-2X-2Nx" customClass="RecordView" customModule="KeyHolder">
+                            <rect key="frame" x="142" y="47" width="250" height="34"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
+                                    <color key="value" red="0.1647058824" green="0.51764705879999995" blue="0.82352941180000006" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                    <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                    <real key="value" value="17"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                    <real key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                    <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </customView>
+                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gcN-yW-VR1" customClass="RecordView" customModule="KeyHolder">
+                            <rect key="frame" x="142" y="3" width="250" height="34"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
+                                    <color key="value" red="0.1647058824" green="0.51764705879999995" blue="0.82352941180000006" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                    <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                    <real key="value" value="17"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                    <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                    <real key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
                         </customView>
                     </subviews>
                 </view>
