@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 import Magnet
-import RxOptional
 
 final class HotKeyManager: NSObject {
     // MARK: - Properties
