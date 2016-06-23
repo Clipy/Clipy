@@ -79,8 +79,7 @@ extension HotKeyManager {
             let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo, target: self, action: type.selector)
             hotKey.register()
             // Save KeyCombo
-            let data = NSKeyedArchiver.archivedDataWithRootObject(keyCombo)
-            defaults.setObject(data, forKey: type.defaultsKey)
+            defaults.setArchiveData(keyCombo, forKey: type.defaultsKey)
         } else {
             // Remove KeyCombo
             defaults.removeObjectForKey(type.defaultsKey)
@@ -97,15 +96,15 @@ extension HotKeyManager {
         }
 
         // Main HotKey
-        if let data = defaults.objectForKey(Constants.HotKey.mainKeyCombo) as? NSData, let keyCombo = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? KeyCombo {
+        if let keyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) {
             mainKeyCombo.value = keyCombo
         }
         // History HotKey
-        if let data = defaults.objectForKey(Constants.HotKey.historyKeyCombo) as? NSData, let keyCombo = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? KeyCombo {
+        if let keyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo) {
             historyKeyCombo.value = keyCombo
         }
         // Snippet HotKey
-        if let data = defaults.objectForKey(Constants.HotKey.snippetKeyCombo) as? NSData, let keyCombo = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? KeyCombo {
+        if let keyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo) {
             snippetKeyCombo.value = keyCombo
         }
     }
@@ -115,22 +114,19 @@ extension HotKeyManager {
             // Main HotKey
             if let combo = keyCombos[Constants.Menu.clip] as? [String: AnyObject], keyCode = combo["keyCode"] as? Int, modifiers = combo["modifiers"] as? Int {
                 if let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: modifiers) {
-                    let archiveData = NSKeyedArchiver.archivedDataWithRootObject(keyCombo)
-                    defaults.setObject(archiveData, forKey: Constants.HotKey.mainKeyCombo)
+                    defaults.setArchiveData(keyCombo, forKey: Constants.HotKey.mainKeyCombo)
                 }
             }
             // History HotKey
             if let combo = keyCombos[Constants.Menu.history] as? [String: AnyObject], keyCode = combo["keyCode"] as? Int, modifiers = combo["modifiers"] as? Int {
                 if let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: modifiers) {
-                    let archiveData = NSKeyedArchiver.archivedDataWithRootObject(keyCombo)
-                    defaults.setObject(archiveData, forKey: Constants.HotKey.historyKeyCombo)
+                    defaults.setArchiveData(keyCombo, forKey: Constants.HotKey.historyKeyCombo)
                 }
             }
             // Snippet HotKey
             if let combo = keyCombos[Constants.Menu.snippet] as? [String: AnyObject], keyCode = combo["keyCode"] as? Int, modifiers = combo["modifiers"] as? Int {
                 if let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: modifiers) {
-                    let archiveData = NSKeyedArchiver.archivedDataWithRootObject(keyCombo)
-                    defaults.setObject(archiveData, forKey: Constants.HotKey.snippetKeyCombo)
+                    defaults.setArchiveData(keyCombo, forKey: Constants.HotKey.snippetKeyCombo)
                 }
             }
         }
