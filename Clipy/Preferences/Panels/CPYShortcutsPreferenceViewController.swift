@@ -17,8 +17,6 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     @IBOutlet weak var historyShortcutRecordView: RecordView!
     @IBOutlet weak var snippetShortcutRecordView: RecordView!
 
-    private let defaults = NSUserDefaults.standardUserDefaults()
-
     // MARK: - Initialize
     override func loadView() {
         super.loadView()
@@ -50,22 +48,26 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
     }
 
     func recordViewDidClearShortcut(recordView: RecordView) {
-        if recordView == mainShortcutRecordView {
+        switch recordView {
+        case mainShortcutRecordView:
             HotKeyManager.sharedManager.mainKeyCombo.value = nil
-        } else if recordView == historyShortcutRecordView {
+        case historyShortcutRecordView:
             HotKeyManager.sharedManager.historyKeyCombo.value = nil
-        } else if recordView == snippetShortcutRecordView {
+        case snippetShortcutRecordView:
             HotKeyManager.sharedManager.snippetKeyCombo.value = nil
+        default: break
         }
     }
 
     func recordView(recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
-        if recordView == mainShortcutRecordView {
+        switch recordView {
+        case mainShortcutRecordView:
             HotKeyManager.sharedManager.mainKeyCombo.value = keyCombo
-        } else if recordView == historyShortcutRecordView {
+        case historyShortcutRecordView:
             HotKeyManager.sharedManager.historyKeyCombo.value = keyCombo
-        } else if recordView == snippetShortcutRecordView {
+        case snippetShortcutRecordView:
             HotKeyManager.sharedManager.snippetKeyCombo.value = keyCombo
+        default: break
         }
     }
 
