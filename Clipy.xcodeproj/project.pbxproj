@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E268DEDCB098C017E971C678 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31FC235AB322AD066509A515 /* Pods_Clipy.framework */; };
+		FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */; };
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
 		FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */; };
 		FA189C7B1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */; };
@@ -90,6 +91,7 @@
 		31FC235AB322AD066509A515 /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD5220A00AAF6B15ED7DCDB /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
 		6363BC713F82693557EAE114 /* Pods-Clipy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.debug.xcconfig"; sourceTree = "<group>"; };
+		FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuType.swift; sourceTree = "<group>"; };
 		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUpdatesPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYTypePreferenceViewController.swift; sourceTree = "<group>"; };
@@ -201,6 +203,14 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		FA08EDF41D1FE9DE000D1D13 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
 		FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -277,6 +287,7 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
+				FA08EDF41D1FE9DE000D1D13 /* Enums */,
 				FAC4E62A1C7F26D100200271 /* Preferences */,
 				FA5900E21C7B79D900E84E23 /* Extensions */,
 				FAC43E6E1B35F36E00C06102 /* Utility */,
@@ -612,6 +623,7 @@
 				FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
 				FA5900E61C7B79D900E84E23 /* NSImage+AssetCatalog.swift in Sources */,
+				FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */,
 				FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */,
 				FA72A8601C807D4500D120B3 /* CPYDesignableButton.swift in Sources */,
 				FAC4E62D1C7F270900200271 /* CPYPreferencesWindowController.swift in Sources */,

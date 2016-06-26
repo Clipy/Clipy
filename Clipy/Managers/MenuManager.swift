@@ -38,9 +38,6 @@ final class MenuManager: NSObject {
     private var clipToken: RLMNotificationToken?
 
     // MARK: - Enum Values
-    enum MenuType {
-        case Main, History, Snippet
-    }
     enum StatusType: Int {
         case None = 0
         case Black

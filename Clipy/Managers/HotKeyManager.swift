@@ -19,34 +19,6 @@ final class HotKeyManager: NSObject {
     let historyKeyCombo = Variable<KeyCombo?>(nil)
     let snippetKeyCombo = Variable<KeyCombo?>(nil)
 
-    private enum Type: String {
-        case Main       = "ClipMenu"
-        case History    = "HistoryMenu"
-        case Snippet    = "SnippetMenu"
-
-        var selector: Selector {
-            switch self {
-            case .Main:
-                return #selector(HotKeyManager.popUpClipMenu)
-            case .History:
-                return #selector(HotKeyManager.popUpHistoryMenu)
-            case .Snippet:
-                return #selector(HotKeyManager.popUpSnippetMenu)
-            }
-        }
-
-        var defaultsKey: String {
-            switch self {
-            case .Main:
-                return Constants.HotKey.mainKeyCombo
-            case .History:
-                return Constants.HotKey.historyKeyCombo
-            case .Snippet:
-                return Constants.HotKey.snippetKeyCombo
-            }
-        }
-    }
-
     // MARK: - Initialize
     override init() {
         super.init()
@@ -55,34 +27,34 @@ final class HotKeyManager: NSObject {
 }
 
 // MARK: - Action
-private extension HotKeyManager {
-    @objc private func popUpClipMenu() {
+extension HotKeyManager {
+    func popUpClipMenu() {
         MenuManager.sharedManager.popUpMenu(.Main)
     }
 
-    @objc private func popUpHistoryMenu() {
+    func popUpHistoryMenu() {
         MenuManager.sharedManager.popUpMenu(.History)
     }
 
-    @objc private func popUpSnippetMenu() {
+    func popUpSnippetMenu() {
         MenuManager.sharedManager.popUpMenu(.Snippet)
     }
 }
 
 // MARK: - KeyCombo
 extension HotKeyManager {
-    private func changeHotKey(type: Type, keyCombo: KeyCombo?) {
+    private func changeHotKey(type: MenuType, keyCombo: KeyCombo?) {
         // Unregister HotKey
         HotKeyCenter.sharedCenter.unregisterHotKey(type.rawValue)
         if let keyCombo = keyCombo {
             // Register HotKey
-            let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo, target: self, action: type.selector)
+            let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo, target: self, action: type.hotKeySelector)
             hotKey.register()
             // Save KeyCombo
-            defaults.setArchiveData(keyCombo, forKey: type.defaultsKey)
+            defaults.setArchiveData(keyCombo, forKey: type.userDefaultsKey)
         } else {
             // Remove KeyCombo
-            defaults.removeObjectForKey(type.defaultsKey)
+            defaults.removeObjectForKey(type.userDefaultsKey)
         }
         defaults.synchronize()
     }
