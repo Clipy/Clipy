@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		459C5A834B0BC4A320E74133 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99D7CF57E814F0729572C7DA /* Pods_ClipyTests.framework */; };
 		E268DEDCB098C017E971C678 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31FC235AB322AD066509A515 /* Pods_Clipy.framework */; };
+		FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */; };
+		FA08EDF81D1FED7D000D1D13 /* HotKeyManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */; };
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
 		FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */; };
 		FA189C7B1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */; };
@@ -21,6 +24,7 @@
 		FA5900E61C7B79D900E84E23 /* NSImage+AssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E31C7B79D900E84E23 /* NSImage+AssetCatalog.swift */; };
 		FA5900E71C7B79D900E84E23 /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E41C7B79D900E84E23 /* NSImage+Resize.swift */; };
 		FA5900E81C7B79D900E84E23 /* NSLock+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */; };
+		FA6D02061D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6D02051D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift */; };
 		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA71E3F81BA0A66300369F92 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA71E3F71BA0A66300369F92 /* HistoryManager.swift */; };
@@ -28,24 +32,17 @@
 		FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */; };
 		FA78E7991C8C6F4500B6BA8C /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */; };
 		FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */; };
+		FAA256C71D16FC65000A23BC /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA256C61D16FC65000A23BC /* HotKeyManager.swift */; };
 		FAAD02221CA99E22007C6EEE /* NSBundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAD02211CA99E22007C6EEE /* NSBundle+Version.swift */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
 		FAC43DD01B35D8B100C06102 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DCF1B35D8B100C06102 /* Images.xcassets */; };
-		FAC43DDF1B35D8B100C06102 /* ClipyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */; };
 		FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DF91B35DD4300C06102 /* Localizable.strings */; };
-		FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; };
-		FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E191B35DF2500C06102 /* PTHotKey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
 		FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E241B35DFD000C06102 /* AppKit.framework */; };
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
 		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E441B35E12900C06102 /* RLMSupport.swift */; };
-		FAC43E511B35E13000C06102 /* SRCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E481B35E13000C06102 /* SRCommon.m */; };
-		FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E4A1B35E13000C06102 /* SRKeyCodeTransformer.m */; };
-		FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E4C1B35E13000C06102 /* SRRecorderCell.m */; };
-		FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E4E1B35E13000C06102 /* SRRecorderControl.m */; };
-		FAC43E551B35E13000C06102 /* SRValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E501B35E13000C06102 /* SRValidator.m */; };
 		FAC43E5E1B35E1C300C06102 /* CPYClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5D1B35E1C300C06102 /* CPYClip.swift */; };
 		FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */; };
 		FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E611B35EA4E00C06102 /* CPYFolder.swift */; };
@@ -53,7 +50,6 @@
 		FAC43E671B35EC5400C06102 /* MenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E661B35EC5400C06102 /* MenuManager.swift */; };
 		FAC43E691B35EC6200C06102 /* ClipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E681B35EC6200C06102 /* ClipManager.swift */; };
 		FAC43E6B1B35EC7000C06102 /* CPYSnippetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */; };
-		FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */; };
 		FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43E711B36D0A600C06102 /* CPYUtilities.swift */; };
 		FAC4E62D1C7F270900200271 /* CPYPreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */; };
 		FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */; };
@@ -86,7 +82,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				FAC43E1C1B35DF4A00C06102 /* PTHotKey.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,9 +89,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		26BF4B87A614FDC819B6A594 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3060D07626AFD5F722C021D5 /* Pods-ClipyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.release.xcconfig"; sourceTree = "<group>"; };
 		31FC235AB322AD066509A515 /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD5220A00AAF6B15ED7DCDB /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
 		6363BC713F82693557EAE114 /* Pods-Clipy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.debug.xcconfig"; sourceTree = "<group>"; };
+		99D7CF57E814F0729572C7DA /* Pods_ClipyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClipyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuType.swift; sourceTree = "<group>"; };
+		FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyManagerSpec.swift; sourceTree = "<group>"; };
 		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUpdatesPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYTypePreferenceViewController.swift; sourceTree = "<group>"; };
@@ -110,12 +110,14 @@
 		FA5900E31C7B79D900E84E23 /* NSImage+AssetCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+AssetCatalog.swift"; sourceTree = "<group>"; };
 		FA5900E41C7B79D900E84E23 /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
+		FA6D02051D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUserDefaults+ArchiveData.swift"; sourceTree = "<group>"; };
 		FA71E3F71BA0A66300369F92 /* HistoryManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
 		FA72A85F1C807D4500D120B3 /* CPYDesignableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableButton.swift; sourceTree = "<group>"; };
 		FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Initialize.swift"; sourceTree = "<group>"; };
 		FA78E7981C8C6F4500B6BA8C /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		FA823D771B4042F200009614 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
 		FA823D7B1B40439500009614 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYSnippetEditorWindowController.xib; sourceTree = "<group>"; };
+		FAA256C61D16FC65000A23BC /* HotKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
 		FAAD02211CA99E22007C6EEE /* NSBundle+Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+Version.swift"; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -123,28 +125,14 @@
 		FAC43DCF1B35D8B100C06102 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FAC43DD81B35D8B100C06102 /* ClipyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DDD1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipyTests.swift; sourceTree = "<group>"; };
-		FAC43DE81B35DAA400C06102 /* Clipy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clipy-Bridging-Header.h"; sourceTree = "<group>"; };
 		FAC43DF81B35DD4300C06102 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FAC43DFA1B35DD5200C06102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		FAC43E191B35DF2500C06102 /* PTHotKey.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PTHotKey.framework; sourceTree = "<group>"; };
 		FAC43E221B35DFC800C06102 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FAC43E241B35DFD000C06102 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		FAC43E261B35DFD300C06102 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FAC43E441B35E12900C06102 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RLMSupport.swift; path = Clipy/Libraries/Realm/RLMSupport.swift; sourceTree = SOURCE_ROOT; };
-		FAC43E461B35E13000C06102 /* ShortcutRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShortcutRecorder.h; path = Clipy/Libraries/ShortcutRecorder/ShortcutRecorder.h; sourceTree = SOURCE_ROOT; };
-		FAC43E471B35E13000C06102 /* SRCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRCommon.h; path = Clipy/Libraries/ShortcutRecorder/SRCommon.h; sourceTree = SOURCE_ROOT; };
-		FAC43E481B35E13000C06102 /* SRCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRCommon.m; path = Clipy/Libraries/ShortcutRecorder/SRCommon.m; sourceTree = SOURCE_ROOT; };
-		FAC43E491B35E13000C06102 /* SRKeyCodeTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRKeyCodeTransformer.h; path = Clipy/Libraries/ShortcutRecorder/SRKeyCodeTransformer.h; sourceTree = SOURCE_ROOT; };
-		FAC43E4A1B35E13000C06102 /* SRKeyCodeTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRKeyCodeTransformer.m; path = Clipy/Libraries/ShortcutRecorder/SRKeyCodeTransformer.m; sourceTree = SOURCE_ROOT; };
-		FAC43E4B1B35E13000C06102 /* SRRecorderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRRecorderCell.h; path = Clipy/Libraries/ShortcutRecorder/SRRecorderCell.h; sourceTree = SOURCE_ROOT; };
-		FAC43E4C1B35E13000C06102 /* SRRecorderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRRecorderCell.m; path = Clipy/Libraries/ShortcutRecorder/SRRecorderCell.m; sourceTree = SOURCE_ROOT; };
-		FAC43E4D1B35E13000C06102 /* SRRecorderControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRRecorderControl.h; path = Clipy/Libraries/ShortcutRecorder/SRRecorderControl.h; sourceTree = SOURCE_ROOT; };
-		FAC43E4E1B35E13000C06102 /* SRRecorderControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRRecorderControl.m; path = Clipy/Libraries/ShortcutRecorder/SRRecorderControl.m; sourceTree = SOURCE_ROOT; };
-		FAC43E4F1B35E13000C06102 /* SRValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRValidator.h; path = Clipy/Libraries/ShortcutRecorder/SRValidator.h; sourceTree = SOURCE_ROOT; };
-		FAC43E501B35E13000C06102 /* SRValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRValidator.m; path = Clipy/Libraries/ShortcutRecorder/SRValidator.m; sourceTree = SOURCE_ROOT; };
 		FAC43E5D1B35E1C300C06102 /* CPYClip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClip.swift; sourceTree = "<group>"; };
 		FAC43E5F1B35E3DF00C06102 /* CPYClipData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClipData.swift; sourceTree = "<group>"; };
 		FAC43E611B35EA4E00C06102 /* CPYFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolder.swift; sourceTree = "<group>"; };
@@ -152,7 +140,6 @@
 		FAC43E661B35EC5400C06102 /* MenuManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuManager.swift; sourceTree = "<group>"; };
 		FAC43E681B35EC6200C06102 /* ClipManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipManager.swift; sourceTree = "<group>"; };
 		FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetManager.swift; sourceTree = "<group>"; };
-		FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYHotKeyManager.swift; sourceTree = "<group>"; };
 		FAC43E711B36D0A600C06102 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
 		FAC4E62B1C7F270900200271 /* CPYPreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPreferencesWindowController.swift; sourceTree = "<group>"; };
 		FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Clipy.swift"; sourceTree = "<group>"; };
@@ -184,7 +171,6 @@
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
 				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
-				FAC43E1B1B35DF4A00C06102 /* PTHotKey.framework in Frameworks */,
 				E268DEDCB098C017E971C678 /* Pods_Clipy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,6 +179,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				459C5A834B0BC4A320E74133 /* Pods_ClipyTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,8 +194,8 @@
 				FAC43E261B35DFD300C06102 /* Carbon.framework */,
 				FAC43E241B35DFD000C06102 /* AppKit.framework */,
 				FAC43E221B35DFC800C06102 /* Foundation.framework */,
-				FAC43E191B35DF2500C06102 /* PTHotKey.framework */,
 				31FC235AB322AD066509A515 /* Pods_Clipy.framework */,
+				99D7CF57E814F0729572C7DA /* Pods_ClipyTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -218,8 +205,18 @@
 			children = (
 				6363BC713F82693557EAE114 /* Pods-Clipy.debug.xcconfig */,
 				3BD5220A00AAF6B15ED7DCDB /* Pods-Clipy.release.xcconfig */,
+				26BF4B87A614FDC819B6A594 /* Pods-ClipyTests.debug.xcconfig */,
+				3060D07626AFD5F722C021D5 /* Pods-ClipyTests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		FA08EDF41D1FE9DE000D1D13 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */,
+			);
+			path = Enums;
 			sourceTree = "<group>";
 		};
 		FA3B95F31B3FB9DF00B61FF0 /* WindowControllers */ = {
@@ -269,6 +266,7 @@
 				FAEAB1F81C9309BA005C3A10 /* Realm+NoCatch.swift */,
 				FAFEF21B1C9AF35B00B546E7 /* String+Substring.swift */,
 				FAAD02211CA99E22007C6EEE /* NSBundle+Version.swift */,
+				FA6D02051D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift */,
 			);
 			name = Extensions;
 			path = Clipy/Extensions;
@@ -297,6 +295,7 @@
 		FAC43DC81B35D8B100C06102 /* Clipy */ = {
 			isa = PBXGroup;
 			children = (
+				FA08EDF41D1FE9DE000D1D13 /* Enums */,
 				FAC4E62A1C7F26D100200271 /* Preferences */,
 				FA5900E21C7B79D900E84E23 /* Extensions */,
 				FAC43E6E1B35F36E00C06102 /* Utility */,
@@ -318,7 +317,6 @@
 			children = (
 				FA0C027E1B42C2B2009A558D /* dsa_pub.pem */,
 				FAC43DCA1B35D8B100C06102 /* Info.plist */,
-				FAC43DE81B35DAA400C06102 /* Clipy-Bridging-Header.h */,
 				FAC43DF91B35DD4300C06102 /* Localizable.strings */,
 				FAD2D49A1CC3DAC500C29139 /* Constants.swift */,
 			);
@@ -328,7 +326,7 @@
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
 			isa = PBXGroup;
 			children = (
-				FAC43DDE1B35D8B100C06102 /* ClipyTests.swift */,
+				FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */,
 				FAC43DDC1B35D8B100C06102 /* Supporting Files */,
 			);
 			path = ClipyTests;
@@ -354,28 +352,9 @@
 			isa = PBXGroup;
 			children = (
 				FAC43E161B35DE8800C06102 /* Realm */,
-				FAC43E051B35DE7500C06102 /* ShortcutRecorder */,
 			);
 			name = Libraries;
 			path = Library;
-			sourceTree = "<group>";
-		};
-		FAC43E051B35DE7500C06102 /* ShortcutRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				FAC43E461B35E13000C06102 /* ShortcutRecorder.h */,
-				FAC43E471B35E13000C06102 /* SRCommon.h */,
-				FAC43E481B35E13000C06102 /* SRCommon.m */,
-				FAC43E491B35E13000C06102 /* SRKeyCodeTransformer.h */,
-				FAC43E4A1B35E13000C06102 /* SRKeyCodeTransformer.m */,
-				FAC43E4B1B35E13000C06102 /* SRRecorderCell.h */,
-				FAC43E4C1B35E13000C06102 /* SRRecorderCell.m */,
-				FAC43E4D1B35E13000C06102 /* SRRecorderControl.h */,
-				FAC43E4E1B35E13000C06102 /* SRRecorderControl.m */,
-				FAC43E4F1B35E13000C06102 /* SRValidator.h */,
-				FAC43E501B35E13000C06102 /* SRValidator.m */,
-			);
-			path = ShortcutRecorder;
 			sourceTree = "<group>";
 		};
 		FAC43E161B35DE8800C06102 /* Realm */ = {
@@ -404,7 +383,7 @@
 				FAEAB1FA1C930AAA005C3A10 /* PasteboardManager.swift */,
 				FAC43E681B35EC6200C06102 /* ClipManager.swift */,
 				FA71E3F71BA0A66300369F92 /* HistoryManager.swift */,
-				FAC43E6C1B35EC8900C06102 /* CPYHotKeyManager.swift */,
+				FAA256C61D16FC65000A23BC /* HotKeyManager.swift */,
 				FAC43E6A1B35EC7000C06102 /* CPYSnippetManager.swift */,
 			);
 			path = Managers;
@@ -483,9 +462,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAC43DE51B35D8B100C06102 /* Build configuration list for PBXNativeTarget "ClipyTests" */;
 			buildPhases = (
+				BFFAC60F3BD9708C811DEB74 /* Check Pods Manifest.lock */,
 				FAC43DD41B35D8B100C06102 /* Sources */,
 				FAC43DD51B35D8B100C06102 /* Frameworks */,
 				FAC43DD61B35D8B100C06102 /* Resources */,
+				F100948EEF50A8048074C766 /* Embed Pods Frameworks */,
+				3F17933F2FD772201F2089B9 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -569,6 +551,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3F17933F2FD772201F2089B9 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		741C1DA155065DDF572C094E /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -599,6 +596,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		BFFAC60F3BD9708C811DEB74 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		E1763D22BB204E0B1CCCCDC2 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -612,6 +624,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clipy/Pods-Clipy-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F100948EEF50A8048074C766 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FA4A5CDC1C7CAEDD0031BCEF /* ShellScript */ = {
@@ -647,17 +674,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAC43E6D1B35EC8900C06102 /* CPYHotKeyManager.swift in Sources */,
 				FAC4E6461C7F513800200271 /* CPYShortcutsPreferenceViewController.swift in Sources */,
 				FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */,
 				FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */,
-				FAC43E521B35E13000C06102 /* SRKeyCodeTransformer.m in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
 				FA5900E61C7B79D900E84E23 /* NSImage+AssetCatalog.swift in Sources */,
+				FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */,
 				FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */,
 				FA72A8601C807D4500D120B3 /* CPYDesignableButton.swift in Sources */,
-				FAC43E511B35E13000C06102 /* SRCommon.m in Sources */,
 				FAC4E62D1C7F270900200271 /* CPYPreferencesWindowController.swift in Sources */,
+				FAA256C71D16FC65000A23BC /* HotKeyManager.swift in Sources */,
 				FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */,
@@ -671,17 +697,15 @@
 				FA5900E81C7B79D900E84E23 /* NSLock+Clipy.swift in Sources */,
 				FA71E3F81BA0A66300369F92 /* HistoryManager.swift in Sources */,
 				FAD2D49B1CC3DAC500C29139 /* Constants.swift in Sources */,
-				FAC43E531B35E13000C06102 /* SRRecorderCell.m in Sources */,
-				FAC43E541B35E13000C06102 /* SRRecorderControl.m in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAFEF21C1C9AF35B00B546E7 /* String+Substring.swift in Sources */,
 				FA189C7B1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift in Sources */,
 				FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */,
 				FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */,
 				FAAD02221CA99E22007C6EEE /* NSBundle+Version.swift in Sources */,
+				FA6D02061D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift in Sources */,
 				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,
 				FAC43E6B1B35EC7000C06102 /* CPYSnippetManager.swift in Sources */,
-				FAC43E551B35E13000C06102 /* SRValidator.m in Sources */,
 				FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */,
 				FAC43E691B35EC6200C06102 /* ClipManager.swift in Sources */,
 				FA5900E71C7B79D900E84E23 /* NSImage+Resize.swift in Sources */,
@@ -692,7 +716,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAC43DDF1B35D8B100C06102 /* ClipyTests.swift in Sources */,
+				FA08EDF81D1FED7D000D1D13 /* HotKeyManagerSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -881,7 +905,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Clipy/Clipy-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -904,12 +928,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e8cf9e56-ff8a-41aa-aa17-bbae931648da";
-				SWIFT_OBJC_BRIDGING_HEADER = "Clipy/Clipy-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};
 		FAC43DE61B35D8B100C06102 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26BF4B87A614FDC819B6A594 /* Pods-ClipyTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -931,6 +956,7 @@
 		};
 		FAC43DE71B35D8B100C06102 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3060D07626AFD5F722C021D5 /* Pods-ClipyTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;

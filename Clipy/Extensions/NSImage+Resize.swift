@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 extension NSImage {
     func resizeImage(width: CGFloat, _ height: CGFloat) -> NSImage? {

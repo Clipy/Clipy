@@ -15,6 +15,7 @@ import RxSwift
 import RxOptional
 import NSObject_Rx
 import LoginServiceKit
+import Magnet
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -153,7 +154,7 @@ extension AppDelegate: NSApplicationDelegate {
         CPYUtilities.registerUserDefaultKeys()
 
         // Regist Hotkeys
-        CPYHotKeyManager.sharedManager.registerHotKeys()
+        HotKeyManager.sharedManager.setupDefaultHoyKey()
 
         // Show Login Item
         if !defaults.boolForKey(Constants.UserDefaults.loginItem) && !defaults.boolForKey(Constants.UserDefaults.suppressAlertForLoginItem) {
@@ -176,7 +177,7 @@ extension AppDelegate: NSApplicationDelegate {
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        CPYHotKeyManager.sharedManager.unRegisterHotKeys()
+        HotKeyCenter.sharedCenter.unregisterAll()
     }
 }
 

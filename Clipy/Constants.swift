@@ -79,4 +79,11 @@ struct Constants {
         static let contentElement   = "content"
     }
 
+    struct HotKey {
+        static let mainKeyCombo         = "kCPYHotKeyMainKeyCombo"
+        static let historyKeyCombo      = "kCPYHotKeyHistoryKeyCombo"
+        static let snippetKeyCombo      = "kCPYHotKeySnippetKeyCombo"
+        static let migrateNewKeyCombo   = "kCPYMigrateNewKeyCombo"
+    }
+
 }

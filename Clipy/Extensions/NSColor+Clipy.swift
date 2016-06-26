@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 extension NSColor {
     static func clipyColor() -> NSColor {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 import Crashlytics
 
 final class PasteboardManager {
@@ -72,14 +73,12 @@ extension PasteboardManager {
     static func paste() {
         if !NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.inputPasteCommand) { return }
 
-        dispatch_async(dispatch_get_main_queue()) {
-            let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
-            CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
-            CGEventPost(.CGSessionEventTap, keyVDown)
+        let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
+        CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
+        CGEventPost(.CGAnnotatedSessionEventTap, keyVDown)
 
-            let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
-            CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
-            CGEventPost(.CGSessionEventTap, keyVUp)
-        }
+        let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
+        CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
+        CGEventPost(.CGAnnotatedSessionEventTap, keyVUp)
     }
 }

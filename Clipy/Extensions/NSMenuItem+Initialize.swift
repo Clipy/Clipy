@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 extension NSMenuItem {
     convenience init(title: String, action: Selector) {

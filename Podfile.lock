@@ -2,10 +2,15 @@ PODS:
   - Crashlytics (3.7.0):
     - Fabric (~> 1.6.3)
   - Fabric (1.6.7)
+  - KeyHolder (1.0.0):
+    - Magnet (= 1.0.0)
   - LoginServiceKit (0.0.1)
+  - Magnet (1.0.0)
+  - Nimble (4.1.0)
   - NSObject+Rx (1.2.1):
     - RxSwift (~> 2.1)
   - PINCache (2.2.2)
+  - Quick (0.9.2)
   - Realm (0.102.0):
     - Realm/Headers (= 0.102.0)
   - Realm/Headers (0.102.0)
@@ -20,9 +25,12 @@ PODS:
 DEPENDENCIES:
   - Crashlytics
   - Fabric
+  - KeyHolder
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
+  - Nimble
   - NSObject+Rx
   - PINCache
+  - Quick
   - Realm
   - RxCocoa
   - RxOptional
@@ -41,9 +49,13 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Crashlytics: c3a2333dea9e2733d2777f730910321fc9e25c0d
   Fabric: caf7580c725e64db144f610ac65cd60956911dc7
+  KeyHolder: 04e10ed144b8f0288e8ce746b64a3198bbdf20c1
   LoginServiceKit: 92aee420b05d163e356f6c5cbef64dd23eef93e1
+  Magnet: 4e7cdfa8c7bdb29fff70096e51f1f952331a4074
+  Nimble: 97a0a4cae5124c117115634b2d055d8c97d0af19
   NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
   PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
+  Quick: 18d057bc66451eedd5d1c8dc99ba2a5db6e60226
   Realm: 5d219f9037e3ec2019c599b8227bfc95433cb10e
   RxCocoa: 7d6cd877de99f5640306b3d6cf87f580c1d91b61
   RxOptional: b77fb47a0190213cf8a37c7a2b7fda28160b4563

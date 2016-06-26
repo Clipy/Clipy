@@ -39,23 +39,23 @@ import Cocoa
     // MARK: - Initialize
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        wantsLayer = true
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        wantsLayer = true
     }
 
     // MARK: - Update
-    override func updateLayer() {
-        layer?.backgroundColor = backgroundColor.CGColor
-        layer?.borderColor = borderColor.CGColor
-        layer?.borderWidth = borderWidth
-        layer?.cornerRadius = cornerRadius
-        if cornerRadius != 0 {
-            layer?.masksToBounds = true
-        }
+    override func drawRect(dirtyRect: NSRect) {
+        // Background
+        backgroundColor.setFill()
+        NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius).fill()
+        // Border
+        let rect = NSRect(x: borderWidth / 2, y: borderWidth / 2, width: bounds.width - borderWidth, height: bounds.height - borderWidth)
+        let path = NSBezierPath(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
+        path.lineWidth = borderWidth
+        borderColor.set()
+        path.stroke()
     }
 
 }
