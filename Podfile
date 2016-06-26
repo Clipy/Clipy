@@ -13,8 +13,15 @@ target 'Clipy' do
   pod 'RxCocoa'
   pod 'RxSwift'
   pod 'NSObject+Rx'
-  pod "RxOptional"
+  pod 'RxOptional'
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'
+
+end
+
+target 'ClipyTests' do
+
+  pod 'Quick'
+  pod 'Nimble'
 
 end
