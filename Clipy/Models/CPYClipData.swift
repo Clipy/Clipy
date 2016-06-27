@@ -29,8 +29,10 @@ final class CPYClipData: NSObject {
 
     override var hash: Int {
         var hash = types.joinWithSeparator("").hash
-        if let image = self.image {
-            hash ^= image.TIFFRepresentation!.length
+        if let image = self.image, let imageData = image.TIFFRepresentation {
+            hash ^= imageData.length
+        } else if let image = self.image {
+            hash ^= image.hash
         }
         if !fileNames.isEmpty {
             fileNames.forEach { hash ^= $0.hash }
