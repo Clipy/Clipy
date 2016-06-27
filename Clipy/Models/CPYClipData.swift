@@ -30,22 +30,23 @@ final class CPYClipData: NSObject {
     override var hash: Int {
         var hash = types.joinWithSeparator("").hash
         if let image = self.image {
-            hash ^= image.TIFFRepresentation!.length
+            hash += image.TIFFRepresentation!.length
         }
         if !fileNames.isEmpty {
-            fileNames.forEach { hash ^= $0.hash }
+            fileNames.forEach { hash += $0.hash }
         } else if !self.URLs.isEmpty {
-            URLs.forEach { hash ^= $0.hash }
+            URLs.forEach { hash += $0.hash }
         } else if let pdf = PDF {
-            hash ^= pdf.length
+            hash += pdf.length
         } else if !stringValue.isEmpty {
-            hash ^= stringValue.hash
+            hash += stringValue.hash
         }
         if let data = RTFData {
-            hash ^= data.length
+            hash += data.length
         }
         return hash
     }
+
     var primaryType: String? {
         return types.first
     }
