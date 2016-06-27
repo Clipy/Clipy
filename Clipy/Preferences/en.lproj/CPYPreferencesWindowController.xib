@@ -7,6 +7,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYPreferencesWindowController" customModule="Clipy" customModuleProvider="target">
             <connections>
+                <outlet property="betaButton" destination="Tkb-uY-5PB" id="rSr-MA-qFL"/>
+                <outlet property="betaImageView" destination="KnF-V7-1F2" id="Oip-8w-DfJ"/>
+                <outlet property="betaTextField" destination="CsY-pN-2dE" id="sjM-r5-llZ"/>
                 <outlet property="generalButton" destination="LsG-fK-vSu" id="etb-5P-mCh"/>
                 <outlet property="generalImageView" destination="arX-EY-hyL" id="BKJ-fg-esP"/>
                 <outlet property="generalTextField" destination="emt-MG-SUM" id="KHb-5e-3lL"/>
@@ -174,6 +177,33 @@
                                     </button>
                                 </subviews>
                             </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LzX-pA-tjM">
+                                <rect key="frame" x="285" y="0.0" width="60" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="KnF-V7-1F2">
+                                        <rect key="frame" x="12" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_beta" id="kO5-Zw-jbK"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CsY-pN-2dE">
+                                        <rect key="frame" x="0.0" y="8" width="60" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Beta" id="Fxs-BH-hPx">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="Tkb-uY-5PB">
+                                        <rect key="frame" x="0.0" y="0.0" width="60" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Loo-mm-qBT">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="s0g-X3-6tk"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RKs-Gr-vpv" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="1"/>
                                 <userDefinedRuntimeAttributes>
@@ -215,6 +245,7 @@
         </window>
     </objects>
     <resources>
+        <image name="pref_beta" width="36" height="24"/>
         <image name="pref_general_on" width="36" height="24"/>
         <image name="pref_menu" width="36" height="24"/>
         <image name="pref_shortcut" width="36" height="24"/>
