@@ -85,7 +85,6 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.snippetKeyCombo?.doubledModifiers).to(beFalse())
                 expect(manager.snippetKeyCombo?.characters).to(equal("B"))
             }
-
         }
 
         describe("Save HotKey") { 
@@ -101,11 +100,19 @@ class HotKeyManagerSpec: QuickSpec {
 
             it("Save key combos") {
                 let manager = HotKeyManager()
-                let defautls = NSUserDefaults.standardUserDefaults()
+                expect(manager.mainKeyCombo).to(beNil())
+                expect(manager.historyKeyCombo).to(beNil())
+                expect(manager.snippetKeyCombo).to(beNil())
 
+                let defautls = NSUserDefaults.standardUserDefaults()
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo)).to(beNil())
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo)).to(beNil())
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo)).to(beNil())
+
+                manager.setupDefaultHoyKey()
+                expect(manager.mainKeyCombo).to(beNil())
+                expect(manager.historyKeyCombo).to(beNil())
+                expect(manager.snippetKeyCombo).to(beNil())
 
                 let mainKeyCombo = KeyCombo(keyCode: 9, carbonModifiers: 768)
                 let historyKeyCombo = KeyCombo(doubledCocoaModifiers: .CommandKeyMask)
@@ -138,7 +145,44 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(savedSnippetKeyCombo?.characters).to(equal("A"))
 
                 manager.changeKeyCombo(.Main, keyCombo: nil)
+                expect(manager.mainKeyCombo).to(beNil())
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo)).to(beNil())
+            }
+
+            it("Unarchive saved key combos") {
+                let mainKeyCombo = KeyCombo(keyCode: 9, carbonModifiers: 768)
+                let historyKeyCombo = KeyCombo(doubledCocoaModifiers: .CommandKeyMask)
+                let snippetKeyCombo = KeyCombo(keyCode: 0, cocoaModifiers: .ShiftKeyMask)
+
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.setArchiveData(mainKeyCombo!, forKey: Constants.HotKey.mainKeyCombo)
+                defaults.setArchiveData(historyKeyCombo!, forKey: Constants.HotKey.historyKeyCombo)
+                defaults.setArchiveData(snippetKeyCombo!, forKey: Constants.HotKey.snippetKeyCombo)
+
+                let manager = HotKeyManager()
+                expect(manager.mainKeyCombo).to(beNil())
+                expect(manager.historyKeyCombo).to(beNil())
+                expect(manager.snippetKeyCombo).to(beNil())
+
+                manager.setupDefaultHoyKey()
+
+                expect(manager.mainKeyCombo).toNot(beNil())
+                expect(manager.mainKeyCombo?.keyCode).to(equal(9))
+                expect(manager.mainKeyCombo?.modifiers).to(equal(768))
+                expect(manager.mainKeyCombo?.doubledModifiers).to(beFalse())
+                expect(manager.mainKeyCombo?.characters).to(equal("V"))
+
+                expect(manager.historyKeyCombo).toNot(beNil())
+                expect(manager.historyKeyCombo?.keyCode).to(equal(0))
+                expect(manager.historyKeyCombo?.modifiers).to(equal(cmdKey))
+                expect(manager.historyKeyCombo?.doubledModifiers).to(beTrue())
+                expect(manager.historyKeyCombo?.characters).to(equal(""))
+
+                expect(manager.snippetKeyCombo).toNot(beNil())
+                expect(manager.snippetKeyCombo?.keyCode).to(equal(0))
+                expect(manager.snippetKeyCombo?.modifiers).to(equal(shiftKey))
+                expect(manager.snippetKeyCombo?.doubledModifiers).to(beFalse())
+                expect(manager.snippetKeyCombo?.characters).to(equal("A"))
             }
 
         }
