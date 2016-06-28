@@ -57,6 +57,10 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.Update.enableAutomaticCheck)
         defaultValues.updateValue(NSNumber(int: 86400), forKey: Constants.Update.checkInterval)
 
+        /* Beta */
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.Beta.pastePlainText)
+        defaultValues.updateValue(NSNumber(integer: 0), forKey: Constants.Beta.pastePlainTextModifier)
+
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
     }

@@ -8,6 +8,4 @@
 
 import Cocoa
 
-class CPYBetaPreferenceViewController: NSViewController {
-
-}
+final class CPYBetaPreferenceViewController: NSViewController {}

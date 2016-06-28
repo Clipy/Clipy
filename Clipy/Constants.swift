@@ -59,6 +59,11 @@ struct Constants {
         static let copySameHistory                  = "kCPYPrefCopySameHistroy"
     }
 
+    struct Beta {
+        static let pastePlainText = "kCPYBetaPastePlainText"
+        static let pastePlainTextModifier = "kCPYBetaPastePlainTextModifier"
+    }
+
     struct Update {
         static let enableAutomaticCheck = "kCPYEnableAutomaticCheckKey"
         static let checkInterval        = "kCPYUpdateCheckIntervalKey"
