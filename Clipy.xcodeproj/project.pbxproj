@@ -21,6 +21,8 @@
 		FA3B96061B3FD4BA00B61FF0 /* CPYFolderTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */; };
 		FA3B96081B3FD4C700B61FF0 /* CPYSnippetTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */; };
 		FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */; };
+		FA55FCD71D219BFC005C1936 /* CPYBetaPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA55FCD51D219BFC005C1936 /* CPYBetaPreferenceViewController.swift */; };
+		FA55FCD91D219C17005C1936 /* CPYBetaPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA55FCDB1D219C17005C1936 /* CPYBetaPreferenceViewController.xib */; };
 		FA5900E61C7B79D900E84E23 /* NSImage+AssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E31C7B79D900E84E23 /* NSImage+AssetCatalog.swift */; };
 		FA5900E71C7B79D900E84E23 /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E41C7B79D900E84E23 /* NSImage+Resize.swift */; };
 		FA5900E81C7B79D900E84E23 /* NSLock+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */; };
@@ -107,6 +109,9 @@
 		FA3B96051B3FD4BA00B61FF0 /* CPYFolderTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolderTableView.swift; sourceTree = "<group>"; };
 		FA3B96071B3FD4C700B61FF0 /* CPYSnippetTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetTableView.swift; sourceTree = "<group>"; };
 		FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		FA55FCD51D219BFC005C1936 /* CPYBetaPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYBetaPreferenceViewController.swift; sourceTree = "<group>"; };
+		FA55FCDC1D219C25005C1936 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
+		FA55FCDF1D219C5A005C1936 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA5900E31C7B79D900E84E23 /* NSImage+AssetCatalog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+AssetCatalog.swift"; sourceTree = "<group>"; };
 		FA5900E41C7B79D900E84E23 /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FA5900E51C7B79D900E84E23 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
@@ -428,6 +433,8 @@
 				FAFEF2111C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib */,
 				FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */,
 				FAFEF2171C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib */,
+				FA55FCD51D219BFC005C1936 /* CPYBetaPreferenceViewController.swift */,
+				FA55FCDB1D219C17005C1936 /* CPYBetaPreferenceViewController.xib */,
 			);
 			path = Panels;
 			sourceTree = "<group>";
@@ -533,6 +540,7 @@
 				FAFEF2091C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib in Resources */,
 				FA823D761B4042F200009614 /* CPYSnippetEditorWindowController.xib in Resources */,
 				FAFEF2151C9AEBBC00B546E7 /* CPYUpdatesPreferenceViewController.xib in Resources */,
+				FA55FCD91D219C17005C1936 /* CPYBetaPreferenceViewController.xib in Resources */,
 				FA189C7C1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib in Resources */,
 				FA189C8B1C9AE584002C0312 /* CPYPreferencesWindowController.xib in Resources */,
 				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
@@ -704,6 +712,7 @@
 				FA3B96041B3FD4AC00B61FF0 /* CPYImageAndTextCell.swift in Sources */,
 				FAAD02221CA99E22007C6EEE /* NSBundle+Version.swift in Sources */,
 				FA6D02061D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift in Sources */,
+				FA55FCD71D219BFC005C1936 /* CPYBetaPreferenceViewController.swift in Sources */,
 				FAC43E451B35E12900C06102 /* RLMSupport.swift in Sources */,
 				FAC43E6B1B35EC7000C06102 /* CPYSnippetManager.swift in Sources */,
 				FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */,
@@ -747,6 +756,15 @@
 				FAFEF2011C9AE92600B546E7 /* ja */,
 			);
 			name = CPYPreferencesWindowController.xib;
+			sourceTree = "<group>";
+		};
+		FA55FCDB1D219C17005C1936 /* CPYBetaPreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA55FCDC1D219C25005C1936 /* en */,
+				FA55FCDF1D219C5A005C1936 /* ja */,
+			);
+			name = CPYBetaPreferenceViewController.xib;
 			sourceTree = "<group>";
 		};
 		FA823D781B4042F200009614 /* CPYSnippetEditorWindowController.xib */ = {

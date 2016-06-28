@@ -33,12 +33,14 @@ extension NSImage {
         case TypeOff        = "pref_type"
         case ShortcutsOff   = "pref_shortcut"
         case UpdatesOff     = "pref_update"
+        case BetaOff        = "pref_beta"
 
         case GeneralOn      = "pref_general_on"
         case MenuOn         = "pref_menu_on"
         case TypeOn         = "pref_type_on"
         case ShortcutsOn    = "pref_shortcut_on"
         case UpdatesOn      = "pref_update_on"
+        case BetaOn         = "pref_beta_on"
     }
 
     // MARK: - Initialize

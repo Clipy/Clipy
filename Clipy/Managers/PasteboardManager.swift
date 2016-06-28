@@ -15,6 +15,23 @@ final class PasteboardManager {
     static let sharedManager = PasteboardManager()
     private let pasteboard = NSPasteboard.generalPasteboard()
     private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
+    private let defaults = NSUserDefaults.standardUserDefaults()
+    private var isPastePlainText: Bool {
+        guard let flags = NSApp.currentEvent?.modifierFlags else { return false }
+        if !defaults.boolForKey(Constants.Beta.pastePlainText) { return false }
+
+        let modifierSetting = defaults.integerForKey(Constants.Beta.pastePlainTextModifier)
+        if modifierSetting == 0 && flags.contains(.CommandKeyMask) {
+            return true
+        } else if modifierSetting == 1 && flags.contains(.ShiftKeyMask) {
+            return true
+        } else if modifierSetting == 2 && flags.contains(.ControlKeyMask) {
+            return true
+        } else if modifierSetting == 3 && flags.contains(.AlternateKeyMask) {
+            return true
+        }
+        return false
+    }
 }
 
 // MARK: - Copy
@@ -30,18 +47,18 @@ extension PasteboardManager {
         lock.lock()
         if let data = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
             let types = data.types
+            let isPastePlainText = self.isPastePlainText
             pasteboard.declareTypes(types, owner: self)
-
             types.forEach { type in
                 switch type {
                 case NSStringPboardType:
                     let pbString = data.stringValue
                     pasteboard.setString(pbString, forType: NSStringPboardType)
-                case NSRTFDPboardType:
+                case NSRTFDPboardType where !isPastePlainText:
                     if let rtfData = data.RTFData {
                         pasteboard.setData(rtfData, forType: NSRTFDPboardType)
                     }
-                case NSRTFPboardType:
+                case NSRTFPboardType where !isPastePlainText:
                     if let rtfData = data.RTFData {
                         pasteboard.setData(rtfData, forType: NSRTFPboardType)
                     }
@@ -59,8 +76,7 @@ extension PasteboardManager {
                     if let image = data.image, imageData = image.TIFFRepresentation {
                         pasteboard.setData(imageData, forType: NSTIFFPboardType)
                     }
-                default:
-                    Answers.logCustomEventWithName("No suppert paste type \(type)", customAttributes: nil)
+                default: break
                 }
             }
         }
