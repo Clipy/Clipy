@@ -15,15 +15,9 @@ final class HotKeyManager: NSObject {
     static let sharedManager = HotKeyManager()
     let defaults = NSUserDefaults.standardUserDefaults()
 
-    let mainKeyCombo = Variable<KeyCombo?>(nil)
-    let historyKeyCombo = Variable<KeyCombo?>(nil)
-    let snippetKeyCombo = Variable<KeyCombo?>(nil)
-
-    // MARK: - Initialize
-    override init() {
-        super.init()
-        bind()
-    }
+    private(set) var mainKeyCombo: KeyCombo?
+    private(set) var historyKeyCombo: KeyCombo?
+    private(set) var snippetKeyCombo: KeyCombo?
 }
 
 // MARK: - Action
@@ -41,24 +35,8 @@ extension HotKeyManager {
     }
 }
 
-// MARK: - KeyCombo
+// MARK: - KeyCombo Setting
 extension HotKeyManager {
-    private func changeHotKey(type: MenuType, keyCombo: KeyCombo?) {
-        // Unregister HotKey
-        HotKeyCenter.sharedCenter.unregisterHotKey(type.rawValue)
-        if let keyCombo = keyCombo {
-            // Register HotKey
-            let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo, target: self, action: type.hotKeySelector)
-            hotKey.register()
-            // Save KeyCombo
-            defaults.setArchiveData(keyCombo, forKey: type.userDefaultsKey)
-        } else {
-            // Remove KeyCombo
-            defaults.removeObjectForKey(type.userDefaultsKey)
-        }
-        defaults.synchronize()
-    }
-
     func setupDefaultHoyKey() {
         if !defaults.boolForKey(Constants.HotKey.migrateNewKeyCombo) {
             // Migrate New HotKey Settings
@@ -69,16 +47,51 @@ extension HotKeyManager {
 
         // Main HotKey
         if let keyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) {
-            mainKeyCombo.value = keyCombo
+            changeKeyCombo(.Main, keyCombo: keyCombo)
         }
         // History HotKey
         if let keyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo) {
-            historyKeyCombo.value = keyCombo
+            changeKeyCombo(.History, keyCombo: keyCombo)
         }
         // Snippet HotKey
         if let keyCombo = defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo) {
-            snippetKeyCombo.value = keyCombo
+            changeKeyCombo(.Snippet, keyCombo: keyCombo)
         }
+    }
+
+    func changeKeyCombo(type: MenuType, keyCombo: KeyCombo?) {
+        switch type {
+        case .Main:
+            mainKeyCombo = keyCombo
+        case .History:
+            historyKeyCombo = keyCombo
+        case .Snippet:
+            snippetKeyCombo = keyCombo
+        }
+        registerHotKey(type, keyCombo: keyCombo)
+    }
+}
+
+// MARK: - Register
+extension HotKeyManager {
+    private func registerHotKey(type: MenuType, keyCombo: KeyCombo?) {
+        // Save
+        saveKeyCombo(type, keyCombo: keyCombo)
+        // Unregister
+        HotKeyCenter.sharedCenter.unregisterHotKey(type.rawValue)
+        guard let keyCombo = keyCombo else { return }
+        // Register HotKey
+        let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo, target: self, action: type.hotKeySelector)
+        hotKey.register()
+    }
+
+    private func saveKeyCombo(type: MenuType, keyCombo: KeyCombo?) {
+        if let keyCombo = keyCombo {
+            defaults.setArchiveData(keyCombo, forKey: type.userDefaultsKey)
+        } else {
+            defaults.removeObjectForKey(type.userDefaultsKey)
+        }
+        defaults.synchronize()
     }
 
     private func migrateNewKeyCombo() {
@@ -112,29 +125,5 @@ extension HotKeyManager {
                                                      Constants.Menu.history: ["keyCode": 9, "modifiers": 4352],
                                                      Constants.Menu.snippet: ["keyCode": 11, "modifiers": 768]]
         return defaultKeyCombos
-    }
-}
-
-// MARK: - Binding
-private extension HotKeyManager {
-    private func bind() {
-        // Main Shortcut
-        mainKeyCombo.asObservable()
-            .skip(1)
-            .subscribeNext { [unowned self] keyCombo in
-                self.changeHotKey(.Main, keyCombo: keyCombo)
-            }.addDisposableTo(rx_disposeBag)
-        // History Shortcut
-        historyKeyCombo.asObservable()
-            .skip(1)
-            .subscribeNext { [unowned self] keyCombo in
-                self.changeHotKey(.History, keyCombo: keyCombo)
-            }.addDisposableTo(rx_disposeBag)
-        // Snippet Shortcut
-        snippetKeyCombo.asObservable()
-            .skip(1)
-            .subscribeNext { [unowned self] keyCombo in
-                self.changeHotKey(.Snippet, keyCombo: keyCombo)
-            }.addDisposableTo(rx_disposeBag)
     }
 }

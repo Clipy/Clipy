@@ -31,9 +31,9 @@ class CPYShortcutsPreferenceViewController: NSViewController {
 // MARK: - Shortcut
 private extension CPYShortcutsPreferenceViewController {
     private func prepareHotKeys() {
-        mainShortcutRecordView.keyCombo = HotKeyManager.sharedManager.mainKeyCombo.value
-        historyShortcutRecordView.keyCombo = HotKeyManager.sharedManager.historyKeyCombo.value
-        snippetShortcutRecordView.keyCombo = HotKeyManager.sharedManager.snippetKeyCombo.value
+        mainShortcutRecordView.keyCombo = HotKeyManager.sharedManager.mainKeyCombo
+        historyShortcutRecordView.keyCombo = HotKeyManager.sharedManager.historyKeyCombo
+        snippetShortcutRecordView.keyCombo = HotKeyManager.sharedManager.snippetKeyCombo
     }
 }
 
@@ -50,11 +50,11 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
     func recordViewDidClearShortcut(recordView: RecordView) {
         switch recordView {
         case mainShortcutRecordView:
-            HotKeyManager.sharedManager.mainKeyCombo.value = nil
+            HotKeyManager.sharedManager.changeKeyCombo(.Main, keyCombo: nil)
         case historyShortcutRecordView:
-            HotKeyManager.sharedManager.historyKeyCombo.value = nil
+            HotKeyManager.sharedManager.changeKeyCombo(.History, keyCombo: nil)
         case snippetShortcutRecordView:
-            HotKeyManager.sharedManager.snippetKeyCombo.value = nil
+            HotKeyManager.sharedManager.changeKeyCombo(.Snippet, keyCombo: nil)
         default: break
         }
     }
@@ -62,11 +62,11 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
     func recordView(recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
         switch recordView {
         case mainShortcutRecordView:
-            HotKeyManager.sharedManager.mainKeyCombo.value = keyCombo
+            HotKeyManager.sharedManager.changeKeyCombo(.Main, keyCombo: keyCombo)
         case historyShortcutRecordView:
-            HotKeyManager.sharedManager.historyKeyCombo.value = keyCombo
+            HotKeyManager.sharedManager.changeKeyCombo(.History, keyCombo: keyCombo)
         case snippetShortcutRecordView:
-            HotKeyManager.sharedManager.snippetKeyCombo.value = keyCombo
+            HotKeyManager.sharedManager.changeKeyCombo(.Snippet, keyCombo: keyCombo)
         default: break
         }
     }
