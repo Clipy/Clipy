@@ -38,7 +38,8 @@ platform :mac do
       workspace: "Clipy.xcworkspace",
       scheme: "Clipy",
       skip_build: true,
-      verbose: true
+      verbose: true,
+      clean: true
     )
   end
 
