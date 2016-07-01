@@ -272,6 +272,7 @@ PLATFORMS
 
 DEPENDENCIES
   cocoapods
+  cocoapods-deintegrate
   fastlane
 
 BUNDLED WITH
