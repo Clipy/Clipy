@@ -17,11 +17,13 @@ target 'Clipy' do
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'
 
+  target 'ClipyTests' do
+    inherit! :search_paths
+
+    pod 'Quick'
+    pod 'Nimble'
+
+  end
+
 end
 
-target 'ClipyTests' do
-
-  pod 'Quick'
-  pod 'Nimble'
-
-end
