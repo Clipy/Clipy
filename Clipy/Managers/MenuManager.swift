@@ -340,9 +340,8 @@ private extension MenuManager {
         let firstIndex = firstIndexOfMenuItems()
 
         folderResults.flatMap { $0 as? CPYFolder }
+            .filter { $0.enable }
             .forEach { folder in
-                if !folder.enable { return }
-
                 let folderTitle = folder.title
                 let subMenuItem = makeSubmenuItem(folderTitle)
                 menu.addItem(subMenuItem)
@@ -351,9 +350,8 @@ private extension MenuManager {
                 var i = firstIndex
                 folder.snippets
                     .sortedResultsUsingProperty("index", ascending: true).flatMap { $0 as? CPYSnippet }
+                    .filter { $0.enable }
                     .forEach { snippet in
-                        if !snippet.enable { return }
-
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
                         if let subMenu = menu.itemAtIndex(subMenuIndex)?.submenu {
                             subMenu.addItem(subMenuItem)
