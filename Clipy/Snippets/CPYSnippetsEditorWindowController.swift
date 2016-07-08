@@ -124,10 +124,6 @@ extension CPYSnippetsEditorWindowController {
     }
 
     @IBAction func settingButtonTapped(sender: AnyObject) {}
-
-    @IBAction func outlineViewTapped(sender: AnyObject) {
-        changeItemFocus()
-    }
 }
 
 // MARK: - Item Selected
@@ -207,7 +203,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 }
 
 // MARK: - NSOutlineView Delegate
-extension CPYSnippetsEditorWindowController: NSOutlineViewDelegate, NSTableViewDelegate {
+extension CPYSnippetsEditorWindowController: NSOutlineViewDelegate {
     func outlineView(outlineView: NSOutlineView, willDisplayCell cell: AnyObject, forTableColumn tableColumn: NSTableColumn?, item: AnyObject) {
         guard let cell = cell as? CPYSnippetsEditorCell else { return }
         if let folder = item as? CPYFolder {
@@ -217,6 +213,10 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDelegate, NSTableViewD
             cell.iconType = .None
             cell.isItemEnabled = snippet.enable
         }
+    }
+
+    func outlineViewSelectionDidChange(notification: NSNotification) {
+        changeItemFocus()
     }
 
     func control(control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {

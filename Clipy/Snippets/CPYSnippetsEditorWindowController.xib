@@ -199,7 +199,6 @@
                                                         </tableColumn>
                                                     </tableColumns>
                                                     <connections>
-                                                        <action selector="outlineViewTapped:" target="-2" id="Tr9-RS-iIe"/>
                                                         <outlet property="dataSource" destination="-2" id="ucb-j2-DK5"/>
                                                         <outlet property="delegate" destination="-2" id="1sC-cn-Wrj"/>
                                                     </connections>
@@ -246,7 +245,7 @@
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="string" keyPath="placeHolderText" value="スニペットの内容を記入してください"/>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="placeHolderColor">
-                                                            <color key="value" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="value" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="0.59999999999999998" colorSpace="calibratedRGB"/>
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
