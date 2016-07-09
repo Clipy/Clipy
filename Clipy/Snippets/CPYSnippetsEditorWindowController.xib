@@ -126,7 +126,7 @@
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yKE-95-cH9">
                                         <rect key="frame" x="5" y="8" width="50" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Settings" id="Ett-SG-3wO">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Import" id="Ett-SG-3wO">
                                             <font key="font" size="9" name="HiraKakuProN-W6"/>
                                             <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -134,12 +134,35 @@
                                     </textField>
                                     <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="OlF-2K-CdN">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="72"/>
-                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_setting_snippet" imagePosition="only" alignment="center" alternateImage="snippets_setting_snippet_on" imageScaling="proportionallyDown" inset="2" id="O4r-3j-zV7">
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_setting_snippet" imagePosition="overlaps" alignment="center" alternateImage="snippets_setting_snippet_on" imageScaling="proportionallyDown" inset="2" id="O4r-3j-zV7">
                                             <behavior key="behavior" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="settingButtonTapped:" target="-2" id="yeB-uS-vAO"/>
+                                            <action selector="importSnippetButtonTapped:" target="-2" id="hJS-UO-hv9"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bOl-V3-RiP">
+                                <rect key="frame" x="345" y="0.0" width="60" height="56"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wP4-W7-bDr">
+                                        <rect key="frame" x="5" y="8" width="50" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Export" id="Uqj-Zh-vde">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="Ins-e7-VCV">
+                                        <rect key="frame" x="0.0" y="0.0" width="60" height="72"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_setting_snippet" imagePosition="only" alignment="center" alternateImage="snippets_setting_snippet_on" imageScaling="proportionallyDown" inset="2" id="8Ei-ub-aWP">
+                                            <behavior key="behavior" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="exportSnippetButtonTapped:" target="-2" id="YGI-Qd-fSc"/>
                                         </connections>
                                     </button>
                                 </subviews>

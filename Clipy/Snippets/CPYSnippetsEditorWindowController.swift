@@ -10,6 +10,7 @@ import Cocoa
 import Realm
 import KeyHolder
 import Magnet
+import AEXML
 
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
@@ -123,7 +124,94 @@ extension CPYSnippetsEditorWindowController {
         changeItemFocus()
     }
 
-    @IBAction func settingButtonTapped(sender: AnyObject) {}
+    @IBAction func importSnippetButtonTapped(sender: AnyObject) {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = false
+        panel.directoryURL = NSURL(fileURLWithPath: NSHomeDirectory())
+        panel.allowedFileTypes = [Constants.Xml.fileType]
+        let returnCode = panel.runModal()
+
+        if returnCode != NSOKButton { return }
+
+        let fileURLs = panel.URLs
+        guard let url = fileURLs.first else { return }
+        guard let data = NSData(contentsOfURL: url) else { return }
+
+        do {
+            let lastFolder = CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true).lastObject() as? CPYFolder
+            var folderIndex = (lastFolder?.index ?? -1) + 1
+            // Create Document
+            let xmlDocument = try AEXMLDocument(xmlData: data)
+            xmlDocument[Constants.Xml.rootElement]
+                .children
+                .forEach { folderElement in
+                    let folder = CPYFolder()
+                    // Title
+                    folder.title = folderElement[Constants.Xml.titleElement].value ?? "untitled folder"
+                    // Index
+                    folder.index = folderIndex
+                    // Sync DB
+                    let realm = RLMRealm.defaultRealm()
+                    realm.transaction { realm.addObject(folder) }
+                    // Snippet
+                    var snippetIndex = 0
+                    folderElement[Constants.Xml.snippetsElement][Constants.Xml.snippetElement]
+                        .all?
+                        .forEach { snippetElement in
+                            let snippet = CPYSnippet()
+                            snippet.title = snippetElement[Constants.Xml.titleElement].value ?? "untitled snippet"
+                            snippet.content = snippetElement[Constants.Xml.contentElement].value ?? ""
+                            snippet.index = snippetIndex
+                            realm.transaction { folder.snippets.addObject(snippet) }
+                            // Increment snippet index
+                            snippetIndex += 1
+                        }
+                    // Increment folder index
+                    folderIndex += 1
+                    // Add folder
+                    let copyFolder = folder.deepCopy()
+                    folders.append(copyFolder)
+                }
+            outlineView.reloadData()
+        } catch {}
+    }
+
+    @IBAction func exportSnippetButtonTapped(sender: AnyObject) {
+        let xmlDocument = AEXMLDocument()
+        let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
+
+        let folders = CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true).arrayValue(CPYFolder.self)
+        folders.forEach { folder in
+            let folderElement = rootElement.addChild(name: Constants.Xml.folderElement)
+            folderElement.addChild(name: Constants.Xml.titleElement, value: folder.title, attributes: nil)
+
+            let snippetsElement = folderElement.addChild(name: Constants.Xml.snippetsElement)
+            folder.snippets
+                .sortedResultsUsingProperty("index", ascending: true)
+                .arrayValue(CPYSnippet.self)
+                .forEach { snippet in
+                    let snippetElement = snippetsElement.addChild(name: Constants.Xml.snippetElement)
+                    snippetElement.addChild(name: Constants.Xml.titleElement, value: snippet.title, attributes: nil)
+                    snippetElement.addChild(name: Constants.Xml.contentElement, value: snippet.content, attributes: nil)
+                }
+        }
+
+        let panel = NSSavePanel()
+        panel.accessoryView = nil
+        panel.canSelectHiddenExtension = true
+        panel.allowedFileTypes = [Constants.Xml.fileType]
+        panel.allowsOtherFileTypes = false
+        panel.directoryURL = NSURL(fileURLWithPath: NSHomeDirectory())
+        panel.nameFieldStringValue = "snippets"
+        let returnCode = panel.runModal()
+
+        if returnCode != NSOKButton { return }
+
+        guard let data = xmlDocument.xmlString.dataUsingEncoding(NSUTF8StringEncoding) else { return }
+        guard let path = panel.URL?.path else { return }
+
+        if !data.writeToFile(path, atomically: true) { NSBeep() }
+    }
 }
 
 // MARK: - Item Selected
