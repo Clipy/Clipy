@@ -104,6 +104,23 @@ extension CPYSnippetsEditorWindowController {
 
     @IBAction func deleteButtonTapped(sender: AnyObject) {
         guard let item = outlineView.itemAtRow(outlineView.selectedRow) else { return }
+
+        let alert = NSAlert()
+        // TODO: Localize
+        alert.messageText = "スニペットの削除"
+        alert.informativeText = "本当にこのスニペットを削除しますか？"
+        alert.addButtonWithTitle("削除")
+        alert.addButtonWithTitle("キャンセル")
+        alert.showsSuppressionButton = true
+        NSApp.activateIgnoringOtherApps(true)
+
+        let result = alert.runModal()
+        if result != NSAlertFirstButtonReturn { return }
+        if alert.suppressionButton?.state == NSOnState {
+            // TODO: Not shows alert
+            // TODO: Saved settings
+        }
+
         if let folder = item as? CPYFolder {
             folders.removeObject(folder)
             folder.remove()
