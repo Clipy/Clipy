@@ -18,7 +18,6 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     static let sharedController = CPYSnippetsEditorWindowController(windowNibName: "CPYSnippetsEditorWindowController")
     @IBOutlet weak var splitView: CPYSplitView!
     @IBOutlet weak var folderSettingView: NSView!
-    @IBOutlet weak var outlineView: NSOutlineView!
     @IBOutlet weak var folderTitleTextField: NSTextField!
     @IBOutlet weak var folderShortcutRecordView: RecordView! {
         didSet {
@@ -30,6 +29,12 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
             textView.font = NSFont.systemFontOfSize(14)
             textView.automaticQuoteSubstitutionEnabled = false
             textView.enabledTextCheckingTypes = 0
+        }
+    }
+    @IBOutlet weak var outlineView: NSOutlineView! {
+        didSet {
+            // Enable Drag and Drop
+            outlineView.registerForDraggedTypes([Constants.Common.draggedDataType])
         }
     }
 
@@ -287,6 +292,90 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
             return snippet.title
         }
         return ""
+    }
+
+    // MARK: - Drag and Drop
+    func outlineView(outlineView: NSOutlineView, pasteboardWriterForItem item: AnyObject) -> NSPasteboardWriting? {
+        let pasteboardItem = NSPasteboardItem()
+        if let folder = item as? CPYFolder, index = folders.indexOf(folder) {
+            let draggedData = CPYDraggedData(type: .Folder, folderIdentifier: folder.identifier, snippetIdentifier: nil, index: index)
+            let data = NSKeyedArchiver.archivedDataWithRootObject(draggedData)
+            pasteboardItem.setData(data, forType: Constants.Common.draggedDataType)
+        } else if let snippet = item as? CPYSnippet, folder = outlineView.parentForItem(snippet) as? CPYFolder {
+            let index = folder.snippets.indexOfObject(snippet)
+            if Int(index) == NSNotFound { return nil }
+            let draggedData = CPYDraggedData(type: .Snippet, folderIdentifier: folder.identifier, snippetIdentifier: snippet.identifier, index: Int(index))
+            let data = NSKeyedArchiver.archivedDataWithRootObject(draggedData)
+            pasteboardItem.setData(data, forType: Constants.Common.draggedDataType)
+        } else {
+            return nil
+        }
+        return pasteboardItem
+    }
+
+    func outlineView(outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: AnyObject?, proposedChildIndex index: Int) -> NSDragOperation {
+        if index < 0 { return .None }
+        let pasteboard = info.draggingPasteboard()
+        guard let data = pasteboard.dataForType(Constants.Common.draggedDataType) else { return .None }
+        guard let draggedData = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? CPYDraggedData else { return .None }
+
+        switch draggedData.type {
+        case .Folder where item == nil:
+            return .Move
+        case .Snippet where item is CPYFolder:
+            return .Move
+        default:
+            return .None
+        }
+    }
+
+    func outlineView(outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: AnyObject?, childIndex index: Int) -> Bool {
+        if index < 0 { return false  }
+        let pasteboard = info.draggingPasteboard()
+        guard let data = pasteboard.dataForType(Constants.Common.draggedDataType) else { return false }
+        guard let draggedData = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? CPYDraggedData else { return false }
+
+        switch draggedData.type {
+        case .Folder where index != draggedData.index:
+            guard let folder = folders.filter({ $0.identifier == draggedData.folderIdentifier }).first else { return false }
+            folders.insert(folder, atIndex: index)
+            let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
+            folders.removeAtIndex(removedIndex)
+            outlineView.reloadData()
+            outlineView.selectRowIndexes(NSIndexSet(index: outlineView.rowForItem(folder)), byExtendingSelection: false)
+            CPYFolder.rearrangesIndex(folders)
+            changeItemFocus()
+            return true
+        case .Snippet:
+            guard let fromFolder = folders.filter({ $0.identifier == draggedData.folderIdentifier }).first else { return false }
+            guard let toFolder = item as? CPYFolder else { return false }
+            guard let snippet = fromFolder.snippets.arrayValue(CPYSnippet.self).filter({ $0.identifier == draggedData.snippetIdentifier }).first else { return false }
+
+            if fromFolder.identifier == toFolder.identifier {
+                if index == draggedData.index { return false }
+                // Move to same folder
+                fromFolder.snippets.insertObject(snippet, atIndex: UInt(index))
+                let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
+                fromFolder.snippets.removeObjectAtIndex(UInt(removedIndex))
+                outlineView.reloadData()
+                outlineView.selectRowIndexes(NSIndexSet(index: outlineView.rowForItem(snippet)), byExtendingSelection: false)
+                fromFolder.rearrangesSnippetIndex()
+                changeItemFocus()
+                return true
+            } else {
+                // Move to other folder
+                toFolder.snippets.insertObject(snippet, atIndex: UInt(index))
+                fromFolder.snippets.removeObjectAtIndex(UInt(draggedData.index))
+                outlineView.reloadData()
+                outlineView.expandItem(toFolder)
+                outlineView.selectRowIndexes(NSIndexSet(index: outlineView.rowForItem(snippet)), byExtendingSelection: false)
+                toFolder.insertSnippet(snippet, index: index)
+                fromFolder.removeSnippet(snippet)
+                changeItemFocus()
+                return true
+            }
+        default: return false
+        }
     }
 }
 

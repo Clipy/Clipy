@@ -27,7 +27,7 @@ struct Constants {
         static let snippets         = "snippets"
         static let content          = "content"
         static let selector         = "selector"
-        static let draggedDataType  = "DraggedDataType"
+        static let draggedDataType  = "public.data"
     }
 
     struct UserDefaults {

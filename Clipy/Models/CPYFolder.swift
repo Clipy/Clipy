@@ -34,7 +34,7 @@ extension CPYFolder {
     func deepCopy() -> CPYFolder {
         let folder = CPYFolder(value: self)
         var snippets = [CPYSnippet]()
-        folder.snippets.forEach {
+        self.snippets.sortedResultsUsingProperty("index", ascending: true).forEach {
             let snippet = CPYSnippet(value: $0)
             snippets.append(snippet)
         }
@@ -55,9 +55,23 @@ extension CPYFolder {
 
     func mergeSnippet(snippet: CPYSnippet) {
         guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
-        guard let realm = folder.realm else { return }
         let copySnippet = CPYSnippet(value: snippet)
-        realm.transaction { folder.snippets.addObject(copySnippet) }
+        folder.realm?.transaction { folder.snippets.addObject(copySnippet) }
+    }
+
+    func insertSnippet(snippet: CPYSnippet, index: Int) {
+        guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
+        guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
+        folder.realm?.transaction { folder.snippets.insertObject(savedSnippet, atIndex: UInt(index)) }
+        folder.rearrangesSnippetIndex()
+    }
+
+    func removeSnippet(snippet: CPYSnippet) {
+        guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
+        guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
+        folder.realm?.transaction { folder.snippets.removeObject(savedSnippet) }
+        folder.rearrangesSnippetIndex()
+
     }
 }
 
@@ -91,8 +105,29 @@ extension CPYFolder {
 extension CPYFolder {
     func remove() {
         guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
-        guard let realm = folder.realm else { return }
-        realm.transaction { realm.deleteObjects(folder.snippets) }
-        realm.transaction { realm.deleteObject(folder) }
+        realm?.transaction { realm?.deleteObjects(folder.snippets) }
+        realm?.transaction { realm?.deleteObject(folder) }
+    }
+}
+
+// MARK: - Migrate Index
+extension CPYFolder {
+    static func rearrangesIndex(folders: [CPYFolder]) {
+        for (index, folder) in folders.enumerate() {
+            guard let savedFolder = CPYFolder(forPrimaryKey: folder.identifier) else { return }
+            savedFolder.realm?.transaction {
+                savedFolder.index = index
+            }
+        }
+    }
+
+    func rearrangesSnippetIndex() {
+        for (index, object) in snippets.enumerate() {
+            guard let snippet = object as? CPYSnippet else { return }
+            guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
+            savedSnippet.realm?.transaction {
+                savedSnippet.index = index
+            }
+        }
     }
 }
