@@ -143,6 +143,8 @@ extension ClipManager {
         let isCopySameHistory = defaults.boolForKey(Constants.UserDefaults.copySameHistory)
         // Search same history
         if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
+        // Dont't save empty stirng object
+        if data.isOnlyStringType && data.stringValue.isEmpty { return }
 
         let isOverwriteHistory = defaults.boolForKey(Constants.UserDefaults.overwriteSameHistory)
         let hash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)

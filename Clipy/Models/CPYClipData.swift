@@ -51,6 +51,9 @@ final class CPYClipData: NSObject {
     var primaryType: String? {
         return types.first
     }
+    var isOnlyStringType: Bool {
+        return types == [NSStringPboardType]
+    }
     static var availableTypes: [String] {
         return [NSStringPboardType, NSRTFPboardType, NSRTFDPboardType, NSPDFPboardType, NSFilenamesPboardType, NSURLPboardType, NSTIFFPboardType]
     }
