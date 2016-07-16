@@ -30,7 +30,7 @@ final class MenuManager: NSObject {
     private let defaults = NSUserDefaults.standardUserDefaults()
     private let notificationCenter = NSNotificationCenter.defaultCenter()
     private let kMaxKeyEquivalents = 10
-    private let SHORTEN_SYMBOL = "..."
+    private let shortenSymbol = "..."
     // Realm Results
     private var clipResults: RLMResults
     private let folderResults = CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true)
@@ -40,9 +40,7 @@ final class MenuManager: NSObject {
 
     // MARK: - Enum Values
     enum StatusType: Int {
-        case None = 0
-        case Black
-        case White
+        case None, Black, White
     }
 
     // MARK: - Initialize
@@ -85,7 +83,7 @@ extension MenuManager {
         var index = firstIndexOfMenuItems()
         folder.snippets
             .sortedResultsUsingProperty("index", ascending: true)
-            .flatMap { $0 as? CPYSnippet }
+            .arrayValue(CPYSnippet.self)
             .filter { $0.enable }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
@@ -206,11 +204,11 @@ private extension MenuManager {
         var titleString = (lineEnd == theString.length) ? theString : theString.substringToIndex(contentsEnd)
 
         var maxMenuItemTitleLength = defaults.integerForKey(Constants.UserDefaults.maxMenuItemTitleLength)
-        if maxMenuItemTitleLength < SHORTEN_SYMBOL.characters.count {
-            maxMenuItemTitleLength = SHORTEN_SYMBOL.characters.count
+        if maxMenuItemTitleLength < shortenSymbol.characters.count {
+            maxMenuItemTitleLength = shortenSymbol.characters.count
         }
         if titleString.length > maxMenuItemTitleLength {
-            titleString = titleString.substringToIndex(maxMenuItemTitleLength - SHORTEN_SYMBOL.characters.count) + SHORTEN_SYMBOL
+            titleString = titleString.substringToIndex(maxMenuItemTitleLength - shortenSymbol.characters.count) + shortenSymbol
         }
 
         return titleString as String
@@ -237,7 +235,7 @@ private extension MenuManager {
 
         let currentSize = Int(clipResults.count)
         var i = 0
-        let clips = clipResults.flatMap { $0 as? CPYClip }
+        let clips = clipResults.arrayValue(CPYClip.self)
         for clip in clips {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
@@ -253,7 +251,6 @@ private extension MenuManager {
                     subMenu.addItem(menuItem)
                     listNumber = incrementListNumber(listNumber, max: placeInsideFolder, start: firstIndex)
                 }
-
             } else {
                 // Clip
                 let menuItem = makeClipMenuItem(clip, index: i, listNumber: listNumber)
@@ -339,7 +336,7 @@ private extension MenuManager {
         var subMenuIndex = menu.numberOfItems - 1
         let firstIndex = firstIndexOfMenuItems()
 
-        folderResults.flatMap { $0 as? CPYFolder }
+        folderResults.arrayValue(CPYFolder.self)
             .filter { $0.enable }
             .forEach { folder in
                 let folderTitle = folder.title
@@ -349,7 +346,8 @@ private extension MenuManager {
 
                 var i = firstIndex
                 folder.snippets
-                    .sortedResultsUsingProperty("index", ascending: true).flatMap { $0 as? CPYSnippet }
+                    .sortedResultsUsingProperty("index", ascending: true)
+                    .arrayValue(CPYSnippet)
                     .filter { $0.enable }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
@@ -389,8 +387,7 @@ private extension MenuManager {
             image = NSImage(assetIdentifier: .MenuBlack)
         case .White:
             image = NSImage(assetIdentifier: .MenuWhite)
-        case .None:
-            image = nil
+        case .None: return
         }
         image?.template = true
 
@@ -398,7 +395,6 @@ private extension MenuManager {
         statusItem?.image = image
         statusItem?.highlightMode = true
         statusItem?.toolTip = "\(Constants.Application.name)\(NSBundle.mainBundle().appVersion ?? "")"
-
         statusItem?.menu = clipMenu
     }
 

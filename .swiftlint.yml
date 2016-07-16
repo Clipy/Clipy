@@ -9,6 +9,3 @@ excluded:
   - Pods
   - Clipy/Libraries
 line_length: 200
-variable_name:
-  excluded: 
-    - SHORTEN_SYMBOL

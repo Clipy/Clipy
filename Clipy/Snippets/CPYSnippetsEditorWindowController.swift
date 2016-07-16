@@ -66,7 +66,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         // https://github.com/realm/realm-cocoa/issues/1734
         folders = CPYFolder.allObjects()
                     .sortedResultsUsingProperty("index", ascending: true)
-                    .flatMap { $0 as? CPYFolder }
+                    .arrayValue(CPYFolder.self)
                     .map { $0.deepCopy() }
         // Select first folder
         if let folder = folders.first {
