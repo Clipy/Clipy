@@ -114,11 +114,10 @@ extension CPYSnippetsEditorWindowController {
 
         if !defaults.boolForKey(Constants.UserDefaults.suppressAlertForDeleteSnippet) {
             let alert = NSAlert()
-            // TODO: Localize
-            alert.messageText = "スニペットの削除"
-            alert.informativeText = "本当にこのスニペットを削除しますか？"
-            alert.addButtonWithTitle("削除")
-            alert.addButtonWithTitle("キャンセル")
+            alert.messageText = LocalizedString.DeleteItem.value
+            alert.informativeText = LocalizedString.ConfirmDeleteItem.value
+            alert.addButtonWithTitle(LocalizedString.DeleteItem.value)
+            alert.addButtonWithTitle(LocalizedString.Cancel.value)
             alert.showsSuppressionButton = true
             NSApp.activateIgnoringOtherApps(true)
 
