@@ -38,6 +38,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         }
     }
 
+    private let defaults = NSUserDefaults.standardUserDefaults()
     private var folders = [CPYFolder]()
     private var selectedSnippet: CPYSnippet? {
         guard let snippet = outlineView.itemAtRow(outlineView.selectedRow) as? CPYSnippet else { return nil }
@@ -111,20 +112,22 @@ extension CPYSnippetsEditorWindowController {
             return
         }
 
-        let alert = NSAlert()
-        // TODO: Localize
-        alert.messageText = "スニペットの削除"
-        alert.informativeText = "本当にこのスニペットを削除しますか？"
-        alert.addButtonWithTitle("削除")
-        alert.addButtonWithTitle("キャンセル")
-        alert.showsSuppressionButton = true
-        NSApp.activateIgnoringOtherApps(true)
+        if !defaults.boolForKey(Constants.UserDefaults.suppressAlertForDeleteSnippet) {
+            let alert = NSAlert()
+            // TODO: Localize
+            alert.messageText = "スニペットの削除"
+            alert.informativeText = "本当にこのスニペットを削除しますか？"
+            alert.addButtonWithTitle("削除")
+            alert.addButtonWithTitle("キャンセル")
+            alert.showsSuppressionButton = true
+            NSApp.activateIgnoringOtherApps(true)
 
-        let result = alert.runModal()
-        if result != NSAlertFirstButtonReturn { return }
-        if alert.suppressionButton?.state == NSOnState {
-            // TODO: Not shows alert
-            // TODO: Saved settings
+            let result = alert.runModal()
+            if result != NSAlertFirstButtonReturn { return }
+            if alert.suppressionButton?.state == NSOnState {
+                defaults.setBool(true, forKey: Constants.UserDefaults.suppressAlertForDeleteSnippet)
+                defaults.synchronize()
+            }
         }
 
         if let folder = item as? CPYFolder {

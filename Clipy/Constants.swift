@@ -57,6 +57,7 @@ struct Constants {
         static let thumbnailHeight                  = "thumbnailHeight"
         static let overwriteSameHistory             = "kCPYPrefOverwriteSameHistroy"
         static let copySameHistory                  = "kCPYPrefCopySameHistroy"
+        static let suppressAlertForDeleteSnippet    = "kCPYSuppressAlertForDeleteSnippet"
     }
 
     struct Beta {
