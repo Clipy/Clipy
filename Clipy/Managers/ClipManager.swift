@@ -124,13 +124,22 @@ extension ClipManager {
 }
 
 // MARK: - Create Clips
-private extension ClipManager {
+extension ClipManager {
     private func createClip() {
         let types = clipTypes(pasteboard)
         if types.isEmpty { return }
         if !storeTypes.values.contains(NSNumber(bool: true)) { return }
 
         let data = CPYClipData(pasteboard: pasteboard, types: types)
+        saveClipData(data)
+    }
+
+    func createclip(image: NSImage) {
+        let data = CPYClipData(image: image)
+        saveClipData(data)
+    }
+
+    private func saveClipData(data: CPYClipData) {
         let isCopySameHistory = defaults.boolForKey(Constants.UserDefaults.copySameHistory)
         // Search same history
         if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
@@ -164,9 +173,9 @@ private extension ClipManager {
 
         if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
             if NSKeyedArchiver.archiveRootObject(data, toFile: path) {
-               realm.transaction {
+                realm.transaction {
                     realm.addOrUpdateObject(clip)
-               }
+                }
             }
         }
     }

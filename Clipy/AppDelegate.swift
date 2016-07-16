@@ -8,7 +8,6 @@
 
 import Cocoa
 import Sparkle
-import Fabric
 import Crashlytics
 import RxCocoa
 import RxSwift
@@ -16,6 +15,8 @@ import RxOptional
 import NSObject_Rx
 import LoginServiceKit
 import Magnet
+import Screeen
+import RxScreeen
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -23,6 +24,7 @@ class AppDelegate: NSObject {
     // MARK: - Properties
     let snippetEditorController = CPYSnippetEditorWindowController(windowNibName: "CPYSnippetEditorWindowController")
     let defaults = NSUserDefaults.standardUserDefaults()
+    let screenshotObserver = ScreenShotObserver()
 
     // MARK: - Init
     override func awakeFromNib() {
@@ -189,6 +191,17 @@ private extension AppDelegate {
             .filterNil()
             .subscribeNext { [weak self] enabled in
                 self?.toggleLoginItemState()
+            }.addDisposableTo(rx_disposeBag)
+        // Observe Screenshot
+        defaults.rx_observe(Bool.self, Constants.Beta.observerScreenshot)
+            .filterNil()
+            .subscribeNext { [weak self] enabled in
+                self?.screenshotObserver.isEnabled = enabled
+            }.addDisposableTo(rx_disposeBag)
+        // Observe Screenshot image
+        screenshotObserver.rx_addedImage
+            .subscribeNext { image in
+                ClipManager.sharedManager.createclip(image)
             }.addDisposableTo(rx_disposeBag)
         // Sleep Notification
         NSWorkspace.sharedWorkspace().notificationCenter.rx_notification(NSWorkspaceWillSleepNotification)

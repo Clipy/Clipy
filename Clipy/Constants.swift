@@ -62,6 +62,7 @@ struct Constants {
     struct Beta {
         static let pastePlainText = "kCPYBetaPastePlainText"
         static let pastePlainTextModifier = "kCPYBetaPastePlainTextModifier"
+        static let observerScreenshot = "kCPYBetaObserveScreenshot"
     }
 
     struct Update {
