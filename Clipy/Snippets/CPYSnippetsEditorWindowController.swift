@@ -83,7 +83,10 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
 // MARK: - IBActions
 extension CPYSnippetsEditorWindowController {
     @IBAction func addSnippetButtonTapped(sender: AnyObject) {
-        guard let folder = selectedFolder else { return }
+        guard let folder = selectedFolder else {
+            NSBeep()
+            return
+        }
         let snippet = folder.createSnippet()
         folder.snippets.addObject(snippet)
         folder.mergeSnippet(snippet)
@@ -103,7 +106,10 @@ extension CPYSnippetsEditorWindowController {
     }
 
     @IBAction func deleteButtonTapped(sender: AnyObject) {
-        guard let item = outlineView.itemAtRow(outlineView.selectedRow) else { return }
+        guard let item = outlineView.itemAtRow(outlineView.selectedRow) else {
+            NSBeep()
+            return
+        }
 
         let alert = NSAlert()
         // TODO: Localize
@@ -134,7 +140,10 @@ extension CPYSnippetsEditorWindowController {
     }
 
     @IBAction func changeStatusButtonTapped(sender: AnyObject) {
-        guard let item = outlineView.itemAtRow(outlineView.selectedRow) else { return }
+        guard let item = outlineView.itemAtRow(outlineView.selectedRow) else {
+            NSBeep()
+            return
+        }
         if let folder = item as? CPYFolder {
             folder.enable = !folder.enable
             folder.merge()
@@ -195,7 +204,9 @@ extension CPYSnippetsEditorWindowController {
                     folders.append(copyFolder)
                 }
             outlineView.reloadData()
-        } catch {}
+        } catch {
+            NSBeep()
+        }
     }
 
     @IBAction func exportSnippetButtonTapped(sender: AnyObject) {
