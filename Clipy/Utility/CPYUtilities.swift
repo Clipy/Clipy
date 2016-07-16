@@ -60,6 +60,7 @@ final class CPYUtilities {
         /* Beta */
         defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.Beta.pastePlainText)
         defaultValues.updateValue(NSNumber(integer: 0), forKey: Constants.Beta.pastePlainTextModifier)
+        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.Beta.observerScreenshot)
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
