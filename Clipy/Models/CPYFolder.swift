@@ -34,9 +34,16 @@ extension CPYFolder {
     func deepCopy() -> CPYFolder {
         let folder = CPYFolder(value: self)
         var snippets = [CPYSnippet]()
-        self.snippets.sortedResultsUsingProperty("index", ascending: true).forEach {
-            let snippet = CPYSnippet(value: $0)
-            snippets.append(snippet)
+        if realm == nil {
+            snippets.forEach {
+                let snippet = CPYSnippet(value: $0)
+                snippets.append(snippet)
+            }
+        } else {
+            self.snippets.sortedResultsUsingProperty("index", ascending: true).forEach {
+                let snippet = CPYSnippet(value: $0)
+                snippets.append(snippet)
+            }
         }
         folder.snippets.removeAllObjects()
         folder.snippets.addObjects(snippets)
@@ -105,8 +112,8 @@ extension CPYFolder {
 extension CPYFolder {
     func remove() {
         guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
-        realm?.transaction { realm?.deleteObjects(folder.snippets) }
-        realm?.transaction { realm?.deleteObject(folder) }
+        folder.realm?.transaction { folder.realm?.deleteObjects(folder.snippets) }
+        folder.realm?.transaction { folder.realm?.deleteObject(folder) }
     }
 }
 
@@ -114,6 +121,7 @@ extension CPYFolder {
 extension CPYFolder {
     static func rearrangesIndex(folders: [CPYFolder]) {
         for (index, folder) in folders.enumerate() {
+            if folder.realm == nil { folder.index = index }
             guard let savedFolder = CPYFolder(forPrimaryKey: folder.identifier) else { return }
             savedFolder.realm?.transaction {
                 savedFolder.index = index
@@ -124,6 +132,7 @@ extension CPYFolder {
     func rearrangesSnippetIndex() {
         for (index, object) in snippets.enumerate() {
             guard let snippet = object as? CPYSnippet else { return }
+            if snippet.realm == nil { snippet.index = index }
             guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
             savedSnippet.realm?.transaction {
                 savedSnippet.index = index

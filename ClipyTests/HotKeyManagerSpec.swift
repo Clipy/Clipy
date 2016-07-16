@@ -85,6 +85,16 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.snippetKeyCombo?.doubledModifiers).to(beFalse())
                 expect(manager.snippetKeyCombo?.characters).to(equal("B"))
             }
+
+            afterEach {
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.removeObjectForKey(Constants.UserDefaults.hotKeys)
+                defaults.removeObjectForKey(Constants.HotKey.migrateNewKeyCombo)
+                defaults.removeObjectForKey(Constants.HotKey.mainKeyCombo)
+                defaults.removeObjectForKey(Constants.HotKey.historyKeyCombo)
+                defaults.removeObjectForKey(Constants.HotKey.snippetKeyCombo)
+                defaults.synchronize()
+            }
         }
 
         describe("Save HotKey") { 
@@ -185,6 +195,15 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.snippetKeyCombo?.characters).to(equal("A"))
             }
 
+            afterEach {
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.removeObjectForKey(Constants.UserDefaults.hotKeys)
+                defaults.removeObjectForKey(Constants.HotKey.migrateNewKeyCombo)
+                defaults.removeObjectForKey(Constants.HotKey.mainKeyCombo)
+                defaults.removeObjectForKey(Constants.HotKey.historyKeyCombo)
+                defaults.removeObjectForKey(Constants.HotKey.snippetKeyCombo)
+                defaults.synchronize()
+            }
         }
 
         describe("Key comobos") {
@@ -202,6 +221,42 @@ class HotKeyManagerSpec: QuickSpec {
 
                 expect(snippetCombos?["keyCode"]).to(equal(11))
                 expect(snippetCombos?["modifiers"]).to(equal(768))
+            }
+        }
+
+        describe("Folder HotKey") {
+            beforeEach {
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.removeObjectForKey(Constants.HotKey.folderKeyCombos)
+                defaults.synchronize()
+            }
+
+            it("Add and Remove folder hotkey") {
+                let manager = HotKeyManager()
+
+                let identifier = NSUUID().UUIDString
+                expect(manager.folderKeyCombo(identifier)).to(beNil())
+
+                let keyCombo = KeyCombo(keyCode: 0, carbonModifiers: cmdKey)!
+                manager.addFolderHotKey(identifier, keyCombo: keyCombo)
+
+                expect(manager.folderKeyCombo(identifier)).toNot(beNil())
+                expect(manager.folderKeyCombo(identifier)).to(equal(keyCombo))
+
+                let changeKeyCombo = KeyCombo(doubledCarbonModifiers: shiftKey)!
+                manager.addFolderHotKey(identifier, keyCombo: changeKeyCombo)
+
+                expect(manager.folderKeyCombo(identifier)).toNot(equal(keyCombo))
+                expect(manager.folderKeyCombo(identifier)).to(equal(changeKeyCombo))
+
+                manager.removeFolderHotKey(identifier)
+                expect(manager.folderKeyCombo(identifier)).to(beNil())
+            }
+
+            afterEach {
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.removeObjectForKey(Constants.HotKey.folderKeyCombos)
+                defaults.synchronize()
             }
         }
     }
