@@ -39,9 +39,6 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
 
     // MARK: - Draw
     override func drawWithFrame(cellFrame: NSRect, inView controlView: NSView) {
-
-        // TODO: Change highlight folder image
-
         var newFrame: NSRect
         switch iconType {
         case .Folder:
@@ -50,11 +47,11 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             var cellFrame = cellFrame
             NSDivideRect(cellFrame, &imageFrame, &cellFrame, 15, .MinX)
             imageFrame.origin.x += 5
-            imageFrame.origin.y += 4
-            imageFrame.size = NSSize(width: 16, height: 15)
+            imageFrame.origin.y += 5
+            imageFrame.size = NSSize(width: 16, height: 13)
 
-            let drawImage = NSImage(assetIdentifier: .IconFolder)
-            drawImage.size = NSSize(width: 15, height: 12)
+            let drawImage = (highlighted) ? NSImage(assetIdentifier: .SnippetsIconFolderWhite) : NSImage(assetIdentifier: .SnippetsIconFolder)
+            drawImage.size = NSSize(width: 16, height: 13)
             drawImage.drawInRect(imageFrame, fromRect: NSRect.zero, operation: .CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
 
             newFrame = cellFrame
