@@ -23,10 +23,6 @@ class CPYFolder: RLMObject {
         return "identifier"
     }
 
-    // MARK: - Ignore Properties
-    override static func ignoredProperties() -> [String] {
-        return ["lastSnippet", "lastFolder"]
-    }
 }
 
 // MARK: - Copy
