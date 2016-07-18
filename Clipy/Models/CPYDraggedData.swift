@@ -10,7 +10,7 @@ import Foundation
 
 final class CPYDraggedData: NSObject, NSCoding {
 
-    // MARK: - Protperties
+    // MARK: - Properties
     let type: DragType
     let folderIdentifier: String?
     let snippetIdentifier: String?
