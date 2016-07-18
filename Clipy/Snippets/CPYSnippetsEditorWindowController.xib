@@ -134,7 +134,7 @@
                                     </textField>
                                     <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="OlF-2K-CdN">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="72"/>
-                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_setting_snippet" imagePosition="overlaps" alignment="center" alternateImage="snippets_setting_snippet_on" imageScaling="proportionallyDown" inset="2" id="O4r-3j-zV7">
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_import" imagePosition="overlaps" alignment="center" alternateImage="snippets_import_on" imageScaling="proportionallyDown" inset="2" id="O4r-3j-zV7">
                                             <behavior key="behavior" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -157,7 +157,7 @@
                                     </textField>
                                     <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="Ins-e7-VCV">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="72"/>
-                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_setting_snippet" imagePosition="only" alignment="center" alternateImage="snippets_setting_snippet_on" imageScaling="proportionallyDown" inset="2" id="8Ei-ub-aWP">
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_export" imagePosition="only" alignment="center" alternateImage="snippets_export_on" imageScaling="proportionallyDown" inset="2" id="8Ei-ub-aWP">
                                             <behavior key="behavior" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -440,7 +440,9 @@
         <image name="snippets_delete_snippet_on" width="36" height="24"/>
         <image name="snippets_enable_snippet" width="36" height="24"/>
         <image name="snippets_enable_snippet_on" width="36" height="24"/>
-        <image name="snippets_setting_snippet" width="36" height="24"/>
-        <image name="snippets_setting_snippet_on" width="36" height="24"/>
+        <image name="snippets_export" width="36" height="24"/>
+        <image name="snippets_export_on" width="36" height="24"/>
+        <image name="snippets_import" width="36" height="24"/>
+        <image name="snippets_import_on" width="36" height="24"/>
     </resources>
 </document>
