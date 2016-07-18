@@ -21,6 +21,8 @@ enum LocalizedString: String {
     case LaunchSettingInfo      = "You can change this setting in the Preferences if you want."
     case LaunchOnStartup        = "Launch on system startup"
     case DontLaunch             = "Don't Launch"
+    case DeleteItem             = "Delete Item"
+    case ConfirmDeleteItem      = "Are you sure want to delete this item?"
 
     case TabGeneral             = "General"
     case TabMenu                = "Menu"

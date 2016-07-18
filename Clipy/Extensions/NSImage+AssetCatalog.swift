@@ -21,6 +21,10 @@ extension NSImage {
         case MenuBlack = "statusbar_menu_black"
         case MenuWhite = "statusbar_menu_white"
 
+        // Snippets Editor
+        case SnippetsIconFolder         = "snippets_icon_folder_blue"
+        case SnippetsIconFolderWhite    = "snippets_icon_folder_white"
+
         // SettingTabIcons
         case Menu               = "Menu"
         case IconApplication    = "icon_application"

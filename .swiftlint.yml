@@ -9,11 +9,3 @@ excluded:
   - Pods
   - Clipy/Libraries
 line_length: 200
-force_cast: warning
-variable_name:
-  excluded: 
-    - SHORTEN_SYMBOL
-    - ADD_SNIPPET_IDENTIFIER
-    - DELETE_SNIPPET_IDENTIFIER
-    - CHECK_SNIPPET_IDENTIFIER
-    - DEFAULT_EXPORT_FILENAME

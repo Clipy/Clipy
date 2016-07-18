@@ -1,4 +1,5 @@
 PODS:
+  - AEXML (3.0.1)
   - Crashlytics (3.7.2):
     - Fabric (~> 1.6.3)
   - Fabric (1.6.7)
@@ -28,6 +29,7 @@ PODS:
   - Sparkle (1.14.0)
 
 DEPENDENCIES:
+  - AEXML (from `https://github.com/Clipy/AEXML.git`)
   - Crashlytics
   - Fabric
   - KeyHolder
@@ -44,15 +46,21 @@ DEPENDENCIES:
   - Sparkle
 
 EXTERNAL SOURCES:
+  AEXML:
+    :git: https://github.com/Clipy/AEXML.git
   LoginServiceKit:
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 CHECKOUT OPTIONS:
+  AEXML:
+    :commit: 43926440860213084e4aaa0cd8d79726b57dfa9b
+    :git: https://github.com/Clipy/AEXML.git
   LoginServiceKit:
     :commit: ba5de4c850dba6dc597241913ca049a220a61316
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
+  AEXML: 6f2d034aa62e1f7d13bfc11213b4ca17114f1dd5
   Crashlytics: 130ab943f8c78cda7a814b434f270b2e2c8a3cba
   Fabric: caf7580c725e64db144f610ac65cd60956911dc7
   KeyHolder: 04e10ed144b8f0288e8ce746b64a3198bbdf20c1
@@ -70,6 +78,6 @@ SPEC CHECKSUMS:
   Screeen: 18dc2d30424b19bd1782584957457c42d07f4fe5
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
 
-PODFILE CHECKSUM: 373656d5bc1f5bf0f416401d048ad68249b43259
+PODFILE CHECKSUM: 00fa2a0a4edc3690d1e6fcbe77f664426aa9d028
 
 COCOAPODS: 1.0.1

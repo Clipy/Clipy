@@ -27,7 +27,6 @@ final class ClipManager: NSObject {
     private let realm = RLMRealm.defaultRealm()
     private let pasteboard = NSPasteboard.generalPasteboard()
     // Realm Result
-    // TODO: メニューからこちらを参照する
     private var clipResults: RLMResults
 
     // MARK: - Initialize

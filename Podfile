@@ -17,6 +17,7 @@ target 'Clipy' do
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'
   pod 'RxScreeen'
+  pod 'AEXML', :git => 'https://github.com/Clipy/AEXML.git'
 
   target 'ClipyTests' do
     inherit! :search_paths

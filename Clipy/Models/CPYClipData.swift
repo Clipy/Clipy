@@ -29,7 +29,7 @@ final class CPYClipData: NSObject {
 
     override var hash: Int {
         var hash = types.joinWithSeparator("").hash
-        if let image = self.image, let imageData = image.TIFFRepresentation {
+        if let image = self.image, imageData = image.TIFFRepresentation {
             hash ^= imageData.length
         } else if let image = self.image {
             hash ^= image.hash

@@ -26,17 +26,6 @@ __Distribution Site__ : <https://clipy-app.com>
 2. Open `Clipy.xcworkspace` on Xcode.
 3. build.
 
-### Dependencies
-The source code is dependent on some libraries.
-* [Sparkle](https://github.com/sparkle-project/Sparkle)
-* [Realm](https://realm.io/)
-* [PINCache](https://github.com/pinterest/PINCache)
-* [Fabric](https://fabric.io)
-* [RxSwift](https://github.com/ReactiveX/RxSwift)
-* [RxCocoa](https://github.com/ReactiveX/RxSwift/tree/master/RxCocoa)
-* [NSObject+Rx](https://github.com/RxSwiftCommunity/NSObject-Rx)
-* [RxOptional](https://github.com/RxSwiftCommunity/RxOptional)
-
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)

@@ -27,7 +27,7 @@ struct Constants {
         static let snippets         = "snippets"
         static let content          = "content"
         static let selector         = "selector"
-        static let draggedDataType  = "DraggedDataType"
+        static let draggedDataType  = "public.data"
     }
 
     struct UserDefaults {
@@ -57,6 +57,7 @@ struct Constants {
         static let thumbnailHeight                  = "thumbnailHeight"
         static let overwriteSameHistory             = "kCPYPrefOverwriteSameHistroy"
         static let copySameHistory                  = "kCPYPrefCopySameHistroy"
+        static let suppressAlertForDeleteSnippet    = "kCPYSuppressAlertForDeleteSnippet"
     }
 
     struct Beta {
@@ -90,6 +91,7 @@ struct Constants {
         static let historyKeyCombo      = "kCPYHotKeyHistoryKeyCombo"
         static let snippetKeyCombo      = "kCPYHotKeySnippetKeyCombo"
         static let migrateNewKeyCombo   = "kCPYMigrateNewKeyCombo"
+        static let folderKeyCombos      = "kCPYFolderKeyCombos"
     }
 
 }
