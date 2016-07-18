@@ -84,24 +84,35 @@ class AppDelegate: NSObject {
 
     func selectClipMenuItem(sender: NSMenuItem) {
         Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
-        if let primaryKey = sender.representedObject as? String, clip = CPYClip(forPrimaryKey: primaryKey) {
-            PasteboardManager.sharedManager.copyClipToPasteboard(clip)
-            PasteboardManager.paste()
-        } else {
+        guard let primaryKey = sender.representedObject as? String else {
+            Answers.logCustomEventWithName("Cann't fetch clip primary key", customAttributes: nil)
+            NSBeep()
+            return
+        }
+        guard let clip = CPYClip(forPrimaryKey: primaryKey) else {
             Answers.logCustomEventWithName("Cann't fetch clip data", customAttributes: nil)
             NSBeep()
+            return
         }
+
+        PasteboardManager.sharedManager.copyClipToPasteboard(clip)
+        PasteboardManager.paste()
     }
 
     func selectSnippetMenuItem(sender: AnyObject) {
         Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
-        if let primaryKey = sender.representedObject as? String, snippet = CPYSnippet(forPrimaryKey: primaryKey) {
-            PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
-            PasteboardManager.paste()
-        } else {
+        guard let primaryKey = sender.representedObject as? String else {
+            Answers.logCustomEventWithName("Cann't fetch snippet primary key", customAttributes: nil)
+            NSBeep()
+            return
+        }
+        guard let snippet = CPYSnippet(forPrimaryKey: primaryKey) else {
             Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
             NSBeep()
+            return
         }
+        PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
+        PasteboardManager.paste()
     }
 
     func terminateApplication() {
