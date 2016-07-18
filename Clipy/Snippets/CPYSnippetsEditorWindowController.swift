@@ -112,22 +112,14 @@ extension CPYSnippetsEditorWindowController {
             return
         }
 
-        if !defaults.boolForKey(Constants.UserDefaults.suppressAlertForDeleteSnippet) {
-            let alert = NSAlert()
-            alert.messageText = LocalizedString.DeleteItem.value
-            alert.informativeText = LocalizedString.ConfirmDeleteItem.value
-            alert.addButtonWithTitle(LocalizedString.DeleteItem.value)
-            alert.addButtonWithTitle(LocalizedString.Cancel.value)
-            alert.showsSuppressionButton = true
-            NSApp.activateIgnoringOtherApps(true)
-
-            let result = alert.runModal()
-            if result != NSAlertFirstButtonReturn { return }
-            if alert.suppressionButton?.state == NSOnState {
-                defaults.setBool(true, forKey: Constants.UserDefaults.suppressAlertForDeleteSnippet)
-                defaults.synchronize()
-            }
-        }
+        let alert = NSAlert()
+        alert.messageText = LocalizedString.DeleteItem.value
+        alert.informativeText = LocalizedString.ConfirmDeleteItem.value
+        alert.addButtonWithTitle(LocalizedString.DeleteItem.value)
+        alert.addButtonWithTitle(LocalizedString.Cancel.value)
+        NSApp.activateIgnoringOtherApps(true)
+        let result = alert.runModal()
+        if result != NSAlertFirstButtonReturn { return }
 
         if let folder = item as? CPYFolder {
             folders.removeObject(folder)
