@@ -287,41 +287,34 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
-                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ygf-rF-MiG" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ygf-rF-MiG" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="549" height="544"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="H8F-IV-Fl5">
-                                                <rect key="frame" x="100" y="97" width="350" height="350"/>
+                                                <rect key="frame" x="149" y="168" width="250" height="208"/>
                                                 <subviews>
-                                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YKV-yg-Jt1">
-                                                        <rect key="frame" x="126" y="258" width="20" height="30"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="20" id="9b4-Hr-HvE"/>
-                                                            <constraint firstAttribute="height" constant="30" id="gqp-8L-dbS"/>
-                                                        </constraints>
+                                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YKV-yg-Jt1">
+                                                        <rect key="frame" x="0.0" y="186" width="27" height="22"/>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon_folder" id="FTh-Dz-rHH"/>
                                                     </imageView>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xGQ-1B-r34">
-                                                        <rect key="frame" x="152" y="265" width="66" height="17"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="17" id="hWe-xm-AKv"/>
-                                                        </constraints>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xGQ-1B-r34">
+                                                        <rect key="frame" x="33" y="189" width="224" height="17"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="folder title" id="rI9-rT-YTs">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <font key="font" metaFont="system" size="14"/>
+                                                            <color key="textColor" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="28D-LS-yFH">
-                                                        <rect key="frame" x="48" y="192" width="89" height="17"/>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ショートカット" id="pfw-sA-4aA">
-                                                            <font key="font" size="13" name=".HiraKakuInterface-W3"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <rect key="frame" x="-2" y="135" width="89" height="17"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Shortcut" id="pfw-sA-4aA">
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zjO-0c-pwM" customClass="RecordView" customModule="KeyHolder">
-                                                        <rect key="frame" x="50" y="149" width="250" height="34"/>
+                                                        <rect key="frame" x="0.0" y="91" width="250" height="34"/>
                                                         <userDefinedRuntimeAttributes>
                                                             <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
                                                                 <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
@@ -338,28 +331,49 @@
                                                         </userDefinedRuntimeAttributes>
                                                     </customView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1oW-cV-G3F">
-                                                        <rect key="frame" x="48" y="89" width="89" height="17"/>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="共有" id="wwo-lh-lMK">
-                                                            <font key="font" size="13" name=".HiraKakuInterface-W3"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <rect key="frame" x="-2" y="44" width="101" height="17"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Share snippets" id="wwo-lh-lMK">
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iIQ-Zn-Iyp">
-                                                        <rect key="frame" x="50" y="62" width="250" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Coming soon" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xqZ-QB-lIB">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
-                                                        </buttonCell>
-                                                    </button>
+                                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSp-7i-idd" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="177" width="250" height="1"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                                                <color key="value" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </customView>
+                                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wKH-Tu-3bF" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="250" height="34"/>
+                                                        <subviews>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1c3-zO-hfE">
+                                                                <rect key="frame" x="30" y="9" width="190" height="17"/>
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Comming Soon" id="yzF-k8-xUT">
+                                                                    <font key="font" metaFont="systemBold"/>
+                                                                    <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
+                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                        </subviews>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                                <color key="value" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                <real key="value" value="17"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                                <real key="value" value="1"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </customView>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="350" id="R69-Jz-HW3"/>
-                                                    <constraint firstItem="xGQ-1B-r34" firstAttribute="leading" secondItem="YKV-yg-Jt1" secondAttribute="trailing" constant="8" id="c2t-Eb-n8V"/>
-                                                    <constraint firstAttribute="width" constant="350" id="fXL-WD-3yN"/>
-                                                    <constraint firstItem="YKV-yg-Jt1" firstAttribute="top" secondItem="H8F-IV-Fl5" secondAttribute="top" constant="62" id="qYS-iO-aEJ"/>
-                                                    <constraint firstItem="xGQ-1B-r34" firstAttribute="top" secondItem="H8F-IV-Fl5" secondAttribute="top" constant="68" id="qua-bL-6oh"/>
-                                                    <constraint firstItem="xGQ-1B-r34" firstAttribute="centerX" secondItem="H8F-IV-Fl5" secondAttribute="centerX" constant="10" id="tyE-zH-IZZ"/>
+                                                    <constraint firstAttribute="height" constant="208" id="R69-Jz-HW3"/>
+                                                    <constraint firstAttribute="width" constant="250" id="fXL-WD-3yN"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
