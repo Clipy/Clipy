@@ -287,7 +287,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ygf-rF-MiG" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ygf-rF-MiG" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="549" height="544"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="H8F-IV-Fl5">
