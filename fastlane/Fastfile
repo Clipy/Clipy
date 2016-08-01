@@ -21,7 +21,6 @@ platform :mac do
   desc "Runs all the tests"
   lane :test do
     slack(message: "Start Testing")
-    setup_libraries
     scan_clipy
     slack(message: "Passed All Tests")
   end
