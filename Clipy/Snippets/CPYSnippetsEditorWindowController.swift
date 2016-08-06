@@ -29,6 +29,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
             textView.font = NSFont.systemFontOfSize(14)
             textView.automaticQuoteSubstitutionEnabled = false
             textView.enabledTextCheckingTypes = 0
+            textView.richText = false
         }
     }
     @IBOutlet weak var outlineView: NSOutlineView! {
