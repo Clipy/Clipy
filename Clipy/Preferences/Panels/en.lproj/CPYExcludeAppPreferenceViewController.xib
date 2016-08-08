@@ -22,6 +22,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="addAppButtonTapped:" target="-2" id="WqQ-3P-hyJ"/>
+                    </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u8F-hg-gnH">
                     <rect key="frame" x="75" y="17" width="21" height="21"/>
@@ -29,6 +32,9 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <connections>
+                        <action selector="deleteAppButtonTapped:" target="-2" id="mL0-Kh-QDm"/>
+                    </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YQy-qg-PP3">
                     <rect key="frame" x="53" y="256" width="374" height="17"/>

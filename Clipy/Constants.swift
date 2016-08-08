@@ -58,6 +58,7 @@ struct Constants {
         static let overwriteSameHistory             = "kCPYPrefOverwriteSameHistroy"
         static let copySameHistory                  = "kCPYPrefCopySameHistroy"
         static let suppressAlertForDeleteSnippet    = "kCPYSuppressAlertForDeleteSnippet"
+        static let excludeApplications              = "kCPYExcludeApplications"
     }
 
     struct Beta {

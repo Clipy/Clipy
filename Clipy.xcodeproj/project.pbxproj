@@ -11,6 +11,8 @@
 		BAB1E94AD525CCA86B3D9269 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7704468A08D3F1887B4F2605 /* Pods_ClipyTests.framework */; };
 		FA04129B1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0412991D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift */; };
 		FA04129D1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA04129F1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib */; };
+		FA0412A41D58D19F00D99551 /* CPYAppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0412A31D58D19F00D99551 /* CPYAppInfo.swift */; };
+		FA0412A61D58DD7C00D99551 /* ExcludeAppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0412A51D58DD7C00D99551 /* ExcludeAppManager.swift */; };
 		FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */; };
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
@@ -106,6 +108,8 @@
 		FA0412991D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYExcludeAppPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA04129E1D58BCD500D99551 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA0412A21D58BCDB00D99551 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
+		FA0412A31D58D19F00D99551 /* CPYAppInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYAppInfo.swift; sourceTree = "<group>"; };
+		FA0412A51D58DD7C00D99551 /* ExcludeAppManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppManager.swift; sourceTree = "<group>"; };
 		FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuType.swift; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyManagerSpec.swift; sourceTree = "<group>"; };
 		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
@@ -381,6 +385,7 @@
 				FAC43E611B35EA4E00C06102 /* CPYFolder.swift */,
 				FAC43E631B35EA6800C06102 /* CPYSnippet.swift */,
 				FAD9DBD61D36A2C900117636 /* CPYDraggedData.swift */,
+				FA0412A31D58D19F00D99551 /* CPYAppInfo.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -393,6 +398,7 @@
 				FAC43E681B35EC6200C06102 /* ClipManager.swift */,
 				FA71E3F71BA0A66300369F92 /* HistoryManager.swift */,
 				FAA256C61D16FC65000A23BC /* HotKeyManager.swift */,
+				FA0412A51D58DD7C00D99551 /* ExcludeAppManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -717,10 +723,12 @@
 				FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */,
 				FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */,
 				FAC43E721B36D0A600C06102 /* CPYUtilities.swift in Sources */,
+				FA0412A41D58D19F00D99551 /* CPYAppInfo.swift in Sources */,
 				FA5900E61C7B79D900E84E23 /* NSImage+AssetCatalog.swift in Sources */,
 				FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */,
 				FA72A8601C807D4500D120B3 /* CPYDesignableButton.swift in Sources */,
 				FAC4E62D1C7F270900200271 /* CPYPreferencesWindowController.swift in Sources */,
+				FA0412A61D58DD7C00D99551 /* ExcludeAppManager.swift in Sources */,
 				FAA256C71D16FC65000A23BC /* HotKeyManager.swift in Sources */,
 				FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */,
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
