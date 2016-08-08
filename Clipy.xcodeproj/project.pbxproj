@@ -10,7 +10,7 @@
 		5E0701B212AFC1AEBE5FA462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49262C44884B1EFE07ED5628 /* Pods_Clipy.framework */; };
 		BAB1E94AD525CCA86B3D9269 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7704468A08D3F1887B4F2605 /* Pods_ClipyTests.framework */; };
 		FA04129B1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0412991D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift */; };
-		FA04129C1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA04129A1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.xib */; };
+		FA04129D1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA04129F1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib */; };
 		FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */; };
 		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
@@ -104,7 +104,8 @@
 		BFE367B4762781067D1CAAE4 /* Pods-ClipyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.release.xcconfig"; sourceTree = "<group>"; };
 		DE0762610C0A24B3D30D79A0 /* Pods-Clipy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.debug.xcconfig"; sourceTree = "<group>"; };
 		FA0412991D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYExcludeAppPreferenceViewController.swift; sourceTree = "<group>"; };
-		FA04129A1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
+		FA04129E1D58BCD500D99551 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
+		FA0412A21D58BCDB00D99551 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuType.swift; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyManagerSpec.swift; sourceTree = "<group>"; };
 		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
@@ -438,7 +439,7 @@
 				FA55FCD51D219BFC005C1936 /* CPYBetaPreferenceViewController.swift */,
 				FA55FCDB1D219C17005C1936 /* CPYBetaPreferenceViewController.xib */,
 				FA0412991D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.swift */,
-				FA04129A1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.xib */,
+				FA04129F1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib */,
 			);
 			path = Panels;
 			sourceTree = "<group>";
@@ -575,7 +576,7 @@
 				FAFEF2031C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib in Resources */,
 				FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */,
 				FAF9DE671D3D211A0088358B /* CPYSnippetsEditorWindowController.xib in Resources */,
-				FA04129C1D58B8F400D99551 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
+				FA04129D1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -776,6 +777,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		FA04129F1D58BCD500D99551 /* CPYExcludeAppPreferenceViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA04129E1D58BCD500D99551 /* en */,
+				FA0412A21D58BCDB00D99551 /* ja */,
+			);
+			name = CPYExcludeAppPreferenceViewController.xib;
+			sourceTree = "<group>";
+		};
 		FA189C7E1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
