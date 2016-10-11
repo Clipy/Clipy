@@ -99,7 +99,7 @@ private extension CPYPreferencesWindowController {
         generalImageView.image      = NSImage(assetIdentifier: .GeneralOff)
         menuImageView.image         = NSImage(assetIdentifier: .MenuOff)
         typeImageView.image         = NSImage(assetIdentifier: .TypeOff)
-        excludeImageView.image      = NSImage(assetIdentifier: .ShortcutsOff)
+        excludeImageView.image      = NSImage(assetIdentifier: .ExcludedOff)
         shortcutsImageView.image    = NSImage(assetIdentifier: .ShortcutsOff)
         updatesImageView.image      = NSImage(assetIdentifier: .UpdatesOff)
         betaImageView.image         = NSImage(assetIdentifier: .BetaOff)
@@ -127,7 +127,7 @@ private extension CPYPreferencesWindowController {
             typeImageView.image = NSImage(assetIdentifier: .TypeOn)
             typeTextField.textColor = NSColor.clipyColor()
         case 3:
-            excludeImageView.image = NSImage(assetIdentifier: .ShortcutsOn)
+            excludeImageView.image = NSImage(assetIdentifier: .ExcludedOn)
             excludeTextField.textColor = NSColor.clipyColor()
         case 4:
             shortcutsImageView.image = NSImage(assetIdentifier: .ShortcutsOn)
