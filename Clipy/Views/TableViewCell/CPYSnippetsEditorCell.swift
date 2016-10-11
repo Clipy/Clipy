@@ -43,7 +43,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
         switch iconType {
         case .Folder:
 
-            var imageFrame = NSZeroRect
+            var imageFrame = NSRect.zero
             var cellFrame = cellFrame
             NSDivideRect(cellFrame, &imageFrame, &cellFrame, 15, .MinX)
             imageFrame.origin.x += 5
@@ -85,8 +85,8 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
         switch iconType {
         case .Folder:
 
-            var imageFrame = NSZeroRect
-            var cellRect = NSZeroRect
+            var imageFrame = NSRect.zero
+            var cellRect = NSRect.zero
 
             NSDivideRect(theRect, &imageFrame, &cellRect, 15, .MinX)
 
