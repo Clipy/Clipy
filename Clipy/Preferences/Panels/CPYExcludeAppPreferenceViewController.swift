@@ -48,13 +48,6 @@ extension CPYExcludeAppPreferenceViewController {
     }
 }
 
-// MARK: - NSTableView Delegate
-extension CPYExcludeAppPreferenceViewController: NSTableViewDelegate {
-    func tableView(tableView: NSTableView, willDisplayCell cell: AnyObject, forTableColumn tableColumn: NSTableColumn?, row: Int) {
-        //(cell as? CPYImageAndTextCell)?.cellImageType = .Folder
-    }
-}
-
 // MARK: - NSTableView DataSource
 extension CPYExcludeAppPreferenceViewController: NSTableViewDataSource {
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {

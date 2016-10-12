@@ -14,6 +14,7 @@ final class CPYAppInfo: NSObject, NSCoding {
     let identifier: String
     let name: String
 
+    // MARK: - Initialize
     init?(info: [String: AnyObject]) {
         guard let identifier = info[kCFBundleIdentifierKey as String] as? String else { return nil }
         guard let name = info[kCFBundleNameKey as String] as? String ?? info[kCFBundleExecutableKey as String] as? String else { return nil }
