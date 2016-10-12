@@ -84,7 +84,7 @@ extension PasteboardManager {
     }
 }
 
-// MARK: -Paste
+// MARK: - Paste
 extension PasteboardManager {
     static func paste() {
         if !NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.inputPasteCommand) { return }
