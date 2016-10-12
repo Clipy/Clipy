@@ -1,0 +1,6 @@
+framework module AEXML {
+  umbrella header "AEXML-umbrella.h"
+
+  export *
+  module * { export * }
+}

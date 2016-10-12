@@ -21,10 +21,8 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### How to Build
 0. Move to the project root directory
-1. Install [CocoaPods](http://cocoapods.org) and [fastlane](https://github.com/fastlane/fastlane) using Bundler. Run `bundle install`
-2. Run `bundle exec pod install` on your terminal.
-2. Open `Clipy.xcworkspace` on Xcode.
-3. build.
+1. Open `Clipy.xcworkspace` on Xcode.
+2. build.
 
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )

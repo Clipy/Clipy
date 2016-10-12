@@ -1,0 +1,6 @@
+framework module RxScreeen {
+  umbrella header "RxScreeen-umbrella.h"
+
+  export *
+  module * { export * }
+}
