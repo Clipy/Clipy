@@ -13,7 +13,6 @@ platform :mac do
 
   desc "Setup development"
   lane :setup do
-    setup_libraries
   end
 
   ####################### PUBLIC LANES ########################
@@ -26,12 +25,7 @@ platform :mac do
   end
 
   ####################### PRIVATE LANES ########################
-
-  private_lane :setup_libraries do
-    # Cocoapods
-    cocoapods
-  end
-
+  
   private_lane :scan_clipy do
     scan(
       workspace: "Clipy.xcworkspace",
@@ -45,7 +39,6 @@ platform :mac do
   ############################ POST ############################
 
   after_all do |lane|
-
   end
 
   error do |lane, exception|

@@ -1,0 +1,83 @@
+PODS:
+  - AEXML (3.0.1)
+  - Crashlytics (3.7.2):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.7)
+  - KeyHolder (1.0.0):
+    - Magnet (= 1.0.0)
+  - LoginServiceKit (0.0.1)
+  - Magnet (1.0.0)
+  - Nimble (4.1.0)
+  - NSObject+Rx (1.2.1):
+    - RxSwift (~> 2.1)
+  - PINCache (2.2.2)
+  - Quick (0.9.2)
+  - Realm (1.0.1):
+    - Realm/Headers (= 1.0.1)
+  - Realm/Headers (1.0.1)
+  - RxCocoa (2.5.0):
+    - RxSwift (~> 2.5)
+  - RxOptional (2.0.0):
+    - RxCocoa (~> 2.0)
+    - RxSwift (~> 2.0)
+  - RxScreeen (0.0.2):
+    - RxCocoa (~> 2.5)
+    - RxSwift (~> 2.5)
+    - Screeen (= 0.0.3)
+  - RxSwift (2.5.0)
+  - Screeen (0.0.3)
+  - Sparkle (1.14.0)
+
+DEPENDENCIES:
+  - AEXML (from `https://github.com/Clipy/AEXML.git`)
+  - Crashlytics
+  - Fabric
+  - KeyHolder
+  - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
+  - Nimble
+  - NSObject+Rx
+  - PINCache
+  - Quick
+  - Realm
+  - RxCocoa
+  - RxOptional
+  - RxScreeen
+  - RxSwift
+  - Sparkle
+
+EXTERNAL SOURCES:
+  AEXML:
+    :git: https://github.com/Clipy/AEXML.git
+  LoginServiceKit:
+    :git: https://github.com/Clipy/LoginServiceKit.git
+
+CHECKOUT OPTIONS:
+  AEXML:
+    :commit: 43926440860213084e4aaa0cd8d79726b57dfa9b
+    :git: https://github.com/Clipy/AEXML.git
+  LoginServiceKit:
+    :commit: ba5de4c850dba6dc597241913ca049a220a61316
+    :git: https://github.com/Clipy/LoginServiceKit.git
+
+SPEC CHECKSUMS:
+  AEXML: 6f2d034aa62e1f7d13bfc11213b4ca17114f1dd5
+  Crashlytics: 130ab943f8c78cda7a814b434f270b2e2c8a3cba
+  Fabric: caf7580c725e64db144f610ac65cd60956911dc7
+  KeyHolder: 04e10ed144b8f0288e8ce746b64a3198bbdf20c1
+  LoginServiceKit: 92aee420b05d163e356f6c5cbef64dd23eef93e1
+  Magnet: 4e7cdfa8c7bdb29fff70096e51f1f952331a4074
+  Nimble: 97a0a4cae5124c117115634b2d055d8c97d0af19
+  NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
+  PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
+  Quick: 18d057bc66451eedd5d1c8dc99ba2a5db6e60226
+  Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
+  RxCocoa: e1b1562e57a554d0fb2aabf9d71b637f177257c7
+  RxOptional: b77fb47a0190213cf8a37c7a2b7fda28160b4563
+  RxScreeen: 2336d891e19da307e3cdac8f0cd172a0d25c0909
+  RxSwift: 402b41a50e922a0368fc14cb3bc9f4427920e8ae
+  Screeen: 18dc2d30424b19bd1782584957457c42d07f4fe5
+  Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
+
+PODFILE CHECKSUM: 00fa2a0a4edc3690d1e6fcbe77f664426aa9d028
+
+COCOAPODS: 1.0.1
