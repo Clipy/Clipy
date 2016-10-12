@@ -125,6 +125,8 @@ extension ClipManager {
 // MARK: - Create Clips
 extension ClipManager {
     private func createClip() {
+        if ExcludeAppManager.sharedManager.frontProcessIsExcludeApplication() { return }
+
         let types = clipTypes(pasteboard)
         if types.isEmpty { return }
         if !storeTypes.values.contains(NSNumber(bool: true)) { return }

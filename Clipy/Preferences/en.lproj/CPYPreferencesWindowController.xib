@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
@@ -10,6 +10,9 @@
                 <outlet property="betaButton" destination="Tkb-uY-5PB" id="rSr-MA-qFL"/>
                 <outlet property="betaImageView" destination="KnF-V7-1F2" id="Oip-8w-DfJ"/>
                 <outlet property="betaTextField" destination="CsY-pN-2dE" id="sjM-r5-llZ"/>
+                <outlet property="excludeButton" destination="3Tt-yV-IoW" id="aJp-CT-giL"/>
+                <outlet property="excludeImageView" destination="STs-Fa-lKT" id="wmF-tb-M1n"/>
+                <outlet property="excludeTextField" destination="xXO-mt-VmD" id="KZV-ph-V2x"/>
                 <outlet property="generalButton" destination="LsG-fK-vSu" id="etb-5P-mCh"/>
                 <outlet property="generalImageView" destination="arX-EY-hyL" id="BKJ-fg-esP"/>
                 <outlet property="generalTextField" destination="emt-MG-SUM" id="KHb-5e-3lL"/>
@@ -39,6 +42,18 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="374"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
+                    <textField horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KFD-K3-E8i">
+                        <rect key="frame" x="170" y="159" width="140" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="17" id="jFw-zK-V8j"/>
+                            <constraint firstAttribute="width" constant="136" id="nOG-Ch-nWk"/>
+                        </constraints>
+                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="No Pane is Selected." usesSingleLineMode="YES" id="Vy6-Ui-lLf">
+                            <font key="font" metaFont="systemBold"/>
+                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="DB4-0I-ThE">
                         <rect key="frame" x="0.0" y="318" width="480" height="56"/>
                         <subviews>
@@ -123,8 +138,35 @@
                                     </button>
                                 </subviews>
                             </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d0L-ue-dHf">
+                                <rect key="frame" x="155" y="0.0" width="65" height="56"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="STs-Fa-lKT">
+                                        <rect key="frame" x="14" y="24" width="36" height="24"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_excluded" id="GYU-9L-Orx"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xXO-mt-VmD">
+                                        <rect key="frame" x="5" y="8" width="56" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Exclude" id="odU-xs-hZL">
+                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="3Tt-yV-IoW">
+                                        <rect key="frame" x="0.0" y="0.0" width="65" height="56"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="D7V-bM-e02">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toolBarItemTapped:" target="-2" id="fkD-ag-Ycx"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tm1-Ve-7A5">
-                                <rect key="frame" x="155" y="0.0" width="70" height="56"/>
+                                <rect key="frame" x="220" y="0.0" width="70" height="56"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="Rws-24-H8e">
                                         <rect key="frame" x="17" y="24" width="36" height="24"/>
@@ -138,7 +180,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="iGA-ys-nmA">
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="iGA-ys-nmA">
                                         <rect key="frame" x="0.0" y="0.0" width="70" height="56"/>
                                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="RAI-xu-L7b">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -151,7 +193,7 @@
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bgn-yY-thR">
-                                <rect key="frame" x="225" y="0.0" width="60" height="56"/>
+                                <rect key="frame" x="290" y="0.0" width="60" height="56"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="miw-wN-6dz">
                                         <rect key="frame" x="12" y="24" width="36" height="24"/>
@@ -165,7 +207,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="qwu-rn-gk4">
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="qwu-rn-gk4">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="56"/>
                                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="WqD-9f-VJc">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -178,7 +220,7 @@
                                 </subviews>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LzX-pA-tjM">
-                                <rect key="frame" x="285" y="0.0" width="60" height="56"/>
+                                <rect key="frame" x="350" y="0.0" width="60" height="56"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="KnF-V7-1F2">
                                         <rect key="frame" x="12" y="24" width="36" height="24"/>
@@ -192,7 +234,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="Tkb-uY-5PB">
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="Tkb-uY-5PB">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="56"/>
                                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Loo-mm-qBT">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -217,18 +259,6 @@
                             <constraint firstAttribute="height" constant="56" id="zEv-xk-Ocs"/>
                         </constraints>
                     </customView>
-                    <textField horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KFD-K3-E8i">
-                        <rect key="frame" x="170" y="159" width="140" height="17"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="17" id="jFw-zK-V8j"/>
-                            <constraint firstAttribute="width" constant="136" id="nOG-Ch-nWk"/>
-                        </constraints>
-                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="No Pane is Selected." usesSingleLineMode="YES" id="Vy6-Ui-lLf">
-                            <font key="font" metaFont="systemBold"/>
-                            <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="KFD-K3-E8i" firstAttribute="centerY" secondItem="se5-gp-TjO" secondAttribute="centerY" constant="20" id="Abt-bL-b11"/>
@@ -246,6 +276,7 @@
     </objects>
     <resources>
         <image name="pref_beta" width="36" height="24"/>
+        <image name="pref_excluded" width="36" height="24"/>
         <image name="pref_general_on" width="36" height="24"/>
         <image name="pref_menu" width="36" height="24"/>
         <image name="pref_shortcut" width="36" height="24"/>
