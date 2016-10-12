@@ -20,21 +20,50 @@
 #ifndef REALM_UTIL_TO_STRING_HPP
 #define REALM_UTIL_TO_STRING_HPP
 
-#include <locale>
+#include <iosfwd>
 #include <string>
-#include <sstream>
 
 namespace realm {
 namespace util {
 
+class Printable {
+public:
+    Printable(bool value) : m_type(Type::Bool), m_uint(value) { }
+    Printable(unsigned char value) : m_type(Type::Uint), m_uint(value) { }
+    Printable(unsigned int value) : m_type(Type::Uint), m_uint(value) { }
+    Printable(unsigned long value) : m_type(Type::Uint), m_uint(value) { }
+    Printable(unsigned long long value) : m_type(Type::Uint), m_uint(value) { }
+    Printable(char value) : m_type(Type::Int), m_int(value) { }
+    Printable(int value) : m_type(Type::Int), m_int(value) { }
+    Printable(long value) : m_type(Type::Int), m_int(value) { }
+    Printable(long long value) : m_type(Type::Int), m_int(value) { }
+    Printable(const char* value) : m_type(Type::String), m_string(value) { }
+
+    void print(std::ostream& out, bool quote) const;
+    std::string str() const;
+
+    static void print_all(std::ostream& out, const std::initializer_list<Printable>& values, bool quote);
+
+private:
+    enum class Type {
+        Bool,
+        Int,
+        Uint,
+        String
+    } m_type;
+
+    union {
+        uintmax_t m_uint;
+        intmax_t m_int;
+        const char* m_string;
+    };
+};
+
+
 template<class T>
 std::string to_string(const T& v)
 {
-    std::ostringstream out;
-    out.imbue(std::locale::classic());
-    out.exceptions(std::ios_base::failbit | std::ios_base::badbit);
-    out << v; // Throws
-    return out.str();
+    return Printable(v).str();
 }
 
 } // namespace util

@@ -433,9 +433,9 @@ protected:
     {
     }
 
-    void apply_patch(HandoverPatch& patch, Group& group)
+    void apply_patch(HandoverPatch& patch, Group& dest_group)
     {
-        m_impl.apply_patch(patch, group);
+        m_impl.apply_patch(patch, dest_group);
     }
 
     virtual std::unique_ptr<Query>
@@ -454,9 +454,9 @@ protected:
         return retval;
     }
 
-    virtual void apply_and_consume_patch(std::unique_ptr<HandoverPatch>& patch, Group& group)
+    virtual void apply_and_consume_patch(std::unique_ptr<HandoverPatch>& patch, Group& dest_group)
     {
-        apply_patch(*patch, group);
+        apply_patch(*patch, dest_group);
         patch.reset();
     }
 

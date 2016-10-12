@@ -80,8 +80,8 @@ public:
     /// Construct a null reference.
     StringData() noexcept;
 
-    /// If \a data is 'null', \a size must be zero.
-    StringData(const char* data, size_t size) noexcept;
+    /// If \a external_data is 'null', \a data_size must be zero.
+    StringData(const char* external_data, size_t data_size) noexcept;
 
     template<class T, class A>
     StringData(const std::basic_string<char, T, A>&);
@@ -168,11 +168,11 @@ inline StringData::StringData() noexcept:
 {
 }
 
-inline StringData::StringData(const char* data, size_t size) noexcept:
-    m_data(data),
-    m_size(size)
+inline StringData::StringData(const char* external_data, size_t data_size) noexcept:
+    m_data(external_data),
+    m_size(data_size)
 {
-    REALM_ASSERT_DEBUG(data || size == 0);
+    REALM_ASSERT_DEBUG(external_data || data_size == 0);
 }
 
 template<class T, class A>

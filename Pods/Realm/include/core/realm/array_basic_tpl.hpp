@@ -30,8 +30,8 @@
 namespace realm {
 
 template<class T>
-inline BasicArray<T>::BasicArray(Allocator& alloc) noexcept:
-    Array(alloc)
+inline BasicArray<T>::BasicArray(Allocator& allocator) noexcept:
+    Array(allocator)
 {
 }
 
@@ -43,37 +43,37 @@ inline BasicArray<T>::BasicArray(no_prealloc_tag) noexcept:
 
 
 template<class T>
-inline MemRef BasicArray<T>::create_array(size_t size, Allocator& alloc)
+inline MemRef BasicArray<T>::create_array(size_t init_size, Allocator& allocator)
 {
-    size_t byte_size_0 = calc_aligned_byte_size(size); // Throws
+    size_t byte_size_0 = calc_aligned_byte_size(init_size); // Throws
     // Adding zero to Array::initial_capacity to avoid taking the
     // address of that member
     size_t byte_size = std::max(byte_size_0, Array::initial_capacity+0); // Throws
 
-    MemRef mem = alloc.alloc(byte_size); // Throws
+    MemRef mem = allocator.alloc(byte_size); // Throws
 
     bool is_inner_bptree_node = false;
     bool has_refs = false;
     bool context_flag = false;
     int width = sizeof (T);
-    init_header(mem.m_addr, is_inner_bptree_node, has_refs, context_flag, wtype_Multiply,
-                width, size, byte_size);
+    init_header(mem.get_addr(), is_inner_bptree_node, has_refs, context_flag, wtype_Multiply,
+                width, init_size, byte_size);
 
     return mem;
 }
 
 
 template<class T>
-inline MemRef BasicArray<T>::create_array(Array::Type type, bool context_flag, size_t size,
-                                          T value, Allocator& alloc)
+inline MemRef BasicArray<T>::create_array(Array::Type type, bool context_flag, size_t init_size,
+                                          T value, Allocator& allocator)
 {
     REALM_ASSERT(type == Array::type_Normal);
     REALM_ASSERT(!context_flag);
-    MemRef mem = create_array(size, alloc);
-    if (size) {
-        BasicArray<T> tmp(alloc);
+    MemRef mem = create_array(init_size, allocator);
+    if (init_size) {
+        BasicArray<T> tmp(allocator);
         tmp.init_from_mem(mem);
-        for (size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < init_size; ++i) {
             tmp.set(i, value);
         }
         return tmp.get_mem();
@@ -87,38 +87,38 @@ inline void BasicArray<T>::create(Array::Type type, bool context_flag)
 {
     REALM_ASSERT(type == Array::type_Normal);
     REALM_ASSERT(!context_flag);
-    size_t size = 0;
-    MemRef mem = create_array(size, get_alloc()); // Throws
+    size_t length = 0;
+    MemRef mem = create_array(length, get_alloc()); // Throws
     init_from_mem(mem);
 }
 
 
 template<class T>
-MemRef BasicArray<T>::slice(size_t offset, size_t size, Allocator& target_alloc) const
+MemRef BasicArray<T>::slice(size_t offset, size_t slice_size, Allocator& target_alloc) const
 {
     REALM_ASSERT(is_attached());
 
     // FIXME: This can be optimized as a single contiguous copy
     // operation.
-    BasicArray slice(target_alloc);
-    _impl::ShallowArrayDestroyGuard dg(&slice);
-    slice.create(); // Throws
+    BasicArray array_slice(target_alloc);
+    _impl::ShallowArrayDestroyGuard dg(&array_slice);
+    array_slice.create(); // Throws
     size_t begin = offset;
-    size_t end   = offset + size;
+    size_t end   = offset + slice_size;
     for (size_t i = begin; i != end; ++i) {
         T value = get(i);
-        slice.add(value); // Throws
+        array_slice.add(value); // Throws
     }
     dg.release();
-    return slice.get_mem();
+    return array_slice.get_mem();
 }
 
 template<class T>
-MemRef BasicArray<T>::slice_and_clone_children(size_t offset, size_t size,
+MemRef BasicArray<T>::slice_and_clone_children(size_t offset, size_t slice_size,
                                                Allocator& target_alloc) const
 {
     // BasicArray<T> never contains refs, so never has children.
-    return slice(offset, size, target_alloc);
+    return slice(offset, slice_size, target_alloc);
 }
 
 
@@ -225,17 +225,17 @@ void BasicArray<T>::erase(size_t ndx)
 }
 
 template<class T>
-void BasicArray<T>::truncate(size_t size)
+void BasicArray<T>::truncate(size_t to_size)
 {
     REALM_ASSERT(is_attached());
-    REALM_ASSERT_3(size, <=, m_size);
+    REALM_ASSERT_3(to_size, <=, m_size);
 
     copy_on_write(); // Throws
 
     // Update size in accessor and in header. This leaves the capacity
     // unchanged.
-    m_size = size;
-    set_header_size(size);
+    m_size = to_size;
+    set_header_size(to_size);
 }
 
 template<class T>
@@ -257,7 +257,7 @@ bool BasicArray<T>::compare(const BasicArray<T>& a) const
 
 
 template<class T>
-size_t BasicArray<T>::calc_byte_len(size_t size, size_t) const
+size_t BasicArray<T>::calc_byte_len(size_t for_size, size_t) const
 {
     // FIXME: Consider calling `calc_aligned_byte_size(size)`
     // instead. Note however, that calc_byte_len() is supposed to return
@@ -265,7 +265,7 @@ size_t BasicArray<T>::calc_byte_len(size_t size, size_t) const
     // is done by returning the aligned version, and most callers of
     // calc_byte_len() will actually benefit if calc_byte_len() was
     // changed to always return the aligned byte size.
-    return header_size + size * sizeof (T); // FIXME: Prone to overflow
+    return header_size + for_size * sizeof (T); // FIXME: Prone to overflow
 }
 
 template<class T>

@@ -106,7 +106,7 @@ public:
     BpTree();
     explicit BpTree(BpTreeBase::unattached_tag);
     explicit BpTree(Allocator& alloc);
-    explicit BpTree(std::unique_ptr<Array> root) : BpTreeBase(std::move(root)) {}
+    explicit BpTree(std::unique_ptr<Array> init_root) : BpTreeBase(std::move(init_root)) {}
     BpTree(BpTree&&) = default;
     BpTree& operator=(BpTree&&) = default;
     void init_from_ref(Allocator& alloc, ref_type ref);
@@ -184,7 +184,7 @@ private:
 
 /// Implementation:
 
-inline BpTreeBase::BpTreeBase(std::unique_ptr<Array> root) : m_root(std::move(root))
+inline BpTreeBase::BpTreeBase(std::unique_ptr<Array> init_root) : m_root(std::move(init_root))
 {
 }
 
@@ -279,7 +279,7 @@ BpTree<T>::BpTree(BpTreeBase::unattached_tag) : BpTreeBase(nullptr)
 template<class T>
 std::unique_ptr<Array> BpTree<T>::create_root_from_mem(Allocator& alloc, MemRef mem)
 {
-    const char* header = mem.m_addr;
+    const char* header = mem.get_addr();
     std::unique_ptr<Array> new_root;
     bool is_inner_bptree_node = Array::get_is_inner_bptree_node_from_header(header);
 
@@ -312,7 +312,7 @@ std::unique_ptr<Array> BpTree<T>::create_root_from_mem(Allocator& alloc, MemRef 
 template<class T>
 std::unique_ptr<Array> BpTree<T>::create_root_from_ref(Allocator& alloc, ref_type ref)
 {
-    MemRef mem = MemRef{alloc.translate(ref), ref};
+    MemRef mem = MemRef{alloc.translate(ref), ref, alloc};
     return create_root_from_mem(alloc, mem);
 }
 
@@ -431,7 +431,7 @@ T BpTree<T>::get(size_t ndx) const noexcept
 
     // Use direct getter to avoid initializing leaf array:
     std::pair<MemRef, size_t> p = root().get_bptree_leaf(ndx);
-    const char* leaf_header = p.first.m_addr;
+    const char* leaf_header = p.first.get_addr();
     size_t ndx_in_leaf = p.second;
     return LeafType::get(leaf_header, ndx_in_leaf);
 }

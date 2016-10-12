@@ -49,7 +49,7 @@ using util::File;
 
 @interface RLMRealm ()
 @property (nonatomic, strong) NSHashTable *notificationHandlers;
-- (void)sendNotifications:(NSString *)notification;
+- (void)sendNotifications:(RLMNotification)notification;
 @end
 
 void RLMDisableSyncToDisk() {
@@ -174,9 +174,6 @@ static void RLMCopyColumnMapping(RLMObjectSchema *targetSchema, const ObjectSche
         RLMProperty *targetProp = targetSchema[@(prop.name.c_str())];
         targetProp.column = prop.table_column;
     }
-
-    // re-order properties
-    [targetSchema sortPropertiesByColumn];
 }
 
 static void RLMRealmSetSchemaAndAlign(RLMRealm *realm, RLMSchema *targetSchema) {
@@ -443,7 +440,7 @@ REALM_NOINLINE void RLMRealmTranslateException(NSError **error) {
     return token;
 }
 
-- (void)sendNotifications:(NSString *)notification {
+- (void)sendNotifications:(RLMNotification)notification {
     NSAssert(!_realm->config().read_only, @"Read-only realms do not have notifications");
 
     NSUInteger count = _notificationHandlers.count;
@@ -699,7 +696,7 @@ REALM_NOINLINE void RLMRealmTranslateException(NSError **error) {
     }
 
     @autoreleasepool {
-        NSError *error;
+        NSError *error = nil;
         [RLMRealm realmWithConfiguration:configuration error:&error];
         return error;
     }

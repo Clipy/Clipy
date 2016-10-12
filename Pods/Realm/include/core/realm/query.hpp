@@ -330,13 +330,13 @@ public:
         return retval;
     }
 
-    virtual void apply_and_consume_patch(std::unique_ptr<HandoverPatch>& patch, Group& group)
+    virtual void apply_and_consume_patch(std::unique_ptr<HandoverPatch>& patch, Group& dest_group)
     {
-        apply_patch(*patch, group);
+        apply_patch(*patch, dest_group);
         patch.reset();
     }
 
-    void apply_patch(HandoverPatch& patch, Group& group);
+    void apply_patch(HandoverPatch& patch, Group& dest_group);
     Query(const Query& source, HandoverPatch& patch, ConstSourcePayload mode);
     Query(Query& source, HandoverPatch& patch, MutableSourcePayload mode);
 private:

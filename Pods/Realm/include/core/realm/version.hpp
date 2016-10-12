@@ -21,15 +21,13 @@
 #define REALM_VERSION_HPP
 
 #include <string>
-#include <sstream>
+
+#include <realm/util/features.h>
 
 #define REALM_VER_MAJOR 1
-#define REALM_VER_MINOR 1
+#define REALM_VER_MINOR 3
 #define REALM_VER_PATCH 1
 #define REALM_PRODUCT_NAME "realm-core"
-
-#define REALM_QUOTE2(X) #X
-#define REALM_QUOTE(X) REALM_QUOTE2(X)
 
 #define REALM_VER_STRING REALM_QUOTE(REALM_VER_MAJOR) "." REALM_QUOTE(REALM_VER_MINOR) "." REALM_QUOTE(REALM_VER_PATCH)
 #define REALM_VER_CHUNK "[" REALM_PRODUCT_NAME "-" REALM_VER_STRING "]"

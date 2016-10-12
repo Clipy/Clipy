@@ -32,7 +32,12 @@
 
 namespace realm {
 
-    enum string_compare_method_t { STRING_COMPARE_CORE, STRING_COMPARE_CPP11, STRING_COMPARE_CALLBACK } ;
+    enum string_compare_method_t {
+        STRING_COMPARE_CORE,
+        STRING_COMPARE_CPP11,
+        STRING_COMPARE_CALLBACK,
+        STRING_COMPARE_CORE_SIMILAR
+    };
 
     extern StringCompareCallback string_compare_callback;
     extern string_compare_method_t string_compare_method;
@@ -146,7 +151,6 @@ namespace realm {
     /// needle was not found.
     size_t search_case_fold(StringData haystack, const char* needle_upper,
         const char* needle_lower, size_t needle_size);
-
 
 } // namespace realm
 

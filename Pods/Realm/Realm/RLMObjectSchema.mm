@@ -41,8 +41,8 @@ using namespace realm;
 @implementation RLMObjectSchema {
     // table accessor optimization
     realm::TableRef _table;
-    NSArray *_propertiesInDeclaredOrder;
     NSArray *_swiftGenericProperties;
+    std::vector<RLMProperty *> _propertiesInTableOrder;
 }
 
 - (instancetype)initWithClassName:(NSString *)objectClassName objectClass:(Class)objectClass properties:(NSArray *)properties {
@@ -51,7 +51,7 @@ using namespace realm;
     self.properties = properties;
     self.objectClass = objectClass;
     self.accessorClass = objectClass;
-    self.standaloneClass = objectClass;
+    self.unmanagedClass = objectClass;
     return self;
 }
 
@@ -63,7 +63,7 @@ using namespace realm;
 // create property map when setting property array
 -(void)setProperties:(NSArray *)properties {
     _properties = properties;
-    _propertiesInDeclaredOrder = nil;
+    _propertiesInTableOrder.clear();
     [self _propertiesDidChange];
 }
 
@@ -119,10 +119,6 @@ using namespace realm;
     NSArray *persistedProperties = [allProperties filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(RLMProperty *property, NSDictionary *) {
         return !RLMPropertyTypeIsComputed(property.type);
     }]];
-    NSUInteger index = 0;
-    for (RLMProperty *prop in persistedProperties) {
-        prop.declarationIndex = index++;
-    }
     schema.properties = persistedProperties;
 
     NSArray *computedProperties = [allProperties filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(RLMProperty *property, NSDictionary *) {
@@ -327,7 +323,7 @@ using namespace realm;
     schema->_className = _className;
     schema->_objectClass = _objectClass;
     schema->_accessorClass = _accessorClass;
-    schema->_standaloneClass = _standaloneClass;
+    schema->_unmanagedClass = _unmanagedClass;
     schema->_isSwiftClass = _isSwiftClass;
 
     // call property setter to reset map and primary key
@@ -344,7 +340,7 @@ using namespace realm;
     schema->_className = _className;
     schema->_objectClass = _objectClass;
     schema->_accessorClass = _accessorClass;
-    schema->_standaloneClass = _standaloneClass;
+    schema->_unmanagedClass = _unmanagedClass;
     schema->_isSwiftClass = _isSwiftClass;
 
     // reuse property array, map, and primary key instnaces
@@ -353,6 +349,7 @@ using namespace realm;
     schema->_allPropertiesByName = _allPropertiesByName;
     schema->_primaryKeyProperty = _primaryKeyProperty;
     schema->_swiftGenericProperties = _swiftGenericProperties;
+    schema->_propertiesInTableOrder = _propertiesInTableOrder;
 
     // _table not copied as it's realm::Group-specific
     return schema;
@@ -441,29 +438,24 @@ using namespace realm;
     // for dynamic schema use vanilla RLMDynamicObject accessor classes
     schema.objectClass = RLMObject.class;
     schema.accessorClass = RLMDynamicObject.class;
-    schema.standaloneClass = RLMObject.class;
+    schema.unmanagedClass = RLMObject.class;
     
     return schema;
 }
 
-- (void)sortPropertiesByColumn {
-    _properties = [_properties sortedArrayUsingComparator:^NSComparisonResult(RLMProperty *p1, RLMProperty *p2) {
-        if (p1.column < p2.column) return NSOrderedAscending;
-        if (p1.column > p2.column) return NSOrderedDescending;
-        return NSOrderedSame;
-    }];
-    // No need to update the dictionary
-}
-
-- (NSArray *)propertiesInDeclaredOrder {
-    if (!_propertiesInDeclaredOrder) {
-        _propertiesInDeclaredOrder = [_properties sortedArrayUsingComparator:^NSComparisonResult(RLMProperty *p1, RLMProperty *p2) {
-            if (p1.declarationIndex < p2.declarationIndex) return NSOrderedAscending;
-            if (p1.declarationIndex > p2.declarationIndex) return NSOrderedDescending;
-            return NSOrderedSame;
-        }];
+- (RLMProperty *)propertyForTableColumn:(size_t)tableCol {
+    if (_propertiesInTableOrder.empty()) {
+        _propertiesInTableOrder.resize(_properties.count, nil);
+        for (RLMProperty *property in _properties) {
+            auto col = property.column;
+            if (col >= _propertiesInTableOrder.size()) {
+                _propertiesInTableOrder.resize(col + 1, nil);
+            }
+            _propertiesInTableOrder[col] = property;
+        }
     }
-    return _propertiesInDeclaredOrder;
+
+    return tableCol < _propertiesInTableOrder.size() ? _propertiesInTableOrder[tableCol] : nil;
 }
 
 - (NSArray *)swiftGenericProperties {

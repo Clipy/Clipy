@@ -28,7 +28,6 @@
 #include <realm/table.hpp>
 #include <realm/column_backlink.hpp>
 #include <realm/link_view_fwd.hpp>
-#include <iostream>
 
 namespace realm {
 

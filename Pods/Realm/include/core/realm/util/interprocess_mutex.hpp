@@ -158,9 +158,9 @@ inline void InterprocessMutex::release_shared_part()
 inline void InterprocessMutex::lock()
 {
 #ifdef REALM_ROBUST_MUTEX_EMULATION
-    std::unique_lock<Mutex> lock(m_local_mutex);
+    std::unique_lock<Mutex> mutex_lock(m_local_mutex);
     m_file.lock_exclusive();
-    lock.release();
+    mutex_lock.release();
 #else
     REALM_ASSERT(m_shared_part);
     m_shared_part->lock([](){});

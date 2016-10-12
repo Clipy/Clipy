@@ -20,8 +20,6 @@
 #ifndef REALM_TABLE_VIEW_HPP
 #define REALM_TABLE_VIEW_HPP
 
-#include <iostream>
-
 #include <realm/views.hpp>
 #include <realm/table.hpp>
 #include <realm/link_view.hpp>
@@ -89,22 +87,9 @@ namespace realm {
 //
 // Handover is a two-step procedure. First, the accessors are *exported* from one SharedGroup,
 // called the sourcing group, then it is *imported* into another SharedGroup, called the
-// receiving group. Normally, the thread associated with the sourcing SharedGroup will be
+// receiving group. The thread associated with the sourcing SharedGroup will be
 // responsible for the export operation, while the thread associated with the receiving
-// SharedGroup will do the import operation. This is different for "stealing" - see below.
-// See group_shared.hpp for more details on handover.
-//
-// 2b. Stealing
-// This is a special variant of handover, where the sourcing thread/shared group has its
-// TableView "stolen" from it, in the sense that the sourcing thread is *not* responsible
-// for exporting the view. This form of handover is limited, because the export operation
-// may happen in parallel with operations in the sourcing thread. The export operation is
-// mutually exclusive with advance_read or promote_to_write, so the sourcing thread is
-// free to move forward with these even though another thread is stealing its TableViews.
-// HOWEVER: All other accesses to the TableView is *not* interlocked, including indirect
-// accesses triggered by changes to other TableViews or Tables on which the TableView depend.
-// FIXME: If we truly need to interlock all accesses to the TableView, it is possible
-// to add this feature, BUT the runtime cost must be carefully considered.
+// SharedGroup will do the import operation.
 //
 // 3. Iterating a view and changing data
 // The third use case (and a motivator behind the imperative view) is when you want
@@ -890,7 +875,7 @@ inline TableViewBase::TableViewBase(const TableViewBase& tv):
     // RAII idiom (nor should it).
     Allocator& alloc = m_row_indexes.get_alloc();
     MemRef mem = tv.m_row_indexes.get_root_array()->clone_deep(alloc); // Throws
-    _impl::DeepArrayRefDestroyGuard ref_guard(mem.m_ref, alloc);
+    _impl::DeepArrayRefDestroyGuard ref_guard(mem.get_ref(), alloc);
     if (m_table)
         m_table->register_view(this); // Throws
     m_row_indexes.get_root_array()->init_from_mem(mem);
@@ -972,7 +957,7 @@ inline TableViewBase& TableViewBase::operator=(const TableViewBase& tv)
 
     Allocator& alloc = m_row_indexes.get_alloc();
     MemRef mem = tv.m_row_indexes.get_root_array()->clone_deep(alloc); // Throws
-    _impl::DeepArrayRefDestroyGuard ref_guard(mem.m_ref, alloc);
+    _impl::DeepArrayRefDestroyGuard ref_guard(mem.get_ref(), alloc);
     m_row_indexes.destroy();
     m_row_indexes.get_root_array()->init_from_mem(mem);
     ref_guard.release();

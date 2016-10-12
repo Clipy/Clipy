@@ -32,9 +32,9 @@ public:
 
     const char* get(size_t index) const noexcept;
     bool is_null(size_t index) const noexcept;
-    void add(const char* data, size_t size, bool add_zero_term = false);
-    void insert(size_t pos, const char* data, size_t size, bool add_zero_term = false);
-    void replace(size_t begin, size_t end, const char* data, size_t size,
+    void add(const char* data, size_t data_size, bool add_zero_term = false);
+    void insert(size_t pos, const char* data, size_t data_size, bool add_zero_term = false);
+    void replace(size_t begin, size_t end, const char* data, size_t data_size,
                  bool add_zero_term = false);
     void erase(size_t begin, size_t end);
 
@@ -55,7 +55,7 @@ public:
     /// Construct a blob of the specified size and return just the
     /// reference to the underlying memory. All bytes will be
     /// initialized to zero.
-    static MemRef create_array(size_t size, Allocator&);
+    static MemRef create_array(size_t init_size, Allocator&);
 
 #ifdef REALM_DEBUG
     void verify() const;
@@ -63,10 +63,9 @@ public:
 #endif
 
 private:
-    size_t calc_byte_len(size_t count, size_t width) const override;
+    size_t calc_byte_len(size_t for_size, size_t width) const override;
     size_t calc_item_count(size_t bytes,
                               size_t width) const noexcept override;
-    WidthType GetWidthType() const override { return wtype_Ignore; }
 };
 
 
@@ -75,8 +74,8 @@ private:
 // Implementation:
 
 // Creates new array (but invalid, call init_from_ref() to init)
-inline ArrayBlob::ArrayBlob(Allocator& alloc) noexcept:
-    Array(alloc)
+inline ArrayBlob::ArrayBlob(Allocator& allocator) noexcept:
+    Array(allocator)
 {
 }
 
@@ -90,22 +89,22 @@ inline const char* ArrayBlob::get(size_t index) const noexcept
     return m_data + index;
 }
 
-inline void ArrayBlob::add(const char* data, size_t size, bool add_zero_term)
+inline void ArrayBlob::add(const char* data, size_t data_size, bool add_zero_term)
 {
-    replace(m_size, m_size, data, size, add_zero_term);
+    replace(m_size, m_size, data, data_size, add_zero_term);
 }
 
-inline void ArrayBlob::insert(size_t pos, const char* data, size_t size,
+inline void ArrayBlob::insert(size_t pos, const char* data, size_t data_size,
                               bool add_zero_term)
 {
-    replace(pos, pos, data, size, add_zero_term);
+    replace(pos, pos, data, data_size, add_zero_term);
 }
 
 inline void ArrayBlob::erase(size_t begin, size_t end)
 {
     const char* data = nullptr;
-    size_t size = 0;
-    replace(begin, end, data, size);
+    size_t data_size = 0;
+    replace(begin, end, data, data_size);
 }
 
 inline const char* ArrayBlob::get(const char* header, size_t pos) noexcept
@@ -116,21 +115,21 @@ inline const char* ArrayBlob::get(const char* header, size_t pos) noexcept
 
 inline void ArrayBlob::create()
 {
-    size_t size = 0;
-    MemRef mem = create_array(size, get_alloc()); // Throws
+    size_t init_size = 0;
+    MemRef mem = create_array(init_size, get_alloc()); // Throws
     init_from_mem(mem);
 }
 
-inline MemRef ArrayBlob::create_array(size_t size, Allocator& alloc)
+inline MemRef ArrayBlob::create_array(size_t init_size, Allocator& allocator)
 {
     bool context_flag = false;
     int_fast64_t value = 0;
-    return Array::create(type_Normal, context_flag, wtype_Ignore, size, value, alloc); // Throws
+    return Array::create(type_Normal, context_flag, wtype_Ignore, init_size, value, allocator); // Throws
 }
 
-inline size_t ArrayBlob::calc_byte_len(size_t count, size_t) const
+inline size_t ArrayBlob::calc_byte_len(size_t for_size, size_t) const
 {
-    return header_size + count;
+    return header_size + for_size;
 }
 
 inline size_t ArrayBlob::calc_item_count(size_t bytes, size_t) const noexcept

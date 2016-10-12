@@ -20,7 +20,6 @@
 #ifndef REALM_INDEX_STRING_HPP
 #define REALM_INDEX_STRING_HPP
 
-#include <iostream>
 #include <cstring>
 #include <memory>
 #include <array>
@@ -127,7 +126,7 @@ public:
     void verify() const;
     void verify_entries(const StringColumn& column) const;
     void do_dump_node_structure(std::ostream&, int) const;
-    void to_dot() const { to_dot(std::cerr); }
+    void to_dot() const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
 #endif
 

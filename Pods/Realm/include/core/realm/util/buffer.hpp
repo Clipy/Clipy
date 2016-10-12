@@ -40,7 +40,7 @@ template<class T>
 class Buffer {
 public:
     Buffer() noexcept: m_size(0) {}
-    explicit Buffer(size_t size);
+    explicit Buffer(size_t initial_size);
     Buffer(Buffer<T>&&) noexcept = default;
     ~Buffer() noexcept {}
 
@@ -107,10 +107,10 @@ public:
     const T* data() const noexcept;
 
     /// Append the specified elements. This increases the size of this
-    /// buffer by \a size. If the caller has previously requested a
-    /// minimum capacity that is greater than, or equal to the
+    /// buffer by \a append_data_size. If the caller has previously requested
+    /// a minimum capacity that is greater than, or equal to the
     /// resulting size, this function is guaranteed to not throw.
-    void append(const T* data, size_t size);
+    void append(const T* append_data, size_t append_data_size);
 
     /// If the specified size is less than the current size, then the
     /// buffer contents is truncated accordingly. If the specified
@@ -118,7 +118,7 @@ public:
     /// will have undefined values. If the caller has previously
     /// requested a minimum capacity that is greater than, or equal to
     /// the specified size, this function is guaranteed to not throw.
-    void resize(size_t size);
+    void resize(size_t new_size);
 
     /// This operation does not change the size of the buffer as
     /// returned by size(). If the specified capacity is less than the
@@ -147,9 +147,9 @@ public:
 };
 
 template<class T>
-inline Buffer<T>::Buffer(size_t size):
-    m_data(new T[size]), // Throws
-    m_size(size)
+inline Buffer<T>::Buffer(size_t initial_size):
+    m_data(new T[initial_size]), // Throws
+    m_size(initial_size)
 {
 }
 
@@ -227,11 +227,11 @@ inline const T* AppendBuffer<T>::data() const noexcept
 }
 
 template<class T>
-inline void AppendBuffer<T>::append(const T* data, size_t size)
+inline void AppendBuffer<T>::append(const T* append_data, size_t append_data_size)
 {
-    m_buffer.reserve_extra(m_size, size); // Throws
-    std::copy(data, data+size, m_buffer.data()+m_size);
-    m_size += size;
+    m_buffer.reserve_extra(m_size, append_data_size); // Throws
+    std::copy(append_data, append_data+append_data_size, m_buffer.data()+m_size);
+    m_size += append_data_size;
 }
 
 template<class T>
@@ -241,10 +241,10 @@ inline void AppendBuffer<T>::reserve(size_t min_capacity)
 }
 
 template<class T>
-inline void AppendBuffer<T>::resize(size_t size)
+inline void AppendBuffer<T>::resize(size_t new_size)
 {
-    reserve(size);
-    m_size = size;
+    reserve(new_size);
+    m_size = new_size;
 }
 
 template<class T>

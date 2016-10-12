@@ -93,7 +93,7 @@ public:
 
     /// Construct a copy of the specified slice of this string array
     /// using the specified target allocator.
-    MemRef slice(size_t offset, size_t size, Allocator& target_alloc) const;
+    MemRef slice(size_t offset, size_t slice_size, Allocator& target_alloc) const;
 
 #ifdef REALM_DEBUG
     void string_stats() const;
@@ -101,10 +101,9 @@ public:
 #endif
 
 private:
-    size_t calc_byte_len(size_t count, size_t width) const override;
+    size_t calc_byte_len(size_t num_items, size_t width) const override;
     size_t calc_item_count(size_t bytes,
                               size_t width) const noexcept override;
-    WidthType GetWidthType() const override { return wtype_Multiply; }
 
     bool m_nullable;
 };
@@ -114,8 +113,8 @@ private:
 // Implementation:
 
 // Creates new array (but invalid, call init_from_ref() to init)
-inline ArrayString::ArrayString(Allocator& alloc, bool nullable) noexcept:
-Array(alloc), m_nullable(nullable)
+inline ArrayString::ArrayString(Allocator& allocator, bool nullable) noexcept:
+Array(allocator), m_nullable(nullable)
 {
 }
 
@@ -129,16 +128,16 @@ inline ArrayString::ArrayString(no_prealloc_tag) noexcept:
 
 inline void ArrayString::create()
 {
-    size_t size = 0;
-    MemRef mem = create_array(size, get_alloc()); // Throws
+    size_t init_size = 0;
+    MemRef mem = create_array(init_size, get_alloc()); // Throws
     init_from_mem(mem);
 }
 
-inline MemRef ArrayString::create_array(size_t size, Allocator& alloc)
+inline MemRef ArrayString::create_array(size_t init_size, Allocator& allocator)
 {
     bool context_flag = false;
     int_fast64_t value = 0;
-    return Array::create(type_Normal, context_flag, wtype_Multiply, size, value, alloc); // Throws
+    return Array::create(type_Normal, context_flag, wtype_Multiply, init_size, value, allocator); // Throws
 }
 
 inline StringData ArrayString::get(size_t ndx) const noexcept
@@ -148,13 +147,13 @@ inline StringData ArrayString::get(size_t ndx) const noexcept
         return m_nullable ? realm::null() : StringData("");
 
     const char* data = m_data + (ndx * m_width);
-    size_t size = (m_width-1) - data[m_width-1];
+    size_t array_size = (m_width-1) - data[m_width-1];
 
-    if (size == static_cast<size_t>(-1))
+    if (array_size == static_cast<size_t>(-1))
         return m_nullable ? realm::null() : StringData("");
 
-    REALM_ASSERT(data[size] == 0); // Realm guarantees 0 terminated return strings
-    return StringData(data, size);
+    REALM_ASSERT_EX(data[array_size] == 0, data[array_size], array_size); // Realm guarantees 0 terminated return strings
+    return StringData(data, array_size);
 }
 
 inline void ArrayString::add(StringData value)
@@ -171,7 +170,7 @@ inline void ArrayString::add()
 inline StringData ArrayString::get(const char* header, size_t ndx, bool nullable) noexcept
 {
     REALM_ASSERT(ndx < get_size_from_header(header));
-    size_t width = get_width_from_header(header);
+    uint_least8_t width = get_width_from_header(header);
     const char* data = get_data_from_header(header) + (ndx * width);
 
     if (width == 0)

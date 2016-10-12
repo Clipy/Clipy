@@ -47,7 +47,7 @@ public:
         return m_impl.get_source_ndx(row_ndx);
     }
 
-    void to_json(std::ostream& out) const { m_impl.to_json(out); };
+    void to_json(std::ostream& out) const { m_impl.to_json(out); }
     void to_string(std::ostream& out, size_t limit=500) const
     {
         m_impl.to_string(out, limit);

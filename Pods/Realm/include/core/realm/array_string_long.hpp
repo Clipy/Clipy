@@ -89,7 +89,7 @@ public:
 
     /// Construct a copy of the specified slice of this long string
     /// array using the specified target allocator.
-    MemRef slice(size_t offset, size_t size, Allocator& target_alloc) const;
+    MemRef slice(size_t offset, size_t slice_size, Allocator& target_alloc) const;
 
 #ifdef REALM_DEBUG
     void to_dot(std::ostream&, StringData title = StringData()) const;
@@ -107,8 +107,9 @@ private:
 
 
 // Implementation:
-inline ArrayStringLong::ArrayStringLong(Allocator& alloc, bool nullable) noexcept:
-    Array(alloc), m_offsets(alloc), m_blob(alloc), m_nulls(nullable ? alloc : Allocator::get_default()), m_nullable(nullable)
+inline ArrayStringLong::ArrayStringLong(Allocator& allocator, bool nullable) noexcept:
+    Array(allocator), m_offsets(allocator), m_blob(allocator),
+    m_nulls(nullable ? allocator : Allocator::get_default()), m_nullable(nullable)
 {
     m_offsets.set_parent(this, 0);
     m_blob.set_parent(this, 1);
@@ -118,8 +119,8 @@ inline ArrayStringLong::ArrayStringLong(Allocator& alloc, bool nullable) noexcep
 
 inline void ArrayStringLong::create()
 {
-    size_t size = 0;
-    MemRef mem = create_array(size, get_alloc(), m_nullable); // Throws
+    size_t init_size = 0;
+    MemRef mem = create_array(init_size, get_alloc(), m_nullable); // Throws
     init_from_mem(mem);
 }
 
@@ -127,7 +128,7 @@ inline void ArrayStringLong::init_from_ref(ref_type ref) noexcept
 {
     REALM_ASSERT(ref);
     char* header = get_alloc().translate(ref);
-    init_from_mem(MemRef(header, ref));
+    init_from_mem(MemRef(header, ref, m_alloc));
     m_nullable = (Array::size() == 3);
 }
 
@@ -171,16 +172,16 @@ inline StringData ArrayStringLong::get(size_t ndx) const noexcept
     return StringData(m_blob.get(begin), end-begin);
 }
 
-inline void ArrayStringLong::truncate(size_t size)
+inline void ArrayStringLong::truncate(size_t new_size)
 {
-    REALM_ASSERT_3(size, <, m_offsets.size());
+    REALM_ASSERT_3(new_size, <, m_offsets.size());
 
-    size_t blob_size = size ? to_size_t(m_offsets.get(size-1)) : 0;
+    size_t blob_size = new_size ? to_size_t(m_offsets.get(new_size-1)) : 0;
 
-    m_offsets.truncate(size);
+    m_offsets.truncate(new_size);
     m_blob.truncate(blob_size);
     if (m_nullable)
-        m_nulls.truncate(size);
+        m_nulls.truncate(new_size);
 }
 
 inline void ArrayStringLong::clear()

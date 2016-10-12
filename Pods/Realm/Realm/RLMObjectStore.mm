@@ -139,7 +139,12 @@ static inline NSUInteger RLMCreateOrGetRowForObject(__unsafe_unretained RLMObjec
     // if no existing, create row
     created = NO;
     if (rowIndex == realm::not_found) {
-        rowIndex = table.add_empty_row();
+        try {
+            rowIndex = table.add_empty_row();
+        }
+        catch (std::exception const& e) {
+            @throw RLMException(e);
+        }
         created = YES;
     }
 
@@ -162,7 +167,7 @@ void RLMAddObjectToRealm(__unsafe_unretained RLMObjectBase *const object,
             return;
         }
         // for differing realms users must explicitly create the object in the second realm
-        @throw RLMException(@"Object is already persisted in a Realm");
+        @throw RLMException(@"Object is already managed by another Realm");
     }
     if (object->_observationInfo && object->_observationInfo->hasObservers()) {
         @throw RLMException(@"Cannot add an object with observers to a Realm");
@@ -172,7 +177,7 @@ void RLMAddObjectToRealm(__unsafe_unretained RLMObjectBase *const object,
     NSString *objectClassName = object->_objectSchema.className;
     RLMObjectSchema *schema = [realm.schema schemaForClassName:objectClassName];
     if (!schema) {
-        @throw RLMException(@"Object type '%@' is not persisted in the Realm. "
+        @throw RLMException(@"Object type '%@' is not managed by the Realm. "
                             @"If using a custom `objectClasses` / `objectTypes` array in your configuration, "
                             @"add `%@` to the list of `objectClasses` / `objectTypes`.",
                             objectClassName, objectClassName);
@@ -185,7 +190,7 @@ void RLMAddObjectToRealm(__unsafe_unretained RLMObjectBase *const object,
     auto primaryGetter = [=](__unsafe_unretained RLMProperty *const p) { return [object valueForKey:p.name]; };
     object->_row = (*schema.table)[RLMCreateOrGetRowForObject(schema, primaryGetter, createOrUpdate, created)];
 
-    RLMCreationOptions creationOptions = RLMCreationOptionsPromoteStandalone;
+    RLMCreationOptions creationOptions = RLMCreationOptionsPromoteUnmanaged;
     if (createOrUpdate) {
         creationOptions |= RLMCreationOptionsCreateOrUpdate;
     }
@@ -236,44 +241,7 @@ void RLMAddObjectToRealm(__unsafe_unretained RLMObjectBase *const object,
 }
 
 static void RLMValidateValueForProperty(__unsafe_unretained id const obj,
-                                        __unsafe_unretained RLMProperty *const prop,
-                                        __unsafe_unretained RLMSchema *const schema,
-                                        bool validateNested,
-                                        bool allowMissing);
-
-static void RLMValidateValueForObjectSchema(__unsafe_unretained id const value,
-                                            __unsafe_unretained RLMObjectSchema *const objectSchema,
-                                            __unsafe_unretained RLMSchema *const schema,
-                                            bool validateNested,
-                                            bool allowMissing);
-
-static void RLMValidateNestedObject(__unsafe_unretained id const obj,
-                                    __unsafe_unretained NSString *const className,
-                                    __unsafe_unretained RLMSchema *const schema,
-                                    bool validateNested,
-                                    bool allowMissing) {
-    if (obj != nil && obj != NSNull.null) {
-        if (RLMObjectBase *objBase = RLMDynamicCast<RLMObjectBase>(obj)) {
-            RLMObjectSchema *objectSchema = objBase->_objectSchema;
-            if (![className isEqualToString:objectSchema.className]) {
-                // if not the right object class treat as literal
-                RLMValidateValueForObjectSchema(objBase, schema[className], schema, validateNested, allowMissing);
-            }
-            if (objBase.isInvalidated) {
-                @throw RLMException(@"Adding a deleted or invalidated object to a Realm is not permitted");
-            }
-        }
-        else {
-            RLMValidateValueForObjectSchema(obj, schema[className], schema, validateNested, allowMissing);
-        }
-    }
-}
-
-static void RLMValidateValueForProperty(__unsafe_unretained id const obj,
-                                        __unsafe_unretained RLMProperty *const prop,
-                                        __unsafe_unretained RLMSchema *const schema,
-                                        bool validateNested,
-                                        bool allowMissing) {
+                                        __unsafe_unretained RLMProperty *const prop) {
     switch (prop.type) {
         case RLMPropertyTypeString:
         case RLMPropertyTypeBool:
@@ -287,20 +255,11 @@ static void RLMValidateValueForProperty(__unsafe_unretained id const obj,
             }
             break;
         case RLMPropertyTypeObject:
-            if (validateNested) {
-                RLMValidateNestedObject(obj, prop.objectClassName, schema, validateNested, allowMissing);
-            }
             break;
         case RLMPropertyTypeArray: {
             if (obj != nil && obj != NSNull.null) {
                 if (![obj conformsToProtocol:@protocol(NSFastEnumeration)]) {
                     @throw RLMException(@"Array property value (%@) is not enumerable.", obj);
-                }
-                if (validateNested) {
-                    id<NSFastEnumeration> array = obj;
-                    for (id el in array) {
-                        RLMValidateNestedObject(el, prop.objectClassName, schema, validateNested, allowMissing);
-                    }
                 }
             }
             break;
@@ -308,40 +267,6 @@ static void RLMValidateValueForProperty(__unsafe_unretained id const obj,
         case RLMPropertyTypeAny:
         case RLMPropertyTypeLinkingObjects:
             @throw RLMException(@"Invalid value '%@' for property '%@'", obj, prop.name);
-    }
-}
-
-static void RLMValidateValueForObjectSchema(__unsafe_unretained id const value,
-                                            __unsafe_unretained RLMObjectSchema *const objectSchema,
-                                            __unsafe_unretained RLMSchema *const schema,
-                                            bool validateNested,
-                                            bool allowMissing) {
-    NSArray *props = objectSchema.properties;
-    if (NSArray *array = RLMDynamicCast<NSArray>(value)) {
-        if (array.count != props.count) {
-            @throw RLMException(@"Invalid array input. Number of array elements does not match number of properties.");
-        }
-        for (NSUInteger i = 0; i < array.count; i++) {
-            RLMProperty *prop = props[i];
-            RLMValidateValueForProperty(array[i], prop, schema, validateNested, allowMissing);
-        }
-    }
-    else {
-        NSDictionary *defaults;
-        for (RLMProperty *prop in props) {
-            id obj = [value valueForKey:prop.name];
-
-            // get default for nil object
-            if (!obj) {
-                if (!defaults) {
-                    defaults = RLMDefaultValuesForObjectSchema(objectSchema);
-                }
-                obj = defaults[prop.name];
-            }
-            if (obj || prop.isPrimary || !allowMissing) {
-                RLMValidateValueForProperty(obj, prop, schema, true, allowMissing);
-            }
-        }
     }
 }
 
@@ -358,10 +283,9 @@ RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *classN
     RLMVerifyInWriteTransaction(realm);
 
     // create the object
-    RLMSchema *schema = realm.schema;
     RLMObjectSchema *objectSchema = [realm.schema schemaForClassName:className];
     if (!objectSchema) {
-        @throw RLMException(@"Object type '%@' is not persisted in the Realm. "
+        @throw RLMException(@"Object type '%@' is not managed by the Realm. "
                              @"If using a custom `objectClasses` / `objectTypes` array in your configuration, "
                              @"add `%@` to the list of `objectClasses` / `objectTypes`.",
                              className, className);
@@ -374,17 +298,19 @@ RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *classN
     if (NSArray *array = RLMDynamicCast<NSArray>(value)) {
         // get or create our accessor
         bool created;
-        auto primaryGetter = [=](__unsafe_unretained RLMProperty *const p) { return array[p.column]; };
+        NSArray *props = objectSchema.properties;
+        auto primaryGetter = [=](__unsafe_unretained RLMProperty *const p) {
+            return array[[props indexOfObject:p]];
+        };
         object->_row = (*objectSchema.table)[RLMCreateOrGetRowForObject(objectSchema, primaryGetter, createOrUpdate, created)];
 
         // populate
-        NSArray *props = objectSchema.propertiesInDeclaredOrder;
         for (NSUInteger i = 0; i < array.count; i++) {
             RLMProperty *prop = props[i];
             // skip primary key when updating since it doesn't change
             if (created || !prop.isPrimary) {
                 id val = array[i];
-                RLMValidateValueForProperty(val, prop, schema, false, false);
+                RLMValidateValueForProperty(val, prop);
                 RLMDynamicSet(object, prop, RLMCoerceToNil(val), creationOptions);
             }
         }
@@ -413,7 +339,7 @@ RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *classN
             if (propValue) {
                 if (created || !prop.isPrimary) {
                     // skip missing properties and primary key when updating since it doesn't change
-                    RLMValidateValueForProperty(propValue, prop, schema, false, false);
+                    RLMValidateValueForProperty(propValue, prop);
                     RLMDynamicSet(object, prop, RLMCoerceToNil(propValue), creationOptions);
                 }
             }
@@ -467,10 +393,7 @@ RLMResults *RLMGetObjects(RLMRealm *realm, NSString *objectClassName, NSPredicat
     }
 
     if (predicate) {
-        realm::Query query = objectSchema.table->where();
-        RLMUpdateQueryWithPredicate(&query, predicate, realm.schema, objectSchema);
-
-        // create and populate array
+        realm::Query query = RLMPredicateToQuery(predicate, objectSchema, realm.schema, *realm.group);
         return [RLMResults resultsWithObjectSchema:objectSchema
                                            results:realm::Results(realm->_realm, std::move(query))];
     }

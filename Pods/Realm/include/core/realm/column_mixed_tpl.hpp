@@ -282,8 +282,8 @@ inline void MixedColumn::set_subtable(size_t ndx, const Table* t)
 inline void MixedColumn::insert_value(size_t row_ndx, int_fast64_t types_value,
                                       int_fast64_t data_value)
 {
-    size_t size = m_types->size(); // Slow
-    bool is_append = row_ndx == size;
+    size_t types_size = m_types->size(); // Slow
+    bool is_append = row_ndx == types_size;
     size_t row_ndx_2 = is_append ? realm::npos : row_ndx;
     size_t num_rows = 1;
     m_types->insert_without_updating_index(row_ndx_2, types_value, num_rows); // Throws

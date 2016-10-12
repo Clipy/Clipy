@@ -49,6 +49,9 @@ enum basic_system_errors {
 
     /// Broken pipe
     broken_pipe = EPIPE,
+
+    /// Resource temporarily unavailable
+    resource_unavailable_try_again = EAGAIN,
 };
 
 std::error_code make_error_code(basic_system_errors) noexcept;

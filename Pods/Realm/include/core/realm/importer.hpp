@@ -82,7 +82,7 @@ public:
     bool Empty_as_string;    // Import columns that have occurences of empty strings as String type column
 
 private:
-    size_t import_csv(FILE* file, Table& table, std::vector<DataType> *scheme, std::vector<std::string> *column_names,
+    size_t import_csv(FILE* file, Table& table, std::vector<DataType> *import_scheme, std::vector<std::string> *column_names,
                       size_t type_detection_rows, size_t skip_first_rows, size_t import_rows);
     template<bool can_fail>
     float parse_float(const char*col, bool* success = nullptr);

@@ -112,7 +112,6 @@ AggregateState      State of the aggregate - contains a state variable that stor
 #include <realm/query_expression.hpp>
 #include <realm/column_type_traits.hpp>
 
-#include <iostream>
 #include <map>
 
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 160040219

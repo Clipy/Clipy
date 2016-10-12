@@ -569,7 +569,7 @@ public:
     File::Map<T>& operator=(File::Map<T>&& other)
     {
         if (m_addr) unmap();
-        m_addr = other.m_addr;
+        m_addr = other.get_addr();
         m_size = other.m_size;
         other.m_addr = 0;
         other.m_size = 0;

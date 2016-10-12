@@ -12,9 +12,11 @@ PODS:
     - RxSwift (~> 2.1)
   - PINCache (2.2.2)
   - Quick (0.9.2)
-  - Realm (1.0.1):
-    - Realm/Headers (= 1.0.1)
-  - Realm/Headers (1.0.1)
+  - Realm (1.0.2):
+    - Realm/Headers (= 1.0.2)
+  - Realm/Headers (1.0.2)
+  - RealmSwift (1.0.2):
+    - Realm (= 1.0.2)
   - RxCocoa (2.5.0):
     - RxSwift (~> 2.5)
   - RxOptional (2.0.0):
@@ -38,7 +40,7 @@ DEPENDENCIES:
   - NSObject+Rx
   - PINCache
   - Quick
-  - Realm
+  - RealmSwift (= 1.0.2)
   - RxCocoa
   - RxOptional
   - RxScreeen
@@ -70,7 +72,8 @@ SPEC CHECKSUMS:
   NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
   PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
   Quick: 18d057bc66451eedd5d1c8dc99ba2a5db6e60226
-  Realm: 2e15e39d35b08abb529e212ed5d8af107b5236c8
+  Realm: 9d5c46a4d7d27958530a8dfc58f63a99e5c2cba3
+  RealmSwift: 82f3ac5e24530143dddfde2033acc0d308f27d96
   RxCocoa: e1b1562e57a554d0fb2aabf9d71b637f177257c7
   RxOptional: b77fb47a0190213cf8a37c7a2b7fda28160b4563
   RxScreeen: 2336d891e19da307e3cdac8f0cd172a0d25c0909
@@ -78,6 +81,6 @@ SPEC CHECKSUMS:
   Screeen: 18dc2d30424b19bd1782584957457c42d07f4fe5
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
 
-PODFILE CHECKSUM: 00fa2a0a4edc3690d1e6fcbe77f664426aa9d028
+PODFILE CHECKSUM: 767842ef42668e6b58ffc567a379fafd8a63bebe
 
 COCOAPODS: 1.0.1

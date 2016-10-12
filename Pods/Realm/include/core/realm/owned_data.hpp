@@ -31,19 +31,19 @@ public:
     /// Construct a null reference.
     OwnedData() noexcept {}
 
-    /// If \a data is 'null', \a size must be zero.
-    OwnedData(const char* data, size_t size) : m_size(size)
+    /// If \a data_to_copy is 'null', \a data_size must be zero.
+    OwnedData(const char* data_to_copy, size_t data_size) : m_size(data_size)
     {
-        REALM_ASSERT_DEBUG(data || size == 0);
-        if (data) {
-            m_data = std::unique_ptr<char[]>(new char[size]);
-            memcpy(m_data.get(), data, size);
+        REALM_ASSERT_DEBUG(data_to_copy || data_size == 0);
+        if (data_to_copy) {
+            m_data = std::unique_ptr<char[]>(new char[data_size]);
+            memcpy(m_data.get(), data_to_copy, data_size);
         }
     }
 
-    /// If \a data is 'null', \a size must be zero.
-    OwnedData(std::unique_ptr<char[]> data, size_t size) noexcept :
-        m_data(std::move(data)), m_size(size)
+    /// If \a unique_data is 'null', \a data_size must be zero.
+    OwnedData(std::unique_ptr<char[]> unique_data, size_t data_size) noexcept :
+        m_data(std::move(unique_data)), m_size(data_size)
     {
         REALM_ASSERT_DEBUG(m_data || m_size == 0);
     }

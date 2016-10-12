@@ -209,10 +209,10 @@ inline void StringEnumColumn::insert(size_t row_ndx)
 inline void StringEnumColumn::insert(size_t row_ndx, StringData value)
 {
     REALM_ASSERT_DEBUG(!(!m_nullable && value.is_null()));
-    size_t size = this->size();
-    REALM_ASSERT_3(row_ndx, <=, size);
+    size_t column_size = this->size();
+    REALM_ASSERT_3(row_ndx, <=, column_size);
     size_t num_rows = 1;
-    bool is_append = row_ndx == size;
+    bool is_append = row_ndx == column_size;
     do_insert(row_ndx, value, num_rows, is_append); // Throws
 }
 

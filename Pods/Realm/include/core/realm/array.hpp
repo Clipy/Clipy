@@ -45,7 +45,6 @@ Searching: The main finding function is:
 #include <utility>
 #include <vector>
 #include <ostream>
-#include <sstream>
 
 #include <stdint.h> // unint8_t etc
 
@@ -159,30 +158,13 @@ namespace _impl { class ArrayWriterBase; }
 
 
 #ifdef REALM_DEBUG
-class MemStats {
-public:
-    MemStats():
-        allocated(0),
-        used(0),
-        array_count(0)
-    {
-    }
-    size_t allocated;
-    size_t used;
-    size_t array_count;
+struct MemStats {
+    size_t allocated = 0;
+    size_t used = 0;
+    size_t array_count = 0;
 };
 template<class C, class T>
-std::basic_ostream<C,T>& operator<<(std::basic_ostream<C,T>& out, MemStats stats)
-{
-    std::ostringstream out_2;
-    out_2.setf(std::ios::fixed);
-    out_2.precision(1);
-    double used_percent = 100.0 * stats.used / stats.allocated;
-    out_2 << "allocated = "<<stats.allocated<<", used = "<<stats.used<<" ("<<used_percent<<"%), "
-        "array_count = "<<stats.array_count;
-    out << out_2.str();
-    return out;
-}
+std::basic_ostream<C,T>& operator<<(std::basic_ostream<C,T>& out, MemStats stats);
 #endif
 
 
@@ -369,11 +351,11 @@ public:
     /// Construct a shallow copy of the specified slice of this array using the
     /// specified target allocator. Subarrays will **not** be cloned. See
     /// slice_and_clone_children() for an alternative.
-    MemRef slice(size_t offset, size_t size, Allocator& target_alloc) const;
+    MemRef slice(size_t offset, size_t slice_size, Allocator& target_alloc) const;
 
     /// Construct a deep copy of the specified slice of this array using the
     /// specified target allocator. Subarrays will be cloned.
-    MemRef slice_and_clone_children(size_t offset, size_t size,
+    MemRef slice_and_clone_children(size_t offset, size_t slice_size,
                                     Allocator& target_alloc) const;
 
     // Parent tracking
@@ -476,7 +458,7 @@ public:
     ///
     /// This function guarantees that no exceptions will be thrown if
     /// get_alloc().is_read_only(get_ref()) would return false before the call.
-    void truncate(size_t size);
+    void truncate(size_t new_size);
 
     /// Reduce the size of this array to the specified number of elements. It is
     /// an error to specify a size that is greater than the current size of this
@@ -485,7 +467,7 @@ public:
     ///
     /// This function is guaranteed not to throw if
     /// get_alloc().is_read_only(get_ref()) returns false.
-    void truncate_and_destroy_children(size_t size);
+    void truncate_and_destroy_children(size_t new_size);
 
     /// Remove every element from this array. This is just a shorthand for
     /// calling truncate(0).
@@ -609,8 +591,8 @@ public:
     ///        this \c Array, sorted in ascending order
     /// \return the index of the value if found, or realm::not_found otherwise
     size_t find_gte(const int64_t target, size_t start, Array const* indirection) const;
-    void preset(int64_t min, int64_t max, size_t count);
-    void preset(size_t bitwidth, size_t count);
+    void preset(int64_t min, int64_t max, size_t num_items);
+    void preset(size_t bitwidth, size_t num_items);
 
     int64_t sum(size_t start = 0, size_t end = size_t(-1)) const;
     size_t count(int64_t value) const noexcept;
@@ -1009,7 +991,7 @@ public:
     static bool get_hasrefs_from_header(const char*) noexcept;
     static bool get_context_flag_from_header(const char*) noexcept;
     static WidthType get_wtype_from_header(const char*) noexcept;
-    static size_t get_width_from_header(const char*) noexcept;
+    static uint_least8_t get_width_from_header(const char*) noexcept;
     static size_t get_size_from_header(const char*) noexcept;
 
     static Type get_type_from_header(const char*) noexcept;
@@ -1042,7 +1024,7 @@ public:
         virtual void handle(ref_type ref, size_t allocated, size_t used) = 0;
     };
     void report_memory_usage(MemUsageHandler&) const;
-    void stats(MemStats& stats) const;
+    void stats(MemStats& stats_dest) const;
     typedef void (*LeafDumper)(MemRef, Allocator&, std::ostream&, int level);
     void dump_bptree_structure(std::ostream&, int level, LeafDumper) const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
@@ -1082,16 +1064,15 @@ protected:
 //    void add_positive_local(int64_t value);
 
     // Includes array header. Not necessarily 8-byte aligned.
-    virtual size_t calc_byte_len(size_t size, size_t width) const;
+    virtual size_t calc_byte_len(size_t num_items, size_t width) const;
 
     virtual size_t calc_item_count(size_t bytes, size_t width) const noexcept;
-    virtual WidthType GetWidthType() const { return wtype_Bits; }
 
     bool get_is_inner_bptree_node_from_header() const noexcept;
     bool get_hasrefs_from_header() const noexcept;
     bool get_context_flag_from_header() const noexcept;
     WidthType get_wtype_from_header() const noexcept;
-    size_t get_width_from_header() const noexcept;
+    uint_least8_t get_width_from_header() const noexcept;
     size_t get_size_from_header() const noexcept;
 
     // Undefined behavior if m_alloc.is_read_only(m_ref) returns true
@@ -1135,7 +1116,7 @@ protected:
     template<size_t width>
     void set_width() noexcept;
     void set_width(size_t) noexcept;
-    void alloc(size_t count, size_t width);
+    void alloc(size_t init_size, size_t width);
     void copy_on_write();
 
 private:
@@ -1222,6 +1203,13 @@ public:
     // FIXME: Should not be public
     char* m_data = nullptr; // Points to first byte after header
 
+#if REALM_ENABLE_MEMDEBUG
+    // If m_no_relocation is false, then copy_on_write() will always relocate this array, regardless if it's
+    // required or not. If it's true, then it will never relocate, which is currently only expeted inside 
+    // GroupWriter::write_group() due to a unique chicken/egg problem (see description there).
+    bool m_no_relocation = false;
+#endif
+
 protected:
     int64_t m_lbound;       // min number that can be stored with current m_width
     int64_t m_ubound;       // max number that can be stored with current m_width
@@ -1234,6 +1222,7 @@ private:
     size_t m_ref;
     ArrayParent* m_parent = nullptr;
     size_t m_ndx_in_parent = 0; // Ignored if m_parent is null.
+
 protected:
     uint_least8_t m_width = 0;  // Size of an element (meaning depend on type of array).
     bool m_is_inner_bptree_node; // This array is an inner node of B+-tree.
@@ -1243,6 +1232,7 @@ protected:
 private:
     ref_type do_write_shallow(_impl::ArrayWriterBase&) const;
     ref_type do_write_deep(_impl::ArrayWriterBase&, bool only_if_modified) const;
+    static size_t calc_byte_size(WidthType wtype, size_t size, uint_least8_t width) noexcept;
 
     friend class SlabAlloc;
     friend class GroupWriter;
@@ -1546,8 +1536,8 @@ inline RefOrTagged::RefOrTagged(int_fast64_t value) noexcept:
 {
 }
 
-inline Array::Array(Allocator& alloc) noexcept:
-    m_alloc(alloc)
+inline Array::Array(Allocator& allocator) noexcept:
+    m_alloc(allocator)
 {
 }
 
@@ -1560,9 +1550,9 @@ inline Array::Array(no_prealloc_tag) noexcept:
 }
 
 
-inline void Array::create(Type type, bool context_flag, size_t size, int_fast64_t value)
+inline void Array::create(Type type, bool context_flag, size_t length, int_fast64_t value)
 {
-    MemRef mem = create_array(type, context_flag, size, value, m_alloc); // Throws
+    MemRef mem = create_array(type, context_flag, length, value, m_alloc); // Throws
     init_from_mem(mem);
 }
 
@@ -1571,7 +1561,7 @@ inline void Array::init_from_ref(ref_type ref) noexcept
 {
     REALM_ASSERT_DEBUG(ref);
     char* header = m_alloc.translate(ref);
-    init_from_mem(MemRef(header, ref));
+    init_from_mem(MemRef(header, ref, m_alloc));
 }
 
 
@@ -1694,7 +1684,7 @@ inline ref_type Array::get_ref() const noexcept
 
 inline MemRef Array::get_mem() const noexcept
 {
-    return MemRef(get_header_from_data(m_data), m_ref);
+    return MemRef(get_header_from_data(m_data), m_ref, m_alloc);
 }
 
 inline void Array::destroy() noexcept
@@ -1803,7 +1793,7 @@ inline void Array::destroy_deep(ref_type ref, Allocator& alloc) noexcept
 
 inline void Array::destroy_deep(MemRef mem, Allocator& alloc) noexcept
 {
-    if (!get_hasrefs_from_header(mem.m_addr)) {
+    if (!get_hasrefs_from_header(mem.get_addr())) {
         alloc.free_(mem);
         return;
     }
@@ -1856,11 +1846,11 @@ inline Array::WidthType Array::get_wtype_from_header(const char* header) noexcep
     const uchar* h = reinterpret_cast<const uchar*>(header);
     return WidthType((int(h[4]) & 0x18) >> 3);
 }
-inline size_t Array::get_width_from_header(const char* header) noexcept
+inline uint_least8_t Array::get_width_from_header(const char* header) noexcept
 {
     typedef unsigned char uchar;
     const uchar* h = reinterpret_cast<const uchar*>(header);
-    return size_t((1 << (int(h[4]) & 0x07)) >> 1);
+    return uint_least8_t((1 << (int(h[4]) & 0x07)) >> 1);
 }
 inline size_t Array::get_size_from_header(const char* header) noexcept
 {
@@ -1906,7 +1896,7 @@ inline Array::WidthType Array::get_wtype_from_header() const noexcept
 {
     return get_wtype_from_header(get_header_from_data(m_data));
 }
-inline size_t Array::get_width_from_header() const noexcept
+inline uint_least8_t Array::get_width_from_header() const noexcept
 {
     return get_width_from_header(get_header_from_data(m_data));
 }
@@ -2035,44 +2025,40 @@ inline char* Array::get_header() noexcept
     return get_header_from_data(m_data);
 }
 
+inline size_t Array::calc_byte_size(WidthType wtype, size_t size, uint_least8_t width) noexcept
+{
+    size_t num_bytes = 0;
+    switch (wtype) {
+        case wtype_Bits: {
+            // Current assumption is that size is at most 2^24 and that width is at most 64.
+            // In that case the following will never overflow. (Assuming that size_t is at least 32 bits)
+            REALM_ASSERT_3(size, <, 0x1000000);
+            size_t num_bits = size * width;
+            num_bytes = (num_bits + 7) >> 3;
+            break;
+        }
+        case wtype_Multiply: {
+            num_bytes = size * width;
+            break;
+        }
+        case wtype_Ignore:
+            num_bytes = size;
+            break;
+    }
+
+    // Ensure 8-byte alignment
+    num_bytes = (num_bytes + 7) & ~size_t(7);
+
+    num_bytes += header_size;
+
+    return num_bytes;
+}
 
 inline size_t Array::get_byte_size() const noexcept
 {
-    size_t num_bytes = 0;
     const char* header = get_header_from_data(m_data);
-    switch (get_wtype_from_header(header)) {
-        case wtype_Bits: {
-            // FIXME: The following arithmetic could overflow, that
-            // is, even though both the total number of elements and
-            // the total number of bytes can be represented in
-            // uint_fast64_t, the total number of bits may not
-            // fit. Note that "num_bytes = width < 8 ? size / (8 /
-            // width) : size * (width / 8)" would be guaranteed to
-            // never overflow, but it potentially involves two slow
-            // divisions.
-            uint_fast64_t num_bits = uint_fast64_t(m_size) * m_width;
-            num_bytes = size_t(num_bits / 8);
-            if (num_bits & 0x7)
-                ++num_bytes;
-            goto found;
-        }
-        case wtype_Multiply: {
-            num_bytes = m_size * m_width;
-            goto found;
-        }
-        case wtype_Ignore:
-            num_bytes = m_size;
-            goto found;
-    }
-    REALM_ASSERT_DEBUG(false);
-
-  found:
-    // Ensure 8-byte alignment
-    size_t rest = (~num_bytes & 0x7) + 1;
-    if (rest < 8)
-        num_bytes += rest;
-
-    num_bytes += header_size;
+    WidthType wtype = get_wtype_from_header(header);
+    size_t num_bytes = calc_byte_size(wtype, m_size, m_width);
 
     REALM_ASSERT_7(m_alloc.is_read_only(m_ref), ==, true, ||,
                    num_bytes, <=, get_capacity_from_header(header));
@@ -2083,35 +2069,10 @@ inline size_t Array::get_byte_size() const noexcept
 
 inline size_t Array::get_byte_size_from_header(const char* header) noexcept
 {
-    size_t num_bytes = 0;
     size_t size = get_size_from_header(header);
-    switch (get_wtype_from_header(header)) {
-        case wtype_Bits: {
-            size_t width = get_width_from_header(header);
-            size_t num_bits = (size * width); // FIXME: Prone to overflow
-            num_bytes = num_bits / 8;
-            if (num_bits & 0x7)
-                ++num_bytes;
-            goto found;
-        }
-        case wtype_Multiply: {
-            size_t width = get_width_from_header(header);
-            num_bytes = size * width;
-            goto found;
-        }
-        case wtype_Ignore:
-            num_bytes = size;
-            goto found;
-    }
-    REALM_ASSERT_DEBUG(false);
-
-  found:
-    // Ensure 8-byte alignment
-    size_t rest = (~num_bytes & 0x7) + 1;
-    if (rest < 8)
-        num_bytes += rest;
-
-    num_bytes += header_size;
+    uint_least8_t width = get_width_from_header(header);
+    WidthType wtype = get_wtype_from_header(header);
+    size_t num_bytes = calc_byte_size(wtype, size, width);
 
     return num_bytes;
 }
@@ -2140,7 +2101,7 @@ inline void Array::init_header(char* header, bool is_inner_bptree_node, bool has
 inline MemRef Array::clone_deep(Allocator& target_alloc) const
 {
     char* header = get_header_from_data(m_data);
-    return clone(MemRef(header, m_ref), m_alloc, target_alloc); // Throws
+    return clone(MemRef(header, m_ref, m_alloc), m_alloc, target_alloc); // Throws
 }
 
 inline void Array::move_assign(Array& a) noexcept
@@ -2325,12 +2286,12 @@ ref_type Array::bptree_append(TreeInsert<TreeTraits>& state)
     if (child_is_leaf) {
         size_t elem_ndx_in_child = npos; // Append
         new_sibling_ref =
-            TreeTraits::leaf_insert(MemRef(child_header, child_ref), childs_parent,
+            TreeTraits::leaf_insert(MemRef(child_header, child_ref, m_alloc), childs_parent,
                                     child_ref_ndx, m_alloc, elem_ndx_in_child, state); // Throws
     }
     else {
         Array child(m_alloc);
-        child.init_from_mem(MemRef(child_header, child_ref));
+        child.init_from_mem(MemRef(child_header, child_ref, m_alloc));
         child.set_parent(&childs_parent, child_ref_ndx);
         new_sibling_ref = child.bptree_append(state); // Throws
     }
@@ -2391,12 +2352,12 @@ ref_type Array::bptree_insert(size_t elem_ndx, TreeInsert<TreeTraits>& state)
     if (child_is_leaf) {
         REALM_ASSERT_3(elem_ndx_in_child, <=, REALM_MAX_BPNODE_SIZE);
         new_sibling_ref =
-            TreeTraits::leaf_insert(MemRef(child_header, child_ref), childs_parent,
+            TreeTraits::leaf_insert(MemRef(child_header, child_ref, m_alloc), childs_parent,
                                     child_ref_ndx, m_alloc, elem_ndx_in_child, state); // Throws
     }
     else {
         Array child(m_alloc);
-        child.init_from_mem(MemRef(child_header, child_ref));
+        child.init_from_mem(MemRef(child_header, child_ref, m_alloc));
         child.set_parent(&childs_parent, child_ref_ndx);
         new_sibling_ref = child.bptree_insert(elem_ndx_in_child, state); // Throws
     }
@@ -3166,7 +3127,7 @@ REALM_FORCEINLINE bool Array::find_sse_intern(__m128i* action_data, __m128i* dat
                                                QueryState<int64_t>* state, size_t baseindex, Callback callback) const
 {
     size_t i = 0;
-    __m128i compare = {0};
+    __m128i compare_result = {0};
     unsigned int resmask;
 
     // Search loop. Unrolling it has been tested to NOT increase performance (apparently mem bound)
@@ -3174,40 +3135,40 @@ REALM_FORCEINLINE bool Array::find_sse_intern(__m128i* action_data, __m128i* dat
         // equal / not-equal
         if (std::is_same<cond, Equal>::value || std::is_same<cond, NotEqual>::value) {
             if (width == 8)
-                compare = _mm_cmpeq_epi8(action_data[i], *data);
+                compare_result = _mm_cmpeq_epi8(action_data[i], *data);
             if (width == 16)
-                compare = _mm_cmpeq_epi16(action_data[i], *data);
+                compare_result = _mm_cmpeq_epi16(action_data[i], *data);
             if (width == 32)
-                compare = _mm_cmpeq_epi32(action_data[i], *data);
+                compare_result = _mm_cmpeq_epi32(action_data[i], *data);
             if (width == 64) {
-                compare = _mm_cmpeq_epi64(action_data[i], *data); // SSE 4.2 only
+                compare_result = _mm_cmpeq_epi64(action_data[i], *data); // SSE 4.2 only
             }
         }
 
         // greater
         else if (std::is_same<cond, Greater>::value) {
             if (width == 8)
-                compare = _mm_cmpgt_epi8(action_data[i], *data);
+                compare_result = _mm_cmpgt_epi8(action_data[i], *data);
             if (width == 16)
-                compare = _mm_cmpgt_epi16(action_data[i], *data);
+                compare_result = _mm_cmpgt_epi16(action_data[i], *data);
             if (width == 32)
-                compare = _mm_cmpgt_epi32(action_data[i], *data);
+                compare_result = _mm_cmpgt_epi32(action_data[i], *data);
             if (width == 64)
-                compare = _mm_cmpgt_epi64(action_data[i], *data);
+                compare_result = _mm_cmpgt_epi64(action_data[i], *data);
         }
         // less
         else if (std::is_same<cond, Less>::value) {
             if (width == 8)
-                compare = _mm_cmplt_epi8(action_data[i], *data);
+                compare_result = _mm_cmplt_epi8(action_data[i], *data);
             else if (width == 16)
-                compare = _mm_cmplt_epi16(action_data[i], *data);
+                compare_result = _mm_cmplt_epi16(action_data[i], *data);
             else if (width == 32)
-                compare = _mm_cmplt_epi32(action_data[i], *data);
+                compare_result = _mm_cmplt_epi32(action_data[i], *data);
             else
                 REALM_ASSERT(false);
         }
 
-        resmask = _mm_movemask_epi8(compare);
+        resmask = _mm_movemask_epi8(compare_result);
 
         if (std::is_same<cond, NotEqual>::value)
             resmask = ~resmask & 0x0000ffff;

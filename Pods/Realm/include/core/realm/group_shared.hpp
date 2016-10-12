@@ -286,10 +286,10 @@ public:
         uint_fast32_t index   = 0;
 
         VersionID() {}
-        VersionID(version_type version, uint_fast32_t index)
+        VersionID(version_type initial_version, uint_fast32_t initial_index)
         {
-            this->version = version;
-            this->index = index;
+            version = initial_version;
+            index = initial_index;
         }
 
         bool operator==(const VersionID& other) { return version == other.version; }
@@ -462,17 +462,9 @@ public:
     /// transfer the result back.
     ///
     /// Handover *without* payload or with payload copy is guaranteed *not* to change
-    /// the accessors on the exporting side and is mutually exclusive with respect to
-    /// advance_read(), promote_to_write etc - but it is not interlocked with deletion of
-    /// the accessors: The caller must ensure that the accessors relevant for the export
-    /// operation stays valid for the duration of the export. Usually, this is trivially
-    /// ensured because the reference to the accessor will keep it alive.
+    /// the accessors on the exporting side.
     ///
-    /// Handover is also *not* interlocked with other operations on the TableView, because
-    /// it would require lots of locking.
-    /// This is a decision we might have to change! (FIXME)
-    ///
-    /// Handover with payload *move* is *not* thread safe and should be carried out
+    /// Handover is *not* thread safe and should be carried out
     /// by the thread that "owns" the involved accessors.
     ///
     /// Handover is transitive:
@@ -518,6 +510,20 @@ public:
     std::unique_ptr<Handover<Table>> export_table_for_handover(const TableRef& accessor);
     TableRef import_table_from_handover(std::unique_ptr<Handover<Table>> handover);
 
+    /// When doing handover to background tasks that may be run later, we
+    /// may want to momentarily pin the current version until the other thread
+    /// has retrieved it.
+    ///
+    /// The release is not thread-safe, so it has to be done on the SharedGroup
+    /// associated with the thread calling unpin_version(), and the SharedGroup
+    /// must be attached to the realm file at the point of unpinning.
+
+    // Pin version for handover (not thread safe)
+    VersionID pin_version();
+
+    // Release pinned version (not thread safe)
+    void unpin_version(VersionID version);
+
 private:
     struct SharedInfo;
     struct ReadCount;
@@ -543,7 +549,6 @@ private:
     std::string m_coordination_dir;
     const char* m_key;
     TransactStage m_transact_stage;
-    util::Mutex m_handover_lock;
     util::InterprocessMutex m_writemutex;
     util::InterprocessMutex m_balancemutex;
     util::InterprocessMutex m_controlmutex;
@@ -876,7 +881,6 @@ struct SharedGroup::Handover {
 template<typename T>
 std::unique_ptr<SharedGroup::Handover<T>> SharedGroup::export_for_handover(const T& accessor, ConstSourcePayload mode)
 {
-    util::LockGuard lg(m_handover_lock);
     if (m_transact_stage != transact_Reading)
         throw LogicError(LogicError::wrong_transact_state);
     std::unique_ptr<Handover<T>> result(new Handover<T>());
@@ -894,7 +898,6 @@ std::unique_ptr<SharedGroup::Handover<T>> SharedGroup::export_for_handover(const
 template<typename T>
 std::unique_ptr<SharedGroup::Handover<BasicRow<T>>> SharedGroup::export_for_handover(const BasicRow<T>& accessor)
 {
-    util::LockGuard lg(m_handover_lock);
     if (m_transact_stage != transact_Reading)
         throw LogicError(LogicError::wrong_transact_state);
     std::unique_ptr<Handover<BasicRow<T>>> result(new Handover<BasicRow<T>>());
@@ -908,8 +911,6 @@ std::unique_ptr<SharedGroup::Handover<BasicRow<T>>> SharedGroup::export_for_hand
 template<typename T>
 std::unique_ptr<SharedGroup::Handover<T>> SharedGroup::export_for_handover(T& accessor, MutableSourcePayload mode)
 {
-    // We'll take a lock here for the benefit of users truly knowing what they are doing.
-    util::LockGuard lg(m_handover_lock);
     if (m_transact_stage != transact_Reading)
         throw LogicError(LogicError::wrong_transact_state);
     std::unique_ptr<Handover<T>> result(new Handover<T>());
@@ -992,8 +993,6 @@ inline void SharedGroup::rollback_and_continue_as_read(O* observer)
     if (!hist)
         throw LogicError(LogicError::no_history);
 
-    util::LockGuard lg(m_handover_lock);
-
     // Mark all managed space (beyond the attached file) as free.
     using gf = _impl::GroupFriend;
     gf::reset_free_space_tracking(m_group); // Throws
@@ -1031,7 +1030,6 @@ inline void SharedGroup::rollback_and_continue_as_read(O* observer)
 template<class O>
 inline bool SharedGroup::do_advance_read(O* observer, VersionID version_id, _impl::History& hist)
 {
-    util::LockGuard lg(m_handover_lock);
     ReadLockInfo new_read_lock;
     grab_read_lock(new_read_lock, version_id); // Throws
     REALM_ASSERT(new_read_lock.m_version >= m_read_lock.m_version);

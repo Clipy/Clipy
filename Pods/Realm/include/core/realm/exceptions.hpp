@@ -189,7 +189,10 @@ public:
         /// History type (as specified by the Replication implementation passed
         /// to the SharedGroup constructor) was not consistent across the
         /// session.
-        mixed_history_type
+        mixed_history_type,
+
+        /// Adding rows to a table with no columns is not supported.
+        table_has_no_columns
     };
 
     LogicError(ErrorKind message);
@@ -235,8 +238,8 @@ inline AddressSpaceExhausted::AddressSpaceExhausted(const std::string& msg):
 {
 }
 
-inline LogicError::LogicError(LogicError::ErrorKind kind):
-    m_kind(kind)
+inline LogicError::LogicError(LogicError::ErrorKind k):
+    m_kind(k)
 {
 }
 

@@ -31,11 +31,13 @@
 #include <realm/util/safe_int_ops.hpp>
 #include <realm/util/buffer.hpp>
 #include <realm/util/string_buffer.hpp>
-#include <realm/util/logger.hpp>
 #include <realm/impl/continuous_transactions_history.hpp>
 #include <realm/impl/transact_log.hpp>
 
 namespace realm {
+namespace util {
+    class Logger;
+}
 
 // FIXME: Be careful about the possibility of one modification function being called by another where both do transaction logging.
 
@@ -394,12 +396,6 @@ protected:
     virtual void do_interrupt() noexcept = 0;
 
     virtual void do_clear_interrupt() noexcept = 0;
-
-    // Part of a temporary ugly hack to avoid generating new transaction logs
-    // during application of ones that have olready been created elsewhere. See
-    // ReplicationImpl::do_initiate_transact() in
-    // realm/replication/simplified/provider.cpp for more on this.
-    static void set_replication(Group&, Replication*) noexcept;
 
     friend class _impl::TransactReverser;
 };

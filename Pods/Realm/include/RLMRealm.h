@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #import <Foundation/Foundation.h>
+#import "RLMConstants.h"
 
 @class RLMRealmConfiguration, RLMObject, RLMSchema, RLMMigration, RLMNotificationToken;
 
@@ -57,8 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  The default Realm is used by the `RLMObject` class methods
  which do not take an `RLMRealm` parameter, but is otherwise not special. The
- default Realm is persisted as default.realm under the Documents directory of
- your Application on iOS, and in your application's Application Support
+ default Realm is persisted as *default.realm* under the *Documents* directory of
+ your Application on iOS, and in your application's *Application Support*
  directory on OS X.
  
  The default Realm is created using the default `RLMRealmConfiguration`, which
@@ -120,7 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @see `-[RLMRealm addNotificationBlock:]`
  */
-typedef void (^RLMNotificationBlock)(NSString *notification, RLMRealm *realm);
+typedef void (^RLMNotificationBlock)(RLMNotification notification, RLMRealm *realm);
 
 #pragma mark - Receiving Notification when a Realm Changes
 
@@ -136,7 +137,7 @@ typedef void (^RLMNotificationBlock)(NSString *notification, RLMRealm *realm);
 
  The block has the following definition:
 
-     typedef void(^RLMNotificationBlock)(NSString *notification, RLMRealm *realm);
+     typedef void(^RLMNotificationBlock)(RLMNotification notification, RLMRealm *realm);
 
  It receives the following parameters:
 
@@ -285,7 +286,7 @@ typedef void (^RLMNotificationBlock)(NSString *notification, RLMRealm *realm);
  Disabling `autorefresh` on a Realm without any strong references to it will not
  have any effect, and `autorefresh` will revert back to `YES` the next time the Realm is created.
  This is normally irrelevant as it means that there is
- nothing to refresh (as persisted `RLMObject`s, `RLMArray`s, and `RLMResults` have strong
+ nothing to refresh (as managed `RLMObject`s, `RLMArray`s, and `RLMResults` have strong
  references to the Realm that manages them), but it means that setting
  `RLMRealm.defaultRealm.autorefresh = NO` in
  `application:didFinishLaunchingWithOptions:` and only later storing Realm
@@ -462,7 +463,8 @@ typedef void (^RLMMigrationBlock)(RLMMigration *migration, uint64_t oldSchemaVer
 
  @return The version of the Realm at `fileURL`, or `RLMNotVersioned` if the version cannot be read.
  */
-+ (uint64_t)schemaVersionAtURL:(NSURL *)fileURL encryptionKey:(nullable NSData *)key error:(NSError **)error;
++ (uint64_t)schemaVersionAtURL:(NSURL *)fileURL encryptionKey:(nullable NSData *)key error:(NSError **)error
+NS_REFINED_FOR_SWIFT;
 
 /**
  Performs the given Realm configuration's migration block on a Realm at the given path.
@@ -476,7 +478,7 @@ typedef void (^RLMMigrationBlock)(RLMMigration *migration, uint64_t oldSchemaVer
 
  @see                 RLMMigration
  */
-+ (NSError *)migrateRealm:(RLMRealmConfiguration *)configuration;
++ (nullable NSError *)migrateRealm:(RLMRealmConfiguration *)configuration;
 
 @end
 

@@ -208,7 +208,7 @@ inline BinaryData BinaryColumn::get(size_t ndx) const noexcept
 
     // Non-leaf root
     std::pair<MemRef, size_t> p = m_array->get_bptree_leaf(ndx);
-    const char* leaf_header = p.first.m_addr;
+    const char* leaf_header = p.first.get_addr();
     size_t ndx_in_leaf = p.second;
     Allocator& alloc = m_array->get_alloc();
     bool is_big = Array::get_context_flag_from_header(leaf_header);
@@ -258,9 +258,9 @@ inline void BinaryColumn::insert(size_t row_ndx, BinaryData value)
     if (value.is_null() && !m_nullable)
         throw LogicError(LogicError::column_not_nullable);
 
-    size_t size = this->size(); // Slow
-    REALM_ASSERT_3(row_ndx, <=, size);
-    size_t row_ndx_2 = row_ndx == size ? realm::npos : row_ndx;
+    size_t column_size = this->size(); // Slow
+    REALM_ASSERT_3(row_ndx, <=, column_size);
+    size_t row_ndx_2 = row_ndx == column_size ? realm::npos : row_ndx;
     bool add_zero_term = false;
     size_t num_rows = 1;
     do_insert(row_ndx_2, value, add_zero_term, num_rows); // Throws
@@ -355,9 +355,9 @@ inline void BinaryColumn::add_string(StringData value)
 
 inline void BinaryColumn::insert_string(size_t row_ndx, StringData value)
 {
-    size_t size = this->size(); // Slow
-    REALM_ASSERT_3(row_ndx, <=, size);
-    size_t row_ndx_2 = row_ndx == size ? realm::npos : row_ndx;
+    size_t column_size = this->size(); // Slow
+    REALM_ASSERT_3(row_ndx, <=, column_size);
+    size_t row_ndx_2 = row_ndx == column_size ? realm::npos : row_ndx;
     BinaryData value_2(value.data(), value.size());
     bool add_zero_term = false;
     size_t num_rows = 1;

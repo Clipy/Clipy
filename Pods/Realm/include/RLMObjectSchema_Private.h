@@ -35,11 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 // class used for this object schema
 @property (nonatomic, readwrite, assign) Class objectClass;
 @property (nonatomic, readwrite, assign) Class accessorClass;
-@property (nonatomic, readwrite, assign) Class standaloneClass;
+@property (nonatomic, readwrite, assign) Class unmanagedClass;
 
 @property (nonatomic, readwrite, nullable) RLMProperty *primaryKeyProperty;
 
-@property (nonatomic, readonly) NSArray<RLMProperty *> *propertiesInDeclaredOrder;
 @property (nonatomic, copy) NSArray<RLMProperty *> *computedProperties;
 @property (nonatomic, readonly) NSArray<RLMProperty *> *swiftGenericProperties;
 
@@ -48,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 // returns a cached or new schema for a given object class
 + (instancetype)schemaForObjectClass:(Class)objectClass;
 
-- (void)sortPropertiesByColumn;
+- (RLMProperty *)propertyForTableColumn:(size_t)tableCol;
 
 @end
 
@@ -64,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param objectClassName     The name of the class used to refer to objects of this type.
  @param objectClass         The Objective-C class used when creating instances of this type.
- @param properties          An array of RLMProperty instances describing the persisted properties for this type.
+ @param properties          An array of RLMProperty instances describing the managed properties for this type.
  
  @return    An initialized instance of RLMObjectSchema.
  */

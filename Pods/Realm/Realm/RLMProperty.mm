@@ -31,17 +31,6 @@ BOOL RLMPropertyTypeIsNullable(RLMPropertyType propertyType) {
     return propertyType != RLMPropertyTypeArray && propertyType != RLMPropertyTypeLinkingObjects;
 }
 
-BOOL RLMPropertyTypeIsNumeric(RLMPropertyType propertyType) {
-    switch (propertyType) {
-        case RLMPropertyTypeInt:
-        case RLMPropertyTypeFloat:
-        case RLMPropertyTypeDouble:
-            return YES;
-        default:
-            return NO;
-    }
-}
-
 BOOL RLMPropertyTypeIsComputed(RLMPropertyType propertyType) {
     return propertyType == RLMPropertyTypeLinkingObjects;
 }
@@ -279,7 +268,7 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
     }
 }
 
-- (bool)parseObjcProperty:(objc_property_t)property {
+- (bool)parseObjcProperty:(objc_property_t)property isSwift:(bool)isSwift {
     unsigned int count;
     objc_property_attribute_t *attrs = property_copyAttributeList(property, &count);
 
@@ -303,6 +292,11 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
                 break;
             case 'S':
                 _setterName = @(attrs[i].value);
+                break;
+            case 'V': // backing ivar name
+                if (isSwift) {
+                    _getterName = @(attrs[i].value);
+                }
                 break;
             default:
                 break;
@@ -331,11 +325,26 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
         _linkOriginPropertyName = linkPropertyDescriptor.propertyName;
     }
 
-    if ([self parseObjcProperty:property]) {
+    if ([self parseObjcProperty:property isSwift:true]) {
         return nil;
     }
 
     id propertyValue = [obj valueForKey:_name];
+
+    // FIXME: temporarily workaround added since Objective-C generics used in Swift show up as `@`
+    //        * broken starting in Swift 3.0 Xcode 8 b1
+    //        * tested to still be broken in Swift 3.0 Xcode 8 b2
+    //        * if the Realm Objective-C Swift tests pass with this removed, it's been fixed
+    //        * once it has been fixed, remove this entire conditional block (contents included) entirely
+    //        * Bug Report: SR-2031 https://bugs.swift.org/browse/SR-2031
+    if ([_objcRawType isEqualToString:@"@"]) {
+        if (propertyValue) {
+            _objcRawType = [NSString stringWithFormat:@"@\"%@\"", [propertyValue class]];
+        } else if (linkPropertyDescriptor) {
+            // we're going to naively assume that the user used the correct type since we can't check it
+            _objcRawType = @"@\"RLMLinkingObjects\"";
+        }
+    }
 
     // convert array types to objc variant
     if ([_objcRawType isEqualToString:@"@\"RLMArray\""]) {
@@ -406,7 +415,7 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
         _linkOriginPropertyName = linkPropertyDescriptor.propertyName;
     }
 
-    bool isReadOnly = [self parseObjcProperty:property];
+    bool isReadOnly = [self parseObjcProperty:property isSwift:false];
     bool isComputedProperty = rawTypeIsComputedProperty(_objcRawType);
     if (isReadOnly && !isComputedProperty) {
         return nil;
@@ -503,7 +512,6 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
     prop->_isPrimary = _isPrimary;
     prop->_swiftIvar = _swiftIvar;
     prop->_optional = _optional;
-    prop->_declarationIndex = _declarationIndex;
     prop->_linkOriginPropertyName = _linkOriginPropertyName;
 
     return prop;

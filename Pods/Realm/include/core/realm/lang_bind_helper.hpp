@@ -208,7 +208,7 @@ inline Table* LangBindHelper::new_table()
     Table::Parent* parent = nullptr;
     size_t ndx_in_parent = 0;
     Table* table = tf::create_accessor(alloc, ref, parent, ndx_in_parent); // Throws
-    tf::bind_ptr(*table);
+    bind_table_ptr(table);
     return table;
 }
 
@@ -220,7 +220,7 @@ inline Table* LangBindHelper::copy_table(const Table& table)
     Table::Parent* parent = nullptr;
     size_t ndx_in_parent = 0;
     Table* copy_of_table = tf::create_accessor(alloc, ref, parent, ndx_in_parent); // Throws
-    tf::bind_ptr(*copy_of_table);
+    bind_table_ptr(copy_of_table);
     return copy_of_table;
 }
 

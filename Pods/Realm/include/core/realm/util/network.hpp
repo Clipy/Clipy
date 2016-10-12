@@ -337,10 +337,10 @@ public:
         address_configured = AI_ADDRCONFIG
     };
 
-    query(std::string service, int flags = passive|address_configured);
-    query(const protocol&, std::string service, int flags = passive|address_configured);
-    query(std::string host, std::string service, int flags = address_configured);
-    query(const protocol&, std::string host, std::string service, int flags = address_configured);
+    query(std::string service_port, int init_flags = passive|address_configured);
+    query(const protocol&, std::string service_port, int init_flags = passive|address_configured);
+    query(std::string host_name, std::string service_port, int init_flags = address_configured);
+    query(const protocol&, std::string host_name, std::string service_port, int init_flags = address_configured);
 
     ~query() noexcept;
 
@@ -398,16 +398,16 @@ public:
     void cancel() noexcept;
 
     template<class O>
-    void get_option(O& option) const;
+    void get_option(O& opt) const;
 
     template<class O>
-    std::error_code get_option(O& option, std::error_code&) const;
+    std::error_code get_option(O& opt, std::error_code&) const;
 
     template<class O>
-    void set_option(const O& option);
+    void set_option(const O& opt);
 
     template<class O>
-    std::error_code set_option(const O& option, std::error_code&);
+    std::error_code set_option(const O& opt, std::error_code&);
 
     void bind(const endpoint&);
     std::error_code bind(const endpoint&, std::error_code&);
@@ -477,9 +477,9 @@ private:
 };
 
 struct socket_base::linger_opt {
-    linger_opt(bool enabled, int timeout_seconds = 0)
+    linger_opt(bool enable, int timeout_seconds = 0)
     {
-        m_linger.l_onoff = enabled ? 1 : 0;
+        m_linger.l_onoff = enable ? 1 : 0;
         m_linger.l_linger = timeout_seconds;
     }
 
@@ -545,8 +545,21 @@ public:
     /// \param ep The remote endpoint of the connection to be established.
     template<class H> void async_connect(const endpoint& ep, H handler);
 
+    /// @{ \brief Perform a synchronous write operation.
+    ///
+    /// write() will not return until all the specified bytes have been written
+    /// to the socket, or an error occurs.
+    ///
+    /// The versions of write() that does not take an `std::error_code&`
+    /// argument will throw std::system_error on failure.
+    ///
+    /// The versions that does take an `std::error_code&` argument will set \a
+    /// ec to `std::error_code()` on success, and to something else on
+    /// failure. It returns the same error code as it assigns to \a ec.
+    ///
     void write(const char* data, size_t size);
-    std::error_code write(const char* data, size_t size, std::error_code&) noexcept;
+    std::error_code write(const char* data, size_t size, std::error_code& ec) noexcept;
+    /// @}
 
     /// \brief Perform an asynchronous write operation.
     ///
@@ -692,7 +705,7 @@ private:
     using LendersWriteOperPtr =
         std::unique_ptr<write_oper_base, io_service::LendersOperDeleter>;
 
-    size_t do_read_some(char* buffer, size_t size, std::error_code& ec) noexcept;
+    size_t do_read_some(char* buffer, size_t size, std::error_code&) noexcept;
     size_t do_write_some(const char* data, size_t size, std::error_code&) noexcept;
 
     void do_async_connect(LendersConnectOperPtr);
@@ -790,12 +803,37 @@ public:
     buffered_input_stream(socket&);
     ~buffered_input_stream() noexcept;
 
+    /// @{ \brief Perform a synchronous read operation.
+    ///
+    /// read() will not return until the specified buffer is full, or an error
+    /// occurs. Reaching the end of input before the buffer is filled, is
+    /// considered an error, and will cause the operation to fail with
+    /// `network::end_of_input`.
+    ///
+    /// read_until() will not return until the specified buffer contains the
+    /// specified delimiter, or an error occurs. If the buffer is filled before
+    /// the delimiter is found, the operation fails with
+    /// `network::delim_not_found`. Otherwise, if the end of input is reached
+    /// before the delimiter is found, the operation fails with
+    /// `network::end_of_input`. If the operation succeeds, the last byte placed
+    /// in the buffer is the delimiter.
+    ///
+    /// The versions of read() and read_until() that do not take an
+    /// `std::error_code&` argument will throw std::system_error on failure.
+    ///
+    /// The versions that do take an `std::error_code&` argument will set \a ec
+    /// to `std::error_code()` on success, and to something else on failure. On
+    /// failure they will return the number of bytes placed in the specified
+    /// buffer before the error occured.
+    ///
+    /// \return The number of bytes places in the specified buffer upon return.
     size_t read(char* buffer, size_t size);
-    size_t read(char* buffer, size_t size, std::error_code&) noexcept;
+    size_t read(char* buffer, size_t size, std::error_code& ec) noexcept;
 
     size_t read_until(char* buffer, size_t size, char delim);
     size_t read_until(char* buffer, size_t size, char delim,
-                           std::error_code&) noexcept;
+                           std::error_code& ec) noexcept;
+    /// @}
 
     /// @{ \brief Perform an asynchronous read operation.
     ///
@@ -1372,9 +1410,9 @@ inline void io_service::async_oper::cancel() noexcept
     m_canceled = true;
 }
 
-inline io_service::async_oper::async_oper(size_t size, bool in_use) noexcept:
+inline io_service::async_oper::async_oper(size_t size, bool is_in_use) noexcept:
     m_size(size),
-    m_in_use(in_use)
+    m_in_use(is_in_use)
 {
 }
 
@@ -1453,32 +1491,32 @@ inline void resolver::resolve(const query& q, endpoint::list& l)
         throw std::system_error(ec);
 }
 
-inline resolver::query::query(std::string service, int flags):
-    m_flags(flags),
-    m_service(service)
+inline resolver::query::query(std::string service_port, int init_flags):
+    m_flags(init_flags),
+    m_service(service_port)
 {
 }
 
-inline resolver::query::query(const class protocol& prot, std::string service, int flags):
-    m_flags(flags),
+inline resolver::query::query(const class protocol& prot, std::string service_port, int init_flags):
+    m_flags(init_flags),
     m_protocol(prot),
-    m_service(service)
+    m_service(service_port)
 {
 }
 
-inline resolver::query::query(std::string host, std::string service, int flags):
-    m_flags(flags),
-    m_host(host),
-    m_service(service)
+inline resolver::query::query(std::string host_name, std::string service_port, int init_flags):
+    m_flags(init_flags),
+    m_host(host_name),
+    m_service(service_port)
 {
 }
 
-inline resolver::query::query(const class protocol& prot, std::string host, std::string service,
-                              int flags):
-    m_flags(flags),
+inline resolver::query::query(const class protocol& prot, std::string host_name, std::string service_port,
+                              int init_flags):
+    m_flags(init_flags),
     m_protocol(prot),
-    m_host(host),
-    m_service(service)
+    m_host(host_name),
+    m_service(service_port)
 {
 }
 
@@ -1508,9 +1546,9 @@ inline std::string resolver::query::service() const
 
 // ---------------- socket_base ----------------
 
-inline socket_base::socket_base(io_service& service):
+inline socket_base::socket_base(io_service& s):
     m_sock_fd(-1),
-    m_service(service)
+    m_service(s)
 {
 }
 
@@ -1545,32 +1583,32 @@ inline void socket_base::close() noexcept
 }
 
 template<class O>
-inline void socket_base::get_option(O& option) const
+inline void socket_base::get_option(O& opt) const
 {
     std::error_code ec;
-    if (get_option(option, ec))
+    if (get_option(opt, ec))
         throw std::system_error(ec);
 }
 
 template<class O>
-inline std::error_code socket_base::get_option(O& option, std::error_code& ec) const
+inline std::error_code socket_base::get_option(O& opt, std::error_code& ec) const
 {
-    option.get(*this, ec);
+    opt.get(*this, ec);
     return ec;
 }
 
 template<class O>
-inline void socket_base::set_option(const O& option)
+inline void socket_base::set_option(const O& opt)
 {
     std::error_code ec;
-    if (set_option(option, ec))
+    if (set_option(opt, ec))
         throw std::system_error(ec);
 }
 
 template<class O>
-inline std::error_code socket_base::set_option(const O& option, std::error_code& ec)
+inline std::error_code socket_base::set_option(const O& opt, std::error_code& ec)
 {
-    option.set(*this, ec);
+    opt.set(*this, ec);
     return ec;
 }
 
@@ -1622,8 +1660,8 @@ inline std::error_code socket_base::ensure_nonblocking_mode(std::error_code& ec)
 }
 
 template<class T, int opt, class U>
-inline socket_base::option<T, opt, U>::option(T value):
-    m_value(value)
+inline socket_base::option<T, opt, U>::option(T init_value):
+    m_value(init_value)
 {
 }
 
@@ -1651,8 +1689,8 @@ inline void socket_base::option<T, opt, U>::get(const socket_base& sock, std::er
 template<class T, int opt, class U>
 inline void socket_base::option<T, opt, U>::set(socket_base& sock, std::error_code& ec) const
 {
-    U value = U(m_value);
-    sock.set_option(opt_enum(opt), &value, sizeof value, ec);
+    U value_to_set = U(m_value);
+    sock.set_option(opt_enum(opt), &value_to_set, sizeof value_to_set, ec);
 }
 
 // ---------------- socket ----------------
@@ -1745,7 +1783,26 @@ public:
         size_t n_2 = m_socket->do_write_some(m_curr, n_1, m_error_code);
         REALM_ASSERT(n_2 <= n_1);
         m_curr += n_2;
-        set_is_complete(m_error_code || m_curr == m_end);
+        // During asynchronous operation the socket is in nonblocking mode, and
+        // proceed() will only be called when the socket is reported ready for
+        // writing (by poll() or select()). Even then, it may still occasionally
+        // happen that write() (the system call) fails with EAGAIN
+        // (error::resource_unavailable_try_again). The Linux man page for
+        // select() notes that such a situation might occur. This has been
+        // observed to occur on Mac OSX when writing large amounts of data
+        // quickly.
+        //
+        // The best way to deal with a situation like this, seems to be to
+        // ignore the incidence and go back to waiting for the socket to become
+        // ready for writing again. It is hoped (and assumed) that these
+        // incidences are sufficiently rare, that it does not lead to an
+        // effective busy wait for the socket to become truly ready for writing.
+        if (REALM_UNLIKELY(m_error_code == error::resource_unavailable_try_again)) {
+            m_error_code = std::error_code(); // Clear
+        }
+        else {
+            set_is_complete(m_error_code || m_curr == m_end);
+        }
     }
     void recycle() noexcept override final
     {
@@ -1791,8 +1848,8 @@ private:
     H m_handler;
 };
 
-inline socket::socket(io_service& service):
-    socket_base(service)
+inline socket::socket(io_service& s):
+    socket_base(s)
 {
 }
 
@@ -1811,7 +1868,7 @@ template<class H>
 inline void socket::async_connect(const endpoint& ep, H handler)
 {
     LendersConnectOperPtr op =
-        io_service::alloc<connect_oper<H>>(m_read_oper, *this, ep, std::move(handler)); // Throws
+        io_service::alloc<connect_oper<H>>(m_write_oper, *this, ep, std::move(handler)); // Throws
     do_async_connect(std::move(op)); // Throws
 }
 
@@ -1876,6 +1933,7 @@ inline void socket::do_async_connect(LendersConnectOperPtr op)
         m_service.add_completed_oper(std::move(op));
     }
     else {
+        REALM_ASSERT(op == m_write_oper);
         m_service.add_io_oper(get_sock_fd(), std::move(op), io_service::io_op_Write); // Throws
     }
 }
@@ -1887,6 +1945,7 @@ inline void socket::do_async_write(LendersWriteOperPtr op)
         m_service.add_completed_oper(std::move(op));
     }
     else {
+        REALM_ASSERT(op == m_write_oper);
         m_service.add_io_oper(get_sock_fd(), std::move(op), io_service::io_op_Write); // Throws
     }
 }
@@ -1916,7 +1975,24 @@ public:
         REALM_ASSERT(!m_error_code);
         REALM_ASSERT(!m_socket.is_open());
         m_acceptor->do_accept(m_socket, m_endpoint, m_error_code);
-        set_is_complete(true);
+        // During asynchronous operation the listening socket is in nonblocking
+        // mode, and proceed() will only be called when the socket is reported
+        // ready for reading (by poll() or select()). Even then, it may still
+        // occasionally happen that accept() (the system call) fails with EAGAIN
+        // (error::resource_unavailable_try_again). The Linux man page for
+        // select() notes that such a situation might occur.
+        //
+        // The best way to deal with a situation like this, seems to be to
+        // ignore the incidence and go back to waiting for the socket to become
+        // ready for reading again. It is hoped (and assumed) that these
+        // incidences are sufficiently rare, that it does not lead to an
+        // effective busy wait for the socket to become truly ready for reading.
+        if (REALM_UNLIKELY(m_error_code == error::resource_unavailable_try_again)) {
+            m_error_code = std::error_code(); // Clear
+        }
+        else {
+            set_is_complete(true);
+        }
     }
     void recycle() noexcept override final
     {
@@ -1959,8 +2035,8 @@ private:
     H m_handler;
 };
 
-inline acceptor::acceptor(io_service& service):
-    socket_base(service)
+inline acceptor::acceptor(io_service& s):
+    socket_base(s)
 {
 }
 
@@ -2038,6 +2114,7 @@ inline void acceptor::do_async_accept(LendersAcceptOperPtr op)
         m_service.add_completed_oper(std::move(op));
     }
     else {
+        REALM_ASSERT(op == m_read_oper);
         m_service.add_io_oper(get_sock_fd(), std::move(op), io_service::io_op_Read); // Throws
     }
 }
@@ -2193,6 +2270,7 @@ inline void buffered_input_stream::do_async_read(LendersReadOperPtr op)
         m_socket.m_service.add_completed_oper(std::move(op));
     }
     else {
+        REALM_ASSERT(op == m_socket.m_read_oper);
         m_socket.m_service.add_io_oper(m_socket.get_sock_fd(), std::move(op),
                                        io_service::io_op_Read); // Throws
     }

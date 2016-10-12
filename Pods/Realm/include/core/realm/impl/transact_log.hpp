@@ -22,7 +22,6 @@
 #define REALM_IMPL_TRANSACT_LOG_HPP
 
 #include <stdexcept>
-#include <iostream>
 
 #include <realm/string_data.hpp>
 #include <realm/data_type.hpp>
@@ -166,7 +165,7 @@ public:
     bool nullify_link(size_t, size_t, size_t) { return true; }
     bool insert_substring(size_t, size_t, size_t, StringData) { return true; }
     bool erase_substring(size_t, size_t, size_t, size_t) { return true; }
-    bool optimize_table() { return true; };
+    bool optimize_table() { return true; }
 
     // Must have descriptor selected:
     bool insert_link_column(size_t, DataType, StringData, size_t, size_t) { return true; }
@@ -300,6 +299,7 @@ private:
 
     template<class T>
     static char* encode_int(char*, T value);
+    static char* encode_bool(char*, bool value);
     static char* encode_float(char*, float value);
     static char* encode_double(char*, double value);
     template<class>
@@ -458,6 +458,7 @@ private:
     void read_bytes(char* data, size_t size);
     BinaryData read_buffer(util::StringBuffer&, size_t size);
 
+    bool read_bool();
     float read_float();
     double read_double();
 
@@ -593,7 +594,10 @@ char* TransactLogEncoder::encode_int(char* ptr, T value)
         // The following conversion is guaranteed by C++11 to never
         // overflow (contrast this with "-value" which indeed could
         // overflow). See C99+TC3 section 6.2.6.2 paragraph 2.
+        REALM_DIAG_PUSH();
+        REALM_DIAG_IGNORE_UNSIGNED_MINUS();
         value = -(value + 1);
+        REALM_DIAG_POP();
     }
     // At this point 'value' is always a positive number. Also, small
     // negative numbers have been converted to small positive numbers.
@@ -624,6 +628,14 @@ char* TransactLogEncoder::encode_int(char* ptr, T value)
     return ++ptr;
 }
 
+inline char* TransactLogEncoder::encode_bool(char* ptr, bool value)
+{
+    // A `char` is the smallest element that the encoder/decoder can process. So we encode the bool
+    // in a char. If we called encode_int<bool> it would end up as a char too, but we would get
+    // Various warnings about arithmetic on non-arithmetic type.
+    return encode_int<char>(ptr, value);
+}
+
 inline char* TransactLogEncoder::encode_float(char* ptr, float value)
 {
     static_assert(std::numeric_limits<float>::is_iec559 &&
@@ -648,6 +660,13 @@ struct TransactLogEncoder::EncodeNumber {
     {
         auto value_2 = value + 0; // Perform integral promotion
         *ptr = encode_int(*ptr, value_2);
+    }
+};
+template<>
+struct TransactLogEncoder::EncodeNumber<bool> {
+    void operator()(bool value, char** ptr)
+    {
+        *ptr = encode_bool(*ptr, value);
     }
 };
 template<>
@@ -1387,7 +1406,7 @@ inline void TransactLogConvenientEncoder::link_list_nullify(const LinkView& list
 inline bool TransactLogEncoder::link_list_set_all(const IntegerColumn& values)
 {
     struct iter {
-        iter(const IntegerColumn& values, size_t ndx): m_values(&values), m_ndx(ndx) {}
+        iter(const IntegerColumn& iter_values, size_t ndx): m_values(&iter_values), m_ndx(ndx) {}
         const IntegerColumn* m_values;
         size_t m_ndx;
         bool operator==(const iter& i) const { return m_ndx == i.m_ndx; }
@@ -1544,9 +1563,9 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
             return;
         }
         case instr_SetIntUnique: {
-            std::size_t col_ndx = read_int<std::size_t>(); // Throws
-            std::size_t row_ndx = read_int<std::size_t>(); // Throws
-            std::size_t prior_num_rows = read_int<std::size_t>(); // Throws
+            size_t col_ndx = read_int<size_t>(); // Throws
+            size_t row_ndx = read_int<size_t>(); // Throws
+            size_t prior_num_rows = read_int<size_t>(); // Throws
             // FIXME: Don't depend on the existence of int64_t,
             // but don't allow values to use more than 64 bits
             // either.
@@ -1558,7 +1577,7 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
         case instr_SetBool: {
             size_t col_ndx = read_int<size_t>(); // Throws
             size_t row_ndx = read_int<size_t>(); // Throws
-            bool value = read_int<bool>(); // Throws
+            bool value = read_bool(); // Throws
             if (!handler.set_bool(col_ndx, row_ndx, value)) // Throws
                 parser_error();
             return;
@@ -1588,9 +1607,9 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
             return;
         }
         case instr_SetStringUnique: {
-            std::size_t col_ndx = read_int<std::size_t>(); // Throws
-            std::size_t row_ndx = read_int<std::size_t>(); // Throws
-            std::size_t prior_num_rows = read_int<std::size_t>(); // Throws
+            size_t col_ndx = read_int<size_t>(); // Throws
+            size_t row_ndx = read_int<size_t>(); // Throws
+            size_t prior_num_rows = read_int<size_t>(); // Throws
             StringData value = read_string(m_string_buffer); // Throws
             if (!handler.set_string_unique(col_ndx, row_ndx, prior_num_rows, value)) // Throws
                 parser_error();
@@ -1686,7 +1705,7 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
             size_t row_ndx = read_int<size_t>(); // Throws
             size_t num_rows_to_insert = read_int<size_t>(); // Throws
             size_t prior_num_rows = read_int<size_t>(); // Throws
-            bool unordered = read_int<bool>(); // Throws
+            bool unordered = read_bool(); // Throws
             if (!handler.insert_empty_rows(row_ndx, num_rows_to_insert, prior_num_rows,
                                            unordered)) // Throws
                 parser_error();
@@ -1696,7 +1715,7 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
             size_t row_ndx = read_int<size_t>(); // Throws
             size_t num_rows_to_erase = read_int<size_t>(); // Throws
             size_t prior_num_rows = read_int<size_t>(); // Throws
-            bool unordered = read_int<bool>(); // Throws
+            bool unordered = read_bool(); // Throws
             if (!handler.erase_rows(row_ndx, num_rows_to_erase, prior_num_rows,
                                     unordered)) // Throws
                 parser_error();
@@ -1967,7 +1986,10 @@ T TransactLogParser::read_int()
         // The real value is negative. Because 'value' is positive at
         // this point, the following negation is guaranteed by C++11
         // to never overflow. See C99+TC3 section 6.2.6.2 paragraph 2.
+        REALM_DIAG_PUSH();
+        REALM_DIAG_IGNORE_UNSIGNED_MINUS();
         value = -value;
+        REALM_DIAG_POP();
         if (util::int_subtract_with_overflow_detect(value, 1))
             goto bad_transact_log;
     }
@@ -2009,6 +2031,12 @@ inline BinaryData TransactLogParser::read_buffer(util::StringBuffer& buf, size_t
     buf.resize(size); // Throws
     read_bytes(buf.data(), size);
     return BinaryData(buf.data(), size);
+}
+
+
+inline bool TransactLogParser::read_bool()
+{
+    return read_int<char>();
 }
 
 
@@ -2076,7 +2104,7 @@ inline void TransactLogParser::read_mixed(Mixed* mixed)
             return;
         }
         case type_Bool: {
-            bool value = read_int<bool>(); // Throws
+            bool value = read_bool(); // Throws
             mixed->set_bool(value);
             return;
         }

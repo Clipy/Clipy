@@ -45,6 +45,10 @@
 #    define REALM_ENABLE_ASSERTIONS     0
 #  endif
 
+#  ifndef REALM_ENABLE_MEMDEBUG
+#    define REALM_ENABLE_MEMDEBUG       0
+#  endif
+
 #  ifndef _WIN32
 #    define REALM_INSTALL_PREFIX      "/usr/local"
 #    define REALM_INSTALL_EXEC_PREFIX REALM_INSTALL_PREFIX
@@ -62,6 +66,9 @@
 #  define REALM_MAX_BPNODE_SIZE 1000
 #endif
 
+
+#define REALM_QUOTE_2(x) #x
+#define REALM_QUOTE(x) REALM_QUOTE_2(x)
 
 /* See these links for information about feature check macroes in GCC,
  * Clang, and MSVC:
@@ -87,7 +94,7 @@
 #endif
 
 #if defined(__GNUC__) // clang or GCC
-#  define REALM_PRAGMA(v) _Pragma(REALM_QUOTE2(v))
+#  define REALM_PRAGMA(v) _Pragma(REALM_QUOTE_2(v))
 #elif defined(_MSC_VER) // VS
 #  define REALM_PRAGMA(v) __pragma(v)
 #else
@@ -111,6 +118,12 @@
     REALM_DIAG(ignored "-Wtautological-compare")
 #else
 #  define REALM_DIAG_IGNORE_TAUTOLOGICAL_COMPARE()
+#endif
+
+#ifdef _MSC_VER
+#  define REALM_DIAG_IGNORE_UNSIGNED_MINUS() REALM_PRAGMA(warning(disable:4146)) 
+#else
+#  define REALM_DIAG_IGNORE_UNSIGNED_MINUS() 
 #endif
 
 /* Compiler is MSVC (Microsoft Visual C++) */

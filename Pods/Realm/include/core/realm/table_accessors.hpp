@@ -517,9 +517,9 @@ private:
     // FIXME: Need BasicTableView::Cursor and BasicTableView::ConstCursor if Cursors should exist at all.
     struct SubtabRowAccessor: Subtab::RowAccessor {
     public:
-        SubtabRowAccessor(Subtab* subtab, size_t row_idx):
-            Subtab::RowAccessor(std::make_pair(subtab, row_idx)),
-            m_owner(subtab->get_table_ref()) {}
+        SubtabRowAccessor(Subtab* subtable, size_t row_idx):
+            Subtab::RowAccessor(std::make_pair(subtable, row_idx)),
+            m_owner(subtable->get_table_ref()) {}
 
     private:
         typename Subtab::Ref const m_owner;
@@ -568,9 +568,9 @@ private:
     // FIXME: Dangerous slicing posibility as long as Cursor is same as RowAccessor.
     struct SubtabRowAccessor: Subtab::ConstRowAccessor {
     public:
-        SubtabRowAccessor(const Subtab* subtab, size_t row_idx):
-            Subtab::ConstRowAccessor(std::make_pair(subtab, row_idx)),
-            m_owner(subtab->get_table_ref()) {}
+        SubtabRowAccessor(const Subtab* subtable, size_t row_idx):
+            Subtab::ConstRowAccessor(std::make_pair(subtable, row_idx)),
+            m_owner(subtable->get_table_ref()) {}
 
     private:
         typename Subtab::ConstRef const m_owner;
@@ -1347,7 +1347,7 @@ public:
     {
         Base::m_query->m_impl.between(col_idx, from, to);
         return *Base::m_query;
-    };
+    }
 
     int64_t sum(size_t* resultcount = nullptr, size_t start = 0,
                 size_t end = size_t(-1), size_t limit=size_t(-1)) const
@@ -1418,7 +1418,7 @@ public:
     {
         Base::m_query->m_impl.between(col_idx, from, to);
         return *Base::m_query;
-    };
+    }
 
     double sum(size_t* resultcount = nullptr, size_t start = 0,
                size_t end = size_t(-1), size_t limit=size_t(-1)) const
@@ -1489,7 +1489,7 @@ public:
     {
         Base::m_query->m_impl.between(col_idx, from, to);
         return *Base::m_query;
-    };
+    }
 
     double sum(size_t* resultcount = nullptr, size_t start = 0,
                size_t end = size_t(-1), size_t limit=size_t(-1)) const
@@ -1599,7 +1599,7 @@ public:
     {
         Base::m_query->m_impl.between_olddatetime(col_idx, from, to);
         return *Base::m_query;
-    };
+    }
 
     OldDateTime maximum(size_t* resultcount = nullptr, size_t start = 0,
                  size_t end = size_t(-1), size_t limit=size_t(-1),

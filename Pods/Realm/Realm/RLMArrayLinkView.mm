@@ -357,21 +357,20 @@ static void RLMInsertObject(RLMArrayLinkView *ar, RLMObject *object, NSUInteger 
 }
 
 - (RLMResults *)sortedResultsUsingDescriptors:(NSArray *)properties {
-    auto order = RLMSortOrderFromDescriptors(_objectSchema, properties);
+    auto order = RLMSortOrderFromDescriptors(*_objectSchema.table, properties);
     auto results = translateErrors([&] { return _backingList.sort(std::move(order)); });
     return [RLMResults resultsWithObjectSchema:_objectSchema results:std::move(results)];
 }
 
 - (RLMResults *)objectsWithPredicate:(NSPredicate *)predicate {
-    auto query = translateErrors([&] { return _backingList.get_query(); });
-    RLMUpdateQueryWithPredicate(&query, predicate, _realm.schema, _objectSchema);
-    return [RLMResults resultsWithObjectSchema:_objectSchema
-                                       results:_backingList.filter(std::move(query))];
+    auto query = RLMPredicateToQuery(predicate, _objectSchema, _realm.schema, *_realm.group);
+    auto results = translateErrors([&] { return _backingList.filter(std::move(query)); });
+    return [RLMResults resultsWithObjectSchema:_objectSchema results:std::move(results)];
 }
 
 - (NSUInteger)indexOfObjectWithPredicate:(NSPredicate *)predicate {
     auto query = translateErrors([&] { return _backingList.get_query(); });
-    RLMUpdateQueryWithPredicate(&query, predicate, _realm.schema, _objectSchema);
+    query.and_query(RLMPredicateToQuery(predicate, _objectSchema, _realm.schema, *_realm.group));
     return RLMConvertNotFound(query.find());
 }
 

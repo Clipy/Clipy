@@ -96,7 +96,15 @@
     static_cast<void>(sizeof bool(((left1) cmp1 (right1)) logical1 ((left2) cmp2 (right2)) logical2 ((left3) cmp3 (right3))))
 #endif
 
-#define REALM_UNREACHABLE() \
-    realm::util::terminate("Unreachable code", __FILE__, __LINE__)
+#ifdef REALM_COVER
+#  define REALM_UNREACHABLE()
+#  define REALM_COVER_NEVER(x) false
+#  define REALM_COVER_ALWAYS(x) true
+#else
+#  define REALM_UNREACHABLE() \
+      realm::util::terminate("Unreachable code", __FILE__, __LINE__)
+#  define REALM_COVER_NEVER(x) (x)
+#  define REALM_COVER_ALWAYS(x) (x)
+#endif
 
 #endif // REALM_UTIL_ASSERT_HPP

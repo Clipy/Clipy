@@ -36,7 +36,7 @@ public:
     void add(BinaryData value, bool add_zero_term = false);
     void insert(size_t ndx, BinaryData value, bool add_zero_term = false);
     void erase(size_t ndx);
-    void truncate(size_t size);
+    void truncate(size_t new_size);
     void clear();
     void destroy();
 
@@ -79,7 +79,7 @@ public:
 
     /// Construct a copy of the specified slice of this big blobs
     /// array using the specified target allocator.
-    MemRef slice(size_t offset, size_t size, Allocator& target_alloc) const;
+    MemRef slice(size_t offset, size_t slice_size, Allocator& target_alloc) const;
 
 #ifdef REALM_DEBUG
     void verify() const;
@@ -94,8 +94,8 @@ private:
 
 // Implementation:
 
-inline ArrayBigBlobs::ArrayBigBlobs(Allocator& alloc, bool nullable) noexcept:
-                                    Array(alloc), m_nullable(nullable)
+inline ArrayBigBlobs::ArrayBigBlobs(Allocator& allocator, bool nullable) noexcept:
+                                    Array(allocator), m_nullable(nullable)
 {
 }
 
@@ -107,8 +107,8 @@ inline BinaryData ArrayBigBlobs::get(size_t ndx) const noexcept
 
     const char* blob_header = get_alloc().translate(ref);
     const char* value = ArrayBlob::get(blob_header, 0);
-    size_t size = get_size_from_header(blob_header);
-    return BinaryData(value, size);
+    size_t blob_size = get_size_from_header(blob_header);
+    return BinaryData(value, blob_size);
 }
 
 inline BinaryData ArrayBigBlobs::get(const char* header, size_t ndx,
@@ -133,9 +133,9 @@ inline void ArrayBigBlobs::erase(size_t ndx)
     Array::erase(ndx);
 }
 
-inline void ArrayBigBlobs::truncate(size_t size)
+inline void ArrayBigBlobs::truncate(size_t new_size)
 {
-    Array::truncate_and_destroy_children(size);
+    Array::truncate_and_destroy_children(new_size);
 }
 
 inline void ArrayBigBlobs::clear()
@@ -208,10 +208,10 @@ inline void ArrayBigBlobs::create()
     Array::create(type_HasRefs, context_flag); // Throws
 }
 
-inline MemRef ArrayBigBlobs::slice(size_t offset, size_t size,
+inline MemRef ArrayBigBlobs::slice(size_t offset, size_t slice_size,
                                    Allocator& target_alloc) const
 {
-    return slice_and_clone_children(offset, size, target_alloc);
+    return slice_and_clone_children(offset, slice_size, target_alloc);
 }
 
 

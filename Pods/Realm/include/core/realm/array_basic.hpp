@@ -95,7 +95,6 @@ private:
 
     size_t calc_byte_len(size_t count, size_t width) const override;
     virtual size_t calc_item_count(size_t bytes, size_t width) const noexcept override;
-    virtual WidthType GetWidthType() const override { return wtype_Multiply; }
 
     template<bool find_max>
     bool minmax(T& result, size_t begin, size_t end) const;

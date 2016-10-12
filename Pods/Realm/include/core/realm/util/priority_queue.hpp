@@ -54,15 +54,15 @@ public:
 
     //{@
     /// Construct a PriorityQueue, optionally providing a comparator object.
-    PriorityQueue(const Compare& compare, const Container& cont);
+    PriorityQueue(const Compare& comparator, const Container& cont);
 
-    explicit PriorityQueue(const Compare& compare = Compare{}, Container&& cont = Container{});
-
-    template<class InputIt>
-    PriorityQueue(InputIt first, InputIt last, const Compare& compare, const Container& cont);
+    explicit PriorityQueue(const Compare& comparator = Compare{}, Container&& cont = Container{});
 
     template<class InputIt>
-    PriorityQueue(InputIt first, InputIt last, const Compare& compare = Compare{},
+    PriorityQueue(InputIt first, InputIt last, const Compare& comparator, const Container& cont);
+
+    template<class InputIt>
+    PriorityQueue(InputIt first, InputIt last, const Compare& comparator = Compare{},
                   Container&& cont = Container{});
     //@}
     // Skipping Allocator-specific template constructors.
@@ -151,22 +151,22 @@ private:
 /// Implementation
 
 template<class T, class Container, class Compare>
-PriorityQueue<T, Container, Compare>::PriorityQueue(const Compare& compare, const Container& cont):
-    Compare(compare), m_queue(cont)
+PriorityQueue<T, Container, Compare>::PriorityQueue(const Compare& comparator, const Container& cont):
+    Compare(comparator), m_queue(cont)
 {
 }
 
 template<class T, class Container, class Compare>
-PriorityQueue<T, Container, Compare>::PriorityQueue(const Compare& compare, Container&& cont):
-    Compare(compare), m_queue(std::move(cont))
+PriorityQueue<T, Container, Compare>::PriorityQueue(const Compare& comparator, Container&& cont):
+    Compare(comparator), m_queue(std::move(cont))
 {
 }
 
 template<class T, class Container, class Compare>
 template<class InputIt>
 PriorityQueue<T, Container, Compare>::PriorityQueue(InputIt first, InputIt last,
-                                                    const Compare& compare, const Container& cont):
-    Compare(compare), m_queue(cont)
+                                                    const Compare& comparator, const Container& cont):
+    Compare(comparator), m_queue(cont)
 {
     for (auto it = first; it != last; ++it) {
         push(*it);
@@ -176,8 +176,8 @@ PriorityQueue<T, Container, Compare>::PriorityQueue(InputIt first, InputIt last,
 template<class T, class Container, class Compare>
 template<class InputIt>
 PriorityQueue<T, Container, Compare>::PriorityQueue(InputIt first, InputIt last,
-                                                    const Compare& compare, Container&& cont):
-    Compare(compare), m_queue(std::move(cont))
+                                                    const Compare& comparator, Container&& cont):
+    Compare(comparator), m_queue(std::move(cont))
 {
     for (auto it = first; it != last; ++it) {
         push(*it);
