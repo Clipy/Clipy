@@ -1,15 +1,13 @@
 import Quick
 import Nimble
-import Realm
+import RealmSwift
 @testable import Clipy
 
 class FolderSpec: QuickSpec {
     override func spec() {
 
         beforeEach {
-            let config = RLMRealmConfiguration.defaultConfiguration()
-            config.inMemoryIdentifier = NSUUID().UUIDString
-            RLMRealmConfiguration.setDefaultConfiguration(config)
+            Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().UUIDString
         }
 
         describe("Create new") {
@@ -24,10 +22,10 @@ class FolderSpec: QuickSpec {
                 savedSnippet.index = 10
                 savedSnippet.title = "saved realm snippet"
                 savedSnippet.content = "content"
-                savedFolder.snippets.addObject(savedSnippet)
+                savedFolder.snippets.append(savedSnippet)
 
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(savedFolder) }
+                let realm = try! Realm()
+                realm.transaction { realm.add(savedFolder) }
 
                 // Saved in Realm
                 expect(savedFolder.realm).toNot(beNil())
@@ -42,7 +40,7 @@ class FolderSpec: QuickSpec {
                 expect(folder.identifier).to(equal(savedFolder.identifier))
                 expect(folder.snippets.count).to(equal(1))
 
-                let snippet = folder.snippets.firstObject() as! CPYSnippet
+                let snippet = folder.snippets.first!
                 expect(snippet.realm).to(beNil())
                 expect(snippet.index).to(equal(savedSnippet.index))
                 expect(snippet.enable).to(equal(savedSnippet.enable))
@@ -56,8 +54,8 @@ class FolderSpec: QuickSpec {
                 expect(folder.title).to(equal("untitled folder"))
                 expect(folder.index).to(equal(0))
 
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(folder) }
+                let realm = try! Realm()
+                realm.transaction { realm.add(folder) }
 
                 let folder2 = CPYFolder.create()
                 expect(folder2.index).to(equal(1))
@@ -70,15 +68,15 @@ class FolderSpec: QuickSpec {
                 expect(snippet.title).to(equal("untitled snippet"))
                 expect(snippet.index).to(equal(0))
 
-                folder.snippets.addObject(snippet)
+                folder.snippets.append(snippet)
 
                 let snippet2 = folder.createSnippet()
                 expect(snippet2.index).to(equal(1))
             }
 
             afterEach {
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.deleteAllObjects() }
+                let realm = try! Realm()
+                realm.transaction { realm.deleteAll() }
             }
 
         }
@@ -87,8 +85,8 @@ class FolderSpec: QuickSpec {
 
             it("Merge snippet") {
                 let folder = CPYFolder()
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(folder) }
+                let realm = try! Realm()
+                realm.transaction { realm.add(folder) }
                 let copyFolder = folder.deepCopy()
 
                 let snippet = CPYSnippet()
@@ -100,16 +98,16 @@ class FolderSpec: QuickSpec {
                 expect(snippet2.realm).to(beNil())
                 expect(folder.snippets.count).to(equal(2))
 
-                let savedSnippet = folder.snippets.firstObject() as! CPYSnippet
-                let savedSnippet2 = folder.snippets.objectAtIndex(1) as! CPYSnippet
+                let savedSnippet = folder.snippets.first!
+                let savedSnippet2 = folder.snippets[1]
                 expect(savedSnippet.identifier).to(equal(snippet.identifier))
                 expect(savedSnippet2.identifier).to(equal(snippet2.identifier))
             }
 
             it("Insert snippet") {
                 let folder = CPYFolder()
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(folder) }
+                let realm = try! Realm()
+                realm.transaction { realm.add(folder) }
                 let copyFolder = folder.deepCopy()
 
                 let snippet = CPYSnippet()
@@ -117,7 +115,7 @@ class FolderSpec: QuickSpec {
                 copyFolder.insertSnippet(snippet, index: 0)
                 expect(folder.snippets.count).to(equal(0))
 
-                realm.transaction { realm.addObject(snippet) }
+                realm.transaction { realm.add(snippet) }
 
                 // Can insert saved snippet
                 copyFolder.insertSnippet(snippet, index: 0)
@@ -127,9 +125,9 @@ class FolderSpec: QuickSpec {
             it("Remove snippet") {
                 let folder = CPYFolder()
                 let snippet = CPYSnippet()
-                folder.snippets.addObject(snippet)
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(folder) }
+                folder.snippets.append(snippet)
+                let realm = try! Realm()
+                realm.transaction { realm.add(folder) }
 
                 expect(folder.snippets.count).to(equal(1))
 
@@ -140,7 +138,8 @@ class FolderSpec: QuickSpec {
             }
 
             it("Merge folder") {
-                expect(CPYFolder.allObjects().count).to(equal(0))
+                let realm = try! Realm()
+                expect(realm.objects(CPYFolder.self).count).to(equal(0))
 
                 let folder = CPYFolder()
                 folder.index = 100
@@ -148,9 +147,9 @@ class FolderSpec: QuickSpec {
                 folder.enable = false
                 folder.merge()
                 expect(folder.realm).to(beNil())
-                expect(CPYFolder.allObjects().count).to(equal(1))
+                expect(realm.objects(CPYFolder.self).count).to(equal(1))
 
-                let savedFolder = CPYFolder(forPrimaryKey: folder.identifier)
+                let savedFolder = realm.objectForPrimaryKey(CPYFolder.self, key: folder.identifier)
                 expect(savedFolder).toNot(beNil())
                 expect(savedFolder?.index).to(equal(folder.index))
                 expect(savedFolder?.title).to(equal(folder.title))
@@ -160,7 +159,7 @@ class FolderSpec: QuickSpec {
                 folder.title = "change title"
                 folder.enable = true
                 folder.merge()
-                expect(CPYFolder.allObjects().count).to(equal(1))
+                expect(realm.objects(CPYFolder.self).count).to(equal(1))
 
                 expect(savedFolder?.index).to(equal(folder.index))
                 expect(savedFolder?.title).to(equal(folder.title))
@@ -170,24 +169,24 @@ class FolderSpec: QuickSpec {
             it("Remove folder") {
                 let folder = CPYFolder()
                 let snippet = CPYSnippet()
-                folder.snippets.addObject(snippet)
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(folder) }
+                folder.snippets.append(snippet)
+                let realm = try! Realm()
+                realm.transaction { realm.add(folder) }
 
-                expect(CPYFolder.allObjects().count).to(equal(1))
-                expect(CPYSnippet.allObjects().count).to(equal(1))
+                expect(realm.objects(CPYFolder.self).count).to(equal(1))
+                expect(realm.objects(CPYSnippet.self).count).to(equal(1))
 
                 let copyFolder = folder.deepCopy()
                 expect(copyFolder.realm).to(beNil())
                 copyFolder.remove()
 
-                expect(CPYFolder.allObjects().count).to(equal(0))
-                expect(CPYSnippet.allObjects().count).to(equal(0))
+                expect(realm.objects(CPYFolder.self).count).to(equal(0))
+                expect(realm.objects(CPYSnippet.self).count).to(equal(0))
             }
 
             afterEach {
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.deleteAllObjects() }
+                let realm = try! Realm()
+                realm.transaction { realm.deleteAll() }
             }
 
         }
@@ -201,8 +200,8 @@ class FolderSpec: QuickSpec {
                 folder2.index = 10
 
                 let folders = [folder, folder2]
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObjects(folders) }
+                let realm = try! Realm()
+                realm.transaction { realm.add(folders) }
 
                 let copyFolder = folder.deepCopy()
                 let copyFolder2 = folder2.deepCopy()
@@ -221,16 +220,16 @@ class FolderSpec: QuickSpec {
                 snippet.index = 10
                 let snippet2 = CPYSnippet()
                 snippet2.index = 100
-                folder.snippets.addObject(snippet)
-                folder.snippets.addObject(snippet2)
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(folder) }
+                folder.snippets.append(snippet)
+                folder.snippets.append(snippet2)
+                let realm = try! Realm()
+                realm.transaction { realm.add(folder) }
 
                 let copyFolder = folder.deepCopy()
                 copyFolder.rearrangesSnippetIndex()
 
-                let copySnippet = copyFolder.snippets.firstObject() as! CPYSnippet
-                let copySnippet2 = copyFolder.snippets.objectAtIndex(1) as! CPYSnippet
+                let copySnippet = copyFolder.snippets.first!
+                let copySnippet2 = copyFolder.snippets[1]
                 expect(copySnippet.index).to(equal(0))
                 expect(copySnippet2.index).to(equal(1))
                 expect(snippet.index).to(equal(0))
@@ -238,8 +237,8 @@ class FolderSpec: QuickSpec {
             }
 
             afterEach {
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.deleteAllObjects() }
+                let realm = try! Realm()
+                realm.transaction { realm.deleteAll() }
             }
 
         }

@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import Realm
+import RealmSwift
 import PINCache
 
 final class HistoryManager: NSObject {
@@ -16,7 +16,7 @@ final class HistoryManager: NSObject {
     // Timer
     private var cleanHistotyTimer: NSTimer?
     // Other
-    private let realm = RLMRealm.defaultRealm()
+    private let realm = try! Realm()
     private let defaults = NSUserDefaults.standardUserDefaults()
 
     // MARK: - Initialize
@@ -37,14 +37,14 @@ extension HistoryManager {
     }
 
     func cleanDatas() {
-        let allClips = CPYClip.allObjects()
+        let allClips = realm.objects(CPYClip.self)
         let fileManager = NSFileManager.defaultManager()
         do {
             let dataPathList = try fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder())
             for path in dataPathList {
                 var isExist = false
-                for clipObject in allClips {
-                    if let clip = clipObject as? CPYClip where !clip.invalidated {
+                for clip in allClips {
+                    if !clip.invalidated {
                         if let clipPath = clip.dataPath.componentsSeparatedByString("/").last where clipPath == path {
                             isExist = true
                             break
@@ -59,26 +59,25 @@ extension HistoryManager {
     }
 
     private func trimHistory() {
-        let clips = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: false)
+        let clips = realm.objects(CPYClip.self).sorted("updateTime", ascending: false)
         let maxHistorySize = defaults.integerForKey(Constants.UserDefaults.maxHistorySize)
 
         if maxHistorySize < Int(clips.count) {
-            if let lastClip = clips.objectAtIndex(UInt(maxHistorySize - 1)) as? CPYClip where !lastClip.invalidated {
+            let lastClip = clips[maxHistorySize - 1]
+            if !lastClip.invalidated {
 
                 let lastUsedAt = lastClip.updateTime
-                let results = CPYClip.allObjects().objectsWithPredicate(NSPredicate(format: "updateTime < %d", lastUsedAt))
+                let results = realm.objects(CPYClip.self).filter("updateTime < %d",lastUsedAt)
                 var imagePaths = [String]()
-                for clipObject in results {
-                    if let clip = clipObject as? CPYClip where !clip.invalidated {
-                        if !clip.thumbnailPath.isEmpty {
-                            imagePaths.append(clip.thumbnailPath)
-                        }
+                for clip in results {
+                    if !clip.invalidated && !clip.thumbnailPath.isEmpty {
+                        imagePaths.append(clip.thumbnailPath)
                     }
                 }
 
                 imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
                 realm.transaction {
-                    realm.deleteObjects(results)
+                    realm.delete(results)
                 }
             }
         }

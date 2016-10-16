@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import Magnet
+import RealmSwift
 
 final class HotKeyManager: NSObject {
     // MARK: - Properties
@@ -189,7 +190,8 @@ extension HotKeyManager {
 
     func popUpSnippetFolder(object: AnyObject) {
         guard let hotKey = object as? HotKey else { return }
-        guard let folder = CPYFolder(forPrimaryKey: hotKey.identifier) else { return }
+        let realm = try! Realm()
+        guard let folder = realm.objectForPrimaryKey(CPYFolder.self, key: hotKey.identifier) else { return }
         if !folder.enable { return }
 
         MenuManager.sharedManager.popUpSnippetFolder(folder)

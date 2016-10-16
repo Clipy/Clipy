@@ -1,23 +1,21 @@
 import Quick
 import Nimble
-import Realm
+import RealmSwift
 @testable import Clipy
 
 class SnippetSpec: QuickSpec {
     override func spec() {
 
         beforeEach {
-            let config = RLMRealmConfiguration.defaultConfiguration()
-            config.inMemoryIdentifier = NSUUID().UUIDString
-            RLMRealmConfiguration.setDefaultConfiguration(config)
+            Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().UUIDString
         }
 
         describe("Sync database") { 
 
             it("Merge snippet") {
                 let snippet = CPYSnippet()
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(snippet) }
+                let realm = try! Realm()
+                realm.transaction { realm.add(snippet) }
 
                 let snippet2 = CPYSnippet()
                 snippet2.identifier = snippet.identifier
@@ -33,24 +31,24 @@ class SnippetSpec: QuickSpec {
             }
 
             it("Remove snippet") {
-                expect(CPYSnippet.allObjects().count).to(equal(0))
+                let realm = try! Realm()
+                expect(realm.objects(CPYSnippet.self).count).to(equal(0))
 
                 let snippet = CPYSnippet()
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.addObject(snippet) }
+                realm.transaction { realm.add(snippet) }
 
-                expect(CPYSnippet.allObjects().count).to(equal(1))
+                expect(realm.objects(CPYSnippet.self).count).to(equal(1))
 
                 let snippet2 = CPYSnippet()
                 snippet2.identifier = snippet.identifier
                 snippet2.remove()
 
-                expect(CPYSnippet.allObjects().count).to(equal(0))
+                expect(realm.objects(CPYSnippet.self).count).to(equal(0))
             }
 
             afterEach {
-                let realm = RLMRealm.defaultRealm()
-                realm.transaction { realm.deleteAllObjects() }
+                let realm = try! Realm()
+                realm.transaction { realm.deleteAll() }
             }
 
         }

@@ -7,9 +7,9 @@
 //
 
 import Cocoa
-import Realm
+import RealmSwift
 
-class CPYSnippet: RLMObject {
+final class CPYSnippet: Object {
 
     // MARK: - Properties
     dynamic var index   = 0
@@ -17,42 +17,38 @@ class CPYSnippet: RLMObject {
     dynamic var title   = ""
     dynamic var content = ""
     dynamic var identifier = NSUUID().UUIDString
-    dynamic var folders: RLMLinkingObjects?
+    let folders = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
 
     var folder: CPYFolder? {
-        return folders?.arrayValue(CPYFolder.self).first
+        return folders.first
     }
 
     // MARK: Primary Key
-    override class func primaryKey() -> String {
+    override static func primaryKey() -> String? {
         return "identifier"
-    }
-
-    // MARK: - Linking Objects
-    override static func linkingObjectsProperties() -> [String : RLMPropertyDescriptor] {
-        return ["folders": RLMPropertyDescriptor(withClass: CPYFolder.self, propertyName: "snippets")]
     }
 
     // MARK: - Ignore Properties
     override static func ignoredProperties() -> [String] {
         return ["folder"]
     }
+
 }
 
 // MARK: - Add Snippet
 extension CPYSnippet {
     func merge() {
-        let realm = RLMRealm.defaultRealm()
+        let realm = try! Realm()
         let copySnippet = CPYSnippet(value: self)
-        realm.transaction { realm.addOrUpdateObject(copySnippet) }
+        realm.transaction { realm.add(copySnippet, update: true) }
     }
 }
 
 // MARK: - Remove Snippet
 extension CPYSnippet {
     func remove() {
-        guard let snippet = CPYSnippet(forPrimaryKey: identifier) else { return }
-        guard let realm = snippet.realm else { return }
-        realm.transaction { realm.deleteObject(snippet) }
+        let realm = try! Realm()
+        guard let snippet = realm.objectForPrimaryKey(CPYSnippet.self, key: identifier) else { return }
+        snippet.realm?.transaction { snippet.realm?.delete(snippet) }
     }
 }

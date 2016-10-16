@@ -7,9 +7,9 @@
 //
 
 import Cocoa
-import Realm
+import RealmSwift
 
-class CPYClip: RLMObject {
+final class CPYClip: Object {
 
     // MARK: - Properties
     dynamic var dataPath        = ""
@@ -20,7 +20,7 @@ class CPYClip: RLMObject {
     dynamic var thumbnailPath   = ""
 
     // MARK: Primary Key
-    override class func primaryKey() -> String {
+    override static func primaryKey() -> String? {
         return "dataHash"
     }
 
