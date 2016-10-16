@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_ARRAY_BLOB_HPP
 #define REALM_ARRAY_BLOB_HPP
 
@@ -25,17 +24,21 @@
 namespace realm {
 
 
-class ArrayBlob: public Array {
+class ArrayBlob : public Array {
 public:
+    static constexpr size_t max_binary_size = 0xFFFFF8 - Array::header_size;
+
     explicit ArrayBlob(Allocator&) noexcept;
-    ~ArrayBlob() noexcept override {}
+    ~ArrayBlob() noexcept override
+    {
+    }
 
     const char* get(size_t index) const noexcept;
+    BinaryData get_at(size_t& pos) const noexcept;
     bool is_null(size_t index) const noexcept;
-    void add(const char* data, size_t data_size, bool add_zero_term = false);
+    ref_type add(const char* data, size_t data_size, bool add_zero_term = false);
     void insert(size_t pos, const char* data, size_t data_size, bool add_zero_term = false);
-    void replace(size_t begin, size_t end, const char* data, size_t data_size,
-                 bool add_zero_term = false);
+    ref_type replace(size_t begin, size_t end, const char* data, size_t data_size, bool add_zero_term = false);
     void erase(size_t begin, size_t end);
 
     /// Get the specified element without the cost of constructing an
@@ -58,24 +61,22 @@ public:
     static MemRef create_array(size_t init_size, Allocator&);
 
 #ifdef REALM_DEBUG
+    size_t blob_size() const noexcept;
     void verify() const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
 #endif
 
 private:
     size_t calc_byte_len(size_t for_size, size_t width) const override;
-    size_t calc_item_count(size_t bytes,
-                              size_t width) const noexcept override;
+    size_t calc_item_count(size_t bytes, size_t width) const noexcept override;
 };
-
-
 
 
 // Implementation:
 
 // Creates new array (but invalid, call init_from_ref() to init)
-inline ArrayBlob::ArrayBlob(Allocator& allocator) noexcept:
-    Array(allocator)
+inline ArrayBlob::ArrayBlob(Allocator& allocator) noexcept
+    : Array(allocator)
 {
 }
 
@@ -89,13 +90,12 @@ inline const char* ArrayBlob::get(size_t index) const noexcept
     return m_data + index;
 }
 
-inline void ArrayBlob::add(const char* data, size_t data_size, bool add_zero_term)
+inline ref_type ArrayBlob::add(const char* data, size_t data_size, bool add_zero_term)
 {
-    replace(m_size, m_size, data, data_size, add_zero_term);
+    return replace(m_size, m_size, data, data_size, add_zero_term);
 }
 
-inline void ArrayBlob::insert(size_t pos, const char* data, size_t data_size,
-                              bool add_zero_term)
+inline void ArrayBlob::insert(size_t pos, const char* data, size_t data_size, bool add_zero_term)
 {
     replace(pos, pos, data, data_size, add_zero_term);
 }

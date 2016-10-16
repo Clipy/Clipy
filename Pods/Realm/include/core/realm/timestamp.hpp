@@ -1,26 +1,25 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_TIMESTAMP_HPP
 #define REALM_TIMESTAMP_HPP
 
-#include <stdint.h>
+#include <cstdint>
 #include <ostream>
 #include <realm/util/assert.hpp>
 
@@ -62,17 +61,29 @@ public:
     //       +1.1 seconds (1100 milliseconds after the epoch) is constructed by Timestamp(1, 100000000)
     //       -1.1 seconds (1100 milliseconds before the epoch) is constructed by Timestamp(-1, -100000000)
     //
-    Timestamp(int64_t seconds, int32_t nanoseconds) : m_seconds(seconds), m_nanoseconds(nanoseconds), m_is_null(false)
+    Timestamp(int64_t seconds, int32_t nanoseconds)
+        : m_seconds(seconds)
+        , m_nanoseconds(nanoseconds)
+        , m_is_null(false)
     {
         REALM_ASSERT_EX(-nanoseconds_per_second < nanoseconds && nanoseconds < nanoseconds_per_second, nanoseconds);
         const bool both_non_negative = seconds >= 0 && nanoseconds >= 0;
         const bool both_non_positive = seconds <= 0 && nanoseconds <= 0;
         REALM_ASSERT_EX(both_non_negative || both_non_positive, both_non_negative, both_non_positive);
     }
-    Timestamp(realm::null) : m_is_null(true) { }
-    Timestamp() : Timestamp(null{}) { }
+    Timestamp(realm::null)
+        : m_is_null(true)
+    {
+    }
+    Timestamp()
+        : Timestamp(null{})
+    {
+    }
 
-    bool is_null() const { return m_is_null; }
+    bool is_null() const
+    {
+        return m_is_null;
+    }
 
     int64_t get_seconds() const noexcept
     {
@@ -86,20 +97,50 @@ public:
         return m_nanoseconds;
     }
 
-    // Note that these operators do not work if one of the Timestamps are null! Please use realm::Greater, realm::Equal
-    // etc instead. This is in order to collect all treatment of null behaviour in a single place for all 
+    // Note that these operators do not work if one of the Timestamps are null! Please use realm::Greater,
+    // realm::Equal etc instead. This is in order to collect all treatment of null behaviour in a single place for all
     // types (query_conditions.hpp) to ensure that all types sort and compare null vs. non-null in the same manner,
-    // especially for int/float where we cannot override operators. This design is open for discussion, though, because
-    // it has usability drawbacks
-    bool operator==(const Timestamp& rhs) const { REALM_ASSERT(!is_null()); REALM_ASSERT(!rhs.is_null()); return m_seconds == rhs.m_seconds && m_nanoseconds == rhs.m_nanoseconds; }
-    bool operator!=(const Timestamp& rhs) const { REALM_ASSERT(!is_null()); REALM_ASSERT(!rhs.is_null()); return m_seconds != rhs.m_seconds || m_nanoseconds != rhs.m_nanoseconds; }
-    bool operator>(const Timestamp& rhs) const { REALM_ASSERT(!is_null()); REALM_ASSERT(!rhs.is_null()); return (m_seconds > rhs.m_seconds) || (m_seconds == rhs.m_seconds && m_nanoseconds > rhs.m_nanoseconds); }
-    bool operator<(const Timestamp& rhs) const { REALM_ASSERT(!is_null()); REALM_ASSERT(!rhs.is_null()); return (m_seconds < rhs.m_seconds) || (m_seconds == rhs.m_seconds && m_nanoseconds < rhs.m_nanoseconds); }
-    bool operator<=(const Timestamp& rhs) const { REALM_ASSERT(!is_null()); REALM_ASSERT(!rhs.is_null()); return *this < rhs || *this == rhs; }
-    bool operator>=(const Timestamp& rhs) const { REALM_ASSERT(!is_null()); REALM_ASSERT(!rhs.is_null()); return *this > rhs || *this == rhs; }
+    // especially for int/float where we cannot override operators. This design is open for discussion, though,
+    // because it has usability drawbacks
+    bool operator==(const Timestamp& rhs) const
+    {
+        REALM_ASSERT(!is_null());
+        REALM_ASSERT(!rhs.is_null());
+        return m_seconds == rhs.m_seconds && m_nanoseconds == rhs.m_nanoseconds;
+    }
+    bool operator!=(const Timestamp& rhs) const
+    {
+        REALM_ASSERT(!is_null());
+        REALM_ASSERT(!rhs.is_null());
+        return m_seconds != rhs.m_seconds || m_nanoseconds != rhs.m_nanoseconds;
+    }
+    bool operator>(const Timestamp& rhs) const
+    {
+        REALM_ASSERT(!is_null());
+        REALM_ASSERT(!rhs.is_null());
+        return (m_seconds > rhs.m_seconds) || (m_seconds == rhs.m_seconds && m_nanoseconds > rhs.m_nanoseconds);
+    }
+    bool operator<(const Timestamp& rhs) const
+    {
+        REALM_ASSERT(!is_null());
+        REALM_ASSERT(!rhs.is_null());
+        return (m_seconds < rhs.m_seconds) || (m_seconds == rhs.m_seconds && m_nanoseconds < rhs.m_nanoseconds);
+    }
+    bool operator<=(const Timestamp& rhs) const
+    {
+        REALM_ASSERT(!is_null());
+        REALM_ASSERT(!rhs.is_null());
+        return *this < rhs || *this == rhs;
+    }
+    bool operator>=(const Timestamp& rhs) const
+    {
+        REALM_ASSERT(!is_null());
+        REALM_ASSERT(!rhs.is_null());
+        return *this > rhs || *this == rhs;
+    }
     Timestamp& operator=(const Timestamp& rhs) = default;
 
-    template<class Ch, class Tr>
+    template <class Ch, class Tr>
     friend std::basic_ostream<Ch, Tr>& operator<<(std::basic_ostream<Ch, Tr>& out, const Timestamp&);
     static constexpr int32_t nanoseconds_per_second = 1000000000;
 
@@ -109,12 +150,14 @@ private:
     bool m_is_null;
 };
 
-template<class C, class T>
+// LCOV_EXCL_START
+template <class C, class T>
 inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& out, const Timestamp& d)
 {
     out << "Timestamp(" << d.m_seconds << ", " << d.m_nanoseconds << ")";
     return out;
 }
+// LCOV_EXCL_STOP
 
 } // namespace realm
 

@@ -21,6 +21,8 @@
 
 #include "collection_notifications.hpp"
 
+#include <realm/util/optional.hpp>
+
 #include <unordered_map>
 
 namespace realm {
@@ -39,22 +41,38 @@ public:
 
     // Calculate where rows need to be inserted or deleted from old_rows to turn
     // it into new_rows, and check all matching rows for modifications
+    // If `move_candidates` is supplied they it will be used to do more accurate
+    // determination of which rows moved. This is only supported when the rows
+    // are in table order (i.e. not sorted or from a LinkList)
     static CollectionChangeBuilder calculate(std::vector<size_t> const& old_rows,
                                              std::vector<size_t> const& new_rows,
                                              std::function<bool (size_t)> row_did_change,
-                                             bool sort);
+                                             util::Optional<IndexSet> const& move_candidates = util::none);
 
+    // generic operations {
+    CollectionChangeSet finalize() &&;
     void merge(CollectionChangeBuilder&&);
-    void clean_up_stale_moves();
 
     void insert(size_t ndx, size_t count=1, bool track_moves=true);
     void modify(size_t ndx);
     void erase(size_t ndx);
-    void move_over(size_t ndx, size_t last_ndx, bool track_moves=true);
     void clear(size_t old_size);
+    // }
+
+    // operations only implemented for LinkList semantics {
+    void clean_up_stale_moves();
     void move(size_t from, size_t to);
+    // }
+
+    // operations only implemented for Row semantics {
+    void move_over(size_t ndx, size_t last_ndx, bool track_moves=true);
+    // must be followed by move_over(old_ndx, ...)
+    // precondition: `new_ndx` must be a new insertion
+    void subsume(size_t old_ndx, size_t new_ndx, bool track_moves=true);
+    void swap(size_t ndx_1, size_t ndx_2, bool track_moves=true);
 
     void parse_complete();
+    // }
 
 private:
     std::unordered_map<size_t, size_t> m_move_mapping;

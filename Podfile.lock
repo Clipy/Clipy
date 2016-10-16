@@ -1,8 +1,8 @@
 PODS:
   - AEXML (3.0.1)
-  - Crashlytics (3.7.2):
+  - Crashlytics (3.8.3):
     - Fabric (~> 1.6.3)
-  - Fabric (1.6.7)
+  - Fabric (1.6.10)
   - KeyHolder (1.0.0):
     - Magnet (= 1.0.0)
   - LoginServiceKit (0.0.1)
@@ -12,11 +12,11 @@ PODS:
     - RxSwift (~> 2.1)
   - PINCache (2.2.2)
   - Quick (0.9.2)
-  - Realm (1.0.2):
-    - Realm/Headers (= 1.0.2)
-  - Realm/Headers (1.0.2)
-  - RealmSwift (1.0.2):
-    - Realm (= 1.0.2)
+  - Realm (2.0.2):
+    - Realm/Headers (= 2.0.2)
+  - Realm/Headers (2.0.2)
+  - RealmSwift (2.0.2):
+    - Realm (= 2.0.2)
   - RxCocoa (2.5.0):
     - RxSwift (~> 2.5)
   - RxOptional (2.0.0):
@@ -40,7 +40,7 @@ DEPENDENCIES:
   - NSObject+Rx
   - PINCache
   - Quick
-  - RealmSwift (= 1.0.2)
+  - RealmSwift
   - RxCocoa
   - RxOptional
   - RxScreeen
@@ -63,8 +63,8 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AEXML: 6f2d034aa62e1f7d13bfc11213b4ca17114f1dd5
-  Crashlytics: 130ab943f8c78cda7a814b434f270b2e2c8a3cba
-  Fabric: caf7580c725e64db144f610ac65cd60956911dc7
+  Crashlytics: 2b6dbe138a42395577cfa73dfa1aa7248cadf39e
+  Fabric: c73f371ee543e3f0b80608f2674750e4910d1669
   KeyHolder: 04e10ed144b8f0288e8ce746b64a3198bbdf20c1
   LoginServiceKit: 92aee420b05d163e356f6c5cbef64dd23eef93e1
   Magnet: 4e7cdfa8c7bdb29fff70096e51f1f952331a4074
@@ -72,8 +72,8 @@ SPEC CHECKSUMS:
   NSObject+Rx: 5d032a7f161602dec6b82dcf12731e91ce15b8da
   PINCache: 078426d356ab95ef875e9e62e5c35a2ea3333c28
   Quick: 18d057bc66451eedd5d1c8dc99ba2a5db6e60226
-  Realm: 9d5c46a4d7d27958530a8dfc58f63a99e5c2cba3
-  RealmSwift: 82f3ac5e24530143dddfde2033acc0d308f27d96
+  Realm: 0f5a194af0b7e6158b83db41b4ee1a00be7ddf1a
+  RealmSwift: 0eb5070d851cba7c66e841ca756d83609dc78bc8
   RxCocoa: e1b1562e57a554d0fb2aabf9d71b637f177257c7
   RxOptional: b77fb47a0190213cf8a37c7a2b7fda28160b4563
   RxScreeen: 2336d891e19da307e3cdac8f0cd172a0d25c0909

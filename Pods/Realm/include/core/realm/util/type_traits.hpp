@@ -1,26 +1,25 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_UTIL_TYPE_TRAITS_HPP
 #define REALM_UTIL_TYPE_TRAITS_HPP
 
-#include <stdint.h>
+#include <cstdint>
 #include <climits>
 #include <cwchar>
 #include <limits>
@@ -34,10 +33,11 @@
 namespace realm {
 namespace util {
 
-template<class From, class To>
+template <class From, class To>
 struct CopyConst {
 private:
     typedef typename std::remove_const<To>::type type_1;
+
 public:
     typedef typename std::conditional<std::is_const<From>::value, const type_1, type_1>::type type;
 };
@@ -48,7 +48,7 @@ public:
 ///
 /// \note Enum types are supported only when the compiler supports the
 /// C++11 'decltype' feature.
-template<class T>
+template <class T>
 struct Promote;
 
 
@@ -63,67 +63,67 @@ struct Promote;
 ///
 /// \note Enum types are supported only when the compiler supports the
 /// C++11 'decltype' feature.
-template<class A, class B>
+template <class A, class B>
 struct ArithBinOpType;
 
 
 /// Member `type` is `B` if `B` has more value bits than `A`,
 /// otherwise is is `A`.
-template<class A, class B>
+template <class A, class B>
 struct ChooseWidestInt;
 
 
 /// Member `type` is the first of `unsigned char`, `unsigned short`,
 /// `unsigned int`, `unsigned long`, and `unsigned long long` that has
 /// at least `bits` value bits.
-template<int bits>
+template <int bits>
 struct LeastUnsigned;
 
 
 /// Member `type` is `unsigned` if `unsigned` has at least `bits`
 /// value bits, otherwise it is the same as
-/// `LeastUnsigned<bits>::type`.
-template<int bits>
+/// `LeastUnsigned<bits>::%type`.
+template <int bits>
 struct FastestUnsigned;
 
 
 // Implementation
 
 
-template<class T>
+template <class T>
 struct Promote {
     typedef decltype(+T()) type; // FIXME: This is not performing floating-point promotion.
 };
 
 
-template<class A, class B>
+template <class A, class B>
 struct ArithBinOpType {
-    typedef decltype(A()+B()) type;
+    typedef decltype(A() + B()) type;
 };
 
 
-template<class A, class B>
+template <class A, class B>
 struct ChooseWidestInt {
 private:
     typedef std::numeric_limits<A> lim_a;
     typedef std::numeric_limits<B> lim_b;
     static_assert(lim_a::is_specialized && lim_b::is_specialized,
                   "std::numeric_limits<> must be specialized for both types");
-    static_assert(lim_a::is_integer && lim_b::is_integer,
-                  "Both types must be integers");
+    static_assert(lim_a::is_integer && lim_b::is_integer, "Both types must be integers");
+
 public:
     typedef typename std::conditional<(lim_a::digits >= lim_b::digits), A, B>::type type;
 };
 
 
-template<int bits>
+template <int bits>
 struct LeastUnsigned {
 private:
-    typedef void                                          types_0;
-    typedef TypeAppend<types_0, unsigned char>::type      types_1;
-    typedef TypeAppend<types_1, unsigned short>::type     types_2;
-    typedef TypeAppend<types_2, unsigned int>::type       types_3;
-    typedef TypeAppend<types_3, unsigned long>::type      types_4;
+    typedef void types_0;
+    typedef TypeAppend<types_0, unsigned char>::type types_1;
+    typedef TypeAppend<types_1, unsigned short>::type types_2;
+    typedef TypeAppend<types_2, unsigned int>::type types_3;
+    typedef TypeAppend<types_3, unsigned long>::type types_4;
     typedef TypeAppend<types_4, unsigned long long>::type types_5;
     typedef types_5 types;
     // The `dummy<>` template is there to work around a bug in
@@ -132,23 +132,25 @@ private:
     // attempt to instantiate `FindType<type, pred>` before the
     // instantiation of `LeastUnsigned<>` which obviously fails
     // because `pred` depends on `bits`.
-    template<int>
+    template <int>
     struct dummy {
-        template<class T>
-    struct pred {
+        template <class T>
+        struct pred {
             static const bool value = std::numeric_limits<T>::digits >= bits;
         };
     };
+
 public:
     typedef typename FindType<types, dummy<bits>::template pred>::type type;
     static_assert(!(std::is_same<type, void>::value), "No unsigned type is that wide");
 };
 
 
-template<int bits>
+template <int bits>
 struct FastestUnsigned {
 private:
     typedef typename util::LeastUnsigned<bits>::type least_unsigned;
+
 public:
     typedef typename util::ChooseWidestInt<unsigned, least_unsigned>::type type;
 };

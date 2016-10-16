@@ -268,7 +268,7 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
     }
 }
 
-- (bool)parseObjcProperty:(objc_property_t)property isSwift:(bool)isSwift {
+- (bool)parseObjcProperty:(objc_property_t)property {
     unsigned int count;
     objc_property_attribute_t *attrs = property_copyAttributeList(property, &count);
 
@@ -292,11 +292,6 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
                 break;
             case 'S':
                 _setterName = @(attrs[i].value);
-                break;
-            case 'V': // backing ivar name
-                if (isSwift) {
-                    _getterName = @(attrs[i].value);
-                }
                 break;
             default:
                 break;
@@ -325,7 +320,7 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
         _linkOriginPropertyName = linkPropertyDescriptor.propertyName;
     }
 
-    if ([self parseObjcProperty:property isSwift:true]) {
+    if ([self parseObjcProperty:property]) {
         return nil;
     }
 
@@ -333,7 +328,7 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
 
     // FIXME: temporarily workaround added since Objective-C generics used in Swift show up as `@`
     //        * broken starting in Swift 3.0 Xcode 8 b1
-    //        * tested to still be broken in Swift 3.0 Xcode 8 b2
+    //        * tested to still be broken in Swift 3.0 Xcode 8 b6
     //        * if the Realm Objective-C Swift tests pass with this removed, it's been fixed
     //        * once it has been fixed, remove this entire conditional block (contents included) entirely
     //        * Bug Report: SR-2031 https://bugs.swift.org/browse/SR-2031
@@ -352,6 +347,9 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
     }
     else if ([_objcRawType isEqualToString:@"@\"NSNumber\""]) {
         const char *numberType = [propertyValue objCType];
+        if (!numberType) {
+            @throw RLMException(@"Can't persist NSNumber without default value: use a Swift-native number type or provide a default value.");
+        }
         switch (*numberType) {
             case 'i':
             case 'l':
@@ -415,7 +413,7 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
         _linkOriginPropertyName = linkPropertyDescriptor.propertyName;
     }
 
-    bool isReadOnly = [self parseObjcProperty:property isSwift:false];
+    bool isReadOnly = [self parseObjcProperty:property];
     bool isComputedProperty = rawTypeIsComputedProperty(_objcRawType);
     if (isReadOnly && !isComputedProperty) {
         return nil;
@@ -533,7 +531,6 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
 
 - (BOOL)isEqualToProperty:(RLMProperty *)property {
     return _type == property->_type
-        && _column == property->_column
         && _indexed == property->_indexed
         && _isPrimary == property->_isPrimary
         && _optional == property->_optional

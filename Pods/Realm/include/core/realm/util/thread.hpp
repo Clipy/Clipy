@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_UTIL_THREAD_HPP
 #define REALM_UTIL_THREAD_HPP
 
@@ -45,14 +44,15 @@ namespace util {
 
 /// A separate thread of execution.
 ///
-/// This class is a C++03 compatible reproduction of a subset of
-/// std::thread from C++11 (when discounting Thread::start()).
+/// This class is a C++03 compatible reproduction of a subset of std::thread
+/// from C++11 (when discounting Thread::start(), Thread::set_name(), and
+/// Thread::get_name()).
 class Thread {
 public:
     Thread();
     ~Thread() noexcept;
 
-    template<class F>
+    template <class F>
     explicit Thread(F func);
 
     /// This method is an extension of the API provided by
@@ -61,12 +61,23 @@ public:
     /// calling `start(func)` would have been equivalent to `*this =
     /// Thread(func)`. Please see std::thread::operator=() for
     /// details.
-    template<class F>
+    template <class F>
     void start(F func);
 
     bool joinable() noexcept;
 
     void join();
+
+    // If supported by the platform, set the name of the calling thread (mainly
+    // for debugging purposes). The name will be silently clamped to whatever
+    // limit the platform places on these names. Linux places a limit of 15
+    // characters for these names.
+    static void set_name(const std::string&);
+
+    // If supported by the platform, this function assigns the name of the
+    // calling thread to \a name, and returns true, otherwise it does nothing
+    // and returns false.
+    static bool get_name(std::string& name);
 
 private:
     pthread_t m_id;
@@ -76,7 +87,7 @@ private:
 
     void start(entry_func_type, void* arg);
 
-    template<class>
+    template <class>
     static void* entry_point(void*) noexcept;
 
     REALM_NORETURN static void create_failed(int);
@@ -90,7 +101,8 @@ public:
     Mutex();
     ~Mutex() noexcept;
 
-    struct process_shared_tag {};
+    struct process_shared_tag {
+    };
 
     /// Initialize this mutex for use across multiple processes. When
     /// constructed this way, the instance may be placed in memory
@@ -108,10 +120,13 @@ public:
     void unlock() noexcept;
 
 protected:
-    pthread_mutex_t m_impl;
+    pthread_mutex_t m_impl = PTHREAD_MUTEX_INITIALIZER;
 
-    struct no_init_tag {};
-    Mutex(no_init_tag) {}
+    struct no_init_tag {
+    };
+    Mutex(no_init_tag)
+    {
+    }
 
     void init_as_regular();
     void init_as_process_shared(bool robust_if_available);
@@ -138,7 +153,8 @@ private:
 
 
 /// See UniqueLock.
-struct defer_lock_tag {};
+struct defer_lock_tag {
+};
 
 /// A general-purpose mutex ownership wrapper supporting deferred
 /// locking as well as repeated unlocking and relocking.
@@ -151,6 +167,7 @@ public:
     void lock() noexcept;
     void unlock() noexcept;
     bool holds_lock() noexcept;
+
 private:
     Mutex* m_mutex;
     bool m_is_locked;
@@ -166,7 +183,7 @@ private:
 /// mutexes, this mutex class behaves as a regular process-shared
 /// mutex, which means that if a thread dies while holding a lock, any
 /// future attempt at locking will block indefinitely.
-class RobustMutex: private Mutex {
+class RobustMutex : private Mutex {
 public:
     RobustMutex();
     ~RobustMutex() noexcept;
@@ -189,7 +206,7 @@ public:
     /// function, or if the mutex has entered the 'unrecoverable'
     /// state due to a different thread throwing from its recover
     /// function.
-    template<class Func>
+    template <class Func>
     void lock(Func recover_func);
 
     void unlock() noexcept;
@@ -235,7 +252,7 @@ public:
     friend class CondVar;
 };
 
-class RobustMutex::NotRecoverable: public std::exception {
+class RobustMutex::NotRecoverable : public std::exception {
 public:
     const char* what() const noexcept override
     {
@@ -247,9 +264,10 @@ public:
 /// A simple robust mutex ownership wrapper.
 class RobustLockGuard {
 public:
-    /// \param recover_func See RobustMutex::lock().
-    template<class TFunc>
-    RobustLockGuard(RobustMutex&, TFunc func);
+    /// \param m the mutex to guard
+    /// \param func See RobustMutex::lock().
+    template <class TFunc>
+    RobustLockGuard(RobustMutex& m, TFunc func);
     ~RobustLockGuard() noexcept;
 
 private:
@@ -258,15 +276,14 @@ private:
 };
 
 
-
-
 /// Condition variable for use in synchronization monitors.
 class CondVar {
 public:
     CondVar();
     ~CondVar() noexcept;
 
-    struct process_shared_tag {};
+    struct process_shared_tag {
+    };
 
     /// Initialize this condition variable for use across multiple
     /// processes. When constructed this way, the instance may be
@@ -280,7 +297,7 @@ public:
 
     /// Wait for another thread to call notify() or notify_all().
     void wait(LockGuard& l) noexcept;
-    template<class Func>
+    template <class Func>
     void wait(RobustMutex& m, Func recover_func, const struct timespec* tp = nullptr);
 
     /// If any threads are wating for this condition, wake up at least
@@ -301,32 +318,28 @@ private:
 };
 
 
-
-
-
-
-
-
 // Implementation:
 
-inline Thread::Thread(): m_joinable(false)
+inline Thread::Thread()
+    : m_joinable(false)
 {
 }
 
-template<class F>
-inline Thread::Thread(F func): m_joinable(true)
+template <class F>
+inline Thread::Thread(F func)
+    : m_joinable(true)
 {
-    std::unique_ptr<F> func2(new F(func)); // Throws
+    std::unique_ptr<F> func2(new F(func));       // Throws
     start(&Thread::entry_point<F>, func2.get()); // Throws
     func2.release();
 }
 
-template<class F>
+template <class F>
 inline void Thread::start(F func)
 {
     if (m_joinable)
         std::terminate();
-    std::unique_ptr<F> func2(new F(func)); // Throws
+    std::unique_ptr<F> func2(new F(func));       // Throws
     start(&Thread::entry_point<F>, func2.get()); // Throws
     func2.release();
     m_joinable = true;
@@ -351,7 +364,7 @@ inline void Thread::start(entry_func_type entry_func, void* arg)
         create_failed(r); // Throws
 }
 
-template<class F>
+template <class F>
 inline void* Thread::entry_point(void* cookie) noexcept
 {
     std::unique_ptr<F> func(static_cast<F*>(cookie));
@@ -405,8 +418,8 @@ inline void Mutex::unlock() noexcept
 }
 
 
-inline LockGuard::LockGuard(Mutex& m) noexcept:
-    m_mutex(m)
+inline LockGuard::LockGuard(Mutex& m) noexcept
+    : m_mutex(m)
 {
     m_mutex.lock();
 }
@@ -417,15 +430,15 @@ inline LockGuard::~LockGuard() noexcept
 }
 
 
-inline UniqueLock::UniqueLock(Mutex& m) noexcept:
-    m_mutex(&m)
+inline UniqueLock::UniqueLock(Mutex& m) noexcept
+    : m_mutex(&m)
 {
     m_mutex->lock();
     m_is_locked = true;
 }
 
-inline UniqueLock::UniqueLock(Mutex& m, defer_lock_tag) noexcept:
-    m_mutex(&m)
+inline UniqueLock::UniqueLock(Mutex& m, defer_lock_tag) noexcept
+    : m_mutex(&m)
 {
     m_is_locked = false;
 }
@@ -453,9 +466,9 @@ inline void UniqueLock::unlock() noexcept
     m_is_locked = false;
 }
 
-template<typename TFunc>
-inline RobustLockGuard::RobustLockGuard(RobustMutex& m, TFunc func) :
-    m_mutex(m)
+template <typename TFunc>
+inline RobustLockGuard::RobustLockGuard(RobustMutex& m, TFunc func)
+    : m_mutex(m)
 {
     m_mutex.lock(func);
 }
@@ -466,9 +479,8 @@ inline RobustLockGuard::~RobustLockGuard() noexcept
 }
 
 
-
-inline RobustMutex::RobustMutex():
-    Mutex(no_init_tag())
+inline RobustMutex::RobustMutex()
+    : Mutex(no_init_tag())
 {
     bool robust_if_available = true;
     init_as_process_shared(robust_if_available);
@@ -478,7 +490,7 @@ inline RobustMutex::~RobustMutex() noexcept
 {
 }
 
-template<class Func>
+template <class Func>
 inline void RobustMutex::lock(Func recover_func)
 {
     bool no_thread_has_died = low_level_lock(); // Throws
@@ -508,9 +520,6 @@ inline void RobustMutex::unlock() noexcept
 }
 
 
-
-
-
 inline CondVar::CondVar()
 {
     int r = pthread_cond_init(&m_impl, 0);
@@ -532,7 +541,7 @@ inline void CondVar::wait(LockGuard& l) noexcept
         REALM_TERMINATE("pthread_cond_wait() failed");
 }
 
-template<class Func>
+template <class Func>
 inline void CondVar::wait(RobustMutex& m, Func recover_func, const struct timespec* tp)
 {
     int r;
@@ -580,7 +589,6 @@ inline void CondVar::notify_all() noexcept
     int r = pthread_cond_broadcast(&m_impl);
     REALM_ASSERT(r == 0);
 }
-
 
 
 } // namespace util

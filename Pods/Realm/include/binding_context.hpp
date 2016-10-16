@@ -80,7 +80,7 @@ public:
 
     struct ObserverState;
 
-    // Override this function if you want to recieve detailed information about
+    // Override this function if you want to receive detailed information about
     // external changes to a specific set of objects.
     // This is called before each operation which may advance the read
     // transaction to include
@@ -99,26 +99,27 @@ public:
 
     // Called immediately after the read transaction version is advanced. Unlike
     // will_change(), this is called even if detailed change information was not
-    // requested or if the Realm is not actually in a read transactuib, although
+    // requested or if the Realm is not actually in a read transaction, although
     // both vectors will be empty in that case.
     virtual void did_change(std::vector<ObserverState> const& observers,
                             std::vector<void*> const& invalidated);
 
     // Change information for a single field of a row
     struct ColumnInfo {
-        // Did this column change?
-        bool changed = false;
-        // For LinkList columns, what kind of change occurred?
-        // Always None for other column types
+        // The index of this column prior to the changes in the tracked
+        // transaction, or -1 for newly inserted columns.
+        size_t initial_column_index = -1;
+        // What kind of change occurred?
+        // Always Set or None for everything but LinkList columns.
         enum class Kind {
             None,   // No change
-            Set,    // The entries at `indices` were assigned to
+            Set,    // The value or entries at `indices` were assigned to
             Insert, // New values were inserted at each of the indices given
             Remove, // Values were removed at each of the indices given
             SetAll  // The entire LinkList has been replaced with a new set of values
         } kind = Kind::None;
-        // The indices where things happened for Set, Insert and Remove
-        // Not used for None and SetAll
+        // The indices where things happened for Set, Insert and Remove on
+        // LinkList columns. Not used for other types or for None or SetAll.
         IndexSet indices;
     };
 

@@ -26,17 +26,19 @@
 
 namespace realm {
 class Group;
+class Schema;
+struct ObjectSchemaValidationException;
 struct Property;
 
 class ObjectSchema {
 public:
     ObjectSchema();
-    ObjectSchema(std::string name, std::string primary_key, std::initializer_list<Property> persisted_properties);
+    ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties);
     ~ObjectSchema();
 
     // create object schema from existing table
     // if no table is provided it is looked up in the group
-    ObjectSchema(const Group *group, const std::string &name);
+    ObjectSchema(Group const& group, StringData name, size_t index=-1);
 
     std::string name;
     std::vector<Property> persisted_properties;
@@ -51,6 +53,10 @@ public:
     const Property *primary_key_property() const {
         return property_for_name(primary_key);
     }
+
+    void validate(Schema const& schema, std::vector<ObjectSchemaValidationException>& exceptions) const;
+
+    friend bool operator==(ObjectSchema const& a, ObjectSchema const& b);
 
 private:
     void set_primary_key_property();

@@ -1,26 +1,25 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_GROUP_WRITER_HPP
 #define REALM_GROUP_WRITER_HPP
 
-#include <stdint.h> // unint8_t etc
+#include <cstdint> // unint8_t etc
 #include <utility>
 
 #include <realm/util/file.hpp>
@@ -40,7 +39,7 @@ class SlabAlloc;
 /// particular, do not reuse it in case any of the functions throw.
 ///
 /// FIXME: Move this class to namespace realm::_impl and to subdir src/realm/impl.
-class GroupWriter: public _impl::ArrayWriterBase {
+class GroupWriter : public _impl::ArrayWriterBase {
 public:
     // For groups in transactional mode (Group::m_is_shared), this constructor
     // must be called while a write transaction is in progress.
@@ -80,13 +79,13 @@ public:
 
 private:
     class MapWindow;
-    Group&     m_group;
+    Group& m_group;
     SlabAlloc& m_alloc;
     ArrayInteger m_free_positions; // 4th slot in Group::m_top
     ArrayInteger m_free_lengths;   // 5th slot in Group::m_top
     ArrayInteger m_free_versions;  // 6th slot in Group::m_top
-    uint64_t   m_current_version;
-    uint64_t   m_readlock_version;
+    uint64_t m_current_version;
+    uint64_t m_readlock_version;
 
     // Currently cached memory mappings. We keep as many as 16 1MB windows
     // open for writing. The allocator will favor sequential allocation
@@ -133,9 +132,8 @@ private:
     /// Search only a range of the free list for a block as big as the
     /// specified size. Return a pair with index and size of the found chunk.
     /// \param found indicates whether a suitable block was found.
-    std::pair<size_t, size_t>
-    search_free_space_in_part_of_freelist(size_t size, size_t begin,
-                                          size_t end, bool& found);
+    std::pair<size_t, size_t> search_free_space_in_part_of_freelist(size_t size, size_t begin, size_t end,
+                                                                    bool& found);
 
     /// Extend the file to ensure that a chunk of free space of the
     /// specified size is available. The specified size does not need
@@ -148,11 +146,8 @@ private:
     std::pair<size_t, size_t> extend_free_space(size_t requested_size);
 
     void write_array_at(MapWindow* window, ref_type, const char* data, size_t size);
-    size_t split_freelist_chunk(size_t index, size_t start_pos,
-                                size_t alloc_pos, size_t chunk_size, bool is_shared);
+    size_t split_freelist_chunk(size_t index, size_t start_pos, size_t alloc_pos, size_t chunk_size, bool is_shared);
 };
-
-
 
 
 // Implementation:
@@ -160,7 +155,7 @@ private:
 inline void GroupWriter::set_versions(uint64_t current, uint64_t read_lock) noexcept
 {
     REALM_ASSERT(read_lock <= current);
-    m_current_version  = current;
+    m_current_version = current;
     m_readlock_version = read_lock;
 }
 

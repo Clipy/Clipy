@@ -151,7 +151,7 @@ NSString *operatorName(NSPredicateOperatorType operatorType)
 
 Table& get_table(Group& group, RLMObjectSchema *objectSchema)
 {
-    return *ObjectStore::table_for_object_type(&group, objectSchema.className.UTF8String);
+    return *ObjectStore::table_for_object_type(group, objectSchema.className.UTF8String);
 }
 
 // A reference to a column within a query. Can be resolved to a Columns<T> for use in query expressions.
@@ -180,6 +180,7 @@ public:
     RLMProperty *property() const { return m_property; }
     size_t index() const { return m_index; }
     RLMPropertyType type() const { return property().type; }
+    Group& group() const { return *m_group; }
 
     RLMObjectSchema *link_target_object_schema() const
     {
@@ -665,11 +666,6 @@ void QueryBuilder::add_link_constraint(NSPredicateOperatorType operatorType,
     RLMPrecondition(operatorType == NSEqualToPredicateOperatorType || operatorType == NSNotEqualToPredicateOperatorType,
                     @"Invalid operator type", @"Only 'Equal' and 'Not Equal' operators supported for object comparison");
 
-    // NOTE: This precondition assumes that the argument `obj` will be always originating from the
-    // queried table as verified before by `validate_property_value`
-    RLMPrecondition(column.link_target_object_schema() == obj.objectSchema || !obj->_row.is_attached(),
-                    @"Invalid value origin", @"Object must be from the Realm being queried");
-
     if (operatorType == NSEqualToPredicateOperatorType) {
         m_query.and_query(column.resolve<Link>() == obj->_row);
     }
@@ -909,6 +905,10 @@ void validate_property_value(const ColumnReference& column,
     else {
         RLMPrecondition(RLMIsObjectValidForProperty(value, prop),
                         @"Invalid value", err, RLMTypeToString(prop.type), keyPath, objectSchema.className, value);
+    }
+    if (RLMObjectBase *obj = RLMDynamicCast<RLMObjectBase>(value)) {
+        RLMPrecondition(!obj->_row.is_attached() || &column.group() == &obj->_realm.group,
+                        @"Invalid value origin", @"Object must be from the Realm being queried");
     }
 }
 
@@ -1363,15 +1363,16 @@ realm::Query RLMPredicateToQuery(NSPredicate *predicate, RLMObjectSchema *object
     return query;
 }
 
-realm::SortOrder RLMSortOrderFromDescriptors(realm::Table& table, NSArray<RLMSortDescriptor *> *descriptors) {
-    realm::SortOrder sort;
-    sort.column_indices.reserve(descriptors.count);
-    sort.ascending.reserve(descriptors.count);
+realm::SortDescriptor RLMSortDescriptorFromDescriptors(realm::Table& table, NSArray<RLMSortDescriptor *> *descriptors) {
+    std::vector<std::vector<size_t>> columnIndices;
+    std::vector<bool> ascending;
+    columnIndices.reserve(descriptors.count);
+    ascending.reserve(descriptors.count);
 
     for (RLMSortDescriptor *descriptor in descriptors) {
-        sort.column_indices.push_back(RLMValidatedColumnForSort(table, descriptor.property));
-        sort.ascending.push_back(descriptor.ascending);
+        columnIndices.push_back({RLMValidatedColumnForSort(table, descriptor.property)});
+        ascending.push_back(descriptor.ascending);
     }
 
-    return sort;
+    return {table, std::move(columnIndices), std::move(ascending)};
 }

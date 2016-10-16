@@ -1,20 +1,18 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
 
@@ -25,6 +23,7 @@
 
 #include <realm/binary_data.hpp>
 #include <realm/impl/continuous_transactions_history.hpp>
+#include <realm/util/buffer.hpp>
 
 
 namespace realm {
@@ -46,26 +45,29 @@ public:
     /// availble.
     virtual size_t read(char* buffer, size_t size) = 0;
 
-    virtual ~InputStream() noexcept {}
+    virtual ~InputStream() noexcept
+    {
+    }
 };
 
 
-class SimpleInputStream: public InputStream {
+class SimpleInputStream : public InputStream {
 public:
-    SimpleInputStream(const char* data, size_t size) noexcept:
-        m_ptr(data),
-        m_end(data + size)
+    SimpleInputStream(const char* data, size_t size) noexcept
+        : m_ptr(data)
+        , m_end(data + size)
     {
     }
     size_t read(char* buffer, size_t size) override
     {
-        size_t n = std::min(size, size_t(m_end-m_ptr));
+        size_t n = std::min(size, size_t(m_end - m_ptr));
         const char* begin = m_ptr;
         m_ptr += n;
         const char* end = m_ptr;
         std::copy(begin, end, buffer);
         return n;
     }
+
 private:
     const char* m_ptr;
     const char* const m_end;
@@ -74,32 +76,35 @@ private:
 
 class NoCopyInputStream {
 public:
-    /// \return the number of accessible bytes.
-    /// A value of zero indicates end-of-input.
-    /// For non-zero return value, \a begin and \a end are
+    /// \return if any bytes was read.
+    /// A value of false indicates end-of-input.
+    /// If return value is true, \a begin and \a end are
     /// updated to reflect the start and limit of a
     /// contiguous memory chunk.
-    virtual size_t next_block(const char*& begin, const char*& end) = 0;
+    virtual bool next_block(const char*& begin, const char*& end) = 0;
 
-    virtual ~NoCopyInputStream() noexcept {}
+    virtual ~NoCopyInputStream() noexcept
+    {
+    }
 };
 
 
-class NoCopyInputStreamAdaptor: public NoCopyInputStream {
+class NoCopyInputStreamAdaptor : public NoCopyInputStream {
 public:
-    NoCopyInputStreamAdaptor(InputStream& in, char* buffer, size_t buffer_size) noexcept:
-        m_in(in),
-        m_buffer(buffer),
-        m_buffer_size(buffer_size)
+    NoCopyInputStreamAdaptor(InputStream& in, char* buffer, size_t buffer_size) noexcept
+        : m_in(in)
+        , m_buffer(buffer)
+        , m_buffer_size(buffer_size)
     {
     }
-    size_t next_block(const char*& begin, const char*& end) override
+    bool next_block(const char*& begin, const char*& end) override
     {
         size_t n = m_in.read(m_buffer, m_buffer_size);
         begin = m_buffer;
         end = m_buffer + n;
         return n;
     }
+
 private:
     InputStream& m_in;
     char* m_buffer;
@@ -107,15 +112,15 @@ private:
 };
 
 
-class SimpleNoCopyInputStream: public NoCopyInputStream {
+class SimpleNoCopyInputStream : public NoCopyInputStream {
 public:
-    SimpleNoCopyInputStream(const char* data, size_t size):
-        m_data(data),
-        m_size(size)
+    SimpleNoCopyInputStream(const char* data, size_t size)
+        : m_data(data)
+        , m_size(size)
     {
     }
 
-    size_t next_block(const char*& begin, const char*& end) override
+    bool next_block(const char*& begin, const char*& end) override
     {
         if (m_size == 0)
             return 0;
@@ -131,10 +136,11 @@ private:
     size_t m_size;
 };
 
-class MultiLogNoCopyInputStream: public NoCopyInputStream {
+class MultiLogNoCopyInputStream : public NoCopyInputStream {
 public:
-    MultiLogNoCopyInputStream(const BinaryData* logs_begin, const BinaryData* logs_end):
-        m_logs_begin(logs_begin), m_logs_end(logs_end)
+    MultiLogNoCopyInputStream(const BinaryData* logs_begin, const BinaryData* logs_end)
+        : m_logs_begin(logs_begin)
+        , m_logs_end(logs_end)
     {
         if (m_logs_begin != m_logs_end)
             m_curr_buf_remaining_size = m_logs_begin->size();
@@ -165,7 +171,7 @@ public:
         }
     }
 
-    size_t next_block(const char*& begin, const char*& end) override
+    bool next_block(const char*& begin, const char*& end) override
     {
         while (m_logs_begin < m_logs_end) {
             size_t result = m_logs_begin->size();
@@ -187,54 +193,62 @@ private:
 };
 
 
-class ChangesetInputStream: public NoCopyInputStream {
+class ChangesetInputStream : public NoCopyInputStream {
 public:
     using version_type = History::version_type;
-    ChangesetInputStream(History&, version_type begin_version, version_type end_version);
-    size_t next_block(const char*& begin, const char*& end) override;
+    static constexpr unsigned NB_BUFFERS = 8;
+
+    ChangesetInputStream(History& hist, version_type begin_version, version_type end_version)
+        : m_history(hist)
+        , m_begin_version(begin_version)
+        , m_end_version(end_version)
+    {
+        get_changeset();
+    }
+
+    bool next_block(const char*& begin, const char*& end) override
+    {
+        while (m_valid) {
+            BinaryData actual = m_changesets_begin->get_next();
+
+            if (actual.size() > 0) {
+                begin = actual.data();
+                end = actual.data() + actual.size();
+                return true;
+            }
+
+            m_changesets_begin++;
+
+            if (REALM_UNLIKELY(m_changesets_begin == m_changesets_end)) {
+                get_changeset();
+            }
+        }
+        return false; // End of input
+    }
+
 private:
     History& m_history;
     version_type m_begin_version, m_end_version;
-    BinaryData m_changesets[8]; // Buffer
-    BinaryData* m_changesets_begin = 0;
-    BinaryData* m_changesets_end = 0;
-};
+    BinaryIterator m_changesets[NB_BUFFERS]; // Buffer
+    BinaryIterator* m_changesets_begin = nullptr;
+    BinaryIterator* m_changesets_end = nullptr;
+    bool m_valid;
 
-
-inline ChangesetInputStream::ChangesetInputStream(History& hist, version_type begin_version,
-                                                  version_type end_version):
-    m_history(hist),
-    m_begin_version(begin_version),
-    m_end_version(end_version)
-{
-}
-
-inline size_t ChangesetInputStream::next_block(const char*& begin, const char*& end)
-{
-    for (;;) {
-        if (REALM_UNLIKELY(m_changesets_begin == m_changesets_end)) {
-            if (m_begin_version == m_end_version)
-                return 0; // End of input
-            version_type n = sizeof m_changesets / sizeof m_changesets[0];
-            version_type avail = m_end_version - m_begin_version;
-            if (n > avail)
-                n = avail;
-            version_type end_version = m_begin_version + n;
+    void get_changeset()
+    {
+        auto versions_to_get = m_end_version - m_begin_version;
+        m_valid = versions_to_get > 0;
+        if (m_valid) {
+            if (versions_to_get > NB_BUFFERS)
+                versions_to_get = NB_BUFFERS;
+            version_type end_version = m_begin_version + versions_to_get;
             m_history.get_changesets(m_begin_version, end_version, m_changesets);
             m_begin_version = end_version;
             m_changesets_begin = m_changesets;
-            m_changesets_end = m_changesets_begin + n;
-        }
-
-        BinaryData changeset = *m_changesets_begin++;
-        if (changeset.size() > 0) {
-            begin = changeset.data();
-            end   = changeset.data() + changeset.size();
-            return changeset.size();
+            m_changesets_end = m_changesets_begin + versions_to_get;
         }
     }
-}
-
+};
 
 } // namespace _impl
 } // namespace realm

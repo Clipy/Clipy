@@ -23,6 +23,7 @@
 
 namespace realm {
 class BindingContext;
+enum class SchemaMode : uint8_t;
 
 namespace _impl {
 struct TransactionChangeInfo;
@@ -31,13 +32,14 @@ namespace transaction {
 // Advance the read transaction version, with change notifications sent to delegate
 // Must not be called from within a write transaction.
 void advance(SharedGroup& sg, BindingContext* binding_context,
+             SchemaMode schema_mode,
              SharedGroup::VersionID version=SharedGroup::VersionID{});
 
 // Begin a write transaction
 // If the read transaction version is not up to date, will first advance to the
 // most recent read transaction and sent notifications to delegate
-void begin(SharedGroup& sg, BindingContext* binding_context,
-           bool validate_schema_changes=true);
+void begin(SharedGroup& sg, BindingContext* binding_context, SchemaMode schema_mode);
+void begin_without_validation(SharedGroup& sg);
 
 // Commit a write transaction
 void commit(SharedGroup& sg, BindingContext* binding_context);

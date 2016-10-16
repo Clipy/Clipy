@@ -46,6 +46,7 @@ struct TransactionChangeInfo {
     std::vector<bool> table_moves_needed;
     std::vector<ListChangeInfo> lists;
     std::vector<CollectionChangeBuilder> tables;
+    bool track_all = false;
 };
 
 class DeepChangeChecker {
@@ -130,9 +131,22 @@ public:
     // CollectionNotifier is released on a different thread
     virtual void release_data() noexcept = 0;
 
-    // Call each of the currently registered callbacks, if there have been any
-    // changes since the last time each of those callbacks was called
-    void call_callbacks();
+    // Prepare to deliver the new collection and call callbacks. Returns the
+    // transaction version which it can deliver to if applicable, and a
+    // default-constructed version if this notifier has nothing to deliver to
+    // this Realm (either due to being for a different Realm, or just because
+    // nothing has changed since it last delivered).
+    SharedGroup::VersionID package_for_delivery(Realm&);
+
+    // Deliver the new state to the target collection using the given SharedGroup
+    virtual void deliver(SharedGroup&) { }
+
+    // Pass the given error to all registered callbacks, then remove them
+    void deliver_error(std::exception_ptr);
+
+    // Call each of the given callbacks with the changesets prepared by package_for_delivery()
+    void before_advance();
+    void after_advance();
 
     bool is_alive() const noexcept;
 
@@ -148,7 +162,6 @@ public:
 
     virtual void run() = 0;
     void prepare_handover();
-    bool deliver(Realm&, SharedGroup&, std::exception_ptr);
 
     template <typename T>
     class Handle;
@@ -165,8 +178,8 @@ private:
     virtual void do_attach_to(SharedGroup&) = 0;
     virtual void do_detach_from(SharedGroup&) = 0;
     virtual void do_prepare_handover(SharedGroup&) = 0;
-    virtual bool do_deliver(SharedGroup&) { return true; }
     virtual bool do_add_required_change_info(TransactionChangeInfo&) = 0;
+    virtual bool prepare_to_deliver() { return true; }
 
     mutable std::mutex m_realm_mutex;
     std::shared_ptr<Realm> m_realm;
@@ -174,7 +187,7 @@ private:
     SharedGroup::VersionID m_sg_version;
     SharedGroup* m_sg = nullptr;
 
-    std::exception_ptr m_error;
+    bool m_error = false;
     CollectionChangeBuilder m_accumulated_changes;
     CollectionChangeSet m_changes_to_deliver;
 
@@ -201,7 +214,7 @@ private:
     // remove_callback() updates this when needed
     size_t m_callback_index = npos;
 
-    CollectionChangeCallback next_callback();
+    CollectionChangeCallback next_callback(bool has_changes, bool pre);
 };
 
 // A smart pointer to a CollectionNotifier that unregisters the notifier when

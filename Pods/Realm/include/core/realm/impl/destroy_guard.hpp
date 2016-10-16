@@ -1,20 +1,18 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
 
@@ -32,7 +30,7 @@ namespace _impl {
 /// when the guard is destroyed. For arrays (`T` = `Array`) this means
 /// that the array is destroyed in a shallow fashion. See
 /// `DeepArrayDestroyGuard` for an alternative.
-template<class T>
+template <class T>
 class DestroyGuard {
 public:
     DestroyGuard() noexcept;
@@ -97,33 +95,30 @@ private:
 };
 
 
-
-
-
 // Implementation:
 
 // DestroyGuard<T>
 
-template<class T>
-inline DestroyGuard<T>::DestroyGuard() noexcept:
-    m_ptr(nullptr)
+template <class T>
+inline DestroyGuard<T>::DestroyGuard() noexcept
+    : m_ptr(nullptr)
 {
 }
 
-template<class T>
-inline DestroyGuard<T>::DestroyGuard(T* ptr) noexcept:
-    m_ptr(ptr)
+template <class T>
+inline DestroyGuard<T>::DestroyGuard(T* ptr) noexcept
+    : m_ptr(ptr)
 {
 }
 
-template<class T>
+template <class T>
 inline DestroyGuard<T>::~DestroyGuard() noexcept
 {
     if (m_ptr)
         m_ptr->destroy();
 }
 
-template<class T>
+template <class T>
 inline void DestroyGuard<T>::reset(T* ptr) noexcept
 {
     if (m_ptr)
@@ -131,13 +126,13 @@ inline void DestroyGuard<T>::reset(T* ptr) noexcept
     m_ptr = ptr;
 }
 
-template<class T>
+template <class T>
 inline T* DestroyGuard<T>::get() const noexcept
 {
     return m_ptr;
 }
 
-template<class T>
+template <class T>
 inline T* DestroyGuard<T>::release() noexcept
 {
     T* ptr = m_ptr;
@@ -148,13 +143,13 @@ inline T* DestroyGuard<T>::release() noexcept
 
 // DeepArrayDestroyGuard
 
-inline DeepArrayDestroyGuard::DeepArrayDestroyGuard() noexcept:
-    m_ptr(nullptr)
+inline DeepArrayDestroyGuard::DeepArrayDestroyGuard() noexcept
+    : m_ptr(nullptr)
 {
 }
 
-inline DeepArrayDestroyGuard::DeepArrayDestroyGuard(Array* ptr) noexcept:
-    m_ptr(ptr)
+inline DeepArrayDestroyGuard::DeepArrayDestroyGuard(Array* ptr) noexcept
+    : m_ptr(ptr)
 {
 }
 
@@ -186,16 +181,15 @@ inline Array* DeepArrayDestroyGuard::release() noexcept
 
 // DeepArrayRefDestroyGuard
 
-inline DeepArrayRefDestroyGuard::DeepArrayRefDestroyGuard(Allocator& alloc) noexcept:
-    m_ref(0),
-    m_alloc(alloc)
+inline DeepArrayRefDestroyGuard::DeepArrayRefDestroyGuard(Allocator& alloc) noexcept
+    : m_ref(0)
+    , m_alloc(alloc)
 {
 }
 
-inline DeepArrayRefDestroyGuard::DeepArrayRefDestroyGuard(ref_type ref,
-                                                          Allocator& alloc) noexcept:
-    m_ref(ref),
-    m_alloc(alloc)
+inline DeepArrayRefDestroyGuard::DeepArrayRefDestroyGuard(ref_type ref, Allocator& alloc) noexcept
+    : m_ref(ref)
+    , m_alloc(alloc)
 {
 }
 

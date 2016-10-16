@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_UTIL_FILE_MAPPER_HPP
 #define REALM_UTIL_FILE_MAPPER_HPP
 
@@ -27,10 +26,10 @@
 namespace realm {
 namespace util {
 
-void *mmap(int fd, size_t size, File::AccessMode access, size_t offset, const char *encryption_key);
-void munmap(void *addr, size_t size) noexcept;
+void* mmap(int fd, size_t size, File::AccessMode access, size_t offset, const char* encryption_key);
+void munmap(void* addr, size_t size) noexcept;
 void* mremap(int fd, size_t file_offset, void* old_addr, size_t old_size, File::AccessMode a, size_t new_size);
-void msync(void *addr, size_t size);
+void msync(void* addr, size_t size);
 
 // A function which may be given to encryption_read_barrier. If present, the read barrier is a
 // a barrier for a full array. If absent, the read barrier is a barrier only for the address
@@ -44,17 +43,15 @@ class EncryptedFileMapping;
 
 // This variant allows the caller to obtain direct access to the encrypted file mapping
 // for optimization purposes.
-void *mmap(int fd, size_t size, File::AccessMode access, size_t offset, const char *encryption_key,
+void* mmap(int fd, size_t size, File::AccessMode access, size_t offset, const char* encryption_key,
            EncryptedFileMapping*& mapping);
 
-void do_encryption_read_barrier(const void* addr, size_t size,
-                                HeaderToSize header_to_size,
+void do_encryption_read_barrier(const void* addr, size_t size, HeaderToSize header_to_size,
                                 EncryptedFileMapping* mapping);
 
 void do_encryption_write_barrier(const void* addr, size_t size, EncryptedFileMapping* mapping);
 
-void inline encryption_read_barrier(const void* addr, size_t size,
-                                    EncryptedFileMapping* mapping,
+void inline encryption_read_barrier(const void* addr, size_t size, EncryptedFileMapping* mapping,
                                     HeaderToSize header_to_size = nullptr)
 {
     if (mapping)
@@ -70,54 +67,52 @@ void inline encryption_write_barrier(const void* addr, size_t size, EncryptedFil
 
 extern util::Mutex mapping_mutex;
 
-inline void do_encryption_read_barrier(const void* addr, size_t size,
-                                       HeaderToSize header_to_size,
+inline void do_encryption_read_barrier(const void* addr, size_t size, HeaderToSize header_to_size,
                                        EncryptedFileMapping* mapping)
 {
     UniqueLock lock(mapping_mutex, defer_lock_tag());
     mapping->read_barrier(addr, size, lock, header_to_size);
 }
 
-inline void do_encryption_write_barrier(const void* addr, size_t size,
-                                        EncryptedFileMapping* mapping)
+inline void do_encryption_write_barrier(const void* addr, size_t size, EncryptedFileMapping* mapping)
 {
     LockGuard lock(mapping_mutex);
     mapping->write_barrier(addr, size);
 }
 
 
-
 #else
-void inline encryption_read_barrier(const void*, size_t,
-                                    EncryptedFileMapping*,
-                                    HeaderToSize header_to_size = nullptr)
+void inline encryption_read_barrier(const void*, size_t, EncryptedFileMapping*, HeaderToSize header_to_size = nullptr)
 {
     static_cast<void>(header_to_size);
 }
-void inline encryption_write_barrier(const void*, size_t) {}
-void inline encryption_write_barrier(const void*, size_t, EncryptedFileMapping*) {}
+void inline encryption_write_barrier(const void*, size_t)
+{
+}
+void inline encryption_write_barrier(const void*, size_t, EncryptedFileMapping*)
+{
+}
 #endif
 
 // helpers for encrypted Maps
-template<typename T>
+template <typename T>
 void encryption_read_barrier(File::Map<T>& map, size_t index, size_t num_elements = 1)
 {
     T* addr = map.get_addr();
-    encryption_read_barrier(addr+index, sizeof(T)*num_elements, map.get_encrypted_mapping());
+    encryption_read_barrier(addr + index, sizeof(T) * num_elements, map.get_encrypted_mapping());
 }
 
-template<typename T>
+template <typename T>
 void encryption_write_barrier(File::Map<T>& map, size_t index, size_t num_elements = 1)
 {
     T* addr = map.get_addr();
-    encryption_write_barrier(addr+index, sizeof(T)*num_elements, map.get_encrypted_mapping());
+    encryption_write_barrier(addr + index, sizeof(T) * num_elements, map.get_encrypted_mapping());
 }
 
 File::SizeType encrypted_size_to_data_size(File::SizeType size) noexcept;
 File::SizeType data_size_to_encrypted_size(File::SizeType size) noexcept;
 
 size_t round_up_to_page_size(size_t size) noexcept;
-
 }
 }
 #endif
