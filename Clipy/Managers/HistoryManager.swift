@@ -67,7 +67,7 @@ extension HistoryManager {
             if !lastClip.invalidated {
 
                 let lastUsedAt = lastClip.updateTime
-                let results = realm.objects(CPYClip.self).filter("updateTime < %d",lastUsedAt)
+                let results = realm.objects(CPYClip.self).filter("updateTime < %d", lastUsedAt)
                 var imagePaths = [String]()
                 for clip in results {
                     if !clip.invalidated && !clip.thumbnailPath.isEmpty {
