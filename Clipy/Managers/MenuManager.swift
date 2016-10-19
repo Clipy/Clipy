@@ -8,7 +8,7 @@
 
 import Cocoa
 import PINCache
-import Realm
+import RealmSwift
 import RxCocoa
 import RxSwift
 import NSObject_Rx
@@ -32,11 +32,12 @@ final class MenuManager: NSObject {
     private let kMaxKeyEquivalents = 10
     private let shortenSymbol = "..."
     // Realm Results
-    private var clipResults: RLMResults
-    private let folderResults = CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true)
+    private let realm = try! Realm()
+    private var clipResults: Results<CPYClip>
+    private let folderResults: Results<CPYFolder>
     // Realm Token
-    private var clipToken: RLMNotificationToken?
-    private var snippetToken: RLMNotificationToken?
+    private var clipToken: NotificationToken?
+    private var snippetToken: NotificationToken?
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -45,7 +46,8 @@ final class MenuManager: NSObject {
 
     // MARK: - Initialize
     override init() {
-        clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !defaults.boolForKey(Constants.UserDefaults.reorderClipsAfterPasting))
+        clipResults = realm.objects(CPYClip.self).sorted("updateTime", ascending: !defaults.boolForKey(Constants.UserDefaults.reorderClipsAfterPasting))
+        folderResults = realm.objects(CPYFolder.self).sorted("index", ascending: true)
         super.init()
         folderIcon.template = true
         folderIcon.size = NSSize(width: 15, height: 13)
@@ -82,8 +84,7 @@ extension MenuManager {
         // Snippets
         var index = firstIndexOfMenuItems()
         folder.snippets
-            .sortedResultsUsingProperty("index", ascending: true)
-            .arrayValue(CPYSnippet.self)
+            .sorted("index", ascending: true)
             .filter { $0.enable }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
@@ -98,12 +99,12 @@ extension MenuManager {
 private extension MenuManager {
     private func bind() {
         // Realm Notification
-        clipToken = CPYClip.allObjects()
-                        .addNotificationBlock { [unowned self] (_, _, _) in
+        clipToken = realm.objects(CPYClip.self)
+                        .addNotificationBlock { [unowned self] _ in
                             self.createClipMenu()
                         }
-        snippetToken = CPYFolder.allObjects()
-                        .addNotificationBlock { [unowned self] (_, _, _) in
+        snippetToken = realm.objects(CPYFolder.self)
+                        .addNotificationBlock { [unowned self] _ in
                             self.createClipMenu()
                         }
         // Menu icon
@@ -122,7 +123,7 @@ private extension MenuManager {
         defaults.rx_observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.New])
             .filterNil()
             .subscribeNext { [unowned self] enabled in
-                self.clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !enabled)
+                self.clipResults = self.realm.objects(CPYClip.self).sorted("updateTime", ascending: !enabled)
                 self.createClipMenu()
             }.addDisposableTo(rx_disposeBag)
         // Edit snippets
@@ -235,8 +236,7 @@ private extension MenuManager {
 
         let currentSize = Int(clipResults.count)
         var i = 0
-        let clips = clipResults.arrayValue(CPYClip.self)
-        for clip in clips {
+        for clip in clipResults {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
                 if i == subMenuCount {
@@ -336,7 +336,7 @@ private extension MenuManager {
         var subMenuIndex = menu.numberOfItems - 1
         let firstIndex = firstIndexOfMenuItems()
 
-        folderResults.arrayValue(CPYFolder.self)
+        folderResults
             .filter { $0.enable }
             .forEach { folder in
                 let folderTitle = folder.title
@@ -346,8 +346,7 @@ private extension MenuManager {
 
                 var i = firstIndex
                 folder.snippets
-                    .sortedResultsUsingProperty("index", ascending: true)
-                    .arrayValue(CPYSnippet)
+                    .sorted("index", ascending: true)
                     .filter { $0.enable }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)

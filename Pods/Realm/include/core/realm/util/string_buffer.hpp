@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_UTIL_STRING_BUFFER_HPP
 #define REALM_UTIL_STRING_BUFFER_HPP
 
@@ -37,7 +36,9 @@ namespace util {
 class StringBuffer {
 public:
     StringBuffer() noexcept;
-    ~StringBuffer() noexcept {}
+    ~StringBuffer() noexcept
+    {
+    }
 
     std::string str() const;
 
@@ -69,10 +70,10 @@ public:
 
     void append(const std::string&);
 
-    void append(const char* data, size_t size);
+    void append(const char* append_data, size_t append_size);
 
     /// Append a zero-terminated string to this buffer.
-    void append_c_str(const char* c_str);
+    void append_c_str(const char* c_string);
 
     /// The specified size is understood as not including the
     /// terminating zero. If the specified size is less than the
@@ -83,7 +84,7 @@ public:
     /// original terminating zero will also be left in place such that
     /// from the point of view of c_str(), the size of the string is
     /// unchanged.
-    void resize(size_t size);
+    void resize(size_t new_size);
 
     /// The specified minimum capacity is understood as not including
     /// the terminating zero. This operation does not change the size
@@ -104,12 +105,10 @@ private:
 };
 
 
-
-
-
 // Implementation:
 
-inline StringBuffer::StringBuffer() noexcept: m_size(0)
+inline StringBuffer::StringBuffer() noexcept
+    : m_size(0)
 {
 }
 
@@ -150,26 +149,26 @@ inline void StringBuffer::append(const std::string& s)
     return append(s.data(), s.size());
 }
 
-inline void StringBuffer::append_c_str(const char* c_str)
+inline void StringBuffer::append_c_str(const char* c_string)
 {
-    append(c_str, std::strlen(c_str));
+    append(c_string, std::strlen(c_string));
 }
 
 inline void StringBuffer::reserve(size_t min_capacity)
 {
     size_t capacity = m_buffer.size();
-    if (capacity == 0 || capacity-1 < min_capacity)
+    if (capacity == 0 || capacity - 1 < min_capacity)
         reallocate(min_capacity);
 }
 
-inline void StringBuffer::resize(size_t size)
+inline void StringBuffer::resize(size_t new_size)
 {
-    reserve(size);
+    reserve(new_size);
     // Note that even reserve(0) will attempt to allocate a
     // buffer, so we can safely write the truncating zero at this
     // time.
-    m_size = size;
-    m_buffer[size] = 0;
+    m_size = new_size;
+    m_buffer[new_size] = 0;
 }
 
 inline void StringBuffer::clear() noexcept

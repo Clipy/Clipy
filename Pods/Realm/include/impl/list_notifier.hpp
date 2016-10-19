@@ -39,9 +39,6 @@ private:
     // when the LinkView itself is deleted
     size_t m_prev_size;
 
-    // The column index of the LinkView
-    size_t m_col_ndx;
-
     // The actual change, calculated in run() and delivered in prepare_handover()
     CollectionChangeBuilder m_change;
     TransactionChangeInfo* m_info;

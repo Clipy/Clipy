@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_COLUMN_STRING_ENUM_HPP
 #define REALM_COLUMN_STRING_ENUM_HPP
 
@@ -49,16 +48,16 @@ class StringIndex;
 /// search index. If it is, then the root ref of the index is stored
 /// in Table::m_columns immediately after the root ref of the
 /// enumerated strings column.
-class StringEnumColumn: public IntegerColumn {
+class StringEnumColumn : public IntegerColumn {
 public:
     typedef StringData value_type;
 
-    StringEnumColumn(Allocator&, ref_type ref, ref_type keys_ref, bool nullable);
+    StringEnumColumn(Allocator&, ref_type ref, ref_type keys_ref, bool nullable, size_t column_ndx = npos);
     ~StringEnumColumn() noexcept override;
     void destroy() noexcept override;
     MemRef clone_deep(Allocator& alloc) const override;
 
-    int compare_values(size_t row1, size_t row2) const override
+    int compare_values(size_t row1, size_t row2) const noexcept override
     {
         StringData a = get(row1);
         StringData b = get(row2);
@@ -91,12 +90,11 @@ public:
 
     size_t count(StringData value) const;
     size_t find_first(StringData value, size_t begin = 0, size_t end = npos) const;
-    void find_all(IntegerColumn& res, StringData value,
-                  size_t begin = 0, size_t end = npos) const;
-    FindRes find_all_indexref(StringData value, size_t& dst) const;
+    void find_all(IntegerColumn& res, StringData value, size_t begin = 0, size_t end = npos) const;
+    FindRes find_all_no_copy(StringData value, InternalFindResult& result) const;
 
     size_t count(size_t key_index) const;
-    size_t find_first(size_t key_index, size_t begin=0, size_t end=-1) const;
+    size_t find_first(size_t key_index, size_t begin = 0, size_t end = -1) const;
     void find_all(IntegerColumn& res, size_t key_index, size_t begin = 0, size_t end = -1) const;
 
     //@{
@@ -114,7 +112,10 @@ public:
     // Search index
     StringData get_index_data(size_t ndx, StringIndex::StringConversionBuffer& buffer) const noexcept final;
     void set_search_index_allow_duplicate_values(bool) noexcept override;
-    bool supports_search_index() const noexcept final { return true; }
+    bool supports_search_index() const noexcept final
+    {
+        return true;
+    }
     StringIndex* create_search_index() override;
     void install_search_index(std::unique_ptr<StringIndex>) noexcept;
     void destroy_search_index() noexcept override;
@@ -169,9 +170,6 @@ private:
 };
 
 
-
-
-
 // Implementation:
 
 inline StringData StringEnumColumn::get(size_t ndx) const noexcept
@@ -185,7 +183,7 @@ inline StringData StringEnumColumn::get(size_t ndx) const noexcept
 
 inline bool StringEnumColumn::is_null(size_t ndx) const noexcept
 {
-    return is_nullable() ? get(ndx).is_null() : false;
+    return is_nullable() && get(ndx).is_null();
 }
 
 inline void StringEnumColumn::add()
@@ -209,10 +207,10 @@ inline void StringEnumColumn::insert(size_t row_ndx)
 inline void StringEnumColumn::insert(size_t row_ndx, StringData value)
 {
     REALM_ASSERT_DEBUG(!(!m_nullable && value.is_null()));
-    size_t size = this->size();
-    REALM_ASSERT_3(row_ndx, <=, size);
+    size_t column_size = this->size();
+    REALM_ASSERT_3(row_ndx, <=, column_size);
     size_t num_rows = 1;
-    bool is_append = row_ndx == size;
+    bool is_append = row_ndx == column_size;
     do_insert(row_ndx, value, num_rows, is_append); // Throws
 }
 
@@ -225,7 +223,7 @@ inline void StringEnumColumn::erase(size_t row_ndx)
 
 inline void StringEnumColumn::move_last_over(size_t row_ndx)
 {
-    size_t last_row_ndx = size() - 1; // Note that size() is slow
+    size_t last_row_ndx = size() - 1;         // Note that size() is slow
     do_move_last_over(row_ndx, last_row_ndx); // Throws
 }
 
@@ -235,8 +233,8 @@ inline void StringEnumColumn::clear()
 }
 
 // Overriding virtual method of Column.
-inline void StringEnumColumn::insert_rows(size_t row_ndx, size_t num_rows_to_insert,
-                                          size_t prior_num_rows, bool insert_nulls)
+inline void StringEnumColumn::insert_rows(size_t row_ndx, size_t num_rows_to_insert, size_t prior_num_rows,
+                                          bool insert_nulls)
 {
     REALM_ASSERT_DEBUG(prior_num_rows == size());
     REALM_ASSERT(row_ndx <= prior_num_rows);
@@ -248,8 +246,7 @@ inline void StringEnumColumn::insert_rows(size_t row_ndx, size_t num_rows_to_ins
 }
 
 // Overriding virtual method of Column.
-inline void StringEnumColumn::erase_rows(size_t row_ndx, size_t num_rows_to_erase,
-                                         size_t prior_num_rows, bool)
+inline void StringEnumColumn::erase_rows(size_t row_ndx, size_t num_rows_to_erase, size_t prior_num_rows, bool)
 {
     REALM_ASSERT_DEBUG(prior_num_rows == size());
     REALM_ASSERT(num_rows_to_erase <= prior_num_rows);

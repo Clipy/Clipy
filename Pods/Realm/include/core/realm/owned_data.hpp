@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_OWNED_DATA_HPP
 #define REALM_OWNED_DATA_HPP
 
@@ -29,33 +28,46 @@ namespace realm {
 class OwnedData {
 public:
     /// Construct a null reference.
-    OwnedData() noexcept {}
-
-    /// If \a data is 'null', \a size must be zero.
-    OwnedData(const char* data, size_t size) : m_size(size)
+    OwnedData() noexcept
     {
-        REALM_ASSERT_DEBUG(data || size == 0);
-        if (data) {
-            m_data = std::unique_ptr<char[]>(new char[size]);
-            memcpy(m_data.get(), data, size);
+    }
+
+    /// If \a data_to_copy is 'null', \a data_size must be zero.
+    OwnedData(const char* data_to_copy, size_t data_size)
+        : m_size(data_size)
+    {
+        REALM_ASSERT_DEBUG(data_to_copy || data_size == 0);
+        if (data_to_copy) {
+            m_data = std::unique_ptr<char[]>(new char[data_size]);
+            memcpy(m_data.get(), data_to_copy, data_size);
         }
     }
 
-    /// If \a data is 'null', \a size must be zero.
-    OwnedData(std::unique_ptr<char[]> data, size_t size) noexcept :
-        m_data(std::move(data)), m_size(size)
+    /// If \a unique_data is 'null', \a data_size must be zero.
+    OwnedData(std::unique_ptr<char[]> unique_data, size_t data_size) noexcept
+        : m_data(std::move(unique_data))
+        , m_size(data_size)
     {
         REALM_ASSERT_DEBUG(m_data || m_size == 0);
     }
 
-    OwnedData(const OwnedData& other) : OwnedData(other.m_data.get(), other.m_size) { }
+    OwnedData(const OwnedData& other)
+        : OwnedData(other.m_data.get(), other.m_size)
+    {
+    }
     OwnedData& operator=(const OwnedData& other);
 
     OwnedData(OwnedData&&) = default;
     OwnedData& operator=(OwnedData&&) = default;
 
-    const char* data() const { return m_data.get(); }
-    size_t size() const { return m_size; }
+    const char* data() const
+    {
+        return m_data.get();
+    }
+    size_t size() const
+    {
+        return m_size;
+    }
 
 private:
     std::unique_ptr<char[]> m_data;
@@ -68,7 +80,8 @@ inline OwnedData& OwnedData::operator=(const OwnedData& other)
         if (other.m_data) {
             m_data = std::unique_ptr<char[]>(new char[other.m_size]);
             memcpy(m_data.get(), other.m_data.get(), other.m_size);
-        } else {
+        }
+        else {
             m_data = nullptr;
         }
         m_size = other.m_size;

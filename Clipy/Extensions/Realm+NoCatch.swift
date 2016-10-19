@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import Realm
+import RealmSwift
 
-extension RLMRealm {
-    func transaction(@noescape block: () -> Void) {
+extension Realm {
+    func transaction(@noescape block: (() throws -> Void)) {
         do {
-            try transactionWithBlock(block)
+            try write(block)
         } catch {}
     }
 }

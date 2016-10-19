@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_DATETIME_HPP
 #define REALM_DATETIME_HPP
 
@@ -28,22 +27,31 @@ namespace realm {
 
 class OldDateTime {
 public:
-    OldDateTime() noexcept: m_time(0) {}
+    OldDateTime() noexcept
+        : m_time(0)
+    {
+    }
 
     /// Construct from the number of seconds since Jan 1 00:00:00 UTC
     /// 1970.
     /// FIXME: See if we can make this private again. Required by query_expression.hpp
-    OldDateTime(int_fast64_t d) noexcept : m_time(d) {}
+    OldDateTime(int_fast64_t d) noexcept
+        : m_time(d)
+    {
+    }
 
     /// Return the time as seconds since Jan 1 00:00:00 UTC 1970.
-    int_fast64_t get_olddatetime() const noexcept { return m_time; }
+    int_fast64_t get_olddatetime() const noexcept
+    {
+        return m_time;
+    }
 
     friend bool operator==(const OldDateTime&, const OldDateTime&) noexcept;
     friend bool operator!=(const OldDateTime&, const OldDateTime&) noexcept;
-    friend bool operator< (const OldDateTime&, const OldDateTime&) noexcept;
-    friend bool operator<= (const OldDateTime&, const OldDateTime&) noexcept;
-    friend bool operator> (const OldDateTime&, const OldDateTime&) noexcept;
-    friend bool operator>= (const OldDateTime&, const OldDateTime&) noexcept;
+    friend bool operator<(const OldDateTime&, const OldDateTime&) noexcept;
+    friend bool operator<=(const OldDateTime&, const OldDateTime&) noexcept;
+    friend bool operator>(const OldDateTime&, const OldDateTime&) noexcept;
+    friend bool operator>=(const OldDateTime&, const OldDateTime&) noexcept;
 
     /// Construct from broken down local time.
     ///
@@ -66,7 +74,7 @@ public:
     /// 60]. Note that the range allows for leap seconds.
     OldDateTime(int year, int month, int day, int hours = 0, int minutes = 0, int seconds = 0);
 
-    template<class Ch, class Tr>
+    template <class Ch, class Tr>
     friend std::basic_ostream<Ch, Tr>& operator<<(std::basic_ostream<Ch, Tr>& out, const OldDateTime&);
 
     // This is used by query_expression.hpp to generalize its templates and simplify the code *alot*; it is needed
@@ -76,7 +84,7 @@ public:
 private:
     int_fast64_t m_time; // Seconds since Jan 1 00:00:00 UTC 1970.
     static std::time_t assemble(int year, int month, int day, int hours, int minutes, int seconds);
-    template<typename T>
+    template <typename T>
     friend class Value;
 };
 
@@ -118,25 +126,27 @@ inline OldDateTime::operator int_fast64_t() noexcept
     return m_time;
 }
 
-inline OldDateTime::OldDateTime(int year, int month, int day, int hours, int minutes, int seconds):
-    m_time(assemble(year, month, day, hours, minutes, seconds)) {}
+inline OldDateTime::OldDateTime(int year, int month, int day, int hours, int minutes, int seconds)
+    : m_time(assemble(year, month, day, hours, minutes, seconds))
+{
+}
 
-template<class Ch, class Tr>
+template <class Ch, class Tr>
 inline std::basic_ostream<Ch, Tr>& operator<<(std::basic_ostream<Ch, Tr>& out, const OldDateTime& d)
 {
-    out << "OldDateTime("<<d.m_time<<")";
+    out << "OldDateTime(" << d.m_time << ")";
     return out;
 }
 
 inline std::time_t OldDateTime::assemble(int year, int month, int day, int hours, int minutes, int seconds)
 {
     std::tm local_time;
-    local_time.tm_year  = year  - 1900;
-    local_time.tm_mon   = month - 1;
-    local_time.tm_mday  = day;
-    local_time.tm_hour  = hours;
-    local_time.tm_min   = minutes;
-    local_time.tm_sec   = seconds;
+    local_time.tm_year = year - 1900;
+    local_time.tm_mon = month - 1;
+    local_time.tm_mday = day;
+    local_time.tm_hour = hours;
+    local_time.tm_min = minutes;
+    local_time.tm_sec = seconds;
     local_time.tm_isdst = -1;
     return std::mktime(&local_time);
 }
@@ -145,4 +155,3 @@ inline std::time_t OldDateTime::assemble(int year, int month, int day, int hours
 } // namespace realm
 
 #endif // REALM_DATETIME_HPP
-

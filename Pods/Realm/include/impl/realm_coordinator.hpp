@@ -28,6 +28,7 @@ class Replication;
 class Schema;
 class SharedGroup;
 class StringData;
+struct SyncSession;
 
 namespace _impl {
 class CollectionNotifier;
@@ -40,6 +41,8 @@ class RealmCoordinator : public std::enable_shared_from_this<RealmCoordinator> {
 public:
     // Get the coordinator for the given path, creating it if neccesary
     static std::shared_ptr<RealmCoordinator> get_coordinator(StringData path);
+    // Get the coordinator for the given config, creating it if neccesary
+    static std::shared_ptr<RealmCoordinator> get_coordinator(const Realm::Config&);
     // Get the coordinator for the given path, or null if there is none
     static std::shared_ptr<RealmCoordinator> get_existing_coordinator(StringData path);
 
@@ -49,15 +52,17 @@ public:
     std::shared_ptr<Realm> get_realm(Realm::Config config);
     std::shared_ptr<Realm> get_realm();
 
+    Realm::Config get_config() const { return m_config; }
+
     const Schema* get_schema() const noexcept;
-    uint64_t get_schema_version() const noexcept { return m_config.schema_version; }
+    uint64_t get_schema_version() const noexcept { return m_schema_version; }
     const std::string& get_path() const noexcept { return m_config.path; }
     const std::vector<char>& get_encryption_key() const noexcept { return m_config.encryption_key; }
     bool is_in_memory() const noexcept { return m_config.in_memory; }
 
     // Asynchronously call notify() on every Realm instance for this coordinator's
     // path, including those in other processes
-    void send_commit_notifications();
+    void send_commit_notifications(Realm&);
 
     // Clear the weak Realm cache for all paths
     // Should only be called in test code, as continuing to use the previously
@@ -78,8 +83,8 @@ public:
     // Called by m_notifier when there's a new commit to send notifications for
     void on_change();
 
-    // Update the schema in the cached config
-    void update_schema(Schema const& new_schema);
+    // Update the cached schema
+    void update_schema(Schema const& new_schema, uint64_t new_schema_version);
 
     static void register_notifier(std::shared_ptr<CollectionNotifier> notifier);
 
@@ -88,8 +93,14 @@ public:
     void advance_to_ready(Realm& realm);
     void process_available_async(Realm& realm);
 
+    void notify_others();
+
+    void set_transaction_callback(std::function<void(VersionID, VersionID)>);
+
 private:
     Realm::Config m_config;
+    Schema m_schema;
+    uint64_t m_schema_version = -1;
 
     std::mutex m_realm_mutex;
     std::vector<WeakRealmNotifier> m_weak_realm_notifiers;
@@ -111,14 +122,21 @@ private:
     std::exception_ptr m_async_error;
 
     std::unique_ptr<_impl::ExternalCommitHelper> m_notifier;
+    std::function<void(VersionID, VersionID)> m_transaction_callback;
+
+    std::shared_ptr<SyncSession> m_sync_session;
 
     // must be called with m_notifier_mutex locked
     void pin_version(uint_fast64_t version, uint_fast32_t index);
+
+    void set_config(const Realm::Config&);
+    void create_sync_session();
 
     void run_async_notifiers();
     void open_helper_shared_group();
     void advance_helper_shared_group_to_latest();
     void clean_up_dead_notifiers();
+    std::vector<std::shared_ptr<_impl::CollectionNotifier>> notifiers_to_deliver(Realm&);
 };
 
 } // namespace _impl

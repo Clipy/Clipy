@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_REPLICATION_HPP
 #define REALM_REPLICATION_HPP
 
@@ -31,23 +30,27 @@
 #include <realm/util/safe_int_ops.hpp>
 #include <realm/util/buffer.hpp>
 #include <realm/util/string_buffer.hpp>
-#include <realm/util/logger.hpp>
 #include <realm/impl/continuous_transactions_history.hpp>
 #include <realm/impl/transact_log.hpp>
 
 namespace realm {
+namespace util {
+class Logger;
+}
 
-// FIXME: Be careful about the possibility of one modification function being called by another where both do transaction logging.
+// FIXME: Be careful about the possibility of one modification function being called by another where both do
+// transaction logging.
 
-// FIXME: The current table/subtable selection scheme assumes that a TableRef of a subtable is not accessed after any modification of one of its ancestor tables.
+// FIXME: The current table/subtable selection scheme assumes that a TableRef of a subtable is not accessed after any
+// modification of one of its ancestor tables.
 
-// FIXME: Checking on same Table* requires that ~Table checks and nullifies on match. Another option would be to store m_selected_table as a TableRef. Yet another option would be to assign unique identifiers to each Table instance via Allocator. Yet another option would be to explicitely invalidate subtables recursively when parent is modified.
+// FIXME: Checking on same Table* requires that ~Table checks and nullifies on match. Another option would be to store
+// m_selected_table as a TableRef. Yet another option would be to assign unique identifiers to each Table instance via
+// Allocator. Yet another option would be to explicitely invalidate subtables recursively when parent is modified.
 
 /// Replication is enabled by passing an instance of an implementation of this
 /// class to the SharedGroup constructor.
-class Replication:
-        public _impl::TransactLogConvenientEncoder,
-        protected _impl::TransactLogStream {
+class Replication : public _impl::TransactLogConvenientEncoder, protected _impl::TransactLogStream {
 public:
     // Be sure to keep this type aligned with what is actually used in
     // SharedGroup.
@@ -89,16 +92,7 @@ public:
     /// The default implementation does nothing.
     virtual void terminate_session() noexcept = 0;
 
-    /// Called by the associated SharedGroup to close any open files
-    /// or release similar system resources.
-    ///
-    /// This is a special purpose function that solves a problem that is
-    /// specific to the implementation available through <commit_log.hpp>. At
-    /// least for now, it is not to be considered a genuine part of the
-    /// Replication interface. The default implementation does nothing and other
-    /// implementations should not override this function.
-    virtual void commit_log_close() noexcept {}
-
+    /// \defgroup replication_transactions
     //@{
 
     /// From the point of view of the Replication class, a transaction is
@@ -212,13 +206,17 @@ public:
 
     /// Apply a changeset to the specified group.
     ///
+    /// \param changeset The changes to be applied.
+    ///
+    /// \param group The destination group to apply the changeset to.
+    ///
     /// \param logger If specified, and the library was compiled in debug mode,
     /// then a line describing each individual operation is writted to the
     /// specified logger.
     ///
     /// \throw BadTransactLog If the changeset could not be successfully parsed,
     /// or ended prematurely.
-    static void apply_changeset(InputStream& changeset, Group&, util::Logger* logger = nullptr);
+    static void apply_changeset(InputStream& changeset, Group& group, util::Logger* logger = nullptr);
 
     enum HistoryType {
         /// No history available. No support for either continuous transactions
@@ -362,7 +360,9 @@ public:
     /// returns \ref hist_None.
     virtual _impl::History* get_history() = 0;
 
-    virtual ~Replication() noexcept {}
+    virtual ~Replication() noexcept
+    {
+    }
 
 protected:
     Replication();
@@ -395,17 +395,11 @@ protected:
 
     virtual void do_clear_interrupt() noexcept = 0;
 
-    // Part of a temporary ugly hack to avoid generating new transaction logs
-    // during application of ones that have olready been created elsewhere. See
-    // ReplicationImpl::do_initiate_transact() in
-    // realm/replication/simplified/provider.cpp for more on this.
-    static void set_replication(Group&, Replication*) noexcept;
-
     friend class _impl::TransactReverser;
 };
 
 
-class Replication::Interrupted: public std::exception {
+class Replication::Interrupted : public std::exception {
 public:
     const char* what() const noexcept override
     {
@@ -414,21 +408,21 @@ public:
 };
 
 
-class TrivialReplication: public Replication {
+class TrivialReplication : public Replication {
 public:
-    ~TrivialReplication() noexcept {}
+    ~TrivialReplication() noexcept
+    {
+    }
 
 protected:
     typedef Replication::version_type version_type;
 
     TrivialReplication(const std::string& database_file);
 
-    virtual version_type prepare_changeset(const char* data, size_t size,
-                                           version_type orig_version) = 0;
+    virtual version_type prepare_changeset(const char* data, size_t size, version_type orig_version) = 0;
     virtual void finalize_changeset() noexcept = 0;
 
-    static void apply_changeset(const char* data, size_t size, SharedGroup& target,
-                                util::Logger* logger = nullptr);
+    static void apply_changeset(const char* data, size_t size, SharedGroup& target, util::Logger* logger = nullptr);
 
     bool is_history_updated() const noexcept;
 
@@ -443,8 +437,7 @@ protected:
     void do_interrupt() noexcept override;
     void do_clear_interrupt() noexcept override;
     void transact_log_reserve(size_t n, char** new_begin, char** new_end) override;
-    void transact_log_append(const char* data, size_t size, char** new_begin,
-                             char** new_end) override;
+    void transact_log_append(const char* data, size_t size, char** new_begin, char** new_end) override;
 
 private:
     const std::string m_database_file;
@@ -456,12 +449,10 @@ private:
 };
 
 
-
-
 // Implementation:
 
-inline Replication::Replication():
-    _impl::TransactLogConvenientEncoder(static_cast<_impl::TransactLogStream&>(*this))
+inline Replication::Replication()
+    : _impl::TransactLogConvenientEncoder(static_cast<_impl::TransactLogStream&>(*this))
 {
 }
 
@@ -496,8 +487,8 @@ inline void Replication::clear_interrupt() noexcept
     do_clear_interrupt();
 }
 
-inline TrivialReplication::TrivialReplication(const std::string& database_file):
-    m_database_file(database_file)
+inline TrivialReplication::TrivialReplication(const std::string& database_file)
+    : m_database_file(database_file)
 {
 }
 

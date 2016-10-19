@@ -1,39 +1,37 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
 
 #ifndef REALM_IMPL_SIMULATED_FAILURE_HPP
 #define REALM_IMPL_SIMULATED_FAILURE_HPP
 
-#include <stdint.h>
+#include <cstdint>
 #include <system_error>
 
 #include <realm/util/features.h>
 
 #ifdef REALM_DEBUG
-#  define REALM_ENABLE_SIMULATED_FAILURE
+#define REALM_ENABLE_SIMULATED_FAILURE
 #endif
 
 namespace realm {
 namespace _impl {
 
-class SimulatedFailure: public std::system_error {
+class SimulatedFailure : public std::system_error {
 public:
     enum FailureType {
         generic,
@@ -97,6 +95,7 @@ class SimulatedFailure::OneShotPrimeGuard {
 public:
     OneShotPrimeGuard(FailureType);
     ~OneShotPrimeGuard() noexcept;
+
 private:
     const FailureType m_type;
 };
@@ -106,12 +105,10 @@ class SimulatedFailure::RandomPrimeGuard {
 public:
     RandomPrimeGuard(FailureType, int n, int m, uint_fast64_t seed = 0);
     ~RandomPrimeGuard() noexcept;
+
 private:
     const FailureType m_type;
 };
-
-
-
 
 
 // Implementation
@@ -125,8 +122,7 @@ inline void SimulatedFailure::prime_one_shot(FailureType failure_type)
 #endif
 }
 
-inline void SimulatedFailure::prime_random(FailureType failure_type, int n, int m,
-                                           uint_fast64_t seed)
+inline void SimulatedFailure::prime_random(FailureType failure_type, int n, int m, uint_fast64_t seed)
 {
 #ifdef REALM_ENABLE_SIMULATED_FAILURE
     do_prime_random(failure_type, n, m, seed);
@@ -157,8 +153,7 @@ inline bool SimulatedFailure::check_trigger(FailureType failure_type) noexcept
 #endif
 }
 
-inline std::error_code SimulatedFailure::trigger(FailureType failure_type,
-                                                 std::error_code& ec) noexcept
+inline std::error_code SimulatedFailure::trigger(FailureType failure_type, std::error_code& ec) noexcept
 {
     if (check_trigger(failure_type)) {
         ec = make_error_code(failure_type);
@@ -184,13 +179,13 @@ inline constexpr bool SimulatedFailure::is_enabled()
 #endif
 }
 
-inline SimulatedFailure::SimulatedFailure(std::error_code ec):
-    std::system_error(ec)
+inline SimulatedFailure::SimulatedFailure(std::error_code ec)
+    : std::system_error(ec)
 {
 }
 
-inline SimulatedFailure::OneShotPrimeGuard::OneShotPrimeGuard(FailureType failure_type):
-    m_type(failure_type)
+inline SimulatedFailure::OneShotPrimeGuard::OneShotPrimeGuard(FailureType failure_type)
+    : m_type(failure_type)
 {
     prime_one_shot(m_type);
 }
@@ -201,8 +196,8 @@ inline SimulatedFailure::OneShotPrimeGuard::~OneShotPrimeGuard() noexcept
 }
 
 inline SimulatedFailure::RandomPrimeGuard::RandomPrimeGuard(FailureType failure_type, int n, int m,
-                                                            uint_fast64_t seed):
-    m_type(failure_type)
+                                                            uint_fast64_t seed)
+    : m_type(failure_type)
 {
     prime_random(m_type, n, m, seed);
 }

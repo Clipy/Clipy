@@ -1,20 +1,18 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
 
@@ -40,8 +38,7 @@ class EncryptedFileMapping;
 class EncryptedFileMapping {
 public:
     // Adds the newly-created object to file.mappings iff it's successfully constructed
-    EncryptedFileMapping(SharedFileInfo& file, size_t file_offset,
-                         void* addr, size_t size, File::AccessMode access);
+    EncryptedFileMapping(SharedFileInfo& file, size_t file_offset, void* addr, size_t size, File::AccessMode access);
     ~EncryptedFileMapping();
 
     // Write all dirty pages to disk and mark them read-only
@@ -53,9 +50,7 @@ public:
 
     // Make sure that memory in the specified range is synchronized with any
     // changes made globally visible through call to write_barrier
-    void read_barrier(const void* addr, size_t size,
-                      UniqueLock& lock,
-                      Header_to_size header_to_size);
+    void read_barrier(const void* addr, size_t size, UniqueLock& lock, Header_to_size header_to_size);
 
     // Ensures that any changes made to memory in the specified range
     // becomes visible to any later calls to read_barrier()
@@ -101,9 +96,7 @@ private:
 };
 
 
-
-inline void EncryptedFileMapping::read_barrier(const void* addr, size_t size,
-                                               UniqueLock& lock,
+inline void EncryptedFileMapping::read_barrier(const void* addr, size_t size, UniqueLock& lock,
                                                Header_to_size header_to_size)
 {
     size_t first_accessed_page = reinterpret_cast<uintptr_t>(addr) >> m_page_shift;
@@ -122,10 +115,10 @@ inline void EncryptedFileMapping::read_barrier(const void* addr, size_t size,
         // included in the first page which was handled above.
         size = header_to_size(static_cast<const char*>(addr));
     }
-    size_t last_accessed_page = (reinterpret_cast<uintptr_t>(addr)+size-1) >> m_page_shift;
+    size_t last_accessed_page = (reinterpret_cast<uintptr_t>(addr) + size - 1) >> m_page_shift;
     size_t last_idx = last_accessed_page - m_first_page;
 
-    for (size_t idx = first_idx+1; idx <= last_idx; ++idx) {
+    for (size_t idx = first_idx + 1; idx <= last_idx; ++idx) {
         if (!m_up_to_date_pages[idx]) {
             if (!lock.holds_lock())
                 lock.lock();
@@ -133,10 +126,6 @@ inline void EncryptedFileMapping::read_barrier(const void* addr, size_t size,
         }
     }
 }
-
-
-
-
 }
 }
 
@@ -147,10 +136,12 @@ namespace util {
 
 /// Thrown by EncryptedFileMapping if a file opened is non-empty and does not
 /// contain valid encrypted data
-struct DecryptionFailed: util::File::AccessError {
-    DecryptionFailed(): util::File::AccessError("Decryption failed", std::string()) {}
+struct DecryptionFailed : util::File::AccessError {
+    DecryptionFailed()
+        : util::File::AccessError("Decryption failed", std::string())
+    {
+    }
 };
-
 }
 }
 

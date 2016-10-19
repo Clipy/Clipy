@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_ARRAY_BLOB_HPP
 #define REALM_ARRAY_BLOB_HPP
 
@@ -25,17 +24,21 @@
 namespace realm {
 
 
-class ArrayBlob: public Array {
+class ArrayBlob : public Array {
 public:
+    static constexpr size_t max_binary_size = 0xFFFFF8 - Array::header_size;
+
     explicit ArrayBlob(Allocator&) noexcept;
-    ~ArrayBlob() noexcept override {}
+    ~ArrayBlob() noexcept override
+    {
+    }
 
     const char* get(size_t index) const noexcept;
+    BinaryData get_at(size_t& pos) const noexcept;
     bool is_null(size_t index) const noexcept;
-    void add(const char* data, size_t size, bool add_zero_term = false);
-    void insert(size_t pos, const char* data, size_t size, bool add_zero_term = false);
-    void replace(size_t begin, size_t end, const char* data, size_t size,
-                 bool add_zero_term = false);
+    ref_type add(const char* data, size_t data_size, bool add_zero_term = false);
+    void insert(size_t pos, const char* data, size_t data_size, bool add_zero_term = false);
+    ref_type replace(size_t begin, size_t end, const char* data, size_t data_size, bool add_zero_term = false);
     void erase(size_t begin, size_t end);
 
     /// Get the specified element without the cost of constructing an
@@ -55,28 +58,25 @@ public:
     /// Construct a blob of the specified size and return just the
     /// reference to the underlying memory. All bytes will be
     /// initialized to zero.
-    static MemRef create_array(size_t size, Allocator&);
+    static MemRef create_array(size_t init_size, Allocator&);
 
 #ifdef REALM_DEBUG
+    size_t blob_size() const noexcept;
     void verify() const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
 #endif
 
 private:
-    size_t calc_byte_len(size_t count, size_t width) const override;
-    size_t calc_item_count(size_t bytes,
-                              size_t width) const noexcept override;
-    WidthType GetWidthType() const override { return wtype_Ignore; }
+    size_t calc_byte_len(size_t for_size, size_t width) const override;
+    size_t calc_item_count(size_t bytes, size_t width) const noexcept override;
 };
-
-
 
 
 // Implementation:
 
 // Creates new array (but invalid, call init_from_ref() to init)
-inline ArrayBlob::ArrayBlob(Allocator& alloc) noexcept:
-    Array(alloc)
+inline ArrayBlob::ArrayBlob(Allocator& allocator) noexcept
+    : Array(allocator)
 {
 }
 
@@ -90,22 +90,21 @@ inline const char* ArrayBlob::get(size_t index) const noexcept
     return m_data + index;
 }
 
-inline void ArrayBlob::add(const char* data, size_t size, bool add_zero_term)
+inline ref_type ArrayBlob::add(const char* data, size_t data_size, bool add_zero_term)
 {
-    replace(m_size, m_size, data, size, add_zero_term);
+    return replace(m_size, m_size, data, data_size, add_zero_term);
 }
 
-inline void ArrayBlob::insert(size_t pos, const char* data, size_t size,
-                              bool add_zero_term)
+inline void ArrayBlob::insert(size_t pos, const char* data, size_t data_size, bool add_zero_term)
 {
-    replace(pos, pos, data, size, add_zero_term);
+    replace(pos, pos, data, data_size, add_zero_term);
 }
 
 inline void ArrayBlob::erase(size_t begin, size_t end)
 {
     const char* data = nullptr;
-    size_t size = 0;
-    replace(begin, end, data, size);
+    size_t data_size = 0;
+    replace(begin, end, data, data_size);
 }
 
 inline const char* ArrayBlob::get(const char* header, size_t pos) noexcept
@@ -116,21 +115,21 @@ inline const char* ArrayBlob::get(const char* header, size_t pos) noexcept
 
 inline void ArrayBlob::create()
 {
-    size_t size = 0;
-    MemRef mem = create_array(size, get_alloc()); // Throws
+    size_t init_size = 0;
+    MemRef mem = create_array(init_size, get_alloc()); // Throws
     init_from_mem(mem);
 }
 
-inline MemRef ArrayBlob::create_array(size_t size, Allocator& alloc)
+inline MemRef ArrayBlob::create_array(size_t init_size, Allocator& allocator)
 {
     bool context_flag = false;
     int_fast64_t value = 0;
-    return Array::create(type_Normal, context_flag, wtype_Ignore, size, value, alloc); // Throws
+    return Array::create(type_Normal, context_flag, wtype_Ignore, init_size, value, allocator); // Throws
 }
 
-inline size_t ArrayBlob::calc_byte_len(size_t count, size_t) const
+inline size_t ArrayBlob::calc_byte_len(size_t for_size, size_t) const
 {
-    return header_size + count;
+    return header_size + for_size;
 }
 
 inline size_t ArrayBlob::calc_item_count(size_t bytes, size_t) const noexcept

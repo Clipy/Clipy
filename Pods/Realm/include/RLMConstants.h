@@ -18,6 +18,28 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+// For compatibility with Xcode 7, before extensible string enums were introduced,
+#ifdef NS_EXTENSIBLE_STRING_ENUM
+#define RLM_EXTENSIBLE_STRING_ENUM NS_EXTENSIBLE_STRING_ENUM
+#define RLM_EXTENSIBLE_STRING_ENUM_CASE_SWIFT_NAME(_, extensible_string_enum) NS_SWIFT_NAME(extensible_string_enum)
+#else
+#define RLM_EXTENSIBLE_STRING_ENUM
+#define RLM_EXTENSIBLE_STRING_ENUM_CASE_SWIFT_NAME(fully_qualified, _) NS_SWIFT_NAME(fully_qualified)
+#endif
+
+#if __has_attribute(ns_error_domain) && (!__cplusplus || __cplusplus >= 201103L)
+#define RLM_ERROR_ENUM(type, name, domain) \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wignored-attributes\"") \
+    NS_ENUM(type, __attribute__((ns_error_domain(domain))) name) \
+    _Pragma("clang diagnostic pop")
+#else
+#define RLM_ERROR_ENUM(type, name, domain) NS_ENUM(type, name)
+#endif
+
+
 #pragma mark - Enums
 
 /**
@@ -65,11 +87,17 @@ typedef NS_ENUM(int32_t, RLMPropertyType) {
     RLMPropertyTypeLinkingObjects = 14,
 };
 
+/** An error domain identifying Realm-specific errors. */
+extern NSString * const RLMErrorDomain;
+
+/** An error domain identifying non-specific system errors. */
+extern NSString * const RLMUnknownSystemErrorDomain;
+
 /**
  `RLMError` is an enumeration representing all recoverable errors. It is associated with the
  Realm error domain specified in `RLMErrorDomain`.
  */
-typedef NS_ENUM(NSInteger, RLMError) {
+typedef RLM_ERROR_ENUM(NSInteger, RLMError, RLMErrorDomain) {
     /** Denotes a general error that occurred when trying to open a Realm. */
     RLMErrorFail                  = 1,
 
@@ -125,6 +153,11 @@ typedef NS_ENUM(NSInteger, RLMError) {
 #pragma mark - Notification Constants
 
 /**
+ A notification indicating that changes were made to a Realm.
+*/
+typedef NSString * RLMNotification RLM_EXTENSIBLE_STRING_ENUM;
+
+/**
  This notification is posted by a Realm when the data in that Realm has changed.
 
  More specifically, this notification is posted after a Realm has been refreshed to
@@ -132,12 +165,13 @@ typedef NS_ENUM(NSInteger, RLMError) {
  `-[RLMRealm refresh]` is called, after an implicit refresh from `-[RLMRealm beginWriteTransaction]`,
  or after a local write transaction is completed.
  */
-extern NSString * const RLMRealmRefreshRequiredNotification;
+extern RLMNotification const RLMRealmRefreshRequiredNotification
+RLM_EXTENSIBLE_STRING_ENUM_CASE_SWIFT_NAME(RLMRealmRefreshRequiredNotification, RefreshRequired);
 
 /**
  This notification is posted by a Realm when a write transaction has been
  committed to a Realm on a different thread for the same file.
- 
+
  It is not posted if `-[RLMRealm autorefresh]` is enabled, or if the Realm is
  refreshed before the notification has a chance to run.
 
@@ -147,18 +181,13 @@ extern NSString * const RLMRealmRefreshRequiredNotification;
  files. This is because Realm must keep an extra copy of the data for the stale
  Realm.
  */
-extern NSString * const RLMRealmDidChangeNotification;
+extern RLMNotification const RLMRealmDidChangeNotification
+RLM_EXTENSIBLE_STRING_ENUM_CASE_SWIFT_NAME(RLMRealmDidChangeNotification, DidChange);
 
 #pragma mark - Other Constants
 
 /** The schema version used for uninitialized Realms */
 extern const uint64_t RLMNotVersioned;
-
-/** An error domain identifying Realm-specific errors. */
-extern NSString * const RLMErrorDomain;
-
-/** An error domain identifying non-specific system errors. */
-extern NSString * const RLMUnknownSystemErrorDomain;
 
 /** The corresponding value is the name of an exception thrown by Realm. */
 extern NSString * const RLMExceptionName;
@@ -171,3 +200,5 @@ extern NSString * const RLMRealmCoreVersionKey;
 
 /** The corresponding key is the Realm invalidated property name. */
 extern NSString * const RLMInvalidatedKey;
+
+NS_ASSUME_NONNULL_END

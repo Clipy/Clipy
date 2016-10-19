@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import Realm
+import RealmSwift
 import Fabric
 import Crashlytics
 
@@ -64,27 +64,6 @@ final class CPYUtilities {
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
         NSUserDefaults.standardUserDefaults().synchronize()
-    }
-
-    static func migrationRealm() {
-        let config = RLMRealmConfiguration.defaultConfiguration()
-        config.schemaVersion = 5
-        config.migrationBlock = { (migrate, oldSchemaVersion) in
-            if oldSchemaVersion <= 2 {
-                // Add identifier in CPYSnippet
-                migrate.enumerateObjects(CPYSnippet.className()) { (_, newObject) in
-                    newObject!["identifier"] = NSUUID().UUIDString
-                }
-            }
-            if oldSchemaVersion <= 4 {
-                // Add identifier in CPYFolder
-                migrate.enumerateObjects(CPYFolder.className()) { (_, newObject) in
-                    newObject!["identifier"] = NSUUID().UUIDString
-                }
-            }
-        }
-        RLMRealmConfiguration.setDefaultConfiguration(config)
-        RLMRealm.defaultRealm()
     }
 
     static func applicationSupportFolder() -> String {

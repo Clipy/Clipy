@@ -31,17 +31,6 @@ BOOL RLMPropertyTypeIsNullable(RLMPropertyType propertyType) {
     return propertyType != RLMPropertyTypeArray && propertyType != RLMPropertyTypeLinkingObjects;
 }
 
-BOOL RLMPropertyTypeIsNumeric(RLMPropertyType propertyType) {
-    switch (propertyType) {
-        case RLMPropertyTypeInt:
-        case RLMPropertyTypeFloat:
-        case RLMPropertyTypeDouble:
-            return YES;
-        default:
-            return NO;
-    }
-}
-
 BOOL RLMPropertyTypeIsComputed(RLMPropertyType propertyType) {
     return propertyType == RLMPropertyTypeLinkingObjects;
 }
@@ -337,12 +326,30 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
 
     id propertyValue = [obj valueForKey:_name];
 
+    // FIXME: temporarily workaround added since Objective-C generics used in Swift show up as `@`
+    //        * broken starting in Swift 3.0 Xcode 8 b1
+    //        * tested to still be broken in Swift 3.0 Xcode 8 b6
+    //        * if the Realm Objective-C Swift tests pass with this removed, it's been fixed
+    //        * once it has been fixed, remove this entire conditional block (contents included) entirely
+    //        * Bug Report: SR-2031 https://bugs.swift.org/browse/SR-2031
+    if ([_objcRawType isEqualToString:@"@"]) {
+        if (propertyValue) {
+            _objcRawType = [NSString stringWithFormat:@"@\"%@\"", [propertyValue class]];
+        } else if (linkPropertyDescriptor) {
+            // we're going to naively assume that the user used the correct type since we can't check it
+            _objcRawType = @"@\"RLMLinkingObjects\"";
+        }
+    }
+
     // convert array types to objc variant
     if ([_objcRawType isEqualToString:@"@\"RLMArray\""]) {
         _objcRawType = [NSString stringWithFormat:@"@\"RLMArray<%@>\"", [propertyValue objectClassName]];
     }
     else if ([_objcRawType isEqualToString:@"@\"NSNumber\""]) {
         const char *numberType = [propertyValue objCType];
+        if (!numberType) {
+            @throw RLMException(@"Can't persist NSNumber without default value: use a Swift-native number type or provide a default value.");
+        }
         switch (*numberType) {
             case 'i':
             case 'l':
@@ -503,7 +510,6 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
     prop->_isPrimary = _isPrimary;
     prop->_swiftIvar = _swiftIvar;
     prop->_optional = _optional;
-    prop->_declarationIndex = _declarationIndex;
     prop->_linkOriginPropertyName = _linkOriginPropertyName;
 
     return prop;
@@ -525,7 +531,6 @@ static bool rawTypeIsComputedProperty(NSString *rawType) {
 
 - (BOOL)isEqualToProperty:(RLMProperty *)property {
     return _type == property->_type
-        && _column == property->_column
         && _indexed == property->_indexed
         && _isPrimary == property->_isPrimary
         && _optional == property->_optional

@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_COLUMN_LINK_HPP
 #define REALM_COLUMN_LINK_HPP
 
@@ -32,7 +31,7 @@ namespace realm {
 /// The individual values in a link column are indexes of rows in the target
 /// table (offset with one to allow zero to indicate null links.) The target
 /// table is specified by the table descriptor.
-class LinkColumn: public LinkColumnBase {
+class LinkColumn : public LinkColumnBase {
 public:
     using LinkColumnBase::LinkColumnBase;
     ~LinkColumn() noexcept override;
@@ -68,17 +67,13 @@ public:
     void cascade_break_backlinks_to(size_t, CascadeState&) override;
     void cascade_break_backlinks_to_all_rows(size_t, CascadeState&) override;
 
-#ifdef REALM_DEBUG
     void verify(const Table&, size_t) const override;
-#endif
 
 protected:
     friend class BacklinkColumn;
     void do_nullify_link(size_t row_ndx, size_t old_target_row_ndx) override;
-    void do_update_link(size_t row_ndx, size_t old_target_row_ndx,
-                        size_t new_target_row_ndx) override;
-    void do_swap_link(size_t row_ndx, size_t target_row_ndx_1,
-                      size_t target_row_ndx_2) override;
+    void do_update_link(size_t row_ndx, size_t old_target_row_ndx, size_t new_target_row_ndx) override;
+    void do_swap_link(size_t row_ndx, size_t target_row_ndx_1, size_t target_row_ndx_2) override;
 
 private:
     void remove_backlinks(size_t row_ndx);
@@ -158,15 +153,13 @@ inline void LinkColumn::insert_null_link(size_t row_ndx)
     insert_link(row_ndx, realm::npos); // Throws
 }
 
-inline void LinkColumn::do_update_link(size_t row_ndx, size_t,
-                                       size_t new_target_row_ndx)
+inline void LinkColumn::do_update_link(size_t row_ndx, size_t, size_t new_target_row_ndx)
 {
     // Row pos is offset by one, to allow null refs
     LinkColumnBase::set(row_ndx, new_target_row_ndx + 1);
 }
 
-inline void LinkColumn::do_swap_link(size_t row_ndx, size_t target_row_ndx_1,
-                                     size_t target_row_ndx_2)
+inline void LinkColumn::do_swap_link(size_t row_ndx, size_t target_row_ndx_1, size_t target_row_ndx_2)
 {
     // Row pos is offset by one, to allow null refs
     ++target_row_ndx_1;
@@ -181,6 +174,6 @@ inline void LinkColumn::do_swap_link(size_t row_ndx, size_t target_row_ndx_1,
     }
 }
 
-} //namespace realm
+} // namespace realm
 
-#endif //REALM_COLUMN_LINK_HPP
+#endif // REALM_COLUMN_LINK_HPP

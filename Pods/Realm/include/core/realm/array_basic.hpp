@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_ARRAY_BASIC_HPP
 #define REALM_ARRAY_BASIC_HPP
 
@@ -26,12 +25,13 @@ namespace realm {
 
 /// A BasicArray can currently only be used for simple unstructured
 /// types like float, double.
-template<class T>
-class BasicArray: public Array {
+template <class T>
+class BasicArray : public Array {
 public:
     explicit BasicArray(Allocator&) noexcept;
-    explicit BasicArray(no_prealloc_tag) noexcept;
-    ~BasicArray() noexcept override {}
+    ~BasicArray() noexcept override
+    {
+    }
 
     T get(size_t ndx) const noexcept;
     bool is_null(size_t ndx) const noexcept;
@@ -43,9 +43,8 @@ public:
     void truncate(size_t size);
     void clear();
 
-    size_t find_first(T value, size_t begin = 0 , size_t end = npos) const;
-    void find_all(IntegerColumn* result, T value, size_t add_offset = 0,
-                  size_t begin = 0, size_t end = npos) const;
+    size_t find_first(T value, size_t begin = 0, size_t end = npos) const;
+    void find_all(IntegerColumn* result, T value, size_t add_offset = 0, size_t begin = 0, size_t end = npos) const;
 
     size_t count(T value, size_t begin = 0, size_t end = npos) const;
     bool maximum(T& result, size_t begin = 0, size_t end = npos) const;
@@ -70,8 +69,7 @@ public:
     /// initialized to `T()`.
     static MemRef create_array(size_t size, Allocator&);
 
-    static MemRef create_array(Array::Type leaf_type, bool context_flag, size_t size, T value,
-                               Allocator&);
+    static MemRef create_array(Array::Type leaf_type, bool context_flag, size_t size, T value, Allocator&);
 
     /// Create a new empty array and attach this accessor to it. This
     /// does not modify the parent reference information of this
@@ -95,9 +93,8 @@ private:
 
     size_t calc_byte_len(size_t count, size_t width) const override;
     virtual size_t calc_item_count(size_t bytes, size_t width) const noexcept override;
-    virtual WidthType GetWidthType() const override { return wtype_Multiply; }
 
-    template<bool find_max>
+    template <bool find_max>
     bool minmax(T& result, size_t begin, size_t end) const;
 
     /// Calculate the total number of bytes needed for a basic array

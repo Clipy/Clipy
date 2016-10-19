@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_NULL_HPP
 #define REALM_NULL_HPP
 
@@ -57,34 +56,68 @@ The `S` bit is at position 22 (float) or 51 (double).
 */
 
 struct null {
-    null() {}
-    operator int64_t() { throw(LogicError::type_mismatch); }
-    template<class T>
-    operator util::Optional<T>() { return util::none; }
+    null()
+    {
+    }
+    operator int64_t()
+    {
+        throw(LogicError::type_mismatch);
+    }
+    template <class T>
+    operator util::Optional<T>()
+    {
+        return util::none;
+    }
 
-    template<class T>
-    bool operator == (const T&) const { REALM_ASSERT(false); return false; }
-    template<class T>
-    bool operator != (const T&) const { REALM_ASSERT(false); return false; }
-    template<class T>
-    bool operator > (const T&) const { REALM_ASSERT(false); return false; }
-    template<class T>
-    bool operator >= (const T&) const { REALM_ASSERT(false); return false; }
-    template<class T>
-    bool operator <= (const T&) const { REALM_ASSERT(false); return false; }
-    template<class T>
-    bool operator < (const T&) const { REALM_ASSERT(false); return false; }
+    template <class T>
+    bool operator==(const T&) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    template <class T>
+    bool operator!=(const T&) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    template <class T>
+    bool operator>(const T&) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    template <class T>
+    bool operator>=(const T&) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    template <class T>
+    bool operator<=(const T&) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    template <class T>
+    bool operator<(const T&) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
 
     /// Returns whether `v` bitwise equals the null bit-pattern
-    template<class T>
-    static bool is_null_float(T v) {
+    template <class T>
+    static bool is_null_float(T v)
+    {
         T i = null::get_null_float<T>();
         return std::memcmp(&i, &v, sizeof(T)) == 0;
     }
 
     /// Returns the quiet NaNs that represent null for floats/doubles in Realm in stored payload.
-    template<class T>
-    static T get_null_float() {
+    template <class T>
+    static T get_null_float()
+    {
         typename std::conditional<std::is_same<T, float>::value, uint32_t, uint64_t>::type i;
         int64_t double_nan = 0x7ff80000000000aa;
         i = std::is_same<T, float>::value ? 0x7fc000aa : static_cast<decltype(i)>(double_nan);
@@ -95,8 +128,9 @@ struct null {
     }
 
     /// Takes a NaN as argument and returns whether or not it's signaling
-    template<class T>
-    static bool is_signaling(T v) {
+    template <class T>
+    static bool is_signaling(T v)
+    {
         REALM_ASSERT(std::isnan(static_cast<double>(v)));
         typename std::conditional<std::is_same<T, float>::value, uint32_t, uint64_t>::type i;
         size_t signal_bit = std::is_same<T, float>::value ? 22 : 51; // If this bit is set, it's quiet
@@ -106,8 +140,9 @@ struct null {
 
     /// Converts any signaling or quiet NaN to their their respective bit patterns that are used on x64 gcc+clang,
     /// ARM clang and x64 Java.
-    template<class T>
-    static T to_realm(T v) {
+    template <class T>
+    static T to_realm(T v)
+    {
         if (std::isnan(static_cast<double>(v))) {
             typename std::conditional<std::is_same<T, float>::value, uint32_t, uint64_t>::type i;
             if (std::is_same<T, float>::value) {
@@ -122,7 +157,6 @@ struct null {
             return v;
         }
     }
-
 };
 
 } // namespace realm

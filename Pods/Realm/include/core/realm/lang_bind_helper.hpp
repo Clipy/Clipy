@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_LANG_BIND_HELPER_HPP
 #define REALM_LANG_BIND_HELPER_HPP
 
@@ -83,34 +82,27 @@ public:
     //@}
 
     static Table* get_subtable_ptr(Table*, size_t column_ndx, size_t row_ndx);
-    static const Table* get_subtable_ptr(const Table*, size_t column_ndx,
-                                         size_t row_ndx);
+    static const Table* get_subtable_ptr(const Table*, size_t column_ndx, size_t row_ndx);
 
     // FIXME: This is an 'oddball', do we really need it? If we do,
     // please provide a comment that explains why it is needed!
-    static Table* get_subtable_ptr_during_insert(Table*, size_t col_ndx,
-                                                 size_t row_ndx);
+    static Table* get_subtable_ptr_during_insert(Table*, size_t col_ndx, size_t row_ndx);
 
     static Table* get_subtable_ptr(TableView*, size_t column_ndx, size_t row_ndx);
-    static const Table* get_subtable_ptr(const TableView*, size_t column_ndx,
-                                         size_t row_ndx);
-    static const Table* get_subtable_ptr(const ConstTableView*, size_t column_ndx,
-                                         size_t row_ndx);
+    static const Table* get_subtable_ptr(const TableView*, size_t column_ndx, size_t row_ndx);
+    static const Table* get_subtable_ptr(const ConstTableView*, size_t column_ndx, size_t row_ndx);
 
     /// Calls parent.set_mixed_subtable(col_ndx, row_ndx, &source). Note
     /// that the source table must have a descriptor that is
     /// compatible with the target subtable column.
-    static void set_mixed_subtable(Table& parent, size_t col_ndx, size_t row_ndx,
-                                   const Table& source);
+    static void set_mixed_subtable(Table& parent, size_t col_ndx, size_t row_ndx, const Table& source);
 
     static const LinkViewRef& get_linklist_ptr(Row&, size_t col_ndx);
     static void unbind_linklist_ptr(const LinkViewRef&);
 
     using VersionID = SharedGroup::VersionID;
 
-    //@{
-
-    /// Continuous transactions.
+    /// \defgroup lang_bind_helper_transactions Continuous Transactions
     ///
     /// advance_read() is equivalent to terminating the current read transaction
     /// (SharedGroup::end_read()), and initiating a new one
@@ -160,23 +152,25 @@ public:
     /// wants to terminate the transaction after commit_and_continue_as_read()
     /// or rollback_and_continue_as_read() has thrown an exception.
     ///
-    /// \param history The modification history accessor associated with the
-    /// specified SharedGroup object.
-    ///
     /// \param observer An optional custom replication instruction handler. The
     /// application may pass such a handler to observe the sequence of
     /// modifications that advances (or rolls back) the state of the Realm.
     ///
     /// \throw SharedGroup::BadVersion Thrown by advance_read() if the specified
     /// version does not correspond to a bound (or tethered) snapshot.
+    ///
+    //@{
 
     static void advance_read(SharedGroup&, VersionID = VersionID());
-    template<class O> static void advance_read(SharedGroup&, O&& observer, VersionID = VersionID());
+    template <class O>
+    static void advance_read(SharedGroup&, O&& observer, VersionID = VersionID());
     static void promote_to_write(SharedGroup&);
-    template<class O> static void promote_to_write(SharedGroup&, O&& observer);
+    template <class O>
+    static void promote_to_write(SharedGroup&, O&& observer);
     static SharedGroup::version_type commit_and_continue_as_read(SharedGroup&);
     static void rollback_and_continue_as_read(SharedGroup&);
-    template<class O> static void rollback_and_continue_as_read(SharedGroup&, O&& observer);
+    template <class O>
+    static void rollback_and_continue_as_read(SharedGroup&, O&& observer);
 
     //@}
 
@@ -196,8 +190,6 @@ public:
 };
 
 
-
-
 // Implementation:
 
 inline Table* LangBindHelper::new_table()
@@ -208,7 +200,7 @@ inline Table* LangBindHelper::new_table()
     Table::Parent* parent = nullptr;
     size_t ndx_in_parent = 0;
     Table* table = tf::create_accessor(alloc, ref, parent, ndx_in_parent); // Throws
-    tf::bind_ptr(*table);
+    bind_table_ptr(table);
     return table;
 }
 
@@ -220,40 +212,35 @@ inline Table* LangBindHelper::copy_table(const Table& table)
     Table::Parent* parent = nullptr;
     size_t ndx_in_parent = 0;
     Table* copy_of_table = tf::create_accessor(alloc, ref, parent, ndx_in_parent); // Throws
-    tf::bind_ptr(*copy_of_table);
+    bind_table_ptr(copy_of_table);
     return copy_of_table;
 }
 
-inline Table* LangBindHelper::get_subtable_ptr(Table* t, size_t column_ndx,
-                                               size_t row_ndx)
+inline Table* LangBindHelper::get_subtable_ptr(Table* t, size_t column_ndx, size_t row_ndx)
 {
     Table* subtab = t->get_subtable_ptr(column_ndx, row_ndx); // Throws
     subtab->bind_ptr();
     return subtab;
 }
 
-inline const Table* LangBindHelper::get_subtable_ptr(const Table* t, size_t column_ndx,
-                                                     size_t row_ndx)
+inline const Table* LangBindHelper::get_subtable_ptr(const Table* t, size_t column_ndx, size_t row_ndx)
 {
     const Table* subtab = t->get_subtable_ptr(column_ndx, row_ndx); // Throws
     subtab->bind_ptr();
     return subtab;
 }
 
-inline Table* LangBindHelper::get_subtable_ptr(TableView* tv, size_t column_ndx,
-                                               size_t row_ndx)
+inline Table* LangBindHelper::get_subtable_ptr(TableView* tv, size_t column_ndx, size_t row_ndx)
 {
     return get_subtable_ptr(&tv->get_parent(), column_ndx, tv->get_source_ndx(row_ndx));
 }
 
-inline const Table* LangBindHelper::get_subtable_ptr(const TableView* tv, size_t column_ndx,
-                                                     size_t row_ndx)
+inline const Table* LangBindHelper::get_subtable_ptr(const TableView* tv, size_t column_ndx, size_t row_ndx)
 {
     return get_subtable_ptr(&tv->get_parent(), column_ndx, tv->get_source_ndx(row_ndx));
 }
 
-inline const Table* LangBindHelper::get_subtable_ptr(const ConstTableView* tv,
-                                                     size_t column_ndx, size_t row_ndx)
+inline const Table* LangBindHelper::get_subtable_ptr(const ConstTableView* tv, size_t column_ndx, size_t row_ndx)
 {
     return get_subtable_ptr(&tv->get_parent(), column_ndx, tv->get_source_ndx(row_ndx));
 }
@@ -310,16 +297,15 @@ inline Table* LangBindHelper::get_or_add_table(Group& group, StringData name, bo
 
 inline void LangBindHelper::unbind_table_ptr(const Table* t) noexcept
 {
-   t->unbind_ptr();
+    t->unbind_ptr();
 }
 
 inline void LangBindHelper::bind_table_ptr(const Table* t) noexcept
 {
-   t->bind_ptr();
+    t->bind_ptr();
 }
 
-inline void LangBindHelper::set_mixed_subtable(Table& parent, size_t col_ndx,
-                                               size_t row_ndx, const Table& source)
+inline void LangBindHelper::set_mixed_subtable(Table& parent, size_t col_ndx, size_t row_ndx, const Table& source)
 {
     parent.set_mixed_subtable(col_ndx, row_ndx, &source);
 }
@@ -342,7 +328,7 @@ inline void LangBindHelper::advance_read(SharedGroup& sg, VersionID version)
     sgf::advance_read(sg, observer, version); // Throws
 }
 
-template<class O>
+template <class O>
 inline void LangBindHelper::advance_read(SharedGroup& sg, O&& observer, VersionID version)
 {
     using sgf = _impl::SharedGroupFriend;
@@ -356,7 +342,7 @@ inline void LangBindHelper::promote_to_write(SharedGroup& sg)
     sgf::promote_to_write(sg, observer); // Throws
 }
 
-template<class O>
+template <class O>
 inline void LangBindHelper::promote_to_write(SharedGroup& sg, O&& observer)
 {
     using sgf = _impl::SharedGroupFriend;
@@ -376,7 +362,7 @@ inline void LangBindHelper::rollback_and_continue_as_read(SharedGroup& sg)
     sgf::rollback_and_continue_as_read(sg, observer); // Throws
 }
 
-template<class O>
+template <class O>
 inline void LangBindHelper::rollback_and_continue_as_read(SharedGroup& sg, O&& observer)
 {
     using sgf = _impl::SharedGroupFriend;

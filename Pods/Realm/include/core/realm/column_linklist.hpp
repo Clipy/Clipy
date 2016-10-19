@@ -1,22 +1,21 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_COLUMN_LINKLIST_HPP
 #define REALM_COLUMN_LINKLIST_HPP
 
@@ -28,7 +27,6 @@
 #include <realm/table.hpp>
 #include <realm/column_backlink.hpp>
 #include <realm/link_view_fwd.hpp>
-#include <iostream>
 
 namespace realm {
 
@@ -44,7 +42,7 @@ class TransactLogConvenientEncoder;
 /// The individual values in the column are either refs to Columns containing the
 /// row positions in the target table, or in the case where they are empty, a zero
 /// ref.
-class LinkListColumn: public LinkColumnBase, public ArrayParent {
+class LinkListColumn : public LinkColumnBase, public ArrayParent {
 public:
     using LinkColumnBase::LinkColumnBase;
     LinkListColumn(Allocator& alloc, ref_type ref, Table* table, size_t column_ndx);
@@ -81,12 +79,11 @@ public:
     void adj_acc_erase_row(size_t) noexcept override;
     void adj_acc_move_over(size_t, size_t) noexcept override;
     void adj_acc_swap_rows(size_t, size_t) noexcept override;
+    void adj_acc_merge_rows(size_t, size_t) noexcept override;
     void refresh_accessor_tree(size_t, const Spec&) override;
 
-#ifdef REALM_DEBUG
     void verify() const override;
     void verify(const Table&, size_t) const override;
-#endif
 
 protected:
     void do_discard_child_accessors() noexcept override;
@@ -95,15 +92,18 @@ private:
     struct list_entry {
         size_t m_row_ndx;
         std::weak_ptr<LinkView> m_list;
-        bool operator<(const list_entry& other) const { return m_row_ndx < other.m_row_ndx; }
+        bool operator<(const list_entry& other) const
+        {
+            return m_row_ndx < other.m_row_ndx;
+        }
     };
 
     // The accessors stored in `m_list_accessors` are sorted by their row index.
     // When a LinkList accessor is destroyed because the last shared_ptr pointing
-    // to it dies, its entry is implicitly replaced by a tombstone (an entry with 
-    // an empty `m_list`). These tombstones are pruned at a later time by 
-    // `prune_list_accessor_tombstones`. This is done to amortize the O(n) cost 
-    // of `std::vector::erase` that would otherwise be incurred each time an 
+    // to it dies, its entry is implicitly replaced by a tombstone (an entry with
+    // an empty `m_list`). These tombstones are pruned at a later time by
+    // `prune_list_accessor_tombstones`. This is done to amortize the O(n) cost
+    // of `std::vector::erase` that would otherwise be incurred each time an
     // accessor is removed.
     mutable std::vector<list_entry> m_list_accessors;
     mutable std::atomic<bool> m_list_accessors_contains_tombstones;
@@ -111,10 +111,8 @@ private:
     std::shared_ptr<LinkView> get_ptr(size_t row_ndx) const;
 
     void do_nullify_link(size_t row_ndx, size_t old_target_row_ndx) override;
-    void do_update_link(size_t row_ndx, size_t old_target_row_ndx,
-                        size_t new_target_row_ndx) override;
-    void do_swap_link(size_t row_ndx, size_t target_row_ndx_1,
-                      size_t target_row_ndx_2) override;
+    void do_update_link(size_t row_ndx, size_t old_target_row_ndx, size_t new_target_row_ndx) override;
+    void do_swap_link(size_t row_ndx, size_t target_row_ndx_1, size_t target_row_ndx_2) override;
 
     void unregister_linkview();
     ref_type get_row_ref(size_t row_ndx) const noexcept;
@@ -129,30 +127,27 @@ private:
     // These helpers are needed because of the way the B+-tree of links is
     // traversed in cascade_break_backlinks_to() and
     // cascade_break_backlinks_to_all_rows().
-    void cascade_break_backlinks_to__leaf(size_t row_ndx, const Array& link_list_leaf,
-                                          CascadeState&);
+    void cascade_break_backlinks_to__leaf(size_t row_ndx, const Array& link_list_leaf, CascadeState&);
     void cascade_break_backlinks_to_all_rows__leaf(const Array& link_list_leaf, CascadeState&);
 
     void discard_child_accessors() noexcept;
 
-    template<bool fix_ndx_in_parent>
+    template <bool fix_ndx_in_parent>
     void adj_insert_rows(size_t row_ndx, size_t num_rows_inserted) noexcept;
 
-    template<bool fix_ndx_in_parent>
+    template <bool fix_ndx_in_parent>
     void adj_erase_rows(size_t row_ndx, size_t num_rows_erased) noexcept;
 
-    template<bool fix_ndx_in_parent>
+    template <bool fix_ndx_in_parent>
     void adj_move_over(size_t from_row_ndx, size_t to_row_ndx) noexcept;
 
-    template<bool fix_ndx_in_parent>
+    template <bool fix_ndx_in_parent>
     void adj_swap(size_t row_ndx_1, size_t row_ndx_2) noexcept;
 
     void prune_list_accessor_tombstones() noexcept;
     void validate_list_accessors() const noexcept;
 
-#ifdef REALM_DEBUG
     std::pair<ref_type, size_t> get_to_dot_parent(size_t) const override;
-#endif
 
     friend class BacklinkColumn;
     friend class LinkView;
@@ -160,15 +155,12 @@ private:
 };
 
 
-
-
-
 // Implementation
 
-inline LinkListColumn::LinkListColumn(Allocator& alloc, ref_type ref, Table* table, size_t column_ndx):
-    LinkColumnBase(alloc, ref, table, column_ndx)
-{ 
-    m_list_accessors_contains_tombstones.store(false); 
+inline LinkListColumn::LinkListColumn(Allocator& alloc, ref_type ref, Table* table, size_t column_ndx)
+    : LinkColumnBase(alloc, ref, table, column_ndx)
+{
+    m_list_accessors_contains_tombstones.store(false);
 }
 
 inline LinkListColumn::~LinkListColumn() noexcept
@@ -246,8 +238,6 @@ inline void LinkListColumn::remove_backlink(size_t target_row, size_t source_row
 }
 
 
-} //namespace realm
+} // namespace realm
 
-#endif //REALM_COLUMN_LINKLIST_HPP
-
-
+#endif // REALM_COLUMN_LINKLIST_HPP

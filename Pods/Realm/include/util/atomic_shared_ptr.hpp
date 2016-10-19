@@ -134,4 +134,4 @@ private:
 }
 }
 
-#endif // REALM_ASYNC_QUERY_HPP
+#endif // REALM_ATOMIC_SHARED_PTR_HPP

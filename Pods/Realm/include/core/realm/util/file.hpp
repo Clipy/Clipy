@@ -1,34 +1,33 @@
 /*************************************************************************
  *
- * REALM CONFIDENTIAL
- * __________________
+ * Copyright 2016 Realm Inc.
  *
- *  [2011] - [2015] Realm Inc
- *  All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  **************************************************************************/
+
 #ifndef REALM_UTIL_FILE_HPP
 #define REALM_UTIL_FILE_HPP
 
 #include <cstddef>
-#include <stdint.h>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <streambuf>
 
 #ifndef _WIN32
-#  include <dirent.h> // POSIX.1-2001
+#include <dirent.h> // POSIX.1-2001
 #endif
 
 #include <realm/util/features.h>
@@ -137,7 +136,7 @@ public:
 
     enum AccessMode {
         access_ReadOnly,
-        access_ReadWrite
+        access_ReadWrite,
     };
 
     enum CreateMode {
@@ -147,8 +146,8 @@ public:
     };
 
     enum {
-        flag_Trunc  = 1, ///< Truncate the file if it already exists.
-        flag_Append = 2  ///< Move to end of file before each write.
+        flag_Trunc = 1, ///< Truncate the file if it already exists.
+        flag_Append = 2 ///< Move to end of file before each write.
     };
 
     /// See open(const std::string&, Mode).
@@ -182,15 +181,24 @@ public:
     void write(const char* data, size_t size);
 
     /// Calls write(s.data(), s.size()).
-    void write(const std::string& s) { write(s.data(), s.size()); }
+    void write(const std::string& s)
+    {
+        write(s.data(), s.size());
+    }
 
     /// Calls read(data, N).
-    template<size_t N>
-    size_t read(char (&data)[N]) { return read(data, N); }
+    template <size_t N>
+    size_t read(char (&data)[N])
+    {
+        return read(data, N);
+    }
 
     /// Calls write(data(), N).
-    template<size_t N>
-    void write(const char (&data)[N]) { write(data, N); }
+    template <size_t N>
+    void write(const char (&data)[N])
+    {
+        write(data, N);
+    }
 
     /// Plays the same role as off_t in POSIX
     typedef int_fast64_t SizeType;
@@ -254,9 +262,6 @@ public:
     /// instance. Distinct File instances have separate independent
     /// offsets, as long as the cucrrent process is not forked.
     void seek(SizeType);
-
-    // Return file position (like ftell())
-    SizeType get_file_position();
 
     /// Flush in-kernel buffers to disk. This blocks the caller until the
     /// synchronization operation is complete. On POSIX systems this function
@@ -350,12 +355,11 @@ public:
     ///
     /// If this function throws, the old address range will remain
     /// mapped.
-    void* remap(void* old_addr, size_t old_size, AccessMode a, size_t new_size,
-                int map_flags = 0, size_t file_offset = 0) const;
+    void* remap(void* old_addr, size_t old_size, AccessMode a, size_t new_size, int map_flags = 0,
+                size_t file_offset = 0) const;
 
 #if REALM_ENABLE_ENCRYPTION
-    void* map(AccessMode, size_t size, EncryptedFileMapping*& mapping,
-              int map_flags = 0, size_t offset = 0) const;
+    void* map(AccessMode, size_t size, EncryptedFileMapping*& mapping, int map_flags = 0, size_t offset = 0) const;
 #endif
     /// Unmap the specified address range which must have been
     /// previously returned by map().
@@ -423,7 +427,7 @@ public:
     /// not, this function has undefined behavior.
     bool is_same_file(const File&) const;
 
-    // FIXME: Can we get rid of this one please!!!
+    // FIXME: Get rid of this method
     bool is_removed() const;
 
     /// Resolve the specified path against the specified base directory.
@@ -457,10 +461,27 @@ public:
     /// string is interpreted as a relative path.
     static std::string resolve(const std::string& path, const std::string& base_dir);
 
+
+    struct UniqueID {
+#ifdef _WIN32 // Windows version
+// FIXME: This is not implemented for Windows
+#else
+        // NDK r10e has a bug in sys/stat.h dev_t ino_t are 4 bytes,
+        // but stat.st_dev and st_ino are 8 bytes. So we just use uint64 instead.
+        uint_fast64_t device;
+        uint_fast64_t inode;
+#endif
+    };
+    // Return the unique id for the current opened file descriptor.
+    // Same UniqueID means they are the same file.
+    UniqueID get_unique_id() const;
+    // Return false if the file doesn't exist. Otherwise uid will be set.
+    static bool get_unique_id(const std::string& path, UniqueID& uid);
+
     class ExclusiveLock;
     class SharedLock;
 
-    template<class>
+    template <class>
     class Map;
 
     class CloseGuard;
@@ -479,6 +500,8 @@ private:
 #ifdef _WIN32
     void* m_handle;
     bool m_have_lock; // Only valid when m_handle is not null
+
+    SizeType get_file_position(); // POSIX version not needed because it's only used by Windows version of resize().
 #else
     int m_fd;
 #endif
@@ -515,23 +538,37 @@ private:
 };
 
 
-
 class File::ExclusiveLock {
 public:
-    ExclusiveLock(File& f): m_file(f) { f.lock_exclusive(); }
-    ~ExclusiveLock() noexcept { m_file.unlock(); }
+    ExclusiveLock(File& f)
+        : m_file(f)
+    {
+        f.lock_exclusive();
+    }
+    ~ExclusiveLock() noexcept
+    {
+        m_file.unlock();
+    }
+
 private:
     File& m_file;
 };
 
 class File::SharedLock {
 public:
-    SharedLock(File& f): m_file(f) { f.lock_shared(); }
-    ~SharedLock() noexcept { m_file.unlock(); }
+    SharedLock(File& f)
+        : m_file(f)
+    {
+        f.lock_shared();
+    }
+    ~SharedLock() noexcept
+    {
+        m_file.unlock();
+    }
+
 private:
     File& m_file;
 };
-
 
 
 /// This class provides a RAII abstraction over the concept of a
@@ -549,14 +586,13 @@ private:
 ///
 /// A single Map instance must never be accessed concurrently by
 /// multiple threads.
-template<class T>
-class File::Map: private MapBase {
+template <class T>
+class File::Map : private MapBase {
 public:
     /// Equivalent to calling map() on a default constructed instance.
-    explicit Map(const File&, AccessMode = access_ReadOnly, size_t size = sizeof (T),
-                 int map_flags = 0);
+    explicit Map(const File&, AccessMode = access_ReadOnly, size_t size = sizeof(T), int map_flags = 0);
 
-    explicit Map(const File&, size_t offset, AccessMode = access_ReadOnly, size_t size = sizeof (T),
+    explicit Map(const File&, size_t offset, AccessMode = access_ReadOnly, size_t size = sizeof(T),
                  int map_flags = 0);
 
     /// Create an instance that is not initially attached to a memory
@@ -568,8 +604,9 @@ public:
     /// Move the mapping from another Map object to this Map object
     File::Map<T>& operator=(File::Map<T>&& other)
     {
-        if (m_addr) unmap();
-        m_addr = other.m_addr;
+        if (m_addr)
+            unmap();
+        m_addr = other.get_addr();
         m_size = other.m_size;
         other.m_addr = 0;
         other.m_size = 0;
@@ -586,8 +623,7 @@ public:
     /// attached to a memory mapped file has undefined behavior. The
     /// returned pointer is the same as what will subsequently be
     /// returned by get_addr().
-    T* map(const File&, AccessMode = access_ReadOnly, size_t size = sizeof (T),
-           int map_flags = 0, size_t offset = 0);
+    T* map(const File&, AccessMode = access_ReadOnly, size_t size = sizeof(T), int map_flags = 0, size_t offset = 0);
 
     /// See File::unmap(). This function is idempotent, that is, it is
     /// valid to call it regardless of whether this instance is
@@ -600,8 +636,7 @@ public:
     /// attached to a memory mapped file has undefined behavior. The
     /// returned pointer is the same as what will subsequently be
     /// returned by get_addr().
-    T* remap(const File&, AccessMode = access_ReadOnly, size_t size = sizeof (T),
-             int map_flags = 0);
+    T* remap(const File&, AccessMode = access_ReadOnly, size_t size = sizeof(T), int map_flags = 0);
 
     /// See File::sync_map().
     ///
@@ -648,9 +683,20 @@ public:
 
 class File::CloseGuard {
 public:
-    CloseGuard(File& f) noexcept: m_file(&f) {}
-    ~CloseGuard() noexcept { if (m_file) m_file->close(); }
-    void release() noexcept { m_file = nullptr; }
+    CloseGuard(File& f) noexcept
+        : m_file(&f)
+    {
+    }
+    ~CloseGuard() noexcept
+    {
+        if (m_file)
+            m_file->close();
+    }
+    void release() noexcept
+    {
+        m_file = nullptr;
+    }
+
 private:
     File* m_file;
 };
@@ -658,9 +704,20 @@ private:
 
 class File::UnlockGuard {
 public:
-    UnlockGuard(File& f) noexcept: m_file(&f) {}
-    ~UnlockGuard() noexcept { if (m_file) m_file->unlock(); }
-    void release() noexcept { m_file = nullptr; }
+    UnlockGuard(File& f) noexcept
+        : m_file(&f)
+    {
+    }
+    ~UnlockGuard() noexcept
+    {
+        if (m_file)
+            m_file->unlock();
+    }
+    void release() noexcept
+    {
+        m_file = nullptr;
+    }
+
 private:
     File* m_file;
 };
@@ -668,18 +725,28 @@ private:
 
 class File::UnmapGuard {
 public:
-    template<class T>
-    UnmapGuard(Map<T>& m) noexcept: m_map(&m) {}
-    ~UnmapGuard() noexcept { if (m_map) m_map->unmap(); }
-    void release() noexcept { m_map = nullptr; }
+    template <class T>
+    UnmapGuard(Map<T>& m) noexcept
+        : m_map(&m)
+    {
+    }
+    ~UnmapGuard() noexcept
+    {
+        if (m_map)
+            m_map->unmap();
+    }
+    void release() noexcept
+    {
+        m_map = nullptr;
+    }
+
 private:
     MapBase* m_map;
 };
 
 
-
 /// Only output is supported at this point.
-class File::Streambuf: public std::streambuf {
+class File::Streambuf : public std::streambuf {
 public:
     explicit Streambuf(File*);
     ~Streambuf() noexcept;
@@ -701,10 +768,9 @@ private:
 };
 
 
-
 /// Used for any I/O related exception. Note the derived exception
 /// types that are used for various specific types of errors.
-class File::AccessError: public std::runtime_error {
+class File::AccessError : public std::runtime_error {
 public:
     AccessError(const std::string& msg, const std::string& path);
 
@@ -719,7 +785,7 @@ private:
 
 /// Thrown if the user does not have permission to open or create
 /// the specified file in the specified access mode.
-class File::PermissionDenied: public AccessError {
+class File::PermissionDenied : public AccessError {
 public:
     PermissionDenied(const std::string& msg, const std::string& path);
 };
@@ -728,7 +794,7 @@ public:
 /// Thrown if the directory part of the specified path was not
 /// found, or create_Never was specified and the file did no
 /// exist.
-class File::NotFound: public AccessError {
+class File::NotFound : public AccessError {
 public:
     NotFound(const std::string& msg, const std::string& path);
 };
@@ -736,7 +802,7 @@ public:
 
 /// Thrown if create_Always was specified and the file did already
 /// exist.
-class File::Exists: public AccessError {
+class File::Exists : public AccessError {
 public:
     Exists(const std::string& msg, const std::string& path);
 };
@@ -744,17 +810,15 @@ public:
 
 class DirScanner {
 public:
-    DirScanner(const std::string& path);
+    DirScanner(const std::string& path, bool allow_missing = false);
     ~DirScanner() noexcept;
     bool next(std::string& name);
+
 private:
 #ifndef _WIN32
     DIR* m_dirp;
 #endif
 };
-
-
-
 
 
 // Implementation:
@@ -818,10 +882,19 @@ inline void File::open(const std::string& path, Mode m)
     CreateMode c = create_Auto;
     int flags = 0;
     switch (m) {
-        case mode_Read:   a = access_ReadOnly; c = create_Never; break;
-        case mode_Update:                      c = create_Never; break;
-        case mode_Write:  flags = flag_Trunc;                    break;
-        case mode_Append: flags = flag_Append;                   break;
+        case mode_Read:
+            a = access_ReadOnly;
+            c = create_Never;
+            break;
+        case mode_Update:
+            c = create_Never;
+            break;
+        case mode_Write:
+            flags = flag_Trunc;
+            break;
+        case mode_Append:
+            flags = flag_Append;
+            break;
     }
     open(path, a, c, flags);
 }
@@ -901,7 +974,8 @@ inline void File::MapBase::map(const File& f, AccessMode a, size_t size, int map
 
 inline void File::MapBase::unmap() noexcept
 {
-    if (!m_addr) return;
+    if (!m_addr)
+        return;
     File::unmap(m_addr, m_size);
     m_addr = nullptr;
 #if REALM_ENABLE_ENCRYPTION
@@ -924,69 +998,73 @@ inline void File::MapBase::sync()
     File::sync_map(m_addr, m_size);
 }
 
-template<class T>
+template <class T>
 inline File::Map<T>::Map(const File& f, AccessMode a, size_t size, int map_flags)
 {
     map(f, a, size, map_flags);
 }
 
-template<class T>
+template <class T>
 inline File::Map<T>::Map(const File& f, size_t offset, AccessMode a, size_t size, int map_flags)
 {
     map(f, a, size, map_flags, offset);
 }
 
-template<class T>
-inline File::Map<T>::Map() noexcept {}
+template <class T>
+inline File::Map<T>::Map() noexcept
+{
+}
 
-template<class T>
-inline File::Map<T>::~Map() noexcept {}
+template <class T>
+inline File::Map<T>::~Map() noexcept
+{
+}
 
-template<class T>
+template <class T>
 inline T* File::Map<T>::map(const File& f, AccessMode a, size_t size, int map_flags, size_t offset)
 {
     MapBase::map(f, a, size, map_flags, offset);
     return static_cast<T*>(m_addr);
 }
 
-template<class T>
+template <class T>
 inline void File::Map<T>::unmap() noexcept
 {
     MapBase::unmap();
 }
 
-template<class T>
+template <class T>
 inline T* File::Map<T>::remap(const File& f, AccessMode a, size_t size, int map_flags)
 {
     MapBase::remap(f, a, size, map_flags);
     return static_cast<T*>(m_addr);
 }
 
-template<class T>
+template <class T>
 inline void File::Map<T>::sync()
 {
     MapBase::sync();
 }
 
-template<class T>
+template <class T>
 inline bool File::Map<T>::is_attached() const noexcept
 {
     return (m_addr != nullptr);
 }
 
-template<class T>
+template <class T>
 inline T* File::Map<T>::get_addr() const noexcept
 {
     return static_cast<T*>(m_addr);
 }
 
-template<class T>
+template <class T>
 inline size_t File::Map<T>::get_size() const noexcept
 {
     return m_addr ? m_size : 0;
 }
 
-template<class T>
+template <class T>
 inline T* File::Map<T>::release() noexcept
 {
     T* addr = static_cast<T*>(m_addr);
@@ -995,7 +1073,9 @@ inline T* File::Map<T>::release() noexcept
 }
 
 
-inline File::Streambuf::Streambuf(File* f): m_file(*f), m_buffer(new char[buffer_size])
+inline File::Streambuf::Streambuf(File* f)
+    : m_file(*f)
+    , m_buffer(new char[buffer_size])
 {
     char* b = m_buffer.get();
     setp(b, b + buffer_size);
@@ -1004,7 +1084,8 @@ inline File::Streambuf::Streambuf(File* f): m_file(*f), m_buffer(new char[buffer
 inline File::Streambuf::~Streambuf() noexcept
 {
     try {
-        if (m_file.is_attached()) flush();
+        if (m_file.is_attached())
+            flush();
     }
     catch (...) {
         // Errors deliberately ignored
@@ -1044,9 +1125,9 @@ inline void File::Streambuf::flush()
     setp(m_buffer.get(), epptr());
 }
 
-inline File::AccessError::AccessError(const std::string& msg, const std::string& path):
-    std::runtime_error(msg),
-    m_path(path)
+inline File::AccessError::AccessError(const std::string& msg, const std::string& path)
+    : std::runtime_error(msg)
+    , m_path(path)
 {
 }
 
@@ -1055,19 +1136,63 @@ inline std::string File::AccessError::get_path() const
     return m_path;
 }
 
-inline File::PermissionDenied::PermissionDenied(const std::string& msg, const std::string& path):
-    AccessError(msg, path)
+inline File::PermissionDenied::PermissionDenied(const std::string& msg, const std::string& path)
+    : AccessError(msg, path)
 {
 }
 
-inline File::NotFound::NotFound(const std::string& msg, const std::string& path):
-    AccessError(msg, path)
+inline File::NotFound::NotFound(const std::string& msg, const std::string& path)
+    : AccessError(msg, path)
 {
 }
 
-inline File::Exists::Exists(const std::string& msg, const std::string& path):
-    AccessError(msg, path)
+inline File::Exists::Exists(const std::string& msg, const std::string& path)
+    : AccessError(msg, path)
 {
+}
+
+inline bool operator==(const File::UniqueID& lhs, const File::UniqueID& rhs)
+{
+#ifdef _WIN32 // Windows version
+    throw std::runtime_error("Not yet supported");
+#else // POSIX version
+    return lhs.device == rhs.device && lhs.inode == rhs.inode;
+#endif
+}
+
+inline bool operator!=(const File::UniqueID& lhs, const File::UniqueID& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator<(const File::UniqueID& lhs, const File::UniqueID& rhs)
+{
+#ifdef _WIN32 // Windows version
+    throw std::runtime_error("Not yet supported");
+#else // POSIX version
+    if (lhs.device < rhs.device)
+        return true;
+    if (lhs.device > rhs.device)
+        return false;
+    if (lhs.inode < rhs.inode)
+        return true;
+    return false;
+#endif
+}
+
+inline bool operator>(const File::UniqueID& lhs, const File::UniqueID& rhs)
+{
+    return rhs < lhs;
+}
+
+inline bool operator<=(const File::UniqueID& lhs, const File::UniqueID& rhs)
+{
+    return !(lhs > rhs);
+}
+
+inline bool operator>=(const File::UniqueID& lhs, const File::UniqueID& rhs)
+{
+    return !(lhs < rhs);
 }
 
 } // namespace util

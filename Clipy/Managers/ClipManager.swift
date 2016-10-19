@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import Realm
+import RealmSwift
 import PINCache
 import RxCocoa
 import RxSwift
@@ -24,14 +24,14 @@ final class ClipManager: NSObject {
     private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     // Other
     private let defaults = NSUserDefaults.standardUserDefaults()
-    private let realm = RLMRealm.defaultRealm()
+    private let realm = try! Realm()
     private let pasteboard = NSPasteboard.generalPasteboard()
     // Realm Result
-    private var clipResults: RLMResults
+    private var clipResults: Results<CPYClip>
 
     // MARK: - Initialize
     override init() {
-        clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !defaults.boolForKey(Constants.UserDefaults.reorderClipsAfterPasting))
+        clipResults = realm.objects(CPYClip.self).sorted("updateTime", ascending: !defaults.boolForKey(Constants.UserDefaults.reorderClipsAfterPasting))
         super.init()
         startTimer()
     }
@@ -50,14 +50,13 @@ extension ClipManager {
     func clearAll() {
         var imagePaths = [String]()
 
-        for clipObject in clipResults {
-            if let clip = clipObject as? CPYClip where !clip.thumbnailPath.isEmpty {
-                imagePaths.append(clip.thumbnailPath)
-            }
+        clipResults.forEach { clip in
+            if clip.thumbnailPath.isEmpty { return }
+            imagePaths.append(clip.thumbnailPath)
         }
 
         imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
-        realm.transaction { realm.deleteObjects(clipResults) }
+        realm.transaction { realm.delete(clipResults) }
         HistoryManager.sharedManager.cleanDatas()
     }
 }
@@ -81,7 +80,7 @@ private extension ClipManager {
         defaults.rx_observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.New])
             .filterNil()
             .subscribeNext { [unowned self] enabled in
-                self.clipResults = CPYClip.allObjects().sortedResultsUsingProperty("updateTime", ascending: !enabled)
+                self.clipResults = self.realm.objects(CPYClip.self).sorted("updateTime", ascending: !enabled)
             }.addDisposableTo(rx_disposeBag)
     }
 }
@@ -143,7 +142,7 @@ extension ClipManager {
     private func saveClipData(data: CPYClipData) {
         let isCopySameHistory = defaults.boolForKey(Constants.UserDefaults.copySameHistory)
         // Search same history
-        if let _ = CPYClip(forPrimaryKey: "\(data.hash)") where !isCopySameHistory { return }
+        if let _ = realm.objectForPrimaryKey(CPYClip.self, key: "\(data.hash)") where !isCopySameHistory { return }
         // Dont't save empty stirng object
         if data.isOnlyStringType && data.stringValue.isEmpty { return }
 
@@ -177,7 +176,7 @@ extension ClipManager {
         if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
             if NSKeyedArchiver.archiveRootObject(data, toFile: path) {
                 realm.transaction {
-                    realm.addOrUpdateObject(clip)
+                    realm.add(clip, update: true)
                 }
             }
         }

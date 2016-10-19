@@ -3,6 +3,7 @@ disabled_rules:
   - opening_brace
   - cyclomatic_complexity
   - function_parameter_count
+  - force_try
 included:
   - Clipy
 excluded:

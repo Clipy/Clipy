@@ -23,6 +23,8 @@
 
 @class RLMResults;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RLMRealm (Dynamic)
 
 #pragma mark - Getting Objects from a Realm
@@ -88,26 +90,29 @@
  
  @see       `+[RLMObject objectForPrimaryKey:]`
  */
-- (RLMObject *)objectWithClassName:(NSString *)className forPrimaryKey:(id)primaryKey;
+- (nullable RLMObject *)objectWithClassName:(NSString *)className forPrimaryKey:(id)primaryKey;
 
 /**
  Creates an `RLMObject` instance of type `className` in the Realm, and populates it using a given object.
+ 
+ The `value` argument is used to populate the object. It can be a key-value coding compliant object, an array or
+ dictionary returned from the methods in `NSJSONSerialization`, or an array containing one element for each managed
+ property. An exception will be thrown if any required properties are not present and those properties were not defined
+ with default values.
+
+ When passing in an array as the `value` argument, all properties must be present, valid and in the same order as the
+ properties defined in the model.
 
  @warning This method is useful only in specialized circumstances, for example, when building components
           that integrate with Realm. If you are simply building an app on Realm, it is recommended to
           use `[RLMObject createInDefaultRealmWithValue:]`.
 
- @param value    The value used to populate the object. This can be any key-value coding compliant
-                 object, or an array or dictionary returned from the methods in `NSJSONSerialization`, or
-                 an `NSArray` containing one element for each persisted property. An exception will be
-                 thrown if any required properties are not present and those properties were not defined with
-                 default values.
-
-                 When passing in an `NSArray`, all properties must be present,
-                 valid and in the same order as the properties defined in the model.
+ @param value    The value used to populate the object.
 
  @return    An `RLMObject` instance of type `className`.
  */
 -(RLMObject *)createObject:(NSString *)className withValue:(id)value;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -7,19 +7,19 @@
 //
 
 import Cocoa
-import Realm
+import RealmSwift
 
-class CPYFolder: RLMObject {
+final class CPYFolder: Object {
 
     // MARK: - Properties
     dynamic var index       = 0
     dynamic var enable      = true
     dynamic var title       = ""
-    dynamic var identifier = NSUUID().UUIDString
-    dynamic var snippets    = RLMArray(objectClassName: CPYSnippet.className())
+    dynamic var identifier  = NSUUID().UUIDString
+    let snippets            = List<CPYSnippet>()
 
     // MARK: Primary Key
-    override class func primaryKey() -> String {
+    override static func primaryKey() -> String? {
         return "identifier"
     }
 
@@ -36,13 +36,13 @@ extension CPYFolder {
                 snippets.append(snippet)
             }
         } else {
-            self.snippets.sortedResultsUsingProperty("index", ascending: true).forEach {
+            self.snippets.sorted("index", ascending: true).forEach {
                 let snippet = CPYSnippet(value: $0)
                 snippets.append(snippet)
             }
         }
-        folder.snippets.removeAllObjects()
-        folder.snippets.addObjects(snippets)
+        folder.snippets.removeAll()
+        folder.snippets.appendContentsOf(snippets)
         return folder
     }
 }
@@ -57,49 +57,52 @@ extension CPYFolder {
     }
 
     func mergeSnippet(snippet: CPYSnippet) {
-        guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
+        let realm = try! Realm()
+        guard let folder = realm.objectForPrimaryKey(CPYFolder.self, key: identifier) else { return }
         let copySnippet = CPYSnippet(value: snippet)
-        folder.realm?.transaction { folder.snippets.addObject(copySnippet) }
+        folder.realm?.transaction { folder.snippets.append(copySnippet) }
     }
 
     func insertSnippet(snippet: CPYSnippet, index: Int) {
-        guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
-        guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
-        folder.realm?.transaction { folder.snippets.insertObject(savedSnippet, atIndex: UInt(index)) }
+        let realm = try! Realm()
+        guard let folder = realm.objectForPrimaryKey(CPYFolder.self, key: identifier) else { return }
+        guard let savedSnippet = realm.objectForPrimaryKey(CPYSnippet.self, key: snippet.identifier) else { return }
+        folder.realm?.transaction { folder.snippets.insert(savedSnippet, atIndex: index) }
         folder.rearrangesSnippetIndex()
     }
 
     func removeSnippet(snippet: CPYSnippet) {
-        guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
-        guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
-        folder.realm?.transaction { folder.snippets.removeObject(savedSnippet) }
+        let realm = try! Realm()
+        guard let folder = realm.objectForPrimaryKey(CPYFolder.self, key: identifier) else { return }
+        guard let savedSnippet = realm.objectForPrimaryKey(CPYSnippet.self, key: snippet.identifier), let index = folder.snippets.indexOf(savedSnippet) else { return }
+        folder.realm?.transaction { folder.snippets.removeAtIndex(index) }
         folder.rearrangesSnippetIndex()
-
     }
 }
 
 // MARK: - Add Folder
 extension CPYFolder {
     static func create() -> CPYFolder {
+        let realm = try! Realm()
         let folder = CPYFolder()
         folder.title = "untitled folder"
-        let lastFolder = CPYFolder.allObjects().sortedResultsUsingProperty("index", ascending: true).lastObject() as? CPYFolder
+        let lastFolder = realm.objects(CPYFolder.self).sorted("index", ascending: true).last
         folder.index = lastFolder?.index ?? -1
         folder.index += 1
         return folder
     }
 
     func merge() {
-        if let folder = CPYFolder(forPrimaryKey: identifier) {
+        let realm = try! Realm()
+        if let folder = realm.objectForPrimaryKey(CPYFolder.self, key: identifier) {
             folder.realm?.transaction {
                 folder.index = index
                 folder.enable = enable
                 folder.title = title
             }
         } else {
-            let realm = RLMRealm.defaultRealm()
             let copyFolder = CPYFolder(value: self)
-            realm.transaction { realm.addObject(copyFolder) }
+            realm.transaction { realm.add(copyFolder, update: true) }
         }
     }
 }
@@ -107,9 +110,10 @@ extension CPYFolder {
 // MARK: - Remove Folder
 extension CPYFolder {
     func remove() {
-        guard let folder = CPYFolder(forPrimaryKey: identifier) else { return }
-        folder.realm?.transaction { folder.realm?.deleteObjects(folder.snippets) }
-        folder.realm?.transaction { folder.realm?.deleteObject(folder) }
+        let realm = try! Realm()
+        guard let folder = realm.objectForPrimaryKey(CPYFolder.self, key: identifier) else { return }
+        folder.realm?.transaction { folder.realm?.delete(folder.snippets) }
+        folder.realm?.transaction { folder.realm?.delete(folder) }
     }
 }
 
@@ -118,7 +122,8 @@ extension CPYFolder {
     static func rearrangesIndex(folders: [CPYFolder]) {
         for (index, folder) in folders.enumerate() {
             if folder.realm == nil { folder.index = index }
-            guard let savedFolder = CPYFolder(forPrimaryKey: folder.identifier) else { return }
+            let realm = try! Realm()
+            guard let savedFolder = realm.objectForPrimaryKey(CPYFolder.self, key: folder.identifier) else { return }
             savedFolder.realm?.transaction {
                 savedFolder.index = index
             }
@@ -126,10 +131,10 @@ extension CPYFolder {
     }
 
     func rearrangesSnippetIndex() {
-        for (index, object) in snippets.enumerate() {
-            guard let snippet = object as? CPYSnippet else { return }
+        for (index, snippet) in snippets.enumerate() {
             if snippet.realm == nil { snippet.index = index }
-            guard let savedSnippet = CPYSnippet(forPrimaryKey: snippet.identifier) else { return }
+            let realm = try! Realm()
+            guard let savedSnippet = realm.objectForPrimaryKey(CPYSnippet.self, key: snippet.identifier) else { return }
             savedSnippet.realm?.transaction {
                 savedSnippet.index = index
             }

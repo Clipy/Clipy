@@ -17,6 +17,7 @@ import LoginServiceKit
 import Magnet
 import Screeen
 import RxScreeen
+import RealmSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -29,13 +30,14 @@ class AppDelegate: NSObject {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Migrate Realm
-        CPYUtilities.migrationRealm()
+        Realm.migration()
     }
 
     // MARK: - Override Methods
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            return (CPYClip.allObjects().count != 0)
+            let realm = try! Realm()
+            return !realm.objects(CPYClip.self).isEmpty
         }
         return true
     }
@@ -89,7 +91,8 @@ class AppDelegate: NSObject {
             NSBeep()
             return
         }
-        guard let clip = CPYClip(forPrimaryKey: primaryKey) else {
+        let realm = try! Realm()
+        guard let clip = realm.objectForPrimaryKey(CPYClip.self, key: primaryKey) else {
             Answers.logCustomEventWithName("Cann't fetch clip data", customAttributes: nil)
             NSBeep()
             return
@@ -106,7 +109,8 @@ class AppDelegate: NSObject {
             NSBeep()
             return
         }
-        guard let snippet = CPYSnippet(forPrimaryKey: primaryKey) else {
+        let realm = try! Realm()
+        guard let snippet = realm.objectForPrimaryKey(CPYSnippet.self, key: primaryKey) else {
             Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
             NSBeep()
             return

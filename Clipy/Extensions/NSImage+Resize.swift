@@ -61,12 +61,12 @@ extension NSImage {
             newHeight = origHeight
         }
 
-        let newImageRep = self.bestRepresentationForRect(NSMakeRect(0, 0, newWidth, newHeight), context: nil, hints: nil)
+        let newImageRep = self.bestRepresentationForRect(NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
         if newImageRep == nil {
             return nil
         }
 
-        let thumbnail = NSImage(size: NSMakeSize(newWidth, newHeight))
+        let thumbnail = NSImage(size: NSSize(width: newWidth, height: newHeight))
         thumbnail.addRepresentation(newImageRep!)
 
         return thumbnail
