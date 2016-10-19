@@ -88,7 +88,21 @@ extension PasteboardManager {
 extension PasteboardManager {
     static func paste() {
         if !NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.inputPasteCommand) { return }
+        if pasteWithAppleScript() { return }
+        pasteWithKeyEvent()
+    }
 
+    private static func pasteWithAppleScript() -> Bool {
+        guard let resource = NSBundle.mainBundle().pathForResource("paste", ofType: "scpt") else { return false }
+        guard let script = try? String(contentsOfFile: resource) else { return false }
+
+        var error: NSDictionary?
+        let appleScript = NSAppleScript(source: script)
+        appleScript?.executeAndReturnError(&error)
+        return error == nil
+    }
+
+    private static func pasteWithKeyEvent() {
         let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
         CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
         CGEventPost(.CGAnnotatedSessionEventTap, keyVDown)
