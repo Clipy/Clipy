@@ -103,6 +103,8 @@ extension PasteboardManager {
     }
 
     private static func pasteWithKeyEvent() {
+        Answers.logCustomEventWithName("Failed paste command with AppleScript", customAttributes: nil)
+
         let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
         CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
         CGEventPost(.CGAnnotatedSessionEventTap, keyVDown)
