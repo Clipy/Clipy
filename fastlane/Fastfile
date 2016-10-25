@@ -1,4 +1,4 @@
-fastlane_version "1.105.2"
+fastlane_version "1.105.3"
 
 default_platform :mac
 
@@ -25,7 +25,7 @@ platform :mac do
   end
 
   ####################### PRIVATE LANES ########################
-  
+
   private_lane :scan_clipy do
     scan(
       workspace: "Clipy.xcworkspace",
