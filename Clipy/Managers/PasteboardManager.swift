@@ -89,12 +89,15 @@ extension PasteboardManager {
     static func paste() {
         if !NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.inputPasteCommand) { return }
 
-        let keyVDown = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), true)
-        CGEventSetFlags(keyVDown, CGEventFlags.MaskCommand)
+        let source = CGEventSourceCreate(.CombinedSessionState)
+        // Press Command + V
+        let keyVDown = CGEventCreateKeyboardEvent(source, CGKeyCode(9), true)
+        CGEventSetFlags(keyVDown, .MaskCommand)
+        // Release Command + V
+        let keyVUp = CGEventCreateKeyboardEvent(source, CGKeyCode(9), false)
+        CGEventSetFlags(keyVUp, .MaskCommand)
+        // Post Paste Command
         CGEventPost(.CGAnnotatedSessionEventTap, keyVDown)
-
-        let keyVUp = CGEventCreateKeyboardEvent(nil, CGKeyCode(9), false)
-        CGEventSetFlags(keyVUp, CGEventFlags.MaskCommand)
         CGEventPost(.CGAnnotatedSessionEventTap, keyVUp)
     }
 }
