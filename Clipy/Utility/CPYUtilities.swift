@@ -16,8 +16,10 @@ final class CPYUtilities {
     static func initSDKs() {
         // Fabric
         NSUserDefaults.standardUserDefaults().registerDefaults(["NSApplicationCrashOnExceptions": true])
-        Fabric.with([Answers.self, Crashlytics.self])
-        Answers.logCustomEventWithName("applicationDidFinishLaunching", customAttributes: nil)
+        if NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.collectCrashReport) {
+            Fabric.with([Answers.self, Crashlytics.self])
+            CPYUtilities.sendCustomLog(with: "applicationDidFinishLaunching")
+        }
     }
 
     static func registerUserDefaultKeys() {
@@ -33,6 +35,7 @@ final class CPYUtilities {
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: Constants.UserDefaults.storeTypes)
         defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.inputPasteCommand)
         defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.collectCrashReport)
 
         /* Menu */
         defaultValues.updateValue(NSNumber(integer: 16), forKey: Constants.UserDefaults.menuIconSize)
@@ -101,6 +104,12 @@ final class CPYUtilities {
                     try fileManager.removeItemAtPath(path)
                 } catch { }
             }
+        }
+    }
+
+    static func sendCustomLog(with name: String) {
+        if NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.collectCrashReport) {
+            Answers.logCustomEventWithName(name, customAttributes: nil)
         }
     }
 }

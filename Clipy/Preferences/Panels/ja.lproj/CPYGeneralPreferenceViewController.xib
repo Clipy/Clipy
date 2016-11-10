@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner">
@@ -13,11 +13,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="321"/>
+            <rect key="frame" x="0.0" y="0.0" width="480" height="346"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="el7-aR-A2S" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="266" width="297" height="18"/>
+                    <rect key="frame" x="59" y="291" width="297" height="18"/>
                     <buttonCell key="cell" type="check" title="ログイン時に起動" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Su3-mF-z1T">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -27,7 +27,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vCQ-Oh-Jf7" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="244" width="297" height="18"/>
+                    <rect key="frame" x="59" y="269" width="297" height="18"/>
                     <buttonCell key="cell" type="check" title="メニュー項目選択後に &quot;⌘ + V&quot; を入力" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="0yt-u0-ROt">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -37,7 +37,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="Aum-MH-ep1">
-                    <rect key="frame" x="59" y="292" width="210" height="17"/>
+                    <rect key="frame" x="59" y="317" width="210" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="動作" id="nDk-8y-89n">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -45,7 +45,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="bPn-Ta-y2W">
-                    <rect key="frame" x="59" y="214" width="210" height="17"/>
+                    <rect key="frame" x="59" y="222" width="210" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="クリップボード履歴" id="OOT-F5-Pal">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -53,7 +53,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="6VU-dp-Epr">
-                    <rect key="frame" x="371" y="184" width="39" height="14"/>
+                    <rect key="frame" x="371" y="192" width="39" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="eeq-cw-v00">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -61,7 +61,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xqV-G6-XbY">
-                    <rect key="frame" x="322" y="184" width="44" height="22"/>
+                    <rect key="frame" x="322" y="192" width="44" height="22"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="Gdr-ac-Sdi">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="nMe-68-qB0">
                             <decimal key="minimum" value="1"/>
@@ -75,7 +75,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="249" translatesAutoresizingMaskIntoConstraints="NO" id="brY-3U-2fh">
-                    <rect key="frame" x="59" y="186" width="253" height="18"/>
+                    <rect key="frame" x="59" y="194" width="253" height="18"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="記憶する履歴の数:" id="Nab-CO-ytH">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -83,7 +83,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="192" translatesAutoresizingMaskIntoConstraints="NO" id="O1y-G2-LAu">
-                    <rect key="frame" x="60" y="160" width="196" height="18"/>
+                    <rect key="frame" x="60" y="168" width="196" height="18"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="履歴のソート順:" id="Lps-06-dPB">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -91,7 +91,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8XZ-NR-0QN">
-                    <rect key="frame" x="258" y="155" width="150" height="26"/>
+                    <rect key="frame" x="258" y="163" width="150" height="26"/>
                     <popUpButtonCell key="cell" type="push" title="最終使用日" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ju3-6a-6xj" id="OT4-9P-YiO">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -107,7 +107,7 @@
                     </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="CR1-tn-jHf">
-                    <rect key="frame" x="59" y="126" width="210" height="17"/>
+                    <rect key="frame" x="59" y="134" width="210" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="アピアランス" id="FM4-mw-DCx">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -115,7 +115,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jEa-zd-juz">
-                    <rect key="frame" x="258" y="94" width="78" height="26"/>
+                    <rect key="frame" x="258" y="102" width="78" height="26"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="1N9-cv-ChQ" id="Zdh-dV-1hf">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -138,7 +138,7 @@
                     </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="193" translatesAutoresizingMaskIntoConstraints="NO" id="FPr-bp-NVR">
-                    <rect key="frame" x="59" y="99" width="197" height="17"/>
+                    <rect key="frame" x="59" y="107" width="197" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ステータスバー・アイコン:" id="Faj-kQ-G1v">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -146,7 +146,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="24" translatesAutoresizingMaskIntoConstraints="NO" id="Fvb-rC-1Qh">
-                    <rect key="frame" x="371" y="12" width="28" height="14"/>
+                    <rect key="frame" x="371" y="20" width="28" height="14"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="秒" id="xtQ-vh-HoL">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -154,7 +154,7 @@
                     </textFieldCell>
                 </textField>
                 <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mPF-PU-kvM">
-                    <rect key="frame" x="62" y="11" width="264" height="19"/>
+                    <rect key="frame" x="62" y="19" width="264" height="18"/>
                     <sliderCell key="cell" controlSize="small" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" numberOfTickMarks="5" allowsTickMarkValuesOnly="YES" sliderType="linear" id="NfD-sY-blq">
                         <font key="font" size="12" name="Helvetica"/>
                     </sliderCell>
@@ -163,7 +163,7 @@
                     </connections>
                 </slider>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="357" translatesAutoresizingMaskIntoConstraints="NO" id="AAI-Eh-BRT">
-                    <rect key="frame" x="59" y="40" width="361" height="17"/>
+                    <rect key="frame" x="59" y="48" width="361" height="17"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="クリップボードを監視する間隔:" id="Aqs-BR-w78">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -171,7 +171,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="8rR-NT-hW2">
-                    <rect key="frame" x="59" y="67" width="210" height="17"/>
+                    <rect key="frame" x="59" y="75" width="210" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="時間間隔" id="QaC-dW-fxS">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
@@ -179,7 +179,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="34" translatesAutoresizingMaskIntoConstraints="NO" id="oIY-3y-RoQ">
-                    <rect key="frame" x="332" y="12" width="38" height="17"/>
+                    <rect key="frame" x="332" y="20" width="38" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="0" id="nem-Kv-v3a">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="BBd-hN-6iY">
                             <real key="minimum" value="0.0"/>
@@ -193,8 +193,18 @@
                         <binding destination="Rq0-bo-cst" name="value" keyPath="values.kCPYPrefTimeIntervalKey" id="ul6-yv-sCq"/>
                     </connections>
                 </textField>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l9L-rY-sFN" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                    <rect key="frame" x="60" y="247" width="422" height="18"/>
+                    <buttonCell key="cell" type="check" title="クラッシュレポートやエラーログを送信する(次回起動時に反映)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="6qE-X9-WfN">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="Rq0-bo-cst" name="value" keyPath="values.kCPYCollectCrashReport" id="Gow-0V-uzb"/>
+                    </connections>
+                </button>
             </subviews>
-            <point key="canvasLocation" x="503" y="577.5"/>
+            <point key="canvasLocation" x="503" y="590"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="Rq0-bo-cst"/>
     </objects>
