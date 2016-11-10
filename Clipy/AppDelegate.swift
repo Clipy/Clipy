@@ -8,7 +8,6 @@
 
 import Cocoa
 import Sparkle
-import Crashlytics
 import RxCocoa
 import RxSwift
 import RxOptional
@@ -85,15 +84,15 @@ class AppDelegate: NSObject {
     }
 
     func selectClipMenuItem(sender: NSMenuItem) {
-        Answers.logCustomEventWithName("selectClipMenuItem", customAttributes: nil)
+        CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
-            Answers.logCustomEventWithName("Cann't fetch clip primary key", customAttributes: nil)
+            CPYUtilities.sendCustomLog(with: "Cannot fetch clip primary key")
             NSBeep()
             return
         }
         let realm = try! Realm()
         guard let clip = realm.objectForPrimaryKey(CPYClip.self, key: primaryKey) else {
-            Answers.logCustomEventWithName("Cann't fetch clip data", customAttributes: nil)
+            CPYUtilities.sendCustomLog(with: "Cannot fetch clip data")
             NSBeep()
             return
         }
@@ -103,15 +102,15 @@ class AppDelegate: NSObject {
     }
 
     func selectSnippetMenuItem(sender: AnyObject) {
-        Answers.logCustomEventWithName("selectSnippetMenuItem", customAttributes: nil)
+        CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
-            Answers.logCustomEventWithName("Cann't fetch snippet primary key", customAttributes: nil)
+            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
             NSBeep()
             return
         }
         let realm = try! Realm()
         guard let snippet = realm.objectForPrimaryKey(CPYSnippet.self, key: primaryKey) else {
-            Answers.logCustomEventWithName("Cann't fetch snippet data", customAttributes: nil)
+            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
             NSBeep()
             return
         }
@@ -163,11 +162,11 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        // SDKs
-        CPYUtilities.initSDKs()
-
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
+
+        // SDKs
+        CPYUtilities.initSDKs()
 
         // Regist Hotkeys
         HotKeyManager.sharedManager.setupDefaultHoyKey()
