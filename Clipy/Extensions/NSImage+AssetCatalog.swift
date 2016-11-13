@@ -25,12 +25,6 @@ extension NSImage {
         case SnippetsIconFolder         = "snippets_icon_folder_blue"
         case SnippetsIconFolderWhite    = "snippets_icon_folder_white"
 
-        // SettingTabIcons
-        case Menu               = "Menu"
-        case IconApplication    = "icon_application"
-        case IconKeyboard       = "PTKeyboardIcon"
-        case IconSparkle        = "SparkleIcon"
-
         // Preferences
         case GeneralOff     = "pref_general"
         case MenuOff        = "pref_menu"
