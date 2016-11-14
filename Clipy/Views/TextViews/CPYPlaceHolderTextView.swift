@@ -11,7 +11,7 @@ import Cocoa
 class CPYPlaceHolderTextView: NSTextView {
 
     // MARK: - Properties
-    @IBInspectable var placeHolderColor: NSColor = .disabledControlTextColor() {
+    @IBInspectable var placeHolderColor: NSColor = .disabledControlTextColor {
         didSet {
             needsDisplay = true
         }
@@ -26,17 +26,17 @@ class CPYPlaceHolderTextView: NSTextView {
     }
 
     // MARK: - Draw
-    override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
         if placeHolderText.isEmpty { return }
-        if let string = string where !string.isEmpty { return }
+        if let string = string, !string.isEmpty { return }
 
         let text = placeHolderText as NSString
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = .ByTruncatingTail
-        paragraphStyle.baseWritingDirection = .LeftToRight
-        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(14), NSForegroundColorAttributeName: placeHolderColor, NSParagraphStyleAttributeName: paragraphStyle]
-        text.drawAtPoint(NSPoint(x: 5, y: 5), withAttributes: attributes)
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        paragraphStyle.baseWritingDirection = .leftToRight
+        let attributes: [String: Any] = [NSFontAttributeName: NSFont.systemFont(ofSize: 14), NSForegroundColorAttributeName: placeHolderColor, NSParagraphStyleAttributeName: paragraphStyle]
+        text.draw(at: NSPoint(x: 5, y: 5), withAttributes: attributes)
     }
 
 }

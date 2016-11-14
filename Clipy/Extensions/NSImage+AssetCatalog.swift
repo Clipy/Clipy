@@ -44,8 +44,8 @@ extension NSImage {
     }
 
     // MARK: - Initialize
-    convenience init!(assetIdentifier: AssetIdentifier) {
-        self.init(named: assetIdentifier.rawValue)
+    convenience init(assetIdentifier: AssetIdentifier) {
+        self.init(named: assetIdentifier.rawValue)!
     }
 
 }

@@ -15,62 +15,62 @@ final class CPYUtilities {
 
     static func initSDKs() {
         // Fabric
-        NSUserDefaults.standardUserDefaults().registerDefaults(["NSApplicationCrashOnExceptions": true])
-        if NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.collectCrashReport) {
+        UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
+        if UserDefaults.standard.bool(forKey: Constants.UserDefaults.collectCrashReport) {
             Fabric.with([Answers.self, Crashlytics.self])
             CPYUtilities.sendCustomLog(with: "applicationDidFinishLaunching")
         }
     }
 
     static func registerUserDefaultKeys() {
-        var defaultValues = [String: AnyObject]()
+        var defaultValues = [String: Any]()
 
         defaultValues.updateValue(HotKeyManager.defaultHotKeyCombos(), forKey: Constants.UserDefaults.hotKeys)
         /* General */
-        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.loginItem)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
-        defaultValues.updateValue(NSNumber(integer: 30), forKey: Constants.UserDefaults.maxHistorySize)
-        defaultValues.updateValue(NSNumber(integer: 1), forKey: Constants.UserDefaults.showStatusItem)
-        defaultValues.updateValue(NSNumber(float: 0.75), forKey: Constants.UserDefaults.timeInterval)
+        defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.loginItem)
+        defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+        defaultValues.updateValue(NSNumber(value: 30), forKey: Constants.UserDefaults.maxHistorySize)
+        defaultValues.updateValue(NSNumber(value: 1), forKey: Constants.UserDefaults.showStatusItem)
+        defaultValues.updateValue(NSNumber(value: 0.75), forKey: Constants.UserDefaults.timeInterval)
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: Constants.UserDefaults.storeTypes)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.inputPasteCommand)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.reorderClipsAfterPasting)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.collectCrashReport)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.inputPasteCommand)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.collectCrashReport)
 
         /* Menu */
-        defaultValues.updateValue(NSNumber(integer: 16), forKey: Constants.UserDefaults.menuIconSize)
-        defaultValues.updateValue(NSNumber(integer: 20), forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        defaultValues.updateValue(NSNumber(integer: 0), forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
-        defaultValues.updateValue(NSNumber(integer: 10), forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.addClearHistoryMenuItem)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showIconInTheMenu)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.UserDefaults.addNumericKeyEquivalents)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.showImageInTheMenu)
-        defaultValues.updateValue(NSNumber(integer: 200), forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        defaultValues.updateValue(NSNumber(integer: 100), forKey: Constants.UserDefaults.thumbnailWidth)
-        defaultValues.updateValue(NSNumber(integer: 32), forKey: Constants.UserDefaults.thumbnailHeight)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.overwriteSameHistory)
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.UserDefaults.copySameHistory)
+        defaultValues.updateValue(NSNumber(value: 16), forKey: Constants.UserDefaults.menuIconSize)
+        defaultValues.updateValue(NSNumber(value: 20), forKey: Constants.UserDefaults.maxMenuItemTitleLength)
+        defaultValues.updateValue(NSNumber(value: 0), forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
+        defaultValues.updateValue(NSNumber(value: 10), forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
+        defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.addClearHistoryMenuItem)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.showIconInTheMenu)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
+        defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.addNumericKeyEquivalents)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.showToolTipOnMenuItem)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.showImageInTheMenu)
+        defaultValues.updateValue(NSNumber(value: 200), forKey: Constants.UserDefaults.maxLengthOfToolTip)
+        defaultValues.updateValue(NSNumber(value: 100), forKey: Constants.UserDefaults.thumbnailWidth)
+        defaultValues.updateValue(NSNumber(value: 32), forKey: Constants.UserDefaults.thumbnailHeight)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.overwriteSameHistory)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.copySameHistory)
 
         /* Updates */
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.Update.enableAutomaticCheck)
-        defaultValues.updateValue(NSNumber(int: 86400), forKey: Constants.Update.checkInterval)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.Update.enableAutomaticCheck)
+        defaultValues.updateValue(NSNumber(value: 86400), forKey: Constants.Update.checkInterval)
 
         /* Beta */
-        defaultValues.updateValue(NSNumber(bool: true), forKey: Constants.Beta.pastePlainText)
-        defaultValues.updateValue(NSNumber(integer: 0), forKey: Constants.Beta.pastePlainTextModifier)
-        defaultValues.updateValue(NSNumber(bool: false), forKey: Constants.Beta.observerScreenshot)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.Beta.pastePlainText)
+        defaultValues.updateValue(NSNumber(value: 0), forKey: Constants.Beta.pastePlainTextModifier)
+        defaultValues.updateValue(NSNumber(value: false), forKey: Constants.Beta.observerScreenshot)
 
-        NSUserDefaults.standardUserDefaults().registerDefaults(defaultValues)
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.register(defaults: defaultValues)
+        UserDefaults.standard.synchronize()
     }
 
     static func applicationSupportFolder() -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)
+        let paths = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
         var basePath: String!
         if paths.count > 0 {
             basePath = paths.first
@@ -78,16 +78,16 @@ final class CPYUtilities {
             basePath = NSTemporaryDirectory()
         }
 
-        return (basePath as NSString).stringByAppendingPathComponent(Constants.Application.name)
+        return (basePath as NSString).appendingPathComponent(Constants.Application.name)
     }
 
-    static func prepareSaveToPath(path: String) -> Bool {
-        let fileManager = NSFileManager.defaultManager()
+    static func prepareSaveToPath(_ path: String) -> Bool {
+        let fileManager = FileManager.default
         var isDir: ObjCBool = false
 
-        if (fileManager.fileExistsAtPath(path, isDirectory: &isDir) && isDir) == false {
+        if (fileManager.fileExists(atPath: path, isDirectory: &isDir) && isDir.boolValue) == false {
             do {
-                try fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 return false
             }
@@ -95,21 +95,21 @@ final class CPYUtilities {
         return true
     }
 
-    static func deleteData(path: String) {
+    static func deleteData(_ path: String) {
         autoreleasepool { () -> () in
-            let fileManager = NSFileManager.defaultManager()
+            let fileManager = FileManager.default
             var isDir: ObjCBool = false
-            if fileManager.fileExistsAtPath(path, isDirectory: &isDir) {
+            if fileManager.fileExists(atPath: path, isDirectory: &isDir) {
                 do {
-                    try fileManager.removeItemAtPath(path)
+                    try fileManager.removeItem(atPath: path)
                 } catch { }
             }
         }
     }
 
     static func sendCustomLog(with name: String) {
-        if NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.collectCrashReport) {
-            Answers.logCustomEventWithName(name, customAttributes: nil)
+        if UserDefaults.standard.bool(forKey: Constants.UserDefaults.collectCrashReport) {
+            Answers.logCustomEvent(withName: name, customAttributes: nil)
         }
     }
 }

@@ -38,8 +38,8 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet weak var updatesButton: NSButton!
     @IBOutlet weak var betaButton: NSButton!
     // ViewController
-    private let defaults = NSUserDefaults.standardUserDefaults()
-    private let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
+    fileprivate let defaults = UserDefaults.standard
+    fileprivate let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
                                   NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
                                   CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
                                   CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil)!,
@@ -50,22 +50,22 @@ final class CPYPreferencesWindowController: NSWindowController {
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
-        self.window?.collectionBehavior = .CanJoinAllSpaces
+        self.window?.collectionBehavior = .canJoinAllSpaces
         self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
         toolBarItemTapped(generalButton)
-        generalButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
-        menuButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
-        typeButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
-        excludeButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
-        shortcutsButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
-        updatesButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
-        betaButton.sendActionOn(Int(NSEventMask.LeftMouseDownMask.rawValue))
+        generalButton.sendAction(on: .leftMouseDown)
+        menuButton.sendAction(on:.leftMouseDown)
+        typeButton.sendAction(on: .leftMouseDown)
+        excludeButton.sendAction(on: .leftMouseDown)
+        shortcutsButton.sendAction(on: .leftMouseDown)
+        updatesButton.sendAction(on: .leftMouseDown)
+        betaButton.sendAction(on: .leftMouseDown)
     }
 
-    override func showWindow(sender: AnyObject?) {
+    override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
         window?.makeKeyAndOrderFront(self)
     }
@@ -73,7 +73,7 @@ final class CPYPreferencesWindowController: NSWindowController {
 
 // MARK: - IBActions
 extension CPYPreferencesWindowController {
-    @IBAction func toolBarItemTapped(sender: NSButton) {
+    @IBAction func toolBarItemTapped(_ sender: NSButton) {
         selectedTab(sender.tag)
         switchView(sender.tag)
     }
@@ -81,20 +81,20 @@ extension CPYPreferencesWindowController {
 
 // MARK: - NSWindow Delegate
 extension CPYPreferencesWindowController: NSWindowDelegate {
-    func windowWillClose(notification: NSNotification) {
+    func windowWillClose(_ notification: Notification) {
         if let viewController = viewController[2] as? CPYTypePreferenceViewController {
-           defaults.setObject(viewController.storeTypes, forKey: Constants.UserDefaults.storeTypes)
+            defaults.set(viewController.storeTypes, forKey: Constants.UserDefaults.storeTypes)
             defaults.synchronize()
         }
-        if let window = window where !window.makeFirstResponder(window) {
-            window.endEditingFor(nil)
+        if let window = window, !window.makeFirstResponder(window) {
+            window.endEditing(for: nil)
         }
         NSApp.deactivate()
     }
 }
 
 // MARK: - Layout
-private extension CPYPreferencesWindowController {
+fileprivate extension CPYPreferencesWindowController {
     private func resetImages() {
         generalImageView.image      = NSImage(assetIdentifier: .GeneralOff)
         menuImageView.image         = NSImage(assetIdentifier: .MenuOff)
@@ -113,7 +113,7 @@ private extension CPYPreferencesWindowController {
         betaTextField.textColor         = NSColor.tabTitleColor()
     }
 
-    private func selectedTab(index: Int) {
+    func selectedTab(_ index: Int) {
         resetImages()
 
         switch index {
@@ -142,7 +142,7 @@ private extension CPYPreferencesWindowController {
         }
     }
 
-    private func switchView(index: Int) {
+    fileprivate func switchView(_ index: Int) {
         let newView = viewController[index].view
         // Remove current views without toolbar
         window?.contentView?.subviews.forEach { view in
@@ -152,7 +152,7 @@ private extension CPYPreferencesWindowController {
         }
         // Resize view
         let frame = window!.frame
-        var newFrame = window!.frameRectForContentRect(newView.frame)
+        var newFrame = window!.frameRect(forContentRect: newView.frame)
         newFrame.origin = frame.origin
         newFrame.origin.y +=  frame.height - newFrame.height - toolBar.frame.height
         newFrame.size.height += toolBar.frame.height

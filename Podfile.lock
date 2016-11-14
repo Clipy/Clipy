@@ -8,8 +8,6 @@ PODS:
   - LoginServiceKit (1.0.0)
   - Magnet (2.0.0)
   - Nimble (5.1.1)
-  - NSObject+Rx (2.0.0):
-    - RxSwift
   - PINCache (2.3)
   - Quick (0.10.0)
   - Realm (2.0.3):
@@ -37,7 +35,6 @@ DEPENDENCIES:
   - KeyHolder
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
   - Nimble
-  - NSObject+Rx
   - PINCache
   - Quick
   - RealmSwift
@@ -64,7 +61,6 @@ SPEC CHECKSUMS:
   LoginServiceKit: 7433d75d42dd0d8047f2d428b2de453c58947d3d
   Magnet: b30d2807dd0d8a349ce4e6574ecefa38012d02ca
   Nimble: 415e3aa3267e7bc2c96b05fa814ddea7bb686a29
-  NSObject+Rx: 2a9cd801d9c847e6d2486cbad8d7701b67834e70
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
   Quick: 5d290df1c69d5ee2f0729956dcf0fd9a30447eaa
   Realm: 5f008bfe3c8c47142eddfc30b8c1584cde22db24
@@ -76,6 +72,6 @@ SPEC CHECKSUMS:
   Screeen: 07f3593d9941d7a9546f081e4f775ce85d974447
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
 
-PODFILE CHECKSUM: 514e290f9afcf1a9f9aad14f8bfa80aa2537ae52
+PODFILE CHECKSUM: b55f99fb3c5fd6f6efabc88c9fdf99f2d6f9448d
 
 COCOAPODS: 1.1.1

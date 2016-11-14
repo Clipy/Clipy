@@ -12,7 +12,7 @@ import Cocoa
 final class CPYSnippetsEditorCell: NSTextFieldCell {
 
     // MARK: - Properties
-    var iconType = IconType.Folder
+    var iconType = IconType.folder
     var isItemEnabled = false
     override var cellSize: NSSize {
         var size = super.cellSize
@@ -22,73 +22,73 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
 
     // MARK: - Enums
     enum IconType {
-        case Folder, None
+        case folder, none
     }
 
     // MARK: - Initialize
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        font = NSFont.systemFontOfSize(14)
+    required init(coder: NSCoder) {
+        super.init(coder: coder)
+        font = NSFont.systemFont(ofSize: 14)
     }
 
-    override func copyWithZone(zone: NSZone) -> AnyObject {
-        guard let cell = super.copyWithZone(zone) as? CPYSnippetsEditorCell else { return super.copyWithZone(zone) }
+    override func copy(with zone: NSZone?) -> Any {
+        guard let cell = super.copy(with: zone) as? CPYSnippetsEditorCell else { return super.copy(with: zone) }
         cell.iconType = iconType
         return cell
     }
 
     // MARK: - Draw
-    override func drawWithFrame(cellFrame: NSRect, inView controlView: NSView) {
+    override func draw(withFrame cellFrame: NSRect, in controlView: NSView) {
         var newFrame: NSRect
         switch iconType {
-        case .Folder:
+        case .folder:
 
             var imageFrame = NSRect.zero
             var cellFrame = cellFrame
-            NSDivideRect(cellFrame, &imageFrame, &cellFrame, 15, .MinX)
+            NSDivideRect(cellFrame, &imageFrame, &cellFrame, 15, .minX)
             imageFrame.origin.x += 5
             imageFrame.origin.y += 5
             imageFrame.size = NSSize(width: 16, height: 13)
 
-            let drawImage = (highlighted) ? NSImage(assetIdentifier: .SnippetsIconFolderWhite) : NSImage(assetIdentifier: .SnippetsIconFolder)
+            let drawImage = (isHighlighted) ? NSImage(assetIdentifier: .SnippetsIconFolderWhite) : NSImage(assetIdentifier: .SnippetsIconFolder)
             drawImage.size = NSSize(width: 16, height: 13)
-            drawImage.drawInRect(imageFrame, fromRect: NSRect.zero, operation: .CompositeSourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
+            drawImage.draw(in: imageFrame, from: NSRect.zero, operation: .sourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
 
             newFrame = cellFrame
             newFrame.origin.x += 8
             newFrame.origin.y += 2
             newFrame.size.height -= 2
-        case .None:
+        case .none:
             newFrame = cellFrame
             newFrame.origin.y += 2
             newFrame.size.height -= 2
         }
 
-        textColor = (!isItemEnabled) ? .lightGrayColor() : (highlighted) ? .whiteColor() : .titleColor()
+        textColor = (!isItemEnabled) ? .lightGray : (isHighlighted) ? .white : .titleColor()
 
-        super.drawWithFrame(newFrame, inView: controlView)
+        super.draw(withFrame: newFrame, in: controlView)
     }
 
     // MARK: - Frame
-    override func selectWithFrame(aRect: NSRect, inView controlView: NSView, editor textObj: NSText, delegate anObject: AnyObject?, start selStart: Int, length selLength: Int) {
-        let textFrame = titleRectForBounds(aRect)
+    override func select(withFrame aRect: NSRect, in controlView: NSView, editor textObj: NSText, delegate anObject: Any?, start selStart: Int, length selLength: Int) {
+        let textFrame = titleRect(forBounds: aRect)
         textColor = .titleColor()
-        super.selectWithFrame(textFrame, inView: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
+        super.select(withFrame: textFrame, in: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
     }
 
-    override func editWithFrame(aRect: NSRect, inView controlView: NSView, editor textObj: NSText, delegate anObject: AnyObject?, event theEvent: NSEvent) {
-        let textFrame = titleRectForBounds(aRect)
-        super.editWithFrame(textFrame, inView: controlView, editor: textObj, delegate: anObject, event: theEvent)
+    override func edit(withFrame aRect: NSRect, in controlView: NSView, editor textObj: NSText, delegate anObject: Any?, event theEvent: NSEvent?) {
+        let textFrame = titleRect(forBounds: aRect)
+        super.edit(withFrame: textFrame, in: controlView, editor: textObj, delegate: anObject, event: theEvent)
     }
 
-    override func titleRectForBounds(theRect: NSRect) -> NSRect {
+    override func titleRect(forBounds theRect: NSRect) -> NSRect {
         switch iconType {
-        case .Folder:
+        case .folder:
 
             var imageFrame = NSRect.zero
             var cellRect = NSRect.zero
 
-            NSDivideRect(theRect, &imageFrame, &cellRect, 15, .MinX)
+            NSDivideRect(theRect, &imageFrame, &cellRect, 15, .minX)
 
             imageFrame.origin.x += 5
             imageFrame.origin.y += 4
@@ -103,7 +103,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
 
             return newFrame
 
-        case .None:
+        case .none:
             var newFrame = theRect
             newFrame.origin.y += 2
             newFrame.size.height -= 2

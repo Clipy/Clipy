@@ -12,7 +12,6 @@ target 'Clipy' do
   pod 'Crashlytics'
   pod 'RxCocoa'
   pod 'RxSwift'
-  pod 'NSObject+Rx'
   pod 'RxOptional'
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'

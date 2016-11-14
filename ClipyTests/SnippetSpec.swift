@@ -7,7 +7,7 @@ class SnippetSpec: QuickSpec {
     override func spec() {
 
         beforeEach {
-            Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().UUIDString
+            Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().uuidString
         }
 
         describe("Sync database") { 

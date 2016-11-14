@@ -16,7 +16,7 @@ class CPYUpdatesPreferenceViewController: NSViewController {
     // MARK: - Initialize
     override func loadView() {
         super.loadView()
-        if let versionString = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as? String {
+        if let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
             versionTextField.stringValue = "v\(versionString)"
         }
     }

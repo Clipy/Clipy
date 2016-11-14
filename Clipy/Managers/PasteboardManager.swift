@@ -13,21 +13,21 @@ import Crashlytics
 final class PasteboardManager {
     // MARK: - Properties
     static let sharedManager = PasteboardManager()
-    private let pasteboard = NSPasteboard.generalPasteboard()
-    private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
-    private let defaults = NSUserDefaults.standardUserDefaults()
-    private var isPastePlainText: Bool {
+    fileprivate let pasteboard = NSPasteboard.general()
+    fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
+    fileprivate let defaults = UserDefaults.standard
+    fileprivate var isPastePlainText: Bool {
         guard let flags = NSApp.currentEvent?.modifierFlags else { return false }
-        if !defaults.boolForKey(Constants.Beta.pastePlainText) { return false }
+        if !defaults.bool(forKey: Constants.Beta.pastePlainText) { return false }
 
-        let modifierSetting = defaults.integerForKey(Constants.Beta.pastePlainTextModifier)
-        if modifierSetting == 0 && flags.contains(.CommandKeyMask) {
+        let modifierSetting = defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
+        if modifierSetting == 0 && flags.contains(.command) {
             return true
-        } else if modifierSetting == 1 && flags.contains(.ShiftKeyMask) {
+        } else if modifierSetting == 1 && flags.contains(.shift) {
             return true
-        } else if modifierSetting == 2 && flags.contains(.ControlKeyMask) {
+        } else if modifierSetting == 2 && flags.contains(.control) {
             return true
-        } else if modifierSetting == 3 && flags.contains(.AlternateKeyMask) {
+        } else if modifierSetting == 3 && flags.contains(.option) {
             return true
         }
         return false
@@ -36,16 +36,16 @@ final class PasteboardManager {
 
 // MARK: - Copy
 extension PasteboardManager {
-    func copyStringToPasteboard(aString: String) {
+    func copyStringToPasteboard(_ aString: String) {
         lock.lock()
         pasteboard.declareTypes([NSStringPboardType], owner: self)
         pasteboard.setString(aString, forType: NSStringPboardType)
         lock.unlock()
     }
 
-    func copyClipToPasteboard(clip: CPYClip) {
+    func copyClipToPasteboard(_ clip: CPYClip) {
         lock.lock()
-        if let data = NSKeyedUnarchiver.unarchiveObjectWithFile(clip.dataPath) as? CPYClipData {
+        if let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData {
             let types = data.types
             let isPastePlainText = self.isPastePlainText
             pasteboard.declareTypes(types, owner: self)
@@ -63,8 +63,8 @@ extension PasteboardManager {
                         pasteboard.setData(rtfData, forType: NSRTFPboardType)
                     }
                 case NSPDFPboardType:
-                    if let pdfData = data.PDF, pdfRep = NSPDFImageRep(data: pdfData) {
-                        pasteboard.setData(pdfRep.PDFRepresentation, forType: NSPDFPboardType)
+                    if let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) {
+                        pasteboard.setData(pdfRep.pdfRepresentation, forType: NSPDFPboardType)
                     }
                 case NSFilenamesPboardType:
                     let fileNames = data.fileNames
@@ -73,7 +73,7 @@ extension PasteboardManager {
                     let url = data.URLs
                     pasteboard.setPropertyList(url, forType: NSURLPboardType)
                 case NSTIFFPboardType:
-                    if let image = data.image, imageData = image.TIFFRepresentation {
+                    if let image = data.image, let imageData = image.tiffRepresentation {
                         pasteboard.setData(imageData, forType: NSTIFFPboardType)
                     }
                 default: break
@@ -87,17 +87,17 @@ extension PasteboardManager {
 // MARK: - Paste
 extension PasteboardManager {
     static func paste() {
-        if !NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.inputPasteCommand) { return }
+        if !UserDefaults.standard.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
 
-        let source = CGEventSourceCreate(.CombinedSessionState)
+        let source = CGEventSource(stateID: .combinedSessionState)
         // Press Command + V
-        let keyVDown = CGEventCreateKeyboardEvent(source, CGKeyCode(9), true)
-        CGEventSetFlags(keyVDown, .MaskCommand)
+        let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: true)
+        keyVDown?.flags = .maskCommand
         // Release Command + V
-        let keyVUp = CGEventCreateKeyboardEvent(source, CGKeyCode(9), false)
-        CGEventSetFlags(keyVUp, .MaskCommand)
+        let keyVUp = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: false)
+        keyVUp?.flags = .maskCommand
         // Post Paste Command
-        CGEventPost(.CGAnnotatedSessionEventTap, keyVDown)
-        CGEventPost(.CGAnnotatedSessionEventTap, keyVUp)
+        keyVDown?.post(tap: .cgAnnotatedSessionEventTap)
+        keyVUp?.post(tap: .cgAnnotatedSessionEventTap)
     }
 }

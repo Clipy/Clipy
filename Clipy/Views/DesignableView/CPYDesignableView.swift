@@ -12,12 +12,12 @@ import Cocoa
 @IBDesignable class CPYDesignableView: NSView {
 
     // MARK: - Properties
-    @IBInspectable var backgroundColor: NSColor = NSColor.clearColor() {
+    @IBInspectable var backgroundColor: NSColor = .clear {
         didSet {
             needsDisplay = true
         }
     }
-    @IBInspectable var borderColor: NSColor = NSColor.clearColor() {
+    @IBInspectable var borderColor: NSColor = .clear {
         didSet {
             needsDisplay = true
         }
@@ -46,7 +46,7 @@ import Cocoa
     }
 
     // MARK: - Update
-    override func drawRect(dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: NSRect) {
         // Background
         backgroundColor.setFill()
         NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius).fill()

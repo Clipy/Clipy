@@ -10,7 +10,7 @@ import Foundation
 import Cocoa
 
 extension NSImage {
-    func resizeImage(width: CGFloat, _ height: CGFloat) -> NSImage? {
+    func resizeImage(_ width: CGFloat, _ height: CGFloat) -> NSImage? {
 
         let representations = self.representations
         var bitmapRep: NSBitmapImageRep?
@@ -61,7 +61,7 @@ extension NSImage {
             newHeight = origHeight
         }
 
-        let newImageRep = self.bestRepresentationForRect(NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
+        let newImageRep = self.bestRepresentation(for: NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
         if newImageRep == nil {
             return nil
         }

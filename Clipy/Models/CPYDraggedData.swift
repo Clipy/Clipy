@@ -18,7 +18,7 @@ final class CPYDraggedData: NSObject, NSCoding {
 
     // MARK: - Enums
     enum DragType: Int {
-        case Folder, Snippet
+        case folder, snippet
     }
 
     // MARK: - Initialize
@@ -32,17 +32,17 @@ final class CPYDraggedData: NSObject, NSCoding {
 
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        self.type               = DragType(rawValue: aDecoder.decodeIntegerForKey("type")) ?? .Folder
-        self.folderIdentifier   = aDecoder.decodeObjectForKey("folderIdentifier") as? String
-        self.snippetIdentifier  = aDecoder.decodeObjectForKey("snippetIdentifier") as? String
-        self.index              = aDecoder.decodeIntegerForKey("index")
+        self.type               = DragType(rawValue: aDecoder.decodeInteger(forKey: "type")) ?? .folder
+        self.folderIdentifier   = aDecoder.decodeObject(forKey: "folderIdentifier") as? String
+        self.snippetIdentifier  = aDecoder.decodeObject(forKey: "snippetIdentifier") as? String
+        self.index              = aDecoder.decodeInteger(forKey: "index")
         super.init()
     }
 
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeInteger(type.rawValue, forKey: "type")
-        aCoder.encodeObject(folderIdentifier, forKey: "folderIdentifier")
-        aCoder.encodeObject(snippetIdentifier, forKey: "snippetIdentifier")
-        aCoder.encodeInteger(index, forKey: "index")
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(type.rawValue, forKey: "type")
+        aCoder.encode(folderIdentifier, forKey: "folderIdentifier")
+        aCoder.encode(snippetIdentifier, forKey: "snippetIdentifier")
+        aCoder.encode(index, forKey: "index")
     }
 }

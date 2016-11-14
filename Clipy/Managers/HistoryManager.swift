@@ -14,10 +14,10 @@ final class HistoryManager: NSObject {
     // MARK: - Properties
     static let sharedManager = HistoryManager()
     // Timer
-    private var cleanHistotyTimer: NSTimer?
+    fileprivate var cleanHistotyTimer: Timer?
     // Other
-    private let realm = try! Realm()
-    private let defaults = NSUserDefaults.standardUserDefaults()
+    fileprivate let realm = try! Realm()
+    fileprivate let defaults = UserDefaults.standard
 
     // MARK: - Initialize
     deinit {
@@ -38,44 +38,44 @@ extension HistoryManager {
 
     func cleanDatas() {
         let allClips = realm.objects(CPYClip.self)
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
         do {
-            let dataPathList = try fileManager.contentsOfDirectoryAtPath(CPYUtilities.applicationSupportFolder())
+            let dataPathList = try fileManager.contentsOfDirectory(atPath: CPYUtilities.applicationSupportFolder())
             for path in dataPathList {
                 var isExist = false
                 for clip in allClips {
-                    if !clip.invalidated {
-                        if let clipPath = clip.dataPath.componentsSeparatedByString("/").last where clipPath == path {
+                    if !clip.isInvalidated {
+                        if let clipPath = clip.dataPath.components(separatedBy: "/").last, clipPath == path {
                             isExist = true
                             break
                         }
                     }
                 }
                 if !isExist {
-                    CPYUtilities.deleteData((CPYUtilities.applicationSupportFolder() as NSString).stringByAppendingPathComponent(path))
+                    CPYUtilities.deleteData((CPYUtilities.applicationSupportFolder() as NSString).appendingPathComponent(path))
                 }
             }
         } catch { }
     }
 
-    private func trimHistory() {
-        let clips = realm.objects(CPYClip.self).sorted("updateTime", ascending: false)
-        let maxHistorySize = defaults.integerForKey(Constants.UserDefaults.maxHistorySize)
+    fileprivate func trimHistory() {
+        let clips = realm.objects(CPYClip.self).sorted(byProperty: "updateTime", ascending: false)
+        let maxHistorySize = defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
 
         if maxHistorySize < Int(clips.count) {
             let lastClip = clips[maxHistorySize - 1]
-            if !lastClip.invalidated {
+            if !lastClip.isInvalidated {
 
                 let lastUsedAt = lastClip.updateTime
                 let results = realm.objects(CPYClip.self).filter("updateTime < %d", lastUsedAt)
                 var imagePaths = [String]()
                 for clip in results {
-                    if !clip.invalidated && !clip.thumbnailPath.isEmpty {
+                    if !clip.isInvalidated && !clip.thumbnailPath.isEmpty {
                         imagePaths.append(clip.thumbnailPath)
                     }
                 }
 
-                imagePaths.forEach { PINCache.sharedCache().removeObjectForKey($0) }
+                imagePaths.forEach { PINCache.shared().removeObject(forKey: $0) }
                 realm.transaction {
                     realm.delete(results)
                 }
@@ -87,19 +87,19 @@ extension HistoryManager {
 
 // MARK: - Timer
 private extension HistoryManager {
-    private func startTimer() {
+    func startTimer() {
         stopTimer()
         // Clean clip data history every 30 minutes
-        cleanHistotyTimer = NSTimer(timeInterval: 60 * 30,
+        cleanHistotyTimer = Timer(timeInterval: 60 * 30,
                                     target: self,
                                     selector: #selector(HistoryManager.cleanHistory),
                                     userInfo: nil,
                                     repeats: true)
-        NSRunLoop.currentRunLoop().addTimer(cleanHistotyTimer!, forMode: NSRunLoopCommonModes)
+        RunLoop.current.add(cleanHistotyTimer!, forMode: RunLoopMode.commonModes)
     }
 
-    private func stopTimer() {
-        if let timer = cleanHistotyTimer where timer.valid {
+    func stopTimer() {
+        if let timer = cleanHistotyTimer, timer.isValid {
             cleanHistotyTimer?.invalidate()
             cleanHistotyTimer = nil
         }
