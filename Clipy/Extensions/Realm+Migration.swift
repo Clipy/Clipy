@@ -34,18 +34,22 @@ extension Realm {
                     newObject!["updateTime"] = oldObject!["updateTime"]
                     newObject!["thumbnailPath"] = oldObject!["thumbnailPath"]
                 })
-                migration.enumerate(CPYFolder.className(), { (oldObject, newObject) in
-                    newObject!["index"] = oldObject!["index"]
-                    newObject!["enable"] = oldObject!["enable"]
-                    newObject!["title"] = oldObject!["title"]
-                    newObject!["identifier"] = oldObject!["identifier"]
-                })
                 migration.enumerate(CPYSnippet.className(), { (oldObject, newObject) in
                     newObject!["index"] = oldObject!["index"]
                     newObject!["enable"] = oldObject!["enable"]
                     newObject!["title"] = oldObject!["title"]
                     newObject!["content"] = oldObject!["content"]
-                    newObject!["identifier"] = oldObject!["identifier"]
+                    if oldSchemaVersion >= 3 {
+                        newObject!["identifier"] = oldObject!["identifier"]
+                    }
+                })
+                migration.enumerate(CPYFolder.className(), { (oldObject, newObject) in
+                    newObject!["index"] = oldObject!["index"]
+                    newObject!["enable"] = oldObject!["enable"]
+                    newObject!["title"] = oldObject!["title"]
+                    if oldSchemaVersion >= 5 {
+                        newObject!["identifier"] = oldObject!["identifier"]
+                    }
                 })
             }
         })
