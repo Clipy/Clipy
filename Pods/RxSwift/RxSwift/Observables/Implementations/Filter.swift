@@ -1,6 +1,6 @@
 //
 //  Filter.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 2/17/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -12,29 +12,27 @@ class FilterSink<O : ObserverType>: Sink<O>, ObserverType {
     typealias Predicate = (Element) throws -> Bool
     typealias Element = O.E
     
-    typealias Parent = Filter<Element>
-    
     private let _predicate: Predicate
     
-    init(predicate: Predicate, observer: O) {
+    init(predicate: @escaping Predicate, observer: O, cancel: Cancelable) {
         _predicate = predicate
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
     
-    func on(event: Event<Element>) {
+    func on(_ event: Event<Element>) {
         switch event {
-            case .Next(let value):
+            case .next(let value):
                 do {
                     let satisfies = try _predicate(value)
                     if satisfies {
-                        forwardOn(.Next(value))
+                        forwardOn(.next(value))
                     }
                 }
                 catch let e {
-                    forwardOn(.Error(e))
+                    forwardOn(.error(e))
                     dispose()
                 }
-            case .Completed, .Error:
+            case .completed, .error:
                 forwardOn(event)
                 dispose()
         }
@@ -47,14 +45,14 @@ class Filter<Element> : Producer<Element> {
     private let _source: Observable<Element>
     private let _predicate: Predicate
     
-    init(source: Observable<Element>, predicate: Predicate) {
+    init(source: Observable<Element>, predicate: @escaping Predicate) {
         _source = source
         _predicate = predicate
     }
     
-    override func run<O: ObserverType where O.E == Element>(observer: O) -> Disposable {
-        let sink = FilterSink(predicate: _predicate, observer: observer)
-        sink.disposable = _source.subscribe(sink)
-        return sink
+    override func run<O: ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == Element {
+        let sink = FilterSink(predicate: _predicate, observer: observer, cancel: cancel)
+        let subscription = _source.subscribe(sink)
+        return (sink: sink, subscription: subscription)
     }
 }

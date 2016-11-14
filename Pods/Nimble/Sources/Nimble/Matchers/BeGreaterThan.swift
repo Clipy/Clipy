@@ -2,19 +2,22 @@ import Foundation
 
 
 /// A Nimble matcher that succeeds when the actual value is greater than the expected value.
-public func beGreaterThan<T: Comparable>(expectedValue: T?) -> NonNilMatcherFunc<T> {
+public func beGreaterThan<T: Comparable>(_ expectedValue: T?) -> NonNilMatcherFunc<T> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be greater than <\(stringify(expectedValue))>"
-        return try actualExpression.evaluate() > expectedValue
+        if let actual = try actualExpression.evaluate(), let expected = expectedValue {
+            return actual > expected
+        }
+        return false
     }
 }
 
 /// A Nimble matcher that succeeds when the actual value is greater than the expected value.
-public func beGreaterThan(expectedValue: NMBComparable?) -> NonNilMatcherFunc<NMBComparable> {
+public func beGreaterThan(_ expectedValue: NMBComparable?) -> NonNilMatcherFunc<NMBComparable> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be greater than <\(stringify(expectedValue))>"
         let actualValue = try actualExpression.evaluate()
-        let matches = actualValue != nil && actualValue!.NMB_compare(expectedValue) == NSComparisonResult.OrderedDescending
+        let matches = actualValue != nil && actualValue!.NMB_compare(expectedValue) == ComparisonResult.orderedDescending
         return matches
     }
 }
@@ -29,7 +32,7 @@ public func >(lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
 
 #if _runtime(_ObjC)
 extension NMBObjCMatcher {
-    public class func beGreaterThanMatcher(expected: NMBComparable?) -> NMBObjCMatcher {
+    public class func beGreaterThanMatcher(_ expected: NMBComparable?) -> NMBObjCMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
             let expr = actualExpression.cast { $0 as? NMBComparable }
             return try! beGreaterThan(expected).matches(expr, failureMessage: failureMessage)

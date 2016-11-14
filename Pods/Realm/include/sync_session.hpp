@@ -110,6 +110,8 @@ private:
     bool is_inactive() const;
     // }
 
+    bool can_wait_for_network_completion() const;
+
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
     void set_error_handler(std::function<SyncSessionErrorHandler>);
     void nonsync_transact_notify(VersionID::version_type);

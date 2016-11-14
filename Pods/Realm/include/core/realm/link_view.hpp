@@ -177,7 +177,7 @@ inline LinkView::LinkView(const ctor_cookie&, Table* origin_table, LinkListColum
     Array& root = *m_row_indexes.get_root_array();
     root.set_parent(&column, row_ndx);
     if (ref_type ref = root.get_ref_from_parent())
-        root.init_from_ref(ref);
+        m_row_indexes.init_from_ref(column.get_alloc(), ref);
 }
 
 inline std::shared_ptr<LinkView> LinkView::create(Table* origin_table, LinkListColumn& column, size_t row_ndx)

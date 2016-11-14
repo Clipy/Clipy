@@ -8,6 +8,8 @@
 #import <UIKit/UIKit.h>
 #endif
 
+#import <pthread.h>
+
 #define PINDiskCacheError(error) if (error) { NSLog(@"%@ (%d) ERROR: %@", \
 [[NSString stringWithUTF8String:__FILE__] lastPathComponent], \
 __LINE__, [error localizedDescription]); }
@@ -23,16 +25,21 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
 - (void)end;
 @end
 
-@interface PINDiskCache ()
+typedef NS_ENUM(NSUInteger, PINDiskCacheCondition) {
+    PINDiskCacheConditionNotReady = 0,
+    PINDiskCacheConditionReady = 1,
+};
+
+@interface PINDiskCache () {
+    NSConditionLock *_instanceLock;
+}
 
 @property (assign) NSUInteger byteCount;
 @property (strong, nonatomic) NSURL *cacheURL;
 #if OS_OBJECT_USE_OBJC
 @property (strong, nonatomic) dispatch_queue_t asyncQueue;
-@property (strong, nonatomic) dispatch_semaphore_t lockSemaphore;
 #else
 @property (assign, nonatomic) dispatch_queue_t asyncQueue;
-@property (assign, nonatomic) dispatch_semaphore_t lockSemaphore;
 #endif
 @property (strong, nonatomic) NSMutableDictionary *dates;
 @property (strong, nonatomic) NSMutableDictionary *sizes;
@@ -50,12 +57,15 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
 @synthesize ageLimit = _ageLimit;
 @synthesize ttlCache = _ttlCache;
 
+#if TARGET_OS_IPHONE
+@synthesize writingProtectionOption = _writingProtectionOption;
+#endif
+
 #pragma mark - Initialization -
 
 - (void)dealloc
 {
 #if !OS_OBJECT_USE_OBJC
-    dispatch_release(_lockSemaphore);
     dispatch_release(_asyncQueue);
     _asyncQueue = nil;
 #endif
@@ -80,7 +90,7 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     if (self = [super init]) {
         _name = [name copy];
         _asyncQueue = dispatch_queue_create([[NSString stringWithFormat:@"%@ Asynchronous Queue", PINDiskCachePrefix] UTF8String], DISPATCH_QUEUE_CONCURRENT);
-        _lockSemaphore = dispatch_semaphore_create(1);
+        _instanceLock = [[NSConditionLock alloc] initWithCondition:PINDiskCacheConditionNotReady];
         _willAddObjectBlock = nil;
         _willRemoveObjectBlock = nil;
         _willRemoveAllObjectsBlock = nil;
@@ -91,7 +101,11 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
         _byteCount = 0;
         _byteLimit = 0;
         _ageLimit = 0.0;
-        
+      
+        #if TARGET_OS_IPHONE
+          _writingProtectionOption = NSDataWritingFileProtectionNone;
+        #endif
+      
         _dates = [[NSMutableDictionary alloc] init];
         _sizes = [[NSMutableDictionary alloc] init];
         
@@ -99,13 +113,12 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
         _cacheURL = [NSURL fileURLWithPathComponents:@[ rootPath, pathComponent ]];
         
         //we don't want to do anything without setting up the disk cache, but we also don't want to block init, it can take a while to initialize
-        //this is only safe because we use a dispatch_semaphore as a lock. If we switch to an NSLock or posix locks, this will *no longer be safe*.
-        [self lock];
         dispatch_async(_asyncQueue, ^{
-            [self createCacheDirectory];
-            [self initializeDiskProperties];
-
-            [self unlock];
+            //should always be able to aquire the lock unless the below code is running.
+            [_instanceLock lockWhenCondition:PINDiskCacheConditionNotReady];
+                [self createCacheDirectory];
+                [self initializeDiskProperties];
+            [_instanceLock unlockWithCondition:PINDiskCacheConditionReady];
         });
     }
     return self;
@@ -113,7 +126,7 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
 
 - (NSString *)description
 {
-    return [[NSString alloc] initWithFormat:@"%@.%@.%p", PINDiskCachePrefix, _name, self];
+    return [[NSString alloc] initWithFormat:@"%@.%@.%p", PINDiskCachePrefix, _name, (void *)self];
 }
 
 + (instancetype)sharedCache
@@ -243,9 +256,9 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
 
 + (void)emptyTrash
 {
-    PINBackgroundTask *task = [PINBackgroundTask start];
-    
     dispatch_async([self sharedTrashQueue], ^{
+        PINBackgroundTask *task = [PINBackgroundTask start];
+        
         NSError *searchTrashedItemsError = nil;
         NSArray *trashedItems = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[self sharedTrashURL]
                                                               includingPropertiesForKeys:nil
@@ -449,6 +462,19 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     });
 }
 
+- (void)containsObjectForKey:(NSString *)key block:(PINDiskCacheContainsBlock)block
+{
+    if (!key || !block)
+        return;
+    
+    __weak PINDiskCache *weakSelf = self;
+    
+    dispatch_async(_asyncQueue, ^{
+        PINDiskCache *strongSelf = weakSelf;
+        block([strongSelf containsObjectForKey:key]);
+    });
+}
+
 - (void)objectForKey:(NSString *)key block:(PINDiskCacheObjectBlock)block
 {
     __weak PINDiskCache *weakSelf = self;
@@ -607,9 +633,19 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     }
 }
 
+- (BOOL)containsObjectForKey:(NSString *)key
+{
+    return ([self fileURLForKey:key updateFileModificationDate:NO] != nil);
+}
+
 - (__nullable id<NSCoding>)objectForKey:(NSString *)key
 {
     return [self objectForKey:key fileURL:nil];
+}
+
+- (id)objectForKeyedSubscript:(NSString *)key
+{
+    return [self objectForKey:key];
 }
 
 - (__nullable id <NSCoding>)objectForKey:(NSString *)key fileURL:(NSURL **)outFileURL
@@ -650,21 +686,27 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     return object;
 }
 
+/// Helper function to call fileURLForKey:updateFileModificationDate:
 - (NSURL *)fileURLForKey:(NSString *)key
 {
-    NSDate *now = [[NSDate alloc] init];
-    
-    if (!key)
+    // Don't update the file modification time, if self is a ttlCache
+    return [self fileURLForKey:key updateFileModificationDate:!self->_ttlCache];
+}
+
+- (NSURL *)fileURLForKey:(NSString *)key updateFileModificationDate:(BOOL)updateFileModificationDate
+{
+    if (!key) {
         return nil;
+    }
     
+    NSDate *now = [[NSDate alloc] init];
     NSURL *fileURL = nil;
     
     [self lock];
         fileURL = [self encodedFileURLForKey:key];
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:[fileURL path]]) {
-            // Don't update the file modification time, if self is a ttlCache
-            if (!self->_ttlCache) {
+            if (updateFileModificationDate) {
                 [self setFileModificationDate:now forURL:fileURL];
             }
         } else {
@@ -679,6 +721,11 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     [self setObject:object forKey:key fileURL:nil];
 }
 
+- (void)setObject:(id)object forKeyedSubscript:(NSString *)key
+{
+    [self setObject:object forKey:key];
+}
+
 - (void)setObject:(id <NSCoding>)object forKey:(NSString *)key fileURL:(NSURL **)outFileURL
 {
     NSDate *now = [[NSDate alloc] init];
@@ -688,6 +735,12 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     
     PINBackgroundTask *task = [PINBackgroundTask start];
     
+    #if TARGET_OS_IPHONE
+      NSDataWritingOptions writeOptions = NSDataWritingAtomic | self.writingProtectionOption;
+    #else
+      NSDataWritingOptions writeOptions = NSDataWritingAtomic;
+    #endif
+  
     NSURL *fileURL = nil;
     
     [self lock];
@@ -695,8 +748,12 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
         
         if (self->_willAddObjectBlock)
             self->_willAddObjectBlock(self, key, object, fileURL);
-        
-        BOOL written = [NSKeyedArchiver archiveRootObject:object toFile:[fileURL path]];
+  
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object];
+        NSError *writeError = nil;
+  
+        BOOL written = [data writeToURL:fileURL options:writeOptions error:&writeError];
+        PINDiskCacheError(writeError);
         
         if (written) {
             [self setFileModificationDate:now forURL:fileURL];
@@ -1094,14 +1151,42 @@ static NSString * const PINDiskCacheSharedName = @"PINDiskCacheShared";
     });
 }
 
+#if TARGET_OS_IPHONE
+- (NSDataWritingOptions)writingProtectionOption {
+    NSDataWritingOptions option;
+  
+    [self lock];
+        option = _writingProtectionOption;
+    [self unlock];
+  
+    return option;
+}
+
+- (void)setWritingProtectionOption:(NSDataWritingOptions)writingProtectionOption {
+  __weak PINDiskCache *weakSelf = self;
+  
+  dispatch_async(_asyncQueue, ^{
+    PINDiskCache *strongSelf = weakSelf;
+    if (!strongSelf)
+      return;
+    
+    NSDataWritingOptions option = NSDataWritingFileProtectionMask & writingProtectionOption;
+    
+    [strongSelf lock];
+    strongSelf->_writingProtectionOption = option;
+    [strongSelf unlock];
+  });
+}
+#endif
+
 - (void)lock
 {
-    dispatch_semaphore_wait(_lockSemaphore, DISPATCH_TIME_FOREVER);
+    [_instanceLock lockWhenCondition:PINDiskCacheConditionReady];
 }
 
 - (void)unlock
 {
-    dispatch_semaphore_signal(_lockSemaphore);
+    [_instanceLock unlockWithCondition:PINDiskCacheConditionReady];
 }
 
 @end

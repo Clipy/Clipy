@@ -1,10 +1,10 @@
+import Dispatch
 import Foundation
 
-#if _runtime(_ObjC)
 private enum ErrorResult {
-    case Exception(NSException)
-    case Error(ErrorType)
-    case None
+    case exception(NSException)
+    case error(Error)
+    case none
 }
 
 /// Only classes, protocols, methods, properties, and subscript declarations can be
@@ -12,71 +12,77 @@ private enum ErrorResult {
 /// asynchronous waiting logic so that it may be called from Objective-C and Swift.
 internal class NMBWait: NSObject {
     internal class func until(
-        timeout timeout: NSTimeInterval,
+        timeout: TimeInterval,
         file: FileString = #file,
         line: UInt = #line,
-        action: (() -> Void) -> Void) -> Void {
-            return throwableUntil(timeout: timeout, file: file, line: line) { (done: () -> Void) throws -> Void in
-                action() { done() }
+        action: @escaping (@escaping () -> Void) -> Void) -> Void {
+            return throwableUntil(timeout: timeout, file: file, line: line) { done in
+                action(done)
             }
     }
 
     // Using a throwable closure makes this method not objc compatible.
     internal class func throwableUntil(
-        timeout timeout: NSTimeInterval,
+        timeout: TimeInterval,
         file: FileString = #file,
         line: UInt = #line,
-        action: (() -> Void) throws -> Void) -> Void {
+        action: @escaping (@escaping () -> Void) throws -> Void) -> Void {
             let awaiter = NimbleEnvironment.activeInstance.awaiter
             let leeway = timeout / 2.0
-            let result = awaiter.performBlock { (done: (ErrorResult) -> Void) throws -> Void in
-                dispatch_async(dispatch_get_main_queue()) {
+            let result = awaiter.performBlock { (done: @escaping (ErrorResult) -> Void) throws -> Void in
+                DispatchQueue.main.async {
                     let capture = NMBExceptionCapture(
                         handler: ({ exception in
-                            done(.Exception(exception))
+                            done(.exception(exception))
                         }),
                         finally: ({ })
                     )
                     capture.tryBlock {
                         do {
                             try action() {
-                                done(.None)
+                                done(.none)
                             }
                         } catch let e {
-                            done(.Error(e))
+                            done(.error(e))
                         }
                     }
                 }
             }.timeout(timeout, forcefullyAbortTimeout: leeway).wait("waitUntil(...)", file: file, line: line)
 
             switch result {
-            case .Incomplete: internalError("Reached .Incomplete state for waitUntil(...).")
-            case .BlockedRunLoop:
+            case .incomplete: internalError("Reached .incomplete state for waitUntil(...).")
+            case .blockedRunLoop:
                 fail(blockedRunLoopErrorMessageFor("-waitUntil()", leeway: leeway),
                     file: file, line: line)
-            case .TimedOut:
+            case .timedOut:
                 let pluralize = (timeout == 1 ? "" : "s")
                 fail("Waited more than \(timeout) second\(pluralize)", file: file, line: line)
-            case let .RaisedException(exception):
+            case let .raisedException(exception):
                 fail("Unexpected exception raised: \(exception)")
-            case let .ErrorThrown(error):
+            case let .errorThrown(error):
                 fail("Unexpected error thrown: \(error)")
-            case .Completed(.Exception(let exception)):
+            case .completed(.exception(let exception)):
                 fail("Unexpected exception raised: \(exception)")
-            case .Completed(.Error(let error)):
+            case .completed(.error(let error)):
                 fail("Unexpected error thrown: \(error)")
-            case .Completed(.None): // success
+            case .completed(.none): // success
                 break
             }
     }
 
+    #if _runtime(_ObjC)
     @objc(untilFile:line:action:)
-    internal class func until(file: FileString = #file, line: UInt = #line, action: (() -> Void) -> Void) -> Void {
+    internal class func until(_ file: FileString = #file, line: UInt = #line, action: @escaping (() -> Void) -> Void) -> Void {
         until(timeout: 1, file: file, line: line, action: action)
     }
+    #else
+    internal class func until(_ file: FileString = #file, line: UInt = #line, action: @escaping (() -> Void) -> Void) -> Void {
+        until(timeout: 1, file: file, line: line, action: action)
+    }
+    #endif
 }
 
-internal func blockedRunLoopErrorMessageFor(fnName: String, leeway: NSTimeInterval) -> String {
+internal func blockedRunLoopErrorMessageFor(_ fnName: String, leeway: TimeInterval) -> String {
     return "\(fnName) timed out but was unable to run the timeout handler because the main thread is unresponsive (\(leeway) seconds is allow after the wait times out). Conditions that may cause this include processing blocking IO on the main thread, calls to sleep(), deadlocks, and synchronous IPC. Nimble forcefully stopped run loop which may cause future failures in test run."
 }
 
@@ -87,7 +93,6 @@ internal func blockedRunLoopErrorMessageFor(fnName: String, leeway: NSTimeInterv
 /// 
 /// This function manages the main run loop (`NSRunLoop.mainRunLoop()`) while this function
 /// is executing. Any attempts to touch the run loop may cause non-deterministic behavior.
-public func waitUntil(timeout timeout: NSTimeInterval = 1, file: FileString = #file, line: UInt = #line, action: (() -> Void) -> Void) -> Void {
+public func waitUntil(timeout: TimeInterval = 1, file: FileString = #file, line: UInt = #line, action: @escaping (@escaping () -> Void) -> Void) -> Void {
     NMBWait.until(timeout: timeout, file: file, line: line, action: action)
 }
-#endif

@@ -11,15 +11,15 @@ import Foundation
 ///
 /// nil arguments indicates that the matcher should not attempt to match against
 /// that parameter.
-public func throwError<T: ErrorType>(
-    error: T? = nil,
+public func throwError<T: Error>(
+    _ error: T? = nil,
     errorType: T.Type? = nil,
     closure: ((T) -> Void)? = nil) -> MatcherFunc<Any> {
         return MatcherFunc { actualExpression, failureMessage in
 
-            var actualError: ErrorType?
+            var actualError: Error?
             do {
-                try actualExpression.evaluate()
+                _ = try actualExpression.evaluate()
             } catch let catchedError {
                 actualError = catchedError
             }
@@ -33,16 +33,16 @@ public func throwError<T: ErrorType>(
 /// error or when the passed closures' arbitrary custom matching succeeds.
 ///
 /// This duplication to it's generic adequate is required to allow to receive
-/// values of the existential type ErrorType in the closure.
+/// values of the existential type `Error` in the closure.
 ///
 /// The closure only gets called when an error was thrown.
 public func throwError(
-    closure closure: ((ErrorType) -> Void)? = nil) -> MatcherFunc<Any> {
+    closure: ((Error) -> Void)? = nil) -> MatcherFunc<Any> {
         return MatcherFunc { actualExpression, failureMessage in
             
-            var actualError: ErrorType?
+            var actualError: Error?
             do {
-                try actualExpression.evaluate()
+                _ = try actualExpression.evaluate()
             } catch let catchedError {
                 actualError = catchedError
             }

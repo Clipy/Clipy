@@ -55,7 +55,7 @@ static NSString * const PINMemoryCachePrefix = @"com.pinterest.PINMemoryCache";
 {
     if (self = [super init]) {
         _lockSemaphore = dispatch_semaphore_create(1);
-        NSString *queueName = [[NSString alloc] initWithFormat:@"%@.%p", PINMemoryCachePrefix, self];
+        NSString *queueName = [[NSString alloc] initWithFormat:@"%@.%p", PINMemoryCachePrefix, (void *)self];
         _concurrentQueue = dispatch_queue_create([queueName UTF8String], DISPATCH_QUEUE_CONCURRENT);
 
         _dictionary = [[NSMutableDictionary alloc] init];
@@ -270,6 +270,21 @@ static NSString * const PINMemoryCachePrefix = @"com.pinterest.PINMemoryCache";
 
 #pragma mark - Public Asynchronous Methods -
 
+- (void)containsObjectForKey:(NSString *)key block:(PINMemoryCacheContainmentBlock)block
+{
+    if (!key || !block)
+        return;
+    
+    __weak PINMemoryCache *weakSelf = self;
+    
+    dispatch_async(_concurrentQueue, ^{
+        PINMemoryCache *strongSelf = weakSelf;
+        BOOL containsObject = [strongSelf containsObjectForKey:key];
+        
+        block(containsObject);
+    });
+}
+
 - (void)objectForKey:(NSString *)key block:(PINMemoryCacheObjectBlock)block
 {
     __weak PINMemoryCache *weakSelf = self;
@@ -381,6 +396,17 @@ static NSString * const PINMemoryCachePrefix = @"com.pinterest.PINMemoryCache";
 
 #pragma mark - Public Synchronous Methods -
 
+- (BOOL)containsObjectForKey:(NSString *)key
+{
+    if (!key)
+        return NO;
+    
+    [self lock];
+        BOOL containsObject = (_dictionary[key] != nil);
+    [self unlock];
+    return containsObject;
+}
+
 - (__nullable id)objectForKey:(NSString *)key
 {
     if (!key)
@@ -404,9 +430,19 @@ static NSString * const PINMemoryCachePrefix = @"com.pinterest.PINMemoryCache";
     return object;
 }
 
+- (id)objectForKeyedSubscript:(NSString *)key
+{
+    return [self objectForKey:key];
+}
+
 - (void)setObject:(id)object forKey:(NSString *)key
 {
     [self setObject:object forKey:key withCost:0];
+}
+
+- (void)setObject:(id)object forKeyedSubscript:(NSString *)key
+{
+    [self setObject:object forKey:key];
 }
 
 - (void)setObject:(id)object forKey:(NSString *)key withCost:(NSUInteger)cost
@@ -424,6 +460,10 @@ static NSString * const PINMemoryCachePrefix = @"com.pinterest.PINMemoryCache";
         willAddObjectBlock(self, key, object);
     
     [self lock];
+        NSNumber* oldCost = _costs[key];
+        if (oldCost)
+            _totalCost -= [oldCost unsignedIntegerValue];
+
         _dictionary[key] = object;
         _dates[key] = [[NSDate alloc] init];
         _costs[key] = @(cost);

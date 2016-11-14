@@ -6,11 +6,11 @@ import RxSwift
 
 public extension ObservableType where E: OptionalType {
     /**
-     Unwrap and filter out nil values.
+     Unwraps and filters out `nil` elements.
 
-     - returns: Observbale of only successfully unwrapped values.
+     - returns: `Observable` of source `Observable`'s elements, with `nil` elements filtered out.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
+    
     public func filterNil() -> Observable<E.Wrapped> {
         return self.flatMap { element -> Observable<E.Wrapped> in
             guard let value = element.value else {
@@ -21,15 +21,16 @@ public extension ObservableType where E: OptionalType {
     }
 
     /**
-     Unwraps optional and if finds nil emmits error.
+     Throws an error if the source `Observable` contains an empty element; otherwise returns original source `Observable` of non-empty elements.
 
-     - parameter error: Error to emit when nil if found. Defaults to
-     `RxOptionalError.FoundNilWhileUnwrappingOptional`
+     - parameter error: error to throw when an empty element is encountered. Defaults to `RxOptionalError.FoundNilWhileUnwrappingOptional`.
 
-     - returns: Observable of unwrapped value or Error.
+     - throws: `error` if an empty element is encountered.
+
+     - returns: original source `Observable` of non-empty elements if it contains no empty elements.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func errorOnNil(error: ErrorType = RxOptionalError.FoundNilWhileUnwrappingOptional(E.self)) -> Observable<E.Wrapped> {
+    
+    public func errorOnNil(_ error: Error = RxOptionalError.foundNilWhileUnwrappingOptional(E.self)) -> Observable<E.Wrapped> {
         return self.map { element -> E.Wrapped in
             guard let value = element.value else {
                 throw error
@@ -39,14 +40,14 @@ public extension ObservableType where E: OptionalType {
     }
 
     /**
-     Unwraps optional and replace nil values with value.
+     Unwraps optional elements and replaces `nil` elements with `valueOnNil`.
 
-     - parameter valueOnNil: Value to emit when nil is found.
+     - parameter valueOnNil: value to use when `nil` is encountered.
 
-     - returns: Observable of unwrapped value or nilValue.
+     - returns: `Observable` of the source `Observable`'s unwrapped elements, with `nil` elements replaced by `valueOnNil`.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func replaceNilWith(valueOnNil: E.Wrapped) -> Observable<E.Wrapped> {
+    
+    public func replaceNilWith(_ valueOnNil: E.Wrapped) -> Observable<E.Wrapped> {
         return self.map { element -> E.Wrapped in
             guard let value = element.value else {
                 return valueOnNil
@@ -56,21 +57,35 @@ public extension ObservableType where E: OptionalType {
     }
 
     /**
-     Unwraps element and passes value if not nil. When nil uses handler to call another Observable
+     Unwraps optional elements and replaces `nil` elements with result returned by `handler`.
 
-     - parameter handler: Nil handler function, producing another Observable.
+     - parameter handler: `nil` handler throwing function that returns `Observable` of non-`nil` elements.
 
-     - returns: Observable containing the source sequence's elements,
-     followed by the elements produced by the handler's resulting observable
-     sequence in case an nil was found while unwrapping.
+     - returns: `Observable` of the source `Observable`'s unwrapped elements, with `nil` elements replaced by the handler's returned non-`nil` elements.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func catchOnNil(handler: () throws -> Observable<E.Wrapped>) -> Observable<E.Wrapped> {
+    
+    public func catchOnNil(_ handler: @escaping () throws -> Observable<E.Wrapped>) -> Observable<E.Wrapped> {
         return self.flatMap { element -> Observable<E.Wrapped> in
             guard let value = element.value else {
                 return try handler()
             }
             return Observable<E.Wrapped>.just(value)
+        }
+    }
+}
+
+public extension ObservableType where E: OptionalType, E.Wrapped: Equatable {
+    /**
+     Returns an observable sequence that contains only distinct contiguous elements according to equality operator.
+     
+     - seealso: [distinct operator on reactivex.io](http://reactivex.io/documentation/operators/distinct.html)
+     
+     - returns: An observable sequence only containing the distinct contiguous elements, based on equality operator, from the source sequence.
+     */
+    
+    public func distinctUntilChanged() -> Observable<Self.E> {
+        return self.distinctUntilChanged { (lhs, rhs) -> Bool in
+            return lhs.value == rhs.value
         }
     }
 }

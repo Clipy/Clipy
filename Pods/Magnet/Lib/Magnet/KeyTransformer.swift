@@ -13,74 +13,74 @@ public final class KeyTransformer {}
 
 // MARK: - Cocoa & Carbon
 public extension KeyTransformer {
-    public static func carbonToCocoaFlags(carbonFlags: Int) -> NSEventModifierFlags {
+    public static func cocoaFlags(from carbonFlags: Int) -> NSEventModifierFlags {
         var cocoaFlags: NSEventModifierFlags = NSEventModifierFlags(rawValue: 0)
 
         if (carbonFlags & cmdKey) != 0 {
-            cocoaFlags.insert(.CommandKeyMask)
+            cocoaFlags.insert(.command)
         }
         if (carbonFlags & optionKey) != 0 {
-            cocoaFlags.insert(.AlternateKeyMask)
+            cocoaFlags.insert(.option)
         }
         if (carbonFlags & controlKey) != 0 {
-            cocoaFlags.insert(.ControlKeyMask)
+            cocoaFlags.insert(.control)
         }
         if (carbonFlags & shiftKey) != 0 {
-            cocoaFlags.insert(.ShiftKeyMask)
+            cocoaFlags.insert(.shift)
         }
 
         return cocoaFlags
     }
 
-    public static func cocoaToCarbonFlags(cocoaFlags: NSEventModifierFlags) -> Int {
+    public static func carbonFlags(from cocoaFlags: NSEventModifierFlags) -> Int {
         var carbonFlags: Int = 0
 
-        if cocoaFlags.contains(.CommandKeyMask) {
+        if cocoaFlags.contains(.command) {
             carbonFlags |= cmdKey
         }
-        if cocoaFlags.contains(.AlternateKeyMask) {
+        if cocoaFlags.contains(.option) {
             carbonFlags |= optionKey
         }
-        if cocoaFlags.contains(.ControlKeyMask) {
+        if cocoaFlags.contains(.control) {
             carbonFlags |= controlKey
         }
-        if cocoaFlags.contains(.ShiftKeyMask) {
+        if cocoaFlags.contains(.shift) {
             carbonFlags |= shiftKey
         }
 
         return carbonFlags
     }
 
-    public static func supportedCarbonFlags(carbonFlags: Int) -> Bool {
-        return carbonToCocoaFlags(carbonFlags).rawValue != 0
+    public static func supportedCarbonFlags(_ carbonFlags: Int) -> Bool {
+        return cocoaFlags(from: carbonFlags).rawValue != 0
     }
 
-    public static func supportedCocoaFlags(cocoaFlogs: NSEventModifierFlags) -> Bool {
-        return cocoaToCarbonFlags(cocoaFlogs) != 0
+    public static func supportedCocoaFlags(_ cocoaFlogs: NSEventModifierFlags) -> Bool {
+        return carbonFlags(from: cocoaFlogs) != 0
     }
 
-    public static func singleCarbonFlags(carbonFlags: Int) -> Bool {
+    public static func singleCarbonFlags(_ carbonFlags: Int) -> Bool {
         let commandSelected = (carbonFlags & cmdKey) != 0
-        let altSelected     = (carbonFlags & optionKey) != 0
+        let optionSelected  = (carbonFlags & optionKey) != 0
         let controlSelected = (carbonFlags & controlKey) != 0
         let shiftSelected   = (carbonFlags & shiftKey) != 0
-        let hash = commandSelected.hashValue + altSelected.hashValue + controlSelected.hashValue + shiftSelected.hashValue
+        let hash = commandSelected.hashValue + optionSelected.hashValue + controlSelected.hashValue + shiftSelected.hashValue
         return hash == 1
     }
 
-    public static func singleCocoaFlags(cocoaFlags: NSEventModifierFlags) -> Bool {
-        let commandSelected = cocoaFlags.contains(.CommandKeyMask)
-        let altSelected     = cocoaFlags.contains(.AlternateKeyMask)
-        let controlSelected = cocoaFlags.contains(.ControlKeyMask)
-        let shiftSelected   = cocoaFlags.contains(.ShiftKeyMask)
-        let hash = commandSelected.hashValue + altSelected.hashValue + controlSelected.hashValue + shiftSelected.hashValue
+    public static func singleCocoaFlags(_ cocoaFlags: NSEventModifierFlags) -> Bool {
+        let commandSelected = cocoaFlags.contains(.command)
+        let optionSelected  = cocoaFlags.contains(.option)
+        let controlSelected = cocoaFlags.contains(.control)
+        let shiftSelected   = cocoaFlags.contains(.shift)
+        let hash = commandSelected.hashValue + optionSelected.hashValue + controlSelected.hashValue + shiftSelected.hashValue
         return hash == 1
     }
 }
 
 // MARK: - Function
 public extension KeyTransformer {
-    public static func containsFunctionKey(keyCode: Int) -> Bool {
+    public static func containsFunctionKey(_ keyCode: Int) -> Bool {
         switch keyCode {
         case kVK_F1: fallthrough
         case kVK_F2: fallthrough
@@ -111,7 +111,7 @@ public extension KeyTransformer {
 
 // MARK: - Modifiers
 public extension KeyTransformer {
-    public static func modifiersToString(carbonModifiers: Int) -> [String] {
+    public static func modifiersToString(_ carbonModifiers: Int) -> [String] {
         var strings = [String]()
 
         if (carbonModifiers & cmdKey) != 0 {
@@ -130,19 +130,19 @@ public extension KeyTransformer {
         return strings
     }
 
-    public static func modifiersToString(cocoaModifiers: NSEventModifierFlags) -> [String] {
+    public static func modifiersToString(_ cocoaModifiers: NSEventModifierFlags) -> [String] {
         var strings = [String]()
 
-        if cocoaModifiers.contains(.CommandKeyMask) {
+        if cocoaModifiers.contains(.command) {
             strings.append("⌘")
         }
-        if cocoaModifiers.contains(.AlternateKeyMask) {
+        if cocoaModifiers.contains(.option) {
             strings.append("⌥")
         }
-        if cocoaModifiers.contains(.ControlKeyMask) {
+        if cocoaModifiers.contains(.control) {
             strings.append("⌃")
         }
-        if cocoaModifiers.contains(.ShiftKeyMask) {
+        if cocoaModifiers.contains(.shift) {
             strings.append("⇧")
         }
 

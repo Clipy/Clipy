@@ -200,6 +200,8 @@ public:
     BasicTableView()
     {
     }
+    BasicTableView(const BasicTableView&) = default;
+    BasicTableView(BasicTableView&&) = default;
     BasicTableView& operator=(BasicTableView);
     friend BasicTableView move(BasicTableView& tv)
     {

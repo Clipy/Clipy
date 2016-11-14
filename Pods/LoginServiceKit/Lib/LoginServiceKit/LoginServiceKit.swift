@@ -49,18 +49,18 @@ import Cocoa
 public final class LoginServiceKit: NSObject {}
 
 public extension LoginServiceKit {
-    public static func pathInLoginItems(path: String) -> Bool {
+    public static func isExistLoginItems(at path: String) -> Bool {
         if path.isEmpty { return false }
 
-        let itemURL = UnsafeMutablePointer<Unmanaged<CFURL>?>.alloc(1)
+        let itemURL = UnsafeMutablePointer<Unmanaged<CFURL>?>.allocate(capacity: 1)
         let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
-        let url = NSURL(fileURLWithPath: path)
+        let url = URL(fileURLWithPath: path)
 
         let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
         if let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] {
             for loginItem in loginItems {
                 if LSSharedFileListItemResolve(loginItem, 0, itemURL, nil) == noErr {
-                    if let memoryURL = itemURL.memory?.takeRetainedValue() where url == memoryURL {
+                    if let memoryURL = itemURL.pointee?.takeRetainedValue() , url == memoryURL as URL {
                         return true
                     }
                 }
@@ -69,29 +69,29 @@ public extension LoginServiceKit {
         return false
     }
 
-    public static func addPathToLoginItems(path: String) {
+    public static func addLoginItems(at path: String) {
         if path.isEmpty { return }
 
         let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
-        let url = NSURL(fileURLWithPath: path)
+        let url = URL(fileURLWithPath: path)
 
         let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
         let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem]
-        LSSharedFileListInsertItemURL(loginItemList, loginItems?.last ?? kLSSharedFileListItemBeforeFirst.takeRetainedValue(), nil, nil, url, nil, nil)
+        LSSharedFileListInsertItemURL(loginItemList, loginItems?.last ?? kLSSharedFileListItemBeforeFirst.takeRetainedValue(), nil, nil, url as CFURL!, nil, nil)
     }
 
-    public static func removePathFromLoginItems(path: String) {
+    public static func removeLoginItems(at path: String) {
         if path.isEmpty { return }
 
-        let itemURL = UnsafeMutablePointer<Unmanaged<CFURL>?>.alloc(1)
+        let itemURL = UnsafeMutablePointer<Unmanaged<CFURL>?>.allocate(capacity: 1)
         let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
-        let url = NSURL(fileURLWithPath: path)
+        let url = URL(fileURLWithPath: path)
 
         let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
         if let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] {
             for loginItem in loginItems {
                 if LSSharedFileListItemResolve(loginItem, 0, itemURL, nil) == noErr {
-                    if let memoryURL = itemURL.memory?.takeRetainedValue() where url == memoryURL {
+                    if let memoryURL = itemURL.pointee?.takeRetainedValue() , url == memoryURL as URL {
                         LSSharedFileListItemRemove(loginItemList, loginItem)
                     }
                 }

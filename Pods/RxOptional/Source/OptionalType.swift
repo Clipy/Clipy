@@ -4,7 +4,7 @@ import Foundation
 // Credit to Artsy and @ashfurrow
 
 public protocol OptionalType {
-    typealias Wrapped
+    associatedtype Wrapped
     var value: Wrapped? { get }
 }
 

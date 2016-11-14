@@ -1227,9 +1227,7 @@ public:
                     // todo: Apparently we can't use m_index.get_alloc() because it uses default allocator which
                     // simply makes
                     // translate(x) = x. Shouldn't it inherit owner column's allocator?!
-                    m_index_matches.reset(new IntegerColumn(IntegerColumn::unattached_root_tag(),
-                                                            m_condition_column->get_alloc())); // Throws
-                    m_index_matches->get_root_array()->init_from_ref(res.payload);
+                    m_index_matches.reset(new IntegerColumn(m_condition_column->get_alloc(), res.payload)); // Throws
                     m_results_start = res.start_ndx;
                     m_results_end = res.end_ndx;
 

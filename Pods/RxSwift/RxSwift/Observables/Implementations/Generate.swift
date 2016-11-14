@@ -1,6 +1,6 @@
 //
 //  Generate.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 9/2/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -15,10 +15,10 @@ class GenerateSink<S, O: ObserverType> : Sink<O> {
     
     private var _state: S
     
-    init(parent: Parent, observer: O) {
+    init(parent: Parent, observer: O, cancel: Cancelable) {
         _parent = parent
         _state = parent._initialState
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
     
     func run() -> Disposable {
@@ -30,17 +30,17 @@ class GenerateSink<S, O: ObserverType> : Sink<O> {
                 
                 if try self._parent._condition(self._state) {
                     let result = try self._parent._resultSelector(self._state)
-                    self.forwardOn(.Next(result))
+                    self.forwardOn(.next(result))
                     
                     recurse(false)
                 }
                 else {
-                    self.forwardOn(.Completed)
+                    self.forwardOn(.completed)
                     self.dispose()
                 }
             }
             catch let error {
-                self.forwardOn(.Error(error))
+                self.forwardOn(.error(error))
                 self.dispose()
             }
         }
@@ -48,13 +48,13 @@ class GenerateSink<S, O: ObserverType> : Sink<O> {
 }
 
 class Generate<S, E> : Producer<E> {
-    private let _initialState: S
-    private let _condition: S throws -> Bool
-    private let _iterate: S throws -> S
-    private let _resultSelector: S throws -> E
-    private let _scheduler: ImmediateSchedulerType
+    fileprivate let _initialState: S
+    fileprivate let _condition: (S) throws -> Bool
+    fileprivate let _iterate: (S) throws -> S
+    fileprivate let _resultSelector: (S) throws -> E
+    fileprivate let _scheduler: ImmediateSchedulerType
     
-    init(initialState: S, condition: S throws -> Bool, iterate: S throws -> S, resultSelector: S throws -> E, scheduler: ImmediateSchedulerType) {
+    init(initialState: S, condition: @escaping (S) throws -> Bool, iterate: @escaping (S) throws -> S, resultSelector: @escaping (S) throws -> E, scheduler: ImmediateSchedulerType) {
         _initialState = initialState
         _condition = condition
         _iterate = iterate
@@ -63,9 +63,9 @@ class Generate<S, E> : Producer<E> {
         super.init()
     }
     
-    override func run<O : ObserverType where O.E == E>(observer: O) -> Disposable {
-        let sink = GenerateSink(parent: self, observer: observer)
-        sink.disposable = sink.run()
-        return sink
+    override func run<O : ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == E {
+        let sink = GenerateSink(parent: self, observer: observer, cancel: cancel)
+        let subscription = sink.run()
+        return (sink: sink, subscription: subscription)
     }
 }

@@ -10,13 +10,13 @@ import Cocoa
 
 final class Util {
     static func bundleImage(name: String) -> NSImage? {
-        var bundle = NSBundle(identifier: "com.clipy-app.KeyHolder")
+        var bundle = Bundle(identifier: "com.clipy-app.KeyHolder")
         if bundle == nil {
-            let frameworkBundle = NSBundle(forClass: RecordView.self)
-            let path = frameworkBundle.pathForResource("KeyHolder", ofType: "bundle")!
-            bundle = NSBundle(path: path)
+            let frameworkBundle = Bundle(for: RecordView.self)
+            let path = frameworkBundle.path(forResource: "KeyHolder", ofType: "bundle")!
+            bundle = Bundle(path: path)
         }
         guard let resourceBundle = bundle else { return nil }
-        return resourceBundle.imageForResource(name)
+        return resourceBundle.image(forResource: name)
     }
 }

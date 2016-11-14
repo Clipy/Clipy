@@ -1,6 +1,6 @@
 //
 //  ShareReplay1WhileConnected.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 12/6/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -28,14 +28,14 @@ final class ShareReplay1WhileConnected<Element>
         self._source = source
     }
 
-    override func subscribe<O : ObserverType where O.E == E>(observer: O) -> Disposable {
+    override func subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == E {
         _lock.lock(); defer { _lock.unlock() }
         return _synchronized_subscribe(observer)
     }
 
-    func _synchronized_subscribe<O : ObserverType where O.E == E>(observer: O) -> Disposable {
+    func _synchronized_subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == E {
         if let element = self._element {
-            observer.on(.Next(element))
+            observer.on(.next(element))
         }
 
         let initialCount = self._observers.count
@@ -46,18 +46,18 @@ final class ShareReplay1WhileConnected<Element>
             let connection = SingleAssignmentDisposable()
             _connection = connection
 
-            connection.disposable = self._source.subscribe(self)
+            connection.setDisposable(self._source.subscribe(self))
         }
 
         return SubscriptionDisposable(owner: self, key: disposeKey)
     }
 
-    func synchronizedUnsubscribe(disposeKey: DisposeKey) {
+    func synchronizedUnsubscribe(_ disposeKey: DisposeKey) {
         _lock.lock(); defer { _lock.unlock() }
         _synchronized_unsubscribe(disposeKey)
     }
 
-    func _synchronized_unsubscribe(disposeKey: DisposeKey) {
+    func _synchronized_unsubscribe(_ disposeKey: DisposeKey) {
         // if already unsubscribed, just return
         if self._observers.removeKey(disposeKey) == nil {
             return
@@ -70,23 +70,23 @@ final class ShareReplay1WhileConnected<Element>
         }
     }
 
-    func on(event: Event<E>) {
-        _lock.lock(); defer { _lock.unlock() }
-        _synchronized_on(event)
+    func on(_ event: Event<E>) {
+        _synchronized_on(event).on(event)
     }
 
-    func _synchronized_on(event: Event<E>) {
+    func _synchronized_on(_ event: Event<E>) -> Bag<AnyObserver<Element>> {
+        _lock.lock(); defer { _lock.unlock() }
         switch event {
-        case .Next(let element):
+        case .next(let element):
             _element = element
-            _observers.on(event)
-        case .Error, .Completed:
+            return _observers
+        case .error, .completed:
             _element = nil
             _connection?.dispose()
             _connection = nil
             let observers = _observers
             _observers = Bag()
-            observers.on(event)
+            return observers
         }
     }
 }

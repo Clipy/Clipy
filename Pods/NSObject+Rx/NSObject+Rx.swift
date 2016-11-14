@@ -3,11 +3,11 @@ import RxSwift
 import ObjectiveC
 
 public extension NSObject {
-    private struct AssociatedKeys {
+    fileprivate struct AssociatedKeys {
         static var DisposeBag = "rx_disposeBag"
     }
 
-    private func doLocked(closure: () -> Void) {
+    fileprivate func doLocked(_ closure: () -> Void) {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
         closure()
     }

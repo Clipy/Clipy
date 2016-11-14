@@ -67,6 +67,29 @@ namespace realm {
 class Spec;
 class Timestamp;
 
+class IndexArray : public Array {
+public:
+    IndexArray(Allocator& allocator)
+        : Array(allocator)
+    {
+    }
+
+    size_t index_string_find_first(StringData value, ColumnBase* column) const;
+    void index_string_find_all(IntegerColumn& result, StringData value, ColumnBase* column) const;
+    FindRes index_string_find_all_no_copy(StringData value, ColumnBase* column, InternalFindResult& result) const;
+    size_t index_string_count(StringData value, ColumnBase* column) const;
+
+private:
+    template <IndexMethod>
+    size_t from_list(StringData value, IntegerColumn& result, InternalFindResult& result_ref,
+                     const IntegerColumn& rows, ColumnBase* column) const;
+
+    template <IndexMethod method, class T>
+    size_t index_string(StringData value, IntegerColumn& result, InternalFindResult& result_ref,
+                        ColumnBase* column) const;
+};
+
+
 class StringIndex {
 public:
     StringIndex(ColumnBase* target_column, Allocator&);
@@ -171,7 +194,7 @@ private:
     // type 2, or type 3 (no shifting in either case).
     // References point to a list if the context header flag is NOT set.
     // If the header flag is set, references point to a sub-StringIndex (nesting).
-    std::unique_ptr<Array> m_array;
+    std::unique_ptr<IndexArray> m_array;
     ColumnBase* m_target_column;
     bool m_deny_duplicate_values;
 
@@ -179,7 +202,7 @@ private:
     };
     StringIndex(inner_node_tag, Allocator&);
 
-    static Array* create_node(Allocator&, bool is_leaf);
+    static IndexArray* create_node(Allocator&, bool is_leaf);
 
     void insert_with_offset(size_t row_ndx, StringData value, size_t offset);
     void insert_row_list(size_t ref, size_t offset, StringData value);
@@ -329,7 +352,7 @@ inline StringIndex::StringIndex(ColumnBase* target_column, Allocator& alloc)
 
 inline StringIndex::StringIndex(ref_type ref, ArrayParent* parent, size_t ndx_in_parent, ColumnBase* target_column,
                                 bool deny_duplicate_values, Allocator& alloc)
-    : m_array(new Array(alloc))
+    : m_array(new IndexArray(alloc))
     , m_target_column(target_column)
     , m_deny_duplicate_values(deny_duplicate_values)
 {

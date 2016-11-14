@@ -935,7 +935,7 @@ public:
     template <class T>
     BasicTableRef<T> get_subtable() const
     {
-        REALM_ASSERT(!Base::is_subtable() || Base::template is_subtable<T>());
+        REALM_ASSERT(!Base::is_subtable() || this->Base::template is_subtable<T>());
         return unchecked_cast<T>(get_subtable());
     }
 
@@ -987,7 +987,7 @@ public:
     template <class T>
     BasicTableRef<const T> get_subtable() const
     {
-        REALM_ASSERT(!Base::is_subtable() || Base::template is_subtable<T>());
+        REALM_ASSERT(!Base::is_subtable() || this->Base::template is_subtable<T>());
         return unchecked_cast<const T>(get_subtable());
     }
 

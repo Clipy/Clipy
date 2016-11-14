@@ -19,10 +19,12 @@
 #ifndef REALM_TRANSACT_LOG_HANDLER_HPP
 #define REALM_TRANSACT_LOG_HANDLER_HPP
 
-#include <realm/group_shared.hpp>
+#include <cstdint>
+#include <realm/version_id.hpp>
 
 namespace realm {
 class BindingContext;
+class SharedGroup;
 enum class SchemaMode : uint8_t;
 
 namespace _impl {
@@ -33,7 +35,7 @@ namespace transaction {
 // Must not be called from within a write transaction.
 void advance(SharedGroup& sg, BindingContext* binding_context,
              SchemaMode schema_mode,
-             SharedGroup::VersionID version=SharedGroup::VersionID{});
+             VersionID version=VersionID{});
 
 // Begin a write transaction
 // If the read transaction version is not up to date, will first advance to the
@@ -51,7 +53,7 @@ void cancel(SharedGroup& sg, BindingContext* binding_context);
 // Advance the read transaction version, with change information gathered in info
 void advance(SharedGroup& sg,
              TransactionChangeInfo& info,
-             SharedGroup::VersionID version=SharedGroup::VersionID{});
+             VersionID version=VersionID{});
 } // namespace transaction
 } // namespace _impl
 } // namespace realm

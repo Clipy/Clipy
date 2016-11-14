@@ -3,19 +3,27 @@ import Foundation
 
 /// A Nimble matcher that succeeds when the actual value is the same instance
 /// as the expected instance.
-public func beIdenticalTo(expected: AnyObject?) -> NonNilMatcherFunc<AnyObject> {
+public func beIdenticalTo(_ expected: Any?) -> NonNilMatcherFunc<Any> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
-        let actual = try actualExpression.evaluate()
+        #if os(Linux)
+            let actual = try actualExpression.evaluate() as? AnyObject
+        #else
+            let actual = try actualExpression.evaluate() as AnyObject?
+        #endif
         failureMessage.actualValue = "\(identityAsString(actual))"
         failureMessage.postfixMessage = "be identical to \(identityAsString(expected))"
-        return actual === expected && actual !== nil
+        #if os(Linux)
+            return actual === (expected as? AnyObject) && actual !== nil
+        #else
+            return actual === (expected as AnyObject?) && actual !== nil
+        #endif
     }
 }
 
-public func ===(lhs: Expectation<AnyObject>, rhs: AnyObject?) {
+public func ===(lhs: Expectation<Any>, rhs: Any?) {
     lhs.to(beIdenticalTo(rhs))
 }
-public func !==(lhs: Expectation<AnyObject>, rhs: AnyObject?) {
+public func !==(lhs: Expectation<Any>, rhs: Any?) {
     lhs.toNot(beIdenticalTo(rhs))
 }
 
@@ -23,15 +31,15 @@ public func !==(lhs: Expectation<AnyObject>, rhs: AnyObject?) {
 /// as the expected instance.
 ///
 /// Alias for "beIdenticalTo".
-public func be(expected: AnyObject?) -> NonNilMatcherFunc<AnyObject> {
+public func be(_ expected: Any?) -> NonNilMatcherFunc<Any> {
     return beIdenticalTo(expected)
 }
 
 #if _runtime(_ObjC)
 extension NMBObjCMatcher {
-    public class func beIdenticalToMatcher(expected: NSObject?) -> NMBObjCMatcher {
+    public class func beIdenticalToMatcher(_ expected: NSObject?) -> NMBObjCMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
-            let aExpr = actualExpression.cast { $0 as AnyObject? }
+            let aExpr = actualExpression.cast { $0 as Any? }
             return try! beIdenticalTo(expected).matches(aExpr, failureMessage: failureMessage)
         }
     }

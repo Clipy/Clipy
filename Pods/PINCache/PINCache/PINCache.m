@@ -46,7 +46,7 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
     if (self = [super init]) {
         _name = [name copy];
         
-        NSString *queueName = [[NSString alloc] initWithFormat:@"%@.%p", PINCachePrefix, self];
+        NSString *queueName = [[NSString alloc] initWithFormat:@"%@.%p", PINCachePrefix, (void *)self];
         _concurrentQueue = dispatch_queue_create([[NSString stringWithFormat:@"%@ Asynchronous Queue", queueName] UTF8String], DISPATCH_QUEUE_CONCURRENT);
         
         _diskCache = [[PINDiskCache alloc] initWithName:_name rootPath:rootPath];
@@ -57,7 +57,7 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
 
 - (NSString *)description
 {
-    return [[NSString alloc] initWithFormat:@"%@.%@.%p", PINCachePrefix, _name, self];
+    return [[NSString alloc] initWithFormat:@"%@.%@.%p", PINCachePrefix, _name, (void *)self];
 }
 
 + (instancetype)sharedCache
@@ -74,6 +74,22 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
 
 #pragma mark - Public Asynchronous Methods -
 
+- (void)containsObjectForKey:(NSString *)key block:(PINCacheObjectContainmentBlock)block
+{
+    if (!key || !block) {
+        return;
+    }
+    
+    __weak PINCache *weakSelf = self;
+    
+    dispatch_async(_concurrentQueue, ^{
+        PINCache *strongSelf = weakSelf;
+        
+        BOOL containsObject = [strongSelf containsObjectForKey:key];
+        block(containsObject);
+    });
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 
@@ -88,9 +104,6 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
         PINCache *strongSelf = weakSelf;
         if (!strongSelf)
             return;
-        
-        __weak PINCache *weakSelf = strongSelf;
-        
         [strongSelf->_memoryCache objectForKey:key block:^(PINMemoryCache *memoryCache, NSString *memoryCacheKey, id memoryCacheObject) {
             PINCache *strongSelf = weakSelf;
             if (!strongSelf)
@@ -100,17 +113,12 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
                 [strongSelf->_diskCache fileURLForKey:memoryCacheKey block:^(PINDiskCache *diskCache, NSString *diskCacheKey, id <NSCoding> diskCacheObject, NSURL *fileURL) {
                     // update the access time on disk
                 }];
-                
-                __weak PINCache *weakSelf = strongSelf;
-                
                 dispatch_async(strongSelf->_concurrentQueue, ^{
                     PINCache *strongSelf = weakSelf;
                     if (strongSelf)
                         block(strongSelf, memoryCacheKey, memoryCacheObject);
                 });
             } else {
-                __weak PINCache *weakSelf = strongSelf;
-                
                 [strongSelf->_diskCache objectForKey:memoryCacheKey block:^(PINDiskCache *diskCache, NSString *diskCacheKey, id <NSCoding> diskCacheObject, NSURL *fileURL) {
                     PINCache *strongSelf = weakSelf;
                     if (!strongSelf)
@@ -118,8 +126,7 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
                     
                     [strongSelf->_memoryCache setObject:diskCacheObject forKey:diskCacheKey block:nil];
                     
-                    __weak PINCache *weakSelf = strongSelf;
-                    
+
                     dispatch_async(strongSelf->_concurrentQueue, ^{
                         PINCache *strongSelf = weakSelf;
                         if (strongSelf)
@@ -303,6 +310,14 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
     return byteCount;
 }
 
+- (BOOL)containsObjectForKey:(NSString *)key
+{
+    if (!key)
+        return NO;
+    
+    return [_memoryCache containsObjectForKey:key] || [_diskCache containsObjectForKey:key];
+}
+
 - (__nullable id)objectForKey:(NSString *)key
 {
     if (!key)
@@ -330,6 +345,16 @@ static NSString * const PINCacheSharedName = @"PINCacheShared";
     
     [_memoryCache setObject:object forKey:key];
     [_diskCache setObject:object forKey:key];
+}
+
+- (id)objectForKeyedSubscript:(NSString *)key
+{
+    return [self objectForKey:key];
+}
+
+- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key
+{
+    [self setObject:obj forKey:key];
 }
 
 - (void)removeObjectForKey:(NSString *)key

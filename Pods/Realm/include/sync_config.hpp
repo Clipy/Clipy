@@ -33,13 +33,18 @@ enum class SyncSessionError {
     UserFatal,              // The user associated with the session is invalid.
 };
 
+struct SyncConfig;
+using SyncLogInHandler = void(const std::string&, const SyncConfig&);
+
 using SyncSessionErrorHandler = void(int error_code, std::string message, SyncSessionError);
 
 struct SyncConfig {
-    SyncConfig(std::string user_tag, std::string realm_url, std::function<SyncSessionErrorHandler> error_handler,
-               SyncSessionStopPolicy stop_policy)
+    SyncConfig(std::string user_tag, std::string realm_url, SyncSessionStopPolicy stop_policy,
+               std::function<SyncLogInHandler> log_in_handler,
+               std::function<SyncSessionErrorHandler> error_handler={})
     : user_tag(std::move(user_tag))
     , realm_url(std::move(realm_url))
+    , log_in_handler(std::move(log_in_handler))
     , error_handler(std::move(error_handler))
     , stop_policy(stop_policy)
     {
@@ -47,6 +52,7 @@ struct SyncConfig {
 
     std::string user_tag;
     std::string realm_url;
+    std::function<SyncLogInHandler> log_in_handler;
     std::function<SyncSessionErrorHandler> error_handler;
     SyncSessionStopPolicy stop_policy;
 };

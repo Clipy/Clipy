@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 #import "Nullability.h"
 
+#import "PINCacheObjectSubscripting.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class PINDiskCache;
@@ -12,14 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  A callback block which provides only the cache as an argument
  */
-
 typedef void (^PINDiskCacheBlock)(PINDiskCache *cache);
 
 /**
  A callback block which provides the cache, key and object as arguments
  */
-
 typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <NSCoding>  __nullable object, NSURL * __nullable fileURL);
+
+/**
+ A callback block which provides a BOOL value as argument
+ */
+typedef void (^PINDiskCacheContainsBlock)(BOOL containsObject);
+
 
 /**
  `PINDiskCache` is a thread safe key/value store backed by the file system. It accepts any object conforming
@@ -44,7 +50,7 @@ typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <
  <ageLimit> will trigger a GCD timer to periodically to trim the cache with <trimToDate:>.
  */
 
-@interface PINDiskCache : NSObject
+@interface PINDiskCache : NSObject <PINCacheObjectSubscripting>
 
 
 
@@ -68,7 +74,7 @@ typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <
  The total number of bytes used on disk, as reported by `NSURLTotalFileAllocatedSizeKey`.
  
  @warning This property should only be read from a call to <synchronouslyLockFileAccessWhileExecutingBlock:> or
- its asynchronous equivolent <lockFileAccessWhileExecutingBlock:>
+ its asynchronous equivalent <lockFileAccessWhileExecutingBlock:>
  
  For example:
  
@@ -96,6 +102,21 @@ typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <
  
  */
 @property (assign) NSTimeInterval ageLimit;
+
+
+/**
+ The writing protection option used when writing a file on disk. This value is used every time an object is set.
+ NSDataWritingAtomic and NSDataWritingWithoutOverwriting are ignored if set
+ Defaults to NSDataWritingFileProtectionNone.
+ 
+ @warning Only new files are affected by the new writing protection. If you need all files to be affected,
+ you'll have to purge and set the objects back to the cache
+ 
+ Only available on iOS
+ */
+#if TARGET_OS_IPHONE
+@property (assign) NSDataWritingOptions writingProtectionOption;
+#endif
 
 /**
  If ttlCache is YES, the cache behaves like a ttlCache. This means that once an object enters the
@@ -190,6 +211,17 @@ typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <
  @param block A block to be executed when a lock is available.
  */
 - (void)lockFileAccessWhileExecutingBlock:(nullable PINDiskCacheBlock)block;
+
+/**
+ This method determines whether an object is present for the given key in the cache. This method returns immediately
+ and executes the passed block after the object is available, potentially in parallel with other blocks on the
+ <concurrentQueue>.
+ 
+ @see containsObjectForKey:
+ @param key The key associated with the object.
+ @param block A block to be executed concurrently after the containment check happened
+ */
+- (void)containsObjectForKey:(NSString *)key block:(PINDiskCacheContainsBlock)block;
 
 /**
  Retrieves the object for the specified key. This method returns immediately and executes the passed
@@ -293,6 +325,15 @@ typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <
 - (void)synchronouslyLockFileAccessWhileExecutingBlock:(nullable PINDiskCacheBlock)block;
 
 /**
+ This method determines whether an object is present for the given key in the cache.
+ 
+ @see containsObjectForKey:block:
+ @param key The key associated with the object.
+ @result YES if an object is present for the given key in the cache, otherwise NO.
+ */
+- (BOOL)containsObjectForKey:(NSString *)key;
+
+/**
  Retrieves the object for the specified key. This method blocks the calling thread until the
  object is available.
  
@@ -311,7 +352,7 @@ typedef void (^PINDiskCacheObjectBlock)(PINDiskCache *cache, NSString *key, id <
  @param key The key associated with the object.
  @result The file URL for the specified key.
  */
-- (NSURL *)fileURLForKey:(nullable NSString *)key;
+- (nullable NSURL *)fileURLForKey:(nullable NSString *)key;
 
 /**
  Stores an object in the cache for the specified key. This method blocks the calling thread until

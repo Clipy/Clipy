@@ -103,7 +103,6 @@ public:
 
     struct process_shared_tag {
     };
-
     /// Initialize this mutex for use across multiple processes. When
     /// constructed this way, the instance may be placed in memory
     /// shared by multiple processes, as well as in a memory mapped

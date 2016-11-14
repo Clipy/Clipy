@@ -62,8 +62,8 @@
 		FA6167941D3ACCB90049FA14 /* DraggedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */; };
 		FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */; };
 		FA6D02061D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6D02051D1C2FCD00D3135F /* NSUserDefaults+ArchiveData.swift */; };
-		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
-		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		FA71E3F81BA0A66300369F92 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA71E3F71BA0A66300369F92 /* HistoryManager.swift */; };
 		FA72A8601C807D4500D120B3 /* CPYDesignableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA72A85F1C807D4500D120B3 /* CPYDesignableButton.swift */; };
 		FA78E7951C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78E7941C8C68CA00B6BA8C /* NSMenuItem+Initialize.swift */; };
@@ -696,7 +696,7 @@
 				FA06D2F21DD883EB002FB7C2 /* pref_menu@2x.png in Resources */,
 				FA06D2E01DD88381002FB7C2 /* icon_folder@2x.png in Resources */,
 				FA06D2F41DD883F7002FB7C2 /* pref_shortcut_on@2x.png in Resources */,
-				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
+				FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */,
 				FA06D2EA1DD883C8002FB7C2 /* pref_excluded@2x.png in Resources */,
 				FA06D2DB1DD88333002FB7C2 /* statusbar_menu_white@2x.png in Resources */,
 				FA06D2E41DD8839D002FB7C2 /* pref_beta_on@2x.png in Resources */,
@@ -720,7 +720,7 @@
 				FA189C8B1C9AE584002C0312 /* CPYPreferencesWindowController.xib in Resources */,
 				FA06D2EC1DD883D3002FB7C2 /* pref_general_on@2x.png in Resources */,
 				FA06D2EE1DD883DA002FB7C2 /* pref_general@2x.png in Resources */,
-				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
+				FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */,
 				FAFEF2031C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib in Resources */,
 				FA06D2FE1DD8841D002FB7C2 /* pref_update@2x.png in Resources */,
 				FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */,
@@ -816,7 +816,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		F1EBF246D3BA3328D6039FF8 /* [CP] Check Pods Manifest.lock */ = {
@@ -831,7 +831,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		FA4A5CDC1C7CAEDD0031BCEF /* ShellScript */ = {
