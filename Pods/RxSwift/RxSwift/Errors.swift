@@ -1,6 +1,6 @@
 //
 //  Errors.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 3/28/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -11,61 +11,43 @@ import Foundation
 let RxErrorDomain       = "RxErrorDomain"
 let RxCompositeFailures = "RxCompositeFailures"
 
-/**
-Generic Rx error codes.
-*/
+/// Generic Rx error codes.
 public enum RxError
-    : ErrorType
+    : Swift.Error
     , CustomDebugStringConvertible {
-    /**
-    Unknown error occured.
-    */
-    case Unknown
-    /**
-    Performing an action on disposed object.
-    */
-    case Disposed(object: AnyObject)
-    /**
-    Aritmetic overflow error.
-    */
-    case Overflow
-    /**
-    Argument out of range error.
-    */
-    case ArgumentOutOfRange
-    /**
-    Sequence doesn't contain any elements.
-    */
-    case NoElements
-    /**
-    Sequence contains more than one element.
-    */
-    case MoreThanOneElement
-    /**
-     Timeout error.
-     */
-    case Timeout
+    /// Unknown error occured.
+    case unknown
+    /// Performing an action on disposed object.
+    case disposed(object: AnyObject)
+    /// Aritmetic overflow error.
+    case overflow
+    /// Argument out of range error.
+    case argumentOutOfRange
+    /// Sequence doesn't contain any elements.
+    case noElements
+    /// Sequence contains more than one element.
+    case moreThanOneElement
+    /// Timeout error.
+    case timeout
 }
 
-public extension RxError {
-    /**
-     A textual representation of `self`, suitable for debugging.
-    */
+extension RxError {
+    /// A textual representation of `self`, suitable for debugging.
     public var debugDescription: String {
         switch self {
-        case .Unknown:
+        case .unknown:
             return "Unknown error occured."
-        case .Disposed(let object):
+        case .disposed(let object):
             return "Object `\(object)` was already disposed."
-        case .Overflow:
+        case .overflow:
             return "Arithmetic overflow occured."
-        case .ArgumentOutOfRange:
+        case .argumentOutOfRange:
             return "Argument out of range."
-        case .NoElements:
+        case .noElements:
             return "Sequence doesn't contain any elements."
-        case .MoreThanOneElement:
+        case .moreThanOneElement:
             return "Sequence contains more than one element."
-        case .Timeout:
+        case .timeout:
             return "Sequence timeout."
         }
     }

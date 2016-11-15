@@ -11,7 +11,6 @@ import Sparkle
 import RxCocoa
 import RxSwift
 import RxOptional
-import NSObject_Rx
 import LoginServiceKit
 import Magnet
 import Screeen
@@ -22,8 +21,9 @@ import RealmSwift
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    let defaults = NSUserDefaults.standardUserDefaults()
+    let defaults = UserDefaults.standard
     let screenshotObserver = ScreenShotObserver()
+    let disposeBag = DisposeBag()
 
     // MARK: - Init
     override func awakeFromNib() {
@@ -33,7 +33,7 @@ class AppDelegate: NSObject {
     }
 
     // MARK: - Override Methods
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
             let realm = try! Realm()
             return !realm.objects(CPYClip.self).isEmpty
@@ -44,38 +44,38 @@ class AppDelegate: NSObject {
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
-        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(bool: true) }
+        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
         return storeTypes
     }
 
     // MARK: - Menu Actions
     func showPreferenceWindow() {
-        NSApp.activateIgnoringOtherApps(true)
+        NSApp.activate(ignoringOtherApps: true)
         CPYPreferencesWindowController.sharedController.showWindow(self)
     }
 
     func showSnippetEditorWindow() {
-        NSApp.activateIgnoringOtherApps(true)
+        NSApp.activate(ignoringOtherApps: true)
         CPYSnippetsEditorWindowController.sharedController.showWindow(self)
     }
 
     func clearAllHistory() {
-        let isShowAlert = defaults.boolForKey(Constants.UserDefaults.showAlertBeforeClearHistory)
+        let isShowAlert = defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
             alert.messageText = LocalizedString.ClearHistory.value
             alert.informativeText = LocalizedString.ConfirmClearHistory.value
-            alert.addButtonWithTitle(LocalizedString.ClearHistory.value)
-            alert.addButtonWithTitle(LocalizedString.Cancel.value)
+            alert.addButton(withTitle: LocalizedString.ClearHistory.value)
+            alert.addButton(withTitle: LocalizedString.Cancel.value)
             alert.showsSuppressionButton = true
 
-            NSApp.activateIgnoringOtherApps(true)
+            NSApp.activate(ignoringOtherApps: true)
 
             let result = alert.runModal()
             if result != NSAlertFirstButtonReturn { return }
 
             if alert.suppressionButton?.state == NSOnState {
-                defaults.setBool(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+                defaults.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
             }
             defaults.synchronize()
         }
@@ -83,7 +83,7 @@ class AppDelegate: NSObject {
         ClipManager.sharedManager.clearAll()
     }
 
-    func selectClipMenuItem(sender: NSMenuItem) {
+    func selectClipMenuItem(_ sender: NSMenuItem) {
         CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch clip primary key")
@@ -91,7 +91,7 @@ class AppDelegate: NSObject {
             return
         }
         let realm = try! Realm()
-        guard let clip = realm.objectForPrimaryKey(CPYClip.self, key: primaryKey) else {
+        guard let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey) else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch clip data")
             NSBeep()
             return
@@ -101,7 +101,7 @@ class AppDelegate: NSObject {
         PasteboardManager.paste()
     }
 
-    func selectSnippetMenuItem(sender: AnyObject) {
+    func selectSnippetMenuItem(_ sender: AnyObject) {
         CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
@@ -109,7 +109,7 @@ class AppDelegate: NSObject {
             return
         }
         let realm = try! Realm()
-        guard let snippet = realm.objectForPrimaryKey(CPYSnippet.self, key: primaryKey) else {
+        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
             NSBeep()
             return
@@ -119,41 +119,41 @@ class AppDelegate: NSObject {
     }
 
     func terminateApplication() {
-        NSApplication.sharedApplication().terminate(nil)
+        NSApplication.shared().terminate(nil)
     }
 
     // MARK: - Login Item Methods
-    private func promptToAddLoginItems() {
+    fileprivate func promptToAddLoginItems() {
         let alert = NSAlert()
         alert.messageText = LocalizedString.LaunchClipy.value
         alert.informativeText = LocalizedString.LaunchSettingInfo.value
-        alert.addButtonWithTitle(LocalizedString.LaunchOnStartup.value)
-        alert.addButtonWithTitle(LocalizedString.DontLaunch.value)
+        alert.addButton(withTitle: LocalizedString.LaunchOnStartup.value)
+        alert.addButton(withTitle: LocalizedString.DontLaunch.value)
         alert.showsSuppressionButton = true
-        NSApp.activateIgnoringOtherApps(true)
+        NSApp.activate(ignoringOtherApps: true)
 
         //  Launch on system startup
         if alert.runModal() == NSAlertFirstButtonReturn {
-            defaults.setBool(true, forKey: Constants.UserDefaults.loginItem)
+            defaults.set(true, forKey: Constants.UserDefaults.loginItem)
             toggleLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSOnState {
-            defaults.setBool(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+            defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         }
         defaults.synchronize()
     }
 
-    private func toggleAddingToLoginItems(enable: Bool) {
-        let appPath = NSBundle.mainBundle().bundlePath
-        LoginServiceKit.removePathFromLoginItems(appPath)
+    fileprivate func toggleAddingToLoginItems(_ enable: Bool) {
+        let appPath = Bundle.main.bundlePath
+        LoginServiceKit.removeLoginItems(at: appPath)
         if enable {
-            LoginServiceKit.addPathToLoginItems(appPath)
+            LoginServiceKit.addLoginItems(at: appPath)
         }
     }
 
-    private func toggleLoginItemState() {
-        let isInLoginItems = NSUserDefaults.standardUserDefaults().boolForKey(Constants.UserDefaults.loginItem)
+    fileprivate func toggleLoginItemState() {
+        let isInLoginItems = UserDefaults.standard.bool(forKey: Constants.UserDefaults.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
 }
@@ -161,7 +161,7 @@ class AppDelegate: NSObject {
 // MARK: - NSApplication Delegate
 extension AppDelegate: NSApplicationDelegate {
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
 
@@ -172,15 +172,15 @@ extension AppDelegate: NSApplicationDelegate {
         HotKeyManager.sharedManager.setupDefaultHoyKey()
 
         // Show Login Item
-        if !defaults.boolForKey(Constants.UserDefaults.loginItem) && !defaults.boolForKey(Constants.UserDefaults.suppressAlertForLoginItem) {
+        if !defaults.bool(forKey: Constants.UserDefaults.loginItem) && !defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
 
         // Sparkle
-        let updater = SUUpdater.sharedUpdater()
-        updater.feedURL = Constants.Application.appcastURL
-        updater.automaticallyChecksForUpdates = defaults.boolForKey(Constants.Update.enableAutomaticCheck)
-        updater.updateCheckInterval = NSTimeInterval(defaults.integerForKey(Constants.Update.checkInterval))
+        let updater = SUUpdater.shared()
+        updater?.feedURL = Constants.Application.appcastURL
+        updater?.automaticallyChecksForUpdates = defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
+        updater?.updateCheckInterval = TimeInterval(defaults.integer(forKey: Constants.Update.checkInterval))
 
         // Binding Events
         bind()
@@ -191,39 +191,39 @@ extension AppDelegate: NSApplicationDelegate {
         HistoryManager.sharedManager.setup()
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
-        HotKeyCenter.sharedCenter.unregisterAll()
+    func applicationWillTerminate(_ aNotification: Notification) {
+        HotKeyCenter.shared.unregisterAll()
     }
 }
 
 // MARK: - Bind
-private extension AppDelegate {
-    private func bind() {
+fileprivate extension AppDelegate {
+    fileprivate func bind() {
         // Login Item
-        defaults.rx_observe(Bool.self, Constants.UserDefaults.loginItem, options: [.New])
+        defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
             .filterNil()
-            .subscribeNext { [weak self] enabled in
+            .subscribe(onNext: { [weak self] enabled in
                 self?.toggleLoginItemState()
-            }.addDisposableTo(rx_disposeBag)
+            }).addDisposableTo(disposeBag)
         // Observe Screenshot
-        defaults.rx_observe(Bool.self, Constants.Beta.observerScreenshot)
+        defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
             .filterNil()
-            .subscribeNext { [weak self] enabled in
+            .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
-            }.addDisposableTo(rx_disposeBag)
+            }).addDisposableTo(disposeBag)
         // Observe Screenshot image
-        screenshotObserver.rx_addedImage
-            .subscribeNext { image in
+        screenshotObserver.rx.addedImage
+            .subscribe(onNext: { image in
                 ClipManager.sharedManager.createclip(image)
-            }.addDisposableTo(rx_disposeBag)
+            }).addDisposableTo(disposeBag)
         // Sleep Notification
-        NSWorkspace.sharedWorkspace().notificationCenter.rx_notification(NSWorkspaceWillSleepNotification)
-            .subscribeNext { notification in
+        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceWillSleep)
+            .subscribe(onNext: { notification in
                 ClipManager.sharedManager.stopTimer()
-            }.addDisposableTo(rx_disposeBag)
-        NSWorkspace.sharedWorkspace().notificationCenter.rx_notification(NSWorkspaceDidWakeNotification)
-            .subscribeNext { notification in
+            }).addDisposableTo(disposeBag)
+        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceDidWake)
+            .subscribe(onNext: { notification in
                 ClipManager.sharedManager.startTimer()
-            }.addDisposableTo(rx_disposeBag)
+            }).addDisposableTo(disposeBag)
     }
 }

@@ -32,9 +32,9 @@ public final class HotKey: Equatable {
 // MARK: - Invoke
 public extension HotKey {
     public func invoke() {
-        if let target = target as? NSObject, selector = action {
-            if target.respondsToSelector(selector) {
-                target.performSelector(selector, withObject: self)
+        if let target = target as? NSObject, let selector = action {
+            if target.responds(to: selector) {
+                target.perform(selector, with: self)
             }
         }
     }
@@ -42,11 +42,12 @@ public extension HotKey {
 
 // MARK: - Register & UnRegister
 public extension HotKey {
+    @discardableResult
     public func register() -> Bool {
-        return HotKeyCenter.sharedCenter.register(self)
+        return HotKeyCenter.shared.register(with: self)
     }
     public func unregister() {
-        return HotKeyCenter.sharedCenter.unregister(self)
+        return HotKeyCenter.shared.unregister(with: self)
     }
 }
 

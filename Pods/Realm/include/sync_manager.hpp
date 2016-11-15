@@ -43,8 +43,6 @@ enum class SyncSessionStopPolicy {
     AfterChangesUploaded,           // Once all Realms/Sessions go out of scope, wait for uploads to complete and stop.
 };
 
-using SyncLoginFunction = std::function<void(const std::string&, const SyncConfig&)>;
-
 class SyncLoggerFactory {
 public:
     virtual std::unique_ptr<util::Logger> make_logger(util::Logger::Level) = 0;
@@ -58,7 +56,6 @@ public:
     void set_log_level(util::Logger::Level) noexcept;
     void set_logger_factory(SyncLoggerFactory&) noexcept;
     void set_error_handler(std::function<sync::Client::ErrorHandler>);
-    void set_login_function(SyncLoginFunction);
 
     /// Control whether the sync client attempts to reconnect immediately. Only set this to `true` for testing purposes.
     void set_client_should_reconnect_immediately(bool reconnect_immediately);
@@ -67,8 +64,6 @@ public:
 
     std::shared_ptr<SyncSession> get_session(const std::string& path, const SyncConfig& config);
     std::shared_ptr<SyncSession> get_existing_active_session(const std::string& path) const;
-
-    SyncLoginFunction& get_sync_login_function();
 
 private:
     void dropped_last_reference_to_session(SyncSession*);
@@ -89,8 +84,6 @@ private:
     std::unique_ptr<SyncSession> get_existing_inactive_session_locked(const std::string& path);
 
     mutable std::mutex m_mutex;
-
-    SyncLoginFunction m_login_function;
 
     // FIXME: Should probably be util::Logger::Level::error
     util::Logger::Level m_log_level = util::Logger::Level::info;

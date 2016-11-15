@@ -8,10 +8,10 @@ class DraggedDataSpec: QuickSpec {
         describe("NSCoding") {
 
             it("Archive data") {
-                let draggedData = CPYDraggedData(type: .Folder, folderIdentifier: NSUUID().UUIDString, snippetIdentifier: nil, index: 10)
-                let data = NSKeyedArchiver.archivedDataWithRootObject(draggedData)
+                let draggedData = CPYDraggedData(type: .folder, folderIdentifier: NSUUID().uuidString, snippetIdentifier: nil, index: 10)
+                let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
 
-                let unarchiveData = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? CPYDraggedData
+                let unarchiveData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData
                 expect(unarchiveData).toNot(beNil())
                 expect(unarchiveData?.type).to(equal(draggedData.type))
                 expect(unarchiveData?.folderIdentifier).to(equal(draggedData.folderIdentifier))

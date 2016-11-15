@@ -596,7 +596,6 @@ public:
     using TableViewBase::TableViewBase;
 
     ConstTableView() = default;
-    ~ConstTableView() noexcept = default;
 
     ConstTableView(const TableView&);
     ConstTableView(TableView&&);
@@ -722,7 +721,7 @@ inline TableViewBase::TableViewBase(Table* parent)
     _impl::DeepArrayRefDestroyGuard ref_guard(alloc);
     ref_guard.reset(IntegerColumn::create(alloc)); // Throws
     parent->register_view(this);                   // Throws
-    m_row_indexes.get_root_array()->init_from_ref(ref_guard.release());
+    m_row_indexes.init_from_ref(alloc, ref_guard.release());
 }
 
 inline TableViewBase::TableViewBase(Table* parent, Query& query, size_t start, size_t end, size_t limit)
@@ -741,7 +740,7 @@ inline TableViewBase::TableViewBase(Table* parent, Query& query, size_t start, s
     _impl::DeepArrayRefDestroyGuard ref_guard(alloc);
     ref_guard.reset(IntegerColumn::create(alloc)); // Throws
     parent->register_view(this);                   // Throws
-    m_row_indexes.get_root_array()->init_from_ref(ref_guard.release());
+    m_row_indexes.init_from_ref(alloc, ref_guard.release());
 }
 
 inline TableViewBase::TableViewBase(Table* parent, size_t column, BasicRowExpr<const Table> row)
@@ -758,7 +757,7 @@ inline TableViewBase::TableViewBase(Table* parent, size_t column, BasicRowExpr<c
     _impl::DeepArrayRefDestroyGuard ref_guard(alloc);
     ref_guard.reset(IntegerColumn::create(alloc)); // Throws
     parent->register_view(this);                   // Throws
-    m_row_indexes.get_root_array()->init_from_ref(ref_guard.release());
+    m_row_indexes.init_from_ref(alloc, ref_guard.release());
 }
 
 inline TableViewBase::TableViewBase(const TableViewBase& tv)
@@ -778,14 +777,14 @@ inline TableViewBase::TableViewBase(const TableViewBase& tv)
     , m_num_detached_refs(tv.m_num_detached_refs)
 {
     // FIXME: This code is unreasonably complicated because it uses `IntegerColumn` as
-    // a free-standing container, and beause `IntegerColumn` does not conform to the
+    // a free-standing container, and because `IntegerColumn` does not conform to the
     // RAII idiom (nor should it).
     Allocator& alloc = m_row_indexes.get_alloc();
     MemRef mem = tv.m_row_indexes.get_root_array()->clone_deep(alloc); // Throws
     _impl::DeepArrayRefDestroyGuard ref_guard(mem.get_ref(), alloc);
     if (m_table)
         m_table->register_view(this); // Throws
-    m_row_indexes.get_root_array()->init_from_mem(mem);
+    m_row_indexes.init_from_mem(alloc, mem);
     ref_guard.release();
 }
 

@@ -7,7 +7,7 @@ class FolderSpec: QuickSpec {
     override func spec() {
 
         beforeEach {
-            Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().UUIDString
+            Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().uuidString
         }
 
         describe("Create new") {
@@ -149,7 +149,7 @@ class FolderSpec: QuickSpec {
                 expect(folder.realm).to(beNil())
                 expect(realm.objects(CPYFolder.self).count).to(equal(1))
 
-                let savedFolder = realm.objectForPrimaryKey(CPYFolder.self, key: folder.identifier)
+                let savedFolder = realm.object(ofType: CPYFolder.self, forPrimaryKey: folder.identifier)
                 expect(savedFolder).toNot(beNil())
                 expect(savedFolder?.index).to(equal(folder.index))
                 expect(savedFolder?.title).to(equal(folder.title))

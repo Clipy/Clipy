@@ -9,9 +9,9 @@
 import Foundation
 
 @objc public protocol ScreenShotObserverDelegate: class {
-    optional func screenShotObserver(observer: ScreenShotObserver, addedItem item: NSMetadataItem)
-    optional func screenShotObserver(observer: ScreenShotObserver, updatedItem item: NSMetadataItem)
-    optional func screenShotObserver(observer: ScreenShotObserver, removedItem item: NSMetadataItem)
+    @objc optional func screenShotObserver(_ observer: ScreenShotObserver, addedItem item: NSMetadataItem)
+    @objc optional func screenShotObserver(_ observer: ScreenShotObserver, updatedItem item: NSMetadataItem)
+    @objc optional func screenShotObserver(_ observer: ScreenShotObserver, removedItem item: NSMetadataItem)
 }
 
 public final class ScreenShotObserver: NSObject {
@@ -20,38 +20,37 @@ public final class ScreenShotObserver: NSObject {
     public weak var delegate: ScreenShotObserverDelegate?
     public var isEnabled = true
 
-    private let query = NSMetadataQuery()
+    fileprivate let query = NSMetadataQuery()
 
     // MARK: - Initialize
     override public init() {
         super.init()
         // Observe update notification
-        NSNotificationCenter.defaultCenter()
+        NotificationCenter.default
             .addObserver(self,
                          selector: #selector(ScreenShotObserver.updateQuery(_:)),
-                         name: NSMetadataQueryDidUpdateNotification,
+                         name: NSNotification.Name.NSMetadataQueryDidUpdate,
                          object: query)
         // Query setting
         query.delegate = self
         query.predicate = NSPredicate(format: "kMDItemIsScreenCapture = 1")
-        query.startQuery()
+        query.start()
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        query.stopQuery()
+        NotificationCenter.default.removeObserver(self)
+        query.stop()
         query.delegate = nil
     }
 
-
-    func updateQuery(notification: NSNotification) {
+    func updateQuery(_ notification: Notification) {
         if !isEnabled { return }
 
-        if let items = notification.userInfo?[kMDQueryUpdateAddedItems] as? [NSMetadataItem] {
+        if let items = notification.userInfo?[kMDQueryUpdateAddedItems as String] as? [NSMetadataItem] {
             items.forEach { delegate?.screenShotObserver?(self, addedItem: $0) }
-        } else if let items = notification.userInfo?[kMDQueryUpdateChangedItems] as? [NSMetadataItem] {
+        } else if let items = notification.userInfo?[kMDQueryUpdateChangedItems as String] as? [NSMetadataItem] {
             items.forEach { delegate?.screenShotObserver?(self, updatedItem: $0) }
-        } else if let items = notification.userInfo?[kMDQueryUpdateRemovedItems] as? [NSMetadataItem] {
+        } else if let items = notification.userInfo?[kMDQueryUpdateRemovedItems as String] as? [NSMetadataItem] {
             items.forEach { delegate?.screenShotObserver?(self, removedItem: $0) }
         }
     }

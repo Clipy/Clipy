@@ -1,6 +1,6 @@
 //
 //  ScheduledItem.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 9/2/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -11,24 +11,24 @@ import Foundation
 struct ScheduledItem<T>
     : ScheduledItemType
     , InvocableType {
-    typealias Action = T -> Disposable
+    typealias Action = (T) -> Disposable
     
     private let _action: Action
     private let _state: T
 
     private let _disposable = SingleAssignmentDisposable()
 
-    var disposed: Bool {
-        return _disposable.disposed
+    var isDisposed: Bool {
+        return _disposable.isDisposed
     }
     
-    init(action: Action, state: T) {
+    init(action: @escaping Action, state: T) {
         _action = action
         _state = state
     }
     
     func invoke() {
-         _disposable.disposable = _action(_state)
+         _disposable.setDisposable(_action(_state))
     }
     
     func dispose() {

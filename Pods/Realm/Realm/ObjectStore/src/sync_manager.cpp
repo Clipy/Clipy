@@ -61,20 +61,6 @@ void SyncManager::set_error_handler(std::function<sync::Client::ErrorHandler> ha
     m_error_handler = std::move(wrapped_handler);
 }
 
-void SyncManager::set_login_function(SyncLoginFunction login_function)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_login_function = std::move(login_function);
-}
-
-SyncLoginFunction& SyncManager::get_sync_login_function()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    // Precondition: binding must set a login callback before connecting any synced Realms.
-    REALM_ASSERT(m_login_function);
-    return m_login_function;
-}
-
 void SyncManager::set_client_should_reconnect_immediately(bool reconnect_immediately)
 {
     std::lock_guard<std::mutex> lock(m_mutex);

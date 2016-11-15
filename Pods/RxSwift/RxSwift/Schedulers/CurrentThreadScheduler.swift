@@ -1,93 +1,49 @@
 //
 //  CurrentThreadScheduler.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 8/30/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
 import Foundation
+import Dispatch
 
-#if os(Linux)
-  let CurrentThreadSchedulerKeyInstance       = "RxSwift.CurrentThreadScheduler.SchedulerKey"
-  let CurrentThreadSchedulerQueueKeyInstance  = "RxSwift.CurrentThreadScheduler.Queue"
+let CurrentThreadSchedulerKeyInstance       = "RxSwift.CurrentThreadScheduler.SchedulerKey"
+let CurrentThreadSchedulerQueueKeyInstance  = "RxSwift.CurrentThreadScheduler.Queue"
 
-  typealias CurrentThreadSchedulerValue       = NSString
-  let CurrentThreadSchedulerValueInstance     = "RxSwift.CurrentThreadScheduler.SchedulerKey" as NSString
-#else
-  let CurrentThreadSchedulerKeyInstance       = CurrentThreadSchedulerKey()
-  let CurrentThreadSchedulerQueueKeyInstance  = CurrentThreadSchedulerQueueKey()
+typealias CurrentThreadSchedulerValue       = NSString
+let CurrentThreadSchedulerValueInstance     = "RxSwift.CurrentThreadScheduler.SchedulerKey" as NSString
 
-  typealias CurrentThreadSchedulerValue       = CurrentThreadSchedulerKey
-  let CurrentThreadSchedulerValueInstance     = CurrentThreadSchedulerKeyInstance
 
-  class CurrentThreadSchedulerKey : NSObject, NSCopying {
-      override func isEqual(object: AnyObject?) -> Bool {
-          return object === CurrentThreadSchedulerKeyInstance
-      }
-
-      override var hash: Int { return -904739208 }
-
-      override func copy() -> AnyObject {
-          return CurrentThreadSchedulerKeyInstance
-      }
-
-      func copyWithZone(zone: NSZone) -> AnyObject {
-          return CurrentThreadSchedulerKeyInstance
-      }
-  }
-
-  class CurrentThreadSchedulerQueueKey : NSObject, NSCopying {
-      override func isEqual(object: AnyObject?) -> Bool {
-          return object === CurrentThreadSchedulerQueueKeyInstance
-      }
-
-      override var hash: Int { return -904739207 }
-
-      override func copy() -> AnyObject {
-          return CurrentThreadSchedulerQueueKeyInstance
-      }
-
-      func copyWithZone(zone: NSZone) -> AnyObject {
-          return CurrentThreadSchedulerQueueKeyInstance
-      }
-  }
-#endif
-
-/**
-Represents an object that schedules units of work on the current thread.
-
-This is the default scheduler for operators that generate elements.
-
-This scheduler is also sometimes called `trampoline scheduler`.
-*/
+/// Represents an object that schedules units of work on the current thread.
+///
+/// This is the default scheduler for operators that generate elements.
+///
+/// This scheduler is also sometimes called `trampoline scheduler`.
 public class CurrentThreadScheduler : ImmediateSchedulerType {
     typealias ScheduleQueue = RxMutableBox<Queue<ScheduledItemType>>
 
-    /**
-    The singleton instance of the current thread scheduler.
-    */
+    /// The singleton instance of the current thread scheduler.
     public static let instance = CurrentThreadScheduler()
 
     static var queue : ScheduleQueue? {
         get {
-            return NSThread.getThreadLocalStorageValueForKey(CurrentThreadSchedulerQueueKeyInstance)
+            return Thread.getThreadLocalStorageValueForKey(CurrentThreadSchedulerQueueKeyInstance)
         }
         set {
-            NSThread.setThreadLocalStorageValue(newValue, forKey: CurrentThreadSchedulerQueueKeyInstance)
+            Thread.setThreadLocalStorageValue(newValue, forKey: CurrentThreadSchedulerQueueKeyInstance)
         }
     }
 
-    /**
-    Gets a value that indicates whether the caller must call a `schedule` method.
-    */
-    public static private(set) var isScheduleRequired: Bool {
+    /// Gets a value that indicates whether the caller must call a `schedule` method.
+    public static fileprivate(set) var isScheduleRequired: Bool {
         get {
-            let value: CurrentThreadSchedulerValue? = NSThread.getThreadLocalStorageValueForKey(CurrentThreadSchedulerKeyInstance)
+            let value: CurrentThreadSchedulerValue? = Thread.getThreadLocalStorageValueForKey(CurrentThreadSchedulerKeyInstance)
             return value == nil
         }
         set(isScheduleRequired) {
-            NSThread.setThreadLocalStorageValue(isScheduleRequired ? nil : CurrentThreadSchedulerValueInstance, forKey: CurrentThreadSchedulerKeyInstance)
+            Thread.setThreadLocalStorageValue(isScheduleRequired ? nil : CurrentThreadSchedulerValueInstance, forKey: CurrentThreadSchedulerKeyInstance)
         }
     }
 
@@ -101,7 +57,7 @@ public class CurrentThreadScheduler : ImmediateSchedulerType {
     - parameter action: Action to be executed.
     - returns: The disposable object used to cancel the scheduled action (best effort).
     */
-    public func schedule<StateType>(state: StateType, action: (StateType) -> Disposable) -> Disposable {
+    public func schedule<StateType>(_ state: StateType, action: @escaping (StateType) -> Disposable) -> Disposable {
         if CurrentThreadScheduler.isScheduleRequired {
             CurrentThreadScheduler.isScheduleRequired = false
 
@@ -117,7 +73,7 @@ public class CurrentThreadScheduler : ImmediateSchedulerType {
             }
 
             while let latest = queue.value.dequeue() {
-                if latest.disposed {
+                if latest.isDisposed {
                     continue
                 }
                 latest.invoke()
@@ -139,9 +95,7 @@ public class CurrentThreadScheduler : ImmediateSchedulerType {
 
         let scheduledItem = ScheduledItem(action: action, state: state)
         queue.value.enqueue(scheduledItem)
-        
-        // In Xcode 7.3, `return scheduledItem` causes segmentation fault 11 on release build.
-        // To workaround this compiler issue, returns AnonymousDisposable that disposes scheduledItem.
-        return AnonymousDisposable(scheduledItem.dispose)
+
+        return scheduledItem
     }
 }

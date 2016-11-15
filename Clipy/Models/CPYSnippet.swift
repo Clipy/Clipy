@@ -16,7 +16,7 @@ final class CPYSnippet: Object {
     dynamic var enable  = true
     dynamic var title   = ""
     dynamic var content = ""
-    dynamic var identifier = NSUUID().UUIDString
+    dynamic var identifier = UUID().uuidString
     let folders = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
 
     var folder: CPYFolder? {
@@ -48,7 +48,7 @@ extension CPYSnippet {
 extension CPYSnippet {
     func remove() {
         let realm = try! Realm()
-        guard let snippet = realm.objectForPrimaryKey(CPYSnippet.self, key: identifier) else { return }
+        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: identifier) else { return }
         snippet.realm?.transaction { snippet.realm?.delete(snippet) }
     }
 }

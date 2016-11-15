@@ -1,4 +1,4 @@
-platform :osx, '10.9'
+platform :osx, '10.10'
 use_frameworks!
 
 source 'https://github.com/CocoaPods/Specs.git'
@@ -12,12 +12,11 @@ target 'Clipy' do
   pod 'Crashlytics'
   pod 'RxCocoa'
   pod 'RxSwift'
-  pod 'NSObject+Rx'
   pod 'RxOptional'
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'
   pod 'RxScreeen'
-  pod 'AEXML', :git => 'https://github.com/Clipy/AEXML.git'
+  pod 'AEXML'
 
   target 'ClipyTests' do
     inherit! :search_paths
@@ -28,4 +27,3 @@ target 'Clipy' do
   end
 
 end
-

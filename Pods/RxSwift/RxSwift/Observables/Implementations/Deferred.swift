@@ -8,14 +8,14 @@
 
 import Foundation
 
-class DeferredSink<S: ObservableType, O: ObserverType where S.E == O.E> : Sink<O>, ObserverType {
+class DeferredSink<S: ObservableType, O: ObserverType> : Sink<O>, ObserverType where S.E == O.E {
     typealias E = O.E
 
     private let _observableFactory: () throws -> S
 
-    init(observableFactory: () throws -> S, observer: O) {
+    init(observableFactory: @escaping () throws -> S, observer: O, cancel: Cancelable) {
         _observableFactory = observableFactory
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
     
     func run() -> Disposable {
@@ -24,21 +24,21 @@ class DeferredSink<S: ObservableType, O: ObserverType where S.E == O.E> : Sink<O
             return result.subscribe(self)
         }
         catch let e {
-            forwardOn(.Error(e))
+            forwardOn(.error(e))
             dispose()
-            return NopDisposable.instance
+            return Disposables.create()
         }
     }
     
-    func on(event: Event<E>) {
+    func on(_ event: Event<E>) {
         forwardOn(event)
         
         switch event {
-        case .Next:
+        case .next:
             break
-        case .Error:
+        case .error:
             dispose()
-        case .Completed:
+        case .completed:
             dispose()
         }
     }
@@ -49,13 +49,13 @@ class Deferred<S: ObservableType> : Producer<S.E> {
     
     private let _observableFactory : Factory
     
-    init(observableFactory: Factory) {
+    init(observableFactory: @escaping Factory) {
         _observableFactory = observableFactory
     }
     
-    override func run<O: ObserverType where O.E == S.E>(observer: O) -> Disposable {
-        let sink = DeferredSink(observableFactory: _observableFactory, observer: observer)
-        sink.disposable = sink.run()
-        return sink
+    override func run<O: ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == S.E {
+        let sink = DeferredSink(observableFactory: _observableFactory, observer: observer, cancel: cancel)
+        let subscription = sink.run()
+        return (sink: sink, subscription: subscription)
     }
 }

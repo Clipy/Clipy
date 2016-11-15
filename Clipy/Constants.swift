@@ -12,7 +12,7 @@ struct Constants {
 
     struct Application {
         static let name         = "Clipy"
-        static let appcastURL   = NSURL(string: "https://clipy-app.com/appcast.xml")!
+        static let appcastURL   = URL(string: "https://clipy-app.com/appcast.xml")!
     }
 
     struct Menu {

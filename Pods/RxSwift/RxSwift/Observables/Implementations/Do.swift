@@ -1,6 +1,6 @@
 //
 //  Do.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 2/21/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -14,12 +14,12 @@ class DoSink<O: ObserverType> : Sink<O>, ObserverType {
     
     private let _parent: Parent
     
-    init(parent: Parent, observer: O) {
+    init(parent: Parent, observer: O, cancel: Cancelable) {
         _parent = parent
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
     
-    func on(event: Event<Element>) {
+    func on(_ event: Event<Element>) {
         do {
             try _parent._eventHandler(event)
             forwardOn(event)
@@ -28,26 +28,36 @@ class DoSink<O: ObserverType> : Sink<O>, ObserverType {
             }
         }
         catch let error {
-            forwardOn(.Error(error))
+            forwardOn(.error(error))
             dispose()
         }
     }
 }
 
 class Do<Element> : Producer<Element> {
-    typealias EventHandler = Event<Element> throws -> Void
+    typealias EventHandler = (Event<Element>) throws -> Void
     
-    private let _source: Observable<Element>
-    private let _eventHandler: EventHandler
+    fileprivate let _source: Observable<Element>
+    fileprivate let _eventHandler: EventHandler
+    fileprivate let _onSubscribe: (() -> ())?
+    fileprivate let _onDispose: (() -> ())?
     
-    init(source: Observable<Element>, eventHandler: EventHandler) {
+    init(source: Observable<Element>, eventHandler: @escaping EventHandler, onSubscribe: (() -> ())?, onDispose: (() -> ())?) {
         _source = source
         _eventHandler = eventHandler
+        _onSubscribe = onSubscribe
+        _onDispose = onDispose
     }
     
-    override func run<O: ObserverType where O.E == Element>(observer: O) -> Disposable {
-        let sink = DoSink(parent: self, observer: observer)
-        sink.disposable = _source.subscribe(sink)
-        return sink
+    override func run<O: ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == Element {
+        _onSubscribe?()
+        let sink = DoSink(parent: self, observer: observer, cancel: cancel)
+        let subscription = _source.subscribe(sink)
+        let onDispose = _onDispose
+        let allSubscriptions = Disposables.create {
+            subscription.dispose()
+            onDispose?()
+        }
+        return (sink: sink, subscription: allSubscriptions)
     }
 }

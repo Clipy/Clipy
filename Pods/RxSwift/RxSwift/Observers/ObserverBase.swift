@@ -1,6 +1,6 @@
 //
 //  ObserverBase.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 2/15/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -13,13 +13,13 @@ class ObserverBase<ElementType> : Disposable, ObserverType {
 
     private var _isStopped: AtomicInt = 0
 
-    func on(event: Event<E>) {
+    func on(_ event: Event<E>) {
         switch event {
-        case .Next:
+        case .next:
             if _isStopped == 0 {
                 onCore(event)
             }
-        case .Error, .Completed:
+        case .error, .completed:
 
             if !AtomicCompareAndSwap(0, 1, &_isStopped) {
                 return
@@ -29,11 +29,11 @@ class ObserverBase<ElementType> : Disposable, ObserverType {
         }
     }
 
-    func onCore(event: Event<E>) {
+    func onCore(_ event: Event<E>) {
         abstractMethod()
     }
 
     func dispose() {
-        _isStopped = 1
+        _ = AtomicCompareAndSwap(0, 1, &_isStopped)
     }
 }

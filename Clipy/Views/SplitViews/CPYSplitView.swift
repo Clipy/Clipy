@@ -11,14 +11,14 @@ import Cocoa
 class CPYSplitView: NSSplitView {
 
     // MARK: - Properties
-    @IBInspectable var separatorColor: NSColor = .scrollBarColor() {
+    @IBInspectable var separatorColor: NSColor = .scrollBarColor {
         didSet {
             needsDisplay = true
         }
     }
 
     // MARK: - Draw
-    override func drawDividerInRect(rect: NSRect) {
+    override func drawDivider(in rect: NSRect) {
         separatorColor.setFill()
         NSRectFill(rect)
     }

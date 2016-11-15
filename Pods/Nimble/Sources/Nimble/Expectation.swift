@@ -1,6 +1,8 @@
 import Foundation
 
-internal func expressionMatches<T, U where U: Matcher, U.ValueType == T>(expression: Expression<T>, matcher: U, to: String, description: String?) -> (Bool, FailureMessage) {
+internal func expressionMatches<T, U>(_ expression: Expression<T>, matcher: U, to: String, description: String?) -> (Bool, FailureMessage)
+    where U: Matcher, U.ValueType == T
+{
     let msg = FailureMessage()
     msg.userDescription = description
     msg.to = to
@@ -16,7 +18,9 @@ internal func expressionMatches<T, U where U: Matcher, U.ValueType == T>(express
     }
 }
 
-internal func expressionDoesNotMatch<T, U where U: Matcher, U.ValueType == T>(expression: Expression<T>, matcher: U, toNot: String, description: String?) -> (Bool, FailureMessage) {
+internal func expressionDoesNotMatch<T, U>(_ expression: Expression<T>, matcher: U, toNot: String, description: String?) -> (Bool, FailureMessage)
+    where U: Matcher, U.ValueType == T
+{
     let msg = FailureMessage()
     msg.userDescription = description
     msg.to = toNot
@@ -36,19 +40,23 @@ public struct Expectation<T> {
 
     public let expression: Expression<T>
 
-    public func verify(pass: Bool, _ message: FailureMessage) {
+    public func verify(_ pass: Bool, _ message: FailureMessage) {
         let handler = NimbleEnvironment.activeInstance.assertionHandler
         handler.assert(pass, message: message, location: expression.location)
     }
 
     /// Tests the actual value using a matcher to match.
-    public func to<U where U: Matcher, U.ValueType == T>(matcher: U, description: String? = nil) {
+    public func to<U>(_ matcher: U, description: String? = nil)
+        where U: Matcher, U.ValueType == T
+    {
         let (pass, msg) = expressionMatches(expression, matcher: matcher, to: "to", description: description)
         verify(pass, msg)
     }
 
     /// Tests the actual value using a matcher to not match.
-    public func toNot<U where U: Matcher, U.ValueType == T>(matcher: U, description: String? = nil) {
+    public func toNot<U>(_ matcher: U, description: String? = nil)
+        where U: Matcher, U.ValueType == T
+    {
         let (pass, msg) = expressionDoesNotMatch(expression, matcher: matcher, toNot: "to not", description: description)
         verify(pass, msg)
     }
@@ -56,7 +64,9 @@ public struct Expectation<T> {
     /// Tests the actual value using a matcher to not match.
     ///
     /// Alias to toNot().
-    public func notTo<U where U: Matcher, U.ValueType == T>(matcher: U, description: String? = nil) {
+    public func notTo<U>(_ matcher: U, description: String? = nil)
+        where U: Matcher, U.ValueType == T
+    {
         toNot(matcher, description: description)
     }
 

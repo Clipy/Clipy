@@ -65,7 +65,7 @@ void inline encryption_write_barrier(const void* addr, size_t size, EncryptedFil
 }
 
 
-extern util::Mutex mapping_mutex;
+extern util::Mutex& mapping_mutex;
 
 inline void do_encryption_read_barrier(const void* addr, size_t size, HeaderToSize header_to_size,
                                        EncryptedFileMapping* mapping)

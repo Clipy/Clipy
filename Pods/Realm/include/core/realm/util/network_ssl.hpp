@@ -87,6 +87,12 @@ public:
     /// `SSL_CTX_use_PrivateKey_file()`.
     void use_private_key_file(const std::string& path);
 
+    /// Calling use_default_verify() will make a client use the
+    /// device default certificates for server verification.
+    /// For OpenSSL, use_default_verify() corresponds to
+    /// SSL_CTX_set_default_verify_paths(SSL_CTX*);
+    void use_default_verify();
+
     /// The verify file is a PEM file containing trust
     /// certificates that the client will use to
     /// verify the server crtificate. If use_verify_file()
@@ -101,6 +107,7 @@ private:
     void ssl_destroy() noexcept;
     void ssl_use_certificate_chain_file(const std::string& path, std::error_code&);
     void ssl_use_private_key_file(const std::string& path, std::error_code&);
+    void ssl_use_default_verify(std::error_code&);
     void ssl_use_verify_file(const std::string& path, std::error_code&);
 
 #if REALM_HAVE_OPENSSL
@@ -152,7 +159,7 @@ class Stream {
 public:
     enum HandshakeType { client, server };
 
-    Stream(socket&, Context&, HandshakeType);
+    Stream(Socket&, Context&, HandshakeType);
     ~Stream() noexcept;
 
     /// \brief Set the certificate verification mode for this SSL stream.
@@ -186,7 +193,7 @@ public:
     /// @{
     ///
     /// Read and write operations behave the same way as they do on \ref
-    /// network::socket, except that after cancellation of asynchronous
+    /// network::Socket, except that after cancellation of asynchronous
     /// operations (`lowest_layer().cancel()`), the stream may be left in a bad
     /// state (see below).
     ///
@@ -251,7 +258,7 @@ public:
     template<class H> void async_read_until(char* buffer, std::size_t size, char delim,
                                             ReadAheadBuffer&, H handler);
 
-    template<class H> void async_write(const char* data, size_t size, H handler);
+    template<class H> void async_write(const char* data, std::size_t size, H handler);
 
     template<class H> void async_read_some(char* buffer, std::size_t size, H handler);
 
@@ -262,23 +269,21 @@ public:
     /// @}
 
     /// Returns a reference to the underlying socket.
-    socket& lowest_layer() noexcept;
+    Socket& lowest_layer() noexcept;
 
 private:
-    using Want = io_service::Want;
-    using StreamOps = io_service::BasicStreamOps<Stream>;
+    using Want = Service::Want;
+    using StreamOps = Service::BasicStreamOps<Stream>;
 
     class HandshakeOperBase;
     template<class H> class HandshakeOper;
     class ShutdownOperBase;
     template<class H> class ShutdownOper;
 
-    using LendersHandshakeOperPtr =
-        std::unique_ptr<HandshakeOperBase, io_service::LendersOperDeleter>;
-    using LendersShutdownOperPtr =
-        std::unique_ptr<ShutdownOperBase, io_service::LendersOperDeleter>;
+    using LendersHandshakeOperPtr = std::unique_ptr<HandshakeOperBase, Service::LendersOperDeleter>;
+    using LendersShutdownOperPtr  = std::unique_ptr<ShutdownOperBase,  Service::LendersOperDeleter>;
 
-    socket& m_tcp_socket;
+    Socket& m_tcp_socket;
     Context& m_ssl_context;
     const HandshakeType m_handshake_type;
 
@@ -286,12 +291,12 @@ private:
     std::string m_host_name;
 
     // For async_handshake(), async_read_some()
-    io_service::OwnersOperPtr m_read_oper;
+    Service::OwnersOperPtr m_read_oper;
 
     // For async_write_some(), async_shutdown()
-    io_service::OwnersOperPtr m_write_oper;
+    Service::OwnersOperPtr m_write_oper;
 
-    // See io_service::BasicStreamOps for details on these these 8 functions.
+    // See Service::BasicStreamOps for details on these these 8 functions.
     void do_init_read_sync(std::error_code&) noexcept;
     void do_init_write_sync(std::error_code&) noexcept;
     void do_init_read_async(std::error_code&, Want&) noexcept;
@@ -385,16 +390,16 @@ private:
     std::pair<OSStatus, std::size_t> do_ssl_read(char* buffer, std::size_t size) noexcept;
     std::pair<OSStatus, std::size_t> do_ssl_write(const char* data, std::size_t size) noexcept;
 
-    static OSStatus tcp_read(SSLConnectionRef, void*, size_t* length) noexcept;
-    static OSStatus tcp_write(SSLConnectionRef, const void*, size_t* length) noexcept;
+    static OSStatus tcp_read(SSLConnectionRef, void*, std::size_t* length) noexcept;
+    static OSStatus tcp_write(SSLConnectionRef, const void*, std::size_t* length) noexcept;
 
-    OSStatus tcp_read(void*, size_t* length) noexcept;
-    OSStatus tcp_write(const void*, size_t* length) noexcept;
+    OSStatus tcp_read(void*, std::size_t* length) noexcept;
+    OSStatus tcp_write(const void*, std::size_t* length) noexcept;
 
     OSStatus verify_peer() noexcept;
 #endif
 
-    friend class io_service::BasicStreamOps<Stream>;
+    friend class Service::BasicStreamOps<Stream>;
     friend class network::ReadAheadBuffer;
 };
 
@@ -434,6 +439,14 @@ inline void Context::use_private_key_file(const std::string& path)
         throw std::system_error(ec);
 }
 
+inline void Context::use_default_verify()
+{
+    std::error_code ec;
+    ssl_use_default_verify(ec);
+    if (ec)
+        throw std::system_error(ec);
+}
+
 inline void Context::use_verify_file(const std::string& path)
 {
     std::error_code ec;
@@ -443,11 +456,11 @@ inline void Context::use_verify_file(const std::string& path)
 }
 
 
-class Stream::HandshakeOperBase: public io_service::IoOper {
+class Stream::HandshakeOperBase: public Service::IoOper {
 public:
     HandshakeOperBase(std::size_t size, Stream& stream):
-        IoOper(size),
-        m_stream(&stream)
+        IoOper{size},
+        m_stream{&stream}
     {
     }
     Want initiate() noexcept
@@ -480,7 +493,7 @@ public:
     {
         m_stream = nullptr;
     }
-    socket_base& get_socket() noexcept
+    SocketBase& get_socket() noexcept
     {
         return m_stream->lowest_layer();
     }
@@ -492,8 +505,8 @@ protected:
 template<class H> class Stream::HandshakeOper: public HandshakeOperBase {
 public:
     HandshakeOper(std::size_t size, Stream& stream, H handler):
-        HandshakeOperBase(size, stream),
-        m_handler(std::move(handler))
+        HandshakeOperBase{size, stream},
+        m_handler{std::move(handler)}
     {
     }
     void recycle_and_execute() override final
@@ -510,11 +523,11 @@ private:
     H m_handler;
 };
 
-class Stream::ShutdownOperBase: public io_service::IoOper {
+class Stream::ShutdownOperBase: public Service::IoOper {
 public:
     ShutdownOperBase(std::size_t size, Stream& stream):
-        IoOper(size),
-        m_stream(&stream)
+        IoOper{size},
+        m_stream{&stream}
     {
     }
     Want initiate() noexcept
@@ -548,7 +561,7 @@ public:
     {
         m_stream = nullptr;
     }
-    socket_base& get_socket() noexcept
+    SocketBase& get_socket() noexcept
     {
         return m_stream->lowest_layer();
     }
@@ -560,8 +573,8 @@ protected:
 template<class H> class Stream::ShutdownOper: public ShutdownOperBase {
 public:
     ShutdownOper(std::size_t size, Stream& stream, H handler):
-        ShutdownOperBase(size, stream),
-        m_handler(std::move(handler))
+        ShutdownOperBase{size, stream},
+        m_handler{std::move(handler)}
     {
     }
     void recycle_and_execute() override final
@@ -578,10 +591,10 @@ private:
     H m_handler;
 };
 
-inline Stream::Stream(socket& socket, Context& context, HandshakeType type):
-    m_tcp_socket(socket),
-    m_ssl_context(context),
-    m_handshake_type(type)
+inline Stream::Stream(Socket& socket, Context& context, HandshakeType type):
+    m_tcp_socket{socket},
+    m_ssl_context{context},
+    m_handshake_type{type}
 {
     ssl_init(); // Throws
 }
@@ -600,7 +613,7 @@ inline Stream::~Stream() noexcept
             any_incomplete = true;
     }
     if (any_incomplete) {
-        io_service& service = m_tcp_socket.get_io_service();
+        Service& service = m_tcp_socket.get_service();
         service.cancel_incomplete_io_ops(m_tcp_socket.get_sock_fd());
     }
     ssl_destroy();
@@ -729,8 +742,8 @@ inline void Stream::shutdown()
 template<class H> inline void Stream::async_handshake(H handler)
 {
     LendersHandshakeOperPtr op =
-        io_service::alloc<HandshakeOper<H>>(m_read_oper, *this, std::move(handler)); // Throws
-    io_service::initiate_io_oper(std::move(op)); // Throws
+        Service::alloc<HandshakeOper<H>>(m_read_oper, *this, std::move(handler)); // Throws
+    Service::initiate_io_oper(std::move(op)); // Throws
 }
 
 template<class H> inline void Stream::async_read(char* buffer, std::size_t size, H handler)
@@ -775,8 +788,8 @@ template<class H> inline void Stream::async_write_some(const char* data, std::si
 template<class H> inline void Stream::async_shutdown(H handler)
 {
     LendersShutdownOperPtr op =
-        io_service::alloc<ShutdownOper<H>>(m_write_oper, *this, std::move(handler)); // Throws
-    io_service::initiate_io_oper(std::move(op)); // Throws
+        Service::alloc<ShutdownOper<H>>(m_write_oper, *this, std::move(handler)); // Throws
+    Service::initiate_io_oper(std::move(op)); // Throws
 }
 
 inline void Stream::do_init_read_sync(std::error_code& ec) noexcept
@@ -833,7 +846,7 @@ inline std::size_t Stream::do_write_some_async(const char* data, std::size_t siz
     return ssl_write(data, size, ec, want);
 }
 
-inline socket& Stream::lowest_layer() noexcept
+inline Socket& Stream::lowest_layer() noexcept
 {
     return m_tcp_socket;
 }

@@ -9,9 +9,9 @@
 import Foundation
 
 extension String {
-    subscript (range: Range<Int>) -> String {
-        let startIndex = self.startIndex.advancedBy(range.startIndex, limit:  self.endIndex)
-        let endIndex = self.startIndex.advancedBy(range.endIndex, limit: self.endIndex)
+    subscript (range: CountableClosedRange<Int>) -> String {
+        let startIndex = self.characters.index(self.startIndex, offsetBy: range.lowerBound, limitedBy:  self.endIndex) ?? self.startIndex
+        let endIndex = self.characters.index(self.startIndex, offsetBy: range.upperBound, limitedBy: self.endIndex) ?? self.endIndex
 
         return self[startIndex..<endIndex]
     }

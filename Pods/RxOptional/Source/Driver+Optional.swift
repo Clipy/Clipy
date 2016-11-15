@@ -1,30 +1,30 @@
 import RxCocoa
 
-public extension Driver where Element: OptionalType {
+public extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy, E: OptionalType {
     /**
-     Unwrap and filter out nil values.
+     Unwraps and filters out `nil` elements.
 
-     - returns: Driver with only succefully unwrapped values.
+     - returns: `Driver` of source `Driver`'s elements, with `nil` elements filtered out.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func filterNil() -> Driver<Element.Wrapped> {
-        return self.flatMap { element -> Driver<Element.Wrapped> in
+    
+    public func filterNil() -> Driver<E.Wrapped> {
+        return self.flatMap { element -> Driver<E.Wrapped> in
             guard let value = element.value else {
-                return Driver<Element.Wrapped>.empty()
+                return Driver<E.Wrapped>.empty()
             }
-            return Driver<Element.Wrapped>.just(value)
+            return Driver<E.Wrapped>.just(value)
         }
     }
 
     /**
-     Unwraps optional and replace nil values with value.
+     Unwraps optional elements and replaces `nil` elements with `valueOnNil`.
 
-     - parameter valueOnNil: Value to emit when nil is found.
+     - parameter valueOnNil: value to use when `nil` is encountered.
 
-     - returns: Driver with unwrapped value or nilValue.
+     - returns: `Driver` of the source `Driver`'s unwrapped elements, with `nil` elements replaced by `valueOnNil`.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func replaceNilWith(valueOnNil: Element.Wrapped) -> Driver<Element.Wrapped> {
+    
+    public func replaceNilWith(_ valueOnNil: E.Wrapped) -> Driver<E.Wrapped> {
         return self.map { element -> E.Wrapped in
             guard let value = element.value else {
                 return valueOnNil
@@ -34,21 +34,35 @@ public extension Driver where Element: OptionalType {
     }
 
     /**
-     Unwraps element and passes value if not nil. When nil uses handler to call another Observable
+     Unwraps optional elements and replaces `nil` elements with result returned by `handler`.
 
-     - parameter handler: Nil handler function, producing another observable sequence.
+     - parameter handler: `nil` handler function that returns `Driver` of non-`nil` elements.
 
-     - returns: Driver containing the source sequence's elements,
-     followed by the elements produced by the handler's resulting observable
-     sequence in case an nil was found while unwrapping.
+     - returns: `Driver` of the source `Driver`'s unwrapped elements, with `nil` elements replaced by the handler's returned non-`nil` elements.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func catchOnNil(handler: () -> Driver<Element.Wrapped>) -> Driver<Element.Wrapped> {
-        return self.flatMap { element -> Driver<Element.Wrapped> in
+    
+    public func catchOnNil(_ handler: @escaping () -> Driver<E.Wrapped>) -> Driver<E.Wrapped> {
+        return self.flatMap { element -> Driver<E.Wrapped> in
             guard let value = element.value else {
                 return handler()
             }
-            return Driver<Element.Wrapped>.just(value)
+            return Driver<E.Wrapped>.just(value)
+        }
+    }
+}
+
+public extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy, E: OptionalType, E.Wrapped: Equatable {
+    /**
+     Returns an observable sequence that contains only distinct contiguous elements according to equality operator.
+     
+     - seealso: [distinct operator on reactivex.io](http://reactivex.io/documentation/operators/distinct.html)
+     
+     - returns: An observable sequence only containing the distinct contiguous elements, based on equality operator, from the source sequence.
+     */
+    
+    public func distinctUntilChanged() -> Driver<E> {
+        return self.distinctUntilChanged { (lhs, rhs) -> Bool in
+            return lhs.value == rhs.value
         }
     }
 }

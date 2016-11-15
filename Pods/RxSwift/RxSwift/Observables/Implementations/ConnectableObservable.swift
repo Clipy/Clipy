@@ -1,6 +1,6 @@
 //
 //  ConnectableObservable.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 3/1/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -63,13 +63,13 @@ class ConnectableObservableAdapter<S: SubjectType>
     : ConnectableObservable<S.E> {
     typealias ConnectionType = Connection<S>
     
-    private let _subject: S
-    private let _source: Observable<S.SubjectObserverType.E>
+    fileprivate let _subject: S
+    fileprivate let _source: Observable<S.SubjectObserverType.E>
     
-    private let _lock = NSRecursiveLock()
+    fileprivate let _lock = NSRecursiveLock()
     
     // state
-    private var _connection: ConnectionType?
+    fileprivate var _connection: ConnectionType?
     
     init(source: Observable<S.SubjectObserverType.E>, subject: S) {
         _source = source
@@ -90,7 +90,7 @@ class ConnectableObservableAdapter<S: SubjectType>
         }
     }
     
-    override func subscribe<O : ObserverType where O.E == S.E>(observer: O) -> Disposable {
+    override func subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == S.E {
         return _subject.subscribe(observer)
     }
 }

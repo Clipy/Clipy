@@ -8,11 +8,9 @@
 
 import Foundation
 
-/**
-Type erased recursive scheduler.
-*/
+/// Type erased recursive scheduler.
 class AnyRecursiveScheduler<State> {
-    typealias Action =  (state: State, scheduler: AnyRecursiveScheduler<State>) -> Void
+    typealias Action =  (State, AnyRecursiveScheduler<State>) -> Void
 
     private let _lock = NSRecursiveLock()
     
@@ -22,7 +20,7 @@ class AnyRecursiveScheduler<State> {
     private var _scheduler: SchedulerType
     private var _action: Action?
     
-    init(scheduler: SchedulerType, action: Action) {
+    init(scheduler: SchedulerType, action: @escaping Action) {
         _action = action
         _scheduler = scheduler
     }
@@ -33,7 +31,7 @@ class AnyRecursiveScheduler<State> {
     - parameter state: State passed to the action to be executed.
     - parameter dueTime: Relative time after which to execute the recursive action.
     */
-    func schedule(state: State, dueTime: RxTimeInterval) {
+    func schedule(_ state: State, dueTime: RxTimeInterval) {
 
         var isAdded = false
         var isDone = false
@@ -41,13 +39,13 @@ class AnyRecursiveScheduler<State> {
         var removeKey: CompositeDisposable.DisposeKey? = nil
         let d = _scheduler.scheduleRelative(state, dueTime: dueTime) { (state) -> Disposable in
             // best effort
-            if self._group.disposed {
-                return NopDisposable.instance
+            if self._group.isDisposed {
+                return Disposables.create()
             }
             
             let action = self._lock.calculateLocked { () -> Action? in
                 if isAdded {
-                    self._group.removeDisposable(removeKey!)
+                    self._group.remove(for: removeKey!)
                 }
                 else {
                     isDone = true
@@ -57,26 +55,24 @@ class AnyRecursiveScheduler<State> {
             }
             
             if let action = action {
-                action(state: state, scheduler: self)
+                action(state, self)
             }
             
-            return NopDisposable.instance
+            return Disposables.create()
         }
             
         _lock.performLocked {
             if !isDone {
-                removeKey = _group.addDisposable(d)
+                removeKey = _group.insert(d)
                 isAdded = true
             }
         }
     }
 
-    /**
-    Schedules an action to be executed recursively.
-    
-    - parameter state: State passed to the action to be executed.
-    */
-    func schedule(state: State) {
+    /// Schedules an action to be executed recursively.
+    ///
+    /// - parameter state: State passed to the action to be executed.
+    func schedule(_ state: State) {
             
         var isAdded = false
         var isDone = false
@@ -84,13 +80,13 @@ class AnyRecursiveScheduler<State> {
         var removeKey: CompositeDisposable.DisposeKey? = nil
         let d = _scheduler.schedule(state) { (state) -> Disposable in
             // best effort
-            if self._group.disposed {
-                return NopDisposable.instance
+            if self._group.isDisposed {
+                return Disposables.create()
             }
             
             let action = self._lock.calculateLocked { () -> Action? in
                 if isAdded {
-                    self._group.removeDisposable(removeKey!)
+                    self._group.remove(for: removeKey!)
                 }
                 else {
                     isDone = true
@@ -100,15 +96,15 @@ class AnyRecursiveScheduler<State> {
             }
            
             if let action = action {
-                action(state: state, scheduler: self)
+                action(state, self)
             }
             
-            return NopDisposable.instance
+            return Disposables.create()
         }
         
         _lock.performLocked {
             if !isDone {
-                removeKey = _group.addDisposable(d)
+                removeKey = _group.insert(d)
                 isAdded = true
             }
         }
@@ -122,11 +118,9 @@ class AnyRecursiveScheduler<State> {
     }
 }
 
-/**
-Type erased recursive scheduler.
-*/
+/// Type erased recursive scheduler.
 class RecursiveImmediateScheduler<State> {
-    typealias Action =  (state: State, recurse: State -> Void) -> Void
+    typealias Action =  (_ state: State, _ recurse: (State) -> Void) -> Void
     
     private var _lock = SpinLock()
     private let _group = CompositeDisposable()
@@ -134,33 +128,31 @@ class RecursiveImmediateScheduler<State> {
     private var _action: Action?
     private let _scheduler: ImmediateSchedulerType
     
-    init(action: Action, scheduler: ImmediateSchedulerType) {
+    init(action: @escaping Action, scheduler: ImmediateSchedulerType) {
         _action = action
         _scheduler = scheduler
     }
     
     // immediate scheduling
     
-    /**
-    Schedules an action to be executed recursively.
-    
-    - parameter state: State passed to the action to be executed.
-    */
-    func schedule(state: State) {
-        
+    /// Schedules an action to be executed recursively.
+    ///
+    /// - parameter state: State passed to the action to be executed.
+    func schedule(_ state: State) {
+
         var isAdded = false
         var isDone = false
         
         var removeKey: CompositeDisposable.DisposeKey? = nil
         let d = _scheduler.schedule(state) { (state) -> Disposable in
             // best effort
-            if self._group.disposed {
-                return NopDisposable.instance
+            if self._group.isDisposed {
+                return Disposables.create()
             }
             
             let action = self._lock.calculateLocked { () -> Action? in
                 if isAdded {
-                    self._group.removeDisposable(removeKey!)
+                    self._group.remove(for: removeKey!)
                 }
                 else {
                     isDone = true
@@ -170,15 +162,15 @@ class RecursiveImmediateScheduler<State> {
             }
             
             if let action = action {
-                action(state: state, recurse: self.schedule)
+                action(state, self.schedule)
             }
             
-            return NopDisposable.instance
+            return Disposables.create()
         }
         
         _lock.performLocked {
             if !isDone {
-                removeKey = _group.addDisposable(d)
+                removeKey = _group.insert(d)
                 isAdded = true
             }
         }

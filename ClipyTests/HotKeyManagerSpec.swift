@@ -10,12 +10,12 @@ class HotKeyManagerSpec: QuickSpec {
         describe("Migrate HotKey") {
 
             beforeEach {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(Constants.UserDefaults.hotKeys)
-                defaults.removeObjectForKey(Constants.HotKey.migrateNewKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.mainKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.historyKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.snippetKeyCombo)
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.UserDefaults.hotKeys)
+                defaults.removeObject(forKey: Constants.HotKey.migrateNewKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.mainKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.historyKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.snippetKeyCombo)
                 defaults.synchronize()
             }
 
@@ -25,11 +25,11 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.historyKeyCombo).to(beNil())
                 expect(manager.snippetKeyCombo).to(beNil())
 
-                let defaults = NSUserDefaults.standardUserDefaults()
+                let defaults = UserDefaults.standard
 
-                expect(defaults.boolForKey(Constants.HotKey.migrateNewKeyCombo)).to(beFalse())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beFalse())
                 manager.setupDefaultHoyKey()
-                expect(defaults.boolForKey(Constants.HotKey.migrateNewKeyCombo)).to(beTrue())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beTrue())
 
                 expect(manager.mainKeyCombo).toNot(beNil())
                 expect(manager.mainKeyCombo?.keyCode).to(equal(9))
@@ -56,16 +56,16 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.historyKeyCombo).to(beNil())
                 expect(manager.snippetKeyCombo).to(beNil())
 
-                let defaults = NSUserDefaults.standardUserDefaults()
-                let defaultKeyCombos: [String: AnyObject] = [Constants.Menu.clip: ["keyCode": 0, "modifiers": 4352],
-                                                             Constants.Menu.history: ["keyCode": 9, "modifiers": 768],
-                                                             Constants.Menu.snippet: ["keyCode": 11, "modifiers": 4352]]
-                defaults.registerDefaults([Constants.UserDefaults.hotKeys: defaultKeyCombos])
+                let defaults = UserDefaults.standard
+                let defaultKeyCombos: [String: Any] = [Constants.Menu.clip: ["keyCode": 0, "modifiers": 4352],
+                                                       Constants.Menu.history: ["keyCode": 9, "modifiers": 768],
+                                                       Constants.Menu.snippet: ["keyCode": 11, "modifiers": 4352]]
+                defaults.register(defaults: [Constants.UserDefaults.hotKeys: defaultKeyCombos])
                 defaults.synchronize()
 
-                expect(defaults.boolForKey(Constants.HotKey.migrateNewKeyCombo)).to(beFalse())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beFalse())
                 manager.setupDefaultHoyKey()
-                expect(defaults.boolForKey(Constants.HotKey.migrateNewKeyCombo)).to(beTrue())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beTrue())
 
                 expect(manager.mainKeyCombo).toNot(beNil())
                 expect(manager.mainKeyCombo?.keyCode).to(equal(0))
@@ -87,12 +87,12 @@ class HotKeyManagerSpec: QuickSpec {
             }
 
             afterEach {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(Constants.UserDefaults.hotKeys)
-                defaults.removeObjectForKey(Constants.HotKey.migrateNewKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.mainKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.historyKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.snippetKeyCombo)
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.UserDefaults.hotKeys)
+                defaults.removeObject(forKey: Constants.HotKey.migrateNewKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.mainKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.historyKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.snippetKeyCombo)
                 defaults.synchronize()
             }
         }
@@ -100,11 +100,11 @@ class HotKeyManagerSpec: QuickSpec {
         describe("Save HotKey") { 
 
             beforeEach {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setBool(true, forKey: Constants.HotKey.migrateNewKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.mainKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.historyKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.snippetKeyCombo)
+                let defaults = UserDefaults.standard
+                defaults.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.mainKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.historyKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.snippetKeyCombo)
                 defaults.synchronize()
             }
 
@@ -114,7 +114,7 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.historyKeyCombo).to(beNil())
                 expect(manager.snippetKeyCombo).to(beNil())
 
-                let defautls = NSUserDefaults.standardUserDefaults()
+                let defautls = UserDefaults.standard
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo)).to(beNil())
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo)).to(beNil())
                 expect(defautls.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo)).to(beNil())
@@ -125,8 +125,8 @@ class HotKeyManagerSpec: QuickSpec {
                 expect(manager.snippetKeyCombo).to(beNil())
 
                 let mainKeyCombo = KeyCombo(keyCode: 9, carbonModifiers: 768)
-                let historyKeyCombo = KeyCombo(doubledCocoaModifiers: .CommandKeyMask)
-                let snippetKeyCombo = KeyCombo(keyCode: 0, cocoaModifiers: .ShiftKeyMask)
+                let historyKeyCombo = KeyCombo(doubledCocoaModifiers: .command)
+                let snippetKeyCombo = KeyCombo(keyCode: 0, cocoaModifiers: .shift)
 
                 manager.changeKeyCombo(.Main, keyCombo: mainKeyCombo)
                 manager.changeKeyCombo(.History, keyCombo: historyKeyCombo)
@@ -161,10 +161,10 @@ class HotKeyManagerSpec: QuickSpec {
 
             it("Unarchive saved key combos") {
                 let mainKeyCombo = KeyCombo(keyCode: 9, carbonModifiers: 768)
-                let historyKeyCombo = KeyCombo(doubledCocoaModifiers: .CommandKeyMask)
-                let snippetKeyCombo = KeyCombo(keyCode: 0, cocoaModifiers: .ShiftKeyMask)
+                let historyKeyCombo = KeyCombo(doubledCocoaModifiers: .command)
+                let snippetKeyCombo = KeyCombo(keyCode: 0, cocoaModifiers: .shift)
 
-                let defaults = NSUserDefaults.standardUserDefaults()
+                let defaults = UserDefaults.standard
                 defaults.setArchiveData(mainKeyCombo!, forKey: Constants.HotKey.mainKeyCombo)
                 defaults.setArchiveData(historyKeyCombo!, forKey: Constants.HotKey.historyKeyCombo)
                 defaults.setArchiveData(snippetKeyCombo!, forKey: Constants.HotKey.snippetKeyCombo)
@@ -196,12 +196,12 @@ class HotKeyManagerSpec: QuickSpec {
             }
 
             afterEach {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(Constants.UserDefaults.hotKeys)
-                defaults.removeObjectForKey(Constants.HotKey.migrateNewKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.mainKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.historyKeyCombo)
-                defaults.removeObjectForKey(Constants.HotKey.snippetKeyCombo)
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.UserDefaults.hotKeys)
+                defaults.removeObject(forKey: Constants.HotKey.migrateNewKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.mainKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.historyKeyCombo)
+                defaults.removeObject(forKey: Constants.HotKey.snippetKeyCombo)
                 defaults.synchronize()
             }
         }
@@ -226,15 +226,15 @@ class HotKeyManagerSpec: QuickSpec {
 
         describe("Folder HotKey") {
             beforeEach {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(Constants.HotKey.folderKeyCombos)
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.HotKey.folderKeyCombos)
                 defaults.synchronize()
             }
 
             it("Add and Remove folder hotkey") {
                 let manager = HotKeyManager()
 
-                let identifier = NSUUID().UUIDString
+                let identifier = NSUUID().uuidString
                 expect(manager.folderKeyCombo(identifier)).to(beNil())
 
                 let keyCombo = KeyCombo(keyCode: 0, carbonModifiers: cmdKey)!
@@ -254,8 +254,8 @@ class HotKeyManagerSpec: QuickSpec {
             }
 
             afterEach {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(Constants.HotKey.folderKeyCombos)
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.HotKey.folderKeyCombos)
                 defaults.synchronize()
             }
         }

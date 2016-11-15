@@ -8,48 +8,48 @@
 
 import Foundation
 
-class TimerSink<O: ObserverType where O.E : SignedIntegerType > : Sink<O> {
+class TimerSink<O: ObserverType> : Sink<O> where O.E : SignedInteger  {
     typealias Parent = Timer<O.E>
     
     private let _parent: Parent
     
-    init(parent: Parent, observer: O) {
+    init(parent: Parent, observer: O, cancel: Cancelable) {
         _parent = parent
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
     
     func run() -> Disposable {
         return _parent._scheduler.schedulePeriodic(0 as O.E, startAfter: _parent._dueTime, period: _parent._period!) { state in
-            self.forwardOn(.Next(state))
+            self.forwardOn(.next(state))
             return state &+ 1
         }
     }
 }
 
-class TimerOneOffSink<O: ObserverType where O.E : SignedIntegerType> : Sink<O> {
+class TimerOneOffSink<O: ObserverType> : Sink<O> where O.E : SignedInteger {
     typealias Parent = Timer<O.E>
     
     private let _parent: Parent
     
-    init(parent: Parent, observer: O) {
+    init(parent: Parent, observer: O, cancel: Cancelable) {
         _parent = parent
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
     
     func run() -> Disposable {
         return _parent._scheduler.scheduleRelative((), dueTime: _parent._dueTime) { (_) -> Disposable in
-            self.forwardOn(.Next(0))
-            self.forwardOn(.Completed)
+            self.forwardOn(.next(0))
+            self.forwardOn(.completed)
             
-            return NopDisposable.instance
+            return Disposables.create()
         }
     }
 }
 
-class Timer<E: SignedIntegerType>: Producer<E> {
-    private let _scheduler: SchedulerType
-    private let _dueTime: RxTimeInterval
-    private let _period: RxTimeInterval?
+class Timer<E: SignedInteger>: Producer<E> {
+    fileprivate let _scheduler: SchedulerType
+    fileprivate let _dueTime: RxTimeInterval
+    fileprivate let _period: RxTimeInterval?
     
     init(dueTime: RxTimeInterval, period: RxTimeInterval?, scheduler: SchedulerType) {
         _scheduler = scheduler
@@ -57,16 +57,16 @@ class Timer<E: SignedIntegerType>: Producer<E> {
         _period = period
     }
     
-    override func run<O : ObserverType where O.E == E>(observer: O) -> Disposable {
+    override func run<O : ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == E {
         if let _ = _period {
-            let sink = TimerSink(parent: self, observer: observer)
-            sink.disposable = sink.run()
-            return sink
+            let sink = TimerSink(parent: self, observer: observer, cancel: cancel)
+            let subscription = sink.run()
+            return (sink: sink, subscription: subscription)
         }
         else {
-            let sink = TimerOneOffSink(parent: self, observer: observer)
-            sink.disposable = sink.run()
-            return sink
+            let sink = TimerOneOffSink(parent: self, observer: observer, cancel: cancel)
+            let subscription = sink.run()
+            return (sink: sink, subscription: subscription)
         }
     }
 }

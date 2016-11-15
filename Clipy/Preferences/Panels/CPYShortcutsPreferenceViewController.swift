@@ -29,8 +29,8 @@ class CPYShortcutsPreferenceViewController: NSViewController {
 }
 
 // MARK: - Shortcut
-private extension CPYShortcutsPreferenceViewController {
-    private func prepareHotKeys() {
+fileprivate extension CPYShortcutsPreferenceViewController {
+    fileprivate func prepareHotKeys() {
         mainShortcutRecordView.keyCombo = HotKeyManager.sharedManager.mainKeyCombo
         historyShortcutRecordView.keyCombo = HotKeyManager.sharedManager.historyKeyCombo
         snippetShortcutRecordView.keyCombo = HotKeyManager.sharedManager.snippetKeyCombo
@@ -39,15 +39,15 @@ private extension CPYShortcutsPreferenceViewController {
 
 // MARK: - RecordView Delegate
 extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
-    func recordViewShouldBeginRecording(recordView: RecordView) -> Bool {
+    func recordViewShouldBeginRecording(_ recordView: RecordView) -> Bool {
         return true
     }
 
-    func recordView(recordView: RecordView, canRecordKeyCombo keyCombo: KeyCombo) -> Bool {
+    func recordView(_ recordView: RecordView, canRecordKeyCombo keyCombo: KeyCombo) -> Bool {
         return true
     }
 
-    func recordViewDidClearShortcut(recordView: RecordView) {
+    func recordViewDidClearShortcut(_ recordView: RecordView) {
         switch recordView {
         case mainShortcutRecordView:
             HotKeyManager.sharedManager.changeKeyCombo(.Main, keyCombo: nil)
@@ -59,7 +59,7 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
         }
     }
 
-    func recordView(recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
+    func recordView(_ recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
         switch recordView {
         case mainShortcutRecordView:
             HotKeyManager.sharedManager.changeKeyCombo(.Main, keyCombo: keyCombo)
@@ -71,5 +71,5 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
         }
     }
 
-    func recordViewDidEndRecording(recordView: RecordView) {}
+    func recordViewDidEndRecording(_ recordView: RecordView) {}
 }

@@ -1,5 +1,7 @@
 ![](http://f.cl.ly/items/0r1E192C1R0b2g2Q3h2w/QuickLogo_Color.png)
 
+[![Build Status](https://travis-ci.org/Quick/Quick.svg?branch=master)](https://travis-ci.org/Quick/Quick)
+
 Quick is a behavior-driven development framework for Swift and Objective-C.
 Inspired by [RSpec](https://github.com/rspec/rspec), [Specta](https://github.com/specta/specta), and [Ginkgo](https://github.com/onsi/ginkgo).
 
@@ -43,8 +45,8 @@ All documentation can be found in the [Documentation folder](./Documentation), i
 use_frameworks!
 
 def testing_pods
-    pod 'Quick', '~> 0.9.0'
-    pod 'Nimble', '~> 3.2.0'
+    pod 'Quick'
+    pod 'Nimble'
 end
 
 target 'MyTests' do
@@ -56,6 +58,12 @@ target 'MyUITests' do
 end
 ```
 
+## Projects using Quick
+
+Many apps use both Quick and Nimble however, as they are not included in the app binary, neither appear in “Top Used Libraries” blog posts. Therefore, it would be greatly appreciated to remind contributors that their efforts are valued by compiling a list of organizations and projects that use them. 
+
+Does your organization or project use Quick and Nimble? If yes, [please add your project to the list](https://github.com/Quick/Quick/wiki/Projects-using-Quick).
+
 ## License
 
-Apache 2.0 license. See the `LICENSE` file for details.
+Apache 2.0 license. See the [`LICENSE`](LICENSE) file for details.

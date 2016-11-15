@@ -1,6 +1,6 @@
 //
 //  Just.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 8/30/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -13,36 +13,36 @@ class JustScheduledSink<O: ObserverType> : Sink<O> {
 
     private let _parent: Parent
 
-    init(parent: Parent, observer: O) {
+    init(parent: Parent, observer: O, cancel: Cancelable) {
         _parent = parent
-        super.init(observer: observer)
+        super.init(observer: observer, cancel: cancel)
     }
 
     func run() -> Disposable {
         let scheduler = _parent._scheduler
         return scheduler.schedule(_parent._element) { element in
-            self.forwardOn(.Next(element))
+            self.forwardOn(.next(element))
             return scheduler.schedule(()) { _ in
-                self.forwardOn(.Completed)
-                return NopDisposable.instance
+                self.forwardOn(.completed)
+                return Disposables.create()
             }
         }
     }
 }
 
 class JustScheduled<Element> : Producer<Element> {
-    private let _scheduler: ImmediateSchedulerType
-    private let _element: Element
+    fileprivate let _scheduler: ImmediateSchedulerType
+    fileprivate let _element: Element
 
     init(element: Element, scheduler: ImmediateSchedulerType) {
         _scheduler = scheduler
         _element = element
     }
 
-    override func subscribe<O : ObserverType where O.E == E>(observer: O) -> Disposable {
-        let sink = JustScheduledSink(parent: self, observer: observer)
-        sink.disposable = sink.run()
-        return sink
+    override func run<O : ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == E {
+        let sink = JustScheduledSink(parent: self, observer: observer, cancel: cancel)
+        let subscription = sink.run()
+        return (sink: sink, subscription: subscription)
     }
 }
 
@@ -53,9 +53,9 @@ class Just<Element> : Producer<Element> {
         _element = element
     }
     
-    override func subscribe<O : ObserverType where O.E == Element>(observer: O) -> Disposable {
-        observer.on(.Next(_element))
-        observer.on(.Completed)
-        return NopDisposable.instance
+    override func subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == Element {
+        observer.on(.next(_element))
+        observer.on(.completed)
+        return Disposables.create()
     }
 }

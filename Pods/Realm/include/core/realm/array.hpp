@@ -55,6 +55,7 @@ Searching: The main finding function is:
 #include <realm/string_data.hpp>
 #include <realm/query_conditions.hpp>
 #include <realm/column_fwd.hpp>
+#include <realm/array_direct.hpp>
 
 /*
     MMX: mmintrin.h
@@ -104,65 +105,6 @@ const size_t max_array_payload = 0x00ffffffL;
 
 /// Alias for realm::npos.
 const size_t not_found = npos;
-
-// clang-format off
-/* wid == 16/32 likely when accessing offsets in B tree */
-#define REALM_TEMPEX(fun, wid, arg) \
-    if (wid == 16) {fun<16> arg;} \
-    else if (wid == 32) {fun<32> arg;} \
-    else if (wid == 0) {fun<0> arg;} \
-    else if (wid == 1) {fun<1> arg;} \
-    else if (wid == 2) {fun<2> arg;} \
-    else if (wid == 4) {fun<4> arg;} \
-    else if (wid == 8) {fun<8> arg;} \
-    else if (wid == 64) {fun<64> arg;} \
-    else {REALM_ASSERT_DEBUG(false); fun<0> arg;}
-
-#define REALM_TEMPEX2(fun, targ, wid, arg) \
-    if (wid == 16) {fun<targ, 16> arg;} \
-    else if (wid == 32) {fun<targ, 32> arg;} \
-    else if (wid == 0) {fun<targ, 0> arg;} \
-    else if (wid == 1) {fun<targ, 1> arg;} \
-    else if (wid == 2) {fun<targ, 2> arg;} \
-    else if (wid == 4) {fun<targ, 4> arg;} \
-    else if (wid == 8) {fun<targ, 8> arg;} \
-    else if (wid == 64) {fun<targ, 64> arg;} \
-    else {REALM_ASSERT_DEBUG(false); fun<targ, 0> arg;}
-
-#define REALM_TEMPEX3(fun, targ1, targ2, wid, arg) \
-    if (wid == 16) {fun<targ1, targ2, 16> arg;} \
-    else if (wid == 32) {fun<targ1, targ2, 32> arg;} \
-    else if (wid == 0) {fun<targ1, targ2, 0> arg;} \
-    else if (wid == 1) {fun<targ1, targ2, 1> arg;} \
-    else if (wid == 2) {fun<targ1, targ2, 2> arg;} \
-    else if (wid == 4) {fun<targ1, targ2, 4> arg;} \
-    else if (wid == 8) {fun<targ1, targ2, 8> arg;} \
-    else if (wid == 64) {fun<targ1, targ2, 64> arg;} \
-    else {REALM_ASSERT_DEBUG(false); fun<targ1, targ2, 0> arg;}
-
-#define REALM_TEMPEX4(fun, targ1, targ2, wid, targ3, arg) \
-    if (wid == 16) {fun<targ1, targ2, 16, targ3> arg;} \
-    else if (wid == 32) {fun<targ1, targ2, 32, targ3> arg;} \
-    else if (wid == 0) {fun<targ1, targ2, 0, targ3> arg;} \
-    else if (wid == 1) {fun<targ1, targ2, 1, targ3> arg;} \
-    else if (wid == 2) {fun<targ1, targ2, 2, targ3> arg;} \
-    else if (wid == 4) {fun<targ1, targ2, 4, targ3> arg;} \
-    else if (wid == 8) {fun<targ1, targ2, 8, targ3> arg;} \
-    else if (wid == 64) {fun<targ1, targ2, 64, targ3> arg;} \
-    else {REALM_ASSERT_DEBUG(false); fun<targ1, targ2, 0, targ3> arg;}
-
-#define REALM_TEMPEX5(fun, targ1, targ2, targ3, targ4, wid, arg) \
-    if (wid == 16) {fun<targ1, targ2, targ3, targ4, 16> arg;} \
-    else if (wid == 32) {fun<targ1, targ2, targ3, targ4, 32> arg;} \
-    else if (wid == 0) {fun<targ1, targ2, targ3, targ4, 0> arg;} \
-    else if (wid == 1) {fun<targ1, targ2, targ3, targ4, 1> arg;} \
-    else if (wid == 2) {fun<targ1, targ2, targ3, targ4, 2> arg;} \
-    else if (wid == 4) {fun<targ1, targ2, targ3, targ4, 4> arg;} \
-    else if (wid == 8) {fun<targ1, targ2, targ3, targ4, 8> arg;} \
-    else if (wid == 64) {fun<targ1, targ2, targ3, targ4, 64> arg;} \
-    else {REALM_ASSERT_DEBUG(false); fun<targ1, targ2, targ3, targ4, 0> arg;}
-// clang-format on
-
 
 // Pre-definitions
 class Array;
@@ -226,6 +168,10 @@ protected:
     friend class Array;
 };
 
+struct TreeInsertBase {
+    size_t m_split_offset;
+    size_t m_split_size;
+};
 
 /// Provides access to individual array nodes of the database.
 ///
@@ -500,12 +446,6 @@ public:
     /// If neccessary, expand the representation so that it can store the
     /// specified value.
     void ensure_minimum_width(int_fast64_t value);
-
-    typedef StringData (*StringGetter)(void*, size_t, char*); // Pre-declare getter function from string index
-    size_t index_string_find_first(StringData value, ColumnBase* column) const;
-    void index_string_find_all(IntegerColumn& result, StringData value, ColumnBase* column) const;
-    FindRes index_string_find_all_no_copy(StringData value, ColumnBase* column, InternalFindResult& result) const;
-    size_t index_string_count(StringData value, ColumnBase* column) const;
 
     /// This one may change the represenation of the array, so be carefull if
     /// you call it after ensure_minimum_width().
@@ -845,138 +785,6 @@ public:
     template <bool gt, Action action, size_t width, class Callback>
     bool find_gtlt(int64_t v, uint64_t chunk, QueryState<int64_t>* state, size_t baseindex, Callback callback) const;
 
-
-    /// Get the number of elements in the B+-tree rooted at this array
-    /// node. The root must not be a leaf.
-    ///
-    /// Please avoid using this function (consider it deprecated). It
-    /// will have to be removed if we choose to get rid of the last
-    /// element of the main array of an inner B+-tree node that stores
-    /// the total number of elements in the subtree. The motivation
-    /// for removing it, is that it will significantly improve the
-    /// efficiency when inserting after, and erasing the last element.
-    size_t get_bptree_size() const noexcept;
-
-    /// The root must not be a leaf.
-    static size_t get_bptree_size_from_header(const char* root_header) noexcept;
-
-
-    /// Find the leaf node corresponding to the specified element
-    /// index index. The specified element index must refer to an
-    /// element that exists in the tree. This function must be called
-    /// on an inner B+-tree node, never a leaf. Note that according to
-    /// invar:bptree-nonempty-inner and invar:bptree-nonempty-leaf, an
-    /// inner B+-tree node can never be empty.
-    ///
-    /// This function is not obliged to instantiate intermediate array
-    /// accessors. For this reason, this function cannot be used for
-    /// operations that modify the tree, as that requires an unbroken
-    /// chain of parent array accessors between the root and the
-    /// leaf. Thus, despite the fact that the returned MemRef object
-    /// appears to allow modification of the referenced memory, the
-    /// caller must handle the memory reference as if it was
-    /// const-qualified.
-    ///
-    /// \return (`leaf_header`, `ndx_in_leaf`) where `leaf_header`
-    /// points to the the header of the located leaf, and
-    /// `ndx_in_leaf` is the local index within that leaf
-    /// corresponding to the specified element index.
-    std::pair<MemRef, size_t> get_bptree_leaf(size_t elem_ndx) const noexcept;
-
-
-    class NodeInfo;
-    class VisitHandler;
-
-    /// Visit leaves of the B+-tree rooted at this inner node,
-    /// starting with the leaf that contains the element at the
-    /// specified element index start offset, and ending when the
-    /// handler returns false. The specified element index offset must
-    /// refer to an element that exists in the tree. This function
-    /// must be called on an inner B+-tree node, never a leaf. Note
-    /// that according to invar:bptree-nonempty-inner and
-    /// invar:bptree-nonempty-leaf, an inner B+-tree node can never be
-    /// empty.
-    ///
-    /// \param elem_ndx_offset The start position (must be valid).
-    ///
-    /// \param elems_in_tree The total number of elements in the tree.
-    ///
-    /// \param handler The callback which will get called for each leaf.
-    ///
-    /// \return True if, and only if the handler has returned true for
-    /// all visited leafs.
-    bool visit_bptree_leaves(size_t elem_ndx_offset, size_t elems_in_tree, VisitHandler& handler);
-
-
-    class UpdateHandler;
-
-    /// Call the handler for every leaf. This function must be called
-    /// on an inner B+-tree node, never a leaf.
-    void update_bptree_leaves(UpdateHandler&);
-
-    /// Call the handler for the leaf that contains the element at the
-    /// specified index. This function must be called on an inner
-    /// B+-tree node, never a leaf.
-    void update_bptree_elem(size_t elem_ndx, UpdateHandler&);
-
-
-    class EraseHandler;
-
-    /// Erase the element at the specified index in the B+-tree with
-    /// the specified root. When erasing the last element, you must
-    /// pass npos in place of the index. This function must be called
-    /// with a root that is an inner B+-tree node, never a leaf.
-    ///
-    /// This function is guaranteed to succeed (not throw) if the
-    /// specified element was inserted during the current transaction,
-    /// and no other modifying operation has been carried out since
-    /// then (noexcept:bptree-erase-alt).
-    ///
-    /// FIXME: ExceptionSafety: The exception guarantee explained
-    /// above is not as powerfull as we would like it to be. Here is
-    /// what we would like: This function is guaranteed to succeed
-    /// (not throw) if the specified element was inserted during the
-    /// current transaction (noexcept:bptree-erase). This must be true
-    /// even if the element is modified after insertion, and/or if
-    /// other elements are inserted or erased around it. There are two
-    /// aspects of the current design that stand in the way of this
-    /// guarantee: (A) The fact that the node accessor, that is cached
-    /// in the column accessor, has to be reallocated/reinstantiated
-    /// when the root switches between being a leaf and an inner
-    /// node. This problem would go away if we always cached the last
-    /// used leaf accessor in the column accessor instead. (B) The
-    /// fact that replacing one child ref with another can fail,
-    /// because it may require reallocation of memory to expand the
-    /// bit-width. This can be fixed in two ways: Either have the
-    /// inner B+-tree nodes always have a bit-width of 64, or allow
-    /// the root node to be discarded and the column ref to be set to
-    /// zero in Table::m_columns.
-    static void erase_bptree_elem(Array* root, size_t elem_ndx, EraseHandler&);
-
-
-    struct TreeInsertBase {
-        size_t m_split_offset;
-        size_t m_split_size;
-    };
-
-    template <class TreeTraits>
-    struct TreeInsert : TreeInsertBase {
-        typename TreeTraits::value_type m_value;
-        bool m_nullable;
-    };
-
-    /// Same as bptree_insert() but insert after the last element.
-    template <class TreeTraits>
-    ref_type bptree_append(TreeInsert<TreeTraits>& state);
-
-    /// Insert an element into the B+-subtree rooted at this array
-    /// node. The element is inserted before the specified element
-    /// index. This function must be called on an inner B+-tree node,
-    /// never a leaf. If this inner node had to be split, this
-    /// function returns the `ref` of the new sibling.
-    template <class TreeTraits>
-    ref_type bptree_insert(size_t elem_ndx, TreeInsert<TreeTraits>& state);
-
     ref_type bptree_leaf_insert(size_t ndx, int64_t, TreeInsertBase& state);
 
     /// Get the specified element without the cost of constructing an
@@ -1069,24 +877,6 @@ private:
     Array& operator=(const Array&); // not allowed
 protected:
     typedef bool (*CallbackDummy)(int64_t);
-
-    /// Insert a new child after original. If the parent has to be
-    /// split, this function returns the `ref` of the new parent node.
-    ref_type insert_bptree_child(Array& offsets, size_t orig_child_ndx, ref_type new_sibling_ref,
-                                 TreeInsertBase& state);
-
-    void ensure_bptree_offsets(Array& offsets);
-    void create_bptree_offsets(Array& offsets, int_fast64_t first_value);
-
-    bool do_erase_bptree_elem(size_t elem_ndx, EraseHandler&);
-
-    template <IndexMethod>
-    size_t from_list(StringData value, IntegerColumn& result, InternalFindResult& result_ref,
-                     const IntegerColumn& rows, ColumnBase* column) const;
-
-    template <IndexMethod method, class T>
-    size_t index_string(StringData value, IntegerColumn& result, InternalFindResult& result_ref,
-                        ColumnBase* column) const;
 
 protected:
     // Includes array header. Not necessarily 8-byte aligned.
@@ -1260,65 +1050,6 @@ private:
 };
 
 
-class Array::NodeInfo {
-public:
-    MemRef m_mem;
-    Array* m_parent;
-    size_t m_ndx_in_parent;
-    size_t m_offset, m_size;
-};
-
-class Array::VisitHandler {
-public:
-    virtual bool visit(const NodeInfo& leaf_info) = 0;
-    virtual ~VisitHandler() noexcept
-    {
-    }
-};
-
-
-class Array::UpdateHandler {
-public:
-    virtual void update(MemRef, ArrayParent*, size_t leaf_ndx_in_parent, size_t elem_ndx_in_leaf) = 0;
-    virtual ~UpdateHandler() noexcept
-    {
-    }
-};
-
-
-class Array::EraseHandler {
-public:
-    /// If the specified leaf has more than one element, this function
-    /// must erase the specified element from the leaf and return
-    /// false. Otherwise, when the leaf has a single element, this
-    /// function must return true without modifying the leaf. If \a
-    /// elem_ndx_in_leaf is `npos`, it refers to the last element in
-    /// the leaf. The implementation of this function must be
-    /// exception safe. This function is guaranteed to be called at
-    /// most once during each execution of Array::erase_bptree_elem(),
-    /// and *exactly* once during each *successful* execution of
-    /// Array::erase_bptree_elem().
-    virtual bool erase_leaf_elem(MemRef, ArrayParent*, size_t leaf_ndx_in_parent, size_t elem_ndx_in_leaf) = 0;
-
-    virtual void destroy_leaf(MemRef leaf_mem) noexcept = 0;
-
-    /// Must replace the current root with the specified leaf. The
-    /// implementation of this function must not destroy the
-    /// underlying root node, or any of its children, as that will be
-    /// done by Array::erase_bptree_elem(). The implementation of this
-    /// function must be exception safe.
-    virtual void replace_root_by_leaf(MemRef leaf_mem) = 0;
-
-    /// Same as replace_root_by_leaf(), but must replace the root with
-    /// an empty leaf. Also, if this function is called during an
-    /// execution of Array::erase_bptree_elem(), it is guaranteed that
-    /// it will be preceeded by a call to erase_leaf_elem().
-    virtual void replace_root_by_empty_leaf() = 0;
-
-    virtual ~EraseHandler() noexcept
-    {
-    }
-};
 
 
 // Implementation:
@@ -1819,17 +1550,21 @@ inline void Array::destroy_deep(MemRef mem, Allocator& alloc) noexcept
 
 inline void Array::adjust(size_t ndx, int_fast64_t diff)
 {
-    // FIXME: Should be optimized
     REALM_ASSERT_3(ndx, <=, m_size);
-    int_fast64_t v = get(ndx);
-    set(ndx, int64_t(v + diff)); // Throws
+    if (diff != 0) {
+        // FIXME: Should be optimized
+        int_fast64_t v = get(ndx);
+        set(ndx, int64_t(v + diff)); // Throws
+    }
 }
 
 inline void Array::adjust(size_t begin, size_t end, int_fast64_t diff)
 {
-    // FIXME: Should be optimized
-    for (size_t i = begin; i != end; ++i)
-        adjust(i, diff); // Throws
+    if (diff != 0) {
+        // FIXME: Should be optimized
+        for (size_t i = begin; i != end; ++i)
+            adjust(i, diff); // Throws
+    }
 }
 
 
@@ -2208,159 +1943,6 @@ inline void Array::update_child_ref(size_t child_ndx, ref_type new_ref)
 inline ref_type Array::get_child_ref(size_t child_ndx) const noexcept
 {
     return get_as_ref(child_ndx);
-}
-
-inline size_t Array::get_bptree_size() const noexcept
-{
-    REALM_ASSERT_DEBUG(is_inner_bptree_node());
-    int_fast64_t v = back();
-    return size_t(v / 2); // v = 1 + 2*total_elems_in_tree
-}
-
-inline size_t Array::get_bptree_size_from_header(const char* root_header) noexcept
-{
-    REALM_ASSERT_DEBUG(get_is_inner_bptree_node_from_header(root_header));
-    size_t root_size = get_size_from_header(root_header);
-    int_fast64_t v = get(root_header, root_size - 1);
-    return size_t(v / 2); // v = 1 + 2*total_elems_in_tree
-}
-
-inline void Array::ensure_bptree_offsets(Array& offsets)
-{
-    int_fast64_t first_value = get(0);
-    if (first_value % 2 == 0) {
-        offsets.init_from_ref(to_ref(first_value));
-    }
-    else {
-        create_bptree_offsets(offsets, first_value); // Throws
-    }
-    offsets.set_parent(this, 0);
-}
-
-
-template <class TreeTraits>
-ref_type Array::bptree_append(TreeInsert<TreeTraits>& state)
-{
-    // FIXME: Consider exception safety. Especially, how can the split
-    // be carried out in an exception safe manner?
-    //
-    // Can split be done as a separate preparation step, such that if
-    // the actual insert fails, the split will still have occured.
-    //
-    // Unfortunately, it requires a rather significant rearrangement
-    // of the insertion flow. Instead of returning the sibling ref
-    // from insert functions, the leaf-insert functions must instead
-    // call the special bptree_insert() function on the parent, which
-    // will then cascade the split towards the root as required.
-    //
-    // At each level where a split is required (starting at the leaf):
-    //
-    //  1. Create the new sibling.
-    //
-    //  2. Copy relevant entries over such that new sibling is in
-    //     its final state.
-    //
-    //  3. Call Array::bptree_insert() on parent with sibling ref.
-    //
-    //  4. Rearrange entries in original sibling and truncate as
-    //     required (must not throw).
-    //
-    // What about the 'offsets' array? It will always be
-    // present. Consider this carefully.
-
-    REALM_ASSERT_DEBUG(size() >= 1 + 1 + 1); // At least one child
-
-    ArrayParent& childs_parent = *this;
-    size_t child_ref_ndx = size() - 2;
-    ref_type child_ref = get_as_ref(child_ref_ndx), new_sibling_ref;
-    char* child_header = static_cast<char*>(m_alloc.translate(child_ref));
-
-    bool child_is_leaf = !get_is_inner_bptree_node_from_header(child_header);
-    if (child_is_leaf) {
-        size_t elem_ndx_in_child = npos; // Append
-        new_sibling_ref = TreeTraits::leaf_insert(MemRef(child_header, child_ref, m_alloc), childs_parent,
-                                                  child_ref_ndx, m_alloc, elem_ndx_in_child, state); // Throws
-    }
-    else {
-        Array child(m_alloc);
-        child.init_from_mem(MemRef(child_header, child_ref, m_alloc));
-        child.set_parent(&childs_parent, child_ref_ndx);
-        new_sibling_ref = child.bptree_append(state); // Throws
-    }
-
-    if (REALM_LIKELY(!new_sibling_ref)) {
-        // +2 because stored value is 1 + 2*total_elems_in_subtree
-        adjust(size() - 1, +2); // Throws
-        return 0;               // Child was not split, so parent was not split either
-    }
-
-    Array offsets(m_alloc);
-    int_fast64_t first_value = get(0);
-    if (first_value % 2 == 0) {
-        // Offsets array is present (general form)
-        offsets.init_from_ref(to_ref(first_value));
-        offsets.set_parent(this, 0);
-    }
-    size_t child_ndx = child_ref_ndx - 1;
-    return insert_bptree_child(offsets, child_ndx, new_sibling_ref, state); // Throws
-}
-
-
-template <class TreeTraits>
-ref_type Array::bptree_insert(size_t elem_ndx, TreeInsert<TreeTraits>& state)
-{
-    REALM_ASSERT_3(size(), >=, 1 + 1 + 1); // At least one child
-
-    // Conversion to general form if in compact form. Since this
-    // conversion will occur from root to leaf, it will maintain
-    // invar:bptree-node-form.
-    Array offsets(m_alloc);
-    ensure_bptree_offsets(offsets); // Throws
-
-    size_t child_ndx, elem_ndx_in_child;
-    if (elem_ndx == 0) {
-        // Optimization for prepend
-        child_ndx = 0;
-        elem_ndx_in_child = 0;
-    }
-    else {
-        // There is a choice to be made when the element is to be
-        // inserted between two subtrees. It can either be appended to
-        // the first subtree, or it can be prepended to the second
-        // one. We currently always append to the first subtree. It is
-        // essentially a matter of using the lower vs. the upper bound
-        // when searching through the offsets array.
-        child_ndx = offsets.lower_bound_int(elem_ndx);
-        REALM_ASSERT_3(child_ndx, <, size() - 2);
-        size_t elem_ndx_offset = child_ndx == 0 ? 0 : to_size_t(offsets.get(child_ndx - 1));
-        elem_ndx_in_child = elem_ndx - elem_ndx_offset;
-    }
-
-    ArrayParent& childs_parent = *this;
-    size_t child_ref_ndx = child_ndx + 1;
-    ref_type child_ref = get_as_ref(child_ref_ndx), new_sibling_ref;
-    char* child_header = static_cast<char*>(m_alloc.translate(child_ref));
-    bool child_is_leaf = !get_is_inner_bptree_node_from_header(child_header);
-    if (child_is_leaf) {
-        REALM_ASSERT_3(elem_ndx_in_child, <=, REALM_MAX_BPNODE_SIZE);
-        new_sibling_ref = TreeTraits::leaf_insert(MemRef(child_header, child_ref, m_alloc), childs_parent,
-                                                  child_ref_ndx, m_alloc, elem_ndx_in_child, state); // Throws
-    }
-    else {
-        Array child(m_alloc);
-        child.init_from_mem(MemRef(child_header, child_ref, m_alloc));
-        child.set_parent(&childs_parent, child_ref_ndx);
-        new_sibling_ref = child.bptree_insert(elem_ndx_in_child, state); // Throws
-    }
-
-    if (REALM_LIKELY(!new_sibling_ref)) {
-        // +2 because stored value is 1 + 2*total_elems_in_subtree
-        adjust(size() - 1, +2); // Throws
-        offsets.adjust(child_ndx, offsets.size(), +1);
-        return 0; // Child was not split, so parent was not split either
-    }
-
-    return insert_bptree_child(offsets, child_ndx, new_sibling_ref, state); // Throws
 }
 
 

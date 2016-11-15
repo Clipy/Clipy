@@ -12,12 +12,12 @@ class CPYTypePreferenceViewController: NSViewController {
 
     // MARK: - Properties
     var storeTypes: NSMutableDictionary!
-    private let defaults = NSUserDefaults.standardUserDefaults()
+    fileprivate let defaults = UserDefaults.standard
 
     // MARK: - Initialize
     override func loadView() {
-        if let types = defaults.objectForKey(Constants.UserDefaults.storeTypes)?.mutableCopy() as? NSMutableDictionary {
-            storeTypes = types
+        if let dictionary = defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: Any] {
+            storeTypes = NSMutableDictionary(dictionary: dictionary)
         } else {
             storeTypes = NSMutableDictionary()
         }

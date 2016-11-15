@@ -1,6 +1,6 @@
 //
 //  OperationQueueScheduler.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 4/4/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -8,20 +8,16 @@
 
 import Foundation
 
-/**
-Abstracts the work that needs to be performed on a specific `NSOperationQueue`.
-
-This scheduler is suitable for cases when there is some bigger chunk of work that needs to be performed in background and you want to fine tune concurrent processing using `maxConcurrentOperationCount`.
-*/
+/// Abstracts the work that needs to be performed on a specific `NSOperationQueue`.
+///
+/// This scheduler is suitable for cases when there is some bigger chunk of work that needs to be performed in background and you want to fine tune concurrent processing using `maxConcurrentOperationCount`.
 public class OperationQueueScheduler: ImmediateSchedulerType {
-    public let operationQueue: NSOperationQueue
+    public let operationQueue: OperationQueue
     
-    /**
-    Constructs new instance of `OperationQueueScheduler` that performs work on `operationQueue`.
-    
-    - parameter operationQueue: Operation queue targeted to perform work on.
-    */
-    public init(operationQueue: NSOperationQueue) {
+    /// Constructs new instance of `OperationQueueScheduler` that performs work on `operationQueue`.
+    ///
+    /// - parameter operationQueue: Operation queue targeted to perform work on.
+    public init(operationQueue: OperationQueue) {
         self.operationQueue = operationQueue
     }
     
@@ -32,26 +28,21 @@ public class OperationQueueScheduler: ImmediateSchedulerType {
     - parameter action: Action to execute recursively. The last parameter passed to the action is used to trigger recursive scheduling of the action, passing in recursive invocation state.
     - returns: The disposable object used to cancel the scheduled action (best effort).
     */
-    public func schedule<StateType>(state: StateType, action: (StateType) -> Disposable) -> Disposable {
-        
-        let compositeDisposable = CompositeDisposable()
-        
-        weak var compositeDisposableWeak = compositeDisposable
-        
-        let operation = NSBlockOperation {
-            if compositeDisposableWeak?.disposed ?? false {
+    public func schedule<StateType>(_ state: StateType, action: @escaping (StateType) -> Disposable) -> Disposable {
+        let cancel = SingleAssignmentDisposable()
+
+        let operation = BlockOperation {
+            if cancel.isDisposed {
                 return
             }
-            
-            let disposable = action(state)
-            compositeDisposableWeak?.addDisposable(disposable)
+
+
+            cancel.setDisposable(action(state))
         }
 
         self.operationQueue.addOperation(operation)
         
-        compositeDisposable.addDisposable(AnonymousDisposable(operation.cancel))
-
-        return compositeDisposable
+        return cancel
     }
 
 }

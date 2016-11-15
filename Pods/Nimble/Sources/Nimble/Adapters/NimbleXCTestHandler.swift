@@ -4,7 +4,7 @@ import XCTest
 /// Default handler for Nimble. This assertion handler passes failures along to
 /// XCTest.
 public class NimbleXCTestHandler : AssertionHandler {
-    public func assert(assertion: Bool, message: FailureMessage, location: SourceLocation) {
+    public func assert(_ assertion: Bool, message: FailureMessage, location: SourceLocation) {
         if !assertion {
             recordFailure("\(message.stringValue)\n", location: location)
         }
@@ -14,7 +14,7 @@ public class NimbleXCTestHandler : AssertionHandler {
 /// Alternative handler for Nimble. This assertion handler passes failures along
 /// to XCTest by attempting to reduce the failure message size.
 public class NimbleShortXCTestHandler: AssertionHandler {
-    public func assert(assertion: Bool, message: FailureMessage, location: SourceLocation) {
+    public func assert(_ assertion: Bool, message: FailureMessage, location: SourceLocation) {
         if !assertion {
             let msg: String
             if let actual = message.actualValue {
@@ -30,7 +30,7 @@ public class NimbleShortXCTestHandler: AssertionHandler {
 /// Fallback handler in case XCTest is unavailable. This assertion handler will abort
 /// the program if it is invoked.
 class NimbleXCTestUnavailableHandler : AssertionHandler {
-    func assert(assertion: Bool, message: FailureMessage, location: SourceLocation) {
+    func assert(_ assertion: Bool, message: FailureMessage, location: SourceLocation) {
         fatalError("XCTest is not available and no custom assertion handler was configured. Aborting.")
     }
 }
@@ -42,11 +42,11 @@ class NimbleXCTestUnavailableHandler : AssertionHandler {
 
     private(set) var currentTestCase: XCTestCase?
 
-    @objc func testCaseWillStart(testCase: XCTestCase) {
+    @objc func testCaseWillStart(_ testCase: XCTestCase) {
         currentTestCase = testCase
     }
 
-    @objc func testCaseDidFinish(testCase: XCTestCase) {
+    @objc func testCaseDidFinish(_ testCase: XCTestCase) {
         currentTestCase = nil
     }
 }
@@ -62,14 +62,14 @@ func isXCTestAvailable() -> Bool {
 #endif
 }
 
-private func recordFailure(message: String, location: SourceLocation) {
+private func recordFailure(_ message: String, location: SourceLocation) {
 #if _runtime(_ObjC)
     if let testCase = CurrentTestCaseTracker.sharedInstance.currentTestCase {
-        testCase.recordFailureWithDescription(message, inFile: location.file, atLine: location.line, expected: true)
+        testCase.recordFailure(withDescription: message, inFile: location.file, atLine: location.line, expected: true)
     } else {
         let msg = "Attempted to report a test failure to XCTest while no test case was running. " +
         "The failure was:\n\"\(message)\"\nIt occurred at: \(location.file):\(location.line)"
-        NSException(name: NSInternalInconsistencyException, reason: msg, userInfo: nil).raise()
+        NSException(name: .internalInconsistencyException, reason: msg, userInfo: nil).raise()
     }
 #else
     XCTFail("\(message)\n", file: location.file, line: location.line)

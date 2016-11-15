@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 
 extension Realm {
-    func transaction(@noescape block: (() throws -> Void)) {
+    func transaction(_ block: (() throws -> Void)) {
         do {
             try write(block)
         } catch {}

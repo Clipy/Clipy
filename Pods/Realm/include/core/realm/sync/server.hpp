@@ -134,7 +134,7 @@ public:
                bool reuse_address = true);
 
     /// Return the resolved and bound endpoint of the listening socket.
-    util::network::endpoint listen_endpoint() const;
+    util::network::Endpoint listen_endpoint() const;
 
     /// Run the internal event-loop of the server. At most one thread may
     /// execute run() at any given time. It is an error if run() is called

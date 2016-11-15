@@ -82,7 +82,13 @@ constexpr int get_current_protocol_version() noexcept
 }
 
 // Reserve 0 for compatibility with std::error_condition.
+//
+// ATTENTION: Please remember to update is_session_level_error() and
+// is_connection_level_error() definitions when adding/removing error codes.
+//
 enum class Error {
+    invalid_error                =  99, // Server sent an invalid error code (ERROR)
+
     // Connection level and protocol errors
     connection_closed            = 100, // Connection closed (no error)
     other_error                  = 101, // Other connection level error
@@ -109,11 +115,17 @@ enum class Error {
     bad_client_version           = 210, // Bad client version (IDENT, UPLOAD)
     diverging_histories          = 211, // Diverging histories (IDENT)
     bad_changeset                = 212, // Bad changeset (UPLOAD)
+    disabled_session             = 213, // Disabled session
 };
 
 inline constexpr bool is_session_level_error(Error error)
 {
-    return int(error) >= 200;
+    return int(error) >= 200 && int(error) <= 213;
+}
+
+inline constexpr bool is_connection_level_error(Error error)
+{
+    return int(error) >= 100 && int(error) <= 109;
 }
 
 const char* get_error_message(Error error_code);

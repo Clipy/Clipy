@@ -122,7 +122,7 @@ struct null {
         int64_t double_nan = 0x7ff80000000000aa;
         i = std::is_same<T, float>::value ? 0x7fc000aa : static_cast<decltype(i)>(double_nan);
         T d = type_punning<T, decltype(i)>(i);
-        REALM_ASSERT_DEBUG(std::isnan(static_cast<double>(d)));
+        REALM_ASSERT_DEBUG(std::isnan(d));
         REALM_ASSERT_DEBUG(!is_signaling(d));
         return d;
     }

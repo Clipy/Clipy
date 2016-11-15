@@ -21,6 +21,7 @@
 #include "impl/realm_coordinator.hpp"
 #include "shared_realm.hpp"
 
+#include <realm/group_shared.hpp>
 #include <realm/link_view.hpp>
 
 using namespace realm;
@@ -288,17 +289,17 @@ void CollectionNotifier::deliver_error(std::exception_ptr error)
     m_error = true;
 }
 
-SharedGroup::VersionID CollectionNotifier::package_for_delivery(Realm& realm)
+VersionID CollectionNotifier::package_for_delivery(Realm& realm)
 {
     {
         std::lock_guard<std::mutex> lock(m_realm_mutex);
         if (m_realm.get() != &realm) {
-            return SharedGroup::VersionID{};
+            return VersionID{};
         }
     }
 
     if (!prepare_to_deliver()) {
-        return SharedGroup::VersionID{};
+        return VersionID{};
     }
     m_changes_to_deliver = std::move(m_accumulated_changes).finalize();
     return version();

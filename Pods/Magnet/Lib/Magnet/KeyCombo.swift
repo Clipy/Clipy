@@ -17,7 +17,7 @@ public final class KeyCombo: NSObject, NSCopying, NSCoding {
     public let doubledModifiers: Bool
     public var characters: String {
         if doubledModifiers { return "" }
-        return KeyCodeTransformer.sharedTransformer.transformValue(keyCode, carbonModifiers: modifiers)
+        return KeyCodeTransformer.shared.transformValue(keyCode, carbonModifiers: modifiers)
     }
 
     // MARK: - Initialize
@@ -25,7 +25,7 @@ public final class KeyCombo: NSObject, NSCopying, NSCoding {
         if keyCode < 0 || carbonModifiers < 0 { return nil }
 
         if KeyTransformer.containsFunctionKey(keyCode) {
-            self.modifiers = Int(UInt(carbonModifiers) | NSEventModifierFlags.FunctionKeyMask.rawValue)
+            self.modifiers = Int(UInt(carbonModifiers) | NSEventModifierFlags.function.rawValue)
         } else {
             self.modifiers = carbonModifiers
         }
@@ -37,9 +37,9 @@ public final class KeyCombo: NSObject, NSCopying, NSCoding {
         if keyCode < 0 || !KeyTransformer.supportedCocoaFlags(cocoaModifiers) { return nil }
 
         if KeyTransformer.containsFunctionKey(keyCode) {
-            self.modifiers = Int(UInt(KeyTransformer.cocoaToCarbonFlags(cocoaModifiers)) | NSEventModifierFlags.FunctionKeyMask.rawValue)
+            self.modifiers = Int(UInt(KeyTransformer.carbonFlags(from: cocoaModifiers)) | NSEventModifierFlags.function.rawValue)
         } else {
-            self.modifiers = KeyTransformer.cocoaToCarbonFlags(cocoaModifiers)
+            self.modifiers = KeyTransformer.carbonFlags(from: cocoaModifiers)
         }
         self.keyCode = keyCode
         self.doubledModifiers = false
@@ -57,11 +57,11 @@ public final class KeyCombo: NSObject, NSCopying, NSCoding {
         if !KeyTransformer.singleCocoaFlags(modifiers) { return nil }
 
         self.keyCode = 0
-        self.modifiers = KeyTransformer.cocoaToCarbonFlags(modifiers)
+        self.modifiers = KeyTransformer.carbonFlags(from: modifiers)
         self.doubledModifiers = true
     }
 
-    public func copyWithZone(zone: NSZone) -> AnyObject {
+    public func copy(with zone: NSZone?) -> Any {
         if doubledModifiers {
             return KeyCombo(doubledCarbonModifiers: modifiers)!
         } else {
@@ -70,19 +70,19 @@ public final class KeyCombo: NSObject, NSCopying, NSCoding {
     }
 
     public init?(coder aDecoder: NSCoder) {
-        self.keyCode = aDecoder.decodeIntegerForKey("keyCode")
-        self.modifiers = aDecoder.decodeIntegerForKey("modifiers")
-        self.doubledModifiers = aDecoder.decodeBoolForKey("doubledModifiers")
+        self.keyCode = aDecoder.decodeInteger(forKey: "keyCode")
+        self.modifiers = aDecoder.decodeInteger(forKey: "modifiers")
+        self.doubledModifiers = aDecoder.decodeBool(forKey: "doubledModifiers")
     }
 
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeInteger(keyCode, forKey: "keyCode")
-        aCoder.encodeInteger(modifiers, forKey: "modifiers")
-        aCoder.encodeBool(doubledModifiers, forKey: "doubledModifiers")
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(keyCode, forKey: "keyCode")
+        aCoder.encode(modifiers, forKey: "modifiers")
+        aCoder.encode(doubledModifiers, forKey: "doubledModifiers")
     }
 
     // MARK: - Equatable
-    public override func isEqual(object: AnyObject?) -> Bool {
+    public override func isEqual(_ object: Any?) -> Bool {
         guard let keyCombo = object as? KeyCombo else { return false }
         return keyCode == keyCombo.keyCode &&
                 modifiers == keyCombo.modifiers &&

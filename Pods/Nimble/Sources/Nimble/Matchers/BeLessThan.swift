@@ -1,19 +1,22 @@
 import Foundation
 
 /// A Nimble matcher that succeeds when the actual value is less than the expected value.
-public func beLessThan<T: Comparable>(expectedValue: T?) -> NonNilMatcherFunc<T> {
+public func beLessThan<T: Comparable>(_ expectedValue: T?) -> NonNilMatcherFunc<T> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be less than <\(stringify(expectedValue))>"
-        return try actualExpression.evaluate() < expectedValue
+        if let actual = try actualExpression.evaluate(), let expected = expectedValue {
+            return actual < expected
+        }
+        return false
     }
 }
 
 /// A Nimble matcher that succeeds when the actual value is less than the expected value.
-public func beLessThan(expectedValue: NMBComparable?) -> NonNilMatcherFunc<NMBComparable> {
+public func beLessThan(_ expectedValue: NMBComparable?) -> NonNilMatcherFunc<NMBComparable> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be less than <\(stringify(expectedValue))>"
         let actualValue = try actualExpression.evaluate()
-        let matches = actualValue != nil && actualValue!.NMB_compare(expectedValue) == NSComparisonResult.OrderedAscending
+        let matches = actualValue != nil && actualValue!.NMB_compare(expectedValue) == ComparisonResult.orderedAscending
         return matches
     }
 }
@@ -28,9 +31,9 @@ public func <(lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
 
 #if _runtime(_ObjC)
 extension NMBObjCMatcher {
-    public class func beLessThanMatcher(expected: NMBComparable?) -> NMBObjCMatcher {
+    public class func beLessThanMatcher(_ expected: NMBComparable?) -> NMBObjCMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
-            let expr = actualExpression.cast { $0 as! NMBComparable? }
+            let expr = actualExpression.cast { $0 as? NMBComparable }
             return try! beLessThan(expected).matches(expr, failureMessage: failureMessage)
         }
     }

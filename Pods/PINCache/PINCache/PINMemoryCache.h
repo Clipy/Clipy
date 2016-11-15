@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 #import "Nullability.h"
 
+#import "PINCacheObjectSubscripting.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class PINMemoryCache;
@@ -12,13 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  A callback block which provides only the cache as an argument
  */
-
 typedef void (^PINMemoryCacheBlock)(PINMemoryCache *cache);
 
 /**
  A callback block which provides the cache, key and object as arguments
  */
 typedef void (^PINMemoryCacheObjectBlock)(PINMemoryCache *cache, NSString *key, id __nullable object);
+
+/**
+ A callback block which provides a BOOL value as argument
+ */
+typedef void (^PINMemoryCacheContainmentBlock)(BOOL containsObject);
+
 
 /**
  `PINMemoryCache` is a fast, thread safe key/value store similar to `NSCache`. On iOS it will clear itself
@@ -37,7 +44,7 @@ typedef void (^PINMemoryCacheObjectBlock)(PINMemoryCache *cache, NSString *key, 
  a memory cache backed by a disk cache.
  */
 
-@interface PINMemoryCache : NSObject
+@interface PINMemoryCache : NSObject <PINCacheObjectSubscripting>
 
 #pragma mark -
 /// @name Core
@@ -158,6 +165,17 @@ typedef void (^PINMemoryCacheObjectBlock)(PINMemoryCache *cache, NSString *key, 
 /// @name Asynchronous Methods
 
 /**
+ This method determines whether an object is present for the given key in the cache. This method returns immediately
+ and executes the passed block after the object is available, potentially in parallel with other blocks on the
+ <concurrentQueue>.
+ 
+ @see containsObjectForKey:
+ @param key The key associated with the object.
+ @param block A block to be executed concurrently after the containment check happened
+ */
+- (void)containsObjectForKey:(NSString *)key block:(PINMemoryCacheContainmentBlock)block;
+
+/**
  Retrieves the object for the specified key. This method returns immediately and executes the passed
  block after the object is available, potentially in parallel with other blocks on the <concurrentQueue>.
  
@@ -247,6 +265,15 @@ typedef void (^PINMemoryCacheObjectBlock)(PINMemoryCache *cache, NSString *key, 
 
 #pragma mark -
 /// @name Synchronous Methods
+
+/**
+ This method determines whether an object is present for the given key in the cache.
+ 
+ @see containsObjectForKey:block:
+ @param key The key associated with the object.
+ @result YES if an object is present for the given key in the cache, otherwise NO.
+ */
+- (BOOL)containsObjectForKey:(NSString *)key;
 
 /**
  Retrieves the object for the specified key. This method blocks the calling thread until the

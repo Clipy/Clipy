@@ -1,6 +1,6 @@
 //
 //  Observable+Single.swift
-//  Rx
+//  RxSwift
 //
 //  Created by Krunoslav Zaher on 2/14/15.
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
@@ -19,7 +19,6 @@ extension ObservableType where E: Equatable {
     
     - returns: An observable sequence only containing the distinct contiguous elements, based on equality operator, from the source sequence.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
     public func distinctUntilChanged()
         -> Observable<E> {
         return self.distinctUntilChanged({ $0 }, comparer: { ($0 == $1) })
@@ -35,8 +34,7 @@ extension ObservableType {
     - parameter keySelector: A function to compute the comparison key for each element.
     - returns: An observable sequence only containing the distinct contiguous elements, based on a computed key value, from the source sequence.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func distinctUntilChanged<K: Equatable>(keySelector: (E) throws -> K)
+    public func distinctUntilChanged<K: Equatable>(_ keySelector: @escaping (E) throws -> K)
         -> Observable<E> {
         return self.distinctUntilChanged(keySelector, comparer: { $0 == $1 })
     }
@@ -49,8 +47,7 @@ extension ObservableType {
     - parameter comparer: Equality comparer for computed key values.
     - returns: An observable sequence only containing the distinct contiguous elements, based on `comparer`, from the source sequence.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func distinctUntilChanged(comparer: (lhs: E, rhs: E) throws -> Bool)
+    public func distinctUntilChanged(_ comparer: @escaping (E, E) throws -> Bool)
         -> Observable<E> {
         return self.distinctUntilChanged({ $0 }, comparer: comparer)
     }
@@ -64,8 +61,7 @@ extension ObservableType {
     - parameter comparer: Equality comparer for computed key values.
     - returns: An observable sequence only containing the distinct contiguous elements, based on a computed key value and the comparer, from the source sequence.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func distinctUntilChanged<K>(keySelector: (E) throws -> K, comparer: (lhs: K, rhs: K) throws -> Bool)
+    public func distinctUntilChanged<K>(_ keySelector: @escaping (E) throws -> K, comparer: @escaping (K, K) throws -> Bool)
         -> Observable<E> {
         return DistinctUntilChanged(source: self.asObservable(), selector: keySelector, comparer: comparer)
     }
@@ -74,80 +70,30 @@ extension ObservableType {
 // MARK: doOn
 
 extension ObservableType {
-    
     /**
-    Invokes an action for each event in the observable sequence, and propagates all observer messages through the result sequence.
+     Invokes an action for each event in the observable sequence, and propagates all observer messages through the result sequence.
 
-    - seealso: [do operator on reactivex.io](http://reactivex.io/documentation/operators/do.html)
-    
-    - parameter eventHandler: Action to invoke for each event in the observable sequence.
-    - returns: The source sequence with the side-effecting behavior applied.
-    */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func doOn(eventHandler: (Event<E>) throws -> Void)
-        -> Observable<E> {
-        return Do(source: self.asObservable(), eventHandler: eventHandler)
-    }
-
-    /**
-    Invokes an action for each event in the observable sequence, and propagates all observer messages through the result sequence.
-
-    - seealso: [do operator on reactivex.io](http://reactivex.io/documentation/operators/do.html)
-    
-    - parameter onNext: Action to invoke for each element in the observable sequence.
-    - parameter onError: Action to invoke upon errored termination of the observable sequence.
-    - parameter onCompleted: Action to invoke upon graceful termination of the observable sequence.
-    - returns: The source sequence with the side-effecting behavior applied.
-    */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func doOn(onNext onNext: (E throws -> Void)? = nil, onError: (ErrorType throws -> Void)? = nil, onCompleted: (() throws -> Void)? = nil)
-        -> Observable<E> {
-        return Do(source: self.asObservable()) { e in
-            switch e {
-            case .Next(let element):
-                try onNext?(element)
-            case .Error(let e):
-                try onError?(e)
-            case .Completed:
-                try onCompleted?()
-            }
-        }
-    }
-
-    /**
-     Invokes an action for each Next event in the observable sequence, and propagates all observer messages through the result sequence.
+     - seealso: [do operator on reactivex.io](http://reactivex.io/documentation/operators/do.html)
 
      - parameter onNext: Action to invoke for each element in the observable sequence.
-     - returns: The source sequence with the side-effecting behavior applied.
-     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func doOnNext(onNext: (E throws -> Void))
-        -> Observable<E> {
-        return self.doOn(onNext: onNext)
-    }
-
-    /**
-     Invokes an action for the Error event in the observable sequence, and propagates all observer messages through the result sequence.
-
      - parameter onError: Action to invoke upon errored termination of the observable sequence.
-     - returns: The source sequence with the side-effecting behavior applied.
-     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func doOnError(onError: (ErrorType throws -> Void))
-        -> Observable<E> {
-        return self.doOn(onError: onError)
-    }
-
-    /**
-     Invokes an action for the Completed event in the observable sequence, and propagates all observer messages through the result sequence.
-
      - parameter onCompleted: Action to invoke upon graceful termination of the observable sequence.
-     - returns: The source sequence with the side-effecting behavior applied.
+     - parameter onSubscribe: Action to invoke before subscribing to source observable sequence.
+     - parameter onDispose: Action to invoke after subscription to source observable has been disposed for any reason. It can be either because sequence terminates for some reason or observer subscription being disposed.
+    - returns: The source sequence with the side-effecting behavior applied.
      */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func doOnCompleted(onCompleted: (() throws -> Void))
+    public func `do`(onNext: ((E) throws -> Void)? = nil, onError: ((Swift.Error) throws -> Void)? = nil, onCompleted: (() throws -> Void)? = nil, onSubscribe: (() -> ())? = nil, onDispose: (() -> ())? = nil)
         -> Observable<E> {
-        return self.doOn(onCompleted: onCompleted)
+            return Do(source: self.asObservable(), eventHandler: { e in
+                switch e {
+                case .next(let element):
+                    try onNext?(element)
+                case .error(let e):
+                    try onError?(e)
+                case .completed:
+                    try onCompleted?()
+                }
+            }, onSubscribe: onSubscribe, onDispose: onDispose)
     }
 }
 
@@ -163,8 +109,7 @@ extension ObservableType {
     - parameter elements: Elements to prepend to the specified sequence.
     - returns: The source sequence prepended with the specified values.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func startWith(elements: E ...)
+    public func startWith(_ elements: E ...)
         -> Observable<E> {
         return StartWith(source: self.asObservable(), elements: elements)
     }
@@ -183,7 +128,6 @@ extension ObservableType {
     
     - returns: Observable sequence to repeat until it successfully terminates.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
     public func retry() -> Observable<E> {
         return CatchSequence(sources: InfiniteSequence(repeatedValue: self.asObservable()))
     }
@@ -198,10 +142,9 @@ extension ObservableType {
     - parameter maxAttemptCount: Maximum number of times to repeat the sequence.
     - returns: An observable sequence producing the elements of the given sequence repeatedly until it terminates successfully.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func retry(maxAttemptCount: Int)
+    public func retry(_ maxAttemptCount: Int)
         -> Observable<E> {
-        return CatchSequence(sources: Repeat(count: maxAttemptCount, repeatedValue: self.asObservable()))
+        return CatchSequence(sources: repeatElement(self.asObservable(), count: maxAttemptCount))
     }
     
     /**
@@ -213,8 +156,7 @@ extension ObservableType {
     - parameter notificationHandler: A handler that is passed an observable sequence of errors raised by the source observable and returns and observable that either continues, completes or errors. This behavior is then applied to the source observable.
     - returns: An observable sequence producing the elements of the given sequence repeatedly until it terminates successfully or is notified to error or complete.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func retryWhen<TriggerObservable: ObservableType, Error: ErrorType>(notificationHandler: Observable<Error> -> TriggerObservable)
+    public func retryWhen<TriggerObservable: ObservableType, Error: Swift.Error>(_ notificationHandler: @escaping (Observable<Error>) -> TriggerObservable)
         -> Observable<E> {
             return RetryWhenSequence(sources: InfiniteSequence(repeatedValue: self.asObservable()), notificationHandler: notificationHandler)
     }
@@ -228,8 +170,7 @@ extension ObservableType {
     - parameter notificationHandler: A handler that is passed an observable sequence of errors raised by the source observable and returns and observable that either continues, completes or errors. This behavior is then applied to the source observable.
     - returns: An observable sequence producing the elements of the given sequence repeatedly until it terminates successfully or is notified to error or complete.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func retryWhen<TriggerObservable: ObservableType>(notificationHandler: Observable<ErrorType> -> TriggerObservable)
+    public func retryWhen<TriggerObservable: ObservableType>(_ notificationHandler: @escaping (Observable<Swift.Error>) -> TriggerObservable)
         -> Observable<E> {
             return RetryWhenSequence(sources: InfiniteSequence(repeatedValue: self.asObservable()), notificationHandler: notificationHandler)
     }
@@ -250,8 +191,7 @@ extension ObservableType {
     - parameter accumulator: An accumulator function to be invoked on each element.
     - returns: An observable sequence containing the accumulated values.
     */
-    @warn_unused_result(message="http://git.io/rxs.uo")
-    public func scan<A>(seed: A, accumulator: (A, E) throws -> A)
+    public func scan<A>(_ seed: A, accumulator: @escaping (A, E) throws -> A)
         -> Observable<A> {
         return Scan(source: self.asObservable(), seed: seed, accumulator: accumulator)
     }

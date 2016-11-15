@@ -184,7 +184,7 @@ class BadServerUrl; // Exception
 /// thread-safe, while others are not.
 class Session {
 public:
-    using port_type = util::network::endpoint::port_type;
+    using port_type = util::network::Endpoint::port_type;
     using version_type = _impl::History::version_type;
     using SyncTransactCallback = void(VersionID old_version, VersionID new_version);
     using ErrorHandler = Client::ErrorHandler;

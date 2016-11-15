@@ -25,20 +25,20 @@ final class CPYAppInfo: NSObject, NSCoding {
 
     // MARK: - NSCoding
     init?(coder aDecoder: NSCoder) {
-        guard let identifier = aDecoder.decodeObjectForKey("identifier") as? String else { return nil }
-        guard let name = aDecoder.decodeObjectForKey("name") as? String else { return nil }
+        guard let identifier = aDecoder.decodeObject(forKey: "identifier") as? String else { return nil }
+        guard let name = aDecoder.decodeObject(forKey: "name") as? String else { return nil }
 
         self.identifier = identifier
         self.name       = name
     }
 
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(identifier, forKey: "identifier")
-        aCoder.encodeObject(name, forKey: "name")
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(identifier, forKey: "identifier")
+        aCoder.encode(name, forKey: "name")
     }
 
     // MARK: - Equatable
-    override func isEqual(object: AnyObject?) -> Bool {
+    override func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? CPYAppInfo else { return false }
         return identifier == object.identifier && name == object.name
     }
