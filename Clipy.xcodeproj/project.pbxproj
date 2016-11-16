@@ -15,12 +15,14 @@
 		FA0412A61D58DD7C00D99551 /* ExcludeAppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0412A51D58DD7C00D99551 /* ExcludeAppManager.swift */; };
 		FA08EDF61D1FE9EE000D1D13 /* MenuType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */; };
-		FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA0C027E1B42C2B2009A558D /* dsa_pub.pem */; };
 		FA189C791C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */; };
 		FA189C7B1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */; };
 		FA189C7C1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA189C7E1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib */; };
 		FA189C8B1C9AE584002C0312 /* CPYPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA189C8D1C9AE584002C0312 /* CPYPreferencesWindowController.xib */; };
 		FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */; };
+		FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */; };
+		FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */; };
+		FA1DB49B1DDCB2EE007F95C8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB49A1DDCB2EE007F95C8 /* Constants.swift */; };
 		FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */; };
 		FA55FCD71D219BFC005C1936 /* CPYBetaPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA55FCD51D219BFC005C1936 /* CPYBetaPreferenceViewController.swift */; };
 		FA55FCD91D219C17005C1936 /* CPYBetaPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA55FCDB1D219C17005C1936 /* CPYBetaPreferenceViewController.xib */; };
@@ -40,7 +42,6 @@
 		FAA256C71D16FC65000A23BC /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA256C61D16FC65000A23BC /* HotKeyManager.swift */; };
 		FAAD02221CA99E22007C6EEE /* NSBundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAD02211CA99E22007C6EEE /* NSBundle+Version.swift */; };
 		FAC43DCC1B35D8B100C06102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */; };
-		FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FAC43DF91B35DD4300C06102 /* Localizable.strings */; };
 		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
 		FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E241B35DFD000C06102 /* AppKit.framework */; };
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
@@ -57,7 +58,6 @@
 		FAC4E6331C7F2AF700200271 /* NSColor+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */; };
 		FAC4E6361C7F30B800200271 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */; };
 		FAC4E6461C7F513800200271 /* CPYShortcutsPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */; };
-		FAD2D49B1CC3DAC500C29139 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD2D49A1CC3DAC500C29139 /* Constants.swift */; };
 		FAD6F8C41D27E1830058A255 /* CPYSnippetsEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6F8C21D27E1830058A255 /* CPYSnippetsEditorWindowController.swift */; };
 		FAD6F8CA1D27E1A20058A255 /* CPYSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6F8C71D27E1A20058A255 /* CPYSplitView.swift */; };
 		FAD6F8CB1D27E1A20058A255 /* CPYPlaceHolderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD6F8C91D27E1A20058A255 /* CPYPlaceHolderTextView.swift */; };
@@ -112,12 +112,16 @@
 		FA0412A51D58DD7C00D99551 /* ExcludeAppManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppManager.swift; sourceTree = "<group>"; };
 		FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuType.swift; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyManagerSpec.swift; sourceTree = "<group>"; };
-		FA0C027E1B42C2B2009A558D /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA189C781C9ADE51002C0312 /* CPYUpdatesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUpdatesPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA189C7A1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYTypePreferenceViewController.swift; sourceTree = "<group>"; };
 		FA189C871C9AE428002C0312 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA189C8C1C9AE584002C0312 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
 		FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
+		FA1DB4931DDCB22C007F95C8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA1DB4971DDCB2CB007F95C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FA1DB4991DDCB2D0007F95C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FA1DB49A1DDCB2EE007F95C8 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		FA55FCD51D219BFC005C1936 /* CPYBetaPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYBetaPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA55FCDC1D219C25005C1936 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -136,12 +140,9 @@
 		FAA256C61D16FC65000A23BC /* HotKeyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
 		FAAD02211CA99E22007C6EEE /* NSBundle+Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+Version.swift"; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FAC43DCA1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAC43DCB1B35D8B100C06102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FAC43DD81B35D8B100C06102 /* ClipyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DDD1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FAC43DF81B35DD4300C06102 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		FAC43DFA1B35DD5200C06102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FAC43E221B35DFC800C06102 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FAC43E241B35DFD000C06102 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		FAC43E261B35DFD300C06102 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -158,7 +159,6 @@
 		FAC4E6321C7F2AF700200271 /* NSColor+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Clipy.swift"; sourceTree = "<group>"; };
 		FAC4E6351C7F30B800200271 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
 		FAC4E6441C7F513800200271 /* CPYShortcutsPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYShortcutsPreferenceViewController.swift; sourceTree = "<group>"; };
-		FAD2D49A1CC3DAC500C29139 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FAD6F8C21D27E1830058A255 /* CPYSnippetsEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippetsEditorWindowController.swift; sourceTree = "<group>"; };
 		FAD6F8C71D27E1A20058A255 /* CPYSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSplitView.swift; sourceTree = "<group>"; };
 		FAD6F8C91D27E1A20058A255 /* CPYPlaceHolderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYPlaceHolderTextView.swift; sourceTree = "<group>"; };
@@ -236,6 +236,7 @@
 		FA06D2D21DD882BD002FB7C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */,
 				FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */,
 			);
 			path = Resources;
@@ -247,6 +248,15 @@
 				FA08EDF51D1FE9EE000D1D13 /* MenuType.swift */,
 			);
 			path = Enums;
+			sourceTree = "<group>";
+		};
+		FA1DB4911DDCB205007F95C8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */,
+				FA1DB4931DDCB22C007F95C8 /* Info.plist */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		FA3B96001B3FD47000B61FF0 /* Views */ = {
@@ -321,20 +331,10 @@
 				FAC43E5C1B35E1A100C06102 /* Models */,
 				FAC43DEC1B35DABC00C06102 /* AppDelegate */,
 				FA51AAD21B4853ED00BDDE1D /* MainMenu.xib */,
-				FAC43DC91B35D8B100C06102 /* Supporting Files */,
+				FA1DB49A1DDCB2EE007F95C8 /* Constants.swift */,
+				FA1DB4911DDCB205007F95C8 /* Supporting Files */,
 			);
 			path = Clipy;
-			sourceTree = "<group>";
-		};
-		FAC43DC91B35D8B100C06102 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				FA0C027E1B42C2B2009A558D /* dsa_pub.pem */,
-				FAC43DCA1B35D8B100C06102 /* Info.plist */,
-				FAC43DF91B35DD4300C06102 /* Localizable.strings */,
-				FAD2D49A1CC3DAC500C29139 /* Constants.swift */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
@@ -558,8 +558,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA0C027F1B42C2B2009A558D /* dsa_pub.pem in Resources */,
-				FAC43DF71B35DD4300C06102 /* Localizable.strings in Resources */,
 				FAFEF20F1C9AEB8E00B546E7 /* CPYShortcutsPreferenceViewController.xib in Resources */,
 				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
 				FAFEF2091C9AEB4A00B546E7 /* CPYTypePreferenceViewController.xib in Resources */,
@@ -569,6 +567,8 @@
 				FA189C7C1C9AE327002C0312 /* CPYGeneralPreferenceViewController.xib in Resources */,
 				FA189C8B1C9AE584002C0312 /* CPYPreferencesWindowController.xib in Resources */,
 				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
+				FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */,
+				FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */,
 				FAFEF2031C9AEA3400B546E7 /* CPYMenuPreferenceViewController.xib in Resources */,
 				FA51AAD31B4853ED00BDDE1D /* MainMenu.xib in Resources */,
 				FAF9DE671D3D211A0088358B /* CPYSnippetsEditorWindowController.xib in Resources */,
@@ -724,6 +724,7 @@
 				FAC43E621B35EA4E00C06102 /* CPYFolder.swift in Sources */,
 				FAD6F8CB1D27E1A20058A255 /* CPYPlaceHolderTextView.swift in Sources */,
 				FA78E7991C8C6F4500B6BA8C /* LocalizedString.swift in Sources */,
+				FA1DB49B1DDCB2EE007F95C8 /* Constants.swift in Sources */,
 				FAEAB1FB1C930AAA005C3A10 /* PasteboardManager.swift in Sources */,
 				FAC43E671B35EC5400C06102 /* MenuManager.swift in Sources */,
 				FAC43E641B35EA6800C06102 /* CPYSnippet.swift in Sources */,
@@ -735,7 +736,6 @@
 				FA71E3F81BA0A66300369F92 /* HistoryManager.swift in Sources */,
 				FAD6F8CA1D27E1A20058A255 /* CPYSplitView.swift in Sources */,
 				FAD6F8C41D27E1830058A255 /* CPYSnippetsEditorWindowController.swift in Sources */,
-				FAD2D49B1CC3DAC500C29139 /* Constants.swift in Sources */,
 				FAC43E601B35E3DF00C06102 /* CPYClipData.swift in Sources */,
 				FAFEF21C1C9AF35B00B546E7 /* String+Substring.swift in Sources */,
 				FA189C7B1C9ADF79002C0312 /* CPYTypePreferenceViewController.swift in Sources */,
@@ -801,6 +801,15 @@
 			name = CPYPreferencesWindowController.xib;
 			sourceTree = "<group>";
 		};
+		FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA1DB4971DDCB2CB007F95C8 /* en */,
+				FA1DB4991DDCB2D0007F95C8 /* ja */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		FA55FCDB1D219C17005C1936 /* CPYBetaPreferenceViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -808,15 +817,6 @@
 				FA55FCDF1D219C5A005C1936 /* ja */,
 			);
 			name = CPYBetaPreferenceViewController.xib;
-			sourceTree = "<group>";
-		};
-		FAC43DF91B35DD4300C06102 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				FAC43DF81B35DD4300C06102 /* ja */,
-				FAC43DFA1B35DD5200C06102 /* en */,
-			);
-			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		FAF9DE691D3D211A0088358B /* CPYSnippetsEditorWindowController.xib */ = {
@@ -960,7 +960,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = Clipy/Info.plist;
+				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
@@ -984,7 +984,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = Clipy/Info.plist;
+				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
