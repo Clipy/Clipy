@@ -80,7 +80,7 @@ class AppDelegate: NSObject {
             defaults.synchronize()
         }
 
-        ClipManager.sharedManager.clearAll()
+        ClipService.shared.clearAll()
     }
 
     func selectClipMenuItem(_ sender: NSMenuItem) {
@@ -185,9 +185,10 @@ extension AppDelegate: NSApplicationDelegate {
         // Binding Events
         bind()
 
+        // Services
+        _ = ClipService.shared
         // Managers
         MenuManager.sharedManager.setup()
-        ClipManager.sharedManager.setup()
         HistoryManager.sharedManager.setup()
     }
 
@@ -214,16 +215,7 @@ fileprivate extension AppDelegate {
         // Observe Screenshot image
         screenshotObserver.rx.addedImage
             .subscribe(onNext: { image in
-                ClipManager.sharedManager.createclip(image)
-            }).addDisposableTo(disposeBag)
-        // Sleep Notification
-        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceWillSleep)
-            .subscribe(onNext: { notification in
-                ClipManager.sharedManager.stopTimer()
-            }).addDisposableTo(disposeBag)
-        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceDidWake)
-            .subscribe(onNext: { notification in
-                ClipManager.sharedManager.startTimer()
+                ClipService.shared.create(with: image)
             }).addDisposableTo(disposeBag)
     }
 }
