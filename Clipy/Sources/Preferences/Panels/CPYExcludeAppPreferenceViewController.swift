@@ -26,7 +26,7 @@ extension CPYExcludeAppPreferenceViewController {
         openPanel.directoryURL = URL(fileURLWithPath: basePath)
 
         let returnCode = openPanel.runModal()
-        if returnCode != NSOKButton { return }
+        if returnCode != NSModalResponseOK { return }
 
         let fileURLs = openPanel.urls
         fileURLs.forEach {
