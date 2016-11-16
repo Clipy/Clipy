@@ -157,7 +157,7 @@ extension CPYSnippetsEditorWindowController {
         panel.allowedFileTypes = [Constants.Xml.fileType]
         let returnCode = panel.runModal()
 
-        if returnCode != NSOKButton { return }
+        if returnCode != NSModalResponseOK { return }
 
         let fileURLs = panel.urls
         guard let url = fileURLs.first else { return }
@@ -234,12 +234,16 @@ extension CPYSnippetsEditorWindowController {
         panel.nameFieldStringValue = "snippets"
         let returnCode = panel.runModal()
 
-        if returnCode != NSOKButton { return }
+        if returnCode != NSModalResponseOK { return }
 
-        guard let data = xmlDocument.xml.data(using: String.Encoding.utf8) as? NSData else { return }
+        guard let data = xmlDocument.xml.data(using: String.Encoding.utf8) else { return }
         guard let url = panel.url else { return }
 
-        if !data.write(to: url, atomically: true) { NSBeep() }
+        do {
+            try data.write(to: url, options: .atomic)
+        } catch {
+            NSBeep()
+        }
     }
 }
 
