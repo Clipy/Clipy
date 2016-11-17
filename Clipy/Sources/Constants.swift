@@ -34,7 +34,6 @@ struct Constants {
         static let hotKeys                          = "kCPYPrefHotKeysKey"
         static let menuIconSize                     = "kCPYPrefMenuIconSizeKey"
         static let maxHistorySize                   = "kCPYPrefMaxHistorySizeKey"
-        static let timeInterval                     = "kCPYPrefTimeIntervalKey"
         static let storeTypes                       = "kCPYPrefStoreTypesKey"
         static let inputPasteCommand                = "kCPYPrefInputPasteCommandKey"
         static let showIconInTheMenu                = "kCPYPrefShowIconInTheMenuKey"

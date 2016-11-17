@@ -13,8 +13,6 @@ import PINCache
 import RxSwift
 import RxOptional
 
-// TODO: Remove Pasteboard observe interval setting
-
 final class ClipService {
 
     // MARK: - Properties
@@ -30,7 +28,7 @@ final class ClipService {
     // MARK: - Initialize
     init() {
         // Pasteboard observe timer
-        Observable<Int>.interval(1, scheduler: scheduler)
+        Observable<Int>.interval(0.75, scheduler: scheduler)
             .map { _ in NSPasteboard.general().changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
