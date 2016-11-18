@@ -52,10 +52,10 @@ final class ClipService {
         let clips = realm.objects(CPYClip.self)
 
         // Delete saved images
-        let imagePaths = clips
-                            .filter { !$0.thumbnailPath.isEmpty }
-                            .map { $0.thumbnailPath }
-        imagePaths.forEach { PINCache.shared().removeObject(forKey: $0) }
+        clips
+            .filter { !$0.thumbnailPath.isEmpty }
+            .map { $0.thumbnailPath }
+            .forEach { PINCache.shared().removeObject(forKey: $0) }
         // Delete Realm
         realm.transaction { realm.delete(clips) }
         // Delete writed datas
