@@ -125,7 +125,7 @@ extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             folders.removeObject(folder)
             folder.remove()
-            HotKeyManager.sharedManager.removeFolderHotKey(folder.identifier)
+            HotKeyService.shared.unregisterSnippetHotKey(with: folder.identifier)
         } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let index = folder.snippets.index(of: snippet) {
             folder.snippets.remove(objectAtIndex: index)
             snippet.remove()
@@ -262,7 +262,7 @@ private extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             textView.string = ""
             folderTitleTextField.stringValue = folder.title
-            folderShortcutRecordView.keyCombo = HotKeyManager.sharedManager.folderKeyCombo(folder.identifier)
+            folderShortcutRecordView.keyCombo = HotKeyService.shared.snippetKeyCombo(forIdentifier: folder.identifier)
             folderSettingView.isHidden = false
             textView.isHidden = true
         } else if let snippet = item as? CPYSnippet {
@@ -466,12 +466,12 @@ extension CPYSnippetsEditorWindowController: RecordViewDelegate {
 
     func recordViewDidClearShortcut(_ recordView: RecordView) {
         guard let selectedFolder = selectedFolder else { return }
-        HotKeyManager.sharedManager.removeFolderHotKey(selectedFolder.identifier)
+        HotKeyService.shared.unregisterSnippetHotKey(with: selectedFolder.identifier)
     }
 
     func recordView(_ recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
         guard let selectedFolder = selectedFolder else { return }
-        HotKeyManager.sharedManager.addFolderHotKey(selectedFolder.identifier, keyCombo: keyCombo)
+        HotKeyService.shared.registerSnippetHotKey(with: selectedFolder.identifier, keyCombo: keyCombo)
     }
 
     func recordViewDidEndRecording(_ recordView: RecordView) {}
