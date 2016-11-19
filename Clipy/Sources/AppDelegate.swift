@@ -168,9 +168,6 @@ extension AppDelegate: NSApplicationDelegate {
         // SDKs
         CPYUtilities.initSDKs()
 
-        // Regist Hotkeys
-        HotKeyManager.sharedManager.setupDefaultHoyKey()
-
         // Show Login Item
         if !defaults.bool(forKey: Constants.UserDefaults.loginItem) && !defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
@@ -187,6 +184,8 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         _ = ClipService.shared
+        HotKeyService.shared.setupDefaultHotKeys()
+
         // Managers
         MenuManager.sharedManager.setup()
         HistoryManager.sharedManager.setup()

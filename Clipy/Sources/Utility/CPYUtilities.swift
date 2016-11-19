@@ -25,7 +25,7 @@ final class CPYUtilities {
     static func registerUserDefaultKeys() {
         var defaultValues = [String: Any]()
 
-        defaultValues.updateValue(HotKeyManager.defaultHotKeyCombos(), forKey: Constants.UserDefaults.hotKeys)
+        defaultValues.updateValue(HotKeyService.defaultKeyCombos, forKey: Constants.UserDefaults.hotKeys)
         /* General */
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.loginItem)
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
