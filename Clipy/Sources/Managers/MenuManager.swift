@@ -65,11 +65,11 @@ extension MenuManager {
     func popUpMenu(_ type: MenuType) {
         let menu: NSMenu?
         switch type {
-        case .Main:
+        case .main:
             menu = clipMenu
-        case .History:
+        case .history:
             menu = historyMenu
-        case .Snippet:
+        case .snippet:
             menu = snippetMenu
         }
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation(), in: nil)
