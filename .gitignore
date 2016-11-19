@@ -19,7 +19,8 @@ DerivedData
 .env
 
 # Bundler
-/vendor/bundle/
+vendor
+.bundle
 
 # CocoaPods
 #
