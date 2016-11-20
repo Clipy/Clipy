@@ -115,22 +115,14 @@ extension ClipService {
         clip.updateTime = unixTime
         clip.primaryType = data.primaryType ?? ""
 
-        DispatchQueue.main.async { [weak self] in
-            guard let wSelf = self else { return }
-            let dispatchRealm = try! Realm()
-
+        DispatchQueue.main.async {
             // Save thumbnail image
-            if let image = data.image {
-                let width = wSelf.defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
-                let height = wSelf.defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
-
-                if let thumbnailImage = image.resizeImage(CGFloat(width), CGFloat(height)) {
-                    PINCache.shared().setObject(thumbnailImage, forKey: "\(unixTime)")
-                    clip.thumbnailPath = "\(unixTime)"
-                }
+            if let thumbnailImage = data.thumbnailImage {
+                PINCache.shared().setObject(thumbnailImage, forKey: "\(unixTime)")
+                clip.thumbnailPath = "\(unixTime)"
             }
-
             // Save Realm and .data file
+            let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 if NSKeyedArchiver.archiveRootObject(data, toFile: savedPath) {
                     dispatchRealm.transaction {
