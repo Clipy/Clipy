@@ -135,7 +135,7 @@ extension ClipService {
 
     private func types(with pasteboard: NSPasteboard) -> [String] {
         let types = pasteboard.types?.filter { canSave(with: $0) } ?? []
-        return Array(Set(types))
+        return NSOrderedSet(array: types).array as? [String] ?? []
     }
 
     private func canSave(with type: String) -> Bool {
