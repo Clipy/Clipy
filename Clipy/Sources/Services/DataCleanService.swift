@@ -41,13 +41,13 @@ final class DataCleanService {
         guard let paths = try? fileManager.contentsOfDirectory(atPath: CPYUtilities.applicationSupportFolder()) else { return }
 
         let realm = try! Realm()
-        let allClipPaths = realm.objects(CPYClip.self)
-                                .filter { !$0.isInvalidated }
-                                .flatMap { $0.dataPath.components(separatedBy: "/").last }
+        let allClipPaths = Array(realm.objects(CPYClip.self)
+                                    .filter { !$0.isInvalidated }
+                                    .flatMap { $0.dataPath.components(separatedBy: "/").last })
 
         // Delete diff datas
         DispatchQueue.main.async {
-            Set(Array(allClipPaths)).symmetricDifference(paths)
+            Set(allClipPaths).symmetricDifference(paths)
                 .map { CPYUtilities.applicationSupportFolder() + "/" + "\($0)" }
                 .forEach { CPYUtilities.deleteData(at: $0) }
         }
