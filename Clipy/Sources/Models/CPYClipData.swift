@@ -95,9 +95,7 @@ final class CPYClipData: NSObject {
                     URLs = url
                 }
             case NSTIFFPboardType:
-                if NSImage.canInit(with: pasteboard) {
-                    image =  NSImage(pasteboard: pasteboard)
-                }
+                image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage
             default: break
             }
         }
