@@ -8,5 +8,4 @@ included:
   - Clipy
 excluded:
   - Pods
-  - Clipy/Libraries
 line_length: 200
