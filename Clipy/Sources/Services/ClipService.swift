@@ -59,7 +59,7 @@ final class ClipService {
         // Delete Realm
         realm.transaction { realm.delete(clips) }
         // Delete writed datas
-        HistoryManager.sharedManager.cleanDatas()
+        DataCleanService.shared.cleanDatas()
     }
 
 }

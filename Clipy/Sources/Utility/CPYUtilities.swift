@@ -94,14 +94,11 @@ final class CPYUtilities {
         return true
     }
 
-    static func deleteData(_ path: String) {
-        autoreleasepool { () -> () in
+    static func deleteData(at path: String) {
+        autoreleasepool {
             let fileManager = FileManager.default
-            var isDir: ObjCBool = false
-            if fileManager.fileExists(atPath: path, isDirectory: &isDir) {
-                do {
-                    try fileManager.removeItem(atPath: path)
-                } catch { }
+            if fileManager.fileExists(atPath: path) {
+                try? fileManager.removeItem(atPath: path)
             }
         }
     }

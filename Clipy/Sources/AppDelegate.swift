@@ -184,11 +184,11 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         _ = ClipService.shared
+        _ = DataCleanService.shared
         HotKeyService.shared.setupDefaultHotKeys()
 
         // Managers
         MenuManager.sharedManager.setup()
-        HistoryManager.sharedManager.setup()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
