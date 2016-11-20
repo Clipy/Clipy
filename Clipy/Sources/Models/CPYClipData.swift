@@ -54,6 +54,28 @@ final class CPYClipData: NSObject {
     var isOnlyStringType: Bool {
         return types == [NSStringPboardType]
     }
+    var thumbnailImage: NSImage? {
+        let defaults = UserDefaults.standard
+        let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
+        let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
+
+        if let image = image, fileNames.isEmpty {
+            // Image only data
+            return image.resizeImage(CGFloat(width), CGFloat(height))
+        } else if let fileName = fileNames.first, let path = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
+            /**
+             *  In the case of the local file correct data is not included in the image variable
+             *  Judge the image from the path and create a thumbnail
+             */
+            switch url.pathExtension.lowercased() {
+                case "jpg", "jpeg", "png", "bmp", "tiff":
+                    return NSImage(contentsOfFile: fileName)?.resizeImage(CGFloat(width), CGFloat(height))
+                default: break
+            }
+        }
+        return nil
+    }
+
     static var availableTypes: [String] {
         return [NSStringPboardType, NSRTFPboardType, NSRTFDPboardType, NSPDFPboardType, NSFilenamesPboardType, NSURLPboardType, NSTIFFPboardType]
     }
@@ -67,10 +89,6 @@ final class CPYClipData: NSObject {
     }
 
     // MARK: - Init
-    override init () {
-        super.init()
-    }
-
     init(pasteboard: NSPasteboard, types: [String]) {
         super.init()
         self.types = types
@@ -112,7 +130,7 @@ final class CPYClipData: NSObject {
         self.image = nil
     }
 
-    // MARL- Archiving
+    // MARK: - NSCoding
     func encodeWithCoder(_ aCoder: NSCoder) {
         aCoder.encode(types, forKey: kTypesKey)
         aCoder.encode(stringValue, forKey: kStringValueKey)
