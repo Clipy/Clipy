@@ -72,6 +72,8 @@ final class CPYClipData: NSObject {
                     return NSImage(contentsOfFile: fileName)?.resizeImage(CGFloat(width), CGFloat(height))
                 default: break
             }
+        } else if let color = NSColor(hex: stringValue) {
+            return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
         }
         return nil
     }
