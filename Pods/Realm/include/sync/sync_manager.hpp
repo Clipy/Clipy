@@ -23,6 +23,7 @@
 
 #include <realm/sync/client.hpp>
 #include <realm/util/logger.hpp>
+#include <realm/util/optional.hpp>
 
 #include <memory>
 #include <mutex>
@@ -31,7 +32,10 @@
 namespace realm {
 
 struct SyncConfig;
-struct SyncSession;
+class SyncSession;
+class SyncUser;
+class SyncFileManager;
+class SyncMetadataManager;
 
 namespace _impl {
 struct SyncClient;
@@ -49,9 +53,21 @@ public:
 };
 
 class SyncManager {
-friend struct SyncSession;
+friend class SyncSession;
 public:
+    enum class MetadataMode {
+        NoEncryption,                   // Enable metadata, but disable encryption.
+        Encryption,                     // Enable metadata, and use encryption (automatic if possible).
+        NoMetadata,                     // Disable metadata.
+    };
+
     static SyncManager& shared();
+
+    // Configure the metadata and file management subsystems. This MUST be called upon startup.
+    void configure_file_system(const std::string& base_file_path,
+                               MetadataMode metadata_mode=MetadataMode::Encryption,
+                               util::Optional<std::vector<char>> custom_encryption_key=none,
+                               bool reset_metadata_on_error=false);
 
     void set_log_level(util::Logger::Level) noexcept;
     void set_logger_factory(SyncLoggerFactory&) noexcept;
@@ -59,11 +75,36 @@ public:
 
     /// Control whether the sync client attempts to reconnect immediately. Only set this to `true` for testing purposes.
     void set_client_should_reconnect_immediately(bool reconnect_immediately);
+    bool client_should_reconnect_immediately() const noexcept;
+
     /// Control whether the sync client validates SSL certificates. Should *always* be `true` in production use.
     void set_client_should_validate_ssl(bool validate_ssl);
+    bool client_should_validate_ssl() const noexcept;
+
+    util::Logger::Level log_level() const noexcept;
 
     std::shared_ptr<SyncSession> get_session(const std::string& path, const SyncConfig& config);
     std::shared_ptr<SyncSession> get_existing_active_session(const std::string& path) const;
+
+    // If the metadata manager is configured, perform an update. Returns `true` iff the code was run.
+    bool perform_metadata_update(std::function<void(const SyncMetadataManager&)> update_function) const;
+
+    // Get a sync user for a given identity, or create one if none exists yet, and set its token.
+    // If a logged-out user exists, it will marked as logged back in.
+    std::shared_ptr<SyncUser> get_user(const std::string& identity,
+                                       std::string refresh_token,
+                                       util::Optional<std::string> auth_server_url=none,
+                                       bool is_admin=false);
+    // Get an existing user for a given identity, if one exists and is logged in.
+    std::shared_ptr<SyncUser> get_existing_logged_in_user(const std::string& identity) const;
+    // Get all the users.
+    std::vector<std::shared_ptr<SyncUser>> all_users() const;
+
+    // Get the default path for a Realm for the given user and absolute unresolved URL.
+    std::string path_for_realm(const std::string& user_identity, const std::string& raw_realm_url) const;
+
+    // Reset part of the singleton state for testing purposes. DO NOT CALL OUTSIDE OF TESTING CODE.
+    void reset_for_testing();
 
 private:
     void dropped_last_reference_to_session(SyncSession*);
@@ -92,10 +133,21 @@ private:
     sync::Client::Reconnect m_client_reconnect_mode = sync::Client::Reconnect::normal;
     bool m_client_validate_ssl = true;
 
+    // Protects m_users
+    mutable std::mutex m_user_mutex;
+
+    // A map of user identities to (shared pointers to) SyncUser objects.
+    std::unordered_map<std::string, std::shared_ptr<SyncUser>> m_users;
+
     mutable std::shared_ptr<_impl::SyncClient> m_sync_client;
 
     // Protects m_active_sessions and m_inactive_sessions
     mutable std::mutex m_session_mutex;
+
+    // Protects m_file_manager and m_metadata_manager
+    mutable std::mutex m_file_system_mutex;
+    std::unique_ptr<SyncFileManager> m_file_manager;
+    std::unique_ptr<SyncMetadataManager> m_metadata_manager;
 
     // Active sessions are sessions which the client code holds a strong
     // reference to. When the last strong reference is released, the session is

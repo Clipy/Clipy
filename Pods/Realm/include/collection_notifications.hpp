@@ -44,6 +44,8 @@ struct NotificationToken {
     NotificationToken(NotificationToken const&) = delete;
     NotificationToken& operator=(NotificationToken const&) = delete;
 
+    void suppress_next();
+
 private:
     util::AtomicSharedPtr<_impl::CollectionNotifier> m_notifier;
     size_t m_token;

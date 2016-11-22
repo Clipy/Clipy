@@ -76,6 +76,11 @@ public:
         return std::atomic_exchange(&m_ptr, std::move(ptr));
     }
 
+    std::shared_ptr<T> load() const noexcept
+    {
+        return std::atomic_load(&m_ptr);
+    }
+
 private:
     std::shared_ptr<T> m_ptr = nullptr;
 };
@@ -126,8 +131,14 @@ public:
         return ptr;
     }
 
+    std::shared_ptr<T> load() const noexcept
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return m_ptr;
+    }
+
 private:
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
     std::shared_ptr<T> m_ptr = nullptr;
 };
 

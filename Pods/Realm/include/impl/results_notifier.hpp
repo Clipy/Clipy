@@ -62,10 +62,6 @@ private:
     CollectionChangeBuilder m_changes;
     TransactionChangeInfo* m_info = nullptr;
 
-    // Flag for whether or not the query has been run at all, as goofy timing
-    // can lead to deliver() being called before that
-    bool m_initial_run_complete = false;
-
     bool need_to_run();
     void calculate_changes();
     void deliver(SharedGroup&) override;

@@ -21,12 +21,12 @@
 
 #include <realm/util/features.h>
 
-#if REALM_PLATFORM_NODE
-#include "util/node/event_loop_signal.hpp"
-#elif REALM_PLATFORM_APPLE
+#if REALM_PLATFORM_APPLE
 #include "util/apple/event_loop_signal.hpp"
 #elif REALM_ANDROID
 #include "util/android/event_loop_signal.hpp"
+#elif REALM_HAVE_UV || REALM_PLATFORM_NODE
+#include "util/uv/event_loop_signal.hpp"
 #else
 #include "util/generic/event_loop_signal.hpp"
 #endif
