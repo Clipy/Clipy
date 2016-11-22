@@ -21,6 +21,7 @@
 
 #include "shared_realm.hpp"
 
+#include <condition_variable>
 #include <mutex>
 
 namespace realm {
@@ -28,7 +29,7 @@ class Replication;
 class Schema;
 class SharedGroup;
 class StringData;
-struct SyncSession;
+class SyncSession;
 
 namespace _impl {
 class CollectionNotifier;
@@ -63,6 +64,8 @@ public:
     // Asynchronously call notify() on every Realm instance for this coordinator's
     // path, including those in other processes
     void send_commit_notifications(Realm&);
+    
+    void wake_up_notifier_worker();
 
     // Clear the weak Realm cache for all paths
     // Should only be called in test code, as continuing to use the previously
@@ -91,11 +94,27 @@ public:
     // Advance the Realm to the most recent transaction version which all async
     // work is complete for
     void advance_to_ready(Realm& realm);
+
+    // Advance the Realm to the most recent transaction version, blocking if
+    // async notifiers are not yet ready for that version
+    // returns whether it actually changed the version
+    bool advance_to_latest(Realm& realm);
+
+    // Deliver any notifications which are ready for the Realm's version
     void process_available_async(Realm& realm);
 
-    void notify_others();
-
     void set_transaction_callback(std::function<void(VersionID, VersionID)>);
+
+    // Deliver notifications for the Realm, blocking if some aren't ready yet
+    // The calling Realm must be in a write transaction
+    void promote_to_write(Realm& realm);
+
+    // Commit a Realm's current write transaction and send notifications to all
+    // other Realm instances for that path, including in other processes
+    void commit_write(Realm& realm);
+
+    template<typename Pred>
+    std::unique_lock<std::mutex> wait_for_notifiers(Pred&& wait_predicate);
 
 private:
     Realm::Config m_config;
@@ -106,8 +125,10 @@ private:
     std::vector<WeakRealmNotifier> m_weak_realm_notifiers;
 
     std::mutex m_notifier_mutex;
+    std::condition_variable m_notifier_cv;
     std::vector<std::shared_ptr<_impl::CollectionNotifier>> m_new_notifiers;
     std::vector<std::shared_ptr<_impl::CollectionNotifier>> m_notifiers;
+    VersionID m_notifier_skip_version = {0, 0};
 
     // SharedGroup used for actually running async notifiers
     // Will have a read transaction iff m_notifiers is non-empty
@@ -136,8 +157,27 @@ private:
     void open_helper_shared_group();
     void advance_helper_shared_group_to_latest();
     void clean_up_dead_notifiers();
-    std::vector<std::shared_ptr<_impl::CollectionNotifier>> notifiers_to_deliver(Realm&, VersionID& version);
+
+    std::vector<std::shared_ptr<_impl::CollectionNotifier>> notifiers_for_realm(Realm&);
 };
+
+
+template<typename Pred>
+std::unique_lock<std::mutex> RealmCoordinator::wait_for_notifiers(Pred&& wait_predicate)
+{
+    std::unique_lock<std::mutex> lock(m_notifier_mutex);
+    bool first = true;
+    m_notifier_cv.wait(lock, [&] {
+        if (wait_predicate())
+            return true;
+        if (first) {
+            wake_up_notifier_worker();
+            first = false;
+        }
+        return false;
+    });
+    return lock;
+}
 
 } // namespace _impl
 } // namespace realm

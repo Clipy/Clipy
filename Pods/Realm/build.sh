@@ -297,8 +297,7 @@ download_object_server() {
     mkdir sync
     tar xf $archive_name -C sync
     rm $archive_name
-    echo "\nenterprise:\n  skip_setup: true" >> "sync/object-server/configuration.yml"
-    sed -i '' -e "s/    listen_address: '0\.0\.0\.0'/    listen_address: '::'/" "sync/object-server/configuration.yml"
+    cp Configuration/object-server-config.yml sync/object-server/configuration.yml
     touch "sync/object-server/do_not_open_browser"
 }
 
@@ -1000,10 +999,11 @@ EOM
           mkdir -p include
           mv core/include include/core
 
-          mkdir -p include/impl/apple
-          mkdir -p include/util/apple
+          mkdir -p include/impl/apple include/util/apple include/sync/impl
           cp Realm/*.hpp include
           cp Realm/ObjectStore/src/*.hpp include
+          cp Realm/ObjectStore/src/sync/*.hpp include/sync
+          cp Realm/ObjectStore/src/sync/impl/*.hpp include/sync/impl
           cp Realm/ObjectStore/src/impl/*.hpp include/impl
           cp Realm/ObjectStore/src/impl/apple/*.hpp include/impl/apple
           cp Realm/ObjectStore/src/util/*.hpp include/util
