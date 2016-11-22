@@ -273,6 +273,7 @@ fileprivate extension MenuManager {
         let isMarkWithNumber = defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowToolTip = defaults.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem)
         let isShowImage = defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
+        let isShowColorCode = defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
         let addNumbericKeyEquivalents = defaults.bool(forKey: Constants.UserDefaults.addNumericKeyEquivalents)
 
         var keyEquivalent = ""
@@ -309,13 +310,21 @@ fileprivate extension MenuManager {
             menuItem.title = menuItemTitle("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
 
-        if !clip.thumbnailPath.isEmpty && isShowImage {
-            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] (cache, key, object) in
-                if let image = object as? NSImage {
-                    menuItem?.image = image
+        if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
+            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] (_, _, object) in
+                DispatchQueue.main.async {
+                    menuItem?.image = object as? NSImage
                 }
             })
         }
+        if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
+            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] (_, _, object) in
+                DispatchQueue.main.async {
+                    menuItem?.image = object as? NSImage
+                }
+            })
+        }
+
 
         return menuItem
     }
