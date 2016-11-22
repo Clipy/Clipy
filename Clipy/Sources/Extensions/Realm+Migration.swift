@@ -11,7 +11,7 @@ import RealmSwift
 
 extension Realm {
     static func migration() {
-        let config = Realm.Configuration(schemaVersion: 6, migrationBlock: { (migration, oldSchemaVersion) in
+        let config = Realm.Configuration(schemaVersion: 7, migrationBlock: { (migration, oldSchemaVersion) in
             if oldSchemaVersion <= 2 {
                 // Add identifier in CPYSnippet
                 migration.enumerateObjects(ofType: CPYSnippet.className()) { (_, newObject) in

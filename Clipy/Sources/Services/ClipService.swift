@@ -121,6 +121,11 @@ extension ClipService {
                 PINCache.shared().setObject(thumbnailImage, forKey: "\(unixTime)")
                 clip.thumbnailPath = "\(unixTime)"
             }
+            if let colorCodeImage = data.colorCodeImage {
+                PINCache.shared().setObject(colorCodeImage, forKey: "\(unixTime)")
+                clip.thumbnailPath = "\(unixTime)"
+                clip.isColorCode = true
+            }
             // Save Realm and .data file
             let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {

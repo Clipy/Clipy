@@ -18,6 +18,7 @@ final class CPYClip: Object {
     dynamic var primaryType     = ""
     dynamic var updateTime      = 0
     dynamic var thumbnailPath   = ""
+    dynamic var isColorCode     = false
 
     // MARK: Primary Key
     override static func primaryKey() -> String? {

@@ -59,6 +59,7 @@ struct Constants {
         static let suppressAlertForDeleteSnippet    = "kCPYSuppressAlertForDeleteSnippet"
         static let excludeApplications              = "kCPYExcludeApplications"
         static let collectCrashReport               = "kCPYCollectCrashReport"
+        static let showColorPreviewInTheMenu        = "kCPYPrefShowColorPreviewInTheMenu"
     }
 
     struct Beta {
