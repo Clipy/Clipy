@@ -54,7 +54,7 @@ namespace realm {
 //     }
 //
 //     // Override the did_change method to call each registered notification
-//     void did_change(std::vector<ObserverState> const&, std::vector<void*> const&) override
+//     void did_change(std::vector<ObserverState> const&, std::vector<void*> const&, bool) override
 //     {
 //         // Loop oddly so that unregistering a notification from within the
 //         // registered function works
@@ -102,7 +102,8 @@ public:
     // requested or if the Realm is not actually in a read transaction, although
     // both vectors will be empty in that case.
     virtual void did_change(std::vector<ObserverState> const& observers,
-                            std::vector<void*> const& invalidated);
+                            std::vector<void*> const& invalidated,
+                            bool version_changed=true);
 
     // Change information for a single field of a row
     struct ColumnInfo {
@@ -153,7 +154,7 @@ public:
 };
 
 inline void BindingContext::will_change(std::vector<ObserverState> const&, std::vector<void*> const&) { }
-inline void BindingContext::did_change(std::vector<ObserverState> const&, std::vector<void*> const&) { }
+inline void BindingContext::did_change(std::vector<ObserverState> const&, std::vector<void*> const&, bool) { }
 } // namespace realm
 
 #endif /* BINDING_CONTEXT_HPP */

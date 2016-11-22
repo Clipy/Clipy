@@ -62,7 +62,7 @@ public:
     // set operations are no-ops and all get operations cause an assert to fail.
     //
     // If `make_if_absent` is true and the user was previously marked for deletion, it will be unmarked.
-    SyncUserMetadata(SyncMetadataManager& manager, std::string identity, bool make_if_absent=true);
+    SyncUserMetadata(const SyncMetadataManager& manager, std::string identity, bool make_if_absent=true);
 
     SyncUserMetadata(Schema schema, SharedRealm realm, RowExpr row);
 

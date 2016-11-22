@@ -524,6 +524,9 @@ Results Results::snapshot() &&
 
 void Results::prepare_async()
 {
+    if (m_notifier) {
+        return;
+    }
     if (m_realm->config().read_only()) {
         throw InvalidTransactionException("Cannot create asynchronous query for read-only Realms");
     }
@@ -534,11 +537,9 @@ void Results::prepare_async()
         throw std::logic_error("Cannot create asynchronous query for snapshotted Results.");
     }
 
-    if (!m_notifier) {
-        m_wants_background_updates = true;
-        m_notifier = std::make_shared<_impl::ResultsNotifier>(*this);
-        _impl::RealmCoordinator::register_notifier(m_notifier);
-    }
+    m_wants_background_updates = true;
+    m_notifier = std::make_shared<_impl::ResultsNotifier>(*this);
+    _impl::RealmCoordinator::register_notifier(m_notifier);
 }
 
 NotificationToken Results::async(std::function<void (std::exception_ptr)> target)

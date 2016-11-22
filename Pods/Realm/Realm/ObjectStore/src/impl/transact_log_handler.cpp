@@ -221,6 +221,9 @@ class TransactLogObserver : public TransactLogValidationMixin, public MarkDirtyM
     // Change information for the currently selected LinkList, if any
     ColumnInfo* m_active_linklist = nullptr;
 
+    _impl::NotifierPackage& m_notifiers;
+    SharedGroup& m_sg;
+
     // Get the change info for the given column, creating it if needed
     static ColumnInfo& get_change(ObserverState& state, size_t i)
     {
@@ -250,14 +253,23 @@ class TransactLogObserver : public TransactLogValidationMixin, public MarkDirtyM
 
 public:
     template<typename Func>
-    TransactLogObserver(BindingContext* context, SharedGroup& sg, Func&& func, util::Optional<SchemaMode> schema_mode)
+    TransactLogObserver(BindingContext* context, SharedGroup& sg, Func&& func,
+                        util::Optional<SchemaMode> schema_mode,
+                        _impl::NotifierPackage& notifiers)
     : m_context(context)
+    , m_notifiers(notifiers)
+    , m_sg(sg)
     {
         auto old_version = sg.get_version_of_current_transaction();
         if (context) {
             m_observers = context->get_observed_rows();
         }
-        if (m_observers.empty()) {
+
+        // If we have collection notifiers we have to use the transaction log
+        // observer to send will_change notifications once we know what the
+        // target version is, despite not otherwise needing to observe anything
+        if (m_observers.empty() && (!m_notifiers || m_notifiers.version())) {
+            m_notifiers.before_advance();
             if (schema_mode) {
                 func(TransactLogValidator(*schema_mode));
             }
@@ -267,12 +279,18 @@ public:
             if (context && old_version != sg.get_version_of_current_transaction()) {
                 context->did_change({}, {});
             }
+            m_notifiers.deliver(sg);
+            m_notifiers.after_advance();
             return;
         }
 
         std::sort(begin(m_observers), end(m_observers));
         func(*this);
-        context->did_change(m_observers, invalidated);
+        if (context)
+            context->did_change(m_observers, invalidated, old_version != sg.get_version_of_current_transaction());
+        m_notifiers.package_and_wait(sg.get_version_of_current_transaction().version); // is a no-op if parse_complete() was called
+        m_notifiers.deliver(sg); // only will ever deliver errors
+        m_notifiers.after_advance();
     }
 
     // Mark the given row/col as needing notifications sent
@@ -288,7 +306,11 @@ public:
     // is advanced
     void parse_complete()
     {
-        m_context->will_change(m_observers, invalidated);
+        if (m_context)
+            m_context->will_change(m_observers, invalidated);
+        using sgf = _impl::SharedGroupFriend;
+        m_notifiers.package_and_wait(sgf::get_version_of_latest_snapshot(m_sg));
+        m_notifiers.before_advance();
     }
 
     bool insert_group_level_table(size_t table_ndx, size_t prior_size, StringData name)
@@ -792,12 +814,21 @@ public:
 
 namespace realm {
 namespace _impl {
+
 namespace transaction {
 void advance(SharedGroup& sg, BindingContext* context, SchemaMode schema_mode, VersionID version)
 {
+    _impl::NotifierPackage notifiers;
     TransactLogObserver(context, sg, [&](auto&&... args) {
         LangBindHelper::advance_read(sg, std::move(args)..., version);
-    }, schema_mode);
+    }, schema_mode, notifiers);
+}
+
+void advance(SharedGroup& sg, BindingContext* context, SchemaMode schema_mode, NotifierPackage& notifiers)
+{
+    TransactLogObserver(context, sg, [&](auto&&... args) {
+        LangBindHelper::advance_read(sg, std::move(args)..., notifiers.version().value_or(VersionID{}));
+    }, schema_mode, notifiers);
 }
 
 void begin_without_validation(SharedGroup& sg)
@@ -805,27 +836,25 @@ void begin_without_validation(SharedGroup& sg)
     LangBindHelper::promote_to_write(sg);
 }
 
-void begin(SharedGroup& sg, BindingContext* context, SchemaMode schema_mode)
+void begin(SharedGroup& sg, BindingContext* context, SchemaMode schema_mode,
+           NotifierPackage& notifiers)
 {
     TransactLogObserver(context, sg, [&](auto&&... args) {
         LangBindHelper::promote_to_write(sg, std::move(args)...);
-    }, schema_mode);
+    }, schema_mode, notifiers);
 }
 
-void commit(SharedGroup& sg, BindingContext* context)
+void commit(SharedGroup& sg)
 {
     LangBindHelper::commit_and_continue_as_read(sg);
-
-    if (context) {
-        context->did_change({}, {});
-    }
 }
 
 void cancel(SharedGroup& sg, BindingContext* context)
 {
+    _impl::NotifierPackage notifiers;
     TransactLogObserver(context, sg, [&](auto&&... args) {
         LangBindHelper::rollback_and_continue_as_read(sg, std::move(args)...);
-    }, util::none);
+    }, util::none, notifiers);
 }
 
 void advance(SharedGroup& sg,

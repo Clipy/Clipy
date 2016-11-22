@@ -54,3 +54,8 @@ NotificationToken& NotificationToken::operator=(realm::NotificationToken&& rgt)
     }
     return *this;
 }
+
+void NotificationToken::suppress_next()
+{
+    m_notifier.load()->suppress_next_notification(m_token);
+}
