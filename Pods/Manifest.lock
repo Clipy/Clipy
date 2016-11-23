@@ -20,6 +20,9 @@ PODS:
   - RxOptional (3.1.3):
     - RxCocoa
     - RxSwift
+  - RxRealm (0.3.1):
+    - RealmSwift (~> 2.0)
+    - RxSwift (~> 3.0.0)
   - RxScreeen (1.1.0):
     - RxCocoa (~> 3.0)
     - RxSwift (~> 3.0)
@@ -40,6 +43,7 @@ DEPENDENCIES:
   - RealmSwift
   - RxCocoa
   - RxOptional
+  - RxRealm
   - RxScreeen
   - RxSwift
   - Sparkle
@@ -67,11 +71,12 @@ SPEC CHECKSUMS:
   RealmSwift: a4d4abbf0088c337cab5b738054395842e4b3052
   RxCocoa: 15a52fc590dcc700cb4a690a633b5c5184ce3a78
   RxOptional: b97b59183af80d1e729ac9e51d09a10be668d6a8
+  RxRealm: 0965e07d49b8575d16c3a0487c667dfe64ce6a9c
   RxScreeen: 6aaf7a785a86399cbbf801318b45033e78d57340
   RxSwift: af5680055c4ad04480189c52d28385b1029493a6
   Screeen: 07f3593d9941d7a9546f081e4f775ce85d974447
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
 
-PODFILE CHECKSUM: b55f99fb3c5fd6f6efabc88c9fdf99f2d6f9448d
+PODFILE CHECKSUM: 2a7c581715d954a84155e8ef3333f8976b01534b
 
 COCOAPODS: 1.1.1

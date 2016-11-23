@@ -17,6 +17,7 @@ target 'Clipy' do
   pod 'KeyHolder'
   pod 'RxScreeen'
   pod 'AEXML'
+  pod 'RxRealm'
 
   target 'ClipyTests' do
     inherit! :search_paths

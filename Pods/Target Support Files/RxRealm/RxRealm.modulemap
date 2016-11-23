@@ -1,0 +1,6 @@
+framework module RxRealm {
+  umbrella header "RxRealm-umbrella.h"
+
+  export *
+  module * { export * }
+}
