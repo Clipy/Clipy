@@ -97,8 +97,8 @@ class AppDelegate: NSObject {
             return
         }
 
-        PasteboardManager.sharedManager.copyClipToPasteboard(clip)
-        PasteboardManager.paste()
+        PasteService.shared.copyToPasteboard(with: clip)
+        PasteService.shared.paste()
     }
 
     func selectSnippetMenuItem(_ sender: AnyObject) {
@@ -114,8 +114,8 @@ class AppDelegate: NSObject {
             NSBeep()
             return
         }
-        PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
-        PasteboardManager.paste()
+        PasteService.shared.copyToPasteboard(with: snippet.content)
+        PasteService.shared.paste()
     }
 
     func terminateApplication() {
