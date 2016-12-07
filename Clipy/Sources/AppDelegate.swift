@@ -21,9 +21,15 @@ import RealmSwift
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    let defaults = UserDefaults.standard
-    let screenshotObserver = ScreenShotObserver()
-    let disposeBag = DisposeBag()
+    fileprivate var statusItem: NSStatusItem?
+    fileprivate let defaults = UserDefaults.standard
+    fileprivate let screenshotObserver = ScreenShotObserver()
+    fileprivate let disposeBag = DisposeBag()
+
+    // MARK: - Enum Values
+    enum StatusType: Int {
+        case none, black, white
+    }
 
     // MARK: - Init
     override func awakeFromNib() {
@@ -179,17 +185,15 @@ extension AppDelegate: NSApplicationDelegate {
         updater?.automaticallyChecksForUpdates = defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
         updater?.updateCheckInterval = TimeInterval(defaults.integer(forKey: Constants.Update.checkInterval))
 
-        // Binding Events
-        bind()
-
         // Services
+        _ = MenuService.shared
         _ = ClipService.shared
         _ = DataCleanService.shared
         ExcludeAppService.shared.startAppMonitoring()
         HotKeyService.shared.setupDefaultHotKeys()
 
-        // Managers
-        MenuManager.sharedManager.setup()
+        // Binding Events
+        bind()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -197,25 +201,74 @@ extension AppDelegate: NSApplicationDelegate {
     }
 }
 
+// MARK: - Status Item
+fileprivate extension AppDelegate {
+    fileprivate func changeStatusItem(with type: StatusType) {
+        removeStatusItem()
+        if type == .none { return }
+
+        let image: NSImage?
+        switch type {
+        case .black:
+            image = NSImage(assetIdentifier: .MenuBlack)
+        case .white:
+            image = NSImage(assetIdentifier: .MenuWhite)
+        case .none: return
+        }
+        image?.isTemplate = true
+
+        statusItem = NSStatusBar.system().statusItem(withLength: -1)
+        statusItem?.image = image
+        statusItem?.highlightMode = true
+        statusItem?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
+    }
+
+    private func removeStatusItem() {
+        guard let item = statusItem else { return }
+        NSStatusBar.system().removeStatusItem(item)
+        statusItem = nil
+    }
+}
+
 // MARK: - Bind
 fileprivate extension AppDelegate {
     fileprivate func bind() {
+        // Main Menu
+        MenuService.shared.mainMenu
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] menu in
+                self?.statusItem?.menu = menu
+            })
+            .addDisposableTo(disposeBag)
+        // Menu icon
+        defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem)
+            .filterNil()
+            .map { StatusType(rawValue: $0) ?? .black }
+            .do(onNext: { [weak self] in self?.changeStatusItem(with: $0) })
+            .withLatestFrom(MenuService.shared.mainMenu)
+            .subscribe(onNext: { [weak self] menu in
+                self?.statusItem?.menu = menu
+            })
+            .addDisposableTo(disposeBag)
         // Login Item
         defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.toggleLoginItemState()
-            }).addDisposableTo(disposeBag)
+            })
+            .addDisposableTo(disposeBag)
         // Observe Screenshot
         defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
-            }).addDisposableTo(disposeBag)
+            })
+            .addDisposableTo(disposeBag)
         // Observe Screenshot image
         screenshotObserver.rx.addedImage
             .subscribe(onNext: { image in
                 ClipService.shared.create(with: image)
-            }).addDisposableTo(disposeBag)
+            })
+            .addDisposableTo(disposeBag)
     }
 }

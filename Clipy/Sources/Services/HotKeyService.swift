@@ -34,15 +34,15 @@ final class HotKeyService: NSObject {
 // MARK: - Actions
 extension HotKeyService {
     func popupMainMenu() {
-        MenuManager.sharedManager.popUpMenu(.main)
+        MenuService.shared.popupMenu(with: .main)
     }
 
     func popupHistoryMenu() {
-        MenuManager.sharedManager.popUpMenu(.history)
+        MenuService.shared.popupMenu(with: .history)
     }
 
     func popUpSnippetMenu() {
-        MenuManager.sharedManager.popUpMenu(.snippet)
+        MenuService.shared.popupMenu(with: .snippet)
     }
 }
 
@@ -191,7 +191,7 @@ extension HotKeyService {
         }
         if !folder.enable { return }
 
-        MenuManager.sharedManager.popUpSnippetFolder(folder)
+        MenuService.shared.popupSnippet(with: folder)
     }
 
     fileprivate func setupSnippetHotKeys() {
