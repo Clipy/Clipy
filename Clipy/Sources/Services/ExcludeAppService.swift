@@ -44,9 +44,9 @@ extension ExcludeAppService {
 extension ExcludeAppService {
     func frontProcessIsExcludedApplication() -> Bool {
         if applications.isEmpty { return false }
-        guard let frontApplication = frontApplication.value else { return false }
+        guard let frontApplicationIdentifier = frontApplication.value?.bundleIdentifier else { return false }
 
-        for app in applications where app.identifier == frontApplication.bundleIdentifier {
+        for app in applications where app.identifier == frontApplicationIdentifier {
             return true
         }
         return false
@@ -74,5 +74,38 @@ extension ExcludeAppService {
         let data = applications.archive()
         defaults.set(data, forKey: Constants.UserDefaults.excludeApplications)
         defaults.synchronize()
+    }
+}
+
+// MARK: - Special Applications
+extension ExcludeAppService {
+    /**
+     *  Responding to applications that have special handling for protection of passwords etc.
+     *  e.g 1Password on GoogleChrome browser extension
+     *
+     *  ref: http://nspasteboard.org/
+     */
+    private enum Application: String {
+        case onePassword = "com.agilebits.onepassword"
+
+        // MARK: - Properties
+        private var macApplicationIdentifier: String {
+            switch self {
+            case .onePassword:
+                return "com.agilebits.onepassword-osx"
+            }
+        }
+
+        // MARK: - Excluded
+        func isExcluded(applications: [CPYAppInfo]) -> Bool {
+            return !applications.filter { $0.identifier == macApplicationIdentifier }.isEmpty
+        }
+
+    }
+
+    func copiedProcessIsExcludedApplications(pasteboard: NSPasteboard) -> Bool {
+        guard let types = pasteboard.types else { return false }
+        guard let application = types.flatMap({ Application(rawValue: $0) }).first else { return false }
+        return application.isExcluded(applications: applications)
     }
 }

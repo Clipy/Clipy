@@ -69,14 +69,17 @@ extension ClipService {
     fileprivate func create() {
         lock.lock(); defer { lock.unlock() }
 
-        // Exclude application
-        if ExcludeAppService.shared.frontProcessIsExcludedApplication() { return }
         // Store types
         if !storeTypes.values.contains(NSNumber(value: true)) { return }
         // Pasteboard types
         let pasteboard = NSPasteboard.general()
         let types = self.types(with: pasteboard)
         if types.isEmpty { return }
+
+        // Excluded application
+        if ExcludeAppService.shared.frontProcessIsExcludedApplication() { return }
+        // Special applications
+        if ExcludeAppService.shared.copiedProcessIsExcludedApplications(pasteboard: pasteboard) { return }
 
         // Create data
         let data = CPYClipData(pasteboard: pasteboard, types: types)
