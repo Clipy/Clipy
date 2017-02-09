@@ -94,6 +94,8 @@ extension PasteService {
 
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
+            // Disable local keyboard events while pasting
+            source?.setLocalEventsFilterDuringSuppressionState([.permitLocalMouseEvents, .permitSystemDefinedEvents], state: .eventSuppressionStateSuppressionInterval)
             // Press Command + V
             let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: true)
             keyVDown?.flags = .maskCommand
