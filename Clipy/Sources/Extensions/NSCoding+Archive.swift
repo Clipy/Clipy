@@ -13,3 +13,9 @@ extension NSCoding {
         return NSKeyedArchiver.archivedData(withRootObject: self)
     }
 }
+
+extension Array where Element: NSCoding {
+    func archive() -> Data {
+        return NSKeyedArchiver.archivedData(withRootObject: self)
+    }
+}
