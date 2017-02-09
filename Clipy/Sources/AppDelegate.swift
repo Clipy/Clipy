@@ -185,6 +185,7 @@ extension AppDelegate: NSApplicationDelegate {
         // Services
         _ = ClipService.shared
         _ = DataCleanService.shared
+        ExcludeAppService.shared.startAppMonitoring()
         HotKeyService.shared.setupDefaultHotKeys()
 
         // Managers

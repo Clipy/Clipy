@@ -70,7 +70,7 @@ extension ClipService {
         lock.lock(); defer { lock.unlock() }
 
         // Exclude application
-        if ExcludeAppManager.sharedManager.frontProcessIsExcludeApplication() { return }
+        if ExcludeAppService.shared.frontProcessIsExcludedApplication() { return }
         // Store types
         if !storeTypes.values.contains(NSNumber(value: true)) { return }
         // Pasteboard types

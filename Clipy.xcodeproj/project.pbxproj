@@ -11,6 +11,7 @@
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
+		FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */; };
 		FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */; };
 		FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */; };
 		FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */; };
@@ -29,7 +30,6 @@
 		FA1DB4BB1DDCB452007F95C8 /* Realm+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4B01DDCB452007F95C8 /* Realm+Migration.swift */; };
 		FA1DB4BC1DDCB452007F95C8 /* Realm+NoCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */; };
 		FA1DB4BD1DDCB452007F95C8 /* String+Substring.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4B21DDCB452007F95C8 /* String+Substring.swift */; };
-		FA1DB4C61DDCB460007F95C8 /* ExcludeAppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4C01DDCB460007F95C8 /* ExcludeAppManager.swift */; };
 		FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */; };
 		FA1DB4D21DDCB479007F95C8 /* CPYAppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4CC1DDCB479007F95C8 /* CPYAppInfo.swift */; };
 		FA1DB4D31DDCB479007F95C8 /* CPYClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4CD1DDCB479007F95C8 /* CPYClip.swift */; };
@@ -110,6 +110,7 @@
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceSpec.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
+		FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppService.swift; sourceTree = "<group>"; };
 		FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA1DB4931DDCB22C007F95C8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -130,7 +131,6 @@
 		FA1DB4B01DDCB452007F95C8 /* Realm+Migration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+Migration.swift"; sourceTree = "<group>"; };
 		FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+NoCatch.swift"; sourceTree = "<group>"; };
 		FA1DB4B21DDCB452007F95C8 /* String+Substring.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Substring.swift"; sourceTree = "<group>"; };
-		FA1DB4C01DDCB460007F95C8 /* ExcludeAppManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppManager.swift; sourceTree = "<group>"; };
 		FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuManager.swift; sourceTree = "<group>"; };
 		FA1DB4CC1DDCB479007F95C8 /* CPYAppInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYAppInfo.swift; sourceTree = "<group>"; };
 		FA1DB4CD1DDCB479007F95C8 /* CPYClip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYClip.swift; sourceTree = "<group>"; };
@@ -255,6 +255,7 @@
 				FAE911B81DE045E2008A4BEC /* HotKeyService.swift */,
 				FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */,
 				FAC0DCF01DE576F300309C49 /* PasteService.swift */,
+				FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -326,7 +327,6 @@
 		FA1DB4BE1DDCB460007F95C8 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				FA1DB4C01DDCB460007F95C8 /* ExcludeAppManager.swift */,
 				FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */,
 			);
 			path = Managers;
@@ -737,7 +737,6 @@
 				FA1DB4A61DDCB443007F95C8 /* MenuType.swift in Sources */,
 				FA1DB4B31DDCB452007F95C8 /* Array+Remove.swift in Sources */,
 				FAC0DCF11DE576F300309C49 /* PasteService.swift in Sources */,
-				FA1DB4C61DDCB460007F95C8 /* ExcludeAppManager.swift in Sources */,
 				FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */,
 				FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */,
 				FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */,
@@ -755,6 +754,7 @@
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
 				FA1DB4BD1DDCB452007F95C8 /* String+Substring.swift in Sources */,
+				FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */,
 				FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */,
 				FAC0DCED1DE3230900309C49 /* NSColor+Hex.swift in Sources */,
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,
