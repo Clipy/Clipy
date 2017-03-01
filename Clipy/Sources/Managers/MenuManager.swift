@@ -116,7 +116,7 @@ fileprivate extension MenuManager {
         // Clear history menu
         defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [unowned self] enabled in
+            .subscribe(onNext: { [unowned self] _ in
                 self.createClipMenu()
             }).addDisposableTo(disposeBag)
         // Sort clips
@@ -128,7 +128,7 @@ fileprivate extension MenuManager {
             }).addDisposableTo(disposeBag)
         // Edit snippets
         notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
-            .subscribe(onNext: { [unowned self] notification in
+            .subscribe(onNext: { [unowned self] _ in
                 self.createClipMenu()
             }).addDisposableTo(disposeBag)
     }

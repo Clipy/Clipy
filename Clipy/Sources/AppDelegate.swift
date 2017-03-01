@@ -203,7 +203,7 @@ fileprivate extension AppDelegate {
         // Login Item
         defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [weak self] enabled in
+            .subscribe(onNext: { [weak self] _ in
                 self?.toggleLoginItemState()
             }).addDisposableTo(disposeBag)
         // Observe Screenshot
