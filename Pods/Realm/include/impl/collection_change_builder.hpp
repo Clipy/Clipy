@@ -54,7 +54,7 @@ public:
     void merge(CollectionChangeBuilder&&);
 
     void insert(size_t ndx, size_t count=1, bool track_moves=true);
-    void modify(size_t ndx);
+    void modify(size_t ndx, size_t col=-1);
     void erase(size_t ndx);
     void clear(size_t old_size);
     // }
@@ -74,8 +74,15 @@ public:
     void parse_complete();
     // }
 
+    void insert_column(size_t ndx);
+    void move_column(size_t from, size_t to);
+
 private:
     std::unordered_map<size_t, size_t> m_move_mapping;
+    bool m_track_columns = true;
+
+    template<typename Func>
+    void for_each_col(Func&& f);
 
     void verify();
 };

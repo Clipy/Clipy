@@ -2,7 +2,7 @@ import Foundation
 
 #if _runtime(_ObjC)
 
-internal struct ObjCMatcherWrapper : Matcher {
+internal struct ObjCMatcherWrapper: Matcher {
     let matcher: NMBMatcher
 
     func matches(_ actualExpression: Expression<NSObject>, failureMessage: FailureMessage) -> Bool {
@@ -21,7 +21,7 @@ internal struct ObjCMatcherWrapper : Matcher {
 }
 
 // Equivalent to Expectation, but for Nimble's Objective-C interface
-public class NMBExpectation : NSObject {
+public class NMBExpectation: NSObject {
     internal let _actualBlock: () -> NSObject!
     internal var _negative: Bool
     internal let _file: FileString
@@ -36,7 +36,7 @@ public class NMBExpectation : NSObject {
     }
 
     private var expectValue: Expectation<NSObject> {
-        return expect(_file, line: _line){
+        return expect(_file, line: _line) {
             self._actualBlock() as NSObject?
         }
     }

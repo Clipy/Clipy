@@ -20,7 +20,6 @@
 #define REALM_INDEX_SET_HPP
 
 #include <cstddef>
-#include <cstdlib>
 #include <initializer_list>
 #include <iterator>
 #include <type_traits>

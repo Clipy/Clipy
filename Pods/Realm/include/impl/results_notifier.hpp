@@ -43,6 +43,8 @@ private:
 
     SortDescriptor::HandoverPatch m_sort_handover;
     SortDescriptor m_sort;
+    SortDescriptor::HandoverPatch m_distinct_handover;
+    SortDescriptor m_distinct;
     bool m_target_is_in_table_order;
 
     // The TableView resulting from running the query. Will be detached unless
@@ -61,10 +63,6 @@ private:
     // The changeset calculated during run() and delivered in do_prepare_handover()
     CollectionChangeBuilder m_changes;
     TransactionChangeInfo* m_info = nullptr;
-
-    // Flag for whether or not the query has been run at all, as goofy timing
-    // can lead to deliver() being called before that
-    bool m_initial_run_complete = false;
 
     bool need_to_run();
     void calculate_changes();

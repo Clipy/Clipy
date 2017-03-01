@@ -80,7 +80,7 @@ class AppDelegate: NSObject {
             defaults.synchronize()
         }
 
-        ClipManager.sharedManager.clearAll()
+        ClipService.shared.clearAll()
     }
 
     func selectClipMenuItem(_ sender: NSMenuItem) {
@@ -97,8 +97,8 @@ class AppDelegate: NSObject {
             return
         }
 
-        PasteboardManager.sharedManager.copyClipToPasteboard(clip)
-        PasteboardManager.paste()
+        PasteService.shared.copyToPasteboard(with: clip)
+        PasteService.shared.paste()
     }
 
     func selectSnippetMenuItem(_ sender: AnyObject) {
@@ -114,8 +114,8 @@ class AppDelegate: NSObject {
             NSBeep()
             return
         }
-        PasteboardManager.sharedManager.copyStringToPasteboard(snippet.content)
-        PasteboardManager.paste()
+        PasteService.shared.copyToPasteboard(with: snippet.content)
+        PasteService.shared.paste()
     }
 
     func terminateApplication() {
@@ -168,9 +168,6 @@ extension AppDelegate: NSApplicationDelegate {
         // SDKs
         CPYUtilities.initSDKs()
 
-        // Regist Hotkeys
-        HotKeyManager.sharedManager.setupDefaultHoyKey()
-
         // Show Login Item
         if !defaults.bool(forKey: Constants.UserDefaults.loginItem) && !defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
@@ -185,10 +182,14 @@ extension AppDelegate: NSApplicationDelegate {
         // Binding Events
         bind()
 
+        // Services
+        _ = ClipService.shared
+        _ = DataCleanService.shared
+        ExcludeAppService.shared.startAppMonitoring()
+        HotKeyService.shared.setupDefaultHotKeys()
+
         // Managers
         MenuManager.sharedManager.setup()
-        ClipManager.sharedManager.setup()
-        HistoryManager.sharedManager.setup()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -202,7 +203,7 @@ fileprivate extension AppDelegate {
         // Login Item
         defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [weak self] enabled in
+            .subscribe(onNext: { [weak self] _ in
                 self?.toggleLoginItemState()
             }).addDisposableTo(disposeBag)
         // Observe Screenshot
@@ -214,16 +215,7 @@ fileprivate extension AppDelegate {
         // Observe Screenshot image
         screenshotObserver.rx.addedImage
             .subscribe(onNext: { image in
-                ClipManager.sharedManager.createclip(image)
-            }).addDisposableTo(disposeBag)
-        // Sleep Notification
-        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceWillSleep)
-            .subscribe(onNext: { notification in
-                ClipManager.sharedManager.stopTimer()
-            }).addDisposableTo(disposeBag)
-        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceDidWake)
-            .subscribe(onNext: { notification in
-                ClipManager.sharedManager.startTimer()
+                ClipService.shared.create(with: image)
             }).addDisposableTo(disposeBag)
     }
 }

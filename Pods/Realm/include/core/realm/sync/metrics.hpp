@@ -41,6 +41,10 @@ public:
     /// key. The value is allowed to be negative.
     virtual void gauge_relative(const char* key, double value) = 0;
 
+    /// Allow the dogless library to send each metric to multiple endpoints, as
+    /// required
+    virtual void add_endpoint(const std::string& endpoint) = 0;
+
     virtual ~Metrics() {}
 };
 
@@ -49,11 +53,8 @@ public:
 class DoglessMetrics: public sync::Metrics {
 public:
     DoglessMetrics():
-        m_dogless("realm") // Throws
+        m_dogless(dogless::hostname_prefix("realm")) // Throws
     {
-#if !REALM_PLATFORM_APPLE
-        m_dogless.mtu(dogless::MTU_Jumbo);
-#endif
         m_dogless.loop_interval(1);
     }
 
@@ -74,6 +75,11 @@ public:
         const char* metric = key;
         double amount = value;
         m_dogless.gauge_relative(metric, amount); // Throws
+    }
+
+    void add_endpoint(const std::string& endpoint) override
+    {
+        m_dogless.add_endpoint(endpoint);
     }
 
 private:

@@ -6,8 +6,6 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
 // MARK: filter aka where
 
 extension ObservableType {
@@ -303,4 +301,21 @@ extension ObservableType {
         return SingleAsync(source: asObservable(), predicate: predicate)
     }
 
+}
+
+// MARK: groupBy 
+
+extension ObservableType {
+    /*
+    Groups the elements of an observable sequence according to a specified key selector function.
+
+    - seealso: [groupBy operator on reactivex.io](http://reactivex.io/documentation/operators/groupby.html)
+     
+    - parameter keySelector: A function to extract the key for each element.
+    - returns: A sequence of observable groups, each of which corresponds to a unique key value, containing all elements that share that same key value.
+    */
+    public func groupBy<K: Hashable>(keySelector: @escaping (E) throws -> K)
+        -> Observable<GroupedObservable<K,E>> {
+        return GroupBy(source: self.asObservable(), selector: keySelector)
+    }
 }

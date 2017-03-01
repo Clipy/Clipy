@@ -5,7 +5,7 @@ import Foundation
 internal func memoizedClosure<T>(_ closure: @escaping () throws -> T) -> (Bool) throws -> T {
     var cache: T?
     return ({ withoutCaching in
-        if (withoutCaching || cache == nil) {
+        if withoutCaching || cache == nil {
             cache = try closure()
         }
         return cache!

@@ -95,6 +95,7 @@ public:
     const ColumnDataType operator->() const;
     const ColumnDataType operator[](ptrdiff_t offset) const;
     size_t get_col_ndx() const;
+
 protected:
     size_t m_col_ndx;
     const Column<ColumnDataType>* m_col;
@@ -532,7 +533,7 @@ public:
         , m_tree(Allocator::get_default())
     {
     }
-    explicit Column(std::unique_ptr<Array> root) noexcept;
+    REALM_DEPRECATED("Initialize with ref instead") explicit Column(std::unique_ptr<Array> root) noexcept;
     Column(Allocator&, ref_type, size_t column_ndx = npos);
     Column(unattached_root_tag, Allocator&);
     Column(Column&&) noexcept = default;

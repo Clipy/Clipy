@@ -30,6 +30,7 @@ ResultsNotifier::ResultsNotifier(Results& target)
     set_table(*q.get_table());
     m_query_handover = Realm::Internal::get_shared_group(*get_realm()).export_for_handover(q, MutableSourcePayload::Move);
     SortDescriptor::generate_patch(target.get_sort(), m_sort_handover);
+    SortDescriptor::generate_patch(target.get_distinct(), m_distinct_handover);
 }
 
 void ResultsNotifier::target_results_moved(Results& old_target, Results& new_target)
@@ -76,7 +77,7 @@ bool ResultsNotifier::do_add_required_change_info(TransactionChangeInfo& info)
         info.table_moves_needed.resize(table_ndx + 1);
     info.table_moves_needed[table_ndx] = true;
 
-    return m_initial_run_complete && have_callbacks();
+    return has_run() && have_callbacks();
 }
 
 bool ResultsNotifier::need_to_run()
@@ -93,7 +94,7 @@ bool ResultsNotifier::need_to_run()
     }
 
     // If we've run previously, check if we need to rerun
-    if (m_initial_run_complete && m_query->sync_view_if_needed() == m_last_seen_version) {
+    if (has_run() && m_query->sync_view_if_needed() == m_last_seen_version) {
         return false;
     }
 
@@ -103,7 +104,7 @@ bool ResultsNotifier::need_to_run()
 void ResultsNotifier::calculate_changes()
 {
     size_t table_ndx = m_query->get_table()->get_index_in_group();
-    if (m_initial_run_complete) {
+    if (has_run()) {
         auto changes = table_ndx < m_info->tables.size() ? &m_info->tables[table_ndx] : nullptr;
 
         std::vector<size_t> next_rows;
@@ -151,6 +152,9 @@ void ResultsNotifier::run()
     if (m_sort) {
         m_tv.sort(m_sort);
     }
+    if (m_distinct) {
+        m_tv.distinct(m_distinct);
+    }
     m_last_seen_version = m_tv.sync_if_needed();
 
     calculate_changes();
@@ -163,12 +167,15 @@ void ResultsNotifier::do_prepare_handover(SharedGroup& sg)
         // object and bump its version to the current SG version
         if (m_tv_handover)
             m_tv_handover->version = sg.get_version_of_current_transaction();
+
+        // add_changes() needs to be called even if there are no changes to
+        // clear the skip flag on the callbacks
+        add_changes({});
         return;
     }
 
     REALM_ASSERT(m_tv.is_in_sync());
 
-    m_initial_run_complete = true;
     m_tv_handover = sg.export_for_handover(m_tv, MutableSourcePayload::Move);
 
     add_changes(std::move(m_changes));
@@ -201,10 +208,7 @@ void ResultsNotifier::deliver(SharedGroup& sg)
 bool ResultsNotifier::prepare_to_deliver()
 {
     auto lock = lock_target();
-    // We can get called before the query has actually had the chance to run if
-    // we're added immediately before a different set of async results are
-    // delivered
-    if (!get_realm() || !m_initial_run_complete)
+    if (!get_realm())
         return false;
     m_tv_to_deliver = std::move(m_tv_handover);
     return true;
@@ -215,6 +219,7 @@ void ResultsNotifier::do_attach_to(SharedGroup& sg)
     REALM_ASSERT(m_query_handover);
     m_query = sg.import_from_handover(std::move(m_query_handover));
     m_sort = SortDescriptor::create_from_and_consume_patch(m_sort_handover, *m_query->get_table());
+    m_distinct = SortDescriptor::create_from_and_consume_patch(m_distinct_handover, *m_query->get_table());
 }
 
 void ResultsNotifier::do_detach_from(SharedGroup& sg)
@@ -223,6 +228,7 @@ void ResultsNotifier::do_detach_from(SharedGroup& sg)
     REALM_ASSERT(!m_tv.is_attached());
 
     SortDescriptor::generate_patch(m_sort, m_sort_handover);
+    SortDescriptor::generate_patch(m_distinct, m_distinct_handover);
     m_query_handover = sg.export_for_handover(*m_query, MutableSourcePayload::Move);
     m_query = nullptr;
 }

@@ -59,7 +59,7 @@ public class FailureMessage: NSObject {
         if let userDescription = userDescription {
             return "\(userDescription)\n\(value)"
         }
-        
+
         return value
     }
 }

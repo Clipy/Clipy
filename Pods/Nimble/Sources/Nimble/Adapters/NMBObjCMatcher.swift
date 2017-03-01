@@ -5,7 +5,7 @@ import Foundation
 public typealias MatcherBlock = (_ actualExpression: Expression<NSObject>, _ failureMessage: FailureMessage) -> Bool
 public typealias FullMatcherBlock = (_ actualExpression: Expression<NSObject>, _ failureMessage: FailureMessage, _ shouldNotMatch: Bool) -> Bool
 
-public class NMBObjCMatcher : NSObject, NMBMatcher {
+public class NMBObjCMatcher: NSObject, NMBMatcher {
     let _match: MatcherBlock
     let _doesNotMatch: MatcherBlock
     let canMatchNil: Bool

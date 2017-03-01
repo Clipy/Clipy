@@ -35,6 +35,8 @@ namespace sync {
 
 class Server {
 public:
+    class Clock;
+
     struct Config {
         Config() {}
 
@@ -42,6 +44,11 @@ public:
         /// concurrently by this server. The server keeps a cache of open Realm
         /// files for efficiency reasons.
         long max_open_files = 256;
+
+        /// An optional time provider to be used by the server.
+        /// If no time provider is specified, the server will use the
+        /// system clock.
+        Clock* clock = nullptr;
 
         /// An optional logger to be used by the server. If no logger is
         /// specified, the server will use an instance of util::StderrLogger
@@ -116,7 +123,7 @@ public:
         std::string ssl_certificate_key_path;
     };
 
-    Server(const std::string& root_dir, util::Optional<PKey> public_key, Config = Config());
+    Server(const std::string& root_dir, util::Optional<PKey> public_key, Config = {});
     Server(Server&&) noexcept;
     ~Server() noexcept;
 
@@ -158,6 +165,14 @@ public:
 private:
     class Implementation;
     std::unique_ptr<Implementation> m_impl;
+};
+
+
+class Server::Clock {
+public:
+    virtual int_fast64_t now() = 0;
+
+    virtual ~Clock() {}
 };
 
 } // namespace sync

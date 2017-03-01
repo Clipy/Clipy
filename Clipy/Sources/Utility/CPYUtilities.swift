@@ -25,13 +25,12 @@ final class CPYUtilities {
     static func registerUserDefaultKeys() {
         var defaultValues = [String: Any]()
 
-        defaultValues.updateValue(HotKeyManager.defaultHotKeyCombos(), forKey: Constants.UserDefaults.hotKeys)
+        defaultValues.updateValue(HotKeyService.defaultKeyCombos, forKey: Constants.UserDefaults.hotKeys)
         /* General */
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.loginItem)
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         defaultValues.updateValue(NSNumber(value: 30), forKey: Constants.UserDefaults.maxHistorySize)
         defaultValues.updateValue(NSNumber(value: 1), forKey: Constants.UserDefaults.showStatusItem)
-        defaultValues.updateValue(NSNumber(value: 0.75), forKey: Constants.UserDefaults.timeInterval)
         defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: Constants.UserDefaults.storeTypes)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.inputPasteCommand)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.reorderClipsAfterPasting)
@@ -55,6 +54,7 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: 32), forKey: Constants.UserDefaults.thumbnailHeight)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.overwriteSameHistory)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.copySameHistory)
+        defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
 
         /* Updates */
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.Update.enableAutomaticCheck)
@@ -95,14 +95,11 @@ final class CPYUtilities {
         return true
     }
 
-    static func deleteData(_ path: String) {
-        autoreleasepool { () -> () in
+    static func deleteData(at path: String) {
+        autoreleasepool {
             let fileManager = FileManager.default
-            var isDir: ObjCBool = false
-            if fileManager.fileExists(atPath: path, isDirectory: &isDir) {
-                do {
-                    try fileManager.removeItem(atPath: path)
-                } catch { }
+            if fileManager.fileExists(atPath: path) {
+                try? fileManager.removeItem(atPath: path)
             }
         }
     }

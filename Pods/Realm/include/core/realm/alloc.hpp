@@ -223,7 +223,7 @@ protected:
     /// zero.
     ///
     /// \throw std::bad_alloc If insufficient memory was available.
-    virtual MemRef do_alloc(size_t size) = 0;
+    virtual MemRef do_alloc(const size_t size) = 0;
 
     /// The specified size must be divisible by 8, and must not be
     /// zero.

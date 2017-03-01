@@ -22,7 +22,7 @@ public struct AssertionRecord: CustomStringConvertible {
 /// This is useful for testing failure messages for matchers.
 ///
 /// @see AssertionHandler
-public class AssertionRecorder : AssertionHandler {
+public class AssertionRecorder: AssertionHandler {
     /// All the assertions that were captured by this recorder
     public var assertions = [AssertionRecord]()
 
@@ -43,7 +43,7 @@ public class AssertionRecorder : AssertionHandler {
 /// Once the closure finishes, then the original Nimble assertion handler is restored.
 ///
 /// @see AssertionHandler
-public func withAssertionHandler(_ tempAssertionHandler: AssertionHandler, closure: @escaping () throws -> Void) {
+public func withAssertionHandler(_ tempAssertionHandler: AssertionHandler, closure: () throws -> Void) {
     let environment = NimbleEnvironment.activeInstance
     let oldRecorder = environment.assertionHandler
     let capturer = NMBExceptionCapture(handler: nil, finally: ({

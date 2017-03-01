@@ -67,7 +67,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         // https://github.com/realm/realm-cocoa/issues/1734
         let realm = try! Realm()
         folders = realm.objects(CPYFolder.self)
-                    .sorted(byProperty: "index", ascending: true)
+                    .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
                     .map { $0.deepCopy() }
         // Select first folder
         if let folder = folders.first {
@@ -125,7 +125,7 @@ extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             folders.removeObject(folder)
             folder.remove()
-            HotKeyManager.sharedManager.removeFolderHotKey(folder.identifier)
+            HotKeyService.shared.unregisterSnippetHotKey(with: folder.identifier)
         } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let index = folder.snippets.index(of: snippet) {
             folder.snippets.remove(objectAtIndex: index)
             snippet.remove()
@@ -165,7 +165,7 @@ extension CPYSnippetsEditorWindowController {
 
         do {
             let realm = try! Realm()
-            let lastFolder = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true).last
+            let lastFolder = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true).last
             var folderIndex = (lastFolder?.index ?? -1) + 1
             // Create Document
             let xmlDocument = try AEXMLDocument(xml: data)
@@ -209,7 +209,7 @@ extension CPYSnippetsEditorWindowController {
         let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
 
         let realm = try! Realm()
-        let folders = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true)
+        let folders = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         folders.forEach { folder in
             let folderElement = rootElement.addChild(name: Constants.Xml.folderElement)
 
@@ -217,7 +217,7 @@ extension CPYSnippetsEditorWindowController {
 
             let snippetsElement = folderElement.addChild(name: Constants.Xml.snippetsElement)
             folder.snippets
-                .sorted(byProperty: "index", ascending: true)
+                .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
                 .forEach { snippet in
                     let snippetElement = snippetsElement.addChild(name: Constants.Xml.snippetElement)
                     snippetElement.addChild(name: Constants.Xml.titleElement, value: snippet.title)
@@ -262,7 +262,7 @@ private extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             textView.string = ""
             folderTitleTextField.stringValue = folder.title
-            folderShortcutRecordView.keyCombo = HotKeyManager.sharedManager.folderKeyCombo(folder.identifier)
+            folderShortcutRecordView.keyCombo = HotKeyService.shared.snippetKeyCombo(forIdentifier: folder.identifier)
             folderSettingView.isHidden = false
             textView.isHidden = true
         } else if let snippet = item as? CPYSnippet {
@@ -466,12 +466,12 @@ extension CPYSnippetsEditorWindowController: RecordViewDelegate {
 
     func recordViewDidClearShortcut(_ recordView: RecordView) {
         guard let selectedFolder = selectedFolder else { return }
-        HotKeyManager.sharedManager.removeFolderHotKey(selectedFolder.identifier)
+        HotKeyService.shared.unregisterSnippetHotKey(with: selectedFolder.identifier)
     }
 
     func recordView(_ recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
         guard let selectedFolder = selectedFolder else { return }
-        HotKeyManager.sharedManager.addFolderHotKey(selectedFolder.identifier, keyCombo: keyCombo)
+        HotKeyService.shared.registerSnippetHotKey(with: selectedFolder.identifier, keyCombo: keyCombo)
     }
 
     func recordViewDidEndRecording(_ recordView: RecordView) {}

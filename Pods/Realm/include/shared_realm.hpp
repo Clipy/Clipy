@@ -19,38 +19,49 @@
 #ifndef REALM_REALM_HPP
 #define REALM_REALM_HPP
 
+#include "execution_context_id.hpp"
 #include "schema.hpp"
 
 #include <realm/util/optional.hpp>
-#include <realm/version_id.hpp>
+#include <realm/binary_data.hpp>
 
 #if REALM_ENABLE_SYNC
 #include <realm/sync/client.hpp>
 #endif
 
 #include <memory>
-#include <thread>
 
 namespace realm {
-class AnyThreadConfined;
-class BinaryData;
 class BindingContext;
 class Group;
 class Realm;
 class Replication;
 class SharedGroup;
 class StringData;
+class Table;
 struct SyncConfig;
+class ThreadSafeReferenceBase;
+template <typename T> class ThreadSafeReference;
 struct VersionID;
+template<typename Table> class BasicRow;
+typedef BasicRow<Table> Row;
 typedef std::shared_ptr<Realm> SharedRealm;
 typedef std::weak_ptr<Realm> WeakRealm;
+
+// Sets a path to a directory where Realm can write temporary files and named pipes.
+// This string should include a trailing slash '/'.
+void set_temporary_directory(std::string directory_path);
+
+const std::string& get_temporary_directory() noexcept;
 
 namespace _impl {
     class AnyHandover;
     class CollectionNotifier;
     class ListNotifier;
+    class ObjectNotifier;
     class RealmCoordinator;
     class ResultsNotifier;
+    class RealmFriend;
 }
 
 // How to handle update_schema() being called on a file which has
@@ -60,11 +71,11 @@ enum class SchemaMode : uint8_t {
     // changes, then call the migration function.
     //
     // If the schema version has not changed, verify that the only
-    // changes are to add new tables and add or remvoe indexes, and then
+    // changes are to add new tables and add or remove indexes, and then
     // apply them if so. Does not call the migration function.
     //
     // This mode does not automatically remove tables which are not
-    // present in the schea; that must be manually done in the migration
+    // present in the schema that must be manually done in the migration
     // function, to support sharing a Realm file between processes using
     // different class subsets.
     //
@@ -114,8 +125,6 @@ enum class SchemaMode : uint8_t {
 
 class Realm : public std::enable_shared_from_this<Realm> {
 public:
-    class HandoverPackage;
-
     // A callback function to be called during a migration for Automatic and
     // Manual schema modes. It is passed a SharedRealm at the version before
     // the migration, the SharedRealm in the migration, and a mutable reference
@@ -125,9 +134,12 @@ public:
     using MigrationFunction = std::function<void (SharedRealm old_realm, SharedRealm realm, Schema&)>;
 
     struct Config {
+        // Path and binary data are mutually exclusive
         std::string path;
+        BinaryData realm_data;
         // User-supplied encryption key. Must be either empty or 64 bytes.
         std::vector<char> encryption_key;
+
 
         bool in_memory = false;
         SchemaMode schema_mode = SchemaMode::Automatic;
@@ -160,8 +172,16 @@ public:
         // speeds up tests that don't need notifications.
         bool automatic_change_notifications = true;
 
+        // The identifier of the abstract execution context in which this Realm will be used.
+        // If unset, the current thread's identifier will be used to identify the execution context.
+        util::Optional<AbstractExecutionContextID> execution_context;
+
         /// A data structure storing data used to configure the Realm for sync support.
         std::shared_ptr<SyncConfig> sync_config;
+
+        // FIXME: Realm Java manages sync at the Java level, so it needs to create Realms using the sync history
+        //        format.
+        bool force_sync_history = false;
     };
 
     // Get a cached Realm or create a new one if no cached copies exists
@@ -171,7 +191,8 @@ public:
 
     // Updates a Realm to a given schema, using the Realm's pre-set schema mode.
     void update_schema(Schema schema, uint64_t version=0,
-                       MigrationFunction migration_function=nullptr);
+                       MigrationFunction migration_function=nullptr,
+                       bool in_transaction=false);
 
     // Read the schema version from the file specified by the given config, or
     // ObjectStore::NotVersioned if it does not exist
@@ -195,17 +216,18 @@ public:
     void invalidate();
     bool compact();
     void write_copy(StringData path, BinaryData encryption_key);
+    OwnedBinaryData write_copy();
 
-    std::thread::id thread_id() const { return m_thread_id; }
     void verify_thread() const;
     void verify_in_write() const;
+    void verify_open() const;
 
     bool can_deliver_notifications() const noexcept;
 
     // Close this Realm and remove it from the cache. Continuing to use a
-    // Realm after closing it will produce undefined behavior.
+    // Realm after closing it will throw ClosedRealmException
     void close();
-    bool is_closed() { return !m_read_only_group && !m_shared_group; }
+    bool is_closed() const { return !m_read_only_group && !m_shared_group; }
 
     // returns the file format version upgraded from if an upgrade took place
     util::Optional<int> file_format_upgraded_from_version() const;
@@ -215,57 +237,34 @@ public:
     Realm(Realm&&) = delete;
     Realm& operator=(Realm&&) = delete;
     ~Realm();
-    
-    // Pins the current version and exports each object for handover.
-    HandoverPackage package_for_handover(std::vector<AnyThreadConfined> objects_to_hand_over);
 
-    // Unpins the handover version, ending the current read transaction and beginning a new one at this version,
-    // importing each object for handover.
-    std::vector<AnyThreadConfined> accept_handover(Realm::HandoverPackage handover);
+    // Construct a thread safe reference, pinning the version in the process.
+    template <typename T>
+    ThreadSafeReference<T> obtain_thread_safe_reference(T const& value);
 
-    // Opaque type representing a vector of packaged objects for handover
-    class HandoverPackage {
-    public:
-        HandoverPackage(const HandoverPackage&) = delete;
-        HandoverPackage& operator=(const HandoverPackage&) = delete;
-        HandoverPackage(HandoverPackage&&);
-        HandoverPackage& operator=(HandoverPackage&&);
-        ~HandoverPackage();
+    // Advances the read transaction to the latest version, resolving the thread safe reference and unpinning the
+    // version in the process.
+    template <typename T>
+    T resolve_thread_safe_reference(ThreadSafeReference<T> reference);
 
-        bool is_awaiting_import() const { return m_source_realm != nullptr; };
-
-    private:
-        friend HandoverPackage Realm::package_for_handover(std::vector<AnyThreadConfined> objects_to_hand_over);
-        friend std::vector<AnyThreadConfined> Realm::accept_handover(Realm::HandoverPackage handover);
-
-        VersionID m_version_id;
-        std::vector<_impl::AnyHandover> m_objects;
-        SharedRealm m_source_realm; // Strong reference keeps alive so version stays pinned! Don't touch!!
-
-        HandoverPackage() = default;
-
-        _impl::RealmCoordinator& get_coordinator() const { return *m_source_realm->m_coordinator; }
-        void mark_not_awaiting_import() { m_source_realm = nullptr; };
-        void advance_to_version(VersionID version);
-    };
-
-    static SharedRealm make_shared_realm(Config config) {
+    static SharedRealm make_shared_realm(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator = nullptr) {
         struct make_shared_enabler : public Realm {
-            make_shared_enabler(Config config) : Realm(std::move(config)) {}
+            make_shared_enabler(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator)
+            : Realm(std::move(config), std::move(coordinator)) { }
         };
-        return std::make_shared<make_shared_enabler>(std::move(config));
+        return std::make_shared<make_shared_enabler>(std::move(config), std::move(coordinator));
     }
-    void init(std::shared_ptr<_impl::RealmCoordinator> coordinator);
 
     // Expose some internal functionality to other parts of the ObjectStore
     // without making it public to everyone
     class Internal {
-        friend class AnyThreadConfined;
         friend class _impl::CollectionNotifier;
         friend class _impl::ListNotifier;
+        friend class _impl::ObjectNotifier;
         friend class _impl::RealmCoordinator;
         friend class _impl::ResultsNotifier;
-        friend class _impl::AnyHandover;
+        friend class ThreadSafeReferenceBase;
+        friend class GlobalNotifier;
 
         // ResultsNotifier and ListNotifier need access to the SharedGroup
         // to be able to call the handover functions, which are not very wrappable
@@ -287,10 +286,10 @@ public:
 
 private:
     // `enable_shared_from_this` is unsafe with public constructors; use `make_shared_realm` instead
-    Realm(Config config);
+    Realm(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator);
 
     Config m_config;
-    std::thread::id m_thread_id = std::this_thread::get_id();
+    AnyExecutionContextID m_execution_context;
     bool m_auto_refresh = true;
 
     std::unique_ptr<Replication> m_history;
@@ -308,6 +307,10 @@ private:
     // File format versions populated when a file format upgrade takes place during realm opening
     int upgrade_initial_version = 0, upgrade_final_version = 0;
 
+    // True while sending the notifications caused by advancing the read
+    // transaction version, to avoid recursive notifications where possible
+    bool m_is_sending_notifications = false;
+
     void set_schema(Schema schema, uint64_t version);
     bool reset_file_if_needed(Schema& schema, uint64_t version, std::vector<SchemaChange>& changes_required);
 
@@ -322,6 +325,8 @@ public:
 
     // FIXME private
     Group& read_group();
+
+    friend class _impl::RealmFriend;
 };
 
 class RealmFileException : public std::runtime_error {
@@ -329,6 +334,8 @@ public:
     enum class Kind {
         /** Thrown for any I/O related exception scenarios when a realm is opened. */
         AccessError,
+        /** Thrown if the history type of the on-disk Realm is unexpected or incompatible. */
+        BadHistoryError,
         /** Thrown if the user does not have permission to open or create
          the specified file in the specified access mode when the realm is opened. */
         PermissionDenied,
@@ -360,6 +367,11 @@ public:
     MismatchedConfigException(StringData message, StringData path);
 };
 
+class MismatchedRealmException : public std::logic_error {
+public:
+    MismatchedRealmException(StringData message);
+};
+
 class InvalidTransactionException : public std::logic_error {
 public:
     InvalidTransactionException(std::string message) : std::logic_error(message) {}
@@ -368,6 +380,11 @@ public:
 class IncorrectThreadException : public std::logic_error {
 public:
     IncorrectThreadException() : std::logic_error("Realm accessed from incorrect thread.") {}
+};
+
+class ClosedRealmException : public std::logic_error {
+public:
+    ClosedRealmException() : std::logic_error("Cannot access realm that has been closed.") {}
 };
 
 class UninitializedRealmException : public std::runtime_error {
@@ -379,6 +396,14 @@ class InvalidEncryptionKeyException : public std::logic_error {
 public:
     InvalidEncryptionKeyException() : std::logic_error("Encryption key must be 64 bytes.") {}
 };
+
+// FIXME Those are exposed for Java async queries, mainly because of handover related methods.
+class _impl::RealmFriend {
+public:
+    static SharedGroup& get_shared_group(Realm& realm);
+    static Group& read_group_to(Realm& realm, VersionID& version);
+};
+
 } // namespace realm
 
 #endif /* defined(REALM_REALM_HPP) */

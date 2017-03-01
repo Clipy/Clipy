@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 BOOL RLMPropertyTypeIsNullable(RLMPropertyType propertyType);
 BOOL RLMPropertyTypeIsComputed(RLMPropertyType propertyType);
+FOUNDATION_EXTERN void RLMValidateSwiftPropertyName(NSString *name);
 
 // private property interface
 @interface RLMProperty () {
@@ -68,8 +69,6 @@ BOOL RLMPropertyTypeIsComputed(RLMPropertyType propertyType);
 
 // private properties
 @property (nonatomic, assign) NSUInteger index;
-@property (nonatomic, assign) char objcType;
-@property (nonatomic, copy) NSString *objcRawType;
 @property (nonatomic, assign) BOOL isPrimary;
 @property (nonatomic, assign) Ivar swiftIvar;
 

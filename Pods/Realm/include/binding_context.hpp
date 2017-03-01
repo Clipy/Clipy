@@ -21,6 +21,7 @@
 
 #include "index_set.hpp"
 
+#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -54,7 +55,7 @@ namespace realm {
 //     }
 //
 //     // Override the did_change method to call each registered notification
-//     void did_change(std::vector<ObserverState> const&, std::vector<void*> const&) override
+//     void did_change(std::vector<ObserverState> const&, std::vector<void*> const&, bool) override
 //     {
 //         // Loop oddly so that unregistering a notification from within the
 //         // registered function works
@@ -66,13 +67,21 @@ namespace realm {
 // private:
 //     std::list<std::function<void ()>> m_registered_notifications;
 // };
+class Realm;
 class BindingContext {
 public:
     virtual ~BindingContext() = default;
 
+    std::weak_ptr<Realm> realm;
+
     // If the user adds a notification handler to the Realm, will it ever
     // actually be called?
     virtual bool can_deliver_notifications() const noexcept { return true; }
+
+    // Called by the Realm when refresh called or a notification arrives which
+    // is triggered through write transaction committed by itself or a different
+    // Realm instance.
+    virtual void before_notify() { }
 
     // Called by the Realm when a write transaction is committed to the file by
     // a different Realm instance (possibly in a different process)
@@ -102,7 +111,8 @@ public:
     // requested or if the Realm is not actually in a read transaction, although
     // both vectors will be empty in that case.
     virtual void did_change(std::vector<ObserverState> const& observers,
-                            std::vector<void*> const& invalidated);
+                            std::vector<void*> const& invalidated,
+                            bool version_changed=true);
 
     // Change information for a single field of a row
     struct ColumnInfo {
@@ -153,7 +163,7 @@ public:
 };
 
 inline void BindingContext::will_change(std::vector<ObserverState> const&, std::vector<void*> const&) { }
-inline void BindingContext::did_change(std::vector<ObserverState> const&, std::vector<void*> const&) { }
+inline void BindingContext::did_change(std::vector<ObserverState> const&, std::vector<void*> const&, bool) { }
 } // namespace realm
 
 #endif /* BINDING_CONTEXT_HPP */

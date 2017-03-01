@@ -34,7 +34,6 @@ struct Constants {
         static let hotKeys                          = "kCPYPrefHotKeysKey"
         static let menuIconSize                     = "kCPYPrefMenuIconSizeKey"
         static let maxHistorySize                   = "kCPYPrefMaxHistorySizeKey"
-        static let timeInterval                     = "kCPYPrefTimeIntervalKey"
         static let storeTypes                       = "kCPYPrefStoreTypesKey"
         static let inputPasteCommand                = "kCPYPrefInputPasteCommandKey"
         static let showIconInTheMenu                = "kCPYPrefShowIconInTheMenuKey"
@@ -60,6 +59,7 @@ struct Constants {
         static let suppressAlertForDeleteSnippet    = "kCPYSuppressAlertForDeleteSnippet"
         static let excludeApplications              = "kCPYExcludeApplications"
         static let collectCrashReport               = "kCPYCollectCrashReport"
+        static let showColorPreviewInTheMenu        = "kCPYPrefShowColorPreviewInTheMenu"
     }
 
     struct Beta {

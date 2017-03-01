@@ -46,8 +46,8 @@ final class MenuManager: NSObject {
 
     // MARK: - Initialize
     override init() {
-        clipResults = realm.objects(CPYClip.self).sorted(byProperty: "updateTime", ascending: !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting))
-        folderResults = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true)
+        clipResults = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting))
+        folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         super.init()
         folderIcon.isTemplate = true
         folderIcon.size = NSSize(width: 15, height: 13)
@@ -65,11 +65,11 @@ extension MenuManager {
     func popUpMenu(_ type: MenuType) {
         let menu: NSMenu?
         switch type {
-        case .Main:
+        case .main:
             menu = clipMenu
-        case .History:
+        case .history:
             menu = historyMenu
-        case .Snippet:
+        case .snippet:
             menu = snippetMenu
         }
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation(), in: nil)
@@ -84,7 +84,7 @@ extension MenuManager {
         // Snippets
         var index = firstIndexOfMenuItems()
         folder.snippets
-            .sorted(byProperty: "index", ascending: true)
+            .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
             .filter { $0.enable }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
@@ -100,36 +100,37 @@ fileprivate extension MenuManager {
     fileprivate func bind() {
         // Realm Notification
         clipToken = realm.objects(CPYClip.self)
-                        .addNotificationBlock { [unowned self] _ in
-                            self.createClipMenu()
+                        .addNotificationBlock { [weak self] _ in
+                            self?.createClipMenu()
                         }
         snippetToken = realm.objects(CPYFolder.self)
-                        .addNotificationBlock { [unowned self] _ in
-                            self.createClipMenu()
+                        .addNotificationBlock { [weak self] _ in
+                            self?.createClipMenu()
                         }
         // Menu icon
         defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem)
             .filterNil()
-            .subscribe(onNext: { [unowned self] key in
-                self.changeStatusItem(StatusType(rawValue: key) ?? .black)
+            .subscribe(onNext: { [weak self] key in
+                self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             }).addDisposableTo(disposeBag)
         // Clear history menu
         defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [unowned self] enabled in
-                self.createClipMenu()
+            .subscribe(onNext: { [weak self] _ in
+                self?.createClipMenu()
             }).addDisposableTo(disposeBag)
         // Sort clips
         defaults.rx.observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [unowned self] enabled in
-                self.clipResults = self.realm.objects(CPYClip.self).sorted(byProperty: "updateTime", ascending: !enabled)
-                self.createClipMenu()
+            .subscribe(onNext: { [weak self] enabled in
+                guard let wSelf = self else { return }
+                wSelf.clipResults = wSelf.realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !enabled)
+                wSelf.createClipMenu()
             }).addDisposableTo(disposeBag)
         // Edit snippets
         notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
-            .subscribe(onNext: { [unowned self] notification in
-                self.createClipMenu()
+            .subscribe(onNext: { [weak self] _ in
+                self?.createClipMenu()
             }).addDisposableTo(disposeBag)
     }
 }
@@ -168,7 +169,7 @@ fileprivate extension MenuManager {
     fileprivate func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
         var count = count
         if start == 0 {
-            count = count - 1
+            count -= 1
         }
         var lastNumber = count + numberOfItems
         if end < lastNumber {
@@ -273,6 +274,7 @@ fileprivate extension MenuManager {
         let isMarkWithNumber = defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowToolTip = defaults.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem)
         let isShowImage = defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
+        let isShowColorCode = defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
         let addNumbericKeyEquivalents = defaults.bool(forKey: Constants.UserDefaults.addNumericKeyEquivalents)
 
         var keyEquivalent = ""
@@ -309,10 +311,17 @@ fileprivate extension MenuManager {
             menuItem.title = menuItemTitle("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
 
-        if !clip.thumbnailPath.isEmpty && isShowImage {
-            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] (cache, key, object) in
-                if let image = object as? NSImage {
-                    menuItem?.image = image
+        if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
+            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] (_, _, object) in
+                DispatchQueue.main.async {
+                    menuItem?.image = object as? NSImage
+                }
+            })
+        }
+        if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
+            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] (_, _, object) in
+                DispatchQueue.main.async {
+                    menuItem?.image = object as? NSImage
                 }
             })
         }
@@ -347,7 +356,7 @@ private extension MenuManager {
 
                 var i = firstIndex
                 folder.snippets
-                    .sorted(byProperty: "index", ascending: true)
+                    .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
                     .filter { $0.enable }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)

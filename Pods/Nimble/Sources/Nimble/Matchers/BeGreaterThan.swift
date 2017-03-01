@@ -1,6 +1,5 @@
 import Foundation
 
-
 /// A Nimble matcher that succeeds when the actual value is greater than the expected value.
 public func beGreaterThan<T: Comparable>(_ expectedValue: T?) -> NonNilMatcherFunc<T> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
@@ -26,7 +25,7 @@ public func ><T: Comparable>(lhs: Expectation<T>, rhs: T) {
     lhs.to(beGreaterThan(rhs))
 }
 
-public func >(lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
+public func > (lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
     lhs.to(beGreaterThan(rhs))
 }
 

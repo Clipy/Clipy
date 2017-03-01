@@ -23,8 +23,8 @@
 #include "util/atomic_shared_ptr.hpp"
 
 #include <exception>
-#include <functional>
 #include <memory>
+#include <type_traits>
 #include <vector>
 
 namespace realm {
@@ -43,6 +43,8 @@ struct NotificationToken {
 
     NotificationToken(NotificationToken const&) = delete;
     NotificationToken& operator=(NotificationToken const&) = delete;
+
+    void suppress_next();
 
 private:
     util::AtomicSharedPtr<_impl::CollectionNotifier> m_notifier;
@@ -82,6 +84,9 @@ struct CollectionChangeSet {
     // reported move will always actually be a move, but there may also be
     // unreported moves which show up only as a delete/insert pair.
     std::vector<Move> moves;
+
+    // Per-column version of `modifications`
+    std::vector<IndexSet> columns;
 
     bool empty() const
     {

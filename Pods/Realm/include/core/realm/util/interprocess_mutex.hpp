@@ -95,8 +95,18 @@ private:
     /// InterprocessMutex created on the same file (same inode on POSIX) share the same LockInfo.
     /// LockInfo will be saved in a static map as a weak ptr and use the UniqueID as the key.
     /// Operations on the map need to be protected by s_mutex
-    static std::map<File::UniqueID, std::weak_ptr<LockInfo>> s_info_map;
-    static Mutex s_mutex;
+    static std::map<File::UniqueID, std::weak_ptr<LockInfo>>* s_info_map;
+    static Mutex* s_mutex;
+    /// We manually initialize these static variables when first needed,
+    /// creating them on the heap so that they last for the entire lifetime
+    /// of the process. The destructor of these is never called; the
+    /// process will clean up their memory when exiting. It is not enough
+    /// to count instances of InterprocessMutex and clean up these statics when
+    /// the count reaches zero because the program can create more
+    /// InterprocessMutex instances before the process ends, so we really need
+    /// these variables for the entire lifetime of the process.
+    static std::once_flag s_init_flag;
+    static void initialize_statics();
 
     /// Only used for release_shared_part
     std::string m_filename;
@@ -112,9 +122,11 @@ private:
     friend class InterprocessCondVar;
 };
 
-
 inline InterprocessMutex::InterprocessMutex()
 {
+#ifdef REALM_ROBUST_MUTEX_EMULATION
+    std::call_once(s_init_flag, initialize_statics);
+#endif
 }
 
 inline InterprocessMutex::~InterprocessMutex() noexcept
@@ -138,13 +150,19 @@ inline void InterprocessMutex::free_lock_info()
     if (!m_lock_info)
         return;
 
-    std::lock_guard<Mutex> guard(s_mutex);
+    std::lock_guard<Mutex> guard(*s_mutex);
 
     m_lock_info.reset();
-    if (s_info_map[m_fileuid].expired()) {
-        s_info_map.erase(m_fileuid);
+    if ((*s_info_map)[m_fileuid].expired()) {
+        s_info_map->erase(m_fileuid);
     }
     m_filename.clear();
+}
+
+inline void InterprocessMutex::initialize_statics()
+{
+    s_mutex = new Mutex();
+    s_info_map = new std::map<File::UniqueID, std::weak_ptr<LockInfo>>();
 }
 #endif
 
@@ -158,12 +176,12 @@ inline void InterprocessMutex::set_shared_part(SharedPart& shared_part, const st
 
     m_filename = path + "." + mutex_name + ".mx";
 
-    std::lock_guard<Mutex> guard(s_mutex);
+    std::lock_guard<Mutex> guard(*s_mutex);
 
     // Try to get the file uid if the file exists
     if (File::get_unique_id(m_filename, m_fileuid)) {
-        auto result = s_info_map.find(m_fileuid);
-        if (result != s_info_map.end()) {
+        auto result = s_info_map->find(m_fileuid);
+        if (result != s_info_map->end()) {
             // File exists and the lock info has been created in the map.
             m_lock_info = result->second.lock();
             return;
@@ -177,7 +195,7 @@ inline void InterprocessMutex::set_shared_part(SharedPart& shared_part, const st
     m_lock_info->m_file.open(m_filename, File::mode_Write);
     m_fileuid = m_lock_info->m_file.get_unique_id();
 
-    s_info_map[m_fileuid] = m_lock_info;
+    (*s_info_map)[m_fileuid] = m_lock_info;
 #else
     m_shared_part = &shared_part;
     static_cast<void>(path);
@@ -192,14 +210,14 @@ inline void InterprocessMutex::set_shared_part(SharedPart& shared_part, File&& l
 
     free_lock_info();
 
-    std::lock_guard<Mutex> guard(s_mutex);
+    std::lock_guard<Mutex> guard(*s_mutex);
 
     m_fileuid = lock_file.get_unique_id();
-    auto result = s_info_map.find(m_fileuid);
-    if (result == s_info_map.end()) {
+    auto result = s_info_map->find(m_fileuid);
+    if (result == s_info_map->end()) {
         m_lock_info = std::make_shared<LockInfo>();
         m_lock_info->m_file = std::move(lock_file);
-        s_info_map[m_fileuid] = m_lock_info;
+        (*s_info_map)[m_fileuid] = m_lock_info;
     }
     else {
         // File exists and the lock info has been created in the map.

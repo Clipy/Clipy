@@ -24,8 +24,10 @@
 using namespace realm;
 using namespace realm::_impl;
 
+
 WeakRealmNotifier::WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool cache)
 : m_realm(realm)
+, m_execution_context(realm->config().execution_context)
 , m_realm_key(realm.get())
 , m_cache(cache)
 , m_signal(std::make_shared<util::EventLoopSignal<Callback>>(Callback{realm}))
@@ -34,7 +36,7 @@ WeakRealmNotifier::WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool c
 
 WeakRealmNotifier::~WeakRealmNotifier() = default;
 
-void WeakRealmNotifier::Callback::operator()()
+void WeakRealmNotifier::Callback::operator()() const
 {
     if (auto realm = weak_realm.lock()) {
         realm->notify();

@@ -19,10 +19,11 @@
 #ifndef REALM_OS_KEYCHAIN_HELPER_HPP
 #define REALM_OS_KEYCHAIN_HELPER_HPP
 
+#include <cstdint>
+#include <stdexcept>
 #include <vector>
 
 namespace realm {
-
 namespace keychain {
 
 std::vector<char> metadata_realm_encryption_key();
@@ -34,6 +35,5 @@ public:
 
 }
 }
-
 
 #endif // REALM_OS_KEYCHAIN_HELPER_HPP

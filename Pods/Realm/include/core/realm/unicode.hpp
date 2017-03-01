@@ -82,7 +82,7 @@ bool set_string_compare_method(string_compare_method_t method, StringCompareCall
 size_t sequence_length(char lead);
 
 // Limitations for case insensitive string search
-// Case insensitive search (equal, begins_with, ends_with and contains)
+// Case insensitive search (equal, begins_with, ends_with, like and contains)
 // only works for unicodes 0...0x7f which is the same as the 0...127
 // ASCII character set (letters a-z and A-Z).
 
@@ -149,6 +149,15 @@ bool equal_case_fold(StringData haystack, const char* needle_upper, const char* 
 /// both equal to \a needle_size. Returns haystack.size() if the
 /// needle was not found.
 size_t search_case_fold(StringData haystack, const char* needle_upper, const char* needle_lower, size_t needle_size);
+    
+/// Assumes that the sizes of \a needle_upper and \a needle_lower are
+/// both equal to \a needle_size. Returns false if the
+/// needle was not found.
+bool contains_ins(StringData haystack, const char* needle_upper, const char* needle_lower, size_t needle_size, const std::array<uint8_t, 256> &charmap);
+
+/// Case insensitive wildcard matching ('?' for single char, '*' for zero or more chars)
+bool string_like_ins(StringData text, StringData pattern) noexcept;
+bool string_like_ins(StringData text, StringData upper, StringData lower) noexcept;
 
 } // namespace realm
 

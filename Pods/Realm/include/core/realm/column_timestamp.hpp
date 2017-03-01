@@ -126,8 +126,8 @@ private:
     template <class Condition>
     Timestamp minmax(size_t* result_index) const noexcept
     {
-        // Condition is realm::Greater for maximum and realm::Less for minimum.
-
+        // Condition is realm::Greater for maximum and realm::Less for minimum. Any non-null value is both larger
+        // and smaller than a null value.
         if (size() == 0) {
             if (result_index)
                 *result_index = npos;
@@ -135,11 +135,12 @@ private:
         }
 
         Timestamp best = get(0);
-        size_t best_index = 0;
+        size_t best_index = best.is_null() ? npos : 0;
 
         for (size_t i = 1; i < size(); ++i) {
             Timestamp candidate = get(i);
-            if (Condition()(candidate, best, candidate.is_null(), best.is_null())) {
+            // Condition() will return false if any of the two values are null.
+            if ((best.is_null() && !candidate.is_null()) || Condition()(candidate, best, candidate.is_null(), best.is_null())) {
                 best = candidate;
                 best_index = i;
             }

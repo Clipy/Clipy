@@ -30,8 +30,12 @@
 #import <Realm/RLMResults.h>
 #import <Realm/RLMSchema.h>
 #import <Realm/RLMSyncConfiguration.h>
-#import <Realm/RLMSyncCredential.h>
+#import <Realm/RLMSyncCredentials.h>
 #import <Realm/RLMSyncManager.h>
+#import <Realm/RLMSyncPermissionChange.h>
+#import <Realm/RLMSyncPermissionOffer.h>
+#import <Realm/RLMSyncPermissionOfferResponse.h>
 #import <Realm/RLMSyncSession.h>
 #import <Realm/RLMSyncUser.h>
 #import <Realm/RLMSyncUtil.h>
+#import <Realm/NSError+RLMSync.h>

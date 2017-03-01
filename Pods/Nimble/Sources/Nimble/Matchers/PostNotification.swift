@@ -15,9 +15,9 @@ internal class NotificationCollector {
     }
 
     func startObserving() {
-        self.token = self.notificationCenter.addObserver(forName: nil, object: nil, queue: nil) {
+        self.token = self.notificationCenter.addObserver(forName: nil, object: nil, queue: nil) { [weak self] n in
             // linux-swift gets confused by .append(n)
-            [weak self] n in self?.observedNotifications.append(n)
+            self?.observedNotifications.append(n)
         }
     }
 

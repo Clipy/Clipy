@@ -36,7 +36,7 @@ extension CPYFolder {
                 snippets.append(snippet)
             }
         } else {
-            self.snippets.sorted(byProperty: "index", ascending: true).forEach {
+            self.snippets.sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true).forEach {
                 let snippet = CPYSnippet(value: $0)
                 snippets.append(snippet)
             }
@@ -86,7 +86,7 @@ extension CPYFolder {
         let realm = try! Realm()
         let folder = CPYFolder()
         folder.title = "untitled folder"
-        let lastFolder = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true).last
+        let lastFolder = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true).last
         folder.index = lastFolder?.index ?? -1
         folder.index += 1
         return folder

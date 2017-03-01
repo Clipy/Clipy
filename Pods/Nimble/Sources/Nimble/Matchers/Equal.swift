@@ -61,7 +61,7 @@ public func equal<T: Equatable>(_ expectedValue: [T?]) -> NonNilMatcherFunc<[T?]
             if expectedValue.count != actualValue.count {
                 return false
             }
-            
+
             for (index, item) in actualValue.enumerated() {
                 let otherItem = expectedValue[index]
                 if item == nil && otherItem == nil {
@@ -74,12 +74,12 @@ public func equal<T: Equatable>(_ expectedValue: [T?]) -> NonNilMatcherFunc<[T?]
                     return false
                 }
             }
-            
+
             return true
         } else {
             failureMessage.postfixActual = " (use beNil() to match nils)"
         }
-        
+
         return false
     }
 }
@@ -146,11 +146,11 @@ public func !=<T: Equatable>(lhs: Expectation<[T]>, rhs: [T]?) {
     lhs.toNot(equal(rhs))
 }
 
-public func ==<T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
+public func == <T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
     lhs.to(equal(rhs))
 }
 
-public func !=<T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
+public func != <T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
     lhs.toNot(equal(rhs))
 }
 
