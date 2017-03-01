@@ -325,7 +325,6 @@ fileprivate extension MenuManager {
             })
         }
 
-
         return menuItem
     }
 }

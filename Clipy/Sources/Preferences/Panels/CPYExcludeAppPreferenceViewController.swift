@@ -33,8 +33,8 @@ extension CPYExcludeAppPreferenceViewController {
             guard let bundle = Bundle(url: $0), let info = bundle.infoDictionary else { return }
             guard let appInfo = CPYAppInfo(info: info as [String : AnyObject]) else { return }
             ExcludeAppService.shared.add(with: appInfo)
-            tableView.reloadData()
         }
+        tableView.reloadData()
     }
 
     @IBAction func deleteAppButtonTapped(_ sender: AnyObject) {
@@ -55,6 +55,6 @@ extension CPYExcludeAppPreferenceViewController: NSTableViewDataSource {
     }
 
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        return ExcludeAppService.shared.applications[row].name
+        return ExcludeAppService.shared.applications[safe: row]?.name
     }
 }
