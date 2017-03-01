@@ -502,8 +502,8 @@
 				FAC43DC31B35D8B100C06102 /* Frameworks */,
 				FAC43DC41B35D8B100C06102 /* Resources */,
 				FAC43E1D1B35DF4A00C06102 /* Embed Frameworks */,
-				FA4A5CDC1C7CAEDD0031BCEF /* ShellScript */,
-				FAAD02201CA98E20007C6EEE /* ShellScript */,
+				FA4A5CDC1C7CAEDD0031BCEF /* Fabric */,
+				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				07B47785AE0AC2185B570C28 /* [CP] Embed Pods Frameworks */,
 				40BF6BFF1639341024558E7B /* [CP] Copy Pods Resources */,
 			);
@@ -703,31 +703,33 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		FA4A5CDC1C7CAEDD0031BCEF /* ShellScript */ = {
+		FA4A5CDC1C7CAEDD0031BCEF /* Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = Fabric;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "releaseConfig=\"Release\"\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${PODS_ROOT}/Fabric/run\" 4998ae84bce284505281a865e1d5c008c4cf005a 997285f167af87d3ebdb81f2082b53bb03c11f92fca9fc7e62c4052f1d288ab6\nfi";
 		};
-		FAAD02201CA98E20007C6EEE /* ShellScript */ = {
+		FAAD02201CA98E20007C6EEE /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = SwiftLint;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nfi";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 

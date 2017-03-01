@@ -16,7 +16,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
     var isItemEnabled = false
     override var cellSize: NSSize {
         var size = super.cellSize
-        size.width = size.width + 3.0 + 16.0
+        size.width += 3.0 + 16.0
         return size
     }
 

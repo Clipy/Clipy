@@ -18,6 +18,8 @@ target 'Clipy' do
   pod 'RxScreeen'
   pod 'AEXML'
 
+  pod 'SwiftLint'
+
   target 'ClipyTests' do
     inherit! :search_paths
 

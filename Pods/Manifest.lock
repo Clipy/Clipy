@@ -27,6 +27,7 @@ PODS:
   - RxSwift (3.2.0)
   - Screeen (1.0.0)
   - Sparkle (1.14.0)
+  - SwiftLint (0.16.1)
 
 DEPENDENCIES:
   - AEXML
@@ -43,6 +44,7 @@ DEPENDENCIES:
   - RxScreeen
   - RxSwift
   - Sparkle
+  - SwiftLint
 
 EXTERNAL SOURCES:
   LoginServiceKit:
@@ -71,7 +73,8 @@ SPEC CHECKSUMS:
   RxSwift: 46574f70d416b7923c237195939cc488a7fbf3a0
   Screeen: 07f3593d9941d7a9546f081e4f775ce85d974447
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
+  SwiftLint: b8b683208cc09640898f16318a7a452274e91f61
 
-PODFILE CHECKSUM: b55f99fb3c5fd6f6efabc88c9fdf99f2d6f9448d
+PODFILE CHECKSUM: a0c198e5350b27674f4733f59cdf42fdaebc73af
 
 COCOAPODS: 1.2.0

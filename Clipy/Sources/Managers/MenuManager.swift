@@ -168,7 +168,7 @@ fileprivate extension MenuManager {
     fileprivate func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
         var count = count
         if start == 0 {
-            count = count - 1
+            count -= 1
         }
         var lastNumber = count + numberOfItems
         if end < lastNumber {
