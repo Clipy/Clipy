@@ -100,36 +100,37 @@ fileprivate extension MenuManager {
     fileprivate func bind() {
         // Realm Notification
         clipToken = realm.objects(CPYClip.self)
-                        .addNotificationBlock { [unowned self] _ in
-                            self.createClipMenu()
+                        .addNotificationBlock { [weak self] _ in
+                            self?.createClipMenu()
                         }
         snippetToken = realm.objects(CPYFolder.self)
-                        .addNotificationBlock { [unowned self] _ in
-                            self.createClipMenu()
+                        .addNotificationBlock { [weak self] _ in
+                            self?.createClipMenu()
                         }
         // Menu icon
         defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem)
             .filterNil()
-            .subscribe(onNext: { [unowned self] key in
-                self.changeStatusItem(StatusType(rawValue: key) ?? .black)
+            .subscribe(onNext: { [weak self] key in
+                self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             }).addDisposableTo(disposeBag)
         // Clear history menu
         defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [unowned self] _ in
-                self.createClipMenu()
+            .subscribe(onNext: { [weak self] _ in
+                self?.createClipMenu()
             }).addDisposableTo(disposeBag)
         // Sort clips
         defaults.rx.observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [unowned self] enabled in
-                self.clipResults = self.realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !enabled)
-                self.createClipMenu()
+            .subscribe(onNext: { [weak self] enabled in
+                guard let wSelf = self else { return }
+                wSelf.clipResults = wSelf.realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !enabled)
+                wSelf.createClipMenu()
             }).addDisposableTo(disposeBag)
         // Edit snippets
         notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
-            .subscribe(onNext: { [unowned self] _ in
-                self.createClipMenu()
+            .subscribe(onNext: { [weak self] _ in
+                self?.createClipMenu()
             }).addDisposableTo(disposeBag)
     }
 }
