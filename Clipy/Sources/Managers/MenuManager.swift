@@ -46,8 +46,8 @@ final class MenuManager: NSObject {
 
     // MARK: - Initialize
     override init() {
-        clipResults = realm.objects(CPYClip.self).sorted(byProperty: "updateTime", ascending: !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting))
-        folderResults = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true)
+        clipResults = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting))
+        folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         super.init()
         folderIcon.isTemplate = true
         folderIcon.size = NSSize(width: 15, height: 13)
@@ -84,7 +84,7 @@ extension MenuManager {
         // Snippets
         var index = firstIndexOfMenuItems()
         folder.snippets
-            .sorted(byProperty: "index", ascending: true)
+            .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
             .filter { $0.enable }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
@@ -123,7 +123,7 @@ fileprivate extension MenuManager {
         defaults.rx.observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.new])
             .filterNil()
             .subscribe(onNext: { [unowned self] enabled in
-                self.clipResults = self.realm.objects(CPYClip.self).sorted(byProperty: "updateTime", ascending: !enabled)
+                self.clipResults = self.realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !enabled)
                 self.createClipMenu()
             }).addDisposableTo(disposeBag)
         // Edit snippets
@@ -355,7 +355,7 @@ private extension MenuManager {
 
                 var i = firstIndex
                 folder.snippets
-                    .sorted(byProperty: "index", ascending: true)
+                    .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
                     .filter { $0.enable }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)

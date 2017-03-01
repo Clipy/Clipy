@@ -67,7 +67,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         // https://github.com/realm/realm-cocoa/issues/1734
         let realm = try! Realm()
         folders = realm.objects(CPYFolder.self)
-                    .sorted(byProperty: "index", ascending: true)
+                    .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
                     .map { $0.deepCopy() }
         // Select first folder
         if let folder = folders.first {
@@ -165,7 +165,7 @@ extension CPYSnippetsEditorWindowController {
 
         do {
             let realm = try! Realm()
-            let lastFolder = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true).last
+            let lastFolder = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true).last
             var folderIndex = (lastFolder?.index ?? -1) + 1
             // Create Document
             let xmlDocument = try AEXMLDocument(xml: data)
@@ -209,7 +209,7 @@ extension CPYSnippetsEditorWindowController {
         let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
 
         let realm = try! Realm()
-        let folders = realm.objects(CPYFolder.self).sorted(byProperty: "index", ascending: true)
+        let folders = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         folders.forEach { folder in
             let folderElement = rootElement.addChild(name: Constants.Xml.folderElement)
 
@@ -217,7 +217,7 @@ extension CPYSnippetsEditorWindowController {
 
             let snippetsElement = folderElement.addChild(name: Constants.Xml.snippetsElement)
             folder.snippets
-                .sorted(byProperty: "index", ascending: true)
+                .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
                 .forEach { snippet in
                     let snippetElement = snippetsElement.addChild(name: Constants.Xml.snippetElement)
                     snippetElement.addChild(name: Constants.Xml.titleElement, value: snippet.title)

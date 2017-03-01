@@ -55,7 +55,7 @@ final class DataCleanService {
 
     private func trimDatabase() {
         let realm = try! Realm()
-        let clips = realm.objects(CPYClip.self).sorted(byProperty: "updateTime", ascending: false)
+        let clips = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: false)
         let maxHistorySize = defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
 
         if clips.count <= maxHistorySize { return }
