@@ -18,8 +18,24 @@
 
 #include "sync/impl/sync_file.hpp"
 
+#include "util/time.hpp"
+
 #include <realm/util/file.hpp>
 #include <realm/util/scope_exit.hpp>
+
+#include <iomanip>
+#include <sstream>
+#include <system_error>
+
+#if WIN32
+#include <io.h>
+#include <fcntl.h>
+
+inline static int mkstemp(char* _template) { return _open(_mktemp(_template), _O_CREAT | _O_TEMPORARY, _S_IREAD | _S_IWRITE); }
+#else
+#include <unistd.h>
+#endif
+
 
 using File = realm::util::File;
 
@@ -180,20 +196,47 @@ std::string file_path_by_appending_extension(const std::string& path, const std:
     return buffer;
 }
 
+std::string create_timestamped_template(const std::string& prefix, int wildcard_count)
+{
+    constexpr int WILDCARD_MAX = 20;
+    constexpr int WILDCARD_MIN = 6;
+    wildcard_count = std::min(WILDCARD_MAX, std::max(WILDCARD_MIN, wildcard_count));
+    std::time_t time = std::time(nullptr);
+    std::stringstream stream;
+    stream << prefix << "-" << util::put_time(time, "%Y%m%d-%H%M%S") << "-" << std::string(wildcard_count, 'X');
+    return stream.str();
+}
+
+std::string reserve_unique_file_name(const std::string& path, const std::string& template_string)
+{
+    REALM_ASSERT_DEBUG(template_string.find("XXXXXX") != std::string::npos);
+    std::string path_buffer = file_path_by_appending_component(path, template_string, FilePathType::File);
+    int fd = mkstemp(&path_buffer[0]);
+    if (fd < 0) {
+        int err = errno;
+        throw std::system_error(err, std::system_category());
+    }
+    // Remove the file so we can use the name for our own file.
+    close(fd);
+    unlink(path_buffer.c_str());
+    return path_buffer;
+}
+
 } // util
 
 constexpr const char SyncFileManager::c_sync_directory[];
 constexpr const char SyncFileManager::c_utility_directory[];
+constexpr const char SyncFileManager::c_recovery_directory[];
 constexpr const char SyncFileManager::c_metadata_directory[];
 constexpr const char SyncFileManager::c_metadata_realm[];
 
-std::string SyncFileManager::get_utility_directory() const
+std::string SyncFileManager::get_special_directory(std::string directory_name) const
 {
-    auto util_path = file_path_by_appending_component(get_base_sync_directory(),
-                                                      c_utility_directory,
-                                                      util::FilePathType::Directory);
-    util::try_make_dir(util_path);
-    return util_path;
+    auto dir_path = file_path_by_appending_component(get_base_sync_directory(),
+                                                     directory_name,
+                                                     util::FilePathType::Directory);
+    util::try_make_dir(dir_path);
+    return dir_path;
 }
 
 std::string SyncFileManager::get_base_sync_directory() const
@@ -230,23 +273,17 @@ void SyncFileManager::remove_user_directory(const std::string& user_identity) co
     util::remove_nonempty_dir(user_path);
 }
 
-bool SyncFileManager::remove_realm(const std::string& user_identity, const std::string& raw_realm_path) const
+bool SyncFileManager::remove_realm(const std::string& absolute_path) const
 {
-    REALM_ASSERT(user_identity.length() > 0);
-    REALM_ASSERT(raw_realm_path.length() > 0);
-    if (filename_is_reserved(user_identity) || filename_is_reserved(raw_realm_path)) {
-        throw std::invalid_argument("A user or Realm can't have an identifier reserved by the filesystem.");
-    }
-    auto escaped = util::make_percent_encoded_string(raw_realm_path);
-    auto realm_path = util::file_path_by_appending_component(user_directory(user_identity), escaped);
+    REALM_ASSERT(absolute_path.length() > 0);
     bool success = true;
-    // Remove the base Realm file (e.g. "example.realm").
-    success = File::try_remove(realm_path);
+    // Remove the Realm file (e.g. "example.realm").
+    success = File::try_remove(absolute_path);
     // Remove the lock file (e.g. "example.realm.lock").
-    auto lock_path = util::file_path_by_appending_extension(realm_path, "lock");
+    auto lock_path = util::file_path_by_appending_extension(absolute_path, "lock");
     success = File::try_remove(lock_path);
     // Remove the management directory (e.g. "example.realm.management").
-    auto management_path = util::file_path_by_appending_extension(realm_path, "management");
+    auto management_path = util::file_path_by_appending_extension(absolute_path, "management");
     try {
         util::remove_nonempty_dir(management_path);
     }
@@ -256,6 +293,36 @@ bool SyncFileManager::remove_realm(const std::string& user_identity, const std::
         success = false;
     }
     return success;
+}
+
+bool SyncFileManager::copy_realm_file(const std::string& old_path, const std::string& new_path) const
+{
+    REALM_ASSERT(old_path.length() > 0);
+    try {
+        if (File::exists(new_path)) {
+            return false;
+        }
+        File::copy(old_path, new_path);
+    } 
+    catch (File::NotFound const&) {
+        return false;
+    }
+    catch (File::AccessError const&) {
+        return false;
+    }
+    return true;
+}
+
+bool SyncFileManager::remove_realm(const std::string& user_identity, const std::string& raw_realm_path) const
+{
+    REALM_ASSERT(user_identity.length() > 0);
+    REALM_ASSERT(raw_realm_path.length() > 0);
+    if (filename_is_reserved(user_identity) || filename_is_reserved(raw_realm_path)) {
+        throw std::invalid_argument("A user or Realm can't have an identifier reserved by the filesystem.");
+    }
+    auto escaped = util::make_percent_encoded_string(raw_realm_path);
+    auto realm_path = util::file_path_by_appending_component(user_directory(user_identity), escaped);
+    return remove_realm(realm_path);
 }
 
 std::string SyncFileManager::path(const std::string& user_identity, const std::string& raw_realm_path) const

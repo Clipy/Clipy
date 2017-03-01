@@ -44,6 +44,7 @@ struct Configuration {
     bool ssl = false;
     std::string ssl_certificate_path;
     std::string ssl_certificate_key_path;
+    std::string dashboard_stats_endpoint = "localhost:28125";
 };
 
 void show_help(const std::string& program_name);

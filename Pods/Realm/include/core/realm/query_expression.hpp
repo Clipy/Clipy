@@ -206,9 +206,10 @@ int no_timestamp(const Timestamp&)
     REALM_ASSERT(false);
     return 0;
 }
-#endif // REALM_OLDQUERY_FALLBACK
 
 } // anonymous namespace
+
+#endif // REALM_OLDQUERY_FALLBACK
 
 template <class T>
 struct Plus {
@@ -478,6 +479,10 @@ Query create(L left, const Subexpr2<R>& right)
             q.contains(column->column_ndx(), only_string(left));
         else if (std::is_same<Cond, ContainsIns>::value)
             q.contains(column->column_ndx(), only_string(left), false);
+        else if (std::is_same<Cond, Like>::value)
+            q.like(column->column_ndx(), only_string(left));
+        else if (std::is_same<Cond, LikeIns>::value)
+            q.like(column->column_ndx(), only_string(left), false);
         else {
             // query_engine.hpp does not support this Cond. Please either add support for it in query_engine.hpp or
             // fallback to using use 'return new Compare<>' instead.
@@ -770,7 +775,7 @@ struct NullableVector {
     {
         if (this != &other) {
             init(other.m_size);
-            std::copy(other.m_first, other.m_first + other.m_size, m_first);
+            std::copy_n(other.m_first, other.m_size, m_first);
             m_null = other.m_null;
         }
         return *this;
@@ -779,7 +784,7 @@ struct NullableVector {
     NullableVector(const NullableVector& other)
     {
         init(other.m_size);
-        std::copy(other.m_first, other.m_first + other.m_size, m_first);
+        std::copy_n(other.m_first, other.m_size, m_first);
         m_null = other.m_null;
     }
 
@@ -1626,11 +1631,12 @@ public:
     LinkMap(LinkMap const& other, QueryNodeHandoverPatches* patches)
         : LinkMap(other)
     {
-        if (!patches || m_link_column_indexes.empty())
+        if (!patches)
             return;
 
         m_link_column_indexes.clear();
         const Table* table = m_base_table;
+        m_base_table = nullptr;
         for (auto column : m_link_columns) {
             m_link_column_indexes.push_back(column->get_column_index());
             if (table->get_real_column_type(m_link_column_indexes.back()) == col_type_BackLink)
@@ -1959,6 +1965,16 @@ public:
     Query contains(const Columns<StringData>& col, bool case_sensitive = true)
     {
         return string_compare<Contains, ContainsIns>(*this, col, case_sensitive);
+    }
+
+    Query like(StringData sd, bool case_sensitive = true)
+    {
+        return string_compare<StringData, Like, LikeIns>(*this, sd, case_sensitive);
+    }
+
+    Query like(const Columns<StringData>& col, bool case_sensitive = true)
+    {
+        return string_compare<Like, LikeIns>(*this, col, case_sensitive);
     }
 };
 
@@ -2445,9 +2461,11 @@ public:
     template <class ColType2 = ColType>
     void evaluate_internal(size_t index, ValueBase& destination)
     {
+        REALM_ASSERT_DEBUG(m_sg.get());
+        REALM_ASSERT_DEBUG(dynamic_cast<SequentialGetter<ColType2>*>(m_sg.get()));
+
         using U = typename ColType2::value_type;
         auto sgc = static_cast<SequentialGetter<ColType2>*>(m_sg.get());
-        REALM_ASSERT_DEBUG(dynamic_cast<SequentialGetter<ColType2>*>(m_sg.get()));
         REALM_ASSERT_DEBUG(sgc->m_column);
 
         if (links_exist()) {
@@ -2718,11 +2736,11 @@ public:
         std::vector<size_t> links = m_link_map.get_links(index);
         std::sort(links.begin(), links.end());
 
-        size_t count = std::accumulate(links.begin(), links.end(), 0, [this](size_t running_count, size_t link) {
+        size_t count = std::accumulate(links.begin(), links.end(), size_t(0), [this](size_t running_count, size_t link) {
             return running_count + m_query.count(link, link + 1, 1);
         });
 
-        destination.import(Value<Int>(false, 1, count));
+        destination.import(Value<Int>(false, 1, size_t(count)));
     }
 
     std::unique_ptr<Subexpr> clone(QueryNodeHandoverPatches* patches) const override

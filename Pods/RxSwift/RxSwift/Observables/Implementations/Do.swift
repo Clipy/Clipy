@@ -6,9 +6,7 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
-class DoSink<O: ObserverType> : Sink<O>, ObserverType {
+final class DoSink<O: ObserverType> : Sink<O>, ObserverType {
     typealias Element = O.E
     typealias Parent = Do<Element>
     
@@ -34,7 +32,7 @@ class DoSink<O: ObserverType> : Sink<O>, ObserverType {
     }
 }
 
-class Do<Element> : Producer<Element> {
+final class Do<Element> : Producer<Element> {
     typealias EventHandler = (Event<Element>) throws -> Void
     
     fileprivate let _source: Observable<Element>

@@ -2,14 +2,12 @@ import Foundation
 
 /// A Nimble matcher that succeeds when the actual sequence contains the expected value.
 public func contain<S: Sequence, T: Equatable>(_ items: T...) -> NonNilMatcherFunc<S>
-    where S.Iterator.Element == T
-{
+    where S.Iterator.Element == T {
     return contain(items)
 }
 
 public func contain<S: Sequence, T: Equatable>(_ items: [T]) -> NonNilMatcherFunc<S>
-    where S.Iterator.Element == T
-{
+    where S.Iterator.Element == T {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "contain <\(arrayAsString(items))>"
         if let actual = try actualExpression.evaluate() {

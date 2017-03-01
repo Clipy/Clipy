@@ -179,7 +179,7 @@ internal class AwaitPromiseBuilder<T> {
         trigger.timeoutSource.scheduleOneshot(
             deadline: DispatchTime.now() + timeoutInterval,
             leeway: timeoutLeeway)
-        trigger.timeoutSource.setEventHandler() {
+        trigger.timeoutSource.setEventHandler {
             guard self.promise.asyncResult.isIncomplete() else { return }
             let timedOutSem = DispatchSemaphore(value: 0)
             let semTimedOutOrBlocked = DispatchSemaphore(value: 0)
@@ -287,7 +287,7 @@ internal class Awaiter {
             let timeoutSource = createTimerSource(timeoutQueue)
             var completionCount = 0
             let trigger = AwaitTrigger(timeoutSource: timeoutSource, actionSource: nil) {
-                try closure() {
+                try closure {
                     completionCount += 1
                     nimblePrecondition(
                         completionCount < 2,
@@ -314,7 +314,7 @@ internal class Awaiter {
         let trigger = AwaitTrigger(timeoutSource: timeoutSource, actionSource: asyncSource) {
             let interval = DispatchTimeInterval.nanoseconds(Int(pollInterval * TimeInterval(NSEC_PER_SEC)))
             asyncSource.scheduleRepeating(deadline: .now(), interval: interval, leeway: pollLeeway)
-            asyncSource.setEventHandler() {
+            asyncSource.setEventHandler {
                 do {
                     if let result = try closure() {
                         if promise.resolveResult(.completed(result)) {

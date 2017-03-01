@@ -266,7 +266,7 @@ void CollectionNotifier::set_table(Table const& table)
 
 void CollectionNotifier::add_required_change_info(TransactionChangeInfo& info)
 {
-    if (!do_add_required_change_info(info)) {
+    if (!do_add_required_change_info(info) || m_related_tables.empty()) {
         return;
     }
 
@@ -286,6 +286,12 @@ void CollectionNotifier::prepare_handover()
     m_sg_version = m_sg->get_version_of_current_transaction();
     do_prepare_handover(*m_sg);
     m_has_run = true;
+
+#ifdef REALM_DEBUG
+    std::lock_guard<std::mutex> lock(m_callback_mutex);
+    for (auto& callback : m_callbacks)
+        REALM_ASSERT(!callback.skip_next);
+#endif
 }
 
 void CollectionNotifier::before_advance()
@@ -429,8 +435,10 @@ void NotifierPackage::package_and_wait(util::Optional<VersionID::version_type> t
         return true;
     };
     m_notifiers.erase(std::remove_if(begin(m_notifiers), end(m_notifiers), package), end(m_notifiers));
-    if (m_version && target_version && m_version->version < *target_version)
+    if (m_version && target_version && m_version->version < *target_version) {
         m_notifiers.clear();
+        m_version = util::none;
+    }
     REALM_ASSERT(m_version || m_notifiers.empty());
 
     m_coordinator = nullptr;
@@ -464,4 +472,10 @@ void NotifierPackage::after_advance()
         return;
     for (auto& notifier : m_notifiers)
         notifier->after_advance();
+}
+
+void NotifierPackage::add_notifier(std::shared_ptr<CollectionNotifier> notifier)
+{
+    m_notifiers.push_back(notifier);
+    m_coordinator->register_notifier(notifier);
 }

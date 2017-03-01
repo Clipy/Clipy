@@ -6,8 +6,6 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
 // MARK: combineLatest
 
 extension Observable {
@@ -59,6 +57,22 @@ extension ObservableType where E : ObservableConvertibleType {
     */
     public func switchLatest() -> Observable<E.E> {
         return Switch(source: asObservable())
+    }
+}
+
+// switchIfEmpty
+
+extension ObservableType {
+    /**
+     Returns the elements of the specified sequence or `switchTo` sequence if the sequence is empty.
+     
+     - seealso: [DefaultIfEmpty operator on reactivex.io](http://reactivex.io/documentation/operators/defaultifempty.html)
+
+     - parameter switchTo: Observable sequence being returned when source sequence is empty.
+     - returns: Observable sequence that contains elements from switchTo sequence if source is empty, otherwise returns source sequence elements.
+     */
+    public func ifEmpty(switchTo other: Observable<E>) -> Observable<E> {
+        return SwitchIfEmpty(source: asObservable(), ifEmpty: other)
     }
 }
 

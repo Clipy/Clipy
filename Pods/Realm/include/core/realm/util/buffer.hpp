@@ -186,7 +186,7 @@ template <class T>
 inline void Buffer<T>::resize(size_t new_size, size_t copy_begin, size_t copy_end, size_t copy_to)
 {
     std::unique_ptr<T[]> new_data(new T[new_size]); // Throws
-    std::copy(m_data.get() + copy_begin, m_data.get() + copy_end, new_data.get() + copy_to);
+    std::copy_n(m_data.get() + copy_begin, copy_end - copy_begin, new_data.get() + copy_to);
     m_data.reset(new_data.release());
     m_size = new_size;
 }
@@ -250,7 +250,7 @@ template <class T>
 inline void AppendBuffer<T>::append(const T* append_data, size_t append_data_size)
 {
     m_buffer.reserve_extra(m_size, append_data_size); // Throws
-    std::copy(append_data, append_data + append_data_size, m_buffer.data() + m_size);
+    std::copy_n(append_data, append_data_size, m_buffer.data() + m_size);
     m_size += append_data_size;
 }
 

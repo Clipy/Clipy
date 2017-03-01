@@ -9,10 +9,10 @@ public func beVoid() -> MatcherFunc<()> {
     }
 }
 
-public func ==(lhs: Expectation<()>, rhs: ()) {
+public func == (lhs: Expectation<()>, rhs: ()) {
     lhs.to(beVoid())
 }
 
-public func !=(lhs: Expectation<()>, rhs: ()) {
+public func != (lhs: Expectation<()>, rhs: ()) {
     lhs.toNot(beVoid())
 }

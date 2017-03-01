@@ -21,7 +21,11 @@
 
 #include <exception>
 
+#ifdef _WIN32
+#include <win32/pthread/pthread.h>
+#else
 #include <pthread.h>
+#endif
 
 // Use below line to enable a thread bug detection tool. Note: Will make program execution slower.
 // #include <../test/pthread_test.hpp>

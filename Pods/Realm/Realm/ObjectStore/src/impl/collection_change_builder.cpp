@@ -50,6 +50,18 @@ void CollectionChangeBuilder::merge(CollectionChangeBuilder&& c)
     verify();
     c.verify();
 
+    auto for_each_col = [&](auto&& f) {
+        f(modifications, c.modifications);
+        if (m_track_columns) {
+            if (columns.size() < c.columns.size())
+                columns.resize(c.columns.size());
+            else if (columns.size() > c.columns.size())
+                c.columns.resize(columns.size());
+            for (size_t i = 0; i < columns.size(); ++i)
+                f(columns[i], c.columns[i]);
+        }
+    };
+
     // First update any old moves
     if (!c.moves.empty() || !c.deletions.empty() || !c.insertions.empty()) {
         auto it = std::remove_if(begin(moves), end(moves), [&](auto& old) {
@@ -58,8 +70,10 @@ void CollectionChangeBuilder::merge(CollectionChangeBuilder&& c)
                 return old.to == m.from;
             });
             if (it != c.moves.end()) {
-                if (modifications.contains(it->from))
-                    c.modifications.add(it->to);
+                for_each_col([&](auto& col, auto& other) {
+                    if (col.contains(it->from))
+                        other.add(it->to);
+                });
                 old.to = it->to;
                 *it = c.moves.back();
                 c.moves.pop_back();
@@ -90,8 +104,10 @@ void CollectionChangeBuilder::merge(CollectionChangeBuilder&& c)
     // Ensure that any previously modified rows which were moved are still modified
     if (!modifications.empty() && !c.moves.empty()) {
         for (auto const& move : c.moves) {
-            if (modifications.contains(move.from))
-                c.modifications.add(move.to);
+            for_each_col([&](auto& col, auto& other) {
+                if (col.contains(move.from))
+                    other.add(move.to);
+            });
         }
     }
 
@@ -114,9 +130,11 @@ void CollectionChangeBuilder::merge(CollectionChangeBuilder&& c)
 
     clean_up_stale_moves();
 
-    modifications.erase_at(c.deletions);
-    modifications.shift_for_insert_at(c.insertions);
-    modifications.add(c.modifications);
+    for_each_col([&](auto& col, auto& other) {
+        col.erase_at(c.deletions);
+        col.shift_for_insert_at(c.insertions);
+        col.add(other);
+    });
 
     c = {};
     verify();
@@ -154,14 +172,30 @@ void CollectionChangeBuilder::parse_complete()
               [](auto const& a, auto const& b) { return a.from < b.from; });
 }
 
-void CollectionChangeBuilder::modify(size_t ndx)
+void CollectionChangeBuilder::modify(size_t ndx, size_t col)
 {
     modifications.add(ndx);
+    if (!m_track_columns || col == IndexSet::npos)
+        return;
+
+    if (col >= columns.size())
+        columns.resize(col + 1);
+    columns[col].add(ndx);
+}
+
+template<typename Func>
+void CollectionChangeBuilder::for_each_col(Func&& f)
+{
+    f(modifications);
+    if (m_track_columns) {
+        for (auto& col : columns)
+            f(col);
+    }
 }
 
 void CollectionChangeBuilder::insert(size_t index, size_t count, bool track_moves)
 {
-    modifications.shift_for_insert_at(index, count);
+    for_each_col([=](auto& col) { col.shift_for_insert_at(index, count); });
     if (!track_moves)
         return;
 
@@ -171,11 +205,29 @@ void CollectionChangeBuilder::insert(size_t index, size_t count, bool track_move
         if (move.to >= index)
             ++move.to;
     }
+
+    if (m_move_mapping.empty())
+        return;
+
+    // m_move_mapping is new_ndx -> old_ndx, so updating the keys requires
+    // deleting and re-inserting at the new index
+    std::vector<std::pair<size_t, size_t>> shifted;
+    for (auto it = m_move_mapping.begin(); it != m_move_mapping.end(); ) {
+        if (it->first >= index) {
+            shifted.emplace_back(it->first + count, it->second);
+            it = m_move_mapping.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+    for (auto& pair : shifted)
+        m_move_mapping.insert(pair);
 }
 
 void CollectionChangeBuilder::erase(size_t index)
 {
-    modifications.erase_at(index);
+    for_each_col([=](auto& col) { col.erase_at(index); });
     size_t unshifted = insertions.erase_or_unshift(index);
     if (unshifted != IndexSet::npos)
         deletions.add_shifted(unshifted);
@@ -204,6 +256,7 @@ void CollectionChangeBuilder::clear(size_t old_size)
     insertions.clear();
     moves.clear();
     m_move_mapping.clear();
+    columns.clear();
     deletions.set(old_size);
 }
 
@@ -243,13 +296,15 @@ void CollectionChangeBuilder::move(size_t from, size_t to)
         }
     }
 
-    bool modified = modifications.contains(from);
-    modifications.erase_at(from);
+    for_each_col([=](auto& col) {
+        bool modified = col.contains(from);
+        col.erase_at(from);
 
-    if (modified)
-        modifications.insert_at(to);
-    else
-        modifications.shift_for_insert_at(to);
+        if (modified)
+            col.insert_at(to);
+        else
+            col.shift_for_insert_at(to);
+    });
 }
 
 void CollectionChangeBuilder::move_over(size_t row_ndx, size_t last_row, bool track_moves)
@@ -265,17 +320,19 @@ void CollectionChangeBuilder::move_over(size_t row_ndx, size_t last_row, bool tr
                 deletions.add_shifted(shifted_from);
             m_move_mapping.erase(row_ndx);
         }
-        modifications.remove(row_ndx);
+        for_each_col([=](auto& col) { col.remove(row_ndx); });
         return;
     }
 
-    bool modified = modifications.contains(last_row);
-    if (modified) {
-        modifications.remove(last_row);
-        modifications.add(row_ndx);
-    }
-    else
-        modifications.remove(row_ndx);
+    for_each_col([=](auto& col) {
+        bool modified = col.contains(last_row);
+        if (modified) {
+            col.remove(last_row);
+            col.add(row_ndx);
+        }
+        else
+            col.remove(row_ndx);
+    });
 
     if (!track_moves)
         return;
@@ -329,18 +386,20 @@ void CollectionChangeBuilder::swap(size_t ndx_1, size_t ndx_2, bool track_moves)
     if (ndx_1 > ndx_2)
         std::swap(ndx_1, ndx_2);
 
-    bool row_1_modified = modifications.contains(ndx_1);
-    bool row_2_modified = modifications.contains(ndx_2);
-    if (row_1_modified != row_2_modified) {
-        if (row_1_modified) {
-            modifications.remove(ndx_1);
-            modifications.add(ndx_2);
+    for_each_col([=](auto& col) {
+        bool row_1_modified = col.contains(ndx_1);
+        bool row_2_modified = col.contains(ndx_2);
+        if (row_1_modified != row_2_modified) {
+            if (row_1_modified) {
+                col.remove(ndx_1);
+                col.add(ndx_2);
+            }
+            else {
+                col.remove(ndx_2);
+                col.add(ndx_1);
+            }
         }
-        else {
-            modifications.remove(ndx_2);
-            modifications.add(ndx_1);
-        }
-    }
+    });
 
     if (!track_moves)
         return;
@@ -390,9 +449,11 @@ void CollectionChangeBuilder::subsume(size_t old_ndx, size_t new_ndx, bool track
 {
     REALM_ASSERT(old_ndx != new_ndx);
 
-    if (modifications.contains(old_ndx)) {
-        modifications.add(new_ndx);
-    }
+    for_each_col([=](auto& col) {
+        if (col.contains(old_ndx)) {
+            col.add(new_ndx);
+        }
+    });
 
     if (!track_moves)
         return;
@@ -422,6 +483,24 @@ void CollectionChangeBuilder::verify()
         REALM_ASSERT(insertions.contains(move.to));
     }
 #endif
+}
+
+void CollectionChangeBuilder::insert_column(size_t ndx)
+{
+    if (ndx < columns.size())
+        columns.insert(columns.begin() + ndx, IndexSet{});
+}
+
+void CollectionChangeBuilder::move_column(size_t from, size_t to)
+{
+    if (from >= columns.size() && to >= columns.size())
+        return;
+    if (from >= columns.size() || to >= columns.size())
+        columns.resize(std::max(from, to) + 1);
+    if (from < to)
+        std::rotate(begin(columns) + from, begin(columns) + from + 1, begin(columns) + to + 1);
+    else
+        std::rotate(begin(columns) + to, begin(columns) + from, begin(columns) + from + 1);
 }
 
 namespace {
@@ -801,6 +880,7 @@ CollectionChangeSet CollectionChangeBuilder::finalize() &&
         std::move(insertions),
         std::move(modifications_in_old),
         std::move(modifications),
-        std::move(moves)
+        std::move(moves),
+        std::move(columns)
     };
 }

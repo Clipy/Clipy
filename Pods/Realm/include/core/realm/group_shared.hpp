@@ -54,6 +54,15 @@ struct IncompatibleLockFile : std::runtime_error {
     }
 };
 
+/// Thrown by SharedGroup::open() if the realm database was generated with
+/// a format for Realm Mobile Platform but is being opened as a Realm
+/// Mobile Database or vice versa.
+struct IncompatibleHistories : util::File::AccessError {
+    IncompatibleHistories(const std::string& msg, const std::string& path)
+        : util::File::AccessError("Incompatible histories. " + msg, path)
+    {
+    }
+};
 
 /// A SharedGroup facilitates transactions.
 ///
@@ -343,7 +352,13 @@ public:
     Group& begin_write();
     version_type commit();
     void rollback() noexcept;
-
+    // report statistics of last commit done on THIS shared group.
+    // The free space reported is what can be expected to be freed
+    // by compact(). This may not correspond to the space which is free
+    // at the point where get_stats() is called, since that will include
+    // memory required to hold older versions of data, which still
+    // needs to be available.
+    void get_stats(size_t& free_space, size_t& used_space);
     //@}
 
     enum TransactStage {
@@ -513,6 +528,8 @@ private:
     class ReadLockUnlockGuard;
 
     // Member variables
+    size_t m_free_space = 0;
+    size_t m_used_space = 0;
     Group m_group;
     ReadLockInfo m_read_lock;
     uint_fast32_t m_local_max_entry;
@@ -625,6 +642,12 @@ private:
 
     friend class _impl::SharedGroupFriend;
 };
+
+
+inline void SharedGroup::get_stats(size_t& free_space, size_t& used_space) {
+    free_space = m_free_space;
+    used_space = m_used_space;
+}
 
 
 class ReadTransaction {
@@ -1016,6 +1039,11 @@ inline bool SharedGroup::do_advance_read(O* observer, VersionID version_id, _imp
         version_type new_version = new_read_lock.m_version;
         size_t new_file_size = new_read_lock.m_file_size;
         ref_type new_top_ref = new_read_lock.m_top_ref;
+
+        // Synchronize readers view of the file
+        SlabAlloc& alloc = m_group.m_alloc;
+        alloc.update_reader_view(new_file_size);
+
         hist.update_early_from_top_ref(new_version, new_file_size, new_top_ref); // Throws
     }
 

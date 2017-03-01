@@ -68,6 +68,16 @@ public:
     const char* what() const noexcept override;
 };
 
+
+/// Thrown when a sync agent attempts to join a session in which there is
+/// already a sync agent. A session may only contain one sync agent at any given
+/// time.
+class MultipleSyncAgents : public std::exception {
+public:
+    const char* what() const noexcept override;
+};
+
+
 /// Thrown when memory can no longer be mapped to. When mmap/remap fails.
 class AddressSpaceExhausted : public std::runtime_error {
 public:
@@ -230,6 +240,11 @@ inline const char* DescriptorMismatch::what() const noexcept
 inline const char* FileFormatUpgradeRequired::what() const noexcept
 {
     return "Database upgrade required but prohibited";
+}
+
+inline const char* MultipleSyncAgents::what() const noexcept
+{
+    return "Multiple sync agents attempted to join the same session";
 }
 
 // LCOV_EXCL_STOP

@@ -6,11 +6,9 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
 // MARK: Limited concurrency version
 
-class MergeLimitedSinkIter<S: ObservableConvertibleType, O: ObserverType>
+final class MergeLimitedSinkIter<S: ObservableConvertibleType, O: ObserverType>
     : ObserverType
     , LockOwnerType
     , SynchronizedOnType where S.E == O.E {
@@ -21,7 +19,7 @@ class MergeLimitedSinkIter<S: ObservableConvertibleType, O: ObserverType>
     private let _parent: Parent
     private let _disposeKey: DisposeKey
 
-    var _lock: NSRecursiveLock {
+    var _lock: RecursiveLock {
         return _parent._lock
     }
     
@@ -58,7 +56,7 @@ class MergeLimitedSinkIter<S: ObservableConvertibleType, O: ObserverType>
     }
 }
 
-class MergeLimitedSink<S: ObservableConvertibleType, O: ObserverType>
+final class MergeLimitedSink<S: ObservableConvertibleType, O: ObserverType>
     : Sink<O>
     , ObserverType
     , LockOwnerType
@@ -68,7 +66,7 @@ class MergeLimitedSink<S: ObservableConvertibleType, O: ObserverType>
 
     fileprivate let _maxConcurrent: Int
 
-    let _lock = NSRecursiveLock()
+    let _lock = RecursiveLock()
 
     // state
     fileprivate var _stopped = false
@@ -143,7 +141,7 @@ class MergeLimitedSink<S: ObservableConvertibleType, O: ObserverType>
     }
 }
 
-class MergeLimited<S: ObservableConvertibleType> : Producer<S.E> {
+final class MergeLimited<S: ObservableConvertibleType> : Producer<S.E> {
     private let _source: Observable<S>
     private let _maxConcurrent: Int
     
@@ -228,7 +226,7 @@ final class FlatMapFirstSink<SourceType, S: ObservableConvertibleType, O: Observ
 // It's value is one because initial source subscription is always in CompositeDisposable
 private let MergeNoIterators = 1
 
-class MergeSinkIter<SourceType, S: ObservableConvertibleType, O: ObserverType> : ObserverType where O.E == S.E {
+final class MergeSinkIter<SourceType, S: ObservableConvertibleType, O: ObserverType> : ObserverType where O.E == S.E {
     typealias Parent = MergeSink<SourceType, S, O>
     typealias DisposeKey = CompositeDisposable.DisposeKey
     typealias E = O.E
@@ -276,7 +274,7 @@ class MergeSink<SourceType, S: ObservableConvertibleType, O: ObserverType>
     typealias ResultType = O.E
     typealias Element = SourceType
 
-    fileprivate let _lock = NSRecursiveLock()
+    fileprivate let _lock = RecursiveLock()
 
     fileprivate var subscribeNext: Bool {
         return true

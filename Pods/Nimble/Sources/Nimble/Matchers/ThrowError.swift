@@ -39,14 +39,14 @@ public func throwError<T: Error>(
 public func throwError(
     closure: ((Error) -> Void)? = nil) -> MatcherFunc<Any> {
         return MatcherFunc { actualExpression, failureMessage in
-            
+
             var actualError: Error?
             do {
                 _ = try actualExpression.evaluate()
             } catch let catchedError {
                 actualError = catchedError
             }
-            
+
             setFailureMessageForError(failureMessage, actualError: actualError, closure: closure)
             return errorMatchesNonNilFieldsOrClosure(actualError, closure: closure)
         }

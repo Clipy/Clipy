@@ -1,6 +1,5 @@
 import Foundation
 
-
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
 public func beEmpty<S: Sequence>() -> NonNilMatcherFunc<S> {

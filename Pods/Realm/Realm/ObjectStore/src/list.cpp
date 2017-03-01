@@ -214,7 +214,7 @@ size_t hash<realm::List>::operator()(realm::List const& list) const
 }
 }
 
-NotificationToken List::add_notification_callback(CollectionChangeCallback cb)
+NotificationToken List::add_notification_callback(CollectionChangeCallback cb) &
 {
     verify_attached();
     if (!m_notifier) {

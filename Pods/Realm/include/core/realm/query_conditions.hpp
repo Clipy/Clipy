@@ -63,6 +63,10 @@ struct Contains : public HackClass {
     {
         return v2.contains(v1);
     }
+    bool operator()(StringData v1, const std::array<uint8_t, 256> &charmap, StringData v2) const
+    {
+        return v2.contains(v1, charmap);
+    }
 
     template <class A, class B>
     bool operator()(A, B) const
@@ -76,6 +80,45 @@ struct Contains : public HackClass {
         REALM_ASSERT(false);
         return false;
     }
+    bool operator()(int64_t, int64_t, bool, bool) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+
+    static const int condition = -1;
+};
+
+// Does v2 contain something like v1 (wildcard matching)?
+struct Like : public HackClass {
+    bool operator()(StringData v1, const char*, const char*, StringData v2, bool = false, bool = false) const
+    {
+        return v2.like(v1);
+    }
+    bool operator()(StringData v1, StringData v2, bool = false, bool = false) const
+    {
+        return v2.like(v1);
+    }
+    bool operator()(BinaryData, BinaryData, bool = false, bool = false) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+
+    template <class A, class B>
+    bool operator()(A, B) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+
+    template <class A, class B, class C, class D>
+    bool operator()(A, B, C, D) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+
     bool operator()(int64_t, int64_t, bool, bool) const
     {
         REALM_ASSERT(false);
@@ -240,6 +283,64 @@ struct ContainsIns : public HackClass {
         std::string v1_upper = case_map(v1, true, IgnoreErrors);
         std::string v1_lower = case_map(v1, false, IgnoreErrors);
         return search_case_fold(v2, v1_upper.c_str(), v1_lower.c_str(), v1.size()) != v2.size();
+    }
+    
+    // Case insensitive Boyer-Moore version
+    bool operator()(StringData v1, const char* v1_upper, const char* v1_lower, const std::array<uint8_t, 256> &charmap, StringData v2) const
+    {
+        if (v2.is_null() && !v1.is_null())
+            return false;
+        
+        if (v1.size() == 0 && !v2.is_null())
+            return true;
+        
+        return contains_ins(v2, v1_upper, v1_lower, v1.size(), charmap);
+    }
+
+
+    template <class A, class B>
+    bool operator()(A, B) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    template <class A, class B, class C, class D>
+    bool operator()(A, B, C, D) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+    bool operator()(int64_t, int64_t, bool, bool) const
+    {
+        REALM_ASSERT(false);
+        return false;
+    }
+
+    static const int condition = -1;
+};
+
+// Does v2 contain something like v1 (wildcard matching)?
+struct LikeIns : public HackClass {
+    bool operator()(StringData v1, const char* v1_upper, const char* v1_lower, StringData v2, bool = false,
+                    bool = false) const
+    {
+        if (v2.is_null() || v1.is_null()) {
+            return (v2.is_null() && v1.is_null());
+        }
+
+        return string_like_ins(v2, v1_lower, v1_upper);
+    }
+
+    // Slow version, used if caller hasn't stored an upper and lower case version
+    bool operator()(StringData v1, StringData v2, bool = false, bool = false) const
+    {
+        if (v2.is_null() || v1.is_null()) {
+            return (v2.is_null() && v1.is_null());
+        }
+
+        std::string v1_upper = case_map(v1, true, IgnoreErrors);
+        std::string v1_lower = case_map(v1, false, IgnoreErrors);
+        return string_like_ins(v2, v1_lower, v1_upper);
     }
 
     template <class A, class B>

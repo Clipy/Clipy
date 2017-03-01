@@ -24,6 +24,8 @@
 #include <string>
 #include <ostream>
 #include <cstring>
+#include <array>
+#include <vector>
 
 #include <cfloat>
 #include <cmath>
@@ -138,6 +140,11 @@ public:
     bool begins_with(StringData) const noexcept;
     bool ends_with(StringData) const noexcept;
     bool contains(StringData) const noexcept;
+    bool contains(StringData d, const std::array<uint8_t, 256> &charmap) const noexcept;
+    
+    // Wildcard matching ('?' for single char, '*' for zero or more chars)
+    // case insensitive version in unicode.hpp
+    bool like(StringData) const noexcept;
 
     //@{
     /// Undefined behavior if \a n, \a i, or <tt>i+n</tt> is greater than
@@ -156,6 +163,8 @@ public:
 private:
     const char* m_data;
     size_t m_size;
+
+    static bool matchlike(const StringData& text, const StringData& pattern) noexcept;
 };
 
 
@@ -283,6 +292,120 @@ inline bool StringData::contains(StringData d) const noexcept
         return false;
 
     return d.m_size == 0 || std::search(m_data, m_data + m_size, d.m_data, d.m_data + d.m_size) != m_data + m_size;
+}
+
+/// This method takes an array that maps chars to distance that can be moved (and zero for chars not in needle),
+/// allowing the method to apply Boyer-Moore for quick substring search
+/// The map is calculated in the StringNode<Contains> class (so it can be reused across searches)
+inline bool StringData::contains(StringData d, const std::array<uint8_t, 256> &charmap) const noexcept
+{
+    if (is_null() && !d.is_null())
+        return false;
+    
+    size_t needle_size = d.size();
+    if (needle_size == 0)
+        return true;
+    
+    // Prepare vars to avoid lookups in loop
+    size_t last_char_pos = d.size()-1;
+    unsigned char lastChar = d[last_char_pos];
+    
+    // Do Boyer-Moore search
+    size_t p = last_char_pos;
+    while (p < m_size) {
+        unsigned char c = m_data[p]; // Get candidate for last char
+        
+        if (c == lastChar) {
+            StringData candidate = substr(p-needle_size+1, needle_size);
+            if (candidate == d)
+                return true; // text found!
+        }
+        
+        // If we don't have a match, see how far we can move char_pos
+        if (charmap[c] == 0)
+            p += needle_size; // char was not present in search string
+        else
+            p += charmap[c];
+    }
+    
+    return false;
+}
+    
+inline bool StringData::matchlike(const StringData& text, const StringData& pattern) noexcept
+{
+    std::vector<size_t> textpos;
+    std::vector<size_t> patternpos;
+    size_t p1 = 0; // position in text (haystack)
+    size_t p2 = 0; // position in pattern (needle)
+
+    while (true) {
+        if (p1 == text.size()) {
+            if (p2 == pattern.size())
+                return true;
+            if (p2 == pattern.size() - 1 && pattern[p2] == '*')
+                return true;
+            goto no_match;
+        }
+        if (p2 == pattern.size())
+            goto no_match;
+
+        if (pattern[p2] == '*') {
+            textpos.push_back(p1);
+            patternpos.push_back(++p2);
+            continue;
+        }
+        if (pattern[p2] == '?') {
+            // utf-8 encoded characters may take up multiple bytes
+            if ((text[p1] & 0x80) == 0) {
+                ++p1;
+                ++p2;
+                continue;
+            }
+            else {
+                size_t p = 1;
+                while (p1 + p != text.size() && (text[p1 + p] & 0xc0) == 0x80)
+                    ++p;
+                p1 += p;
+                ++p2;
+                continue;
+            }
+        }
+
+        if (pattern[p2] == text[p1]) {
+            ++p1;
+            ++p2;
+            continue;
+        }
+
+    no_match:
+        if (textpos.empty())
+            return false;
+        else {
+            if (p1 == text.size()) {
+                textpos.pop_back();
+                patternpos.pop_back();
+
+                if (textpos.empty())
+                    return false;
+
+                p1 = textpos.back();
+            }
+            else {
+                p1 = textpos.back();
+                textpos.back() = ++p1;
+            }
+            p2 = patternpos.back();
+        }
+    }
+}
+
+inline bool StringData::like(StringData d) const noexcept
+{
+    if (is_null() || d.is_null()) {
+        return (is_null() && d.is_null());
+    }
+
+    return matchlike(*this, d);
 }
 
 inline StringData StringData::prefix(size_t n) const noexcept

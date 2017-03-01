@@ -8,7 +8,6 @@
 
 #if !os(Linux)
 
-import Foundation
 #if !RX_NO_MODULE
 import RxSwift
 #endif
@@ -206,56 +205,67 @@ extension DelegateProxyType {
         Self.setCurrentDelegate(nil, toObject: object)
         Self.setCurrentDelegate(proxy, toObject: object)
         
-        assert(proxy.forwardToDelegate() === forwardDelegate, "Setting of delegate failed:\ncurrent:\n\(proxy.forwardToDelegate())\nexpected:\n\(forwardDelegate)")
+        assert(proxy.forwardToDelegate() === forwardDelegate, "Setting of delegate failed:\ncurrent:\n\(String(describing: proxy.forwardToDelegate()))\nexpected:\n\(forwardDelegate)")
         
         return Disposables.create {
             MainScheduler.ensureExecutingOnScheduler()
             
             let delegate: AnyObject? = weakForwardDelegate
             
-            assert(delegate == nil || proxy.forwardToDelegate() === delegate, "Delegate was changed from time it was first set. Current \(proxy.forwardToDelegate()), and it should have been \(proxy)")
+            assert(delegate == nil || proxy.forwardToDelegate() === delegate, "Delegate was changed from time it was first set. Current \(String(describing: proxy.forwardToDelegate())), and it should have been \(proxy)")
             
             proxy.setForwardToDelegate(nil, retainDelegate: retainDelegate)
         }
     }
 }
 
-extension ObservableType {
-    func subscribeProxyDataSource<P: DelegateProxyType>(ofObject object: AnyObject, dataSource: AnyObject, retainDataSource: Bool, binding: @escaping (P, Event<E>) -> Void)
-        -> Disposable {
-        let proxy = P.proxyForObject(object)
-        let disposable = P.installForwardDelegate(dataSource, retainDelegate: retainDataSource, onProxyForObject: object)
+    #if os(iOS) || os(tvOS)
+        import UIKit
 
-        let subscription = self.asObservable()
-            .catchError { error in
-                bindingErrorToInterface(error)
-                return Observable.empty()
-            }
-            // source can never end, otherwise it would release the subscriber, and deallocate the data source
-            .concat(Observable.never())
-            .takeUntil((object as! NSObject).rx.deallocated)
-            .subscribe { [weak object] (event: Event<E>) in
-                MainScheduler.ensureExecutingOnScheduler()
+        extension ObservableType {
+            func subscribeProxyDataSource<P: DelegateProxyType>(ofObject object: UIView, dataSource: AnyObject, retainDataSource: Bool, binding: @escaping (P, Event<E>) -> Void)
+                -> Disposable {
+                let proxy = P.proxyForObject(object)
+                let unregisterDelegate = P.installForwardDelegate(dataSource, retainDelegate: retainDataSource, onProxyForObject: object)
+                // this is needed to flush any delayed old state (https://github.com/RxSwiftCommunity/RxDataSources/pull/75)
+                object.layoutIfNeeded()
 
-                if let object = object {
-                    assert(proxy === P.currentDelegateFor(object), "Proxy changed from the time it was first set.\nOriginal: \(proxy)\nExisting: \(P.currentDelegateFor(object))")
-                }
-                
-                binding(proxy, event)
-                
-                switch event {
-                case .error(let error):
-                    bindingErrorToInterface(error)
-                    disposable.dispose()
-                case .completed:
-                    disposable.dispose()
-                default:
-                    break
+                let subscription = self.asObservable()
+                    .observeOn(MainScheduler())
+                    .catchError { error in
+                        bindingErrorToInterface(error)
+                        return Observable.empty()
+                    }
+                    // source can never end, otherwise it would release the subscriber, and deallocate the data source
+                    .concat(Observable.never())
+                    .takeUntil(object.rx.deallocated)
+                    .subscribe { [weak object] (event: Event<E>) in
+
+                        if let object = object {
+                            assert(proxy === P.currentDelegateFor(object), "Proxy changed from the time it was first set.\nOriginal: \(proxy)\nExisting: \(String(describing: P.currentDelegateFor(object)))")
+                        }
+                        
+                        binding(proxy, event)
+                        
+                        switch event {
+                        case .error(let error):
+                            bindingErrorToInterface(error)
+                            unregisterDelegate.dispose()
+                        case .completed:
+                            unregisterDelegate.dispose()
+                        default:
+                            break
+                        }
+                    }
+                    
+                return Disposables.create { [weak object] in
+                    subscription.dispose()
+                    unregisterDelegate.dispose()
+                    object?.layoutIfNeeded()
                 }
             }
-            
-        return Disposables.create(subscription, disposable)
-    }
-}
+        }
+
+    #endif
 
 #endif

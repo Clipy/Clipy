@@ -121,7 +121,7 @@ private:
     };
 
     TableRef m_origin_table;
-    LinkListColumn& m_origin_column;
+    LinkListColumn* m_origin_column;
 
     using HandoverPatch = LinkViewHandoverPatch;
     static void generate_patch(const ConstLinkViewRef& ref, std::unique_ptr<HandoverPatch>& patch);
@@ -152,6 +152,7 @@ private:
 #endif
     // allocate using make_shared:
     static std::shared_ptr<LinkView> create(Table* origin_table, LinkListColumn&, size_t row_ndx);
+    static std::shared_ptr<LinkView> create_detached();
 
     friend class _impl::LinkListFriend;
     friend class LinkListColumn;
@@ -164,6 +165,7 @@ private:
     // because ctor_cookie is private
 public:
     LinkView(const ctor_cookie&, Table* origin_table, LinkListColumn&, size_t row_ndx);
+    LinkView(const ctor_cookie&);
 };
 
 
@@ -172,12 +174,19 @@ public:
 inline LinkView::LinkView(const ctor_cookie&, Table* origin_table, LinkListColumn& column, size_t row_ndx)
     : RowIndexes(IntegerColumn::unattached_root_tag(), column.get_alloc()) // Throws
     , m_origin_table(origin_table->get_table_ref())
-    , m_origin_column(column)
+    , m_origin_column(&column)
 {
-    Array& root = *m_row_indexes.get_root_array();
-    root.set_parent(&column, row_ndx);
-    if (ref_type ref = root.get_ref_from_parent())
-        m_row_indexes.init_from_ref(column.get_alloc(), ref);
+    m_row_indexes.set_parent(m_origin_column, row_ndx);
+    m_row_indexes.init_from_parent();
+}
+
+// create a detached LinkView. Only partially initialized, as it will never be used for
+// anything, but indicating that it is detached.
+inline LinkView::LinkView(const ctor_cookie&)
+    : RowIndexes(IntegerColumn::unattached_root_tag(), Allocator::get_default()) // Throws
+    , m_origin_table(TableRef())
+    , m_origin_column(nullptr)
+{
 }
 
 inline std::shared_ptr<LinkView> LinkView::create(Table* origin_table, LinkListColumn& column, size_t row_ndx)
@@ -185,11 +194,16 @@ inline std::shared_ptr<LinkView> LinkView::create(Table* origin_table, LinkListC
     return std::make_shared<LinkView>(ctor_cookie(), origin_table, column, row_ndx);
 }
 
+inline std::shared_ptr<LinkView> LinkView::create_detached()
+{
+    return std::make_shared<LinkView>(ctor_cookie());
+}
+
 inline LinkView::~LinkView() noexcept
 {
     if (is_attached()) {
         repl_unselect();
-        m_origin_column.unregister_linkview();
+        m_origin_column->unregister_linkview();
     }
 }
 
@@ -230,8 +244,8 @@ inline size_t LinkView::size() const noexcept
 
 inline bool LinkView::operator==(const LinkView& link_list) const noexcept
 {
-    Table& target_table_1 = m_origin_column.get_target_table();
-    Table& target_table_2 = link_list.m_origin_column.get_target_table();
+    Table& target_table_1 = m_origin_column->get_target_table();
+    Table& target_table_2 = link_list.m_origin_column->get_target_table();
     if (target_table_1.get_index_in_group() != target_table_2.get_index_in_group())
         return false;
     if (!m_row_indexes.is_attached() || m_row_indexes.is_empty()) {
@@ -256,7 +270,7 @@ inline Table::RowExpr LinkView::get(size_t link_ndx) noexcept
     REALM_ASSERT(m_row_indexes.is_attached());
     REALM_ASSERT_3(link_ndx, <, m_row_indexes.size());
 
-    Table& target_table = m_origin_column.get_target_table();
+    Table& target_table = m_origin_column->get_target_table();
     size_t target_row_ndx = to_size_t(m_row_indexes.get(link_ndx));
     return target_table[target_row_ndx];
 }
@@ -281,7 +295,7 @@ inline void LinkView::add(size_t target_row_ndx)
 inline size_t LinkView::find(size_t target_row_ndx, size_t start) const noexcept
 {
     REALM_ASSERT(is_attached());
-    REALM_ASSERT_3(target_row_ndx, <, m_origin_column.get_target_table().size());
+    REALM_ASSERT_3(target_row_ndx, <, m_origin_column->get_target_table().size());
     REALM_ASSERT_3(start, <=, size());
 
     if (!m_row_indexes.is_attached())
@@ -319,24 +333,18 @@ inline void LinkView::set_origin_row_index(size_t row_ndx) noexcept
 
 inline const Table& LinkView::get_target_table() const noexcept
 {
-    return m_origin_column.get_target_table();
+    return m_origin_column->get_target_table();
 }
 
 inline Table& LinkView::get_target_table() noexcept
 {
-    return m_origin_column.get_target_table();
+    return m_origin_column->get_target_table();
 }
 
 inline void LinkView::refresh_accessor_tree(size_t new_row_ndx) noexcept
 {
-    Array& root = *m_row_indexes.get_root_array();
-    root.set_ndx_in_parent(new_row_ndx);
-    if (ref_type ref = root.get_ref_from_parent()) {
-        root.init_from_ref(ref);
-    }
-    else {
-        root.detach();
-    }
+    set_origin_row_index(new_row_ndx);
+    m_row_indexes.init_from_parent();
 }
 
 inline void LinkView::update_from_parent(size_t old_baseline) noexcept

@@ -55,7 +55,7 @@ let EXC_TYPES_COUNT = 14
 struct execTypesCountTuple<T: ExpressibleByIntegerLiteral> {
 	// From /usr/include/mach/i386/exception.h
 	// #define EXC_TYPES_COUNT 14 /* incl. illegal exception 0 */
-	var value: (T,T,T,T,T,T,T,T,T,T,T,T,T,T) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+	var value: (T, T, T, T, T, T, T, T, T, T, T, T, T, T) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 	init() {
 	}
 }

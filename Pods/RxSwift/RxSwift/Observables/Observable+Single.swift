@@ -6,8 +6,6 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
 // MARK: distinct until changed
 
 extension ObservableType where E: Equatable {
@@ -194,5 +192,39 @@ extension ObservableType {
     public func scan<A>(_ seed: A, accumulator: @escaping (A, E) throws -> A)
         -> Observable<A> {
         return Scan(source: self.asObservable(), seed: seed, accumulator: accumulator)
+    }
+}
+
+// MARK: defaultIfEmpty
+
+extension ObservableType {
+    
+    /**
+     Emits elements from the source observable sequence, or a default element if the source observable sequence is empty.
+     
+     - seealso: [DefaultIfEmpty operator on reactivex.io](http://reactivex.io/documentation/operators/defaultifempty.html)
+     
+     - parameter default: Default element to be sent if the source does not emit any elements
+     - returns: An observable sequence which emits default element end completes in case the original sequence is empty
+     */
+    public func ifEmpty(default: E) -> Observable<E> {
+        return DefaultIfEmpty(source: self.asObservable(), default: `default`)
+    }
+}
+
+extension ObservableType {
+
+    /**
+     Skips elements and completes (or errors) when the receiver completes (or errors). Equivalent to filter that always returns false.
+
+     - seealso: [ignoreElements operator on reactivex.io](http://reactivex.io/documentation/operators/ignoreelements.html)
+
+     - returns: An observable sequence that skips all elements of the source sequence.
+     */
+    public func ignoreElements()
+        -> Observable<E> {
+        return filter { _ -> Bool in
+            return false
+        }
     }
 }

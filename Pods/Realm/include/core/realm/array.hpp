@@ -540,6 +540,7 @@ public:
     ///        this \c Array, sorted in ascending order
     /// \return the index of the value if found, or realm::not_found otherwise
     size_t find_gte(const int64_t target, size_t start, size_t end = size_t(-1)) const;
+
     void preset(int64_t min, int64_t max, size_t num_items);
     void preset(size_t bitwidth, size_t num_items);
 
@@ -935,6 +936,9 @@ protected:
     void copy_on_write();
 
 private:
+    void do_copy_on_write(size_t minimum_size=0);
+    void do_ensure_minimum_width(int_fast64_t);
+
     template <size_t w>
     int64_t sum(size_t start, size_t end) const;
 
@@ -977,6 +981,8 @@ protected:
     void destroy_children(size_t offset = 0) noexcept;
 
     std::pair<ref_type, size_t> get_to_dot_parent(size_t ndx_in_parent) const override;
+
+    bool is_read_only() const noexcept;
 
 protected:
     // Getters and Setters for adaptive-packed arrays
@@ -1048,8 +1054,6 @@ private:
     friend class GroupWriter;
     friend class StringColumn;
 };
-
-
 
 
 // Implementation:
@@ -1943,6 +1947,33 @@ inline void Array::update_child_ref(size_t child_ndx, ref_type new_ref)
 inline ref_type Array::get_child_ref(size_t child_ndx) const noexcept
 {
     return get_as_ref(child_ndx);
+}
+
+inline bool Array::is_read_only() const noexcept
+{
+    REALM_ASSERT_DEBUG(is_attached());
+    return m_alloc.is_read_only(m_ref);
+}
+
+inline void Array::copy_on_write()
+{
+#if REALM_ENABLE_MEMDEBUG
+    // We want to relocate this array regardless if there is a need or not, in order to catch use-after-free bugs.
+    // Only exception is inside GroupWriter::write_group() (see explanation at the definition of the m_no_relocation
+    // member)
+    if (!m_no_relocation) {
+#else
+    if (is_read_only()) {
+#endif
+        do_copy_on_write();
+    }
+}
+
+inline void Array::ensure_minimum_width(int_fast64_t value)
+{
+    if (value >= m_lbound && value <= m_ubound)
+        return;
+    do_ensure_minimum_width(value);
 }
 
 

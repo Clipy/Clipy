@@ -53,19 +53,19 @@ namespace util {
 class Logger {
 public:
     template <class... Params>
-    void trace(const char* message, Params...);
+    void trace(const char* message, Params&&...);
     template <class... Params>
-    void debug(const char* message, Params...);
+    void debug(const char* message, Params&&...);
     template <class... Params>
-    void detail(const char* message, Params...);
+    void detail(const char* message, Params&&...);
     template <class... Params>
-    void info(const char* message, Params...);
+    void info(const char* message, Params&&...);
     template <class... Params>
-    void warn(const char* message, Params...);
+    void warn(const char* message, Params&&...);
     template <class... Params>
-    void error(const char* message, Params...);
+    void error(const char* message, Params&&...);
     template <class... Params>
-    void fatal(const char* message, Params...);
+    void fatal(const char* message, Params&&...);
 
     /// Specifies criticality when passed to log(). Functions as a criticality
     /// threshold when returned from LevelThreshold::get().
@@ -83,7 +83,7 @@ public:
     enum class Level { all, trace, debug, detail, info, warn, error, fatal, off };
 
     template <class... Params>
-    void log(Level, const char* message, Params...);
+    void log(Level, const char* message, Params&&...);
 
     /// Shorthand for `int(level) >= int(level_threshold.get())`.
     bool would_log(Level level) const noexcept;
@@ -105,14 +105,14 @@ protected:
 
 private:
     struct State;
-    template <class>
-    struct Subst;
 
     template <class... Params>
-    REALM_NOINLINE void do_log(Level, const char* message, Params...);
+    REALM_NOINLINE void do_log(Level, const char* message, Params&&...);
     void log_impl(State&);
     template <class Param, class... Params>
-    void log_impl(State&, const Param&, Params...);
+    void log_impl(State&, Param&&, Params&&...);
+    template <class Param>
+    static void subst(State&, Param&&);
 };
 
 template <class C, class T>
@@ -237,72 +237,53 @@ struct Logger::State {
     }
 };
 
-template <class T>
-struct Logger::Subst {
-    void operator()(const T& param, State* state)
-    {
-        state->m_formatter << "%" << state->m_param_num;
-        std::string key = state->m_formatter.str();
-        state->m_formatter.str(std::string());
-        std::string::size_type j = state->m_search.find(key);
-        if (j != std::string::npos) {
-            state->m_formatter << param;
-            std::string str = state->m_formatter.str();
-            state->m_formatter.str(std::string());
-            state->m_message.replace(j, key.size(), str);
-            state->m_search.replace(j, key.size(), std::string(str.size(), '\0'));
-        }
-        ++state->m_param_num;
-    }
-};
-
 template <class... Params>
-inline void Logger::trace(const char* message, Params... params)
+inline void Logger::trace(const char* message, Params&&... params)
 {
-    log(Level::trace, message, params...); // Throws
+    log(Level::trace, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::debug(const char* message, Params... params)
+inline void Logger::debug(const char* message, Params&&... params)
 {
-    log(Level::debug, message, params...); // Throws
+    log(Level::debug, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::detail(const char* message, Params... params)
+inline void Logger::detail(const char* message, Params&&... params)
 {
-    log(Level::detail, message, params...); // Throws
+    log(Level::detail, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::info(const char* message, Params... params)
+inline void Logger::info(const char* message, Params&&... params)
 {
-    log(Level::info, message, params...); // Throws
+    log(Level::info, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::warn(const char* message, Params... params)
+inline void Logger::warn(const char* message, Params&&... params)
 {
-    log(Level::warn, message, params...); // Throws
+    log(Level::warn, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::error(const char* message, Params... params)
+inline void Logger::error(const char* message, Params&&... params)
 {
-    log(Level::error, message, params...); // Throws
+    log(Level::error, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::fatal(const char* message, Params... params)
+inline void Logger::fatal(const char* message, Params&&... params)
 {
-    log(Level::fatal, message, params...); // Throws
+    log(Level::fatal, message, std::forward<Params>(params)...); // Throws
 }
 
 template <class... Params>
-inline void Logger::log(Level level, const char* message, Params... params)
+inline void Logger::log(Level level, const char* message, Params&&... params)
 {
     if (would_log(level))
-        do_log(level, message, params...); // Throws
+        do_log(level, message, std::forward<Params>(params)...); // Throws
 }
 
 inline bool Logger::would_log(Level level) const noexcept
@@ -321,26 +302,43 @@ inline Logger::Logger(const LevelThreshold& lt) noexcept
 
 inline void Logger::do_log(Logger& logger, Level level, std::string message)
 {
-    logger.do_log(level, std::move(message));
+    logger.do_log(level, std::move(message)); // Throws
 }
 
 template <class... Params>
-void Logger::do_log(Level level, const char* message, Params... params)
+void Logger::do_log(Level level, const char* message, Params&&... params)
 {
     State state(level, message);
-    log_impl(state, params...);
+    log_impl(state, std::forward<Params>(params)...); // Throws
 }
 
 inline void Logger::log_impl(State& state)
 {
-    do_log(state.m_level, std::move(state.m_message));
+    do_log(state.m_level, std::move(state.m_message)); // Throws
 }
 
 template <class Param, class... Params>
-inline void Logger::log_impl(State& state, const Param& param, Params... params)
+inline void Logger::log_impl(State& state, Param&& param, Params&&... params)
 {
-    Subst<Param>()(param, &state);
-    log_impl(state, params...);
+    subst(state, std::forward<Param>(param));         // Throws
+    log_impl(state, std::forward<Params>(params)...); // Throws
+}
+
+template <class Param>
+void Logger::subst(State& state, Param&& param)
+{
+    state.m_formatter << "%" << state.m_param_num;
+    std::string key = state.m_formatter.str();
+    state.m_formatter.str(std::string());
+    std::string::size_type j = state.m_search.find(key);
+    if (j != std::string::npos) {
+        state.m_formatter << std::forward<Param>(param);
+        std::string str = state.m_formatter.str();
+        state.m_formatter.str(std::string());
+        state.m_message.replace(j, key.size(), str);
+        state.m_search.replace(j, key.size(), std::string(str.size(), '\0'));
+    }
+    ++state.m_param_num;
 }
 
 template <class C, class T>

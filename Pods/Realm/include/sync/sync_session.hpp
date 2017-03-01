@@ -25,6 +25,7 @@
 #include "sync_config.hpp"
 
 #include <mutex>
+#include <unordered_map>
 
 namespace realm {
 
@@ -49,6 +50,7 @@ class Session;
 }
 
 using SyncSessionTransactCallback = void(VersionID old_version, VersionID new_version);
+using SyncProgressNotifierCallback = void(uint64_t transferred_bytes, uint64_t transferrable_bytes);
 
 class SyncSession : public std::enable_shared_from_this<SyncSession> {
 public:
@@ -60,27 +62,66 @@ public:
         Error,
     };
     PublicState state() const;
-    // FIXME: Sessions should be safely destroyable at any time; the fact that they aren't is a bug
-    // (https://github.com/realm/realm-sync/issues/986)
-    bool can_be_safely_destroyed() const;
 
     bool is_in_error_state() const {
         return state() == PublicState::Error;
     }
 
+    // The on-disk path of the Realm file backing the Realm this `SyncSession` represents.
     std::string const& path() const { return m_realm_path; }
 
-    void wait_for_upload_completion();
-    void wait_for_download_completion();
+    // Register a callback that will be called when all pending uploads have completed.
+    // The callback is run asynchronously, and upon whatever thread the underlying sync client
+    // chooses to run it on. The method returns immediately with true if the callback was
+    // successfully registered, false otherwise. If the method returns false the callback will
+    // never be run.
+    // If this method is called before the session has been `bind()`ed, it will return false.
+    bool wait_for_upload_completion(std::function<void(std::error_code)> callback);
 
-    void wait_for_upload_completion(std::function<void()> callback);
-    void wait_for_download_completion(std::function<void()> callback);
+    // Register a callback that will be called when all pending downloads have been completed.
+    // Works the same way as `wait_for_upload_completion()`.
+    bool wait_for_download_completion(std::function<void(std::error_code)> callback);
+
+    enum class NotifierType {
+        upload, download
+    };
+    // Register a notifier that updates the app regarding progress.
+    // The notifier will always be called immediately during the function, to provide
+    // the caller with an initial assessment of the state of synchronization.
+    //
+    // If `is_streaming` is true, then the notifier will be called forever, and will
+    // always contain the most up-to-date number of downloadable or uploadable bytes.
+    // Otherwise, the number of downloaded or uploaded bytes will always be reported
+    // relative to the number of downloadable or uploadable bytes at the point in time
+    // when the notifier was registered.
+    //
+    // An integer representing a token is returned. This token can be used to manually
+    // unregister the notifier. If the integer is 0, the notifier was not registered.
+    //
+    // Note that bindings should dispatch the callback onto a separate thread or queue
+    // in order to avoid blocking the sync client.
+    uint64_t register_progress_notifier(std::function<SyncProgressNotifierCallback>, NotifierType, bool is_streaming);
+
+    // Unregister a previously registered notifier. If the token is invalid,
+    // this method does nothing.
+    void unregister_progress_notifier(uint64_t);
+
+    // Wait for any pending uploads to complete, blocking the calling thread.
+    // Returns `false` if the method did not attempt to wait, either because the
+    // session is in an error state or because it hasn't yet been `bind()`ed.
+    bool wait_for_upload_completion_blocking();
 
     // If the sync session is currently `Dying`, ask it to stay alive instead.
     // If the sync session is currently `Inactive`, recreate it. Otherwise, a no-op.
     static void revive_if_needed(std::shared_ptr<SyncSession> session);
 
+    // Give the `SyncSession` a new, valid token, and ask it to refresh the underlying session.
+    // If the session can't accept a new token, this method does nothing.
+    // Note that, if this is the first time the session will be given a token, `server_url` must
+    // be set.
     void refresh_access_token(std::string access_token, util::Optional<std::string> server_url);
+
+    // Give the `SyncSession` an administrator token, and ask it to immediately `bind()` the session.
     void bind_with_admin_token(std::string admin_token, std::string server_url);
 
     // Inform the sync session that it should close.
@@ -92,16 +133,20 @@ public:
     // Inform the sync session that it should log out.
     void log_out();
 
+    // An object representing the user who owns the Realm this `SyncSession` represents.
     std::shared_ptr<SyncUser> user() const
     {
         return m_config.user;
     }
 
+    // A copy of the configuration object describing the Realm this `SyncSession` represents.
     const SyncConfig& config() const
     {
         return m_config;
     }
 
+    // If the `SyncSession` has been configured, the full remote URL of the Realm
+    // this `SyncSession` represents.
     util::Optional<std::string> full_realm_url() const
     {
         return m_server_url;
@@ -129,6 +174,19 @@ public:
         }
     };
 
+    // Expose some internal functionality to testing code.
+    struct OnlyForTesting {
+        static void handle_error(SyncSession& session, SyncError error)
+        {
+            session.handle_error(std::move(error));
+        }
+
+        static void handle_progress_update(SyncSession& session, uint64_t downloaded, uint64_t downloadable,
+                                           uint64_t uploaded, uint64_t uploadable) {
+            session.handle_progress_update(downloaded, downloadable, uploaded, uploadable);
+        }
+    };
+
 private:
     struct State;
     friend struct _impl::sync_session_states::WaitingForAccessToken;
@@ -139,10 +197,14 @@ private:
 
     friend class realm::SyncManager;
     // Called by SyncManager {
-    SyncSession(std::shared_ptr<_impl::SyncClient>, std::string realm_path, SyncConfig);
+    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
     // }
 
     bool can_wait_for_network_completion() const;
+
+    void handle_error(SyncError);
+    static std::string get_recovery_file_path();
+    void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t);
 
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
     void set_error_handler(std::function<SyncSessionErrorHandler>);
@@ -156,16 +218,61 @@ private:
     std::function<SyncSessionTransactCallback> m_sync_transact_callback;
     std::function<SyncSessionErrorHandler> m_error_handler;
 
+    // How many bytes are uploadable or downloadable.
+    struct Progress {
+        uint64_t uploadable;
+        uint64_t downloadable;
+        uint64_t uploaded;
+        uint64_t downloaded;
+    };
+
+    // A PODS encapsulating some information for progress notifier callbacks a binding
+    // can register upon this session.
+    struct NotifierPackage {
+        std::function<SyncProgressNotifierCallback> notifier;
+        bool is_streaming;
+        NotifierType direction;
+        util::Optional<uint64_t> captured_transferrable;
+
+        void update(const Progress&);
+        std::function<void()> create_invocation(const Progress&, bool& is_expired) const;
+    };
+
+    // A counter used as a token to identify progress notifier callbacks registered on this session.
+    uint64_t m_progress_notifier_token = 1;
+
+    // Will be `none` until we've received the initial notification from sync.  Note that this
+    // happens only once ever during the lifetime of a given `SyncSession`, since these values are
+    // expected to semi-monotonically increase, and a lower-bounds estimate is still useful in the
+    // event more up-to-date information isn't yet available.  FIXME: If we support transparent
+    // client reset in the future, we might need to reset the progress state variables if the Realm
+    // is rolled back.
+    util::Optional<Progress> m_current_progress;
+
+    std::unordered_map<uint64_t, NotifierPackage> m_notifiers;
+
     mutable std::mutex m_state_mutex;
+    mutable std::mutex m_progress_notifier_mutex;
 
     const State* m_state = nullptr;
-    size_t m_pending_upload_threads = 0;
+    size_t m_death_count = 0;
 
     SyncConfig m_config;
 
     std::string m_realm_path;
-    std::shared_ptr<_impl::SyncClient> m_client;
+    _impl::SyncClient& m_client;
+
+    // The underlying `Session` object that is owned and managed by this `SyncSession`.
+    // The session is first created when the `SyncSession` is moved out of its initial `inactive` state.
+    // The session might be destroyed if the `SyncSession` becomes inactive again (for example, if the
+    // user owning the session logs out). It might be created anew if the session is revived (if a
+    // logged-out user logs back in, the object store sync code will revive their sessions).
     std::unique_ptr<sync::Session> m_session;
+
+    // Whether or not the session object in `m_session` has been `bind()`ed before.
+    // This determines how the `SyncSession` behaves when refreshing tokens.
+    bool m_session_has_been_bound;
+
     util::Optional<int_fast64_t> m_deferred_commit_notification;
     bool m_deferred_close = false;
 

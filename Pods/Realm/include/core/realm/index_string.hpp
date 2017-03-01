@@ -277,7 +277,7 @@ struct GetIndexData<int64_t> {
     static StringData get_index_data(const int64_t& value, StringIndex::StringConversionBuffer& buffer)
     {
         const char* c = reinterpret_cast<const char*>(&value);
-        std::copy(c, c + sizeof(int64_t), buffer.data());
+        std::copy_n(c, sizeof(int64_t), buffer.data());
         return StringData{buffer.data(), sizeof(int64_t)};
     }
 };

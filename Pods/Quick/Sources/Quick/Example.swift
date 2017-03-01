@@ -23,10 +23,10 @@ final public class Example: NSObject {
     weak internal var group: ExampleGroup?
 
     private let internalDescription: String
-    private let closure: () -> ()
+    private let closure: () -> Void
     private let flags: FilterFlags
 
-    internal init(description: String, callsite: Callsite, flags: FilterFlags, closure: @escaping () -> ()) {
+    internal init(description: String, callsite: Callsite, flags: FilterFlags, closure: @escaping () -> Void) {
         self.internalDescription = description
         self.closure = closure
         self.callsite = callsite
@@ -102,10 +102,12 @@ final public class Example: NSObject {
     }
 }
 
-/**
-    Returns a boolean indicating whether two Example objects are equal.
-    If two examples are defined at the exact same callsite, they must be equal.
-*/
-public func == (lhs: Example, rhs: Example) -> Bool {
-    return lhs.callsite == rhs.callsite
+extension Example {
+    /**
+        Returns a boolean indicating whether two Example objects are equal.
+        If two examples are defined at the exact same callsite, they must be equal.
+    */
+    @nonobjc public static func == (lhs: Example, rhs: Example) -> Bool {
+        return lhs.callsite == rhs.callsite
+    }
 }

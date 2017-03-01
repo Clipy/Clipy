@@ -113,7 +113,7 @@ void* round_up(void* p, size_t align);
 void* round_down(void* p, size_t align);
 size_t round_up(size_t p, size_t align);
 size_t round_down(size_t p, size_t align);
-void millisleep(size_t milliseconds);
+void millisleep(unsigned long milliseconds);
 
 #ifdef REALM_SLAB_ALLOC_TUNE
 void process_mem_usage(double& vm_usage, double& resident_set);

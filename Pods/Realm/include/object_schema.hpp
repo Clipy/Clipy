@@ -53,6 +53,7 @@ public:
     const Property *primary_key_property() const {
         return property_for_name(primary_key);
     }
+    bool property_is_computed(Property const& property) const;
 
     void validate(Schema const& schema, std::vector<ObjectSchemaValidationException>& exceptions) const;
 

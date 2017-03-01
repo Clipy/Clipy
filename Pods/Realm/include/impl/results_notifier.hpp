@@ -43,6 +43,8 @@ private:
 
     SortDescriptor::HandoverPatch m_sort_handover;
     SortDescriptor m_sort;
+    SortDescriptor::HandoverPatch m_distinct_handover;
+    SortDescriptor m_distinct;
     bool m_target_is_in_table_order;
 
     // The TableView resulting from running the query. Will be detached unless

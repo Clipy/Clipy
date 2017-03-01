@@ -12,17 +12,9 @@
 > This is not a robust full featured XML parser, but rather simple,  
 lightweight and easy to use utility for casual XML handling.
 
-**AEXML** is a [minion](http://tadija.net/public/minion.png) which consists of these classes:  
-
-Class | Description
------------- | -------------
-`AEXMLElement` | Base class
-`AEXMLDocument` | Inherited from `AEXMLElement` with a few addons
-`AEXMLParser` | Simple (private) wrapper around `Foundation.XMLParser`
-
 ## Index
 - [Features](#features)
-- [Example](#example)
+- [Usage](#usage)
     - [Read XML](#read-xml)
     - [Write XML](#write-xml)
 - [Requirements](#requirements)
@@ -35,7 +27,7 @@ Class | Description
 - Covered with [unit tests](https://github.com/tadija/AEXML/blob/master/Tests/AEXMLTests.swift)
 - Covered with [docs](http://cocoadocs.org/docsets/AEXML)
 
-## Example
+## Usage
 
 ### Read XML
 Let's say this is some XML string you picked up somewhere and made a variable `data: Data` from that.

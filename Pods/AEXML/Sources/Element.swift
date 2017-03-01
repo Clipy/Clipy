@@ -86,7 +86,7 @@ open class AEXMLElement {
     /// The first element with given name **(Empty element with error if not exists)**.
     open subscript(key: String) -> AEXMLElement {
         guard let
-            first = children.filter({ $0.name == key }).first
+            first = children.first(where: { $0.name == key })
         else {
             let errorElement = AEXMLElement(name: key)
             errorElement.error = AEXMLError.elementNotFound

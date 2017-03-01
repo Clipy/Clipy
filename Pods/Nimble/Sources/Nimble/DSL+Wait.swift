@@ -39,7 +39,7 @@ internal class NMBWait: NSObject {
                     )
                     capture.tryBlock {
                         do {
-                            try action() {
+                            try action {
                                 done(.none)
                             }
                         } catch let e {
@@ -70,12 +70,12 @@ internal class NMBWait: NSObject {
             }
     }
 
-    #if _runtime(_ObjC)
-    @objc(untilFile:line:action:)
+    #if SWIFT_PACKAGE
     internal class func until(_ file: FileString = #file, line: UInt = #line, action: @escaping (() -> Void) -> Void) -> Void {
         until(timeout: 1, file: file, line: line, action: action)
     }
     #else
+    @objc(untilFile:line:action:)
     internal class func until(_ file: FileString = #file, line: UInt = #line, action: @escaping (() -> Void) -> Void) -> Void {
         until(timeout: 1, file: file, line: line, action: action)
     }

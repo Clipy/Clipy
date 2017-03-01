@@ -25,7 +25,6 @@
 namespace realm {
 class BindingContext;
 class SharedGroup;
-enum class SchemaMode : uint8_t;
 
 namespace _impl {
 class NotifierPackage;
@@ -34,16 +33,13 @@ struct TransactionChangeInfo;
 namespace transaction {
 // Advance the read transaction version, with change notifications sent to delegate
 // Must not be called from within a write transaction.
-void advance(SharedGroup& sg, BindingContext* binding_context,
-             SchemaMode schema_mode, NotifierPackage&);
-void advance(SharedGroup& sg, BindingContext* binding_context,
-             SchemaMode schema_mode, VersionID);
+void advance(SharedGroup& sg, BindingContext* binding_context, NotifierPackage&);
+void advance(SharedGroup& sg, BindingContext* binding_context, VersionID);
 
 // Begin a write transaction
 // If the read transaction version is not up to date, will first advance to the
 // most recent read transaction and sent notifications to delegate
-void begin(SharedGroup& sg, BindingContext* binding_context, SchemaMode schema_mode,
-           NotifierPackage&);
+void begin(SharedGroup& sg, BindingContext* binding_context, NotifierPackage&);
 void begin_without_validation(SharedGroup& sg);
 
 // Commit a write transaction
@@ -54,9 +50,7 @@ void commit(SharedGroup& sg);
 void cancel(SharedGroup& sg, BindingContext* binding_context);
 
 // Advance the read transaction version, with change information gathered in info
-void advance(SharedGroup& sg,
-             TransactionChangeInfo& info,
-             VersionID version=VersionID{});
+void advance(SharedGroup& sg, TransactionChangeInfo& info, VersionID version=VersionID{});
 } // namespace transaction
 } // namespace _impl
 } // namespace realm

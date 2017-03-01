@@ -210,6 +210,7 @@ public:
     Query& begins_with(size_t column_ndx, StringData value, bool case_sensitive = true);
     Query& ends_with(size_t column_ndx, StringData value, bool case_sensitive = true);
     Query& contains(size_t column_ndx, StringData value, bool case_sensitive = true);
+    Query& like(size_t column_ndx, StringData value, bool case_sensitive = true);
 
     // These are shortcuts for equal(StringData(c_str)) and
     // not_equal(StringData(c_str)), and are needed to avoid unwanted

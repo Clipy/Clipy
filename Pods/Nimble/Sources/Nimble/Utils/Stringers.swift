@@ -1,6 +1,5 @@
 import Foundation
 
-
 internal func identityAsString(_ value: Any?) -> String {
     let anyObject: AnyObject?
 #if os(Linux)
@@ -51,7 +50,7 @@ extension NSNumber: TestOutputStringConvertible {
     // the travis CI build on linux.
     public var testDescription: String {
         let description = self.description
-        
+
         if description.contains(".") {
             // Travis linux swiftpm build doesn't like casting String to NSString,
             // which is why this annoying nested initializer thing is here.
@@ -87,14 +86,14 @@ extension AnySequence: TestOutputStringConvertible {
         let generator = self.makeIterator()
         var strings = [String]()
         var value: AnySequence.Iterator.Element?
-        
+
         repeat {
             value = generator.next()
             if let value = value {
                 strings.append(stringify(value))
             }
         } while value != nil
-        
+
         let list = strings.joined(separator: ", ")
         return "[\(list)]"
     }
@@ -149,11 +148,11 @@ public func stringify<T>(_ value: T) -> String {
     if let value = value as? TestOutputStringConvertible {
         return value.testDescription
     }
-    
+
     if let value = value as? CustomDebugStringConvertible {
         return value.debugDescription
     }
-    
+
     return String(describing: value)
 }
 

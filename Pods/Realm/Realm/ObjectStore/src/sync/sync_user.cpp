@@ -63,13 +63,13 @@ std::vector<std::shared_ptr<SyncSession>> SyncUser::all_sessions()
     return sessions;
 }
 
-std::shared_ptr<SyncSession> SyncUser::session_for_url(const std::string& url)
+std::shared_ptr<SyncSession> SyncUser::session_for_on_disk_path(const std::string& path)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (m_state == State::Error) {
         return nullptr;
     }
-    auto it = m_sessions.find(url);
+    auto it = m_sessions.find(path);
     if (it == m_sessions.end()) {
         return nullptr;
     }
@@ -171,19 +171,12 @@ SyncUser::State SyncUser::state() const
 
 void SyncUser::register_session(std::shared_ptr<SyncSession> session)
 {
-    const std::string& url = session->config().realm_url;
+    const std::string& path = session->path();
     std::unique_lock<std::mutex> lock(m_mutex);
-    auto has_session = [&] (const auto& sessions) {
-        auto it = sessions.find(url);
-        return it != sessions.end() && !it->second.expired();
-    };
-    if (has_session(m_sessions) || has_session(m_waiting_sessions)) {
-        throw std::invalid_argument("Can only register sessions that haven't previously been registered.");
-    }
     switch (m_state) {
         case State::Active:
             // Immediately ask the session to come online.
-            m_sessions[url] = session;
+            m_sessions[path] = session;
             if (m_is_admin) {
                 session->bind_with_admin_token(m_refresh_token, session->config().realm_url);
             } else {
@@ -192,7 +185,7 @@ void SyncUser::register_session(std::shared_ptr<SyncSession> session)
             }
             break;
         case State::LoggedOut:
-            m_waiting_sessions[url] = session;
+            m_waiting_sessions[path] = session;
             break;
         case State::Error:
             break;

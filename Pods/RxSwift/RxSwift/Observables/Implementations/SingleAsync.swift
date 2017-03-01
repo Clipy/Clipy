@@ -6,9 +6,8 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
-class SingleAsyncSink<ElementType, O: ObserverType> : Sink<O>, ObserverType where O.E == ElementType {
+final class SingleAsyncSink<O: ObserverType> : Sink<O>, ObserverType {
+    typealias ElementType = O.E
     typealias Parent = SingleAsync<ElementType>
     typealias E = ElementType
     
@@ -57,7 +56,7 @@ class SingleAsyncSink<ElementType, O: ObserverType> : Sink<O>, ObserverType wher
     }
 }
 
-class SingleAsync<Element>: Producer<Element> {
+final class SingleAsync<Element>: Producer<Element> {
     typealias Predicate = (Element) throws -> Bool
     
     fileprivate let _source: Observable<Element>

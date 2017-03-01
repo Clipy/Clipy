@@ -97,7 +97,7 @@ struct IsNotRemoveProperty {
 struct GetRemovedColumn {
     size_t operator()(SchemaChange sc) const { return sc.visit(*this); }
     size_t operator()(schema_change::RemoveProperty p) const { return p.property->table_column; }
-    template<typename T> size_t operator()(T) const { __builtin_unreachable(); }
+    template<typename T> size_t operator()(T) const { REALM_COMPILER_HINT_UNREACHABLE(); }
 };
 }
 
@@ -109,6 +109,10 @@ static void compare(ObjectSchema const& existing_schema,
         auto target_prop = target_schema.property_for_name(current_prop.name);
 
         if (!target_prop) {
+            changes.emplace_back(schema_change::RemoveProperty{&existing_schema, &current_prop});
+            continue;
+        }
+        if (target_schema.property_is_computed(*target_prop)) {
             changes.emplace_back(schema_change::RemoveProperty{&existing_schema, &current_prop});
             continue;
         }

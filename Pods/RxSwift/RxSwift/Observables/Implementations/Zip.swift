@@ -6,8 +6,6 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
 protocol ZipSinkProtocol : class
 {
     func next(_ index: Int)
@@ -20,7 +18,7 @@ class ZipSink<O: ObserverType> : Sink<O>, ZipSinkProtocol {
     
     let _arity: Int
 
-    let _lock = NSRecursiveLock()
+    let _lock = RecursiveLock()
 
     // state
     private var _isDone: [Bool]
@@ -102,7 +100,7 @@ class ZipSink<O: ObserverType> : Sink<O>, ZipSinkProtocol {
     }
 }
 
-class ZipObserver<ElementType>
+final class ZipObserver<ElementType>
     : ObserverType
     , LockOwnerType
     , SynchronizedOnType {
@@ -111,14 +109,14 @@ class ZipObserver<ElementType>
 
     private var _parent: ZipSinkProtocol?
     
-    let _lock: NSRecursiveLock
+    let _lock: RecursiveLock
     
     // state
     private let _index: Int
     private let _this: Disposable
     private let _setNextValue: ValueSetter
     
-    init(lock: NSRecursiveLock, parent: ZipSinkProtocol, index: Int, setNextValue: @escaping ValueSetter, this: Disposable) {
+    init(lock: RecursiveLock, parent: ZipSinkProtocol, index: Int, setNextValue: @escaping ValueSetter, this: Disposable) {
         _lock = lock
         _parent = parent
         _index = index

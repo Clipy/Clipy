@@ -1,6 +1,9 @@
 ![](http://f.cl.ly/items/0r1E192C1R0b2g2Q3h2w/QuickLogo_Color.png)
 
 [![Build Status](https://travis-ci.org/Quick/Quick.svg?branch=master)](https://travis-ci.org/Quick/Quick)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Quick.svg)](https://cocoapods.org/pods/Quick)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Platforms](https://img.shields.io/cocoapods/p/Quick.svg)](https://cocoapods.org/pods/Quick)
 
 Quick is a behavior-driven development framework for Swift and Objective-C.
 Inspired by [RSpec](https://github.com/rspec/rspec), [Specta](https://github.com/specta/specta), and [Ginkgo](https://github.com/onsi/ginkgo).
@@ -41,7 +44,7 @@ Certain versions of Quick and Nimble only support certain versions of Swift. Dep
 
 |Swift version        |Quick version   |Nimble version |
 |:--------------------|:---------------|:--------------|
-|Swift 3              |v0.10.0 or later|v5.0.0 or later|
+|Swift 3              |v1.0.0 or later |v5.0.0 or later|
 |Swift 2.2 / Swift 2.3|v0.9.3          |v4.1.0         |
 
 ## Documentation
@@ -53,23 +56,23 @@ All documentation can be found in the [Documentation folder](./Documentation), i
 
 use_frameworks!
 
-def testing_pods
+target "MyApp" do
+  # Normal libraries
+
+  abstract_target 'Tests' do
+    inherit! :search_paths
+    target "MyAppTests"
+    target "MyAppUITests"
+
     pod 'Quick'
     pod 'Nimble'
-end
-
-target 'MyTests' do
-    testing_pods
-end
-
-target 'MyUITests' do
-    testing_pods
+  end
 end
 ```
 
 ## Projects using Quick
 
-Many apps use both Quick and Nimble however, as they are not included in the app binary, neither appear in “Top Used Libraries” blog posts. Therefore, it would be greatly appreciated to remind contributors that their efforts are valued by compiling a list of organizations and projects that use them. 
+Over ten-thousand apps use either Quick and Nimble however, as they are not included in the app binary, neither appear in “Top Used Libraries” blog posts. Therefore, it would be greatly appreciated to remind contributors that their efforts are valued by compiling a list of organizations and projects that use them. 
 
 Does your organization or project use Quick and Nimble? If yes, [please add your project to the list](https://github.com/Quick/Quick/wiki/Projects-using-Quick).
 

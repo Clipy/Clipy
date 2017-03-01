@@ -1,22 +1,22 @@
 PODS:
-  - AEXML (4.0.1)
-  - Crashlytics (3.8.3):
+  - AEXML (4.0.2)
+  - Crashlytics (3.8.4):
     - Fabric (~> 1.6.3)
   - Fabric (1.6.11)
   - KeyHolder (2.0.0):
     - Magnet (~> 2.0)
   - LoginServiceKit (1.0.0)
   - Magnet (2.0.0)
-  - Nimble (5.1.1)
+  - Nimble (6.0.1)
   - PINCache (2.3)
-  - Quick (1.0.0)
-  - Realm (2.1.0):
-    - Realm/Headers (= 2.1.0)
-  - Realm/Headers (2.1.0)
-  - RealmSwift (2.1.0):
-    - Realm (= 2.1.0)
-  - RxCocoa (3.0.1):
-    - RxSwift (~> 3.0)
+  - Quick (1.1.0)
+  - Realm (2.4.3):
+    - Realm/Headers (= 2.4.3)
+  - Realm/Headers (2.4.3)
+  - RealmSwift (2.4.3):
+    - Realm (= 2.4.3)
+  - RxCocoa (3.2.0):
+    - RxSwift (~> 3.1)
   - RxOptional (3.1.3):
     - RxCocoa
     - RxSwift
@@ -24,7 +24,7 @@ PODS:
     - RxCocoa (~> 3.0)
     - RxSwift (~> 3.0)
     - Screeen (~> 1.0)
-  - RxSwift (3.0.1)
+  - RxSwift (3.2.0)
   - Screeen (1.0.0)
   - Sparkle (1.14.0)
 
@@ -54,24 +54,24 @@ CHECKOUT OPTIONS:
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
-  AEXML: 905e50474c0a261d335aa8be4ee32d22d69b6fd5
-  Crashlytics: 2b6dbe138a42395577cfa73dfa1aa7248cadf39e
+  AEXML: 7de81f28c6c876a210f31924acc2e326cd01e162
+  Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
   Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
   KeyHolder: 2389c8c9f911d56c413b1b288efa072e7a992c81
   LoginServiceKit: 7433d75d42dd0d8047f2d428b2de453c58947d3d
   Magnet: b30d2807dd0d8a349ce4e6574ecefa38012d02ca
-  Nimble: 415e3aa3267e7bc2c96b05fa814ddea7bb686a29
+  Nimble: 1527fd1bd2b4cf0636251a36bc8ab37e81da8347
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
-  Quick: 8024e4a47e6cc03a9d5245ef0948264fc6d27cff
-  Realm: bc829ad0ef3d4eea70c34cfcc3b1704d18d50df1
-  RealmSwift: a4d4abbf0088c337cab5b738054395842e4b3052
-  RxCocoa: 15a52fc590dcc700cb4a690a633b5c5184ce3a78
+  Quick: dafc587e21eed9f4cab3249b9f9015b0b7a7f71d
+  Realm: e08d60b0048ccccd3949c8c28a92c4db5712d7e9
+  RealmSwift: 30d49739ccb3385d201242736ca4dda56aec9dfc
+  RxCocoa: ccdf43101a70407097a29082f648ba1676075b30
   RxOptional: b97b59183af80d1e729ac9e51d09a10be668d6a8
   RxScreeen: 6aaf7a785a86399cbbf801318b45033e78d57340
-  RxSwift: af5680055c4ad04480189c52d28385b1029493a6
+  RxSwift: 46574f70d416b7923c237195939cc488a7fbf3a0
   Screeen: 07f3593d9941d7a9546f081e4f775ce85d974447
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
 
 PODFILE CHECKSUM: b55f99fb3c5fd6f6efabc88c9fdf99f2d6f9448d
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.0

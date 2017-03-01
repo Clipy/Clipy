@@ -6,13 +6,11 @@
 //  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
-import Foundation
-
-class TakeWhileSink<ElementType, O: ObserverType>
+final class TakeWhileSink<O: ObserverType>
     : Sink<O>
-    , ObserverType where O.E == ElementType {
-    typealias Parent = TakeWhile<ElementType>
-    typealias Element = ElementType
+    , ObserverType {
+    typealias Element = O.E
+    typealias Parent = TakeWhile<Element>
 
     fileprivate let _parent: Parent
 
@@ -52,11 +50,11 @@ class TakeWhileSink<ElementType, O: ObserverType>
     
 }
 
-class TakeWhileSinkWithIndex<ElementType, O: ObserverType>
+final class TakeWhileSinkWithIndex<O: ObserverType>
     : Sink<O>
-    , ObserverType where O.E == ElementType {
-    typealias Parent = TakeWhile<ElementType>
-    typealias Element = ElementType
+    , ObserverType {
+    typealias Element = O.E
+    typealias Parent = TakeWhile<Element>
     
     fileprivate let _parent: Parent
     
@@ -98,7 +96,7 @@ class TakeWhileSinkWithIndex<ElementType, O: ObserverType>
     
 }
 
-class TakeWhile<Element>: Producer<Element> {
+final class TakeWhile<Element>: Producer<Element> {
     typealias Predicate = (Element) throws -> Bool
     typealias PredicateWithIndex = (Element, Int) throws -> Bool
 

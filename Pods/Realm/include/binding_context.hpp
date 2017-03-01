@@ -21,6 +21,7 @@
 
 #include "index_set.hpp"
 
+#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -66,13 +67,21 @@ namespace realm {
 // private:
 //     std::list<std::function<void ()>> m_registered_notifications;
 // };
+class Realm;
 class BindingContext {
 public:
     virtual ~BindingContext() = default;
 
+    std::weak_ptr<Realm> realm;
+
     // If the user adds a notification handler to the Realm, will it ever
     // actually be called?
     virtual bool can_deliver_notifications() const noexcept { return true; }
+
+    // Called by the Realm when refresh called or a notification arrives which
+    // is triggered through write transaction committed by itself or a different
+    // Realm instance.
+    virtual void before_notify() { }
 
     // Called by the Realm when a write transaction is committed to the file by
     // a different Realm instance (possibly in a different process)

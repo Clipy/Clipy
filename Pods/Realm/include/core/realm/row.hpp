@@ -96,6 +96,7 @@ public:
 
     void set_int(size_t col_ndx, int_fast64_t value);
     void set_int_unique(size_t col_ndx, int_fast64_t value);
+    void add_int(size_t col_ndx, int_fast64_t value);
     void set_bool(size_t col_ndx, bool value);
     void set_float(size_t col_ndx, float value);
     void set_double(size_t col_ndx, double value);
@@ -493,6 +494,12 @@ template <class T, class R>
 inline void RowFuncs<T, R>::set_int_unique(size_t col_ndx, int_fast64_t value)
 {
     table()->set_int_unique(col_ndx, row_ndx(), value); // Throws
+}
+
+template <class T, class R>
+inline void RowFuncs<T, R>::add_int(size_t col_ndx, int_fast64_t value)
+{
+    table()->add_int(col_ndx, row_ndx(), value); // Throws
 }
 
 template <class T, class R>
