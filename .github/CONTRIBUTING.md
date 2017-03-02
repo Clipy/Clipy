@@ -23,3 +23,19 @@
 **If you are using Clipy please use the following snippet.**
 - [English version](https://github.com/Clipy/Clipy/blob/master/.github/git_message_en.xml)
 - [Japanese version](https://github.com/Clipy/Clipy/blob/master/.github/git_message_ja.xml)
+
+## Localization
+
+### Add New Language
+<img src="../Images/new_localization.png" width="600">
+
+After adding the language, please make changes to the various `.strings` files as follows.
+
+### Modify an Existing Language
+The files to be localized are as follows.
+- Localizable.strings ( `Clipy/Resources/#{language_name}.lproj/Localizable.strings` )
+- Preferences ( `Clipy/Sources/Preferences/#{language_name}.lproj/*.strings` )
+- PreferencesPanels ( `Clipy/Sources/Preferences/Panels/#{language_name}.lproj/*.strings` ) 
+- SnippetsEditor ( `Clipy/Sources/Snippets/#{language_name}.lproj/*.strings` ) 
+
+**English localization only, please edit `.xib` files directly**
