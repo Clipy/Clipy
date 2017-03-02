@@ -1,0 +1,9 @@
+
+/* Class = "NSTextFieldCell"; title = "Main Menu:"; ObjectID = "5sL-G8-1io"; */
+"5sL-G8-1io.title" = "メインメニュー:";
+
+/* Class = "NSTextFieldCell"; title = "History Menu:"; ObjectID = "Abl-cO-JwU"; */
+"Abl-cO-JwU.title" = "履歴メニュー:";
+
+/* Class = "NSTextFieldCell"; title = "Snippets Menu:"; ObjectID = "fXr-ry-5ds"; */
+"fXr-ry-5ds.title" = "スニペットメニュー:";
