@@ -163,24 +163,17 @@
 		FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnippetSpec.swift; sourceTree = "<group>"; };
 		FAAA885C1E6853B80088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA88621E6858030088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
-		FAAA88641E6858120088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA886C1E685DC70088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAAA886E1E685DCF0088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYExcludeAppPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88701E685DD40088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYExcludeAppPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88721E685E270088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAAA88741E685E2D0088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88761E685E310088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88781E685F360088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAAA887A1E685F3C0088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA887C1E685F3F0088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA887E1E6862370088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAAA88801E68623E0088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYShortcutsPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88821E6862400088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYShortcutsPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88841E68627D0088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
-		FAAA88861E6862830088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88881E6862850088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA888A1E6862D20088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
-		FAAA888C1E6862D70088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA888E1E6862D90088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataCleanService.swift; sourceTree = "<group>"; };
 		FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
@@ -837,7 +830,6 @@
 			children = (
 				FAAA885C1E6853B80088FB34 /* Base */,
 				FAAA88621E6858030088FB34 /* ja */,
-				FAAA88641E6858120088FB34 /* en */,
 			);
 			name = CPYBetaPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -846,7 +838,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				FAAA886C1E685DC70088FB34 /* Base */,
-				FAAA886E1E685DCF0088FB34 /* en */,
 				FAAA88701E685DD40088FB34 /* ja */,
 			);
 			name = CPYExcludeAppPreferenceViewController.xib;
@@ -856,7 +847,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				FAAA88721E685E270088FB34 /* Base */,
-				FAAA88741E685E2D0088FB34 /* en */,
 				FAAA88761E685E310088FB34 /* ja */,
 			);
 			name = CPYGeneralPreferenceViewController.xib;
@@ -866,7 +856,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				FAAA88781E685F360088FB34 /* Base */,
-				FAAA887A1E685F3C0088FB34 /* en */,
 				FAAA887C1E685F3F0088FB34 /* ja */,
 			);
 			name = CPYMenuPreferenceViewController.xib;
@@ -876,7 +865,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				FAAA887E1E6862370088FB34 /* Base */,
-				FAAA88801E68623E0088FB34 /* en */,
 				FAAA88821E6862400088FB34 /* ja */,
 			);
 			name = CPYShortcutsPreferenceViewController.xib;
@@ -886,7 +874,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				FAAA88841E68627D0088FB34 /* Base */,
-				FAAA88861E6862830088FB34 /* en */,
 				FAAA88881E6862850088FB34 /* ja */,
 			);
 			name = CPYTypePreferenceViewController.xib;
@@ -896,7 +883,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				FAAA888A1E6862D20088FB34 /* Base */,
-				FAAA888C1E6862D70088FB34 /* en */,
 				FAAA888E1E6862D90088FB34 /* ja */,
 			);
 			name = CPYUpdatesPreferenceViewController.xib;
