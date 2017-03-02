@@ -1,0 +1,39 @@
+
+/* Class = "NSButtonCell"; title = "Input \"⌘ + V\" after menu item selection"; ObjectID = "0yt-u0-ROt"; */
+"0yt-u0-ROt.title" = "Input \"⌘ + V\" after menu item selection";
+
+/* Class = "NSTextFieldCell"; title = "Appearance"; ObjectID = "FM4-mw-DCx"; */
+"FM4-mw-DCx.title" = "Appearance";
+
+/* Class = "NSTextFieldCell"; title = "Status Bar icon style:"; ObjectID = "Faj-kQ-G1v"; */
+"Faj-kQ-G1v.title" = "Status Bar icon style:";
+
+/* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
+"Lps-06-dPB.title" = "Sort history order by:";
+
+/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "Send crash report and error log (reflected at the next launch)";
+
+/* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
+"Nab-CO-ytH.title" = "Max clipboard history size:";
+
+/* Class = "NSTextFieldCell"; title = "Clipboard History"; ObjectID = "OOT-F5-Pal"; */
+"OOT-F5-Pal.title" = "Clipboard History";
+
+/* Class = "NSButtonCell"; title = "Launch on Login"; ObjectID = "Su3-mF-z1T"; */
+"Su3-mF-z1T.title" = "Launch on Login";
+
+/* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "YmS-J6-ERc"; */
+"YmS-J6-ERc.title" = "Date Created";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "aEh-u0-hQR"; */
+"aEh-u0-hQR.title" = "None";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "eeq-cw-v00"; */
+"eeq-cw-v00.title" = "items";
+
+/* Class = "NSMenuItem"; title = "Last Used"; ObjectID = "ju3-6a-6xj"; */
+"ju3-6a-6xj.title" = "Last Used";
+
+/* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
+"nDk-8y-89n.title" = "Behavior";

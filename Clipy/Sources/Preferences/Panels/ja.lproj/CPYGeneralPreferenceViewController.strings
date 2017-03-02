@@ -1,0 +1,39 @@
+
+/* Class = "NSButtonCell"; title = "Input \"⌘ + V\" after menu item selection"; ObjectID = "0yt-u0-ROt"; */
+"0yt-u0-ROt.title" = "メニュー項目選択後に \"⌘ + V\" を入力";
+
+/* Class = "NSTextFieldCell"; title = "Appearance"; ObjectID = "FM4-mw-DCx"; */
+"FM4-mw-DCx.title" = "アピアランス";
+
+/* Class = "NSTextFieldCell"; title = "Status Bar icon style:"; ObjectID = "Faj-kQ-G1v"; */
+"Faj-kQ-G1v.title" = "ステータスバー・アイコン:";
+
+/* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
+"Lps-06-dPB.title" = "履歴のソート順:";
+
+/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "クラッシュレポートやエラーログを送信する(次回起動時に反映)";
+
+/* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
+"Nab-CO-ytH.title" = "記憶する履歴の数:";
+
+/* Class = "NSTextFieldCell"; title = "Clipboard History"; ObjectID = "OOT-F5-Pal"; */
+"OOT-F5-Pal.title" = "クリップボード履歴";
+
+/* Class = "NSButtonCell"; title = "Launch on Login"; ObjectID = "Su3-mF-z1T"; */
+"Su3-mF-z1T.title" = "ログイン時に起動";
+
+/* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "YmS-J6-ERc"; */
+"YmS-J6-ERc.title" = "作成日";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "aEh-u0-hQR"; */
+"aEh-u0-hQR.title" = "なし";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "eeq-cw-v00"; */
+"eeq-cw-v00.title" = "項目";
+
+/* Class = "NSMenuItem"; title = "Last Used"; ObjectID = "ju3-6a-6xj"; */
+"ju3-6a-6xj.title" = "最終使用日";
+
+/* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
+"nDk-8y-89n.title" = "動作";
