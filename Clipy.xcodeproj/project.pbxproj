@@ -506,6 +506,7 @@
 				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				07B47785AE0AC2185B570C28 /* [CP] Embed Pods Frameworks */,
 				40BF6BFF1639341024558E7B /* [CP] Copy Pods Resources */,
+				FAAA88991E686CED0088FB34 /* BartyCrouch */,
 			);
 			buildRules = (
 			);
@@ -716,6 +717,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "releaseConfig=\"Release\"\nif [ \"$releaseConfig\" = \"${CONFIGURATION}\" ]; then\n    \"${PODS_ROOT}/Fabric/run\" 4998ae84bce284505281a865e1d5c008c4cf005a 997285f167af87d3ebdb81f2082b53bb03c11f92fca9fc7e62c4052f1d288ab6\nfi";
+		};
+		FAAA88991E686CED0088FB34 /* BartyCrouch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = BartyCrouch;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which bartycrouch > /dev/null; then\n    # Incrementally update all Storyboards/XIBs strings files\n    bartycrouch interfaces -p \"$PROJECT_DIR\"\nelse\n    echo \"warning: BartyCrouch not installed, download it from https://github.com/Flinesoft/BartyCrouch\"\nfi";
 		};
 		FAAD02201CA98E20007C6EEE /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
