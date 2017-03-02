@@ -1,0 +1,69 @@
+
+/* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "2Ra-jY-ADW"; */
+"2Ra-jY-ADW.title" = "pixel";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "4dH-7h-Ssv"; */
+"4dH-7h-Ssv.title" = "項目";
+
+/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "67F-2m-Txz"; */
+"67F-2m-Txz.title" = "文字";
+
+/* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "90g-HQ-9Ua"; */
+"90g-HQ-9Ua.title" = "pixel";
+
+/* Class = "NSButtonCell"; title = "Show Image"; ObjectID = "Drj-kg-Km5"; */
+"Drj-kg-Km5.title" = "画像を表示";
+
+/* Class = "NSTextFieldCell"; title = "Number of items place inside a folder:"; ObjectID = "FP7-VI-YVJ"; */
+"FP7-VI-YVJ.title" = "フォルダに内包する項目の数:";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "Ovp-if-Azp"; */
+"Ovp-if-Azp.title" = "項目";
+
+/* Class = "NSTextFieldCell"; title = "Max length of tool tip string:"; ObjectID = "QFO-xC-Z3p"; */
+"QFO-xC-Z3p.title" = "ツールチップに表示する文字数:";
+
+/* Class = "NSButtonCell"; title = "Show alert panel before clear history"; ObjectID = "U2I-bu-kTR"; */
+"U2I-bu-kTR.title" = "履歴クリアの前に警告パネルを表示";
+
+/* Class = "NSTextFieldCell"; title = "Height:"; ObjectID = "WKb-6V-Q9w"; */
+"WKb-6V-Q9w.title" = "高さ:";
+
+/* Class = "NSButtonCell"; title = "Copy the same history"; ObjectID = "a32-zW-R74"; */
+"a32-zW-R74.title" = "重複した履歴をコピーする";
+
+/* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
+"h4n-Nv-zj1.title" = "メニュー項目上にツールチップを表示";
+
+/* Class = "NSTextFieldCell"; title = "Number of characters in the menu:"; ObjectID = "hBb-sd-DcP"; */
+"hBb-sd-DcP.title" = "メニューに表示する文字数:";
+
+/* Class = "NSButtonCell"; title = "Add key equivalents to numeric keys"; ObjectID = "hE2-DL-MKl"; */
+"hE2-DL-MKl.title" = "数字キーを使ったショートカットを追加";
+
+/* Class = "NSButtonCell"; title = "Show color code preview"; ObjectID = "hgW-RK-5oy"; */
+"hgW-RK-5oy.title" = "カラーコードのプレビューを表示";
+
+/* Class = "NSButtonCell"; title = "Overwrite the same history"; ObjectID = "lsx-Y0-zFR"; */
+"lsx-Y0-zFR.title" = "重複した履歴を上書きする";
+
+/* Class = "NSButtonCell"; title = "Mark menu items with numbers"; ObjectID = "nMF-6D-hXu"; */
+"nMF-6D-hXu.title" = "メニュー項目の先頭に数字を付加";
+
+/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "nzx-q5-ifH"; */
+"nzx-q5-ifH.title" = "文字";
+
+/* Class = "NSButtonCell"; title = "Add a menu item to clear clipboard history"; ObjectID = "p80-3o-bgA"; */
+"p80-3o-bgA.title" = "履歴をクリアするメニュー項目を追加";
+
+/* Class = "NSTextFieldCell"; title = "Width:"; ObjectID = "saf-vP-Qwl"; */
+"saf-vP-Qwl.title" = "幅:";
+
+/* Class = "NSButtonCell"; title = "Menu items' title starts with 0"; ObjectID = "seq-HO-d27"; */
+"seq-HO-d27.title" = "メニュー項目のタイトルを 0 で始める";
+
+/* Class = "NSTextFieldCell"; title = "Number of items place inline:"; ObjectID = "wef-NB-6p6"; */
+"wef-NB-6p6.title" = "インライン表示する項目の数:";
+
+/* Class = "NSButtonCell"; title = "Display icons in menu items"; ObjectID = "yrU-qO-OwD"; */
+"yrU-qO-OwD.title" = "メニュー項目にアイコンを表示する";

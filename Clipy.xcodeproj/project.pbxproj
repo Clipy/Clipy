@@ -154,11 +154,9 @@
 		FA1DB4F41DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYShortcutsPreferenceViewController.swift; sourceTree = "<group>"; };
 		FA1DB4F51DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYTypePreferenceViewController.swift; sourceTree = "<group>"; };
 		FA1DB4F61DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUpdatesPreferenceViewController.swift; sourceTree = "<group>"; };
-		FA1DB4FE1DDCB4C0007F95C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA1DB5001DDCB4C0007F95C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA1DB5021DDCB4C0007F95C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
 		FA1DB5041DDCB4C0007F95C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
-		FA1DB5081DDCB4C0007F95C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA1DB5091DDCB4C0007F95C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYShortcutsPreferenceViewController.xib; sourceTree = "<group>"; };
 		FA1DB50A1DDCB4C0007F95C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYTypePreferenceViewController.xib; sourceTree = "<group>"; };
 		FA1DB50B1DDCB4C0007F95C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -178,6 +176,9 @@
 		FAAA88721E685E270088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYGeneralPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA88741E685E2D0088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA88761E685E310088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
+		FAAA88781E685F360088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYMenuPreferenceViewController.xib; sourceTree = "<group>"; };
+		FAAA887A1E685F3C0088FB34 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
+		FAAA887C1E685F3F0088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataCleanService.swift; sourceTree = "<group>"; };
 		FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
 		FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+NSColor.swift"; sourceTree = "<group>"; };
@@ -861,8 +862,9 @@
 		FA1DB4FD1DDCB4C0007F95C8 /* CPYMenuPreferenceViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				FA1DB4FE1DDCB4C0007F95C8 /* en */,
-				FA1DB5081DDCB4C0007F95C8 /* ja */,
+				FAAA88781E685F360088FB34 /* Base */,
+				FAAA887A1E685F3C0088FB34 /* en */,
+				FAAA887C1E685F3F0088FB34 /* ja */,
 			);
 			name = CPYMenuPreferenceViewController.xib;
 			sourceTree = "<group>";
