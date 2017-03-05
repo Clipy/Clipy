@@ -110,7 +110,8 @@ fileprivate extension MenuManager {
         // Menu icon
         defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem)
             .filterNil()
-            .subscribe(onNext: { [weak self] key in
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] key in
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             }).addDisposableTo(disposeBag)
         // Clear history menu
