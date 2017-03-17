@@ -59,11 +59,11 @@ extension HotKeyService {
         setupSnippetHotKeys()
 
         // Main menu
-        change(with: .main, keyCombo: savedKeyCombo(fotKey: Constants.HotKey.mainKeyCombo))
+        change(with: .main, keyCombo: savedKeyCombo(forKey: Constants.HotKey.mainKeyCombo))
         // History menu
-        change(with: .history, keyCombo: savedKeyCombo(fotKey: Constants.HotKey.historyKeyCombo))
+        change(with: .history, keyCombo: savedKeyCombo(forKey: Constants.HotKey.historyKeyCombo))
         // Snippet menu
-        change(with: .snippet, keyCombo: savedKeyCombo(fotKey: Constants.HotKey.snippetKeyCombo))
+        change(with: .snippet, keyCombo: savedKeyCombo(forKey: Constants.HotKey.snippetKeyCombo))
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
@@ -78,7 +78,7 @@ extension HotKeyService {
         register(with: type, keyCombo: keyCombo)
     }
 
-    private func savedKeyCombo(fotKey key: String) -> KeyCombo? {
+    private func savedKeyCombo(forKey key: String) -> KeyCombo? {
         guard let data = defaults.object(forKey: key) as? Data else { return nil }
         guard let keyCombo = NSKeyedUnarchiver.unarchiveObject(with: data) as? KeyCombo else { return nil }
         return keyCombo
