@@ -8,5 +8,4 @@ included:
   - Clipy
 excluded:
   - Pods
-line_length: 300
-file_length: 500
+line_length: 200
