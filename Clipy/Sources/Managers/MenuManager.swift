@@ -471,7 +471,7 @@ extension MenuManager: NSSearchFieldDelegate {
 
     fileprivate func checkResultsForFilter() {
         if searchFieldStringFilter.characters.count > 2 {
-            clipResults = clipResultsBackup.filter("title CONTAINS '\(searchFieldStringFilter)'")
+            clipResults = clipResultsBackup.filter("title CONTAINS[c] '\(searchFieldStringFilter)'")
         } else {
             clipResults = clipResultsBackup
         }
