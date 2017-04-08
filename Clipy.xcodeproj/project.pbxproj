@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
+		440212B71F4838ED00AA3D24 /* Realm+Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440212B61F4838ED00AA3D24 /* Realm+Object.swift */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */; };
@@ -123,6 +124,7 @@
 		31ACA9F71EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		31ACA9F81EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		31ACA9F91EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		440212B61F4838ED00AA3D24 /* Realm+Object.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Realm+Object.swift"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				FA1DB4AF1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift */,
 				FA1DB4B01DDCB452007F95C8 /* Realm+Migration.swift */,
 				FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */,
+				440212B61F4838ED00AA3D24 /* Realm+Object.swift */,
 				FA1DB4B21DDCB452007F95C8 /* String+Substring.swift */,
 				FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */,
 			);
@@ -821,6 +824,7 @@
 				FA1DB4D41DDCB479007F95C8 /* CPYClipData.swift in Sources */,
 				FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */,
 				FA1DB4D51DDCB479007F95C8 /* CPYDraggedData.swift in Sources */,
+				440212B71F4838ED00AA3D24 /* Realm+Object.swift in Sources */,
 				FA1DB5151DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift in Sources */,
 				FA1DB4EA1DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift in Sources */,
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,
