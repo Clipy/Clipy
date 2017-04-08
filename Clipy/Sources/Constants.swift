@@ -60,6 +60,7 @@ struct Constants {
         static let excludeApplications              = "kCPYExcludeApplications"
         static let collectCrashReport               = "kCPYCollectCrashReport"
         static let showColorPreviewInTheMenu        = "kCPYPrefShowColorPreviewInTheMenu"
+        static let showSearchBarInTheMenu           = "kCPYPrefShowSearchBarInTheMenu"
     }
 
     struct Beta {

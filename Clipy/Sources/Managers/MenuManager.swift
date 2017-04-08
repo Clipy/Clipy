@@ -38,6 +38,11 @@ final class MenuManager: NSObject {
     // Realm Token
     fileprivate var clipToken: NotificationToken?
     fileprivate var snippetToken: NotificationToken?
+    //Search field
+    var searchField: NSSearchField?
+    var searchFieldStringFilter: String = ""
+    fileprivate var clipResultsBackup: Results<CPYClip>
+    var lastMauseLocation: NSPoint = NSEvent.mouseLocation()
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -47,6 +52,7 @@ final class MenuManager: NSObject {
     // MARK: - Initialize
     override init() {
         clipResults = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting))
+        clipResultsBackup = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting))
         folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         super.init()
         folderIcon.isTemplate = true
@@ -72,7 +78,14 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation(), in: nil)
+        setMausePosition()
+        menu?.popUp(positioning: nil, at: lastMauseLocation, in: nil)
+    }
+
+    func updatePopUpMenu() {
+        statusItem?.menu?.cancelTrackingWithoutAnimation()
+        createClipMenu()
+        statusItem?.menu?.popUp(positioning: nil, at: lastMauseLocation, in: nil)
     }
 
     func popUpSnippetFolder(_ folder: CPYFolder) {
@@ -91,8 +104,13 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
-        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation(), in: nil)
+        setMausePosition()
+        folderMenu.popUp(positioning: nil, at: lastMauseLocation, in: nil)
     }
+
+   func setMausePosition() {
+      lastMauseLocation = NSEvent.mouseLocation()
+   }
 }
 
 // MARK: - Binding
@@ -110,7 +128,9 @@ fileprivate extension MenuManager {
         // Menu icon
         defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem)
             .filterNil()
-            .subscribe(onNext: { [weak self] key in
+//            .subscribe(onNext: { [weak self] key in // or this line or the follwing 2 lines
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] key in
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             }).addDisposableTo(disposeBag)
         // Clear history menu
@@ -141,6 +161,8 @@ fileprivate extension MenuManager {
         clipMenu = NSMenu(title: Constants.Application.name)
         historyMenu = NSMenu(title: Constants.Menu.history)
         snippetMenu = NSMenu(title: Constants.Menu.snippet)
+
+        setupSearchFieldView()
 
         addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)
@@ -419,5 +441,48 @@ private extension MenuManager {
 private extension MenuManager {
     func firstIndexOfMenuItems() -> NSInteger {
         return defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero) ? 0 : 1
+    }
+}
+
+// MARK: - NSSearchFieldDelegate
+extension MenuManager: NSSearchFieldDelegate {
+    fileprivate func setupSearchFieldView() {
+        if let searchFieldView = getSearchFieldView(clipMenu) {
+            let searchItem = NSMenuItem()
+            searchItem.view = searchFieldView
+            clipMenu?.addItem(searchItem)
+        }
+    }
+
+    fileprivate func getSearchFieldView(_  menu: NSMenu?) -> NSSearchField? {
+        if #available(OSX 10.11, *) {
+            let maxLengthOfToolTip = defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip) + 110
+            let itemFrame = NSRect(x: 16, y: 2, width: maxLengthOfToolTip, height: 30)
+            searchField = NSSearchField(frame: itemFrame)
+            searchField?.delegate = self
+            searchField?.translatesAutoresizingMaskIntoConstraints = false
+            searchField?.searchMenuTemplate = menu
+            searchField?.stringValue = searchFieldStringFilter
+        }
+        let showSearchBarInTheMenu = defaults.bool(forKey: Constants.UserDefaults.showSearchBarInTheMenu)
+        return showSearchBarInTheMenu ? searchField : nil
+    }
+
+    override func controlTextDidChange(_ obj: Notification) {
+        searchFieldStringFilter = (obj.object as? NSSearchField)?.stringValue ?? ""
+        checkResultsForFilter()
+    }
+
+    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
+        updatePopUpMenu()
+        return true
+    }
+
+    fileprivate func checkResultsForFilter() {
+        if searchFieldStringFilter.characters.count > 2 {
+            clipResults = clipResultsBackup.filter("title CONTAINS[c] '\(searchFieldStringFilter)'")
+        } else {
+            clipResults = clipResultsBackup
+        }
     }
 }
