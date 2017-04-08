@@ -83,8 +83,7 @@ extension MenuManager {
     }
 
     func updatePopUpMenu() {
-        let menu = statusItem?.menu
-        menu?.cancelTrackingWithoutAnimation()
+        statusItem?.menu?.cancelTrackingWithoutAnimation()
         createClipMenu()
         statusItem?.menu?.popUp(positioning: nil, at: lastMauseLocation, in: nil)
     }
@@ -162,6 +161,8 @@ fileprivate extension MenuManager {
         clipMenu = NSMenu(title: Constants.Application.name)
         historyMenu = NSMenu(title: Constants.Menu.history)
         snippetMenu = NSMenu(title: Constants.Menu.snippet)
+
+        setupSearchFieldView()
 
         addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)
@@ -289,8 +290,6 @@ fileprivate extension MenuManager {
 
             if maxHistory <= i { break }
         }
-      setupSearchField(menu)
-      labelItem.view = searchField
     }
 
     fileprivate func makeClipMenuItem(_ clip: CPYClip, index: Int, listNumber: Int) -> NSMenuItem {
@@ -447,9 +446,17 @@ private extension MenuManager {
 
 // MARK: - NSSearchFieldDelegate
 extension MenuManager: NSSearchFieldDelegate {
-    func setupSearchField(_  menu: NSMenu) {
+    fileprivate func setupSearchFieldView() {
+        if let searchFieldView = getSearchFieldView(clipMenu) {
+            let searchItem = NSMenuItem()
+            searchItem.view = searchFieldView
+            clipMenu?.addItem(searchItem)
+        }
+    }
+
+    fileprivate func getSearchFieldView(_  menu: NSMenu?) -> NSSearchField? {
         if #available(OSX 10.11, *) {
-            let maxLengthOfToolTip = defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip) + 100
+            let maxLengthOfToolTip = defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip) + 110
             let itemFrame = NSRect(x: 16, y: 2, width: maxLengthOfToolTip, height: 30)
             searchField = NSSearchField(frame: itemFrame)
             searchField?.delegate = self
@@ -457,6 +464,8 @@ extension MenuManager: NSSearchFieldDelegate {
             searchField?.searchMenuTemplate = menu
             searchField?.stringValue = searchFieldStringFilter
         }
+        let showSearchBarInTheMenu = defaults.bool(forKey: Constants.UserDefaults.showSearchBarInTheMenu)
+        return showSearchBarInTheMenu ? searchField : nil
     }
 
     override func controlTextDidChange(_ obj: Notification) {
@@ -475,5 +484,5 @@ extension MenuManager: NSSearchFieldDelegate {
         } else {
             clipResults = clipResultsBackup
         }
-    }    
+    }
 }

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1217" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,11 +13,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="259"/>
+            <rect key="frame" x="0.0" y="0.0" width="480" height="280"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="el7-aR-A2S" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="204" width="297" height="18"/>
+                    <rect key="frame" x="59" y="225" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="ログイン時に起動" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Su3-mF-z1T">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -28,7 +28,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vCQ-Oh-Jf7" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="182" width="297" height="18"/>
+                    <rect key="frame" x="59" y="203" width="297" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="メニュー項目選択後に &quot;⌘ + V&quot; を入力" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="0yt-u0-ROt">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -39,7 +39,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="Aum-MH-ep1">
-                    <rect key="frame" x="59" y="230" width="210" height="17"/>
+                    <rect key="frame" x="59" y="251" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="動作" id="nDk-8y-89n">
                         <font key="font" metaFont="systemBold"/>
@@ -48,7 +48,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="bPn-Ta-y2W">
-                    <rect key="frame" x="59" y="135" width="210" height="17"/>
+                    <rect key="frame" x="59" y="156" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="クリップボード履歴" id="OOT-F5-Pal">
                         <font key="font" metaFont="systemBold"/>
@@ -57,7 +57,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="6VU-dp-Epr">
-                    <rect key="frame" x="371" y="105" width="39" height="14"/>
+                    <rect key="frame" x="371" y="126" width="39" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="項目" id="eeq-cw-v00">
                         <font key="font" metaFont="smallSystem"/>
@@ -66,7 +66,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xqV-G6-XbY">
-                    <rect key="frame" x="322" y="105" width="44" height="22"/>
+                    <rect key="frame" x="322" y="126" width="44" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="Gdr-ac-Sdi">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="nMe-68-qB0">
@@ -81,7 +81,7 @@
                     </connections>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="249" translatesAutoresizingMaskIntoConstraints="NO" id="brY-3U-2fh">
-                    <rect key="frame" x="59" y="107" width="253" height="18"/>
+                    <rect key="frame" x="59" y="128" width="253" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="記憶する履歴の数:" id="Nab-CO-ytH">
                         <font key="font" metaFont="system"/>
@@ -90,7 +90,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="192" translatesAutoresizingMaskIntoConstraints="NO" id="O1y-G2-LAu">
-                    <rect key="frame" x="60" y="81" width="196" height="18"/>
+                    <rect key="frame" x="60" y="102" width="196" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="履歴のソート順:" id="Lps-06-dPB">
                         <font key="font" metaFont="system"/>
@@ -99,7 +99,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8XZ-NR-0QN">
-                    <rect key="frame" x="258" y="76" width="150" height="26"/>
+                    <rect key="frame" x="258" y="97" width="150" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="最終使用日" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ju3-6a-6xj" id="OT4-9P-YiO">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -116,7 +116,7 @@
                     </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="CR1-tn-jHf">
-                    <rect key="frame" x="59" y="47" width="210" height="17"/>
+                    <rect key="frame" x="59" y="68" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="アピアランス" id="FM4-mw-DCx">
                         <font key="font" metaFont="systemBold"/>
@@ -125,7 +125,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jEa-zd-juz">
-                    <rect key="frame" x="258" y="15" width="78" height="26"/>
+                    <rect key="frame" x="258" y="36" width="78" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="1N9-cv-ChQ" id="Zdh-dV-1hf">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -149,7 +149,7 @@
                     </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="193" translatesAutoresizingMaskIntoConstraints="NO" id="FPr-bp-NVR">
-                    <rect key="frame" x="59" y="20" width="197" height="17"/>
+                    <rect key="frame" x="59" y="41" width="197" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ステータスバー・アイコン:" id="Faj-kQ-G1v">
                         <font key="font" metaFont="system"/>
@@ -158,7 +158,7 @@
                     </textFieldCell>
                 </textField>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l9L-rY-sFN" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="60" y="160" width="422" height="18"/>
+                    <rect key="frame" x="60" y="181" width="422" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="クラッシュレポートやエラーログを送信する(次回起動時に反映)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="6qE-X9-WfN">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -168,8 +168,24 @@
                         <binding destination="Rq0-bo-cst" name="value" keyPath="values.kCPYCollectCrashReport" id="Gow-0V-uzb"/>
                     </connections>
                 </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pCx-jt-PMW" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                    <rect key="frame" x="59" y="15" width="403" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="メニューに検索バーを表示する (コピーアクションが必要)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="p4n-LE-v0j">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="color" keyPath="textColor">
+                            <color key="value" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <binding destination="Rq0-bo-cst" name="value" keyPath="values.kCPYPrefShowSearchBarInTheMenu" id="1av-Rj-18s"/>
+                    </connections>
+                </button>
             </subviews>
-            <point key="canvasLocation" x="503" y="546.5"/>
+            <point key="canvasLocation" x="503" y="546"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="Rq0-bo-cst"/>
     </objects>
