@@ -77,8 +77,11 @@ struct Constants {
         static let closeSnippetEditor = "kCPYSnippetEditorWillCloseNotification"
     }
 
-    struct Xml {
-        static let fileType         = "xml"
+    enum ExtensionType: String {
+        case json, xml
+    }
+
+    struct ExportFile {
         static let type             = "type"
         static let rootElement      = "folders"
         static let folderElement    = "folder"
