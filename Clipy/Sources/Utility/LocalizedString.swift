@@ -22,7 +22,7 @@ enum LocalizedString: String {
     case launchOnStartup        = "Launch on system startup"
     case dontLaunch             = "Don't Launch"
     case deleteItem             = "Delete Item"
-    case confirmDeleteItem      = "Are you sure want to delete this item?"
+    case confirmDeleteItem      = "Are you sure want to delete those items?"
     case add                    = "Add"
 
     case tabGeneral             = "General"
