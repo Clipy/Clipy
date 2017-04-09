@@ -55,6 +55,9 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         }
         return nil
     }
+    fileprivate var selectedItems: [Any] {
+        return outlineView.selectedRowIndexes.flatMap({ outlineView.item(atRow: $0.hashValue ) })
+    }
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
@@ -83,9 +86,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     }
 
     fileprivate func reloadData() {
-        DispatchQueue.main.async {
-            self.outlineView.reloadData()
-        }
+        outlineView.reloadData()
     }
 }
 
@@ -128,9 +129,7 @@ extension CPYSnippetsEditorWindowController {
         let result = alert.runModal()
         if result != NSAlertFirstButtonReturn { return }
 
-        DispatchQueue.global().async {
-            self.deleteItems()
-        }
+        deleteItems()
     }
 
     @IBAction func changeStatusButtonTapped(_ sender: AnyObject) {
@@ -157,8 +156,7 @@ extension CPYSnippetsEditorWindowController {
     }
 
     fileprivate func changeStatusItems() {
-        for index in outlineView.selectedRowIndexes {
-            let item = outlineView.item(atRow: index)
+        for item in selectedItems {
             if let folder = item as? CPYFolder {
                 folder.enable = !folder.enable
                 folder.merge()
@@ -172,8 +170,7 @@ extension CPYSnippetsEditorWindowController {
     }
 
     fileprivate func deleteItems() {
-        for index in outlineView.selectedRowIndexes {
-            let item = outlineView.item(atRow: index)
+        for item in selectedItems {
             if let folder = item as? CPYFolder {
                 folders.removeObject(folder)
                 folder.remove()
@@ -375,35 +372,27 @@ extension CPYSnippetsEditorWindowController {
 // MARK: - Item Selected
 private extension CPYSnippetsEditorWindowController {
     func changeItemFocus() {
-        func updateUI() {
-            // Reset TextView Undo/Redo history
-            textView.undoManager?.removeAllActions()
-            if !checkSelectedItem() {
-                folderSettingView.isHidden = true
-                textView.isHidden = true
-                folderShortcutRecordView.keyCombo = nil
-                folderTitleTextField.stringValue = ""
-                return
-            }
-            for index in outlineView.selectedRowIndexes {
-                let item = outlineView.item(atRow: index)
-                if let folder = item as? CPYFolder {
-                    textView.string = ""
-                    folderTitleTextField.stringValue = folder.title
-                    folderShortcutRecordView.keyCombo = HotKeyService.shared.snippetKeyCombo(forIdentifier: folder.identifier)
-                    folderSettingView.isHidden = false
-                    textView.isHidden = true
-                } else if let snippet = item as? CPYSnippet {
-                    textView.string = snippet.content
-                    folderTitleTextField.stringValue = ""
-                    folderShortcutRecordView.keyCombo = nil
-                    folderSettingView.isHidden = true
-                    textView.isHidden = false
-                }
-            }
+        // Reset TextView Undo/Redo history
+        textView.undoManager?.removeAllActions()
+        guard let item = outlineView.item(atRow: outlineView.selectedRow) else {
+            folderSettingView.isHidden = true
+            textView.isHidden = true
+            folderShortcutRecordView.keyCombo = nil
+            folderTitleTextField.stringValue = ""
+            return
         }
-        DispatchQueue.main.async {
-            updateUI()
+        if let folder = item as? CPYFolder {
+            textView.string = ""
+            folderTitleTextField.stringValue = folder.title
+            folderShortcutRecordView.keyCombo = HotKeyService.shared.snippetKeyCombo(forIdentifier: folder.identifier)
+            folderSettingView.isHidden = false
+            textView.isHidden = true
+        } else if let snippet = item as? CPYSnippet {
+            textView.string = snippet.content
+            folderTitleTextField.stringValue = ""
+            folderShortcutRecordView.keyCombo = nil
+            folderSettingView.isHidden = true
+            textView.isHidden = false
         }
     }
 }
