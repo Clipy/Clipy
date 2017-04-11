@@ -1,11 +1,16 @@
-Clipy
-=============================
+<div align="center">
+  <img src="./images/clipy_logo.png" width="400">
+</div>
+
+<br>
+
 [![Build Status](https://www.bitrise.io/app/4660f968baa24514.svg?token=u8XErsQsveSu74-PGWRrdw&branch=master)](https://www.bitrise.io/app/4660f968baa24514)
 [![Release version](https://img.shields.io/github/release/Clipy/Clipy.svg)](https://github.com/Clipy/Clipy/releases/latest)
 [![License: MIT](https://img.shields.io/github/license/Clipy/Clipy.svg)](https://github.com/Clipy/Clipy/blob/master/LICENSE)
 
-
 Clipy is a Clipboard extension app for macOS.
+
+---
 
 __Requirement__: macOS 10.10 Yosemite or higher
 
