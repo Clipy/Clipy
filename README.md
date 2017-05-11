@@ -7,7 +7,7 @@
 [![Build Status](https://www.bitrise.io/app/4660f968baa24514.svg?token=u8XErsQsveSu74-PGWRrdw&branch=master)](https://www.bitrise.io/app/4660f968baa24514)
 [![Release version](https://img.shields.io/github/release/Clipy/Clipy.svg)](https://github.com/Clipy/Clipy/releases/latest)
 [![License: MIT](https://img.shields.io/github/license/Clipy/Clipy.svg)](https://github.com/Clipy/Clipy/blob/master/LICENSE)
-[![OpenCollective](https://opencollective.com/clipy/backers/badge.svg)](#backers) 
+[![OpenCollective](https://opencollective.com/clipy/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/clipy/sponsors/badge.svg)](#sponsors)
 
 Clipy is a Clipboard extension app for macOS.
@@ -31,7 +31,7 @@ __Distribution Site__ : <https://clipy-app.com>
 2. build.
 
 ### Mavericks Support
-v1.1.2 is the final version of Mavericks support.<br>
+v1.1.2 is the final version of Mavericks support.  
 [Download v1.1.2 release](https://github.com/Clipy/Clipy/releases/tag/1.1.2)
 
 ### Contributing
@@ -40,6 +40,10 @@ v1.1.2 is the final version of Mavericks support.<br>
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+### Localization Contributors
+Clipy is looking for localization contributors.  
+If you can cooperate, please see [CONTRIBUTING.md](https://github.com/Clipy/Clipy/blob/master/.github/CONTRIBUTING.md)
 
 ### Distribution
 If you distribute derived work, especially in the Mac App Store, I ask you to follow two rules:
