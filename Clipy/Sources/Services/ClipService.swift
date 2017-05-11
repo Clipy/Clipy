@@ -98,7 +98,7 @@ extension ClipService {
         let realm = try! Realm()
         // Copy already copied history
         let isCopySameHistory = defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
-        if let _ = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), !isCopySameHistory { return }
+        if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
 
         // Don't save empty string history
         if data.isOnlyStringType && data.stringValue.isEmpty { return }
