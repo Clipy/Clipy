@@ -29,7 +29,7 @@
 /* Class = "NSTextFieldCell"; title = "Height:"; ObjectID = "WKb-6V-Q9w"; */
 "WKb-6V-Q9w.title" = "高さ:";
 
-/* Class = "NSButtonCell"; title = "Copy the same history"; ObjectID = "a32-zW-R74"; */
+/* Class = "NSButtonCell"; title = "Place already copied history at the top"; ObjectID = "a32-zW-R74"; */
 "a32-zW-R74.title" = "重複した履歴をコピーする";
 
 /* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
@@ -44,7 +44,7 @@
 /* Class = "NSButtonCell"; title = "Show color code preview"; ObjectID = "hgW-RK-5oy"; */
 "hgW-RK-5oy.title" = "カラーコードのプレビューを表示";
 
-/* Class = "NSButtonCell"; title = "Overwrite the same history"; ObjectID = "lsx-Y0-zFR"; */
+/* Class = "NSButtonCell"; title = "Move instead of copying (removes the older one from the list)"; ObjectID = "lsx-Y0-zFR"; */
 "lsx-Y0-zFR.title" = "重複した履歴を上書きする";
 
 /* Class = "NSButtonCell"; title = "Mark menu items with numbers"; ObjectID = "nMF-6D-hXu"; */
