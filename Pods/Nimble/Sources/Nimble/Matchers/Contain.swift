@@ -1,14 +1,14 @@
 import Foundation
 
 /// A Nimble matcher that succeeds when the actual sequence contains the expected value.
-public func contain<S: Sequence, T: Equatable>(_ items: T...) -> NonNilMatcherFunc<S>
+public func contain<S: Sequence, T: Equatable>(_ items: T...) -> Predicate<S>
     where S.Iterator.Element == T {
     return contain(items)
 }
 
-public func contain<S: Sequence, T: Equatable>(_ items: [T]) -> NonNilMatcherFunc<S>
+public func contain<S: Sequence, T: Equatable>(_ items: [T]) -> Predicate<S>
     where S.Iterator.Element == T {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.postfixMessage = "contain <\(arrayAsString(items))>"
         if let actual = try actualExpression.evaluate() {
             return items.all {
@@ -16,16 +16,16 @@ public func contain<S: Sequence, T: Equatable>(_ items: [T]) -> NonNilMatcherFun
             }
         }
         return false
-    }
+    }.requireNonNil
 }
 
 /// A Nimble matcher that succeeds when the actual string contains the expected substring.
-public func contain(_ substrings: String...) -> NonNilMatcherFunc<String> {
+public func contain(_ substrings: String...) -> Predicate<String> {
     return contain(substrings)
 }
 
-public func contain(_ substrings: [String]) -> NonNilMatcherFunc<String> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
+public func contain(_ substrings: [String]) -> Predicate<String> {
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.postfixMessage = "contain <\(arrayAsString(substrings))>"
         if let actual = try actualExpression.evaluate() {
             return substrings.all {
@@ -34,37 +34,37 @@ public func contain(_ substrings: [String]) -> NonNilMatcherFunc<String> {
             }
         }
         return false
-    }
+    }.requireNonNil
 }
 
 /// A Nimble matcher that succeeds when the actual string contains the expected substring.
-public func contain(_ substrings: NSString...) -> NonNilMatcherFunc<NSString> {
+public func contain(_ substrings: NSString...) -> Predicate<NSString> {
     return contain(substrings)
 }
 
-public func contain(_ substrings: [NSString]) -> NonNilMatcherFunc<NSString> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
+public func contain(_ substrings: [NSString]) -> Predicate<NSString> {
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.postfixMessage = "contain <\(arrayAsString(substrings))>"
         if let actual = try actualExpression.evaluate() {
             return substrings.all { actual.range(of: $0.description).length != 0 }
         }
         return false
-    }
+    }.requireNonNil
 }
 
 /// A Nimble matcher that succeeds when the actual collection contains the expected object.
-public func contain(_ items: Any?...) -> NonNilMatcherFunc<NMBContainer> {
+public func contain(_ items: Any?...) -> Predicate<NMBContainer> {
     return contain(items)
 }
 
-public func contain(_ items: [Any?]) -> NonNilMatcherFunc<NMBContainer> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
+public func contain(_ items: [Any?]) -> Predicate<NMBContainer> {
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.postfixMessage = "contain <\(arrayAsString(items))>"
         guard let actual = try actualExpression.evaluate() else { return false }
         return items.all { item in
             return item != nil && actual.contains(item!)
         }
-    }
+    }.requireNonNil
 }
 
 #if _runtime(_ObjC)

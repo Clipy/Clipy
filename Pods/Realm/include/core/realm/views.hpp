@@ -22,6 +22,8 @@
 #include <realm/column.hpp>
 #include <realm/handover_defs.hpp>
 
+#include <vector>
+
 namespace realm {
 
 const int64_t detached_ref = -1;
@@ -83,6 +85,10 @@ public:
         m_debug_cookie = 0x7765697633333333; // 0x77656976 = 'view'; 0x33333333 = '3333' = destructed
 #endif
     }
+
+    // Disable copying, this is not supported.
+    RowIndexes& operator=(const RowIndexes&) = delete;
+    RowIndexes(const RowIndexes&) = delete;
 
     // Return a column of the table that m_row_indexes are pointing at (which is the target table for LinkList and
     // parent table for TableView)

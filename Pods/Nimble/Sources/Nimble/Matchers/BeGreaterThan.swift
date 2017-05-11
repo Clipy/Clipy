@@ -1,24 +1,24 @@
 import Foundation
 
 /// A Nimble matcher that succeeds when the actual value is greater than the expected value.
-public func beGreaterThan<T: Comparable>(_ expectedValue: T?) -> NonNilMatcherFunc<T> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
-        failureMessage.postfixMessage = "be greater than <\(stringify(expectedValue))>"
+public func beGreaterThan<T: Comparable>(_ expectedValue: T?) -> Predicate<T> {
+    let errorMessage = "be greater than <\(stringify(expectedValue))>"
+    return Predicate.simple(errorMessage) { actualExpression in
         if let actual = try actualExpression.evaluate(), let expected = expectedValue {
-            return actual > expected
+            return PredicateStatus(bool: actual > expected)
         }
-        return false
+        return .fail
     }
 }
 
 /// A Nimble matcher that succeeds when the actual value is greater than the expected value.
-public func beGreaterThan(_ expectedValue: NMBComparable?) -> NonNilMatcherFunc<NMBComparable> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
+public func beGreaterThan(_ expectedValue: NMBComparable?) -> Predicate<NMBComparable> {
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be greater than <\(stringify(expectedValue))>"
         let actualValue = try actualExpression.evaluate()
         let matches = actualValue != nil && actualValue!.NMB_compare(expectedValue) == ComparisonResult.orderedDescending
         return matches
-    }
+    }.requireNonNil
 }
 
 public func ><T: Comparable>(lhs: Expectation<T>, rhs: T) {

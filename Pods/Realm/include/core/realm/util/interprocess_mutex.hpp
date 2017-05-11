@@ -50,6 +50,11 @@ public:
     InterprocessMutex();
     ~InterprocessMutex() noexcept;
 
+    // Disable copying. Copying a locked Mutex will create a scenario
+    // where the same file descriptor will be locked once but unlocked twice.
+    InterprocessMutex(const InterprocessMutex&) = delete;
+    InterprocessMutex& operator=(const InterprocessMutex&) = delete;
+
 #ifdef REALM_ROBUST_MUTEX_EMULATION
     struct SharedPart {
     };
@@ -69,6 +74,10 @@ public:
 
     /// Lock the mutex. If the mutex is already locked, wait for it to be unlocked.
     void lock();
+
+    /// Non-blocking attempt to lock the mutex. Returns true if the lock is obtained.
+    /// If the lock can not be obtained return false immediately.
+    bool try_lock();
 
     /// Unlock the mutex
     void unlock();
@@ -90,7 +99,11 @@ private:
     struct LockInfo {
         File m_file;
         Mutex m_local_mutex;
+        LockInfo() {}
         ~LockInfo() noexcept;
+        // Disable copying.
+        LockInfo(const LockInfo&) = delete;
+        LockInfo& operator=(const LockInfo&) = delete;
     };
     /// InterprocessMutex created on the same file (same inode on POSIX) share the same LockInfo.
     /// LockInfo will be saved in a static map as a weak ptr and use the UniqueID as the key.
@@ -146,7 +159,7 @@ inline InterprocessMutex::LockInfo::~LockInfo() noexcept
 
 inline void InterprocessMutex::free_lock_info()
 {
-    // It has not been inited yet.
+    // It has not been initialized yet.
     if (!m_lock_info)
         return;
 
@@ -251,6 +264,27 @@ inline void InterprocessMutex::lock()
 #else
     REALM_ASSERT(m_shared_part);
     m_shared_part->lock([]() {});
+#endif
+}
+
+inline bool InterprocessMutex::try_lock()
+{
+#ifdef REALM_ROBUST_MUTEX_EMULATION
+    std::unique_lock<Mutex> mutex_lock(m_lock_info->m_local_mutex, std::try_to_lock_t());
+    if (!mutex_lock.owns_lock()) {
+        return false;
+    }
+    bool success = m_lock_info->m_file.try_lock_exclusive();
+    if (success) {
+        mutex_lock.release();
+        return true;
+    }
+    else {
+        return false;
+    }
+#else
+    REALM_ASSERT(m_shared_part);
+    return m_shared_part->try_lock([]() {});
 #endif
 }
 

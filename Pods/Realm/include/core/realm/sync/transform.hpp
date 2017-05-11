@@ -30,6 +30,16 @@
 namespace realm {
 namespace sync {
 
+/// Represents an entry in the history of changes in a sync-enabled Realm
+/// file. Server and client use different history formats, but this class is
+/// used both on the server and the client side. Each history entry corresponds
+/// to a version of the Realm state. For server and client-side histories, these
+/// versions are referred to as *server versions* and *client versions*
+/// respectively. These versions may, or may not correspond to Realm snapshot
+/// numbers (on the server-side they currently do not).
+///
+/// FIXME: Move this class into a separate header
+/// (`<realm/sync/history_entry.hpp>`).
 class HistoryEntry {
 public:
     using timestamp_type  = uint_fast64_t;
@@ -42,75 +52,44 @@ public:
     /// time at the point when the local transaction was committed. For changes
     /// of remote origin, it is the remote time of origin at the client
     /// identified by `origin_client_file_ident`.
-    ///
-    /// All clients that will be, or are already participating in
-    /// synchronization must guarantee that their local history is causally
-    /// consistent. The convergence guarantee offered by the merge system relies
-    /// strongly on this.
-    ///
-    /// FIXME: In its current form, the merge algorithm seems to achieve
-    /// convergence even without causal consistency. Figure out whether we still
-    /// want to require it, and if so, why.
-    ///
-    /// **Definition:** The local history is *causally consistent* if, and only
-    /// if every entry, referring to changes of local origin, has an effective
-    /// timestamp, which is greater than, or equal to the effective timestamp of
-    /// all preceding entries in the local history.
-    ///
-    /// **Definition:** The *effective timestamp* of a history entry is the pair
-    /// `(origin_timestamp, origin_client_file_ident)` endowed with the standard
-    /// lexicographic order. Note that this implies that it is impossible for
-    /// two entries to have equal effective timestamps if they originate from
-    /// different clients.
     timestamp_type origin_timestamp;
 
-    /// For changes of local origin, `origin_client_file_ident` is always
-    /// zero. For changes of remote origin, this history entry was produced by
-    /// the integration of a changeset received from a remote peer P. In some
-    /// cases, that changeset may itself have been produced by the integration
-    /// on P of a changeset received from another remote peer. In any case, as
-    /// long as these changes are of remote origin, `origin_client_file_ident`
-    /// identifies the peer on which they originated, which may or may not be P.
+    /// For changes of local origin, this is the identifier of the local
+    /// file. On the client side, the special value, zero, is used as a stand-in
+    /// for the actual file identifier. This is necessary because changes may
+    /// occur on the client-side before it obtains the the actual identifier
+    /// from the server. Depending on context, the special value, zero, will, or
+    /// will not have been replaced by the actual local file identifier.
     ///
-    /// More concretely, on the server-side, the remote peer is a client, and
-    /// and the changes always originate from that client, so
-    /// `origin_client_file_ident` always refer to that client. Conversely, on
-    /// the client-side, the remote peer is the server, and the server received
-    /// the original changeset from a client, so `origin_client_file_ident`
-    /// refers to that client.
+    /// For changes of remote origin, this is the identifier of the file in the
+    /// context of which this change originated. This may be a client, or a
+    /// server-side file. For example, when a change "travels" from client file
+    /// A with identifier 2, through the server, to client file B with
+    /// identifier 3, then `origin_client_file_ident` will be 2 on the server
+    /// and in client file A. On the other hand, if the change originates on the
+    /// server, and the server-side file identifier is 1, then
+    /// `origin_client_file_ident` will be 1 in both client files.
     ///
-    /// Note that *peer* is used colloquially here to refer to a particular
-    /// synchronization participant. In reality, a synchronization participant
-    /// is either a server-side file, or a particular client-side file
-    /// associated with that server-side file. To make things even more
-    /// confusing, a single client application may contain multiple client-side
-    /// files associated with the same server-side file. In the same vein,
-    /// *client* should be understood as client-side file, and *remote peer* as
-    /// any other file from the set of associated files, even other such files
-    /// contained within the same client application, if there are any.
+    /// FIXME: Rename this member to `origin_file_ident`. It is no longer
+    /// necessarily a client-side file.
     file_ident_type origin_client_file_ident;
 
-    /// For changes of local origin, `remote_version` is the version produced on
-    /// the remote peer by the last changeset integrated locally prior to the
-    /// production of the changeset referenced by this history entry, or zero if
-    /// no remote changeset was integrated yet. This only makes sense when there
-    /// is a unique remote peer, and since that is not the case on the server,
-    /// the server cannot be the originator of any changes.
+    /// For changes of local origin on the client side, this is the last server
+    /// version integrated locally prior to this history entry. In other words,
+    /// it is a copy of `remote_version` of the last preceding history entry
+    /// that carries changes of remote origin, or zero if there is no such
+    /// preceding history entry.
     ///
-    /// For changes of remote origin, this history entry was produced by the
-    /// integration of a changeset directly received from a remote peer P, and
-    /// `remote_version` is then the version produced on P by that
-    /// changeset. Note that such changes may have originated from a different
-    /// peer (not P), but `remote_version` will still be the version produced on
-    /// P.
+    /// For changes of local origin on the server-side, this is always zero.
     ///
-    /// More concretely, on the server-side, the remote peer is a client, and
-    /// the changes always originate from that client, and `remote_version` is
-    /// the `<client version>` specified in an UPLOAD message of the
-    /// client-server communication protocol. Conversely, for changes of remote
-    /// origin on the client-side, the remote peer is the server, and
-    /// `remote_version` is the <server version> specified in a received
-    /// DOWNLOAD message.
+    /// For changes of remote origin, this is the version produced within the
+    /// remote-side Realm file by the change that gave rise to this history
+    /// entry. The remote-side Realm file is not always the same Realm file from
+    /// which the change originated. On the client side, the remote side is
+    /// always the server side, and `remote_version` is always a server version
+    /// (since clients do not speak directly to each other). On the server side,
+    /// the remote side is always a client side, and `remote_version` is always
+    /// a client version.
     version_type remote_version;
 
     /// Referenced memory is not owned by this class.
@@ -126,13 +105,19 @@ public:
     using file_ident_type = HistoryEntry::file_ident_type;
     using version_type    = HistoryEntry::version_type;
 
-    /// Get the first history entry whose changeset produced a version that
-    /// succeeds `begin_version` and, and does not succeed `end_version`, and
-    /// whose changeset was not produced by integration of a changeset received
-    /// from the specified remote peer.
+    /// Get the first history entry where the produced version is greater than
+    /// `begin_version` and less than or equal to `end_version`, and whose
+    /// changeset is neither empty, nor produced by integration of a changeset
+    /// received from the specified remote peer.
     ///
-    /// The ownership of the memory referenced by `entry.changeset` is **not**
-    /// passed to the caller upon return. The callee retains ownership.
+    /// If \a buffer is non-null, memory will be allocated and transferred to
+    /// \a buffer. The changeset will be copied into the newly allocated memory.
+    ///
+    /// If \a buffer is null, the changeset is not copied out of the Realm,
+    /// and entry.changeset.data() does not point to the changeset.
+    /// The changeset in the Realm could be chunked, hence it is not possible
+    /// to point to it with BinaryData. entry.changeset.size() always gives the
+    /// size of the changeset.
     ///
     /// \param begin_version, end_version The range of versions to consider. If
     /// `begin_version` is equal to `end_version`, this is the empty range. If
@@ -155,8 +140,8 @@ public:
     /// criteria.
     virtual version_type find_history_entry(version_type begin_version, version_type end_version,
                                             file_ident_type not_from_remote_client_file_ident,
-                                            bool only_nonempty,
-                                            HistoryEntry& entry) const noexcept = 0;
+                                            bool only_nonempty, HistoryEntry& entry,
+                                            util::Optional<std::unique_ptr<char[]>&> buffer) const noexcept = 0;
 
     /// Copy a contiguous sequence of bytes from the specified reciprocally
     /// transformed changeset into the specified buffer. The targeted history
@@ -201,13 +186,6 @@ public:
                                             const char* data, size_t size) = 0;
 
     virtual ~TransformHistory() noexcept {}
-
-protected:
-    static bool register_local_time(timestamp_type local_timestamp,
-                                    timestamp_type& timestamp_threshold) noexcept;
-
-    static bool register_remote_time(timestamp_type remote_timestamp,
-                                     timestamp_type& timestamp_threshold) noexcept;
 };
 
 
@@ -317,34 +295,6 @@ std::unique_ptr<Transformer> make_transformer(Transformer::file_ident_type local
 
 
 // Implementation
-
-inline bool TransformHistory::register_local_time(timestamp_type local_timestamp,
-                                                  timestamp_type& timestamp_threshold) noexcept
-{
-    // Needed to ensure causal consistency. This also guards against
-    // nonmonotonic local time.
-    if (timestamp_threshold < local_timestamp) {
-        timestamp_threshold = local_timestamp;
-        return true;
-    }
-    return false;
-}
-
-inline bool TransformHistory::register_remote_time(timestamp_type remote_timestamp,
-                                                   timestamp_type& timestamp_threshold) noexcept
-{
-    // To ensure causal consistency, we need to know the latest remote (or
-    // local) timestamp seen so far. Adding one to the incoming remote
-    // timestamp, before using it to bump the `timestamp_threshold`, is a
-    // simple way of ensuring not only proper ordering among timestamps, but
-    // also among 'effective timestamps' (which is required), regardless of the
-    // values of the assiciated client file identifiers.
-    if (timestamp_threshold < remote_timestamp + 1) {
-        timestamp_threshold = remote_timestamp + 1;
-        return true;
-    }
-    return false;
-}
 
 class TransformError: public std::runtime_error {
 public:

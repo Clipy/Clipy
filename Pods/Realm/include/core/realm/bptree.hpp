@@ -180,6 +180,10 @@ public:
     struct unattached_tag {
     };
 
+    // Disable copying, this is not allowed.
+    BpTreeBase& operator=(const BpTreeBase&) = delete;
+    BpTreeBase(const BpTreeBase&) = delete;
+
     // Accessor concept:
     Allocator& get_alloc() const noexcept;
     void destroy() noexcept;
@@ -261,6 +265,11 @@ public:
     }
     BpTree(BpTree&&) = default;
     BpTree& operator=(BpTree&&) = default;
+
+    // Disable copying, this is not allowed.
+    BpTree& operator=(const BpTree&) = delete;
+    BpTree(const BpTree&) = delete;
+
     void init_from_ref(Allocator& alloc, ref_type ref);
     void init_from_mem(Allocator& alloc, MemRef mem);
     void init_from_parent();

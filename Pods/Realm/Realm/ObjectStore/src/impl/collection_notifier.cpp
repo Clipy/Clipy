@@ -90,20 +90,24 @@ bool DeepChangeChecker::check_outgoing_links(size_t table_ndx,
     // Check if we're already checking if the destination of the link is
     // modified, and if not add it to the stack
     auto already_checking = [&](size_t col) {
-        for (auto p = m_current_path.begin(); p < m_current_path.begin() + depth; ++p) {
-            if (p->table == table_ndx && p->row == row_ndx && p->col == col)
-                return true;
+        auto end = m_current_path.begin() + depth;
+        auto match = std::find_if(m_current_path.begin(), end, [&](auto& p) {
+            return p.table == table_ndx && p.row == row_ndx && p.col == col;
+        });
+        if (match != end) {
+            for (; match < end; ++match) match->depth_exceeded = true;
+            return true;
         }
         m_current_path[depth] = {table_ndx, row_ndx, col, false};
         return false;
     };
 
-    for (auto const& link : it->links) {
+    auto linked_object_changed = [&](OutgoingLink const& link) {
         if (already_checking(link.col_ndx))
-            continue;
+            return false;
         if (!link.is_list) {
             if (table.is_null_link(link.col_ndx, row_ndx))
-                continue;
+                return false;
             auto dst = table.get_link(link.col_ndx, row_ndx);
             return check_row(*table.get_link_target(link.col_ndx), dst, depth + 1);
         }
@@ -115,9 +119,10 @@ bool DeepChangeChecker::check_outgoing_links(size_t table_ndx,
             if (check_row(target, dst, depth + 1))
                 return true;
         }
-    }
+        return false;
+    };
 
-    return false;
+    return std::any_of(begin(it->links), end(it->links), linked_object_changed);
 }
 
 bool DeepChangeChecker::check_row(Table const& table, size_t idx, size_t depth)
@@ -141,7 +146,7 @@ bool DeepChangeChecker::check_row(Table const& table, size_t idx, size_t depth)
         return false;
 
     bool ret = check_outgoing_links(table_ndx, table, idx, depth);
-    if (!ret && !m_current_path[depth].depth_exceeded)
+    if (!ret && (depth == 0 || !m_current_path[depth - 1].depth_exceeded))
         m_not_modified[table_ndx].add(idx);
     return ret;
 }
@@ -155,7 +160,7 @@ bool DeepChangeChecker::operator()(size_t ndx)
 
 CollectionNotifier::CollectionNotifier(std::shared_ptr<Realm> realm)
 : m_realm(std::move(realm))
-, m_sg_version(Realm::Internal::get_shared_group(*m_realm).get_version_of_current_transaction())
+, m_sg_version(Realm::Internal::get_shared_group(*m_realm)->get_version_of_current_transaction())
 {
 }
 

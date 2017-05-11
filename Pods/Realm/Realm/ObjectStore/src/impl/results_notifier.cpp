@@ -28,7 +28,7 @@ ResultsNotifier::ResultsNotifier(Results& target)
 {
     Query q = target.get_query();
     set_table(*q.get_table());
-    m_query_handover = Realm::Internal::get_shared_group(*get_realm()).export_for_handover(q, MutableSourcePayload::Move);
+    m_query_handover = Realm::Internal::get_shared_group(*get_realm())->export_for_handover(q, MutableSourcePayload::Move);
     SortDescriptor::generate_patch(target.get_sort(), m_sort_handover);
     SortDescriptor::generate_patch(target.get_distinct(), m_distinct_handover);
 }

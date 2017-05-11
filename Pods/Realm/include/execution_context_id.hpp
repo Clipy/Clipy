@@ -19,7 +19,12 @@
 #ifndef REALM_OS_EXECUTION_CONTEXT_ID_HPP
 #define REALM_OS_EXECUTION_CONTEXT_ID_HPP
 
+#if defined(__GNUC__) && __GNUC__ < 5
+// GCC 4.9 doesn't have std::alligned_union so polyfill
 #include "util/aligned_union.hpp"
+#else
+#include <type_traits>
+#endif
 
 #include <cstring>
 #include <thread>
@@ -95,7 +100,11 @@ private:
 
     template <typename> struct TypeForStorageType;
 
+#if defined(__GNUC__) && __GNUC__ < 5
     util::AlignedUnion<1, std::thread::id, AbstractExecutionContextID>::type m_storage;
+#else
+    std::aligned_union<1, std::thread::id, AbstractExecutionContextID>::type m_storage;
+#endif
     Type m_type;
 };
 

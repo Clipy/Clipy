@@ -21,7 +21,7 @@
 
 #include <realm/util/features.h>
 
-#if (defined(REALM_HAVE_EPOLL) && REALM_HAVE_EPOLL) || REALM_ANDROID || (defined(REALM_PLATFORM_NODE) && REALM_PLATFORM_NODE && !REALM_PLATFORM_APPLE)
+#if (defined(REALM_HAVE_EPOLL) && REALM_HAVE_EPOLL) || REALM_ANDROID || (defined(REALM_PLATFORM_NODE) && REALM_PLATFORM_NODE && !REALM_PLATFORM_APPLE && !defined(_WIN32))
 #define REALM_USE_EPOLL 1
 #else
 #define REALM_USE_EPOLL 0
@@ -31,7 +31,7 @@
 #include "impl/apple/external_commit_helper.hpp"
 #elif REALM_USE_EPOLL
 #include "impl/epoll/external_commit_helper.hpp"
-#elif WIN32
+#elif defined(_WIN32)
 #include "impl/windows/external_commit_helper.hpp"
 #else
 #include "impl/generic/external_commit_helper.hpp"

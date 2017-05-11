@@ -23,8 +23,8 @@ final class MenuManager: NSObject {
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
-    fileprivate let folderIcon = NSImage(assetIdentifier: .IconFolder)
-    fileprivate let snippetIcon = NSImage(assetIdentifier: .IconText)
+    fileprivate let folderIcon = NSImage(assetIdentifier: .iconFolder)
+    fileprivate let snippetIcon = NSImage(assetIdentifier: .iconText)
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let defaults = UserDefaults.standard
@@ -152,13 +152,13 @@ fileprivate extension MenuManager {
         clipMenu?.addItem(NSMenuItem.separator())
 
         if defaults.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
-            clipMenu?.addItem(NSMenuItem(title: LocalizedString.ClearHistory.value, action: #selector(AppDelegate.clearAllHistory)))
+            clipMenu?.addItem(NSMenuItem(title: LocalizedString.clearHistory.value, action: #selector(AppDelegate.clearAllHistory)))
         }
 
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.EditSnippets.value, action: #selector(AppDelegate.showSnippetEditorWindow)))
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.Preference.value, action: #selector(AppDelegate.showPreferenceWindow)))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.editSnippets.value, action: #selector(AppDelegate.showSnippetEditorWindow)))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.preference.value, action: #selector(AppDelegate.showPreferenceWindow)))
         clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.QuitClipy.value, action: #selector(AppDelegate.terminateApplication)))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.quitClipy.value, action: #selector(AppDelegate.terminateApplication)))
 
         statusItem?.menu = clipMenu
     }
@@ -227,7 +227,7 @@ fileprivate extension MenuManager {
         let maxHistory = defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
 
         // History title
-        let labelItem = NSMenuItem(title: LocalizedString.History.value, action: nil)
+        let labelItem = NSMenuItem(title: LocalizedString.history.value, action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
@@ -340,7 +340,7 @@ private extension MenuManager {
         }
 
         // Snippet title
-        let labelItem = NSMenuItem(title: LocalizedString.Snippet.value, action: nil)
+        let labelItem = NSMenuItem(title: LocalizedString.snippet.value, action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
@@ -394,9 +394,9 @@ private extension MenuManager {
         let image: NSImage?
         switch type {
         case .black:
-            image = NSImage(assetIdentifier: .MenuBlack)
+            image = NSImage(assetIdentifier: .menuBlack)
         case .white:
-            image = NSImage(assetIdentifier: .MenuWhite)
+            image = NSImage(assetIdentifier: .menuWhite)
         case .none: return
         }
         image?.isTemplate = true

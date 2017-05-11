@@ -48,8 +48,15 @@ ObjectSchema::ObjectSchema() = default;
 ObjectSchema::~ObjectSchema() = default;
 
 ObjectSchema::ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties)
+: ObjectSchema(std::move(name), persisted_properties, {})
+{
+}
+
+ObjectSchema::ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties,
+                           std::initializer_list<Property> computed_properties)
 : name(std::move(name))
 , persisted_properties(persisted_properties)
+, computed_properties(computed_properties)
 {
     for (auto const& prop : persisted_properties) {
         if (prop.is_primary) {

@@ -111,7 +111,6 @@ public:
 
     // Search index
     StringData get_index_data(size_t ndx, StringIndex::StringConversionBuffer& buffer) const noexcept final;
-    void set_search_index_allow_duplicate_values(bool) noexcept override;
     bool supports_search_index() const noexcept final
     {
         return true;

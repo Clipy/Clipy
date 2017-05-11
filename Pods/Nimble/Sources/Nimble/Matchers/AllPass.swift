@@ -1,53 +1,66 @@
 import Foundation
 
 public func allPass<T, U>
-    (_ passFunc: @escaping (T?) -> Bool) -> NonNilMatcherFunc<U>
-    where U: Sequence, U.Iterator.Element == T {
-    return allPass("pass a condition", passFunc)
+    (_ passFunc: @escaping (T?) throws -> Bool) -> Predicate<U>
+    where U: Sequence, T == U.Iterator.Element {
+        let matcher = Predicate.simpleNilable("pass a condition") { actualExpression in
+            return PredicateStatus(bool: try passFunc(try actualExpression.evaluate()))
+        }
+        return createPredicate(matcher)
 }
 
 public func allPass<T, U>
-    (_ passName: String, _ passFunc: @escaping (T?) -> Bool) -> NonNilMatcherFunc<U>
-    where U: Sequence, U.Iterator.Element == T {
-    return createAllPassMatcher { expression, failureMessage in
-        failureMessage.postfixMessage = passName
-        return passFunc(try expression.evaluate())
-    }
+    (_ passName: String, _ passFunc: @escaping (T?) throws -> Bool) -> Predicate<U>
+    where U: Sequence, T == U.Iterator.Element {
+        let matcher = Predicate.simpleNilable(passName) { actualExpression in
+            return PredicateStatus(bool: try passFunc(try actualExpression.evaluate()))
+        }
+        return createPredicate(matcher)
 }
 
-public func allPass<U, V>
-    (_ matcher: V) -> NonNilMatcherFunc<U>
-    where U: Sequence, V: Matcher, U.Iterator.Element == V.ValueType {
-    return createAllPassMatcher {
-        try matcher.matches($0, failureMessage: $1)
-    }
+public func allPass<S, M>(_ elementMatcher: M) -> Predicate<S>
+    where S: Sequence, M: Matcher, S.Iterator.Element == M.ValueType {
+        return createPredicate(elementMatcher.predicate)
 }
 
-private func createAllPassMatcher<T, U>
-    (_ elementEvaluator: @escaping (Expression<T>, FailureMessage) throws -> Bool) -> NonNilMatcherFunc<U>
-    where U: Sequence, U.Iterator.Element == T {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
-        failureMessage.actualValue = nil
-        if let actualValue = try actualExpression.evaluate() {
+public func allPass<S>(_ elementPredicate: Predicate<S.Iterator.Element>) -> Predicate<S>
+    where S: Sequence {
+        return createPredicate(elementPredicate)
+}
+
+private func createPredicate<S>(_ elementMatcher: Predicate<S.Iterator.Element>) -> Predicate<S>
+    where S: Sequence {
+        return Predicate { actualExpression in
+            guard let actualValue = try actualExpression.evaluate() else {
+                return PredicateResult(
+                    status: .fail,
+                    message: .appends(.expectedTo("all pass"), " (use beNil() to match nils)")
+                )
+            }
+
+            var failure: ExpectationMessage = .expectedTo("all pass")
             for currentElement in actualValue {
                 let exp = Expression(
                     expression: {currentElement}, location: actualExpression.location)
-                if try !elementEvaluator(exp, failureMessage) {
-                    failureMessage.postfixMessage =
-                        "all \(failureMessage.postfixMessage),"
-                        + " but failed first at element <\(stringify(currentElement))>"
-                        + " in <\(stringify(actualValue))>"
-                    return false
+                let predicateResult = try elementMatcher.satisfies(exp)
+                if predicateResult.status == .matches {
+                    failure = predicateResult.message.prepended(expectation: "all ")
+                } else {
+                    failure = predicateResult.message
+                        .replacedExpectation({ .expectedTo($0.expectedMessage) })
+                        .wrappedExpectation(
+                            before: "all ",
+                            after: ", but failed first at element <\(stringify(currentElement))>"
+                                + " in <\(stringify(actualValue))>"
+                    )
+                    return PredicateResult(status: .doesNotMatch, message: failure)
                 }
             }
-            failureMessage.postfixMessage = "all \(failureMessage.postfixMessage)"
-        } else {
-            failureMessage.postfixMessage = "all pass (use beNil() to match nils)"
-            return false
+            failure = failure.replacedExpectation({ expectation in
+                return .expectedTo(expectation.expectedMessage)
+            })
+            return PredicateResult(status: .matches, message: failure)
         }
-
-        return true
-    }
 }
 
 #if _runtime(_ObjC)
@@ -82,12 +95,14 @@ extension NMBObjCMatcher {
             }
 
             let expr = Expression(expression: ({ nsObjects }), location: location)
-            let elementEvaluator: (Expression<NSObject>, FailureMessage) -> Bool = {
-                expression, failureMessage in
-                return matcher.matches({try! expression.evaluate()}, failureMessage: failureMessage, location: expr.location)
-            }
-            return try! createAllPassMatcher(elementEvaluator).matches(
-                expr, failureMessage: failureMessage)
+            let pred: Predicate<[NSObject]> = createPredicate(Predicate.fromDeprecatedFullClosure { expr, failureMessage, expectMatch in
+                if expectMatch {
+                    return matcher.matches({ try! expr.evaluate() }, failureMessage: failureMessage, location: expr.location)
+                } else {
+                    return matcher.doesNotMatch({ try! expr.evaluate() }, failureMessage: failureMessage, location: expr.location)
+                }
+            })
+            return try! pred.matches(expr, failureMessage: failureMessage)
         }
     }
 }

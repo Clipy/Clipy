@@ -33,6 +33,9 @@
 #pragma mark - API
 
 - (void)setSyncConfiguration:(RLMSyncConfiguration *)syncConfiguration {
+    if (self.config.should_compact_on_launch_function) {
+        @throw RLMException(@"Cannot set `syncConfiguration` when `shouldCompactOnLaunch` is set.");
+    }
     RLMSyncUser *user = syncConfiguration.user;
     if (user.state == RLMSyncUserStateError) {
         @throw RLMException(@"Cannot set a sync configuration which has an errored-out user.");
@@ -51,6 +54,11 @@
     self.config.in_memory = false;
     self.config.sync_config = std::make_shared<realm::SyncConfig>([syncConfiguration rawConfiguration]);
     self.config.schema_mode = realm::SchemaMode::Additive;
+    if (!self.config.encryption_key.empty()) {
+        auto& sync_encryption_key = self.config.sync_config->realm_encryption_key;
+        sync_encryption_key = std::array<char, 64>();
+        std::copy_n(self.config.encryption_key.begin(), 64, sync_encryption_key->begin());
+    }
 }
 
 - (RLMSyncConfiguration *)syncConfiguration {

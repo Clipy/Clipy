@@ -36,6 +36,11 @@ class SyncSession;
 class SyncUser {
 friend class SyncSession;
 public:
+    enum class TokenType {
+        Normal,
+        Admin,
+    };
+
     enum class State {
         LoggedOut,
         Active,
@@ -46,7 +51,7 @@ public:
     SyncUser(std::string refresh_token,
              std::string identity,
              util::Optional<std::string> server_url,
-             bool is_admin=false);
+             TokenType token_type=TokenType::Normal);
 
     // Return a list of all sessions belonging to this user.
     std::vector<std::shared_ptr<SyncSession>> all_sessions();
@@ -64,20 +69,30 @@ public:
     // Log the user out and mark it as such. This will also close its associated Sessions.
     void log_out();
 
-    // Whether the user was configured as an 'admin user' (directly uses its user token
-    // to open Realms).
-    bool is_admin() const
+    // Whether the user has administrator privileges.
+    bool is_admin() const noexcept
     {
-        return m_is_admin;
+        return m_token_type == TokenType::Admin || m_is_admin;
     }
 
-    std::string identity() const
+    TokenType token_type() const noexcept
+    {
+        return m_token_type;
+    }
+
+    // Specify whether the user has administrator privileges.
+    // Note that this is an internal flag meant for bindings to communicate information
+    // originating from the server. It is *NOT* possible to unilaterally change a user's
+    // administrator status from the client through this or any other API.
+    void set_is_admin(bool);
+
+    std::string identity() const noexcept
     {
         return m_identity;
     }
 
     // FIXME: remove this APIs once the new token system is implemented.
-    const std::string& server_url() const
+    const std::string& server_url() const noexcept
     {
         return m_server_url;
     }
@@ -89,10 +104,17 @@ public:
     // A registered session will be bound at the earliest opportunity: either
     // immediately, or upon the user becoming Active.
     // Note that this is called by the SyncManager, and should not be directly called.
-    void register_session(std::shared_ptr<SyncSession> session);
+    void register_session(std::shared_ptr<SyncSession>);
+
+    // Internal APIs. Do not call.
+    void register_management_session(const std::string&);
+    void register_permission_session(const std::string&);
 
 private:
     State m_state;
+
+    std::weak_ptr<SyncSession> m_management_session;
+    std::weak_ptr<SyncSession> m_permission_session;
 
     // The auth server URL. Bindings should set this appropriately when they retrieve
     // instances of `SyncUser`s.
@@ -104,9 +126,12 @@ private:
 
     mutable std::mutex m_mutex;
 
-    // Whether the user is an 'admin' user. Admin users use the admin tokens they were
-    // configured with to directly open sessions, and do not make network requests.
+    // The token type of the user.
+    // FIXME: remove this flag once bindings take responsible for admin token users
+    TokenType m_token_type;
+
     bool m_is_admin;
+
     // The user's refresh token.
     std::string m_refresh_token;
     // Set by the server. The unique ID of the user account on the Realm Object Server.

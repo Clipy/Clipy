@@ -31,7 +31,10 @@ struct RowBaseHandoverPatch;
 struct TableViewHandoverPatch;
 
 struct TableHandoverPatch {
+    bool m_is_sub_table;
     size_t m_table_num;
+    size_t m_col_ndx;
+    size_t m_row_ndx;
 };
 
 struct LinkViewHandoverPatch {

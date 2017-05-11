@@ -57,12 +57,12 @@ public:
 };
 
 
-/// The \c FileFormatUpgradeRequired exception can be thrown by the \c
-/// SharedGroup constructor when opening a database that uses a deprecated file
-/// format, and the user has indicated he does not want automatic upgrades to
-/// be performed. This exception indicates that until an upgrade of the file
-/// format is performed, the database will be unavailable for read or write
-/// operations.
+/// The FileFormatUpgradeRequired exception can be thrown by the SharedGroup
+/// constructor when opening a database that uses a deprecated file format
+/// and/or a deprecated history schema, and the user has indicated he does not
+/// want automatic upgrades to be performed. This exception indicates that until
+/// an upgrade of the file format is performed, the database will be unavailable
+/// for read or write operations.
 class FileFormatUpgradeRequired : public std::exception {
 public:
     const char* what() const noexcept override;
@@ -199,8 +199,16 @@ public:
         /// session.
         mixed_history_type,
 
+        /// History schema version (as specified by the Replication
+        /// implementation passed to the SharedGroup constructor) was not
+        /// consistent across the session.
+        mixed_history_schema_version,
+
         /// Adding rows to a table with no columns is not supported.
-        table_has_no_columns
+        table_has_no_columns,
+
+        /// Referring to a column that has been deleted.
+        column_does_not_exist
     };
 
     LogicError(ErrorKind message);

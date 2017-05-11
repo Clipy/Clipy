@@ -147,63 +147,6 @@ public:
     }
 };
 
-
-/// This class is intended to eventually become a basis for implementing the
-/// Replication API for the purpose of supporting continuous transactions. That
-/// is, its purpose is to replace the current implementation in commit_log.cpp,
-/// which places the history in separate files.
-///
-/// By ensuring that the root node of the history is correctly configured with
-/// Group::m_top as its parent, this class allows for modifications of the
-/// history as long as those modifications happen after the remainder of the
-/// Group accessor is updated to reflect the new snapshot (see
-/// History::update_early_from_top_ref()).
-class InRealmHistory : public History {
-public:
-    void initialize(Group&);
-
-    /// Must never be called more than once per transaction. Returns the version
-    /// produced by the added changeset.
-    version_type add_changeset(BinaryData);
-
-    void update_early_from_top_ref(version_type, size_t, ref_type) override;
-    void update_from_parent(version_type) override;
-    void get_changesets(version_type, version_type, BinaryIterator*) const noexcept override;
-    void set_oldest_bound_version(version_type) override;
-
-    void verify() const override;
-
-private:
-    Group* m_group = nullptr;
-
-    /// Version on which the first changeset in the history is based, or if the
-    /// history is empty, the version associatede with currently bound
-    /// snapshot. In general, the version associatede with currently bound
-    /// snapshot is equal to `m_base_version + m_size`, but after
-    /// add_changeset() is called, it is equal to one minus that.
-    version_type m_base_version;
-
-    /// Current number of entries in the history. A cache of
-    /// `m_changesets->size()`.
-    size_t m_size;
-
-    /// A list of changesets, one for each entry in the history. If null, the
-    /// history is empty.
-    ///
-    /// FIXME: Ideally, the B+tree accessor below should have been just
-    /// Bptree<BinaryData>, but Bptree<BinaryData> seems to not allow that yet.
-    ///
-    /// FIXME: The memory-wise indirection is an unfortunate consequence of the
-    /// fact that it is impossible to construct a BinaryColumn without already
-    /// having a ref to a valid underlying node structure. This, in turn, is an
-    /// unfortunate consequence of the fact that a column accessor contains a
-    /// dynamically allocated root node accessor, and the type of the required
-    /// root node accessor depends on the size of the B+-tree.
-    std::unique_ptr<BinaryColumn> m_changesets;
-
-    void update_from_ref(ref_type, version_type);
-};
-
 } // namespace _impl
 } // namespace realm
 

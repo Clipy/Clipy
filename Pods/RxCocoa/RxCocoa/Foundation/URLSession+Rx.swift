@@ -141,7 +141,11 @@ extension Reactive where Base: URLSession {
                 if Logging.URLRequests(request) {
                     let interval = Date().timeIntervalSince(d ?? Date())
                     print(convertURLRequestToCurlCommand(request))
-                    print(convertResponseToString(response, error.map { $0 as NSError }, interval))
+                    #if os(Linux)
+                        print(convertResponseToString(response, error.flatMap { $0 as? NSError }, interval))
+                    #else
+                        print(convertResponseToString(response, error.map { $0 as NSError }, interval))
+                    #endif
                 }
                 
                 guard let response = response, let data = data else {
@@ -158,9 +162,7 @@ extension Reactive where Base: URLSession {
                 observer.on(.completed)
             }
 
-
-            let t = task
-            t.resume()
+            task.resume()
 
             return Disposables.create(with: task.cancel)
         }

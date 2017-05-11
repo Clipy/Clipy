@@ -33,6 +33,10 @@ public:
     {
     }
 
+    // Disable copying, this is not allowed.
+    BasicArray& operator=(const BasicArray&) = delete;
+    BasicArray(const BasicArray&) = delete;
+
     T get(size_t ndx) const noexcept;
     bool is_null(size_t ndx) const noexcept;
     void add(T value);

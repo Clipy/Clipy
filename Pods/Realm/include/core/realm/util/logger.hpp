@@ -27,7 +27,6 @@
 #include <iostream>
 
 #include <realm/util/features.h>
-#include <realm/util/tuple.hpp>
 #include <realm/util/thread.hpp>
 #include <realm/util/file.hpp>
 

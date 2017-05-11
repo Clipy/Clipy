@@ -206,7 +206,7 @@ private:
     Query m_query;
     TableView m_table_view;
     LinkViewRef m_link_view;
-    Table* m_table = nullptr;
+    TableRef m_table;
     SortDescriptor m_sort;
     SortDescriptor m_distinct;
 

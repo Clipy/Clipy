@@ -52,6 +52,8 @@ private:
     };
     std::vector<ListInfo> m_lists;
     VersionID m_version;
+
+    size_t new_table_ndx(size_t ndx) const { return ndx < table_indices.size() ? table_indices[ndx] : ndx; }
 };
 
 KVOAdapter::KVOAdapter(std::vector<BindingContext::ObserverState>& observers, BindingContext* context)
@@ -103,9 +105,7 @@ void KVOAdapter::before(SharedGroup& sg)
         return;
 
     for (auto& observer : m_observers) {
-        size_t table_ndx = observer.table_ndx;
-        if (table_ndx < table_indices.size())
-            table_ndx = table_indices[table_ndx];
+        size_t table_ndx = new_table_ndx(observer.table_ndx);
         if (table_ndx >= tables.size())
             continue;
 
@@ -143,7 +143,12 @@ void KVOAdapter::before(SharedGroup& sg)
     for (auto& list : m_lists) {
         if (list.builder.empty())
             continue;
-        // column should have been marked as modified and thus already exist in `changes`
+        // If the containing row was deleted then changes will be empty
+        if (list.observer->changes.empty()) {
+            REALM_ASSERT_DEBUG(tables[new_table_ndx(list.observer->table_ndx)].deletions.contains(list.observer->row_ndx));
+            continue;
+        }
+        // otherwise the column should have been marked as modified
         REALM_ASSERT(list.col < list.observer->changes.size());
         auto& builder = list.builder;
         auto& changes = list.observer->changes[list.col];
@@ -342,9 +347,8 @@ void expand_to(std::vector<size_t>& cols, size_t i)
     if (old_size > i)
         return;
 
-    auto new_size = std::max(old_size * 2, i + 1);
-    cols.resize(new_size);
-    std::iota(&cols[old_size], &cols[new_size], old_size == 0 ? 0 : cols[old_size - 1] + 1);
+    cols.resize(std::max(old_size * 2, i + 1));
+    std::iota(begin(cols) + old_size, end(cols), old_size == 0 ? 0 : cols[old_size - 1] + 1);
 }
 
 void adjust_ge(std::vector<size_t>& values, size_t i)
@@ -483,17 +487,18 @@ public:
         REALM_ASSERT(unordered);
         size_t last_row = prior_num_rows - 1;
 
-        for (auto it = begin(m_info.lists); it != end(m_info.lists); ) {
-            if (it->table_ndx == current_table()) {
-                if (it->row_ndx == row_ndx) {
-                    *it = std::move(m_info.lists.back());
-                    m_info.lists.pop_back();
-                    continue;
-                }
-                if (it->row_ndx == last_row)
-                    it->row_ndx = row_ndx;
+        for (size_t i = 0; i < m_info.lists.size(); ++i) {
+            auto& list = m_info.lists[i];
+            if (list.table_ndx != current_table())
+                continue;
+            if (list.row_ndx == row_ndx) {
+                if (i + 1 < m_info.lists.size())
+                    m_info.lists[i] = std::move(m_info.lists.back());
+                m_info.lists.pop_back();
+                continue;
             }
-            ++it;
+            if (list.row_ndx == last_row)
+                list.row_ndx = row_ndx;
         }
 
         if (auto change = get_change())
@@ -642,10 +647,10 @@ public:
 };
 
 template<typename Func>
-void advance_with_notifications(BindingContext* context, SharedGroup& sg, Func&& func,
+void advance_with_notifications(BindingContext* context, const std::unique_ptr<SharedGroup>& sg, Func&& func,
                                 _impl::NotifierPackage& notifiers)
 {
-    auto old_version = sg.get_version_of_current_transaction();
+    auto old_version = sg->get_version_of_current_transaction();
     std::vector<BindingContext::ObserverState> observers;
     if (context) {
         observers = context->get_observed_rows();
@@ -657,20 +662,23 @@ void advance_with_notifications(BindingContext* context, SharedGroup& sg, Func&&
     if (observers.empty() && (!notifiers || notifiers.version())) {
         notifiers.before_advance();
         func(TransactLogValidator());
-        auto new_version = sg.get_version_of_current_transaction();
+        auto new_version = sg->get_version_of_current_transaction();
         if (context && old_version != new_version)
             context->did_change({}, {});
+        // did_change() could close the Realm. Just return if it does.
+        if (!sg)
+            return;
         // did_change() can change the read version, and if it does we can't
         // deliver notifiers
-        if (new_version == sg.get_version_of_current_transaction())
-            notifiers.deliver(sg);
+        if (new_version == sg->get_version_of_current_transaction())
+            notifiers.deliver(*sg);
         notifiers.after_advance();
         return;
     }
 
-    func(KVOTransactLogObserver(observers, context, notifiers, sg));
-    notifiers.package_and_wait(sg.get_version_of_current_transaction().version); // is a no-op if parse_complete() was called
-    notifiers.deliver(sg);
+    func(KVOTransactLogObserver(observers, context, notifiers, *sg));
+    notifiers.package_and_wait(sg->get_version_of_current_transaction().version); // is a no-op if parse_complete() was called
+    notifiers.deliver(*sg);
     notifiers.after_advance();
 }
 
@@ -685,10 +693,10 @@ void advance(SharedGroup& sg, BindingContext*, VersionID version)
     LangBindHelper::advance_read(sg, TransactLogValidator(), version);
 }
 
-void advance(SharedGroup& sg, BindingContext* context, NotifierPackage& notifiers)
+void advance(const std::unique_ptr<SharedGroup>& sg, BindingContext* context, NotifierPackage& notifiers)
 {
     advance_with_notifications(context, sg, [&](auto&&... args) {
-        LangBindHelper::advance_read(sg, std::move(args)..., notifiers.version().value_or(VersionID{}));
+        LangBindHelper::advance_read(*sg, std::move(args)..., notifiers.version().value_or(VersionID{}));
     }, notifiers);
 }
 
@@ -697,10 +705,10 @@ void begin_without_validation(SharedGroup& sg)
     LangBindHelper::promote_to_write(sg);
 }
 
-void begin(SharedGroup& sg, BindingContext* context, NotifierPackage& notifiers)
+void begin(const std::unique_ptr<SharedGroup>& sg, BindingContext* context, NotifierPackage& notifiers)
 {
     advance_with_notifications(context, sg, [&](auto&&... args) {
-        LangBindHelper::promote_to_write(sg, std::move(args)...);
+        LangBindHelper::promote_to_write(*sg, std::move(args)...);
     }, notifiers);
 }
 

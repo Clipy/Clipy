@@ -55,7 +55,7 @@ struct SyncProgress {
 };
 
 
-class SyncHistory:
+class ClientHistory:
         public TrivialReplication {
 public:
     using version_type    = TrivialReplication::version_type;
@@ -256,18 +256,18 @@ public:
                                       util::AppendBuffer<char>&) const = 0;
 
 protected:
-    SyncHistory(const std::string& realm_path);
+    ClientHistory(const std::string& realm_path);
 };
 
 
 /// \brief Abstract interface for changeset cookers.
 ///
 /// Note, it is completely up to the application to decide what a cooked
-/// changeset is. History objects (instances of SyncHistory) are required to
+/// changeset is. History objects (instances of ClientHistory) are required to
 /// treat cooked changesets as opaque entities. For an example of a concrete
 /// changeset cooker, see TrivialChangesetCooker which defines the cooked
 /// changesets to be identical copies of the raw changesets.
-class SyncHistory::ChangesetCooker {
+class ClientHistory::ChangesetCooker {
 public:
     /// \brief An opportunity to produce a cooked changeset.
     ///
@@ -292,7 +292,7 @@ public:
 };
 
 
-class SyncHistory::Config {
+class ClientHistory::Config {
 public:
     Config() {}
 
@@ -308,14 +308,14 @@ public:
     /// If a changeset cooker is specified, then the created history object will
     /// allow for a cooked changeset to be produced for each changeset of remote
     /// origin; that is, for each changeset that is integrated during the
-    /// execution of SyncHistory::integrate_remote_changesets(). If no changeset
-    /// cooker is specified, then no cooked changesets will be produced on
-    /// behalf of the created history object.
+    /// execution of ClientHistory::integrate_remote_changesets(). If no
+    /// changeset cooker is specified, then no cooked changesets will be
+    /// produced on behalf of the created history object.
     ///
-    /// SyncHistory::integrate_remote_changesets() will pass each incoming
+    /// ClientHistory::integrate_remote_changesets() will pass each incoming
     /// changeset to the cooker after operational transformation; that is, when
     /// the chageset is ready to be applied to the local Realm state.
-    ChangesetCooker* changeset_cooker = nullptr;
+    std::shared_ptr<ChangesetCooker> changeset_cooker;
 };
 
 /// \brief Create a "sync history" implementation of the realm::Replication
@@ -323,14 +323,14 @@ public:
 ///
 /// The intended role for such an object is as a plugin for new
 /// realm::SharedGroup objects.
-std::unique_ptr<SyncHistory> make_sync_history(const std::string& realm_path,
-                                               SyncHistory::Config = {});
+std::unique_ptr<ClientHistory> make_client_history(const std::string& realm_path,
+                                                   ClientHistory::Config = {});
 
 
 
 // Implementation
 
-inline SyncHistory::SyncHistory(const std::string& realm_path):
+inline ClientHistory::ClientHistory(const std::string& realm_path):
     TrivialReplication(realm_path)
 {
 }

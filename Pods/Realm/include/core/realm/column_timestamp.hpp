@@ -65,8 +65,7 @@ public:
         return m_search_index.get();
     }
     void destroy_search_index() noexcept override;
-    void set_search_index_ref(ref_type ref, ArrayParent* parent, size_t ndx_in_parent,
-                              bool allow_duplicate_values) final;
+    void set_search_index_ref(ref_type ref, ArrayParent* parent, size_t ndx_in_parent) final;
     void populate_search_index();
     StringIndex* create_search_index() override;
     bool supports_search_index() const noexcept final

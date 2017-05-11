@@ -14,8 +14,8 @@ import Foundation
 public func throwError<T: Error>(
     _ error: T? = nil,
     errorType: T.Type? = nil,
-    closure: ((T) -> Void)? = nil) -> MatcherFunc<Any> {
-        return MatcherFunc { actualExpression, failureMessage in
+    closure: ((T) -> Void)? = nil) -> Predicate<Any> {
+        return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
 
             var actualError: Error?
             do {
@@ -37,8 +37,8 @@ public func throwError<T: Error>(
 ///
 /// The closure only gets called when an error was thrown.
 public func throwError(
-    closure: ((Error) -> Void)? = nil) -> MatcherFunc<Any> {
-        return MatcherFunc { actualExpression, failureMessage in
+    closure: ((Error) -> Void)? = nil) -> Predicate<Any> {
+        return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
 
             var actualError: Error?
             do {

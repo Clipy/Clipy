@@ -36,7 +36,7 @@ Results::~Results() = default;
 Results::Results(SharedRealm r, Query q, SortDescriptor s, SortDescriptor d)
 : m_realm(std::move(r))
 , m_query(std::move(q))
-, m_table(m_query.get_table().get())
+, m_table(m_query.get_table())
 , m_sort(std::move(s))
 , m_distinct(std::move(d))
 , m_mode(Mode::Query)
@@ -45,18 +45,18 @@ Results::Results(SharedRealm r, Query q, SortDescriptor s, SortDescriptor d)
 
 Results::Results(SharedRealm r, Table& table)
 : m_realm(std::move(r))
-, m_table(&table)
 , m_mode(Mode::Table)
 {
+    m_table.reset(&table);
 }
 
 Results::Results(SharedRealm r, LinkViewRef lv, util::Optional<Query> q, SortDescriptor s)
 : m_realm(std::move(r))
 , m_link_view(lv)
-, m_table(&lv->get_target_table())
 , m_sort(std::move(s))
 , m_mode(Mode::LinkView)
 {
+    m_table.reset(&lv->get_target_table());
     if (q) {
         m_query = std::move(*q);
         m_mode = Mode::Query;
@@ -66,11 +66,11 @@ Results::Results(SharedRealm r, LinkViewRef lv, util::Optional<Query> q, SortDes
 Results::Results(SharedRealm r, TableView tv, SortDescriptor s, SortDescriptor d)
 : m_realm(std::move(r))
 , m_table_view(std::move(tv))
-, m_table(&m_table_view.get_parent())
 , m_sort(std::move(s))
 , m_distinct(std::move(d))
 , m_mode(Mode::TableView)
 {
+    m_table.reset(&m_table_view.get_parent());
 }
 
 Results::Results(const Results&) = default;
@@ -82,7 +82,7 @@ Results::Results(Results&& other)
 , m_query(std::move(other.m_query))
 , m_table_view(std::move(other.m_table_view))
 , m_link_view(std::move(other.m_link_view))
-, m_table(other.m_table)
+, m_table(std::move(other.m_table))
 , m_sort(std::move(other.m_sort))
 , m_distinct(std::move(other.m_distinct))
 , m_notifier(std::move(other.m_notifier))
@@ -215,7 +215,11 @@ util::Optional<RowExpr> Results::first()
         case Mode::Query:
         case Mode::TableView:
             update_tableview();
-            return m_table_view.size() == 0 ? util::none : util::make_optional(m_table_view.front());
+            if (m_table_view.size() == 0)
+                return util::none;
+            else if (m_update_policy == UpdatePolicy::Never && !m_table_view.is_row_attached(0))
+                return RowExpr();
+            return m_table_view.front();
     }
     REALM_UNREACHABLE();
 }
@@ -235,7 +239,12 @@ util::Optional<RowExpr> Results::last()
         case Mode::Query:
         case Mode::TableView:
             update_tableview();
-            return m_table_view.size() == 0 ? util::none : util::make_optional(m_table_view.back());
+            auto s = m_table_view.size();
+            if (s == 0)
+                return util::none;
+            else if (m_update_policy == UpdatePolicy::Never && !m_table_view.is_row_attached(s - 1))
+                return RowExpr();
+            return m_table_view.back();
     }
     REALM_UNREACHABLE();
 }
@@ -361,7 +370,7 @@ util::Optional<Mixed> Results::aggregate(size_t column,
         case type_Float: return do_agg(agg_float);
         case type_Int: return do_agg(agg_int);
         default:
-            throw UnsupportedColumnTypeException{column, m_table, name};
+            throw UnsupportedColumnTypeException{column, m_table.get(), name};
     }
 }
 
@@ -393,7 +402,7 @@ util::Optional<Mixed> Results::sum(size_t column)
                      [=](auto const& table) { return table.sum_int(column); },
                      [=](auto const& table) { return table.sum_float(column); },
                      [=](auto const& table) { return table.sum_double(column); },
-                     [=](auto const&) -> util::None { throw UnsupportedColumnTypeException{column, m_table, "sum"}; });
+                     [=](auto const&) -> util::None { throw UnsupportedColumnTypeException{column, m_table.get(), "sum"}; });
 }
 
 util::Optional<Mixed> Results::average(size_t column)
@@ -404,7 +413,7 @@ util::Optional<Mixed> Results::average(size_t column)
                              [&](auto const& table) { return table.average_int(column, &value_count); },
                              [&](auto const& table) { return table.average_float(column, &value_count); },
                              [&](auto const& table) { return table.average_double(column, &value_count); },
-                             [&](auto const&) -> util::None { throw UnsupportedColumnTypeException{column, m_table, "average"}; });
+                             [&](auto const&) -> util::None { throw UnsupportedColumnTypeException{column, m_table.get(), "average"}; });
     return value_count == 0 ? none : results;
 }
 

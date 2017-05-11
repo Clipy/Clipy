@@ -41,10 +41,10 @@ namespace realm {
     static const char *string_for_property_type(PropertyType type);
 
     struct Property {
-        std::string name;
-        PropertyType type;
-        std::string object_type;
-        std::string link_origin_property_name;
+        std::string name = "";
+        PropertyType type = PropertyType::Int;
+        std::string object_type = "";
+        std::string link_origin_property_name = "";
         bool is_primary = false;
         bool is_indexed = false;
         bool is_nullable = false;
@@ -84,6 +84,17 @@ namespace realm {
                 default:
                     return string_for_property_type(type);
             }
+        }
+
+        enum class Nullable { yes, no };
+        enum class PrimaryKey { yes, no };
+        enum class Indexed { yes, no };
+        static Property make(std::string name, PropertyType type,
+                             PrimaryKey is_primary=PrimaryKey::no,
+                             Indexed is_indexed=Indexed::no,
+                             Nullable is_nullable=Nullable::no)
+        { 
+            return { std::move(name), type, "", "", is_primary == PrimaryKey::yes, is_indexed == Indexed::yes, is_nullable == Nullable::yes };
         }
 
 #if __GNUC__ < 5

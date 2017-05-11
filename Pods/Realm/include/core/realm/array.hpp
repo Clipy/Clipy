@@ -47,7 +47,6 @@ Searching: The main finding function is:
 
 #include <cstdint> // unint8_t etc
 
-#include <realm/util/meta.hpp>
 #include <realm/util/assert.hpp>
 #include <realm/util/file_mapper.hpp>
 #include <realm/utilities.hpp>
@@ -101,7 +100,8 @@ inline T no0(T v)
 const size_t npos = size_t(-1);
 
 // Maximum number of bytes that the payload of an array can be
-const size_t max_array_payload = 0x00ffffffL;
+const size_t max_array_payload         = 0x00ffffffL;
+const size_t max_array_payload_aligned = 0x00fffff8L;
 
 /// Alias for realm::npos.
 const size_t not_found = npos;
@@ -558,6 +558,7 @@ public:
     ///
     /// This information is guaranteed to be cached in the array accessor.
     bool has_refs() const noexcept;
+    void set_has_refs(bool) noexcept;
 
     /// This information is guaranteed to be cached in the array accessor.
     ///
@@ -874,8 +875,8 @@ public:
     // The encryption layer relies on headers always fitting within a single page.
     static_assert(header_size == 8, "Header must always fit in entirely on a page");
 
-private:
-    Array& operator=(const Array&); // not allowed
+    Array& operator=(const Array&) = delete; // not allowed
+    Array(const Array&) = delete; // not allowed
 protected:
     typedef bool (*CallbackDummy)(int64_t);
 
@@ -936,7 +937,7 @@ protected:
     void copy_on_write();
 
 private:
-    void do_copy_on_write(size_t minimum_size=0);
+    void do_copy_on_write(size_t minimum_size = 0);
     void do_ensure_minimum_width(int_fast64_t);
 
     template <size_t w>
@@ -1416,6 +1417,15 @@ inline bool Array::has_refs() const noexcept
     return m_has_refs;
 }
 
+inline void Array::set_has_refs(bool value) noexcept
+{
+    if (m_has_refs != value) {
+        REALM_ASSERT(!is_read_only());
+        m_has_refs = value;
+        set_header_hasrefs(value);
+    }
+}
+
 inline bool Array::get_context_flag() const noexcept
 {
     return m_context_flag;
@@ -1423,8 +1433,11 @@ inline bool Array::get_context_flag() const noexcept
 
 inline void Array::set_context_flag(bool value) noexcept
 {
-    m_context_flag = value;
-    set_header_context_flag(value);
+    if (m_context_flag != value) {
+        REALM_ASSERT(!is_read_only());
+        m_context_flag = value;
+        set_header_context_flag(value);
+    }
 }
 
 inline ref_type Array::get_ref() const noexcept

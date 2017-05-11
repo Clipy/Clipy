@@ -31,7 +31,6 @@
 #include <realm/impl/output_stream.hpp>
 #include <realm/impl/continuous_transactions_history.hpp>
 #include <realm/table.hpp>
-#include <realm/table_basic_fwd.hpp>
 #include <realm/alloc_slab.hpp>
 
 namespace realm {
@@ -103,6 +102,7 @@ public:
 
     // FIXME: Implement a proper copy constructor (fairly trivial).
     Group(const Group&) = delete;
+    Group& operator=(const Group&) = delete;
 
     ~Group() noexcept override;
 
@@ -277,8 +277,6 @@ public:
     /// the dynamic type (descriptor) to match the statically specified custom
     /// table type.
     ///
-    /// \tparam T An instance of the BasicTable class template.
-    ///
     /// \param index Index of table in this group.
     ///
     /// \param name Name of table. All strings are valid table names as long as
@@ -334,30 +332,6 @@ public:
     TableRef insert_table(size_t index, StringData name, bool require_unique_name = true);
     TableRef get_or_add_table(StringData name, bool* was_added = nullptr);
     TableRef get_or_insert_table(size_t index, StringData name, bool* was_added = nullptr);
-
-    template <class T>
-    BasicTableRef<T> get_table(size_t index);
-
-    template <class T>
-    BasicTableRef<const T> get_table(size_t index) const;
-
-    template <class T>
-    BasicTableRef<T> get_table(StringData name);
-
-    template <class T>
-    BasicTableRef<const T> get_table(StringData name) const;
-
-    template <class T>
-    BasicTableRef<T> add_table(StringData name, bool require_unique_name = true);
-
-    template <class T>
-    BasicTableRef<T> insert_table(size_t index, StringData name, bool require_unique_name = true);
-
-    template <class T>
-    BasicTableRef<T> get_or_add_table(StringData name, bool* was_added = nullptr);
-
-    template <class T>
-    BasicTableRef<T> get_or_insert_table(size_t index, StringData name, bool* was_added = nullptr);
 
     void remove_table(size_t index);
     void remove_table(StringData name);
@@ -558,36 +532,40 @@ private:
     ///
     /// <pre>
     ///
-    ///   slot  value
-    ///   -----------------------
-    ///   1st   m_table_names
-    ///   2nd   m_tables
-    ///   3rd   Logical file size
-    ///   4th   GroupWriter::m_free_positions (optional)
-    ///   5th   GroupWriter::m_free_lengths   (optional)
-    ///   6th   GroupWriter::m_free_versions  (optional)
-    ///   7th   Transaction number / version  (optional)
-    ///   8th   In-Realm history type         (optional)
-    ///   9th   In-Realm history ref          (optional)
+    ///                                                     Introduced in file
+    ///   Slot  Value                                       format version
+    ///   ---------------------------------------------------------------------
+    ///    1st   m_table_names
+    ///    2nd   m_tables
+    ///    3rd   Logical file size
+    ///    4th   GroupWriter::m_free_positions (optional)
+    ///    5th   GroupWriter::m_free_lengths   (optional)
+    ///    6th   GroupWriter::m_free_versions  (optional)
+    ///    7th   Transaction number / version  (optional)
+    ///    8th   History type         (optional)             4
+    ///    9th   History ref          (optional)             4
+    ///   10th   History version      (optional)             7
     ///
     /// </pre>
     ///
-    /// The 'in-Realm history type' slot stores a value of
-    /// Replication::HistoryType, although never
-    /// Replication::hist_OutOfRealm. For more information about that, see
-    /// Replication::get_history_type().
+    /// The 'History type' slot stores a value of type
+    /// Replication::HistoryType. The 'History version' slot stores a history
+    /// schema version as returned by Replication::get_history_schema_version().
     ///
     /// The first three entries are mandatory. In files created by
     /// Group::write(), none of the optional entries are present and the size of
     /// `m_top` is 3. In files updated by Group::commit(), the 4th and 5th entry
-    /// is present, and the size of `m_top` is 5. In files updated by way of a
-    /// transaction (SharedGroup::commit()), the 4th, 5th, 6th, and 7th entry is
-    /// present, and the size of `m_top` is 7. In files that contain a changeset
-    /// history, the 8th and 9th entry is present.
+    /// are present, and the size of `m_top` is 5. In files updated by way of a
+    /// transaction (SharedGroup::commit()), the 4th, 5th, 6th, and 7th entry
+    /// are present, and the size of `m_top` is 7. In files that contain a
+    /// changeset history, the 8th, 9th, and 10th entry are present, except that
+    /// if the file was opened in nonshared mode (via Group::open()), and the
+    /// file format remains at 6 (not previously upgraded to 7 or later), then
+    /// the 10th entry will be absent.
     ///
     /// When a group accessor is attached to a newly created file or an empty
     /// memory buffer where there is no top array yet, `m_top`, `m_tables`, and
-    /// `m_table_names` with be left in the detached state until the initiation
+    /// `m_table_names` will be left in the detached state until the initiation
     /// of the first write transaction. In particular, they will remain in the
     /// detached state during read transactions that precede the first write
     /// transaction.
@@ -710,11 +688,13 @@ private:
     void send_cascade_notification(const CascadeNotification& notification) const;
     void send_schema_change_notification() const;
 
-    static void get_version_and_history_type(const Array& top, _impl::History::version_type& version,
-                                             int& history_type) noexcept;
+    static void get_version_and_history_info(const Array& top, _impl::History::version_type& version,
+                                             int& history_type, int& history_schema_version) noexcept;
     static ref_type get_history_ref(const Array& top) noexcept;
+    static int get_history_schema_version(const Array& top) noexcept;
+    void set_history_schema_version(int version);
     void set_history_parent(Array& history_root) noexcept;
-    void prepare_history_parent(Array& history_root, int history_type);
+    void prepare_history_parent(Array& history_root, int history_type, int history_schema_version);
 
     friend class Table;
     friend class GroupWriter;
@@ -894,91 +874,6 @@ inline TableRef Group::get_or_add_table(StringData name, bool* was_added)
     return TableRef(table);
 }
 
-template <class T>
-inline BasicTableRef<T> Group::get_table(size_t table_ndx)
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescMatcher desc_matcher = &T::matches_dynamic_type;
-    Table* table = do_get_table(table_ndx, desc_matcher); // Throws
-    return BasicTableRef<T>(static_cast<T*>(table));
-}
-
-template <class T>
-inline BasicTableRef<const T> Group::get_table(size_t table_ndx) const
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescMatcher desc_matcher = &T::matches_dynamic_type;
-    const Table* table = do_get_table(table_ndx, desc_matcher); // Throws
-    return BasicTableRef<const T>(static_cast<const T*>(table));
-}
-
-template <class T>
-inline BasicTableRef<T> Group::get_table(StringData name)
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescMatcher desc_matcher = &T::matches_dynamic_type;
-    Table* table = do_get_table(name, desc_matcher); // Throws
-    return BasicTableRef<T>(static_cast<T*>(table));
-}
-
-template <class T>
-inline BasicTableRef<const T> Group::get_table(StringData name) const
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescMatcher desc_matcher = &T::matches_dynamic_type;
-    const Table* table = do_get_table(name, desc_matcher); // Throws
-    return BasicTableRef<const T>(static_cast<const T*>(table));
-}
-
-template <class T>
-inline BasicTableRef<T> Group::insert_table(size_t table_ndx, StringData name, bool require_unique_name)
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescSetter desc_setter = &T::set_dynamic_type;
-    Table* table = do_insert_table(table_ndx, name, desc_setter, require_unique_name); // Throws
-    return BasicTableRef<T>(static_cast<T*>(table));
-}
-
-template <class T>
-inline BasicTableRef<T> Group::add_table(StringData name, bool require_unique_name)
-{
-    return insert_table<T>(size(), name, require_unique_name);
-}
-
-template <class T>
-BasicTableRef<T> Group::get_or_insert_table(size_t table_ndx, StringData name, bool* was_added)
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescMatcher desc_matcher = &T::matches_dynamic_type;
-    DescSetter desc_setter = &T::set_dynamic_type;
-    Table* table = do_get_or_insert_table(table_ndx, name, desc_matcher, desc_setter, was_added); // Throws
-    return BasicTableRef<T>(static_cast<T*>(table));
-}
-
-template <class T>
-BasicTableRef<T> Group::get_or_add_table(StringData name, bool* was_added)
-{
-    static_assert(IsBasicTable<T>::value, "Invalid table type");
-    if (!is_attached())
-        throw LogicError(LogicError::detached_accessor);
-    DescMatcher desc_matcher = &T::matches_dynamic_type;
-    DescSetter desc_setter = &T::set_dynamic_type;
-    Table* table = do_get_or_add_table(name, desc_matcher, desc_setter, was_added); // Throws
-    return BasicTableRef<T>(static_cast<T*>(table));
-}
-
 template <class S>
 void Group::to_json(S& out, size_t link_depth, std::map<std::string, std::string>* renames) const
 {
@@ -1067,19 +962,24 @@ inline void Group::send_schema_change_notification() const
         m_schema_change_handler();
 }
 
-inline void Group::get_version_and_history_type(const Array& top, _impl::History::version_type& version,
-                                                int& history_type) noexcept
+inline void Group::get_version_and_history_info(const Array& top, _impl::History::version_type& version,
+                                                int& history_type, int& history_schema_version) noexcept
 {
-    _impl::History::version_type version_2 = 0;
+    using version_type = _impl::History::version_type;
+    version_type version_2 = 0;
     int history_type_2 = 0;
+    int history_schema_version_2 = 0;
     if (top.is_attached()) {
         if (top.size() >= 6) {
             REALM_ASSERT(top.size() >= 7);
-            version_2 = _impl::History::version_type(top.get(6) / 2);
+            version_2 = version_type(top.get_as_ref_or_tagged(6).get_as_int());
         }
         if (top.size() >= 8) {
             REALM_ASSERT(top.size() >= 9);
-            history_type_2 = int(top.get(7) / 2);
+            history_type_2           = int(top.get_as_ref_or_tagged(7).get_as_int());
+        }
+        if (top.size() >= 10) {
+            history_schema_version_2 = int(top.get_as_ref_or_tagged(9).get_as_int());
         }
     }
     // Version 0 is not a legal initial version, so it has to be set to 1
@@ -1088,33 +988,41 @@ inline void Group::get_version_and_history_type(const Array& top, _impl::History
         version_2 = 1;
     version = version_2;
     history_type = history_type_2;
+    history_schema_version = history_schema_version_2;
 }
 
 inline ref_type Group::get_history_ref(const Array& top) noexcept
 {
-    if (top.is_attached()) {
-        if (top.size() >= 8) {
-            REALM_ASSERT(top.size() >= 9);
-            return top.get_as_ref(8);
-        }
+    bool has_history = (top.is_attached() && top.size() >= 8);
+    if (has_history) {
+        // This function is only used is shared mode (from SharedGroup)
+        REALM_ASSERT(top.size() >= 10);
+        return top.get_as_ref(8);
     }
     return 0;
+}
+
+inline int Group::get_history_schema_version(const Array& top) noexcept
+{
+    bool has_history = (top.is_attached() && top.size() >= 8);
+    if (has_history) {
+        // This function is only used is shared mode (from SharedGroup)
+        REALM_ASSERT(top.size() >= 10);
+        return int(top.get_as_ref_or_tagged(9).get_as_int());
+    }
+    return 0;
+}
+
+inline void Group::set_history_schema_version(int version)
+{
+    // This function is only used is shared mode (from SharedGroup)
+    REALM_ASSERT(m_top.size() >= 10);
+    m_top.set(9, RefOrTagged::make_tagged(unsigned(version))); // Throws
 }
 
 inline void Group::set_history_parent(Array& history_root) noexcept
 {
     history_root.set_parent(&m_top, 8);
-}
-
-inline void Group::prepare_history_parent(Array& history_root, int history_type)
-{
-    REALM_ASSERT(m_alloc.get_file_format_version() >= 4);
-    // Ensure that there are slots for both the history type and the history
-    // ref.
-    while (m_top.size() < 9)
-        m_top.add(0);                                     // Throws
-    m_top.set(7, RefOrTagged::make_tagged(history_type)); // Throws
-    set_history_parent(history_root);
 }
 
 class Group::TableWriter {
@@ -1265,13 +1173,15 @@ public:
             group.create_empty_group(); // Throws
     }
 
-    static void get_version_and_history_type(Allocator& alloc, ref_type top_ref,
-                                             _impl::History::version_type& version, int& history_type) noexcept
+    static void get_version_and_history_info(Allocator& alloc, ref_type top_ref,
+                                             _impl::History::version_type& version,
+                                             int& history_type,
+                                             int& history_schema_version) noexcept
     {
         Array top(alloc);
         if (top_ref != 0)
             top.init_from_ref(top_ref);
-        Group::get_version_and_history_type(top, version, history_type);
+        Group::get_version_and_history_info(top, version, history_type, history_schema_version);
     }
 
     static ref_type get_history_ref(const Group& group) noexcept
@@ -1287,14 +1197,33 @@ public:
         return Group::get_history_ref(top);
     }
 
+    static int get_history_schema_version(const Group& group) noexcept
+    {
+        return Group::get_history_schema_version(group.m_top);
+    }
+
+    static int get_history_schema_version(Allocator& alloc, ref_type top_ref) noexcept
+    {
+        Array top{alloc};
+        if (top_ref != 0)
+            top.init_from_ref(top_ref);
+        return Group::get_history_schema_version(top);
+    }
+
+    static void set_history_schema_version(Group& group, int version)
+    {
+        group.set_history_schema_version(version); // Throws
+    }
+
     static void set_history_parent(Group& group, Array& history_root) noexcept
     {
         group.set_history_parent(history_root);
     }
 
-    static void prepare_history_parent(Group& group, Array& history_root, int history_type)
+    static void prepare_history_parent(Group& group, Array& history_root, int history_type,
+                                       int history_schema_version)
     {
-        group.prepare_history_parent(history_root, history_type); // Throws
+        group.prepare_history_parent(history_root, history_type, history_schema_version); // Throws
     }
 
     static int get_file_format_version(const Group& group) noexcept

@@ -171,6 +171,15 @@ public:
     Query& less_equal(size_t column_ndx, Timestamp value);
     Query& less(size_t column_ndx, Timestamp value);
 
+    // Conditions: size
+    Query& size_equal(size_t column_ndx, int64_t value);
+    Query& size_not_equal(size_t column_ndx, int64_t value);
+    Query& size_greater(size_t column_ndx, int64_t value);
+    Query& size_greater_equal(size_t column_ndx, int64_t value);
+    Query& size_less_equal(size_t column_ndx, int64_t value);
+    Query& size_less(size_t column_ndx, int64_t value);
+    Query& size_between(size_t column_ndx, int64_t from, int64_t to);
+
     // Conditions: bool
     Query& equal(size_t column_ndx, bool value);
 
@@ -338,8 +347,6 @@ private:
     void handle_pending_not();
     void set_table(TableRef tr);
 
-    static bool comp(const std::pair<size_t, size_t>& a, const std::pair<size_t, size_t>& b);
-
 public:
     using HandoverPatch = QueryHandoverPatch;
 
@@ -390,6 +397,9 @@ private:
 
     template <typename TConditionFunction, class T>
     Query& add_condition(size_t column_ndx, T value);
+
+    template <typename TConditionFunction>
+    Query& add_size_condition(size_t column_ndx, int64_t value);
 
     template <typename T, bool Nullable>
     double average(size_t column_ndx, size_t* resultcount = nullptr, size_t start = 0, size_t end = size_t(-1),

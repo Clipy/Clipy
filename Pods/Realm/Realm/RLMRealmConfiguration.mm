@@ -25,6 +25,7 @@
 
 #import "schema.hpp"
 #import "shared_realm.hpp"
+#import "sync/sync_config.hpp"
 
 static NSString *const c_RLMRealmConfigurationProperties[] = {
     @"fileURL",
@@ -34,6 +35,7 @@ static NSString *const c_RLMRealmConfigurationProperties[] = {
     @"schemaVersion",
     @"migrationBlock",
     @"deleteRealmIfMigrationNeeded",
+    @"shouldCompactOnLaunch",
     @"dynamic",
     @"customSchema",
 };
@@ -93,6 +95,14 @@ NSString *RLMRealmPathForFile(NSString *fileName) {
         static NSURL *defaultRealmURL = [NSURL fileURLWithPath:RLMRealmPathForFile(c_defaultRealmFileName)];
         self.fileURL = defaultRealmURL;
         self.schemaVersion = 0;
+        self.cache = YES;
+
+        // We have our own caching of RLMRealm instances, so the ObjectStore
+        // cache is at best pointless, and may result in broken behavior when
+        // a realm::Realm instance outlives the RLMRealm (due to collection
+        // notifiers being in the middle of running when the RLMRealm is
+        // dealloced) and then reused for a new RLMRealm
+        _config.cache = false;
     }
 
     return self;
@@ -101,8 +111,10 @@ NSString *RLMRealmPathForFile(NSString *fileName) {
 - (instancetype)copyWithZone:(NSZone *)zone {
     RLMRealmConfiguration *configuration = [[[self class] allocWithZone:zone] init];
     configuration->_config = _config;
+    configuration->_cache = _cache;
     configuration->_dynamic = _dynamic;
     configuration->_migrationBlock = _migrationBlock;
+    configuration->_shouldCompactOnLaunch = _shouldCompactOnLaunch;
     configuration->_customSchema = _customSchema;
     return configuration;
 }
@@ -176,9 +188,16 @@ static void RLMNSStringToStdString(std::string &out, NSString *in) {
     if (NSData *key = RLMRealmValidatedEncryptionKey(encryptionKey)) {
         auto bytes = static_cast<const char *>(key.bytes);
         _config.encryption_key.assign(bytes, bytes + key.length);
+        if (_config.sync_config) {
+            auto& sync_encryption_key = self.config.sync_config->realm_encryption_key;
+            sync_encryption_key = std::array<char, 64>();
+            std::copy_n(_config.encryption_key.begin(), 64, sync_encryption_key->begin());
+        }
     }
     else {
         _config.encryption_key.clear();
+        if (_config.sync_config)
+            _config.sync_config->realm_encryption_key = realm::util::none;
     }
 }
 
@@ -190,6 +209,8 @@ static void RLMNSStringToStdString(std::string &out, NSString *in) {
     if (readOnly) {
         if (self.deleteRealmIfMigrationNeeded) {
             @throw RLMException(@"Cannot set `readOnly` when `deleteRealmIfMigrationNeeded` is set.");
+        } else if (self.shouldCompactOnLaunch) {
+            @throw RLMException(@"Cannot set `readOnly` when `shouldCompactOnLaunch` is set.");
         }
         _config.schema_mode = realm::SchemaMode::ReadOnly;
     }
@@ -235,15 +256,7 @@ static void RLMNSStringToStdString(std::string &out, NSString *in) {
 
 - (void)setDynamic:(bool)dynamic {
     _dynamic = dynamic;
-    _config.cache = !dynamic;
-}
-
-- (bool)cache {
-    return _config.cache;
-}
-
-- (void)setCache:(bool)cache {
-    _config.cache = cache;
+    self.cache = !dynamic;
 }
 
 - (bool)disableFormatUpgrade {
@@ -262,5 +275,25 @@ static void RLMNSStringToStdString(std::string &out, NSString *in) {
     _config.schema_mode = mode;
 }
 
-@end
+- (NSString *)pathOnDisk {
+    return @(_config.path.c_str());
+}
 
+- (void)setShouldCompactOnLaunch:(RLMShouldCompactOnLaunchBlock)shouldCompactOnLaunch {
+    if (shouldCompactOnLaunch) {
+        if (self.readOnly) {
+            @throw RLMException(@"Cannot set `shouldCompactOnLaunch` when `readOnly` is set.");
+        } else if (_config.sync_config) {
+            @throw RLMException(@"Cannot set `shouldCompactOnLaunch` when `syncConfiguration` is set.");
+        }
+        _config.should_compact_on_launch_function = [=](size_t totalBytes, size_t usedBytes) {
+            return shouldCompactOnLaunch(totalBytes, usedBytes);
+        };
+    }
+    else {
+        _config.should_compact_on_launch_function = nullptr;
+    }
+    _shouldCompactOnLaunch = shouldCompactOnLaunch;
+}
+
+@end
