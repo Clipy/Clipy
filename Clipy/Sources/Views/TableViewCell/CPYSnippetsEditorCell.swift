@@ -50,7 +50,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             imageFrame.origin.y += 5
             imageFrame.size = NSSize(width: 16, height: 13)
 
-            let drawImage = (isHighlighted) ? NSImage(assetIdentifier: .SnippetsIconFolderWhite) : NSImage(assetIdentifier: .SnippetsIconFolder)
+            let drawImage = (isHighlighted) ? NSImage(assetIdentifier: .snippetsIconFolderWhite) : NSImage(assetIdentifier: .snippetsIconFolder)
             drawImage.size = NSSize(width: 16, height: 13)
             drawImage.draw(in: imageFrame, from: NSRect.zero, operation: .sourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
 

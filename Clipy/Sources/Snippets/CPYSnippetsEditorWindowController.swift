@@ -114,10 +114,10 @@ extension CPYSnippetsEditorWindowController {
         }
 
         let alert = NSAlert()
-        alert.messageText = LocalizedString.DeleteItem.value
-        alert.informativeText = LocalizedString.ConfirmDeleteItem.value
-        alert.addButton(withTitle: LocalizedString.DeleteItem.value)
-        alert.addButton(withTitle: LocalizedString.Cancel.value)
+        alert.messageText = LocalizedString.deleteItem.value
+        alert.informativeText = LocalizedString.confirmDeleteItem.value
+        alert.addButton(withTitle: LocalizedString.deleteItem.value)
+        alert.addButton(withTitle: LocalizedString.cancel.value)
         NSApp.activate(ignoringOtherApps: true)
         let result = alert.runModal()
         if result != NSAlertFirstButtonReturn { return }

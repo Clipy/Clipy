@@ -63,10 +63,10 @@ class AppDelegate: NSObject {
         let isShowAlert = defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = LocalizedString.ClearHistory.value
-            alert.informativeText = LocalizedString.ConfirmClearHistory.value
-            alert.addButton(withTitle: LocalizedString.ClearHistory.value)
-            alert.addButton(withTitle: LocalizedString.Cancel.value)
+            alert.messageText = LocalizedString.clearHistory.value
+            alert.informativeText = LocalizedString.confirmClearHistory.value
+            alert.addButton(withTitle: LocalizedString.clearHistory.value)
+            alert.addButton(withTitle: LocalizedString.cancel.value)
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -125,10 +125,10 @@ class AppDelegate: NSObject {
     // MARK: - Login Item Methods
     fileprivate func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = LocalizedString.LaunchClipy.value
-        alert.informativeText = LocalizedString.LaunchSettingInfo.value
-        alert.addButton(withTitle: LocalizedString.LaunchOnStartup.value)
-        alert.addButton(withTitle: LocalizedString.DontLaunch.value)
+        alert.messageText = LocalizedString.launchClipy.value
+        alert.informativeText = LocalizedString.launchSettingInfo.value
+        alert.addButton(withTitle: LocalizedString.launchOnStartup.value)
+        alert.addButton(withTitle: LocalizedString.dontLaunch.value)
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
