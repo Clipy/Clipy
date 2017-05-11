@@ -341,7 +341,6 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        if index < 0 { return NSDragOperation() }
         let pasteboard = info.draggingPasteboard()
         guard let data = pasteboard.data(forType: Constants.Common.draggedDataType) else { return NSDragOperation() }
         guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return NSDragOperation() }
@@ -357,13 +356,13 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-        if index < 0 { return false  }
         let pasteboard = info.draggingPasteboard()
         guard let data = pasteboard.data(forType: Constants.Common.draggedDataType) else { return false }
         guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return false }
 
         switch draggedData.type {
         case .folder where index != draggedData.index:
+            guard index >= 0 else { return false }
             guard let folder = folders.filter({ $0.identifier == draggedData.folderIdentifier }).first else { return false }
             folders.insert(folder, at: index)
             let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
@@ -379,6 +378,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
             guard let snippet = fromFolder.snippets.filter({ $0.identifier == draggedData.snippetIdentifier }).first else { return false }
 
             if fromFolder.identifier == toFolder.identifier {
+                guard index >= 0 else { return false }
                 if index == draggedData.index { return false }
                 // Move to same folder
                 fromFolder.snippets.insert(snippet, at: index)
@@ -391,6 +391,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
                 return true
             } else {
                 // Move to other folder
+                let index = max(0, index)
                 toFolder.snippets.insert(snippet, at: index)
                 fromFolder.snippets.remove(objectAtIndex: draggedData.index)
                 outlineView.reloadData()
