@@ -236,6 +236,7 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Pj1-QF-bGu" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="800" height="1"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="1" id="l8q-V9-ML6"/>
                                     <constraint firstAttribute="height" constant="1" id="mmC-6S-EmQ"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
@@ -258,9 +259,11 @@
                             <constraint firstAttribute="trailing" secondItem="Pj1-QF-bGu" secondAttribute="trailing" id="V02-8C-5oN"/>
                             <constraint firstAttribute="bottom" secondItem="Ai4-Gz-mok" secondAttribute="bottom" id="ZZ5-Uh-zkO"/>
                             <constraint firstItem="bOl-V3-RiP" firstAttribute="top" secondItem="0FR-y9-W1U" secondAttribute="top" id="c9V-Zn-Cp2"/>
+                            <constraint firstItem="Pj1-QF-bGu" firstAttribute="leading" secondItem="0FR-y9-W1U" secondAttribute="leading" id="duk-jh-xd7"/>
                             <constraint firstItem="iha-Jy-er7" firstAttribute="leading" secondItem="0FR-y9-W1U" secondAttribute="leading" constant="5" id="e2T-ei-TJm"/>
                             <constraint firstItem="bOl-V3-RiP" firstAttribute="leading" secondItem="JVZ-wd-QzO" secondAttribute="trailing" id="f9u-DZ-z02"/>
                             <constraint firstAttribute="bottom" secondItem="bOl-V3-RiP" secondAttribute="bottom" id="lvg-z5-hZu"/>
+                            <constraint firstAttribute="trailing" secondItem="Pj1-QF-bGu" secondAttribute="trailing" id="o6t-B8-e9C"/>
                             <constraint firstItem="Pj1-QF-bGu" firstAttribute="leading" secondItem="0FR-y9-W1U" secondAttribute="leading" id="rwy-e1-sti"/>
                             <constraint firstAttribute="bottom" secondItem="Pj1-QF-bGu" secondAttribute="bottom" id="ryK-X0-h3T"/>
                             <constraint firstItem="bca-eH-ThD" firstAttribute="top" secondItem="0FR-y9-W1U" secondAttribute="top" id="u8W-27-hOm"/>
@@ -268,6 +271,7 @@
                             <constraint firstItem="Ai4-Gz-mok" firstAttribute="top" secondItem="0FR-y9-W1U" secondAttribute="top" id="vnS-9N-FXB"/>
                             <constraint firstAttribute="bottom" secondItem="JVZ-wd-QzO" secondAttribute="bottom" id="wXS-YC-K4i"/>
                             <constraint firstAttribute="bottom" secondItem="iha-Jy-er7" secondAttribute="bottom" id="xwa-xX-UAg"/>
+                            <constraint firstAttribute="bottom" secondItem="Pj1-QF-bGu" secondAttribute="bottom" id="zvT-ex-jJ9"/>
                         </constraints>
                     </customView>
                     <splitView arrangesAllSubviews="NO" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BiM-Ll-CfO" customClass="CPYSplitView" customModule="Clipy" customModuleProvider="target">
