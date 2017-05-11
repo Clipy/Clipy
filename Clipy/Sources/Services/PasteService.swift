@@ -50,20 +50,24 @@ extension PasteService {
 
         guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
 
+        if isPastePlainText {
+            copyToPasteboard(with: data.stringValue)
+            return
+        }
+
         let pasteboard = NSPasteboard.general()
         let types = data.types
-        let isPastePlainText = self.isPastePlainText
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
             switch type {
             case NSStringPboardType:
                 let pbString = data.stringValue
                 pasteboard.setString(pbString, forType: NSStringPboardType)
-            case NSRTFDPboardType where !isPastePlainText:
+            case NSRTFDPboardType:
                 if let rtfData = data.RTFData {
                     pasteboard.setData(rtfData, forType: NSRTFDPboardType)
                 }
-            case NSRTFPboardType where !isPastePlainText:
+            case NSRTFPboardType:
                 if let rtfData = data.RTFData {
                     pasteboard.setData(rtfData, forType: NSRTFPboardType)
                 }
