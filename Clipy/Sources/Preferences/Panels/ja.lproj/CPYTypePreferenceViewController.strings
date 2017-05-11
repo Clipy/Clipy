@@ -6,7 +6,7 @@
 "9wr-mR-kmC.title" = "プレーンテキスト";
 
 /* Class = "NSButtonCell"; title = "Rich Text Format Directory (RTFD)"; ObjectID = "Nvy-pc-6hl"; */
-"Nvy-pc-6hl.title" = "Rich Text Format Directory (RTFD)";
+"Nvy-pc-6hl.title" = "リッチテキストフォーマットディレクトリ";
 
 /* Class = "NSButtonCell"; title = "Filenames"; ObjectID = "iO6-7x-OcH"; */
 "iO6-7x-OcH.title" = "ファイル名";
@@ -21,4 +21,4 @@
 "oXv-rM-kj5.title" = "URL";
 
 /* Class = "NSButtonCell"; title = "Rich Text Format (RTF)"; ObjectID = "xyj-FL-88b"; */
-"xyj-FL-88b.title" = "Rich Text Format (RTF)";
+"xyj-FL-88b.title" = "リッチテキストフォーマット";

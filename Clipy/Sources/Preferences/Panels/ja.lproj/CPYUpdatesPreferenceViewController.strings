@@ -15,7 +15,7 @@
 "hhl-AS-dQ0.title" = "v1.0.0";
 
 /* Class = "NSTextFieldCell"; title = "date"; ObjectID = "nG5-PB-zcE"; */
-"nG5-PB-zcE.title" = "date";
+"nG5-PB-zcE.title" = "";
 
 /* Class = "NSMenuItem"; title = "Monthly"; ObjectID = "o5Q-Ao-iQN"; */
 "o5Q-Ao-iQN.title" = "毎月";

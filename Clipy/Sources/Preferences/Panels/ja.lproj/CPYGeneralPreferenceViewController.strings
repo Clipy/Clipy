@@ -3,7 +3,7 @@
 "0yt-u0-ROt.title" = "メニュー項目選択後に \"⌘ + V\" を入力";
 
 /* Class = "NSTextFieldCell"; title = "Appearance"; ObjectID = "FM4-mw-DCx"; */
-"FM4-mw-DCx.title" = "アピアランス";
+"FM4-mw-DCx.title" = "外観";
 
 /* Class = "NSTextFieldCell"; title = "Status Bar icon style:"; ObjectID = "Faj-kQ-G1v"; */
 "Faj-kQ-G1v.title" = "ステータスバー・アイコン:";
