@@ -170,6 +170,139 @@ public protocol RecordViewDelegate: class {
         clearButton.frame = NSRect(x: x, y: y, width: clearSize, height: clearSize)
         clearButton.isHidden = !showsClearButton
     }
+
+    // MARK: - NSResponder
+    override open var acceptsFirstResponder: Bool {
+        return enabled
+    }
+
+    override open var canBecomeKeyView: Bool {
+        return super.canBecomeKeyView && NSApp.isFullKeyboardAccessEnabled
+    }
+
+    override open var needsPanelToBecomeKey: Bool {
+        return true
+    }
+
+    override open func resignFirstResponder() -> Bool {
+        endRecording()
+        return super.resignFirstResponder()
+    }
+
+    override open func acceptsFirstMouse(for theEvent: NSEvent?) -> Bool {
+        return true
+    }
+
+    override open func mouseDown(with theEvent: NSEvent) {
+        if !enabled {
+            super.mouseDown(with: theEvent)
+            return
+        }
+
+        let locationInView = convert(theEvent.locationInWindow, from: nil)
+        if mouse(locationInView, in: bounds) && !recording {
+            _ = beginRecording()
+        } else {
+            super.mouseDown(with: theEvent)
+        }
+    }
+
+    override open func keyDown(with theEvent: NSEvent) {
+        if !performKeyEquivalent(with: theEvent) { super.keyDown(with: theEvent) }
+    }
+
+    override open func performKeyEquivalent(with theEvent: NSEvent) -> Bool {
+        if !enabled { return false }
+        if window?.firstResponder != self { return false }
+
+        let keyCodeInt = Int(theEvent.keyCode)
+        if recording && validateModifiers(inputModifiers) {
+            let modifiers = KeyTransformer.carbonFlags(from: theEvent.modifierFlags)
+            if let keyCombo = KeyCombo(keyCode: keyCodeInt, carbonModifiers: modifiers) {
+                if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
+                    self.keyCombo = keyCombo
+                    delegate?.recordView(self, didChangeKeyCombo: keyCombo)
+                    endRecording()
+                    return true
+                }
+            }
+            return false
+        } else if recording && KeyTransformer.containsFunctionKey(keyCodeInt) {
+            if let keyCombo = KeyCombo(keyCode: keyCodeInt, carbonModifiers: 0) {
+                if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
+                    self.keyCombo = keyCombo
+                    delegate?.recordView(self, didChangeKeyCombo: keyCombo)
+                    endRecording()
+                    return true
+                }
+            }
+            return false
+        } else if Int(theEvent.keyCode) == kVK_Space {
+            return beginRecording()
+        }
+        return false
+    }
+
+    override open func flagsChanged(with theEvent: NSEvent) {
+        if recording {
+            inputModifiers = theEvent.modifierFlags
+            needsDisplay = true
+
+            // For dobule tap
+            let commandTapped = inputModifiers.contains(.command)
+            let shiftTapped = inputModifiers.contains(.shift)
+            let controlTapped = inputModifiers.contains(.control)
+            let optionTapped = inputModifiers.contains(.option)
+            let totalHash = commandTapped.hashValue + optionTapped.hashValue + shiftTapped.hashValue + controlTapped.hashValue
+            if totalHash > 1 {
+                multiModifiers = true
+                return
+            }
+            if multiModifiers || totalHash == 0 {
+                multiModifiers = false
+                return
+            }
+
+            if (doubleTapModifier.contains(.command) && commandTapped) ||
+                (doubleTapModifier.contains(.shift) && shiftTapped)    ||
+                (doubleTapModifier.contains(.control) && controlTapped) ||
+                (doubleTapModifier.contains(.option) && optionTapped) {
+
+                if let keyCombo = KeyCombo(doubledCocoaModifiers: doubleTapModifier) {
+                    if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
+                        self.keyCombo = keyCombo
+                        delegate?.recordView(self, didChangeKeyCombo: keyCombo)
+                        endRecording()
+                    }
+                }
+                doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+            } else {
+                if commandTapped {
+                    doubleTapModifier = .command
+                } else if shiftTapped {
+                    doubleTapModifier = .shift
+                } else if controlTapped {
+                    doubleTapModifier = .control
+                } else if optionTapped {
+                    doubleTapModifier = .option
+                } else {
+                    doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+                }
+            }
+
+            // Clean Flag
+            let delay = 0.3 * Double(NSEC_PER_SEC)
+            let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
+            DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
+                self?.doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+            })
+        } else {
+            inputModifiers = NSEventModifierFlags(rawValue: 0)
+        }
+        
+        super.flagsChanged(with: theEvent)
+    }
+
 }
 
 // MARK: - Text Attributes
@@ -255,140 +388,6 @@ public extension RecordView {
     public func clearAndEndRecording() {
         clear()
         endRecording()
-    }
-}
-
-// MARK: - NSReponder
-public extension RecordView {
-    open override var acceptsFirstResponder: Bool {
-        return enabled
-    }
-
-    open override var canBecomeKeyView: Bool {
-        return super.canBecomeKeyView && NSApp.isFullKeyboardAccessEnabled
-    }
-
-    open override var needsPanelToBecomeKey: Bool {
-        return true
-    }
-
-    open override func resignFirstResponder() -> Bool {
-        endRecording()
-        return super.resignFirstResponder()
-    }
-
-    open override func acceptsFirstMouse(for theEvent: NSEvent?) -> Bool {
-        return true
-    }
-
-    open override func mouseDown(with theEvent: NSEvent) {
-        if !enabled {
-            super.mouseDown(with: theEvent)
-            return
-        }
-
-        let locationInView = convert(theEvent.locationInWindow, from: nil)
-        if mouse(locationInView, in: bounds) && !recording {
-            _ = beginRecording()
-        } else {
-            super.mouseDown(with: theEvent)
-        }
-    }
-
-    open override func keyDown(with theEvent: NSEvent) {
-        if !performKeyEquivalent(with: theEvent) { super.keyDown(with: theEvent) }
-    }
-
-    open override func performKeyEquivalent(with theEvent: NSEvent) -> Bool {
-        if !enabled { return false }
-        if window?.firstResponder != self { return false }
-
-        let keyCodeInt = Int(theEvent.keyCode)
-        if recording && validateModifiers(inputModifiers) {
-            let modifiers = KeyTransformer.carbonFlags(from: theEvent.modifierFlags)
-            if let keyCombo = KeyCombo(keyCode: keyCodeInt, carbonModifiers: modifiers) {
-                if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
-                    self.keyCombo = keyCombo
-                    delegate?.recordView(self, didChangeKeyCombo: keyCombo)
-                    endRecording()
-                    return true
-                }
-            }
-            return false
-        } else if recording && KeyTransformer.containsFunctionKey(keyCodeInt) {
-            if let keyCombo = KeyCombo(keyCode: keyCodeInt, carbonModifiers: 0) {
-                if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
-                    self.keyCombo = keyCombo
-                    delegate?.recordView(self, didChangeKeyCombo: keyCombo)
-                    endRecording()
-                    return true
-                }
-            }
-            return false
-        } else if Int(theEvent.keyCode) == kVK_Space {
-            return beginRecording()
-        }
-        return false
-    }
-
-    open override func flagsChanged(with theEvent: NSEvent) {
-        if recording {
-            inputModifiers = theEvent.modifierFlags
-            needsDisplay = true
-
-            // For dobule tap
-            let commandTapped = inputModifiers.contains(.command)
-            let shiftTapped = inputModifiers.contains(.shift)
-            let controlTapped = inputModifiers.contains(.control)
-            let optionTapped = inputModifiers.contains(.option)
-            let totalHash = commandTapped.hashValue + optionTapped.hashValue + shiftTapped.hashValue + controlTapped.hashValue
-            if totalHash > 1 {
-                multiModifiers = true
-                return
-            }
-            if multiModifiers || totalHash == 0 {
-                multiModifiers = false
-                return
-            }
-
-            if (doubleTapModifier.contains(.command) && commandTapped) ||
-                (doubleTapModifier.contains(.shift) && shiftTapped)    ||
-                (doubleTapModifier.contains(.control) && controlTapped) ||
-                (doubleTapModifier.contains(.option) && optionTapped) {
-
-                if let keyCombo = KeyCombo(doubledCocoaModifiers: doubleTapModifier) {
-                    if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
-                        self.keyCombo = keyCombo
-                        delegate?.recordView(self, didChangeKeyCombo: keyCombo)
-                        endRecording()
-                    }
-                }
-                doubleTapModifier = NSEventModifierFlags(rawValue: 0)
-            } else {
-                if commandTapped {
-                    doubleTapModifier = .command
-                } else if shiftTapped {
-                    doubleTapModifier = .shift
-                } else if controlTapped {
-                    doubleTapModifier = .control
-                } else if optionTapped {
-                    doubleTapModifier = .option
-                } else {
-                    doubleTapModifier = NSEventModifierFlags(rawValue: 0)
-                }
-            }
-
-            // Clean Flag
-            let delay = 0.3 * Double(NSEC_PER_SEC)
-            let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
-            DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
-                self?.doubleTapModifier = NSEventModifierFlags(rawValue: 0)
-            })
-        } else {
-            inputModifiers = NSEventModifierFlags(rawValue: 0)
-        }
-
-        super.flagsChanged(with: theEvent)
     }
 }
 

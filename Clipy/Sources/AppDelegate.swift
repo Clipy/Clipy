@@ -205,17 +205,20 @@ fileprivate extension AppDelegate {
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
                 self?.toggleLoginItemState()
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Observe Screenshot
         defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Observe Screenshot image
         screenshotObserver.rx.addedImage
             .subscribe(onNext: { image in
                 ClipService.shared.create(with: image)
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 }

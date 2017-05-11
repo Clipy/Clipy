@@ -3,7 +3,7 @@ PODS:
   - Crashlytics (3.8.4):
     - Fabric (~> 1.6.3)
   - Fabric (1.6.11)
-  - KeyHolder (2.0.0):
+  - KeyHolder (2.0.1):
     - Magnet (~> 2.0)
   - LoginServiceKit (1.0.0)
   - Magnet (2.0.0)
@@ -59,7 +59,7 @@ SPEC CHECKSUMS:
   AEXML: 647fbb051280f3fb38a1a7caa62b0344055a851c
   Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
   Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
-  KeyHolder: 2389c8c9f911d56c413b1b288efa072e7a992c81
+  KeyHolder: 33180865d66f40088758915f30ba7017e96ca264
   LoginServiceKit: 7433d75d42dd0d8047f2d428b2de453c58947d3d
   Magnet: b30d2807dd0d8a349ce4e6574ecefa38012d02ca
   Nimble: 874982b605d4d752fcac6be695d13c502de84b1b

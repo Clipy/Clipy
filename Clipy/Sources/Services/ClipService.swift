@@ -36,7 +36,7 @@ final class ClipService {
                 self?.cachedChangeCount.value = changeCount
                 self?.create()
             })
-            .addDisposableTo(disposeBag)
+            .disposed(by: disposeBag)
         // Store types
         defaults.rx.observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
             .filterNil()
@@ -44,7 +44,7 @@ final class ClipService {
             .drive(onNext: { [weak self] in
                 self?.storeTypes = $0
             })
-            .addDisposableTo(disposeBag)
+            .disposed(by: disposeBag)
     }
 
     func clearAll() {
@@ -98,7 +98,7 @@ extension ClipService {
         let realm = try! Realm()
         // Copy already copied history
         let isCopySameHistory = defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
-        if let _ = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), !isCopySameHistory { return }
+        if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
 
         // Don't save empty string history
         if data.isOnlyStringType && data.stringValue.isEmpty { return }
