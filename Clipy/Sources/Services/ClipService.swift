@@ -36,7 +36,7 @@ final class ClipService {
                 self?.cachedChangeCount.value = changeCount
                 self?.create()
             })
-            .addDisposableTo(disposeBag)
+            .disposed(by: disposeBag)
         // Store types
         defaults.rx.observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
             .filterNil()
@@ -44,7 +44,7 @@ final class ClipService {
             .drive(onNext: { [weak self] in
                 self?.storeTypes = $0
             })
-            .addDisposableTo(disposeBag)
+            .disposed(by: disposeBag)
     }
 
     func clearAll() {

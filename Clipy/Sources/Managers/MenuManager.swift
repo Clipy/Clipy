@@ -113,13 +113,15 @@ fileprivate extension MenuManager {
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] key in
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Clear history menu
         defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new])
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
                 self?.createClipMenu()
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Sort clips
         defaults.rx.observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.new])
             .filterNil()
@@ -127,12 +129,14 @@ fileprivate extension MenuManager {
                 guard let wSelf = self else { return }
                 wSelf.clipResults = wSelf.realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !enabled)
                 wSelf.createClipMenu()
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Edit snippets
         notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
             .subscribe(onNext: { [weak self] _ in
                 self?.createClipMenu()
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 }
 

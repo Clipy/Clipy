@@ -17,7 +17,7 @@ final class ExcludeAppService {
     fileprivate(set) var applications = [CPYAppInfo]()
     fileprivate var frontApplication = Variable<NSRunningApplication?>(nil)
     fileprivate let defaults = UserDefaults.standard
-    fileprivate var notificationDisposeBag = DisposeBag()
+    fileprivate var disposeBag = DisposeBag()
 
     // MARK: - Initialize
     init() {
@@ -31,12 +31,12 @@ final class ExcludeAppService {
 // MARK: - Monitor Applications
 extension ExcludeAppService {
     func startAppMonitoring() {
-        notificationDisposeBag = DisposeBag()
+        disposeBag = DisposeBag()
         // Monitoring top active application
         NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceDidActivateApplication)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
-            .bindTo(frontApplication)
-            .addDisposableTo(notificationDisposeBag)
+            .bind(to: frontApplication)
+            .disposed(by: disposeBag)
     }
 }
 

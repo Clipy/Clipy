@@ -27,7 +27,7 @@ final class DataCleanService {
             .subscribe(onNext: { [weak self] _ in
                 self?.cleanDatas()
             })
-            .addDisposableTo(disposeBag)
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Delete Data
