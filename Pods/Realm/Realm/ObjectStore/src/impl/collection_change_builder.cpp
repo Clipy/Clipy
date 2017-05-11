@@ -77,7 +77,6 @@ void CollectionChangeBuilder::merge(CollectionChangeBuilder&& c)
                 old.to = it->to;
                 *it = c.moves.back();
                 c.moves.pop_back();
-                ++it;
                 return false;
             }
 

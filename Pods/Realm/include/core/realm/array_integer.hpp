@@ -34,6 +34,10 @@ public:
     {
     }
 
+    // Disable copying, this is not allowed.
+    ArrayInteger& operator=(const ArrayInteger&) = delete;
+    ArrayInteger(const ArrayInteger&) = delete;
+
     void create(Type type = type_Normal, bool context_flag = false);
 
     void add(int64_t value);

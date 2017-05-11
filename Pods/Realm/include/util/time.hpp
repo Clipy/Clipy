@@ -31,7 +31,7 @@ namespace util {
 inline std::tm localtime(std::time_t time)
 {
     std::tm calendar_time;
-#if defined(WIN32)
+#ifdef _WIN32
     auto* result = localtime_s(&time, &calendar_time);
 #else
     auto* result = localtime_r(&time, &calendar_time);

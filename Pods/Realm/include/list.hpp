@@ -38,6 +38,10 @@ class Results;
 class SortDescriptor;
 template <typename T> class ThreadSafeReference;
 
+namespace _impl {
+class ListNotifier;
+}
+
 class List {
 public:
     List() noexcept;
@@ -79,6 +83,16 @@ public:
     // Return a Results representing a snapshot of this List.
     Results snapshot() const;
 
+    // Get the min/max/average/sum of the given column
+    // All but sum() returns none when there are zero matching rows
+    // sum() returns 0, except for when it returns none
+    // Throws UnsupportedColumnTypeException for sum/average on timestamp or non-numeric column
+    // Throws OutOfBoundsIndexException for an out-of-bounds column
+    util::Optional<Mixed> max(size_t column);
+    util::Optional<Mixed> min(size_t column);
+    util::Optional<Mixed> average(size_t column);
+    util::Optional<Mixed> sum(size_t column);
+
     bool operator==(List const& rgt) const noexcept;
 
     NotificationToken add_notification_callback(CollectionChangeCallback cb) &;
@@ -113,7 +127,7 @@ private:
     std::shared_ptr<Realm> m_realm;
     mutable const ObjectSchema* m_object_schema = nullptr;
     LinkViewRef m_link_view;
-    _impl::CollectionNotifier::Handle<_impl::CollectionNotifier> m_notifier;
+    _impl::CollectionNotifier::Handle<_impl::ListNotifier> m_notifier;
 
     void verify_valid_row(size_t row_ndx, bool insertion = false) const;
 

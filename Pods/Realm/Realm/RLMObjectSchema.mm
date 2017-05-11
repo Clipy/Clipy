@@ -96,10 +96,14 @@ using namespace realm;
 
     // determine classname from objectclass as className method has not yet been updated
     NSString *className = NSStringFromClass(objectClass);
-    bool isSwift = [RLMSwiftSupport isSwiftClassName:className];
-    if (isSwift) {
+    bool hasSwiftName = [RLMSwiftSupport isSwiftClassName:className];
+    if (hasSwiftName) {
         className = [RLMSwiftSupport demangleClassName:className];
     }
+    
+    static Class s_swiftObjectClass = NSClassFromString(@"RealmSwiftObject");
+    bool isSwift = hasSwiftName || [objectClass isSubclassOfClass:s_swiftObjectClass];
+    
     schema.className = className;
     schema.objectClass = objectClass;
     schema.accessorClass = objectClass;
@@ -151,14 +155,15 @@ using namespace realm;
             @throw RLMException(@"Primary key property '%@' does not exist on object '%@'", primaryKey, className);
         }
         if (schema.primaryKeyProperty.type != RLMPropertyTypeInt && schema.primaryKeyProperty.type != RLMPropertyTypeString) {
-            @throw RLMException(@"Only 'string' and 'int' properties can be designated the primary key");
+            @throw RLMException(@"Property '%@' cannot be made the primary key of '%@' because it is not a 'string' or 'int' property.",
+                                primaryKey, className);
         }
     }
 
     for (RLMProperty *prop in schema.properties) {
         if (prop.optional && !RLMPropertyTypeIsNullable(prop.type)) {
-            @throw RLMException(@"Only 'string', 'binary', and 'object' properties can be made optional, and property '%@' is of type '%@'.",
-                                prop.name, RLMTypeToString(prop.type));
+            @throw RLMException(@"Property '%@.%@' cannot be made optional because optional '%@' properties are not supported.",
+                                className, prop.name, RLMTypeToString(prop.type));
         }
     }
 

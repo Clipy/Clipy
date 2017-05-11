@@ -201,6 +201,26 @@ Results List::snapshot() const
     return Results(m_realm, m_link_view).snapshot();
 }
 
+util::Optional<Mixed> List::max(size_t column)
+{
+    return Results(m_realm, m_link_view).max(column);
+}
+
+util::Optional<Mixed> List::min(size_t column)
+{
+    return Results(m_realm, m_link_view).min(column);
+}
+
+util::Optional<Mixed> List::sum(size_t column)
+{
+    return Results(m_realm, m_link_view).sum(column);
+}
+
+util::Optional<Mixed> List::average(size_t column)
+{
+    return Results(m_realm, m_link_view).average(column);
+}
+
 // These definitions rely on that LinkViews are interned by core
 bool List::operator==(List const& rgt) const noexcept
 {

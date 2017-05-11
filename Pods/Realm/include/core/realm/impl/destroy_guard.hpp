@@ -39,6 +39,10 @@ public:
 
     ~DestroyGuard() noexcept;
 
+    // Default implementations of copy/assign can trigger multiple destructions
+    DestroyGuard(const DestroyGuard&) = delete;
+    DestroyGuard& operator=(const DestroyGuard&) = delete;
+
     void reset(T*) noexcept;
 
     T* get() const noexcept;
@@ -62,6 +66,10 @@ public:
 
     ~DeepArrayDestroyGuard() noexcept;
 
+    // Default implementations of copy/assign can trigger multiple destructions
+    DeepArrayDestroyGuard(const DeepArrayDestroyGuard&) = delete;
+    DeepArrayDestroyGuard& operator=(const DeepArrayDestroyGuard&) = delete;
+
     void reset(Array*) noexcept;
 
     Array* get() const noexcept;
@@ -82,6 +90,10 @@ public:
     DeepArrayRefDestroyGuard(ref_type, Allocator&) noexcept;
 
     ~DeepArrayRefDestroyGuard() noexcept;
+
+    // Default implementations of copy/assign can trigger multiple destructions
+    DeepArrayRefDestroyGuard(const DeepArrayRefDestroyGuard&) = delete;
+    DeepArrayRefDestroyGuard& operator=(const DeepArrayRefDestroyGuard&) = delete;
 
     void reset(ref_type) noexcept;
 

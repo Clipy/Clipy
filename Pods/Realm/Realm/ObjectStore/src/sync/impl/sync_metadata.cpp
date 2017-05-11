@@ -37,6 +37,7 @@ static const char * const c_sync_marked_for_removal = "marked_for_removal";
 static const char * const c_sync_identity = "identity";
 static const char * const c_sync_auth_server_url = "auth_server_url";
 static const char * const c_sync_user_token = "user_token";
+static const char * const c_sync_user_is_admin = "user_is_admin";
 
 static const char * const c_sync_fileActionMetadata = "FileActionMetadata";
 static const char * const c_sync_original_name = "original_name";
@@ -44,34 +45,32 @@ static const char * const c_sync_new_name = "new_name";
 static const char * const c_sync_action = "action";
 static const char * const c_sync_url = "url";
 
+namespace {
 
-SyncMetadataManager::SyncMetadataManager(std::string path,
-                                         bool should_encrypt,
-                                         util::Optional<std::vector<char>> encryption_key)
+Property make_nullable_string_property(const char* name)
 {
-    std::lock_guard<std::mutex> lock(m_metadata_lock);
+    Property p = {name, PropertyType::String};
+    p.is_nullable = true;
+    return p;
+}
 
-    auto make_nullable_string_property = [](const char *name) -> Property {
-        Property p = {name, PropertyType::String};
-        p.is_nullable = true;
-        return p;
-    };
+Property make_primary_key_property(const char* name)
+{
+    Property p = {name, PropertyType::String};
+    p.is_indexed = true;
+    p.is_primary = true;
+    return p;
+}
 
-    auto make_primary_key_property = [](const char *name) -> Property {
-        Property p = {name, PropertyType::String};
-        p.is_indexed = true;
-        p.is_primary = true;
-        return p;
-    };
-
-    Realm::Config config;
-    config.path = std::move(path);
-    config.schema = Schema{
+Schema make_schema()
+{
+    return Schema{
         {c_sync_userMetadata, {
             make_primary_key_property(c_sync_identity),
             {c_sync_marked_for_removal, PropertyType::Bool},
             make_nullable_string_property(c_sync_auth_server_url),
             make_nullable_string_property(c_sync_user_token),
+            {c_sync_user_is_admin, PropertyType::Bool},
         }},
         {c_sync_fileActionMetadata, {
             make_primary_key_property(c_sync_original_name),
@@ -81,8 +80,24 @@ SyncMetadataManager::SyncMetadataManager(std::string path,
             {c_sync_identity, PropertyType::String},
         }},
     };
-    config.schema_mode = SchemaMode::Additive;
-    config.schema_version = 0;
+}
+
+}
+
+// MARK: - Sync metadata manager
+
+SyncMetadataManager::SyncMetadataManager(std::string path,
+                                         bool should_encrypt,
+                                         util::Optional<std::vector<char>> encryption_key)
+{
+    constexpr uint64_t SCHEMA_VERSION = 1;
+    std::lock_guard<std::mutex> lock(m_metadata_lock);
+
+    Realm::Config config;
+    config.path = std::move(path);
+    config.schema = make_schema();
+    config.schema_version = SCHEMA_VERSION;
+    config.schema_mode = SchemaMode::Automatic;
 #if REALM_PLATFORM_APPLE
     if (should_encrypt && !encryption_key) {
         encryption_key = keychain::metadata_realm_encryption_key();
@@ -105,7 +120,8 @@ SyncMetadataManager::SyncMetadataManager(std::string path,
         descriptor->get_column_index(c_sync_identity),
         descriptor->get_column_index(c_sync_marked_for_removal),
         descriptor->get_column_index(c_sync_user_token),
-        descriptor->get_column_index(c_sync_auth_server_url)
+        descriptor->get_column_index(c_sync_auth_server_url),
+        descriptor->get_column_index(c_sync_user_is_admin),
     };
 
     descriptor = ObjectStore::table_for_object_type(realm->read_group(), c_sync_fileActionMetadata)->get_descriptor();
@@ -156,6 +172,8 @@ SyncFileActionMetadataResults SyncMetadataManager::all_pending_actions() const
     return SyncFileActionMetadataResults(std::move(results), std::move(realm), m_file_action_schema);
 }
 
+// MARK: - Sync user metadata
+
 SyncUserMetadata::SyncUserMetadata(Schema schema, SharedRealm realm, RowExpr row)
 : m_invalid(row.get_bool(schema.idx_marked_for_removal))
 , m_schema(std::move(schema))
@@ -183,6 +201,7 @@ SyncUserMetadata::SyncUserMetadata(const SyncMetadataManager& manager, std::stri
         if (row_idx == not_found) {
             row_idx = table->add_empty_row();
             table->set_string(m_schema.idx_identity, row_idx, identity);
+            table->set_bool(m_schema.idx_user_is_admin, row_idx, false);
             m_realm->commit_transaction();
         } else {
             // Someone beat us to adding this user.
@@ -208,14 +227,22 @@ bool SyncUserMetadata::is_valid() const
 
 std::string SyncUserMetadata::identity() const
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     StringData result = m_row.get_string(m_schema.idx_identity);
     return result;
 }
 
+bool SyncUserMetadata::is_admin() const
+{
+    REALM_ASSERT(m_realm);
+    m_realm->verify_thread();
+    return m_row.get_bool(m_schema.idx_user_is_admin);
+}
+
 util::Optional<std::string> SyncUserMetadata::get_optional_string_field(size_t col_idx) const
 {
-    REALM_ASSERT(!m_invalid);
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     StringData result = m_row.get_string(col_idx);
     return result.is_null() ? util::none : util::make_optional(std::string(result));
@@ -236,10 +263,23 @@ void SyncUserMetadata::set_state(util::Optional<std::string> server_url, util::O
     if (m_invalid) {
         return;
     }
+    REALM_ASSERT_DEBUG(m_realm);
     m_realm->verify_thread();
     m_realm->begin_transaction();
     m_row.set_string(m_schema.idx_user_token, *user_token);
     m_row.set_string(m_schema.idx_auth_server_url, *server_url);
+    m_realm->commit_transaction();
+}
+
+void SyncUserMetadata::set_is_admin(bool is_admin)
+{
+    if (m_invalid) {
+        return;
+    }
+    REALM_ASSERT_DEBUG(m_realm);
+    m_realm->verify_thread();
+    m_realm->begin_transaction();
+    m_row.set_bool(m_schema.idx_user_is_admin, is_admin);
     m_realm->commit_transaction();
 }
 
@@ -263,6 +303,8 @@ void SyncUserMetadata::remove()
     m_realm->commit_transaction();
     m_realm = nullptr;
 }
+
+// MARK: - File action metadata
 
 util::Optional<SyncFileActionMetadata> SyncFileActionMetadata::metadata_for_path(const std::string& original_name, const SyncMetadataManager& manager)
 {
@@ -313,12 +355,14 @@ SyncFileActionMetadata::SyncFileActionMetadata(Schema schema, SharedRealm realm,
 
 std::string SyncFileActionMetadata::original_name() const
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     return m_row.get_string(m_schema.idx_original_name);
 }
 
 util::Optional<std::string> SyncFileActionMetadata::new_name() const
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     StringData result = m_row.get_string(m_schema.idx_new_name);
     return result.is_null() ? util::none : util::make_optional(std::string(result));
@@ -326,24 +370,28 @@ util::Optional<std::string> SyncFileActionMetadata::new_name() const
 
 SyncFileActionMetadata::Action SyncFileActionMetadata::action() const
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     return static_cast<SyncFileActionMetadata::Action>(m_row.get_int(m_schema.idx_action));
 }
 
 std::string SyncFileActionMetadata::url() const
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     return m_row.get_string(m_schema.idx_url);
 }
 
 std::string SyncFileActionMetadata::user_identity() const
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     return m_row.get_string(m_schema.idx_user_identity);
 }
 
 void SyncFileActionMetadata::remove()
 {
+    REALM_ASSERT(m_realm);
     m_realm->verify_thread();
     m_realm->begin_transaction();
     TableRef table = ObjectStore::table_for_object_type(m_realm->read_group(), c_sync_fileActionMetadata);

@@ -20,8 +20,34 @@
 
 #include "impl/object_notifier.hpp"
 #include "impl/realm_coordinator.hpp"
+#include "object_schema.hpp"
+#include "util/format.hpp"
 
 using namespace realm;
+
+InvalidatedObjectException::InvalidatedObjectException(const std::string& object_type)
+: std::logic_error("Accessing object of type " + object_type + " which has been invalidated or deleted")
+, object_type(object_type)
+{}
+
+InvalidPropertyException::InvalidPropertyException(const std::string& object_type, const std::string& property_name)
+: std::logic_error(util::format("Property '%1.%2' does not exist", object_type, property_name))
+, object_type(object_type), property_name(property_name)
+{}
+
+MissingPropertyValueException::MissingPropertyValueException(const std::string& object_type, const std::string& property_name)
+: std::logic_error(util::format("Missing value for property '%1.%2'", object_type, property_name))
+, object_type(object_type), property_name(property_name)
+{}
+
+MissingPrimaryKeyException::MissingPrimaryKeyException(const std::string& object_type)
+: std::logic_error(util::format("'%1' does not have a primary key defined", object_type))
+, object_type(object_type)
+{}
+
+ReadOnlyPropertyException::ReadOnlyPropertyException(const std::string& object_type, const std::string& property_name)
+: std::logic_error(util::format("Cannot modify read-only property '%1.%2'", object_type, property_name))
+, object_type(object_type), property_name(property_name) {}
 
 Object::Object(SharedRealm r, ObjectSchema const& s, BasicRowExpr<Table> const& o)
 : m_realm(std::move(r)), m_object_schema(&s), m_row(o) { }
@@ -36,10 +62,28 @@ Object::Object(Object&&) = default;
 Object& Object::operator=(Object const&) = default;
 Object& Object::operator=(Object&&) = default;
 
-NotificationToken Object::add_notification_block(CollectionChangeCallback callback) &
+NotificationToken Object::add_notification_callback(CollectionChangeCallback callback) &
 {
-    if (!m_notifier)
+    if (!m_notifier) {
         m_notifier = std::make_shared<_impl::ObjectNotifier>(m_row, m_realm);
-    _impl::RealmCoordinator::register_notifier(m_notifier);
+        _impl::RealmCoordinator::register_notifier(m_notifier);
+    }
     return {m_notifier, m_notifier->add_callback(std::move(callback))};
+}
+
+void Object::verify_attached() const
+{
+    m_realm->verify_thread();
+    if (!m_row.is_attached()) {
+        throw InvalidatedObjectException(m_object_schema->name);
+    }
+}
+
+Property const& Object::property_for_name(std::string const& prop_name) const
+{
+    auto prop = m_object_schema->property_for_name(prop_name);
+    if (!prop) {
+        throw InvalidPropertyException(m_object_schema->name, prop_name);
+    }
+    return *prop;
 }

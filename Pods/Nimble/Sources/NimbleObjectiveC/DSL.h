@@ -186,6 +186,8 @@ NIMBLE_EXPORT_INLINE id<NMBMatcher> beginWith(id itemElementOrSubstring) {
     DEFINE_OVERLOAD(unsigned long, @(expectedValue))
     DEFINE_OVERLOAD(int, @(expectedValue))
     DEFINE_OVERLOAD(unsigned int, @(expectedValue))
+    DEFINE_OVERLOAD(float, @(expectedValue))
+    DEFINE_OVERLOAD(double, @(expectedValue))
     DEFINE_OVERLOAD(long long, @(expectedValue))
     DEFINE_OVERLOAD(unsigned long long, @(expectedValue))
     DEFINE_OVERLOAD(char, @(expectedValue))

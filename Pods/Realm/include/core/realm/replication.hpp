@@ -26,7 +26,6 @@
 #include <string>
 
 #include <realm/util/assert.hpp>
-#include <realm/util/tuple.hpp>
 #include <realm/util/safe_int_ops.hpp>
 #include <realm/util/buffer.hpp>
 #include <realm/util/string_buffer.hpp>
@@ -218,21 +217,30 @@ public:
     /// or ended prematurely.
     static void apply_changeset(InputStream& changeset, Group& group, util::Logger* logger = nullptr);
 
+    /// CAUTION: These values are stored in Realm files, so value reassignment
+    /// is not allowed.
     enum HistoryType {
         /// No history available. No support for either continuous transactions
         /// or inter-client synchronization.
         hist_None = 0,
 
         /// Out-of-Realm history supporting continuous transactions.
+        ///
+        /// NOTE: This history type is no longer in use. The value needs to stay
+        /// reserved in case someone tries to open an old Realm file.
         hist_OutOfRealm = 1,
 
         /// In-Realm history supporting continuous transactions
-        /// (_impl::InRealmHistory).
+        /// (make_in_realm_history()).
         hist_InRealm = 2,
 
-        /// In-Realm history supporting continuous transactions and inter-client
-        /// synchronization (_impl::SyncHistory).
-        hist_Sync = 3
+        /// In-Realm history supporting continuous transactions and client-side
+        /// synchronization protocol (realm::sync::ClientHistory).
+        hist_SyncClient = 3,
+
+        /// In-Realm history supporting continuous transactions and server-side
+        /// synchronization protocol (realm::_impl::ServerHistory).
+        hist_SyncServer = 4
     };
 
     /// Returns the type of history maintained by this Replication
@@ -243,114 +251,80 @@ public:
     /// history, at the beginning of a new session.
     ///
     /// As a special case, if there is no top array (Group::m_top) at the
-    /// beginning of a new session, then all history types (as returned by
-    /// get_history_type()) are allowed during that session. Note that this is
-    /// only possible if there was no preceding session, or if no transaction
-    /// was sucessfully comitted during any of the preceding sessions. As soon
-    /// as a transaction is successfully committed, the Realm contains at least
-    /// a top array, and from that point on, the history type is generally
-    /// fixed, although still subject to certain allowed changes (as mentioned
-    /// below).
+    /// beginning of a new session, then the history type is still undecided and
+    /// all history types (as returned by get_history_type()) are threfore
+    /// allowed for the session initiator. Note that this case only arises if
+    /// there was no preceding session, or if no transaction was sucessfully
+    /// committed during any of the preceding sessions. As soon as a transaction
+    /// is successfully committed, the Realm contains at least a top array, and
+    /// from that point on, the history type is generally fixed, although still
+    /// subject to certain allowed changes (as mentioned below).
     ///
     /// For the sake of backwards compatibility with older Realm files that does
     /// not store any history type, the following rule shall apply:
     ///
     ///   - If the top array of a Realm file (Group::m_top) does not contain a
     ///     history type, because it is too short, it shall be understood as
-    ///     implicitely storing the type \ref hist_None.
+    ///     implicitly storing the type \ref hist_None.
     ///
     /// Note: In what follows, the meaning of *preceding session* is: The last
     /// preceding session that modified the Realm by sucessfully committing a
     /// new snapshot.
     ///
-    /// Older Realm files do not store any history type, even when they were
-    /// last used with a history of type \ref hist_OutOfRealm. Howewver, since
-    /// such histories (\ref hist_OutOfRealm) are placed outside the Realm file,
-    /// and are transient (recreated at the beginning of each new session), a
-    /// new session is not obliged to use the same type of history (\ref
-    /// hist_OutOfRealm). For this reason, and to achieve further backwards
-    /// compatibility, the following rules are adopted:
-    ///
-    ///   - At the beginning of a new session, if there is no stored history
-    ///     type (no top array), or if the stored history type is \ref
-    ///     hist_None, assume that the history type used during the preceding
-    ///     session was \ref hist_None or \ref hist_OutOfRealm, or that there
-    ///     was no preceding session. In all other cases, assume that the stored
-    ///     history type is the type used during the preceding session.
-    ///
-    ///   - When storing the history type, store \ref hist_None if the history
-    ///     type used in the current session is \ref hist_None or \ref
-    ///     hist_OutOfRealm. In all other cases, store the actual history type
-    ///     used.
-    ///
     /// It shall be allowed to switch to a \ref hist_InRealm history if the
-    /// stored history type is either \ref hist_None or \ref
-    /// hist_OutOfRealm. Fortunately, this can be done simply by adding a
-    /// history to the Realm file (of type \ref hist_InRealm), and that is
-    /// possible because a \ref hist_InRealm history is independent of any
-    /// history used in a previous session (as long as it was session-confined),
-    /// or whether any history was used at all. Conversely, if a \ref
-    /// hist_OutOfRealm history was used in the previous session, then the
-    /// contents of that history becomes obsolete at the end of the previous
-    /// session.
+    /// stored history type is \ref hist_None. This can be done simply by adding
+    /// a new history to the Realm file. This is possible because histories of
+    /// this type a transient in nature, and need not survive from one session
+    /// to the next.
     ///
     /// On the other hand, as soon as a history of type \ref hist_InRealm is
     /// added to a Realm file, that history type is binding for all subsequent
     /// sessions. In theory, this constraint is not necessary, and a later
-    /// switch to \ref hist_None or \ref hist_OutOfRealm would be possible
-    /// because of the fact that the contents of the history becomes obsolete at
-    /// the end of the session, however, because the \ref hist_InRealm history
-    /// remains in the Realm file, there are practical complications, and for
-    /// that reason, such switching shall not be supported.
+    /// switch to \ref hist_None would be possible because of the transient
+    /// nature of it, however, because the \ref hist_InRealm history remains in
+    /// the Realm file, there are practical complications, and for that reason,
+    /// such switching shall not be supported.
     ///
-    /// The \ref hist_Sync history type can only be used if the stored history
-    /// type is also \ref hist_Sync, or when there is no top array
-    /// yet. Additionally, when the stored history type is \ref hist_Sync, then
-    /// all subsequent sesssions must have the same type. These restrictions
-    /// apply because such a history needs to be maintained persistently across
-    /// sessions. That is, the contents of such a history is not obsolete at the
-    /// end of the session, and is in general needed during subsequent sessions.
+    /// The \ref hist_SyncClient history type can only be used if the stored
+    /// history type is also \ref hist_SyncClient, or when there is no top array
+    /// yet. Likewise, the \ref hist_SyncServer history type can only be used if
+    /// the stored history type is also \ref hist_SyncServer, or when there is
+    /// no top array yet. Additionally, when the stored history type is \ref
+    /// hist_SyncClient or \ref hist_SyncServer, then all subsequent sessions
+    /// must have the same type. These restrictions apply because such a history
+    /// needs to be maintained persistently across sessions.
     ///
     /// In general, if there is no stored history type (no top array) at the
     /// beginning of a new session, or if the stored type disagrees with what is
     /// returned by get_history_type() (which is possible due to particular
     /// allowed changes of history type), the actual history type (as returned
     /// by get_history_type()) used during that session, must be stored in the
-    /// Realm during the first successfully committed transaction of that
-    /// session, if any are sucessfully committed. But note that there is still
-    /// no need to expand the top array to store the history type \ref
-    /// hist_None, due to the rule mentioned above.
-    ///
-    /// Due to the rules listed above, a new history type only actually needs to
-    /// be stored when the history type of the session (get_history_type()) is
-    /// neither \ref hist_None nor \ref hist_OutOfRealm, and only when that
-    /// differs from the stored history type, or if there is no top array at the
-    /// beginning of the session.
-    ///
-    /// Summary of session-to-session history type change constraints:
-    ///
-    /// If there is no top array at the beginning of a new session, then all
-    /// history types (as returned by get_history_type()) are possible during
-    /// that session. Otherwise there must have been a preceding session (at
-    /// least one that adds the top array), and the following rules then apply:
-    ///
-    /// <pre>
-    ///
-    ///                      Type stored in
-    ///   Type used during   Realm file at
-    ///   preceding          beginning of     Possible history types (as returned by
-    ///   session            new session      get_history_type()) during new session
-    ///   ----------------------------------------------------------------------------
-    ///   hist_None          hist_None        hist_None, hist_OutOfRealm, hist_InRealm
-    ///   hist_OutOfRealm    hist_None        hist_None, hist_OutOfRealm, hist_InRealm
-    ///   hist_InRealm       hist_InRealm     hist_InRealm
-    ///   hist_Sync          hist_Sync        hist_Sync
-    ///
-    /// </pre>
+    /// Realm during the first successfully committed transaction in that
+    /// session. But note that there is still no need to expand the top array to
+    /// store the history type \ref hist_None, due to the rule mentioned above.
     ///
     /// This function must return \ref hist_None when, and only when
     /// get_history() returns null.
     virtual HistoryType get_history_type() const noexcept = 0;
+
+    /// Returns the schema version of the history maintained by this Replication
+    /// implementation, or 0 if no history is maintained by it. All session
+    /// participants must agree on history schema version.
+    ///
+    /// Must return 0 if get_history_type() returns \ref hist_None.
+    virtual int get_history_schema_version() const noexcept = 0;
+
+    /// Implementation may assume that this function is only ever called with a
+    /// stored schema version that is less than what was returned by
+    /// get_history_schema_version().
+    virtual bool is_upgradable_history_schema(int stored_schema_version) const noexcept = 0;
+
+    /// The implementation may assume that this function is only ever called if
+    /// is_upgradable_history_schema() was called with the same stored schema
+    /// version, and returned true. This implies that the specified stored
+    /// schema version is always strictly less than what was returned by
+    /// get_history_schema_version().
+    virtual void upgrade_history_schema(int stored_schema_version) = 0;
 
     /// Returns an object that gives access to the history of changesets in a
     /// way that allows for continuous transactions to work

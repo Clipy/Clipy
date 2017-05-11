@@ -17,7 +17,6 @@ lightweight and easy to use utility for casual XML handling.
 - [Usage](#usage)
     - [Read XML](#read-xml)
     - [Write XML](#write-xml)
-- [Requirements](#requirements)
 - [Installation](#installation)
 - [License](#license)
 
@@ -25,7 +24,7 @@ lightweight and easy to use utility for casual XML handling.
 - **Read XML** data
 - **Write XML** string
 - Covered with [unit tests](https://github.com/tadija/AEXML/blob/master/Tests/AEXMLTests.swift)
-- Covered with [docs](http://cocoadocs.org/docsets/AEXML)
+- Covered with inline docs
 
 ## Usage
 
@@ -165,10 +164,6 @@ getStockPrice.addChild(name: "m:StockName", value: "AAPL")
 // prints the same XML structure as original
 print(soapRequest.xml)
 ```
-
-## Requirements
-- Xcode 8.0+
-- AEXML doesn't require any additional libraries for it to work.
 
 ## Installation
 

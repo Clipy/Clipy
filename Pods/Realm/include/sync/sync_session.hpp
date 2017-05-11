@@ -75,7 +75,9 @@ public:
     // chooses to run it on. The method returns immediately with true if the callback was
     // successfully registered, false otherwise. If the method returns false the callback will
     // never be run.
-    // If this method is called before the session has been `bind()`ed, it will return false.
+    // This method will return true if the completion handler was registered, either immediately
+    // or placed in a queue. If it returns true the completion handler will always be called
+    // at least once, except in the case where a logged-out session is never logged back in.
     bool wait_for_upload_completion(std::function<void(std::error_code)> callback);
 
     // Register a callback that will be called when all pending downloads have been completed.
@@ -106,14 +108,10 @@ public:
     // this method does nothing.
     void unregister_progress_notifier(uint64_t);
 
-    // Wait for any pending uploads to complete, blocking the calling thread.
-    // Returns `false` if the method did not attempt to wait, either because the
-    // session is in an error state or because it hasn't yet been `bind()`ed.
-    bool wait_for_upload_completion_blocking();
-
     // If the sync session is currently `Dying`, ask it to stay alive instead.
+    // If the sync session is currently `WaitingForAccessToken`, cancel any deferred close.
     // If the sync session is currently `Inactive`, recreate it. Otherwise, a no-op.
-    static void revive_if_needed(std::shared_ptr<SyncSession> session);
+    void revive_if_needed();
 
     // Give the `SyncSession` a new, valid token, and ask it to refresh the underlying session.
     // If the session can't accept a new token, this method does nothing.
@@ -121,14 +119,14 @@ public:
     // be set.
     void refresh_access_token(std::string access_token, util::Optional<std::string> server_url);
 
+    // FIXME: we need an API to allow the binding to tell sync that the access token fetch failed
+    // or was cancelled, and cannot be retried.
+
     // Give the `SyncSession` an administrator token, and ask it to immediately `bind()` the session.
     void bind_with_admin_token(std::string admin_token, std::string server_url);
 
     // Inform the sync session that it should close.
     void close();
-
-    // Inform the sync session that it should close, but only if it is not yet connected.
-    void close_if_connecting();
 
     // Inform the sync session that it should log out.
     void log_out();
@@ -151,6 +149,13 @@ public:
     {
         return m_server_url;
     }
+
+    // Create an external reference to this session. The sync session attempts to remain active
+    // as long as an external reference to the session exists.
+    std::shared_ptr<SyncSession> external_reference();
+
+    // Return an existing external reference to this session, if one exists. Otherwise, returns `nullptr`.
+    std::shared_ptr<SyncSession> existing_external_reference();
 
     // Expose some internal functionality to other parts of the ObjectStore
     // without making it public to everyone
@@ -182,12 +187,24 @@ public:
         }
 
         static void handle_progress_update(SyncSession& session, uint64_t downloaded, uint64_t downloadable,
-                                           uint64_t uploaded, uint64_t uploadable) {
-            session.handle_progress_update(downloaded, downloadable, uploaded, uploadable);
+                                           uint64_t uploaded, uint64_t uploadable, bool is_fresh=true) {
+            session.handle_progress_update(downloaded, downloadable, uploaded, uploadable, is_fresh);
+        }
+
+        static bool has_stale_progress(SyncSession& session)
+        {
+            return session.m_current_progress != none && !session.m_latest_progress_data_is_fresh;
+        }
+
+        static bool has_fresh_progress(SyncSession& session)
+        {
+            return session.m_latest_progress_data_is_fresh;
         }
     };
 
 private:
+    using std::enable_shared_from_this<SyncSession>::shared_from_this;
+
     struct State;
     friend struct _impl::sync_session_states::WaitingForAccessToken;
     friend struct _impl::sync_session_states::Active;
@@ -200,11 +217,9 @@ private:
     SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
     // }
 
-    bool can_wait_for_network_completion() const;
-
     void handle_error(SyncError);
     static std::string get_recovery_file_path();
-    void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t);
+    void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t, bool);
 
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
     void set_error_handler(std::function<SyncSessionErrorHandler>);
@@ -214,6 +229,7 @@ private:
 
     void create_sync_session();
     void unregister(std::unique_lock<std::mutex>& lock);
+    void did_drop_external_reference();
 
     std::function<SyncSessionTransactCallback> m_sync_transact_callback;
     std::function<SyncSessionErrorHandler> m_error_handler;
@@ -234,12 +250,13 @@ private:
         NotifierType direction;
         util::Optional<uint64_t> captured_transferrable;
 
-        void update(const Progress&);
-        std::function<void()> create_invocation(const Progress&, bool& is_expired) const;
+        void update(const Progress&, bool);
+        std::function<void()> create_invocation(const Progress&, bool&) const;
     };
 
     // A counter used as a token to identify progress notifier callbacks registered on this session.
     uint64_t m_progress_notifier_token = 1;
+    bool m_latest_progress_data_is_fresh;
 
     // Will be `none` until we've received the initial notification from sync.  Note that this
     // happens only once ever during the lifetime of a given `SyncSession`, since these values are
@@ -262,6 +279,13 @@ private:
     std::string m_realm_path;
     _impl::SyncClient& m_client;
 
+    // For storing wait-for-completion requests if the session isn't yet ready to handle them.
+    struct CompletionWaitPackage {
+        void(sync::Session::*waiter)(std::function<void(std::error_code)>);
+        std::function<void(std::error_code)> callback;
+    };
+    std::vector<CompletionWaitPackage> m_completion_wait_packages;
+
     // The underlying `Session` object that is owned and managed by this `SyncSession`.
     // The session is first created when the `SyncSession` is moved out of its initial `inactive` state.
     // The session might be destroyed if the `SyncSession` becomes inactive again (for example, if the
@@ -278,6 +302,9 @@ private:
 
     // The fully-resolved URL of this Realm, including the server and the path.
     util::Optional<std::string> m_server_url;
+
+    class ExternalReference;
+    std::weak_ptr<ExternalReference> m_external_reference;
 };
 
 }

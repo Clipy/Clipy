@@ -152,36 +152,60 @@ static void compare(ObjectSchema const& existing_schema,
               [](auto a, auto b) { return GetRemovedColumn()(a) > GetRemovedColumn()(b); });
 }
 
+template<typename T, typename U, typename Func>
+void Schema::zip_matching(T&& a, U&& b, Func&& func)
+{
+    size_t i = 0, j = 0;
+    while (i < a.size() && j < b.size()) {
+        auto& object_schema = a[i];
+        auto& matching_schema = b[j];
+        int cmp = object_schema.name.compare(matching_schema.name);
+        if (cmp == 0) {
+            func(&object_schema, &matching_schema);
+            ++i, ++j;
+        }
+        else if (cmp < 0) {
+            func(&object_schema, nullptr);
+            ++i;
+        }
+        else {
+            func(nullptr, &matching_schema);
+            ++j;
+        }
+    }
+    for (; i < a.size(); ++i)
+        func(&a[i], nullptr);
+    for (; j < b.size(); ++j)
+        func(nullptr, &b[j]);
+
+}
+
 std::vector<SchemaChange> Schema::compare(Schema const& target_schema) const
 {
     std::vector<SchemaChange> changes;
-    for (auto &object_schema : target_schema) {
-        auto matching_schema = find(object_schema);
-        if (matching_schema == end()) {
-            changes.emplace_back(schema_change::AddTable{&object_schema});
-            continue;
-        }
-
-        ::compare(*matching_schema, object_schema, changes);
-    }
+    zip_matching(target_schema, *this, [&](const ObjectSchema* target, const ObjectSchema* existing) {
+        if (target && existing)
+            ::compare(*existing, *target, changes);
+        else if (target)
+            changes.emplace_back(schema_change::AddTable{target});
+        // nothing for tables in existing but not target
+    });
     return changes;
 }
 
 void Schema::copy_table_columns_from(realm::Schema const& other)
 {
-    for (auto& source_schema : other) {
-        auto matching_schema = find(source_schema);
-        if (matching_schema == end()) {
-            continue;
-        }
+    zip_matching(*this, other, [&](ObjectSchema* existing, const ObjectSchema* other) {
+        if (!existing || !other)
+            return;
 
-        for (auto& current_prop : source_schema.persisted_properties) {
-            auto target_prop = matching_schema->property_for_name(current_prop.name);
+        for (auto& current_prop : other->persisted_properties) {
+            auto target_prop = existing->property_for_name(current_prop.name);
             if (target_prop) {
                 target_prop->table_column = current_prop.table_column;
             }
         }
-    }
+    });
 }
 
 namespace realm {

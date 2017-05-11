@@ -60,6 +60,10 @@ public:
     {
     }
 
+    // Disable copying, this is not allowed.
+    ArrayBinary& operator=(const ArrayBinary&) = delete;
+    ArrayBinary(const ArrayBinary&) = delete;
+
     /// Create a new empty binary array and attach this accessor to
     /// it. This does not modify the parent reference information of
     /// this accessor.

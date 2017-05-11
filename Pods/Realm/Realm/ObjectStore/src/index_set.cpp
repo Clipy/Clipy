@@ -141,7 +141,7 @@ ChunkedRangeVector::iterator ChunkedRangeVector::ensure_space(iterator pos)
     return pos;
 }
 
-ChunkedRangeVector::iterator ChunkedRangeVector::erase(iterator pos)
+ChunkedRangeVector::iterator ChunkedRangeVector::erase(iterator pos) noexcept
 {
     auto offset = pos.offset();
     auto& chunk = *pos.m_outer;
@@ -270,13 +270,13 @@ IndexSet::IndexSet(std::initializer_list<size_t> values)
         add(v);
 }
 
-bool IndexSet::contains(size_t index) const
+bool IndexSet::contains(size_t index) const noexcept
 {
     auto it = const_cast<IndexSet*>(this)->find(index);
     return it != end() && it->first <= index;
 }
 
-size_t IndexSet::count(size_t start_index, size_t end_index) const
+size_t IndexSet::count(size_t start_index, size_t end_index) const noexcept
 {
     auto it = const_cast<IndexSet*>(this)->find(start_index);
     const auto end = this->end();
@@ -320,12 +320,12 @@ size_t IndexSet::count(size_t start_index, size_t end_index) const
     return ret;
 }
 
-IndexSet::iterator IndexSet::find(size_t index)
+IndexSet::iterator IndexSet::find(size_t index) noexcept
 {
     return find(index, begin());
 }
 
-IndexSet::iterator IndexSet::find(size_t index, iterator begin)
+IndexSet::iterator IndexSet::find(size_t index, iterator begin) noexcept
 {
     auto it = std::find_if(begin.outer(), m_data.end(),
                            [&](auto const& lft) { return lft.end > index; });
@@ -653,7 +653,7 @@ void IndexSet::remove(realm::IndexSet const& values)
     }
 }
 
-size_t IndexSet::shift(size_t index) const
+size_t IndexSet::shift(size_t index) const noexcept
 {
     // FIXME: optimize
     for (auto range : *this) {
@@ -664,13 +664,13 @@ size_t IndexSet::shift(size_t index) const
     return index;
 }
 
-size_t IndexSet::unshift(size_t index) const
+size_t IndexSet::unshift(size_t index) const noexcept
 {
     REALM_ASSERT_DEBUG(!contains(index));
     return index - count(0, index);
 }
 
-void IndexSet::clear()
+void IndexSet::clear() noexcept
 {
     m_data.clear();
 }

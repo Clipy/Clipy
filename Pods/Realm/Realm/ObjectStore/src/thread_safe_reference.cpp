@@ -55,14 +55,14 @@ V ThreadSafeReferenceBase::invalidate_after_import(Realm& destination_realm, T c
     REALM_ASSERT_DEBUG(!m_source_realm->is_in_transaction());
     REALM_ASSERT_DEBUG(!is_invalidated());
 
-    SharedGroup& destination_shared_group = Realm::Internal::get_shared_group(destination_realm);
+    SharedGroup& destination_shared_group = *Realm::Internal::get_shared_group(destination_realm);
     auto unpin_version = util::make_scope_exit([&]() noexcept { invalidate(); });
 
     return construct_with_shared_group(destination_shared_group);
 }
 
 SharedGroup& ThreadSafeReferenceBase::get_source_shared_group() const {
-    return Realm::Internal::get_shared_group(*m_source_realm);
+    return *Realm::Internal::get_shared_group(*m_source_realm);
 }
 
 bool ThreadSafeReferenceBase::has_same_config(Realm& realm) const {
@@ -72,7 +72,7 @@ bool ThreadSafeReferenceBase::has_same_config(Realm& realm) const {
 void ThreadSafeReferenceBase::invalidate() {
     REALM_ASSERT_DEBUG(m_source_realm);
     SharedRealm thread_local_realm = Realm::Internal::get_coordinator(*m_source_realm).get_realm();
-    Realm::Internal::get_shared_group(*thread_local_realm).unpin_version(m_version_id);
+    Realm::Internal::get_shared_group(*thread_local_realm)->unpin_version(m_version_id);
     m_source_realm = nullptr;
 }
 

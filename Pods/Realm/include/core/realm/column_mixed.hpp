@@ -24,7 +24,6 @@
 #include <realm/column.hpp>
 #include <realm/column_type.hpp>
 #include <realm/column_table.hpp>
-#include <realm/column_binary.hpp>
 #include <realm/table.hpp>
 #include <realm/utilities.hpp>
 

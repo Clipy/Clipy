@@ -1,5 +1,10 @@
 # Nimble
 
+[![Build Status](https://travis-ci.org/Quick/Nimble.svg?branch=master)](https://travis-ci.org/Quick/Nimble)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Nimble.svg)](https://cocoapods.org/pods/Nimble)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Platforms](https://img.shields.io/cocoapods/p/Nimble.svg)](https://cocoapods.org/pods/Nimble)
+
 Use Nimble to express the expected outcomes of Swift
 or Objective-C expressions. Inspired by
 [Cedar](https://github.com/pivotal/cedar).
@@ -46,6 +51,7 @@ expect(ocean.isClean).toEventually(beTruthy())
   - [Verify collection count](#verify-collection-count)
   - [Verify a notification was posted](#verifying-a-notification-was-posted)
   - [Matching a value to any of a group of matchers](#matching-a-value-to-any-of-a-group-of-matchers)
+  - [Custom Validation](#custom-validation)
 - [Writing Your Own Matchers](#writing-your-own-matchers)
   - [Lazy Evaluation](#lazy-evaluation)
   - [Type Checking via Swift Generics](#type-checking-via-swift-generics)
@@ -496,25 +502,25 @@ Nimble supports checking the type membership of any kind of object, whether
 Objective-C conformant or not:
 
 ```swift
-// Swift 
+// Swift
 
 protocol SomeProtocol{}
 class SomeClassConformingToProtocol: SomeProtocol{}
 struct SomeStructConformingToProtocol: SomeProtocol{}
 
 // The following tests pass
-expect(1).to(beKindOf(Int.self))
-expect("turtle").to(beKindOf(String.self))
+expect(1).to(beAKindOf(Int.self))
+expect("turtle").to(beAKindOf(String.self))
 
 let classObject = SomeClassConformingToProtocol()
-expect(classObject).to(beKindOf(SomeProtocol.self))
-expect(classObject).to(beKindOf(SomeClassConformingToProtocol.self))
-expect(classObject).toNot(beKindOf(SomeStructConformingToProtocol.self))
+expect(classObject).to(beAKindOf(SomeProtocol.self))
+expect(classObject).to(beAKindOf(SomeClassConformingToProtocol.self))
+expect(classObject).toNot(beAKindOf(SomeStructConformingToProtocol.self))
 
 let structObject = SomeStructConformingToProtocol()
-expect(structObject).to(beKindOf(SomeProtocol.self))
-expect(structObject).to(beKindOf(SomeStructConformingToProtocol.self))
-expect(structObject).toNot(beKindOf(SomeClassConformingToProtocol.self))
+expect(structObject).to(beAKindOf(SomeProtocol.self))
+expect(structObject).to(beAKindOf(SomeStructConformingToProtocol.self))
+expect(structObject).toNot(beAKindOf(SomeClassConformingToProtocol.self))
 ```
 
 ```objc
@@ -528,15 +534,15 @@ expect(@1).toNot(beAKindOf([NSNull class]));
 
 Objects can be tested for their exact types using the `beAnInstanceOf` matcher:
 ```swift
-// Swift 
+// Swift
 
 protocol SomeProtocol{}
 class SomeClassConformingToProtocol: SomeProtocol{}
 struct SomeStructConformingToProtocol: SomeProtocol{}
 
-// Unlike the 'beKindOf' matcher, the 'beAnInstanceOf' matcher only 
+// Unlike the 'beKindOf' matcher, the 'beAnInstanceOf' matcher only
 // passes if the object is the EXACT type requested. The following
-// tests pass -- note its behavior when working in an inheritance hierarchy. 
+// tests pass -- note its behavior when working in an inheritance hierarchy.
 expect(1).to(beAnInstanceOf(Int.self))
 expect("turtle").to(beAnInstanceOf(String.self))
 
@@ -1130,6 +1136,8 @@ expect {
 ## Matching a value to any of a group of matchers
 
 ```swift
+// Swift
+
 // passes if actual is either less than 10 or greater than 20
 expect(actual).to(satisfyAnyOf(beLessThan(10), beGreaterThan(20)))
 
@@ -1142,6 +1150,8 @@ expect(82).to(beLessThan(50) || beGreaterThan(80))
 ```
 
 ```objc
+// Objective-C
+
 // passes if actual is either less than 10 or greater than 20
 expect(actual).to(satisfyAnyOf(beLessThan(@10), beGreaterThan(@20)))
 
@@ -1155,33 +1165,70 @@ Note: This matcher allows you to chain any number of matchers together. This pro
       could instead refactor that single test into multiple, more precisely focused tests for
       better coverage.
 
+## Custom Validation
+
+```swift
+// Swift
+
+// passes if .succeed is returned from the closure
+expect({
+    guard case .enumCaseWithAssociatedValueThatIDontCareAbout = actual else {
+        return .failed("wrong enum case")
+    }
+
+    return .succeeded
+}).to(succeed())
+
+// passes if .failed is returned from the closure
+expect({
+    guard case .enumCaseWithAssociatedValueThatIDontCareAbout = actual else {
+        return .failed("wrong enum case")
+    }
+
+    return .succeeded
+}).notTo(succeed())
+```
+
+The `String` provided with `.failed()` is shown when the test fails.
+
+When using `toEventually()` be careful not to make state changes or run process intensive code since this closure will be ran many times.
+
 # Writing Your Own Matchers
 
 In Nimble, matchers are Swift functions that take an expected
-value and return a `MatcherFunc` closure. Take `equal`, for example:
+value and return a `Predicate` closure. Take `equal`, for example:
 
 ```swift
 // Swift
 
 public func equal<T: Equatable>(expectedValue: T?) -> MatcherFunc<T?> {
-  return MatcherFunc { actualExpression, failureMessage in
-    failureMessage.postfixMessage = "equal <\(expectedValue)>"
+  // Can be shorted to:
+  //   Predicate { actual in  ... }
+  //
+  // But shown with types here for clarity
+  return Predicate { (actual: Expression<T>) throws -> PredicateResult in
+    let msg = ExpectationMessage.expectedActualValueTo("equal <\(expectedValue)>")
     if let actualValue = try actualExpression.evaluate() {
-    	return actualValue == expectedValue
+    	return PredicateResult(
+            bool: actualValue == expectedValue!,
+            message: msg
+        )
     } else {
-    	return false
+    	return PredicateResult(
+            status: .fail,
+            message: msg.appendedBeNilHint()
+        )
     }
   }
 }
 ```
 
-The return value of a `MatcherFunc` closure is a `Bool` that indicates
-whether the actual value matches the expectation: `true` if it does, or
-`false` if it doesn't.
+The return value of a `Predicate` closure is a `PredicateResult` that indicates
+whether the actual value matches the expectation and what error message to
+display on failure.
 
-> The actual `equal` matcher function does not match when either
-  `actual` or `expected` are nil; the example above has been edited for
-  brevity.
+> The actual `equal` matcher function does not match when
+  `expected` are nil; the example above has been edited for brevity.
 
 Since matchers are just Swift functions, you can define them anywhere:
 at the top of your test file, in a file shared by all of your tests, or
@@ -1196,6 +1243,63 @@ For examples of how to write your own matchers, just check out the
 to see how Nimble's built-in set of matchers are implemented. You can
 also check out the tips below.
 
+## PredicateResult
+
+`PredicateResult` is the return struct that `Predicate` return to indicate
+success and failure. A `PredicateResult` is made up of two values:
+`PredicateStatus` and `ExpectationMessage`.
+
+Instead of a boolean, `PredicateStatus` captures a trinary set of values:
+
+```swift
+// Swift
+
+public enum PredicateStatus {
+// The predicate "passes" with the given expression
+// eg - expect(1).to(equal(1))
+case matches
+
+// The predicate "fails" with the given expression
+// eg - expect(1).toNot(equal(1))
+case doesNotMatch
+
+// The predicate never "passes" with the given expression, even if negated
+// eg - expect(nil as Int?).toNot(equal(1))
+case fail
+
+// ...
+}
+```
+
+Meanwhile, `ExpectationMessage` provides messaging semantics for error reporting.
+
+```swift
+// Swift
+
+public indirect enum ExpectationMessage {
+// Emits standard error message:
+// eg - "expected to <string>, got <actual>"
+case expectedActualValueTo(/* message: */ String)
+
+// Allows any free-form message
+// eg - "<string>"
+case fail(/* message: */ String)
+
+// ...
+}
+```
+
+Predicates should usually depend on either `.expectedActualValueTo(..)` or
+`.fail(..)` when reporting errors. Special cases can be used for the other enum
+cases.
+
+Finally, if your Predicate utilizes other Predicates, you can utilize
+`.appended(details:)` and `.appended(message:)` methods to annotate an existing
+error with more details.
+
+A common message to append is failing on nils. For that, `.appendedBeNilHint()`
+can be used.
+
 ## Lazy Evaluation
 
 `actualExpression` is a lazy, memoized closure around the value provided to the
@@ -1206,21 +1310,23 @@ custom matchers should call `actualExpression.evaluate()`:
 ```swift
 // Swift
 
-public func beNil<T>() -> MatcherFunc<T?> {
-  return MatcherFunc { actualExpression, failureMessage in
-    failureMessage.postfixMessage = "be nil"
-    return actualExpression.evaluate() == nil
-  }
+public func beNil<T>() -> Predicate<T> {
+	// Predicate.simpleNilable(..) automatically generates ExpectationMessage for
+	// us based on the string we provide to it. Also, the 'Nilable' postfix indicates
+	// that this Predicate supports matching against nil actualExpressions, instead of
+	// always resulting in a PredicateStatus.fail result -- which is true for
+	// Predicate.simple(..)
+    return Predicate.simpleNilable("be nil") { actualExpression in
+        let actualValue = try actualExpression.evaluate()
+        return PredicateStatus(bool: actualValue == nil)
+    }
 }
 ```
 
-In the above example, `actualExpression` is not `nil`--it is a closure
+In the above example, `actualExpression` is not `nil` -- it is a closure
 that returns a value. The value it returns, which is accessed via the
 `evaluate()` method, may be `nil`. If that value is `nil`, the `beNil`
 matcher function returns `true`, indicating that the expectation passed.
-
-Use `expression.isClosure` to determine if the expression will be invoking
-a closure to produce its value.
 
 ## Type Checking via Swift Generics
 
@@ -1234,43 +1340,106 @@ against the one provided to the matcher function, and passes if they are the sam
 ```swift
 // Swift
 
-public func haveDescription(description: String) -> MatcherFunc<Printable?> {
-  return MatcherFunc { actual, failureMessage in
-    return actual.evaluate().description == description
+public func haveDescription(description: String) -> Predicate<Printable?> {
+  return Predicate.simple("have description") { actual in
+    return PredicateStatus(bool: actual.evaluate().description == description)
   }
 }
 ```
 
 ## Customizing Failure Messages
 
-By default, Nimble outputs the following failure message when an
-expectation fails:
+When using `Predicate.simple(..)` or `Predicate.simpleNilable(..)`, Nimble
+outputs the following failure message when an expectation fails:
 
-```
-expected to match, got <\(actual)>
+```swift
+// where `message` is the first string argument and
+// `actual` is the actual value received in `expect(..)`
+"expected to \(message), got <\(actual)>"
 ```
 
-You can customize this message by modifying the `failureMessage` struct
-from within your `MatcherFunc` closure. To change the verb "match" to
-something else, update the `postfixMessage` property:
+You can customize this message by modifying the way you create a `Predicate`.
+
+### Basic Customication
+
+For slightly more complex error messaging, receive the created failure message
+with `Predicate.define(..)`:
 
 ```swift
 // Swift
-
-// Outputs: expected to be under the sea, got <\(actual)>
-failureMessage.postfixMessage = "be under the sea"
+public func equal<T: Equatable>(_ expectedValue: T?) -> Predicate<T> {
+    return Predicate.define("equal <\(stringify(expectedValue))>") { actualExpression, msg in
+        let actualValue = try actualExpression.evaluate()
+        let matches = actualValue == expectedValue && expectedValue != nil
+        if expectedValue == nil || actualValue == nil {
+            if expectedValue == nil && actualValue != nil {
+                return PredicateResult(
+                    status: .fail,
+                    message: msg.appendedBeNilHint()
+                )
+            }
+            return PredicateResult(status: .fail, message: msg)
+        }
+        return PredicateResult(bool: matches, message: msg)
+    }
+}
 ```
 
-You can change how the `actual` value is displayed by updating
-`failureMessage.actualValue`. Or, to remove it altogether, set it to
-`nil`:
+In the example above, `msg` is defined based on the string given to
+`Predicate.define`. The code looks akin to:
 
 ```swift
 // Swift
+let msg = ExpectationMessage.expectedActualValueTo("equal <\(stringify(expectedValue))>")
+```
 
-// Outputs: expected to be under the sea
-failureMessage.actualValue = nil
-failureMessage.postfixMessage = "be under the sea"
+### Full Customization
+
+To fully customize the behavior of the Predicate, use the overload that expects
+a `PredicateResult` to be returned.
+
+Along with `PredicateResult`, there are other `ExpectationMessage` enum values you can use:
+
+```swift
+public indirect enum ExpectationMessage {
+// Emits standard error message:
+// eg - "expected to <message>, got <actual>"
+case expectedActualValueTo(/* message: */ String)
+
+// Allows any free-form message
+// eg - "<message>"
+case fail(/* message: */ String)
+
+// Emits standard error message with a custom actual value instead of the default.
+// eg - "expected to <message>, got <actual>"
+case expectedCustomValueTo(/* message: */ String, /* actual: */ String)
+
+// Emits standard error message without mentioning the actual value
+// eg - "expected to <message>"
+case expectedTo(/* message: */ String, /* actual: */ String)
+
+// ...
+}
+```
+
+For matchers that compose other matchers, there are a handful of helper
+functions to annotate messages.
+
+`appended(message: String)` is used to append to the original failure message:
+
+```swift
+// produces "expected to be true, got <actual> (use beFalse() for inverse)"
+// appended message do show up inline in Xcode.
+.expectedActualValueTo("be true").appended(message: " (use beFalse() for inverse)")
+```
+
+For a more comprehensive message that spans multiple lines, use
+`appended(details: String)` instead:
+
+```swift
+// produces "expected to be true, got <actual>\n\nuse beFalse() for inverse\nor use beNil()"
+// details do not show inline in Xcode, but do show up in test logs.
+.expectedActualValueTo("be true").appended(details: "use beFalse() for inverse\nor use beNil()")
 ```
 
 ## Supporting Objective-C
@@ -1359,6 +1528,85 @@ extension NMBObjCMatcher {
 }
 ```
 
+## Migrating from the Old Matcher API
+
+Previously (`<7.0.0`), Nimble supported matchers via the following types:
+
+- `Matcher`
+- `NonNilMatcherFunc`
+- `MatcherFunc`
+
+All of those types have been replaced by `Predicate`. While migrating can be a
+lot of work, Nimble currently provides several steps to aid migration of your
+custom matchers:
+
+### Minimal Step - Use `.predicate`
+
+Nimble provides an extension to the old types that automatically naively
+converts those types to the newer `Predicate`.
+
+```swift
+// Swift
+public func beginWith<S: Sequence, T: Equatable where S.Iterator.Element == T>(startingElement: T) -> Predicate<S> {
+    return NonNilMatcherFunc { actualExpression, failureMessage in
+        failureMessage.postfixMessage = "begin with <\(startingElement)>"
+        if let actualValue = actualExpression.evaluate() {
+            var actualGenerator = actualValue.makeIterator()
+            return actualGenerator.next() == startingElement
+        }
+        return false
+    }.predicate
+}
+```
+
+This is the simpliest way to externally support `Predicate` which allows easier
+composition than the old Nimble matcher interface, with minimal effort to change.
+
+### Convert to use `Predicate` Type with Old Matcher Constructor
+
+The second most convenient step is to utilize special constructors that
+`Predicate` supports that closely align to the constructors of the old Nimble
+matcher types.
+
+```swift
+// Swift
+public func beginWith<S: Sequence, T: Equatable where S.Iterator.Element == T>(startingElement: T) -> Predicate<S> {
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
+        failureMessage.postfixMessage = "begin with <\(startingElement)>"
+        if let actualValue = actualExpression.evaluate() {
+            var actualGenerator = actualValue.makeIterator()
+            return actualGenerator.next() == startingElement
+        }
+        return false
+    }
+}
+```
+
+This allows you to completely drop the old types from your code, although the
+intended behavior may alter slightly to what is desired.
+
+### Convert to `Predicate` Type with Preferred Constructor
+
+Finally, you can convert to the native `Predicate` format using one of the
+constructors not used to assist in the migration.
+
+### Deprecation Roadmap
+
+Nimble 7 introduces `Predicate` but will support the old types with warning
+deprecations. A couple major releases of Nimble will remain backwards
+compatible with the old matcher api, although new features may not be
+backported.
+
+The deprecating plan is a 3 major versions removal. Which is as follows:
+
+ 1. Introduce new `Predicate` API, deprecation warning for old matcher APIs.
+    (Nimble `v7.x.x`)
+ 2. Introduce warnings on migration-path features (`.predicate`,
+    `Predicate`-constructors with similar arguments to old API). (Nimble
+    `v8.x.x`)
+ 3. Remove old API. (Nimble `v9.x.x`)
+
+
 # Installing Nimble
 
 > Nimble can be used on its own, or in conjunction with its sister
@@ -1399,7 +1647,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 target 'YOUR_APP_NAME_HERE_Tests', :exclusive => true do
   use_frameworks!
-  pod 'Nimble', '~> 5.0.0'
+  pod 'Nimble', '~> 6.0.0'
 end
 ```
 

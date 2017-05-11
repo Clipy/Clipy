@@ -60,6 +60,10 @@ public:
     ~SlabAlloc() noexcept override;
     SlabAlloc();
 
+    // Disable copying. Copying an allocator can produce double frees.
+    SlabAlloc(const SlabAlloc&) = delete;
+    SlabAlloc& operator=(const SlabAlloc&) = delete;
+
     /// \struct Config
     /// \brief Storage for combining setup flags for initialization to
     /// the SlabAlloc.

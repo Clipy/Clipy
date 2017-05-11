@@ -27,7 +27,7 @@ internal protocol WaitLock {
 }
 
 internal class AssertionWaitLock: WaitLock {
-    private var currentWaiter: WaitingInfo? = nil
+    private var currentWaiter: WaitingInfo?
     init() { }
 
     func acquireWaitingLock(_ fnName: String, file: FileString, line: UInt) {
@@ -282,20 +282,23 @@ internal class Awaiter {
     }
 
     func performBlock<T>(
-        _ closure: @escaping (@escaping (T) -> Void) throws -> Void) -> AwaitPromiseBuilder<T> {
+        file: FileString,
+        line: UInt,
+        _ closure: @escaping (@escaping (T) -> Void) throws -> Void
+        ) -> AwaitPromiseBuilder<T> {
             let promise = AwaitPromise<T>()
             let timeoutSource = createTimerSource(timeoutQueue)
             var completionCount = 0
             let trigger = AwaitTrigger(timeoutSource: timeoutSource, actionSource: nil) {
                 try closure {
                     completionCount += 1
-                    nimblePrecondition(
-                        completionCount < 2,
-                        "InvalidNimbleAPIUsage",
-                        "Done closure's was called multiple times. waitUntil(..) expects its " +
-                        "completion closure to only be called once.")
-                    if promise.resolveResult(.completed($0)) {
-                        CFRunLoopStop(CFRunLoopGetMain())
+                    if completionCount < 2 {
+                        if promise.resolveResult(.completed($0)) {
+                            CFRunLoopStop(CFRunLoopGetMain())
+                        }
+                    } else {
+                        fail("waitUntil(..) expects its completion closure to be only called once",
+                             file: file, line: line)
                     }
                 }
             }
@@ -347,14 +350,10 @@ internal func pollBlock(
     expression: @escaping () throws -> Bool) -> AwaitResult<Bool> {
         let awaiter = NimbleEnvironment.activeInstance.awaiter
         let result = awaiter.poll(pollInterval) { () throws -> Bool? in
-            do {
-                if try expression() {
-                    return true
-                }
-                return nil
-            } catch let error {
-                throw error
+            if try expression() {
+                return true
             }
+            return nil
         }.timeout(timeoutInterval, forcefullyAbortTimeout: timeoutInterval / 2.0).wait(fnName, file: file, line: line)
 
         return result

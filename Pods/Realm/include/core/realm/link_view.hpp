@@ -384,6 +384,12 @@ public:
     {
         list.do_insert(link_ndx, target_row_ndx);
     }
+
+    static const LinkListColumn& get_origin_column(const LinkView& list)
+    {
+        REALM_ASSERT(list.is_attached());
+        return *list.m_origin_column;
+    }
 };
 
 } // namespace realm

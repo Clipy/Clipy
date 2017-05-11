@@ -34,6 +34,8 @@ class ObjectSchema {
 public:
     ObjectSchema();
     ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties);
+    ObjectSchema(std::string name, std::initializer_list<Property> persisted_properties,
+                 std::initializer_list<Property> computed_properties);
     ~ObjectSchema();
 
     // create object schema from existing table

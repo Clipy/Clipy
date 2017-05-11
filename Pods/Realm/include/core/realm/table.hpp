@@ -57,6 +57,8 @@ template <class>
 class SubQuery;
 struct LinkTargetInfo;
 
+struct SubTable {
+};
 struct Link {
 };
 typedef Link LinkList;
@@ -69,14 +71,6 @@ class TableFriend;
 class Replication;
 
 
-/// The Table class is non-polymorphic, that is, it has no virtual
-/// functions. This is important because it ensures that there is no run-time
-/// distinction between a Table instance and an instance of any variation of
-/// BasicTable<T>, and this, in turn, makes it valid to cast a pointer from
-/// Table to BasicTable<T> even when the instance is constructed as a Table. Of
-/// course, this also assumes that BasicTable<> is non-polymorphic, has no
-/// destructor, and adds no extra data members.
-///
 /// FIXME: Table assignment (from any group to any group) could be made aliasing
 /// safe as follows: Start by cloning source table into target allocator. On
 /// success, assign, and then deallocate any previous structure at the target.
@@ -412,6 +406,12 @@ public:
     DataType get_mixed_type(size_t column_ndx, size_t row_ndx) const noexcept;
     Timestamp get_timestamp(size_t column_ndx, size_t row_ndx) const noexcept;
 
+    /// Return data from position 'pos' and onwards. If the blob is distributed
+    /// across multiple arrays, you will only get data from one array. 'pos'
+    /// will be updated to be an index to next available data. It will be 0
+    /// if no more data.
+    BinaryData get_binary_at(size_t col_ndx, size_t ndx, size_t& pos) const noexcept;
+
     template <class T>
     T get(size_t c, size_t r) const noexcept;
 
@@ -425,9 +425,6 @@ public:
 
     TableRef get_link_target(size_t column_ndx) noexcept;
     ConstTableRef get_link_target(size_t column_ndx) const noexcept;
-
-    template <class T>
-    typename T::RowAccessor get_link_accessor(size_t column_ndx, size_t row_ndx);
 
     //@{
 
@@ -483,7 +480,7 @@ public:
     ///
     /// String level modifications performed via insert_substring() and
     /// remove_substring() are mergable and subject to operational
-    /// trsnaformation. That is, the effect of two causally unrelated
+    /// transformation. That is, the effect of two causally unrelated
     /// modifications will in general both be retained during synchronization.
 
     static const size_t max_string_size = 0xFFFFF8 - Array::header_size - 1;
@@ -513,6 +510,11 @@ public:
     void nullify_link(size_t column_ndx, size_t row_ndx);
     void set_null(size_t column_ndx, size_t row_ndx, bool is_default = false);
     void set_null_unique(size_t col_ndx, size_t row_ndx);
+
+    // Sync needs to store blobs bigger than 16 M. This function can be used for that. Data should be read
+    // out again using the get_binary_at() function. Should not be used for user data as normal get_binary()
+    // will just return null if the data is bigger than the limit.
+    void set_binary_big(size_t column_ndx, size_t row_ndx, BinaryData value, bool is_default = false);
 
     void add_int(size_t column_ndx, size_t row_ndx, int_fast64_t value);
 
@@ -995,7 +997,7 @@ private:
     /// assign() would not check for spec compatibility. This would
     /// make it ideal as a basis for implementing operator=() for
     /// typed tables.
-    Table& operator=(const Table&);
+    Table& operator=(const Table&) = delete;
 
     /// Used when constructing an accessor whose lifetime is going to be managed
     /// by reference counting. The lifetime of accessors of free-standing tables
@@ -1171,6 +1173,8 @@ private:
     LinkListColumn& get_column_link_list(size_t ndx);
     const BacklinkColumn& get_column_backlink(size_t ndx) const noexcept;
     BacklinkColumn& get_column_backlink(size_t ndx);
+
+    void verify_column(size_t col_ndx, const ColumnBase* col) const;
 
     void instantiate_before_change();
     void validate_column_type(const ColumnBase& col, ColumnType expected_type, size_t ndx) const;
@@ -1451,7 +1455,6 @@ private:
     friend class Group;
 };
 
-
 class Table::Parent : public ArrayParent {
 public:
     ~Parent() noexcept override
@@ -1652,6 +1655,18 @@ inline bool Table::has_shared_type() const noexcept
     return !m_top.is_attached();
 }
 
+inline void Table::verify_column(size_t col_ndx, const ColumnBase* col) const
+{
+    // Check if the column exists at the expected location
+    if (REALM_LIKELY(col_ndx < m_cols.size() && m_cols[col_ndx] == col))
+        return;
+    // The column might be elsewhere in the list
+    for (auto c : m_cols) {
+        if (c == col)
+            return;
+    }
+    throw LogicError(LogicError::column_does_not_exist);
+}
 
 class Table::UnbindGuard {
 public:
@@ -1991,17 +2006,6 @@ inline size_t* Table::record_subtable_path(size_t* begin, size_t* end) const noe
 inline size_t* Table::Parent::record_subtable_path(size_t* begin, size_t*) noexcept
 {
     return begin;
-}
-
-template <class T>
-typename T::RowAccessor Table::get_link_accessor(size_t column_ndx, size_t row_ndx)
-{
-    size_t row_pos_in_target = get_link(column_ndx, row_ndx);
-    TableRef target_table = get_link_target(column_ndx);
-
-    Table* table = &*target_table;
-    T* typed_table = reinterpret_cast<T*>(table);
-    return (*typed_table)[row_pos_in_target];
 }
 
 inline bool Table::is_marked() const noexcept

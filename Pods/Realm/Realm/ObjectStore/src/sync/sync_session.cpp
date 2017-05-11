@@ -32,6 +32,8 @@ using namespace realm;
 using namespace realm::_impl;
 using namespace realm::_impl::sync_session_states;
 
+using SessionWaiterPointer = void(sync::Session::*)(std::function<void(std::error_code)>);
+
 constexpr const char SyncError::c_original_file_path_key[];
 constexpr const char SyncError::c_recovery_file_path_key[];
 
@@ -48,7 +50,6 @@ constexpr const char SyncError::c_recovery_file_path_key[];
 ///    * ACTIVE: when the binding successfully refreshes the token
 ///    * INACTIVE: if asked to log out, or if asked to close and the stop policy
 ///                is Immediate.
-///    * DYING: if asked to close and the stop policy is AfterChangesUploaded
 ///    * ERROR: if a fatal error occurs
 ///
 /// ACTIVE: the session is connected to the Realm Object Server and is actively
@@ -73,6 +74,8 @@ constexpr const char SyncError::c_recovery_file_path_key[];
 ///
 /// INACTIVE: the user owning this session has logged out, the `sync::Session`
 /// owned by this session is destroyed, and the session is quiescent.
+/// Note that a session briefly enters this state before being destroyed, but
+/// it can also enter this state and stay there if the user has been logged out.
 /// From: initial, WAITING_FOR_ACCESS_TOKEN, ACTIVE, DYING
 /// To:
 ///    * WAITING_FOR_ACCESS_TOKEN: if the session is revived
@@ -87,6 +90,7 @@ constexpr const char SyncError::c_recovery_file_path_key[];
 struct SyncSession::State {
     virtual ~State() { }
 
+    // Move the given session into this state. All state transitions MUST be carried out through this method.
     virtual void enter_state(std::unique_lock<std::mutex>&, SyncSession&) const { }
 
     virtual void refresh_access_token(std::unique_lock<std::mutex>&,
@@ -96,18 +100,32 @@ struct SyncSession::State {
     virtual void bind_with_admin_token(std::unique_lock<std::mutex>&,
                                        SyncSession&, const std::string&, const std::string&) const { }
 
-    /// Returns true iff the lock is still locked when the method returns.
+    // Returns true iff the lock is still locked when the method returns.
     virtual bool access_token_expired(std::unique_lock<std::mutex>&, SyncSession&) const { return true; }
 
     virtual void nonsync_transact_notify(std::unique_lock<std::mutex>&, SyncSession&, sync::Session::version_type) const { }
 
+    // Perform any work needed to reactivate a session that is not already active.
+    // Returns true iff the session should ask the binding to get a token for `bind()`.
     virtual bool revive_if_needed(std::unique_lock<std::mutex>&, SyncSession&) const { return false; }
 
+    // The user that owns this session has been logged out, and the session should take appropriate action.
     virtual void log_out(std::unique_lock<std::mutex>&, SyncSession&) const { }
 
-    virtual void close_if_connecting(std::unique_lock<std::mutex>&, SyncSession&) const { }
-
+    // The session should be closed and moved to `inactive`, in accordance with its stop policy and other state.
     virtual void close(std::unique_lock<std::mutex>&, SyncSession&) const { }
+
+    // Returns true iff the error has been fully handled and the error handler should immediately return.
+    virtual bool handle_error(std::unique_lock<std::mutex>&, SyncSession&, const SyncError&) const { return false; }
+
+    // Register a handler to wait for sync session uploads, downloads, or synchronization.
+    // PRECONDITION: the session state lock must be held at the time this method is called, until after it returns.
+    // Returns true iff the handler was registered, either immediately or placed in a queue for later registration.
+    virtual bool wait_for_completion(SyncSession&,
+                                     std::function<void(std::error_code)>,
+                                     SessionWaiterPointer) const {
+        return false;
+    }
 
     static const State& waiting_for_access_token;
     static const State& active;
@@ -126,6 +144,7 @@ struct sync_session_states::WaitingForAccessToken : public SyncSession::State {
                               std::string access_token,
                               const util::Optional<std::string>& server_url) const override
     {
+        REALM_ASSERT(session.m_session);
         // Since the sync session was previously unbound, it's safe to do this from the
         // calling thread.
         if (!session.m_server_url) {
@@ -134,16 +153,25 @@ struct sync_session_states::WaitingForAccessToken : public SyncSession::State {
         if (session.m_session_has_been_bound) {
             session.m_session->refresh(std::move(access_token));
         } else {
-            session.m_session->bind(*session.m_server_url, std::move(access_token));
+            session.m_session->bind(*session.m_server_url, std::move(access_token),
+                                    session.m_config.client_validate_ssl, session.m_config.ssl_trust_certificate_path);
             session.m_session_has_been_bound = true;
         }
+
+        // Register all the pending wait-for-completion blocks.
+        for (auto& package : session.m_completion_wait_packages) {
+            (*session.m_session.*package.waiter)(std::move(package.callback));
+        }
+        session.m_completion_wait_packages.clear();
+
+        // Handle any deferred commit notification.
         if (session.m_deferred_commit_notification) {
             session.m_session->nonsync_transact_notify(*session.m_deferred_commit_notification);
             session.m_deferred_commit_notification = util::none;
         }
+
         session.advance_state(lock, active);
         if (session.m_deferred_close) {
-            session.m_deferred_close = false;
             session.m_state->close(lock, session);
         }
     }
@@ -151,6 +179,12 @@ struct sync_session_states::WaitingForAccessToken : public SyncSession::State {
     void log_out(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
     {
         session.advance_state(lock, inactive);
+    }
+
+    bool revive_if_needed(std::unique_lock<std::mutex>&, SyncSession& session) const override
+    {
+        session.m_deferred_close = false;
+        return false;
     }
 
     void nonsync_transact_notify(std::unique_lock<std::mutex>&,
@@ -161,15 +195,27 @@ struct sync_session_states::WaitingForAccessToken : public SyncSession::State {
         session.m_deferred_commit_notification = version;
     }
 
-    void close_if_connecting(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
+    void close(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
     {
-        // Ignore the sync configuration's stop policy as we're not yet connected.
-        session.advance_state(lock, inactive);
+        switch (session.m_config.stop_policy) {
+            case SyncSessionStopPolicy::Immediately:
+                // Immediately kill the session.
+                session.advance_state(lock, inactive);
+                break;
+            case SyncSessionStopPolicy::LiveIndefinitely:
+            case SyncSessionStopPolicy::AfterChangesUploaded:
+                // Defer handling closing the session until after the login response succeeds.
+                session.m_deferred_close = true;
+                break;
+        }
     }
 
-    void close(std::unique_lock<std::mutex>&, SyncSession& session) const override
+    bool wait_for_completion(SyncSession& session,
+                             std::function<void(std::error_code)> callback,
+                             SessionWaiterPointer waiter) const override
     {
-        session.m_deferred_close = true;
+        session.m_completion_wait_packages.push_back({ waiter, std::move(callback) });
+        return true;
     }
 };
 
@@ -217,18 +263,40 @@ struct sync_session_states::Active : public SyncSession::State {
                 break;
         }
     }
+
+    bool wait_for_completion(SyncSession& session,
+                             std::function<void(std::error_code)> callback,
+                             SessionWaiterPointer waiter) const override
+    {
+        REALM_ASSERT(session.m_session);
+        (*session.m_session.*waiter)(std::move(callback));
+        return true;
+    }
 };
 
 struct sync_session_states::Dying : public SyncSession::State {
     void enter_state(std::unique_lock<std::mutex>&, SyncSession& session) const override
     {
         size_t current_death_count = ++session.m_death_count;
-        session.m_session->async_wait_for_upload_completion([session=&session, current_death_count](std::error_code) {
-            std::unique_lock<std::mutex> lock(session->m_state_mutex);
-            if (session->m_state == &State::dying && session->m_death_count == current_death_count) {
-                session->advance_state(lock, inactive);
+        std::weak_ptr<SyncSession> weak_session = session.shared_from_this();
+        session.m_session->async_wait_for_upload_completion([weak_session, current_death_count](std::error_code) {
+            if (auto session = weak_session.lock()) {
+                std::unique_lock<std::mutex> lock(session->m_state_mutex);
+                if (session->m_state == &State::dying && session->m_death_count == current_death_count) {
+                    session->advance_state(lock, inactive);
+                }
             }
         });
+    }
+
+    bool handle_error(std::unique_lock<std::mutex>& lock, SyncSession& session, const SyncError& error) const override
+    {
+        if (error.is_fatal) {
+            session.advance_state(lock, inactive);
+        }
+        // If the error isn't fatal, don't change state, but don't
+        // allow it to be reported either.
+        return true;
     }
 
     bool revive_if_needed(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
@@ -242,11 +310,25 @@ struct sync_session_states::Dying : public SyncSession::State {
     {
         session.advance_state(lock, inactive);
     }
+
+    bool wait_for_completion(SyncSession& session,
+                             std::function<void(std::error_code)> callback,
+                             SessionWaiterPointer waiter) const override
+    {
+        REALM_ASSERT(session.m_session);
+        (*session.m_session.*waiter)(std::move(callback));
+        return true;
+    }
 };
 
 struct sync_session_states::Inactive : public SyncSession::State {
     void enter_state(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
     {
+        // Inform any queued-up completion handlers that they were cancelled.
+        for (auto& package : session.m_completion_wait_packages) {
+            package.callback(util::error::operation_aborted);
+        }
+        session.m_completion_wait_packages.clear();
         session.m_session = nullptr;
         session.m_server_url = util::none;
         session.unregister(lock);
@@ -268,11 +350,24 @@ struct sync_session_states::Inactive : public SyncSession::State {
         session.advance_state(lock, waiting_for_access_token);
         return true;
     }
+
+    bool wait_for_completion(SyncSession& session,
+                             std::function<void(std::error_code)> callback,
+                             SessionWaiterPointer waiter) const override
+    {
+        session.m_completion_wait_packages.push_back({ waiter, std::move(callback) });
+        return true;
+    }
 };
 
 struct sync_session_states::Error : public SyncSession::State {
     void enter_state(std::unique_lock<std::mutex>&, SyncSession& session) const override
     {
+        // Inform any queued-up completion handlers that they were cancelled.
+        for (auto& package : session.m_completion_wait_packages) {
+            package.callback(util::error::operation_aborted);
+        }
+        session.m_completion_wait_packages.clear();
         session.m_session = nullptr;
         session.m_config = { nullptr, "", SyncSessionStopPolicy::Immediately, nullptr };
     }
@@ -286,7 +381,6 @@ const SyncSession::State& SyncSession::State::active = Active();
 const SyncSession::State& SyncSession::State::dying = Dying();
 const SyncSession::State& SyncSession::State::inactive = Inactive();
 const SyncSession::State& SyncSession::State::error = Error();
-
 
 SyncSession::SyncSession(SyncClient& client, std::string realm_path, SyncConfig config)
 : m_state(&State::inactive)
@@ -306,12 +400,21 @@ void SyncSession::handle_error(SyncError error)
     bool should_invalidate_session = error.is_fatal;
     auto error_code = error.error_code;
 
+    {
+        // See if the current state wishes to take responsibility for handling the error.
+        std::unique_lock<std::mutex> lock(m_state_mutex);
+        if (m_state->handle_error(lock, *this, error)) {
+            return;
+        }
+    }
+
     if (error_code.category() == realm::sync::protocol_error_category()) {
         using ProtocolError = realm::sync::ProtocolError;
         switch (static_cast<ProtocolError>(error_code.value())) {
             // Connection level errors
             case ProtocolError::connection_closed:
             case ProtocolError::other_error:
+            case ProtocolError::pong_timeout:
                 // Not real errors, don't need to be reported to the binding.
                 return;
             case ProtocolError::unknown_message:
@@ -322,6 +425,7 @@ void SyncSession::handle_error(SyncError error)
             case ProtocolError::reuse_of_session_ident:
             case ProtocolError::bound_in_other_session:
             case ProtocolError::bad_message_order:
+            case ProtocolError::malformed_http_request:
                 break;
             // Session errors
             case ProtocolError::session_closed:
@@ -399,6 +503,7 @@ void SyncSession::handle_error(SyncError error)
             case ClientError::bad_request_ident:
             case ClientError::bad_error_code:
             case ClientError::bad_compression:
+            case ClientError::bad_client_version:
                 // Don't do anything special for these errors.
                 // Future functionality may require special-case handling for existing
                 // errors, or newly introduced error codes.
@@ -418,16 +523,17 @@ void SyncSession::handle_error(SyncError error)
 }
 
 void SyncSession::handle_progress_update(uint64_t downloaded, uint64_t downloadable,
-                                         uint64_t uploaded, uint64_t uploadable)
+                                         uint64_t uploaded, uint64_t uploadable, bool is_fresh)
 {
     std::vector<std::function<void()>> invocations;
     {
         std::lock_guard<std::mutex> lock(m_progress_notifier_mutex);
         m_current_progress = Progress{uploadable, downloadable, uploaded, downloaded};
+        m_latest_progress_data_is_fresh = is_fresh;
 
         for (auto it = m_notifiers.begin(); it != m_notifiers.end();) {
             auto& package = it->second;
-            package.update(*m_current_progress);
+            package.update(*m_current_progress, is_fresh);
 
             bool should_delete = false;
             invocations.emplace_back(package.create_invocation(*m_current_progress, should_delete));
@@ -441,18 +547,26 @@ void SyncSession::handle_progress_update(uint64_t downloaded, uint64_t downloada
     }
 }
 
-void SyncSession::NotifierPackage::update(const Progress& current_progress)
+void SyncSession::NotifierPackage::update(const Progress& current_progress, bool data_is_fresh)
 {
-    if (is_streaming || captured_transferrable)
+    if (is_streaming || captured_transferrable || !data_is_fresh)
         return;
 
     captured_transferrable = direction == NotifierType::download ? current_progress.downloadable
                                                                  : current_progress.uploadable;
 }
 
-std::function<void()> SyncSession::NotifierPackage::create_invocation(const Progress& current_progress, bool& is_expired) const
+// PRECONDITION: `update()` must first be called on the same package.
+std::function<void()> SyncSession::NotifierPackage::create_invocation(const Progress& current_progress,
+                                                                      bool& is_expired) const
 {
-    REALM_ASSERT(is_streaming || captured_transferrable);
+    // It's possible for a non-streaming notifier to not yet have fresh transferrable bytes data.
+    // In that case, we don't call it at all.
+    // NOTE: `update()` is always called before `create_invocation()`, and will
+    // set `captured_transferrable` on the notifier package if fresh data has
+    // been received and the package is for a non-streaming notifier.
+    if (!is_streaming && !captured_transferrable)
+        return [](){ };
 
     bool is_download = direction == NotifierType::download;
     uint64_t transferred = is_download ? current_progress.downloaded : current_progress.uploaded;
@@ -473,7 +587,10 @@ std::function<void()> SyncSession::NotifierPackage::create_invocation(const Prog
 void SyncSession::create_sync_session()
 {
     REALM_ASSERT(!m_session);
-    m_session = std::make_unique<sync::Session>(m_client.client, m_realm_path);
+    sync::Session::Config session_config;
+    session_config.changeset_cooker = m_config.transformer;
+    session_config.encryption_key = m_config.realm_encryption_key;
+    m_session = std::make_unique<sync::Session>(m_client.client, m_realm_path, session_config);
 
     // The next time we get a token, call `bind()` instead of `refresh()`.
     m_session_has_been_bound = false;
@@ -503,9 +620,10 @@ void SyncSession::create_sync_session()
 
     // Set up the wrapped progress handler callback
     auto wrapped_progress_handler = [this, weak_self](uint_fast64_t downloaded, uint_fast64_t downloadable,
-                                                      uint_fast64_t uploaded, uint_fast64_t uploadable) {
+                                                      uint_fast64_t uploaded, uint_fast64_t uploadable,
+                                                      bool is_fresh) {
         if (auto self = weak_self.lock()) {
-            handle_progress_update(downloaded, downloadable, uploaded, uploadable);
+            handle_progress_update(downloaded, downloadable, uploaded, uploadable, is_fresh);
         }
     };
     m_session->set_progress_handler(std::move(wrapped_progress_handler));
@@ -535,19 +653,16 @@ void SyncSession::nonsync_transact_notify(sync::Session::version_type version)
     m_state->nonsync_transact_notify(lock, *this, version);
 }
 
-void SyncSession::revive_if_needed(std::shared_ptr<SyncSession> session)
+void SyncSession::revive_if_needed()
 {
-    REALM_ASSERT(session);
     util::Optional<std::function<SyncBindSessionHandler>&> handler;
     {
-        std::unique_lock<std::mutex> lock(session->m_state_mutex);
-        if (session->m_state->revive_if_needed(lock, *session)) {
-            handler = session->m_config.bind_session_handler;
-        }
+        std::unique_lock<std::mutex> lock(m_state_mutex);
+        if (m_state->revive_if_needed(lock, *this))
+            handler = m_config.bind_session_handler;
     }
-    if (handler) {
-        handler.value()(session->m_realm_path, session->m_config, session);
-    }
+    if (handler)
+        handler.value()(m_realm_path, m_config, shared_from_this());
 }
 
 void SyncSession::log_out()
@@ -562,12 +677,6 @@ void SyncSession::close()
     m_state->close(lock, *this);
 }
 
-void SyncSession::close_if_connecting()
-{
-    std::unique_lock<std::mutex> lock(m_state_mutex);
-    m_state->close_if_connecting(lock, *this);
-}
-
 void SyncSession::unregister(std::unique_lock<std::mutex>& lock)
 {
     REALM_ASSERT(lock.owns_lock());
@@ -577,46 +686,16 @@ void SyncSession::unregister(std::unique_lock<std::mutex>& lock)
     SyncManager::shared().unregister_session(m_realm_path);
 }
 
-bool SyncSession::can_wait_for_network_completion() const
-{
-    return m_state == &State::active || m_state == &State::dying;
-}
-
 bool SyncSession::wait_for_upload_completion(std::function<void(std::error_code)> callback)
 {
     std::unique_lock<std::mutex> lock(m_state_mutex);
-    // FIXME: instead of dropping the callback if we haven't yet `bind()`ed,
-    // save it and register it when the session `bind()`s.
-    if (can_wait_for_network_completion()) {
-        REALM_ASSERT(m_session);
-        m_session->async_wait_for_upload_completion(std::move(callback));
-        return true;
-    }
-    return false;
+    return m_state->wait_for_completion(*this, std::move(callback), &sync::Session::async_wait_for_upload_completion);
 }
 
 bool SyncSession::wait_for_download_completion(std::function<void(std::error_code)> callback)
 {
     std::unique_lock<std::mutex> lock(m_state_mutex);
-    // FIXME: instead of dropping the callback if we haven't yet `bind()`ed,
-    // save it and register it when the session `bind()`s.
-    if (can_wait_for_network_completion()) {
-        REALM_ASSERT(m_session);
-        m_session->async_wait_for_download_completion(std::move(callback));
-        return true;
-    }
-    return false;
-}
-
-bool SyncSession::wait_for_upload_completion_blocking()
-{
-    std::unique_lock<std::mutex> lock(m_state_mutex);
-    if (can_wait_for_network_completion()) {
-        REALM_ASSERT(m_session);
-        m_session->wait_for_upload_complete_or_client_stopped();
-        return true;
-    }
-    return false;
+    return m_state->wait_for_completion(*this, std::move(callback), &sync::Session::async_wait_for_download_completion);
 }
 
 uint64_t SyncSession::register_progress_notifier(std::function<SyncProgressNotifierCallback> notifier,
@@ -633,7 +712,7 @@ uint64_t SyncSession::register_progress_notifier(std::function<SyncProgressNotif
             m_notifiers.emplace(token_value, std::move(package));
             return token_value;
         }
-        package.update(*m_current_progress);
+        package.update(*m_current_progress, m_latest_progress_data_is_fresh);
         bool skip_registration = false;
         invocation = package.create_invocation(*m_current_progress, skip_registration);
         if (skip_registration) {
@@ -683,4 +762,53 @@ SyncSession::PublicState SyncSession::state() const
         return PublicState::Error;
     }
     REALM_UNREACHABLE();
+}
+
+// Represents a reference to the SyncSession from outside of the sync subsystem.
+// We attempt to keep the SyncSession in an active state as long as it has an external reference.
+class SyncSession::ExternalReference {
+public:
+    ExternalReference(std::shared_ptr<SyncSession> session) : m_session(std::move(session))
+    {}
+
+    ~ExternalReference()
+    {
+        m_session->did_drop_external_reference();
+    }
+
+private:
+    std::shared_ptr<SyncSession> m_session;
+};
+
+std::shared_ptr<SyncSession> SyncSession::external_reference()
+{
+    std::unique_lock<std::mutex> lock(m_state_mutex);
+
+    if (auto external_reference = m_external_reference.lock())
+        return std::shared_ptr<SyncSession>(external_reference, this);
+
+    auto external_reference = std::make_shared<ExternalReference>(shared_from_this());
+    m_external_reference = external_reference;
+    return std::shared_ptr<SyncSession>(external_reference, this);
+}
+
+std::shared_ptr<SyncSession> SyncSession::existing_external_reference()
+{
+    std::unique_lock<std::mutex> lock(m_state_mutex);
+
+    if (auto external_reference = m_external_reference.lock())
+        return std::shared_ptr<SyncSession>(external_reference, this);
+
+    return nullptr;
+}
+
+void SyncSession::did_drop_external_reference()
+{
+    std::unique_lock<std::mutex> lock(m_state_mutex);
+
+    // If the session is being resurrected we should not close the session.
+    if (!m_external_reference.expired())
+        return;
+
+    m_state->close(lock, *this);
 }

@@ -179,6 +179,7 @@ protected:
 
 class SubtableColumn : public SubtableColumnBase {
 public:
+    using value_type = ConstTableRef;
     /// Create a subtable column accessor and attach it to a
     /// preexisting underlying structure of arrays.
     ///
@@ -207,6 +208,11 @@ public:
     /// The returned table pointer must **always** end up being
     /// wrapped in some instantiation of BasicTableRef<>.
     Table* get_subtable_ptr(size_t subtable_ndx);
+
+    ConstTableRef get(size_t subtable_ndx) const
+    {
+        return ConstTableRef(get_subtable_ptr(subtable_ndx));
+    }
 
     const Table* get_subtable_ptr(size_t subtable_ndx) const;
 

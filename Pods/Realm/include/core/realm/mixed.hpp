@@ -24,14 +24,13 @@
 #include <cstddef> // size_t
 #include <cstring>
 
-#include <realm/util/assert.hpp>
-#include <realm/util/meta.hpp>
-#include <realm/utilities.hpp>
+#include <realm/binary_data.hpp>
 #include <realm/data_type.hpp>
 #include <realm/olddatetime.hpp>
 #include <realm/string_data.hpp>
-#include <realm/binary_data.hpp>
-#include <realm/column_timestamp.hpp>
+#include <realm/timestamp.hpp>
+#include <realm/util/assert.hpp>
+#include <realm/utilities.hpp>
 
 namespace realm {
 
@@ -238,6 +237,11 @@ bool operator!=(Wrap<Mixed>, OldDateTime) noexcept;
 bool operator==(OldDateTime, Wrap<Mixed>) noexcept;
 bool operator!=(OldDateTime, Wrap<Mixed>) noexcept;
 
+// Compare mixed with Timestamp
+bool operator==(Wrap<Mixed>, Timestamp) noexcept;
+bool operator!=(Wrap<Mixed>, Timestamp) noexcept;
+bool operator==(Timestamp, Wrap<Mixed>) noexcept;
+bool operator!=(Timestamp, Wrap<Mixed>) noexcept;
 
 // Implementation:
 
@@ -394,14 +398,11 @@ inline void Mixed::set_olddatetime(OldDateTime v) noexcept
     m_date = v.get_olddatetime();
 }
 
-// LCOV_EXCL_START
 inline void Mixed::set_timestamp(Timestamp v) noexcept
 {
-    REALM_ASSERT(false && "not yet implemented");
     m_type = type_Timestamp;
     m_timestamp = v;
 }
-// LCOV_EXCL_STOP
 
 // LCOV_EXCL_START
 template <class Ch, class Tr>
@@ -649,6 +650,28 @@ inline bool operator==(OldDateTime a, Wrap<Mixed> b) noexcept
 inline bool operator!=(OldDateTime a, Wrap<Mixed> b) noexcept
 {
     return type_OldDateTime != Mixed(b).get_type() || a != OldDateTime(Mixed(b).get_olddatetime());
+}
+
+// Compare mixed with Timestamp
+
+inline bool operator==(Wrap<Mixed> a, Timestamp b) noexcept
+{
+    return Mixed(a).get_type() == type_Timestamp && Timestamp(Mixed(a).get_timestamp()) == b;
+}
+
+inline bool operator!=(Wrap<Mixed> a, Timestamp b) noexcept
+{
+    return Mixed(a).get_type() != type_Timestamp || Timestamp(Mixed(a).get_timestamp()) != b;
+}
+
+inline bool operator==(Timestamp a, Wrap<Mixed> b) noexcept
+{
+    return type_Timestamp == Mixed(b).get_type() && a == Timestamp(Mixed(b).get_timestamp());
+}
+
+inline bool operator!=(Timestamp a, Wrap<Mixed> b) noexcept
+{
+    return type_Timestamp != Mixed(b).get_type() || a != Timestamp(Mixed(b).get_timestamp());
 }
 
 

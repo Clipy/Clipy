@@ -40,13 +40,16 @@ public:
         size_t idx_marked_for_removal;
         size_t idx_user_token;
         size_t idx_auth_server_url;
+        size_t idx_user_is_admin;
     };
 
     std::string identity() const;
+    bool is_admin() const;
     util::Optional<std::string> server_url() const;
     util::Optional<std::string> user_token() const;
 
     void set_state(util::Optional<std::string> server_url, util::Optional<std::string> user_token);
+    void set_is_admin(bool);
 
     // Remove the user from the metadata database.
     void remove();
@@ -62,7 +65,7 @@ public:
     // set operations are no-ops and all get operations cause an assert to fail.
     //
     // If `make_if_absent` is true and the user was previously marked for deletion, it will be unmarked.
-    SyncUserMetadata(const SyncMetadataManager& manager, std::string identity, bool make_if_absent=true);
+    SyncUserMetadata(const SyncMetadataManager&, std::string, bool make_if_absent=true);
 
     SyncUserMetadata(Schema schema, SharedRealm realm, RowExpr row);
 
@@ -169,7 +172,6 @@ public:
     SyncFileActionMetadataResults all_pending_actions() const;
 
     Realm::Config get_configuration() const;
-
 
     /// Construct the metadata manager.
     ///

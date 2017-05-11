@@ -69,7 +69,7 @@ public:
 
     bool is_valid() const { return m_row.is_attached(); }
 
-    NotificationToken add_notification_block(CollectionChangeCallback callback) &;
+    NotificationToken add_notification_callback(CollectionChangeCallback callback) &;
 
 private:
     SharedRealm m_realm;
@@ -77,8 +77,9 @@ private:
     Row m_row;
     _impl::CollectionNotifier::Handle<_impl::ObjectNotifier> m_notifier;
 
+
     template<typename ValueType, typename ContextType>
-    void set_property_value_impl(ContextType ctx, const Property &property, ValueType value, bool try_update);
+    void set_property_value_impl(ContextType ctx, const Property &property, ValueType value, bool try_update, bool is_default=false);
     template<typename ValueType, typename ContextType>
     ValueType get_property_value_impl(ContextType ctx, const Property &property);
 
@@ -86,7 +87,36 @@ private:
     static size_t get_for_primary_key_impl(ContextType ctx, Table const& table,
                                            const Property &primary_prop, ValueType primary_value);
 
-    inline void verify_attached();
+    void verify_attached() const;
+    Property const& property_for_name(std::string const& prop_name) const;
+};
+
+struct InvalidatedObjectException : public std::logic_error {
+    InvalidatedObjectException(const std::string& object_type);
+    const std::string object_type;
+};
+
+struct InvalidPropertyException : public std::logic_error {
+    InvalidPropertyException(const std::string& object_type, const std::string& property_name);
+    const std::string object_type;
+    const std::string property_name;
+};
+
+struct MissingPropertyValueException : public std::logic_error {
+    MissingPropertyValueException(const std::string& object_type, const std::string& property_name);
+    const std::string object_type;
+    const std::string property_name;
+};
+
+struct MissingPrimaryKeyException : public std::logic_error {
+    MissingPrimaryKeyException(const std::string& object_type);
+    const std::string object_type;
+};
+
+struct ReadOnlyPropertyException : public std::logic_error {
+    ReadOnlyPropertyException(const std::string& object_type, const std::string& property_name);
+    const std::string object_type;
+    const std::string property_name;
 };
 } // namespace realm
 

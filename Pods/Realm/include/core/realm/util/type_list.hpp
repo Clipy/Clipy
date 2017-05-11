@@ -19,8 +19,6 @@
 #ifndef REALM_UTIL_TYPE_LIST_HPP
 #define REALM_UTIL_TYPE_LIST_HPP
 
-#include <realm/util/meta.hpp>
-
 namespace realm {
 namespace util {
 
