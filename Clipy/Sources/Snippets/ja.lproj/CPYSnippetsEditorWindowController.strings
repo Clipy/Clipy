@@ -1,0 +1,36 @@
+
+/* Class = "NSTextFieldCell"; title = "Import"; ObjectID = "Ett-SG-3wO"; */
+"Ett-SG-3wO.title" = "インポート";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "J4q-sY-gcS"; */
+"J4q-sY-gcS.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Delete"; ObjectID = "Lxb-5c-zOc"; */
+"Lxb-5c-zOc.title" = "削除";
+
+/* Class = "NSWindow"; title = "Clipy - Snippets Editor"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Clipy - スニペット編集";
+
+/* Class = "NSTextFieldCell"; title = "Export"; ObjectID = "Uqj-Zh-vde"; */
+"Uqj-Zh-vde.title" = "エクスポート";
+
+/* Class = "NSTextFieldCell"; title = "Enable/Disable"; ObjectID = "WZs-f9-lGW"; */
+"WZs-f9-lGW.title" = "有効/無効";
+
+/* Class = "NSTextFieldCell"; title = "Add Folder"; ObjectID = "hoO-RC-sTG"; */
+"hoO-RC-sTG.title" = "フォルダ追加";
+
+/* Class = "NSTextFieldCell"; title = "Shortcut"; ObjectID = "pfw-sA-4aA"; */
+"pfw-sA-4aA.title" = "ショートカット";
+
+/* Class = "NSTextFieldCell"; title = "folder title"; ObjectID = "rI9-rT-YTs"; */
+"rI9-rT-YTs.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Share snippets"; ObjectID = "wwo-lh-lMK"; */
+"wwo-lh-lMK.title" = "スニペット共有";
+
+/* Class = "NSTextFieldCell"; title = "Add Snippet"; ObjectID = "xPC-Uv-z03"; */
+"xPC-Uv-z03.title" = "スニペット追加";
+
+/* Class = "NSTextFieldCell"; title = "Coming Soon"; ObjectID = "yzF-k8-xUT"; */
+"yzF-k8-xUT.title" = "Coming Soon";
