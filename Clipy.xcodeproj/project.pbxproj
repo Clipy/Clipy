@@ -110,6 +110,16 @@
 		314B299E1EC49AEF004DD070 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		314B299F1EC49BAF004DD070 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYPreferencesWindowController.xib; sourceTree = "<group>"; };
 		314B29A11EC49D31004DD070 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
+		31ACA9F01EC5B85B00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
+		31ACA9F11EC5B85B00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F21EC5B85B00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYExcludeAppPreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F31EC5B85B00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F41EC5B85B00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F51EC5B85B00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYShortcutsPreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F61EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F71EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
+		31ACA9F81EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
+		31ACA9F91EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
@@ -569,6 +579,7 @@
 				en,
 				Base,
 				ja,
+				it,
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
@@ -827,6 +838,7 @@
 			children = (
 				FA1DB4971DDCB2CB007F95C8 /* en */,
 				FA1DB4991DDCB2D0007F95C8 /* ja */,
+				31ACA9F91EC5B85C00BD34C0 /* it */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -836,6 +848,7 @@
 			children = (
 				314B299F1EC49BAF004DD070 /* Base */,
 				314B29A11EC49D31004DD070 /* ja */,
+				31ACA9F01EC5B85B00BD34C0 /* it */,
 			);
 			name = CPYPreferencesWindowController.xib;
 			sourceTree = "<group>";
@@ -845,6 +858,7 @@
 			children = (
 				FAAA885C1E6853B80088FB34 /* Base */,
 				FAAA88621E6858030088FB34 /* ja */,
+				31ACA9F11EC5B85B00BD34C0 /* it */,
 			);
 			name = CPYBetaPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -854,6 +868,7 @@
 			children = (
 				FAAA886C1E685DC70088FB34 /* Base */,
 				FAAA88701E685DD40088FB34 /* ja */,
+				31ACA9F21EC5B85B00BD34C0 /* it */,
 			);
 			name = CPYExcludeAppPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -863,6 +878,7 @@
 			children = (
 				FAAA88721E685E270088FB34 /* Base */,
 				FAAA88761E685E310088FB34 /* ja */,
+				31ACA9F31EC5B85B00BD34C0 /* it */,
 			);
 			name = CPYGeneralPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -872,6 +888,7 @@
 			children = (
 				FAAA88781E685F360088FB34 /* Base */,
 				FAAA887C1E685F3F0088FB34 /* ja */,
+				31ACA9F41EC5B85B00BD34C0 /* it */,
 			);
 			name = CPYMenuPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -881,6 +898,7 @@
 			children = (
 				FAAA887E1E6862370088FB34 /* Base */,
 				FAAA88821E6862400088FB34 /* ja */,
+				31ACA9F51EC5B85B00BD34C0 /* it */,
 			);
 			name = CPYShortcutsPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -890,6 +908,7 @@
 			children = (
 				FAAA88841E68627D0088FB34 /* Base */,
 				FAAA88881E6862850088FB34 /* ja */,
+				31ACA9F61EC5B85C00BD34C0 /* it */,
 			);
 			name = CPYTypePreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -899,6 +918,7 @@
 			children = (
 				FAAA888A1E6862D20088FB34 /* Base */,
 				FAAA888E1E6862D90088FB34 /* ja */,
+				31ACA9F71EC5B85C00BD34C0 /* it */,
 			);
 			name = CPYUpdatesPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -908,6 +928,7 @@
 			children = (
 				314B299D1EC49AD5004DD070 /* Base */,
 				314B299E1EC49AEF004DD070 /* ja */,
+				31ACA9F81EC5B85C00BD34C0 /* it */,
 			);
 			name = CPYSnippetsEditorWindowController.xib;
 			sourceTree = "<group>";
