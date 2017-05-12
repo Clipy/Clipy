@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./images/clipy_logo.png" width="400">
+  <img src="./Resources/clipy_logo.png" width="400">
 </div>
 
 <br>

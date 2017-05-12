@@ -5,7 +5,7 @@
 ## Localization
 
 ### Add New Language
-<img src="../Images/new_localization.png" width="600">
+<img src="../Resources/new_localization.png" width="600">
 
 After adding the language, please make changes to the various `.strings` files as follows.
 
