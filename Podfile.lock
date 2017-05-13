@@ -6,7 +6,7 @@ PODS:
   - KeyHolder (2.0.1):
     - Magnet (~> 2.0)
   - LoginServiceKit (1.0.0)
-  - Magnet (2.0.0)
+  - Magnet (2.0.1)
   - Nimble (7.0.0)
   - PINCache (2.3)
   - Quick (1.1.0)
@@ -61,7 +61,7 @@ SPEC CHECKSUMS:
   Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
   KeyHolder: 33180865d66f40088758915f30ba7017e96ca264
   LoginServiceKit: 7433d75d42dd0d8047f2d428b2de453c58947d3d
-  Magnet: b30d2807dd0d8a349ce4e6574ecefa38012d02ca
+  Magnet: d4a1767953d02c2141f5b572ea483244fe0878d5
   Nimble: 874982b605d4d752fcac6be695d13c502de84b1b
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
   Quick: dafc587e21eed9f4cab3249b9f9015b0b7a7f71d

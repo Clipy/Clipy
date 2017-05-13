@@ -18,13 +18,32 @@ public final class HotKey: Equatable {
     public var action: Selector?
     public var hotKeyId: UInt32?
     public var hotKeyRef: EventHotKeyRef?
+    public let actionQueue: ActionQueue
 
-    // MARK: - Init
-    public init(identifier: String, keyCombo: KeyCombo, target: AnyObject? = nil, action: Selector? = nil) {
-        self.identifier = identifier
-        self.keyCombo   = keyCombo
-        self.target     = target
-        self.action     = action
+    // MARK: - Enum Value
+    public enum ActionQueue {
+        case main
+        case session
+
+        public func execute(closure: @escaping () -> Void) {
+            switch self {
+            case .main:
+                DispatchQueue.main.async {
+                    closure()
+                }
+            case .session:
+                closure()
+            }
+        }
+    }
+
+    // MARK: - Initialize
+    public init(identifier: String, keyCombo: KeyCombo, target: AnyObject? = nil, action: Selector? = nil, actionQueue: ActionQueue = .main) {
+        self.identifier     = identifier
+        self.keyCombo       = keyCombo
+        self.target         = target
+        self.action         = action
+        self.actionQueue    = actionQueue
     }
     
 }
@@ -34,7 +53,10 @@ public extension HotKey {
     public func invoke() {
         if let target = target as? NSObject, let selector = action {
             if target.responds(to: selector) {
-                target.perform(selector, with: self)
+                actionQueue.execute { [weak self] in
+                    guard let wSelf = self else { return }
+                    target.perform(selector, with: wSelf)
+                }
             }
         }
     }
