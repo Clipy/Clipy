@@ -18,7 +18,7 @@
  - it delivers events on `MainScheduler.instance`
  - `shareReplayLatestWhileConnected()` behavior
  - all observers share sequence computation resources
- - it's stateful, upon subscription (calling subscribe) last element is immediatelly replayed if it was produced
+ - it's stateful, upon subscription (calling subscribe) last element is immediately replayed if it was produced
  - computation of elements is reference counted with respect to the number of observers
  - if there are no subscribers, it will release sequence computation resources
 
@@ -37,7 +37,7 @@
 public typealias Driver<E> = SharedSequence<DriverSharingStrategy, E>
 
 public struct DriverSharingStrategy: SharingStrategyProtocol {
-    public static var scheduler: SchedulerType { return driverObserveOnScheduler }
+    public static var scheduler: SchedulerType { return driverObserveOnScheduler() }
     public static func share<E>(_ source: Observable<E>) -> Observable<E> {
         return source.shareReplayLatestWhileConnected()
     }
@@ -58,12 +58,12 @@ extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingSt
 */
 public func driveOnScheduler(_ scheduler: SchedulerType, action: () -> ()) {
     let originalObserveOnScheduler = driverObserveOnScheduler
-    driverObserveOnScheduler = scheduler
+    driverObserveOnScheduler = { return scheduler }
 
     action()
 
     // If you remove this line , compiler buggy optimizations will change behavior of this code
-    _forceCompilerToStopDoingInsaneOptimizationsThatBreakCode(driverObserveOnScheduler)
+    _forceCompilerToStopDoingInsaneOptimizationsThatBreakCode(scheduler)
     // Scary, I know
 
     driverObserveOnScheduler = originalObserveOnScheduler
@@ -87,4 +87,4 @@ func _forceCompilerToStopDoingInsaneOptimizationsThatBreakCode(_ scheduler: Sche
     }
 }
 
-fileprivate var driverObserveOnScheduler: SchedulerType = MainScheduler.instance
+fileprivate var driverObserveOnScheduler: () -> SchedulerType = { MainScheduler() }

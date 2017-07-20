@@ -101,10 +101,12 @@ namespace sync {
 //
 //  17 Added PING and PONG messages. It is used for rtt monitoring and dead
 //     connection detection by both the client and the server.
+//
+//  18 Enhanced the session_ident to accept values of size up to at least 63 bits.
 
 constexpr int get_current_protocol_version() noexcept
 {
-    return 17;
+    return 18;
 }
 
 /// \brief Protocol errors discovered by the server, and reported to the client
@@ -176,7 +178,7 @@ namespace sync {
 namespace protocol {
 
 using OutputBuffer = util::ResettableExpandableBufferOutputStream;
-using session_ident_type = uint_fast16_t;
+using session_ident_type = uint_fast64_t;
 using file_ident_type = uint_fast64_t;
 using version_type = uint_fast64_t;
 using timestamp_type  = uint_fast64_t;

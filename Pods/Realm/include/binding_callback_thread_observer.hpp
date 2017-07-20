@@ -19,6 +19,8 @@
 #ifndef REALM_OS_BINDING_CALLBACK_THREAD_OBSERVER_HPP
 #define REALM_OS_BINDING_CALLBACK_THREAD_OBSERVER_HPP
 
+#include <exception>
+
 namespace realm {
 // Interface for bindings interested in registering callbacks before/after the ObjectStore thread runs.
 // This is for example helpful to attach/detach the pthread to the JavaVM in order to be able to perform JNI calls.
@@ -29,6 +31,9 @@ public:
 
     // This method is called just before the thread is being destroyed
     virtual void will_destroy_thread() = 0;
+
+    // This method is called with any exception throws by client.run().
+    virtual void handle_error(std::exception const& e) = 0;
 };
 
 extern BindingCallbackThreadObserver* g_binding_callback_thread_observer;

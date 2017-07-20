@@ -65,4 +65,28 @@ public class FailureMessage: NSObject {
 
         return value
     }
+
+    internal func appendMessage(_ msg: String) {
+        if hasOverriddenStringValue {
+            stringValue += "\(msg)"
+        } else if actualValue != nil {
+            postfixActual += msg
+        } else {
+            postfixMessage += msg
+        }
+    }
+
+    internal func appendDetails(_ msg: String) {
+        if hasOverriddenStringValue {
+            if let desc = userDescription {
+                stringValue = "\(desc)\n\(stringValue)"
+            }
+            stringValue += "\n\(msg)"
+        } else {
+            if let desc = userDescription {
+                userDescription = desc
+            }
+            extendedMessage = msg
+        }
+    }
 }

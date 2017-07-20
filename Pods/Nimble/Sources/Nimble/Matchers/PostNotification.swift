@@ -44,7 +44,7 @@ public func postNotifications<T>(
     -> Predicate<Any>
     where T: Matcher, T.ValueType == [Notification]
 {
-    let _ = mainThread // Force lazy-loading of this value
+    _ = mainThread // Force lazy-loading of this value
     let collector = NotificationCollector(notificationCenter: center)
     collector.startObserving()
     var once: Bool = false

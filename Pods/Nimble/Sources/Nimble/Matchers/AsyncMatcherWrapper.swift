@@ -23,7 +23,7 @@ fileprivate func async<T>(style: ExpectationStyle, predicate: Predicate<T>, time
         }
         switch result {
         case .completed: return lastPredicateResult!
-        case .timedOut: return PredicateResult(status: .doesNotMatch, message: lastPredicateResult!.message)
+        case .timedOut: return PredicateResult(status: .fail, message: lastPredicateResult!.message)
         case let .errorThrown(error):
             return PredicateResult(status: .fail, message: .fail("unexpected error thrown: <\(error)>"))
         case let .raisedException(exception):

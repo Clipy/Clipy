@@ -326,6 +326,9 @@ public:
     /// \param key A 64-byte encryption key, or null to disable encryption.
     void set_encryption_key(const char* key);
 
+    /// Get the encryption key set by set_encryption_key(),
+    /// null_ptr if no key set.
+    const char* get_encryption_key();
     enum {
         /// If possible, disable opportunistic flushing of dirted
         /// pages of a memory mapped file to physical medium. On some
@@ -545,7 +548,7 @@ private:
     int m_fd;
 #endif
 
-    std::unique_ptr<const char[]> m_encryption_key;
+    std::unique_ptr<const char[]> m_encryption_key = nullptr;
 
     bool lock(bool exclusive, bool non_blocking);
     void open_internal(const std::string& path, AccessMode, CreateMode, int flags, bool* success);

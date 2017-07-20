@@ -65,15 +65,15 @@ std::string uuid_string()
     // IETF variant.
     uuid_bytes[8] = (uuid_bytes[8] & 0x3f) | 0x80;
 
-    std::array<char, 36> uuid_formatted;
-    snprintf(uuid_formatted.data(), uuid_formatted.size() + 1,
+    std::array<char, 37> uuid_formatted;
+    snprintf(uuid_formatted.data(), uuid_formatted.size(),
              "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
              uuid_bytes[0], uuid_bytes[1], uuid_bytes[2], uuid_bytes[3],
              uuid_bytes[4], uuid_bytes[5], uuid_bytes[6], uuid_bytes[7],
              uuid_bytes[8], uuid_bytes[9], uuid_bytes[10], uuid_bytes[11],
              uuid_bytes[12], uuid_bytes[13], uuid_bytes[14], uuid_bytes[15]);
 
-    return std::string(uuid_formatted.data(), uuid_formatted.size());
+    return std::string(uuid_formatted.data(), uuid_formatted.size() - 1);
 }
 
 } // namespace util

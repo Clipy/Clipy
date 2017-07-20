@@ -89,8 +89,8 @@ public:
     /// returns `not_found`.
     size_t get_column_index(StringData name) const noexcept;
 
-    /// Get the index of the column to which links in the column at the
-    /// specified index refer.
+    /// Get the index of the table to which links in the column at the specified
+    /// index refer.
     ///
     /// The consequences of specifying a column index that is out of
     /// range, are undefined.

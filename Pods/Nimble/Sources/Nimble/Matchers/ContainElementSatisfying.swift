@@ -38,7 +38,7 @@ public func containElementSatisfying<S: Sequence, T>(_ predicate: @escaping ((T)
                     return false
                 }
 
-                let iterator = NSFastEnumerationIterator(enumeration)
+                var iterator = NSFastEnumerationIterator(enumeration)
                 while let item = iterator.next() {
                     guard let object = item as? NSObject else {
                         continue

@@ -203,7 +203,8 @@ public:
                                  std::uint_fast64_t downloadable_bytes,
                                  std::uint_fast64_t uploaded_bytes,
                                  std::uint_fast64_t uploadable_bytes,
-                                 std::uint_fast64_t progress_version);
+                                 std::uint_fast64_t progress_version,
+                                 std::uint_fast64_t snapshot_version);
     using WaitOperCompletionHandler = std::function<void(std::error_code)>;
 
     class Config {

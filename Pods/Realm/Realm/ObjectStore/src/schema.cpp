@@ -162,7 +162,8 @@ void Schema::zip_matching(T&& a, U&& b, Func&& func)
         int cmp = object_schema.name.compare(matching_schema.name);
         if (cmp == 0) {
             func(&object_schema, &matching_schema);
-            ++i, ++j;
+            ++i;
+            ++j;
         }
         else if (cmp < 0) {
             func(&object_schema, nullptr);

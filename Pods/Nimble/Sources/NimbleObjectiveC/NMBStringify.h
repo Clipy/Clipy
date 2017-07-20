@@ -4,7 +4,7 @@
  * Returns a string appropriate for displaying in test output
  * from the provided value.
  *
- * @param value A value that will show up in a test's output.
+ * @param anyObject A value that will show up in a test's output.
  *
  * @return The string that is returned can be
  *     customized per type by conforming a type to the `TestOutputStringConvertible`

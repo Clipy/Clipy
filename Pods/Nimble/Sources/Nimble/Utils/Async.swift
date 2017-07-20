@@ -109,7 +109,7 @@ internal class AwaitPromise<T> {
     /// this method will resolve in a no-op.
     ///
     /// @returns a Bool that indicates if the async result was accepted or rejected because another
-    ///          value was recieved first.
+    ///          value was received first.
     func resolveResult(_ result: AwaitResult<T>) -> Bool {
         if signal.wait(timeout: .now()) == .success {
             self.asyncResult = result
@@ -218,7 +218,7 @@ internal class AwaitPromiseBuilder<T> {
     /// @discussion
     /// This function must be executed on the main thread and cannot be nested. This is because
     /// this function (and it's related methods) coordinate through the main run loop. Tampering
-    /// with the run loop can cause undesireable behavior.
+    /// with the run loop can cause undesirable behavior.
     ///
     /// This method will return an AwaitResult in the following cases:
     ///

@@ -20,72 +20,189 @@
 #define REALM_OS_OBJECT_ACCESSOR_IMPL_HPP
 
 #include "object_accessor.hpp"
+
 #include "util/any.hpp"
 
 namespace realm {
 using AnyDict = std::map<std::string, util::Any>;
 using AnyVector = std::vector<util::Any>;
 
-struct CppContext {
-    std::map<std::string, AnyDict> defaults;
-};
-
-template<>
-class NativeAccessor<util::Any, CppContext*> {
+// An object accessor context which can be used to create and access objects
+// using util::Any as the type-erased value type. In addition, this serves as
+// the reference implementation of an accessor context that must be implemented
+// by each binding.
+class CppContext {
 public:
-    static bool dict_has_value_for_key(CppContext*, util::Any dict, const std::string &prop_name) {
-        return any_cast<AnyDict>(dict).count(prop_name) != 0;
+    // This constructor is the only one used by the object accessor code, and is
+    // used when recurring into a link or array property during object creation
+    // (i.e. prop.type will always be Object or Array).
+    CppContext(CppContext& c, Property const& prop)
+    : realm(c.realm)
+    , object_schema(&*realm->schema().find(prop.object_type))
+    { }
+
+    CppContext() = default;
+    CppContext(std::shared_ptr<Realm> realm, const ObjectSchema* os=nullptr)
+    : realm(std::move(realm)), object_schema(os) { }
+
+    // The use of util::Optional for the following two functions is not a hard
+    // requirement; only that it be some type which can be evaluated in a
+    // boolean context to determine if it contains a value, and if it does
+    // contain a value it must be dereferencable to obtain that value.
+
+    // Get the value for a property in an input object, or `util::none` if no
+    // value present. The property is identified both by the name of the
+    // property and its index within the ObjectScehma's persisted_properties
+    // array.
+    util::Optional<util::Any> value_for_property(util::Any& dict,
+                                                 std::string const& prop_name,
+                                                 size_t /* property_index */) const
+    {
+        auto const& v = any_cast<AnyDict&>(dict);
+        auto it = v.find(prop_name);
+        return it == v.end() ? util::none : util::make_optional(it->second);
     }
 
-    static util::Any dict_value_for_key(CppContext*, util::Any dict, const std::string &prop_name) {
-        return any_cast<AnyDict>(dict).at(prop_name);
+    // Get the default value for the given property in the given object schema,
+    // or `util::none` if there is none (which is distinct from the default
+    // being `null`).
+    //
+    // This implementation does not support default values; see the default
+    // value tests for an example of one which does.
+    util::Optional<util::Any>
+    default_value_for_property(ObjectSchema const&, std::string const&) const
+    {
+        return util::none;
     }
 
-    static size_t list_size(CppContext*, util::Any& v) { return any_cast<AnyVector>(v).size(); }
-    static util::Any list_value_at_index(CppContext*, util::Any& v, size_t index) { return any_cast<AnyVector>(v)[index]; }
-
-    static bool has_default_value_for_property(CppContext* context, Realm*, ObjectSchema const& object, std::string const& prop) {
-        auto it = context->defaults.find(object.name);
-        if (it != context->defaults.end())
-            return it->second.count(prop);
-        return false;
+    // Invoke `fn` with each of the values from an enumerable type
+    template<typename Func>
+    void enumerate_list(util::Any& value, Func&& fn) {
+        for (auto&& v : any_cast<AnyVector&>(value))
+            fn(v);
     }
 
-    static util::Any default_value_for_property(CppContext* context, Realm*, ObjectSchema const& object, std::string const& prop) {
-        return context->defaults.at(object.name).at(prop);
-    }
+    // Convert from core types to the boxed type
+    util::Any box(BinaryData v) const { return std::string(v); }
+    util::Any box(List v) const { return v; }
+    util::Any box(Object v) const { return v; }
+    util::Any box(Results v) const { return v; }
+    util::Any box(StringData v) const { return std::string(v); }
+    util::Any box(Timestamp v) const { return v; }
+    util::Any box(bool v) const { return v; }
+    util::Any box(double v) const { return v; }
+    util::Any box(float v) const { return v; }
+    util::Any box(int64_t v) const { return v; }
+    util::Any box(RowExpr) const;
 
-    static Timestamp to_timestamp(CppContext*, util::Any& v) { return any_cast<Timestamp>(v); }
-    static bool to_bool(CppContext*, util::Any& v) { return any_cast<bool>(v); }
-    static double to_double(CppContext*, util::Any& v) { return any_cast<double>(v); }
-    static float to_float(CppContext*, util::Any& v) { return any_cast<float>(v); }
-    static long long to_long(CppContext*, util::Any& v) { return any_cast<long long>(v); }
-    static std::string to_binary(CppContext*, util::Any& v) { return any_cast<std::string>(v); }
-    static std::string to_string(CppContext*, util::Any& v) { return any_cast<std::string>(v); }
-    static Mixed to_mixed(CppContext*, util::Any&) { throw std::logic_error("'Mixed' type is unsupported"); }
+    // Any properties are only supported by the Cocoa binding to enable reading
+    // old Realm files that may have used them. Other bindings can safely not
+    // implement this.
+    util::Any box(Mixed) const { REALM_TERMINATE("not supported"); }
 
-    static util::Any from_binary(CppContext*, BinaryData v) { return std::string(v); }
-    static util::Any from_bool(CppContext*, bool v) { return v; }
-    static util::Any from_double(CppContext*, double v) { return v; }
-    static util::Any from_float(CppContext*, float v) { return v; }
-    static util::Any from_long(CppContext*, long long v) { return v; }
-    static util::Any from_string(CppContext*, StringData v) { return std::string(v); }
-    static util::Any from_timestamp(CppContext*, Timestamp v) { return v; }
-    static util::Any from_list(CppContext*, List v) { return v; }
-    static util::Any from_results(CppContext*, Results v) { return v; }
-    static util::Any from_object(CppContext*, Object v) { return v; }
+    // Convert from the boxed type to core types. This needs to be implemented
+    // for all of the types which `box()` can take, plus `RowExpr` and optional
+    // versions of the numeric types, minus `List` and `Results`.
+    //
+    // `create` and `update` are only applicable to `unbox<RowExpr>`. If
+    // `create` is false then when given something which is not a managed Realm
+    // object `unbox()` should simply return a detached row expr, while if it's
+    // true then `unbox()` should create a new object in the context's Realm
+    // using the provided value. If `update` is true then upsert semantics
+    // should be used for this.
+    template<typename T>
+    T unbox(util::Any& v, bool /*create*/= false, bool /*update*/= false) const { return any_cast<T>(v); }
 
-    static bool is_null(CppContext*, util::Any& v) { return !v.has_value(); }
-    static util::Any null_value(CppContext*) { return {}; }
+    bool is_null(util::Any const& v) const noexcept { return !v.has_value(); }
+    util::Any null_value() const noexcept { return {}; }
+    util::Optional<util::Any> no_value() const noexcept { return {}; }
 
-    static size_t to_existing_object_index(CppContext*, SharedRealm, util::Any &) { REALM_TERMINATE("not implemented"); }
-    static size_t to_object_index(CppContext* context, SharedRealm realm, util::Any& value, std::string const& object_type, bool update) {
-        if (auto object = any_cast<Object>(&value)) {
-            return object->row().get_index();
-        }
-        return Object::create(context, realm, *realm->schema().find(object_type), value, update).row().get_index();
-    }
+    // KVO hooks which will be called before and after modying a property from
+    // within Object::create().
+    void will_change(Object const&, Property const&) {}
+    void did_change() {}
+
+    // Get a string representation of the given value for use in error messages.
+    std::string print(util::Any const&) const { return "not implemented"; }
+
+    // Cocoa allows supplying fewer values than there are properties when
+    // creating objects using an array of values. Other bindings should not
+    // mimick this behavior so just return false here.
+    bool allow_missing(util::Any const&) const { return false; }
+
+private:
+    std::shared_ptr<Realm> realm;
+    const ObjectSchema* object_schema = nullptr;
+
 };
+
+inline util::Any CppContext::box(RowExpr row) const
+{
+    REALM_ASSERT(object_schema);
+    return Object(realm, *object_schema, row);
 }
 
-#endif /* REALM_OS_OBJECT_ACCESSOR_IMPL_HPP */
+template<>
+inline StringData CppContext::unbox(util::Any& v, bool, bool) const
+{
+    if (!v.has_value())
+        return StringData();
+    auto& value = any_cast<std::string&>(v);
+    return StringData(value.c_str(), value.size());
+}
+
+template<>
+inline BinaryData CppContext::unbox(util::Any& v, bool, bool) const
+{
+    if (!v.has_value())
+        return BinaryData();
+    auto& value = any_cast<std::string&>(v);
+    return BinaryData(value.c_str(), value.size());
+}
+
+template<>
+inline RowExpr CppContext::unbox(util::Any& v, bool create, bool update) const
+{
+    if (auto object = any_cast<Object>(&v))
+        return object->row();
+    if (auto row = any_cast<RowExpr>(&v))
+        return *row;
+    if (!create)
+        return RowExpr();
+
+    REALM_ASSERT(object_schema);
+    return Object::create(const_cast<CppContext&>(*this), realm, *object_schema, v, update).row();
+}
+
+template<>
+inline util::Optional<bool> CppContext::unbox(util::Any& v, bool, bool) const
+{
+    return v.has_value() ? util::make_optional(unbox<bool>(v)) : util::none;
+}
+
+template<>
+inline util::Optional<int64_t> CppContext::unbox(util::Any& v, bool, bool) const
+{
+    return v.has_value() ? util::make_optional(unbox<int64_t>(v)) : util::none;
+}
+
+template<>
+inline util::Optional<double> CppContext::unbox(util::Any& v, bool, bool) const
+{
+    return v.has_value() ? util::make_optional(unbox<double>(v)) : util::none;
+}
+
+template<>
+inline util::Optional<float> CppContext::unbox(util::Any& v, bool, bool) const
+{
+    return v.has_value() ? util::make_optional(unbox<float>(v)) : util::none;
+}
+
+template<>
+inline Mixed CppContext::unbox(util::Any&, bool, bool) const
+{
+    throw std::logic_error("'Any' type is unsupported");
+}
+}
+
+#endif // REALM_OS_OBJECT_ACCESSOR_IMPL_HPP

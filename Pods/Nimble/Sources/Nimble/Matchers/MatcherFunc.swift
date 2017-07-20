@@ -2,7 +2,7 @@
 /// behavior. The toNot() behavior is the negation of to().
 ///
 /// @see NonNilMatcherFunc if you prefer to have this matcher fail when nil
-///                        values are recieved in an expectation.
+///                        values are received in an expectation.
 ///
 /// You may use this when implementing your own custom matchers.
 ///

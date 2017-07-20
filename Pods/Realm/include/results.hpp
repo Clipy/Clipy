@@ -69,7 +69,7 @@ public:
 
     // Get the currently applied distinct condition for this Results
     SortDescriptor const& get_distinct() const noexcept { return m_distinct; }
-    
+
     // Get a tableview containing the same rows as this Results
     TableView get_tableview();
 
@@ -87,16 +87,31 @@ public:
     // Throws OutOfBoundsIndexException if index >= size()
     RowExpr get(size_t index);
 
+    // Get the boxed row accessor for the given index
+    // Throws OutOfBoundsIndexException if index >= size()
+    template<typename Context>
+    auto get(Context&, size_t index);
+
     // Get a row accessor for the first/last row, or none if the results are empty
     // More efficient than calling size()+get()
     util::Optional<RowExpr> first();
     util::Optional<RowExpr> last();
+
+    template<typename Context>
+    auto first(Context&);
+    template<typename Context>
+    auto last(Context&);
 
     // Get the first index of the given row in this results, or not_found
     // Throws DetachedAccessorException if row is not attached
     // Throws IncorrectTableException if row belongs to a different table
     size_t index_of(size_t row_ndx);
     size_t index_of(Row const& row);
+    template<typename Context, typename T>
+    size_t index_of(Context&, T&& value);
+
+    // Get the index of the first row matching the query in this table
+    size_t index_of(Query&& q);
 
     // Delete all of the rows in this Results from the Realm
     // size() will always be zero afterwards
@@ -113,7 +128,7 @@ public:
     // - https://github.com/realm/realm-object-store/issues/266
     // - https://github.com/realm/realm-core/issues/2332
     Results distinct(SortDescriptor&& uniqueness);
-    
+
     // Return a snapshot of this Results that never updates to reflect changes in the underlying data.
     Results snapshot() const &;
     Results snapshot() &&;
@@ -194,7 +209,7 @@ public:
         friend class _impl::ResultsNotifier;
         static void set_table_view(Results& results, TableView&& tv);
     };
-    
+
 private:
     enum class UpdatePolicy {
         Auto,  // Update automatically to reflect changes in the underlying data.
@@ -233,6 +248,33 @@ private:
 
     void set_table_view(TableView&& tv);
 };
+
+template<typename ContextType, typename ValueType>
+size_t Results::index_of(ContextType& ctx, ValueType&& value)
+{
+    validate_read();
+    return index_of(ctx.template unbox<RowExpr>(value));
+}
+
+template<typename Context>
+auto Results::get(Context& ctx, size_t row_ndx)
+{
+    return ctx.box(get(row_ndx));
+}
+
+template<typename Context>
+auto Results::first(Context& ctx)
+{
+    auto row = first();
+    return row ? ctx.box(*row) : ctx.no_value();
+}
+
+template<typename Context>
+auto Results::last(Context& ctx)
+{
+    auto row = last();
+    return row ? ctx.box(*row) : ctx.no_value();
+}
 }
 
 #endif /* REALM_RESULTS_HPP */

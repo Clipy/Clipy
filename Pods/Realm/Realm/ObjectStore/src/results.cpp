@@ -332,6 +332,22 @@ size_t Results::index_of(size_t row_ndx)
     REALM_UNREACHABLE();
 }
 
+size_t Results::index_of(Query&& q)
+{
+    size_t row;
+    if (!m_sort) {
+        auto query = get_query().and_query(std::move(q));
+        query.sync_view_if_needed();
+        row = query.find();
+    }
+    else {
+        auto first = filter(std::move(q)).first();
+        row = first ? first->get_index() : realm::not_found;
+    }
+
+    return row != realm::not_found ? index_of(row) : row;
+}
+
 template<typename Int, typename Float, typename Double, typename Timestamp>
 util::Optional<Mixed> Results::aggregate(size_t column,
                                          const char* name,
