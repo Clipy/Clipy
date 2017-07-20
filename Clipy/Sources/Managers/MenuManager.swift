@@ -97,15 +97,20 @@ extension MenuManager {
 
 // MARK: - Binding
 fileprivate extension MenuManager {
+    // swiftlint:disable function_body_length
     fileprivate func bind() {
         // Realm Notification
         clipToken = realm.objects(CPYClip.self)
                         .addNotificationBlock { [weak self] _ in
-                            self?.createClipMenu()
+                            DispatchQueue.main.async { [weak self] in
+                                self?.createClipMenu()
+                            }
                         }
         snippetToken = realm.objects(CPYFolder.self)
                         .addNotificationBlock { [weak self] _ in
-                            self?.createClipMenu()
+                            DispatchQueue.main.async { [weak self] in
+                                self?.createClipMenu()
+                            }
                         }
         // Menu icon
         defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem)
@@ -115,17 +120,11 @@ fileprivate extension MenuManager {
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             })
             .disposed(by: disposeBag)
-        // Clear history menu
-        defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new])
-            .filterNil()
-            .subscribe(onNext: { [weak self] _ in
-                self?.createClipMenu()
-            })
-            .disposed(by: disposeBag)
         // Sort clips
         defaults.rx.observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.new])
             .filterNil()
-            .subscribe(onNext: { [weak self] enabled in
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] enabled in
                 guard let wSelf = self else { return }
                 wSelf.clipResults = wSelf.realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: !enabled)
                 wSelf.createClipMenu()
@@ -133,11 +132,35 @@ fileprivate extension MenuManager {
             .disposed(by: disposeBag)
         // Edit snippets
         notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
-            .subscribe(onNext: { [weak self] _ in
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] _ in
+                self?.createClipMenu()
+            })
+            .disposed(by: disposeBag)
+        // Observe change preference settings
+        Observable.of(defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxHistorySize, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showIconInTheMenu, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInline, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInsideFolder, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxMenuItemTitleLength, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsTitleStartWithZero, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsAreMarkedWithNumbers, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showToolTipOnMenuItem, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showImageInTheMenu, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.addNumericKeyEquivalents, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new]).mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new]).mapVoidDistinctUntilChanged())
+            .merge()
+            .skip(1)
+            .throttle(1, scheduler: MainScheduler.instance)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] in
                 self?.createClipMenu()
             })
             .disposed(by: disposeBag)
     }
+    // swiftlint:enable function_body_length
 }
 
 // MARK: - Menus
