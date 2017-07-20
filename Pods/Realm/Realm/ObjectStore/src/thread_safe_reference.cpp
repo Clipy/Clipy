@@ -89,7 +89,7 @@ List ThreadSafeReference<List>::import_into_realm(SharedRealm realm) && {
 
 ThreadSafeReference<Object>::ThreadSafeReference(Object const& object)
 : ThreadSafeReferenceBase(object.realm())
-, m_row(get_source_shared_group().export_for_handover(object.row()))
+, m_row(get_source_shared_group().export_for_handover(Row(object.row())))
 , m_object_schema_name(object.get_object_schema().name) { }
 
 Object ThreadSafeReference<Object>::import_into_realm(SharedRealm realm) && {

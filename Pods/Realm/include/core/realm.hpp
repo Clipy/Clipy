@@ -25,5 +25,6 @@
 #include <realm/table_view.hpp>
 #include <realm/query.hpp>
 #include <realm/query_engine.hpp>
+#include <realm/query_expression.hpp>
 
 #endif // REALM_HPP

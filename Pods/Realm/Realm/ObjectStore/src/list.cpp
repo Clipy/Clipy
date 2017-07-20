@@ -78,6 +78,21 @@ void List::verify_valid_row(size_t row_ndx, bool insertion) const
     }
 }
 
+static StringData object_name(Table& table)
+{
+    return ObjectStore::object_type_for_table_name(table.get_name());
+}
+
+void List::validate(RowExpr row) const
+{
+    if (!row.is_attached())
+        throw std::invalid_argument("Object has been deleted or invalidated");
+    if (row.get_table() != &m_link_view->get_target_table())
+        throw std::invalid_argument(util::format("Object of type (%1) does not match List type (%2)",
+                                                 object_name(*row.get_table()),
+                                                 object_name(m_link_view->get_target_table())));
+}
+
 bool List::is_valid() const
 {
     m_realm->verify_thread();
@@ -120,10 +135,9 @@ size_t List::get_unchecked(size_t row_ndx) const noexcept
 size_t List::find(ConstRow const& row) const
 {
     verify_attached();
-
-    if (!row.is_attached() || row.get_table() != &m_link_view->get_target_table()) {
+    if (!row.is_attached())
         return not_found;
-    }
+    validate(row);
 
     return m_link_view->find(row.get_index());
 }
@@ -134,11 +148,23 @@ void List::add(size_t target_row_ndx)
     m_link_view->add(target_row_ndx);
 }
 
+void List::add(RowExpr row)
+{
+    validate(row);
+    add(row.get_index());
+}
+
 void List::insert(size_t row_ndx, size_t target_row_ndx)
 {
     verify_in_transaction();
     verify_valid_row(row_ndx, true);
     m_link_view->insert(row_ndx, target_row_ndx);
+}
+
+void List::insert(size_t ndx, RowExpr row)
+{
+    validate(row);
+    insert(ndx, row.get_index());
 }
 
 void List::move(size_t source_ndx, size_t dest_ndx)
@@ -167,6 +193,12 @@ void List::set(size_t row_ndx, size_t target_row_ndx)
     verify_in_transaction();
     verify_valid_row(row_ndx);
     m_link_view->set(row_ndx, target_row_ndx);
+}
+
+void List::set(size_t ndx, RowExpr row)
+{
+    validate(row);
+    set(ndx, row.get_index());
 }
 
 void List::swap(size_t ndx1, size_t ndx2)

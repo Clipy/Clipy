@@ -47,17 +47,25 @@ expect(ocean.isClean).toEventually(beTruthy())
   - [Exceptions](#exceptions)
   - [Collection Membership](#collection-membership)
   - [Strings](#strings)
-  - [Checking if all elements of a collection pass a condition](#checking-if-all-elements-of-a-collection-pass-a-condition)
-  - [Verify collection count](#verify-collection-count)
-  - [Verify a notification was posted](#verifying-a-notification-was-posted)
+  - [Collection Elements](#collection-elements)
+  - [Collection Count](#collection-count)
+  - [Notifications](#notifications)
   - [Matching a value to any of a group of matchers](#matching-a-value-to-any-of-a-group-of-matchers)
   - [Custom Validation](#custom-validation)
 - [Writing Your Own Matchers](#writing-your-own-matchers)
+  - [PredicateResult](#predicateresult)
   - [Lazy Evaluation](#lazy-evaluation)
   - [Type Checking via Swift Generics](#type-checking-via-swift-generics)
   - [Customizing Failure Messages](#customizing-failure-messages)
+    - [Basic Customization](#basic-customization)
+    - [Full Customization](#full-customization)
   - [Supporting Objective-C](#supporting-objective-c)
     - [Properly Handling `nil` in Objective-C Matchers](#properly-handling-nil-in-objective-c-matchers)
+  - [Migrating from the Old Matcher API](#migrating-from-the-old-matcher-api)
+    - [Minimal Step - Use `.predicate`](#minimal-step---use-predicate)
+    - [Convert to use `Predicate` Type with Old Matcher Constructor](#convert-to-use-predicate-type-with-old-matcher-constructor)
+    - [Convert to `Predicate` Type with Preferred Constructor](#convert-to-predicate-type-with-preferred-constructor)
+    - [Deprecation Roadmap](#deprecation-roadmap)
 - [Installing Nimble](#installing-nimble)
   - [Installing Nimble as a Submodule](#installing-nimble-as-a-submodule)
   - [Installing Nimble via CocoaPods](#installing-nimble-via-cocoapods)
@@ -288,9 +296,9 @@ expect(1 as CInt).to(equal(1))
   make expectations on primitive C values, wrap then in an object
   literal:
 
-  ```objc
-  expect(@(1 + 1)).to(equal(@2));
-  ```
+```objc
+expect(@(1 + 1)).to(equal(@2));
+```
 
 ## Asynchronous Expectations
 
@@ -298,11 +306,22 @@ In Nimble, it's easy to make expectations on values that are updated
 asynchronously. Just use `toEventually` or `toEventuallyNot`:
 
 ```swift
-// Swift
+// Swift 3.0 and later
+
+DispatchQueue.main.async {
+    ocean.add("dolphins")
+    ocean.add("whales")
+}
+expect(ocean).toEventually(contain("dolphins", "whales"))
+```
+
+
+```swift
+// Swift 2.3 and earlier
 
 dispatch_async(dispatch_get_main_queue()) {
-  ocean.add("dolphins")
-  ocean.add("whales")
+    ocean.add("dolphins")
+    ocean.add("whales")
 }
 expect(ocean).toEventually(contain("dolphins", "whales"))
 ```
@@ -310,9 +329,10 @@ expect(ocean).toEventually(contain("dolphins", "whales"))
 
 ```objc
 // Objective-C
+
 dispatch_async(dispatch_get_main_queue(), ^{
-  [ocean add:@"dolphins"];
-  [ocean add:@"whales"];
+    [ocean add:@"dolphins"];
+    [ocean add:@"whales"];
 });
 expect(ocean).toEventually(contain(@"dolphins", @"whales"));
 ```
@@ -354,9 +374,9 @@ You can also provide a callback by using the `waitUntil` function:
 // Swift
 
 waitUntil { done in
-  // do some stuff that takes a while...
-  NSThread.sleepForTimeInterval(0.5)
-  done()
+    // do some stuff that takes a while...
+    NSThread.sleepForTimeInterval(0.5)
+    done()
 }
 ```
 
@@ -364,9 +384,9 @@ waitUntil { done in
 // Objective-C
 
 waitUntil(^(void (^done)(void)){
-  // do some stuff that takes a while...
-  [NSThread sleepForTimeInterval:0.5];
-  done();
+    // do some stuff that takes a while...
+    [NSThread sleepForTimeInterval:0.5];
+    done();
 });
 ```
 
@@ -376,9 +396,9 @@ waitUntil(^(void (^done)(void)){
 // Swift
 
 waitUntil(timeout: 10) { done in
-  // do some stuff that takes a while...
-  NSThread.sleepForTimeInterval(1)
-  done()
+    // do some stuff that takes a while...
+    NSThread.sleepForTimeInterval(1)
+    done()
 }
 ```
 
@@ -386,9 +406,9 @@ waitUntil(timeout: 10) { done in
 // Objective-C
 
 waitUntilTimeout(10, ^(void (^done)(void)){
-  // do some stuff that takes a while...
-  [NSThread sleepForTimeInterval:1];
-  done();
+    // do some stuff that takes a while...
+    [NSThread sleepForTimeInterval:1];
+    done();
 });
 ```
 
@@ -533,6 +553,7 @@ expect(@1).toNot(beAKindOf([NSNull class]));
 ```
 
 Objects can be tested for their exact types using the `beAnInstanceOf` matcher:
+
 ```swift
 // Swift
 
@@ -555,18 +576,18 @@ let structObject = SomeStructConformingToProtocol()
 expect(structObject).toNot(beAnInstanceOf(SomeProtocol.self))
 expect(structObject).to(beAnInstanceOf(SomeStructConformingToProtocol.self))
 expect(structObject).toNot(beAnInstanceOf(SomeClassConformingToProtocol.self))
-````
+```
 
 ## Equivalence
 
 ```swift
 // Swift
 
-// Passes if actual is equivalent to expected:
+// Passes if 'actual' is equivalent to 'expected':
 expect(actual).to(equal(expected))
 expect(actual) == expected
 
-// Passes if actual is not equivalent to expected:
+// Passes if 'actual' is not equivalent to 'expected':
 expect(actual).toNot(equal(expected))
 expect(actual) != expected
 ```
@@ -574,10 +595,10 @@ expect(actual) != expected
 ```objc
 // Objective-C
 
-// Passes if actual is equivalent to expected:
+// Passes if 'actual' is equivalent to 'expected':
 expect(actual).to(equal(expected))
 
-// Passes if actual is not equivalent to expected:
+// Passes if 'actual' is not equivalent to 'expected':
 expect(actual).toNot(equal(expected))
 ```
 
@@ -589,25 +610,33 @@ Values must be `Equatable`, `Comparable`, or subclasses of `NSObject`.
 ```swift
 // Swift
 
-// Passes if actual has the same pointer address as expected:
+// Passes if 'actual' has the same pointer address as 'expected':
 expect(actual).to(beIdenticalTo(expected))
 expect(actual) === expected
 
-// Passes if actual does not have the same pointer address as expected:
+// Passes if 'actual' does not have the same pointer address as 'expected':
 expect(actual).toNot(beIdenticalTo(expected))
 expect(actual) !== expected
 ```
 
-Its important to remember that `beIdenticalTo` only makes sense when comparing types with reference semantics, which have a notion of identity. In Swift, that means a `class`. This matcher will not work with types with value semantics such as `struct` or `enum`. If you need to compare two value types, you can either compare individual properties or if it makes sense to do so, make your type implement `Equatable` and use Nimble's equivalence matchers instead.
+It is important to remember that `beIdenticalTo` only makes sense when comparing
+types with reference semantics, which have a notion of identity. In Swift, 
+that means types that are defined as a `class`. 
+
+This matcher will not work when comparing types with value semantics such as
+those defined as a `struct` or `enum`. If you need to compare two value types,
+consider what it means for instances of your type to be identical. This may mean
+comparing individual properties or, if it makes sense to do so, conforming your type 
+to `Equatable` and using Nimble's equivalence matchers instead.
 
 
 ```objc
 // Objective-C
 
-// Passes if actual has the same pointer address as expected:
+// Passes if 'actual' has the same pointer address as 'expected':
 expect(actual).to(beIdenticalTo(expected));
 
-// Passes if actual does not have the same pointer address as expected:
+// Passes if 'actual' does not have the same pointer address as 'expected':
 expect(actual).toNot(beIdenticalTo(expected));
 ```
 
@@ -712,20 +741,20 @@ expect([0.0, 2.0]).to(beCloseTo([0.1, 2.1], within: 0.1))
 ```swift
 // Swift
 
-// Passes if instance is an instance of aClass:
+// Passes if 'instance' is an instance of 'aClass':
 expect(instance).to(beAnInstanceOf(aClass))
 
-// Passes if instance is an instance of aClass or any of its subclasses:
+// Passes if 'instance' is an instance of 'aClass' or any of its subclasses:
 expect(instance).to(beAKindOf(aClass))
 ```
 
 ```objc
 // Objective-C
 
-// Passes if instance is an instance of aClass:
+// Passes if 'instance' is an instance of 'aClass':
 expect(instance).to(beAnInstanceOf(aClass));
 
-// Passes if instance is an instance of aClass or any of its subclasses:
+// Passes if 'instance' is an instance of 'aClass' or any of its subclasses:
 expect(instance).to(beAKindOf(aClass));
 ```
 
@@ -752,38 +781,38 @@ expect(dolphin).to(beAKindOf([Mammal class]));
 ## Truthiness
 
 ```swift
-// Passes if actual is not nil, true, or an object with a boolean value of true:
+// Passes if 'actual' is not nil, true, or an object with a boolean value of true:
 expect(actual).to(beTruthy())
 
-// Passes if actual is only true (not nil or an object conforming to Boolean true):
+// Passes if 'actual' is only true (not nil or an object conforming to Boolean true):
 expect(actual).to(beTrue())
 
-// Passes if actual is nil, false, or an object with a boolean value of false:
+// Passes if 'actual' is nil, false, or an object with a boolean value of false:
 expect(actual).to(beFalsy())
 
-// Passes if actual is only false (not nil or an object conforming to Boolean false):
+// Passes if 'actual' is only false (not nil or an object conforming to Boolean false):
 expect(actual).to(beFalse())
 
-// Passes if actual is nil:
+// Passes if 'actual' is nil:
 expect(actual).to(beNil())
 ```
 
 ```objc
 // Objective-C
 
-// Passes if actual is not nil, true, or an object with a boolean value of true:
+// Passes if 'actual' is not nil, true, or an object with a boolean value of true:
 expect(actual).to(beTruthy());
 
-// Passes if actual is only true (not nil or an object conforming to Boolean true):
+// Passes if 'actual' is only true (not nil or an object conforming to Boolean true):
 expect(actual).to(beTrue());
 
-// Passes if actual is nil, false, or an object with a boolean value of false:
+// Passes if 'actual' is nil, false, or an object with a boolean value of false:
 expect(actual).to(beFalsy());
 
-// Passes if actual is only false (not nil or an object conforming to Boolean false):
+// Passes if 'actual' is only false (not nil or an object conforming to Boolean false):
 expect(actual).to(beFalse());
 
-// Passes if actual is nil:
+// Passes if 'actual' is nil:
 expect(actual).to(beNil());
 ```
 
@@ -794,14 +823,16 @@ If you're using Swift, you can use the `throwAssertion` matcher to check if an a
 ```swift
 // Swift
 
-// Passes if somethingThatThrows() throws an assertion, such as calling fatalError() or precondition fails:
+// Passes if 'somethingThatThrows()' throws an assertion, 
+// such as by calling 'fatalError()' or if a precondition fails:
+expect { try somethingThatThrows() }.to(throwAssertion())
 expect { () -> Void in fatalError() }.to(throwAssertion())
 expect { precondition(false) }.to(throwAssertion())
 
-// Passes if throwing a NSError is not equal to throwing an assertion:
+// Passes if throwing an NSError is not equal to throwing an assertion:
 expect { throw NSError(domain: "test", code: 0, userInfo: nil) }.toNot(throwAssertion())
 
-// Passes if the post assertion code is not run:
+// Passes if the code after the precondition check is not run:
 var reachedPoint1 = false
 var reachedPoint2 = false
 expect {
@@ -822,40 +853,53 @@ Notes:
 
 ## Swift Error Handling
 
-If you're using Swift 2.0+, you can use the `throwError` matcher to check if an error is thrown.
+If you're using Swift 2.0 or newer, you can use the `throwError` matcher to check if an error is thrown.
+
+Note:
+The following code sample references the `Swift.Error` protocol. 
+This is `Swift.ErrorProtocol` in versions of Swift prior to version 3.0.
 
 ```swift
 // Swift
 
-// Passes if somethingThatThrows() throws an ErrorProtocol:
-expect{ try somethingThatThrows() }.to(throwError())
+// Passes if 'somethingThatThrows()' throws an 'Error':
+expect { try somethingThatThrows() }.to(throwError())
 
-// Passes if somethingThatThrows() throws an error with a given domain:
-expect{ try somethingThatThrows() }.to(throwError { (error: ErrorProtocol) in
+// Passes if 'somethingThatThrows()' throws an error within a particular domain:
+expect { try somethingThatThrows() }.to(throwError { (error: Error) in
     expect(error._domain).to(equal(NSCocoaErrorDomain))
 })
 
-// Passes if somethingThatThrows() throws an error with a given case:
-expect{ try somethingThatThrows() }.to(throwError(NSCocoaError.PropertyListReadCorruptError))
+// Passes if 'somethingThatThrows()' throws a particular error enum case:
+expect { try somethingThatThrows() }.to(throwError(NSCocoaError.PropertyListReadCorruptError))
 
-// Passes if somethingThatThrows() throws an error with a given type:
-expect{ try somethingThatThrows() }.to(throwError(errorType: NimbleError.self))
+// Passes if 'somethingThatThrows()' throws an error of a particular type:
+expect { try somethingThatThrows() }.to(throwError(errorType: NimbleError.self))
 ```
 
-If you are working directly with `ErrorProtocol` values, as is sometimes the case when using `Result` or `Promise` types, you can use the `matchError` matcher to check if the error is the same error is is supposed to be, without requiring explicit casting.
+When working directly with `Error` values, using the `matchError` matcher
+allows you to perform certain checks on the error itself without having to
+explicitly cast the error.
+
+The `matchError` matcher allows you to check whether or not the error:
+
+- is the same _type_ of error you are expecting.
+- represents a particular error value that you are expecting.
+
+This can be useful when using `Result` or `Promise` types, for example.
 
 ```swift
 // Swift
 
-let actual: ErrorProtocol = …
+let actual: Error = ...
 
-// Passes if actual contains any error value from the NimbleErrorEnum type:
-expect(actual).to(matchError(NimbleErrorEnum))
+// Passes if 'actual' represents any error value from the NimbleErrorEnum type:
+expect(actual).to(matchError(NimbleErrorEnum.self))
 
-// Passes if actual contains the Timeout value from the NimbleErrorEnum type:
-expect(actual).to(matchError(NimbleErrorEnum.Timeout))
+// Passes if 'actual' represents the case 'timeout' from the NimbleErrorEnum type:
+expect(actual).to(matchError(NimbleErrorEnum.timeout))
 
-// Passes if actual contains an NSError equal to the given one:
+// Passes if 'actual' contains an NSError equal to the one provided:
 expect(actual).to(matchError(NSError(domain: "err", code: 123, userInfo: nil)))
 ```
 
@@ -866,17 +910,17 @@ Note: This feature is only available in Swift.
 ```swift
 // Swift
 
-// Passes if actual, when evaluated, raises an exception:
+// Passes if 'actual', when evaluated, raises an exception:
 expect(actual).to(raiseException())
 
-// Passes if actual raises an exception with the given name:
+// Passes if 'actual' raises an exception with the given name:
 expect(actual).to(raiseException(named: name))
 
-// Passes if actual raises an exception with the given name and reason:
+// Passes if 'actual' raises an exception with the given name and reason:
 expect(actual).to(raiseException(named: name, reason: reason))
 
-// Passes if actual raises an exception and it passes expectations in the block
-// (in this case, if name begins with 'a r')
+// Passes if 'actual' raises an exception which passes expectations defined in the given closure:
+// (in this case, if the exception's name begins with "a r")
 expect { exception.raise() }.to(raiseException { (exception: NSException) in
     expect(exception.name).to(beginWith("a r"))
 })
@@ -885,44 +929,44 @@ expect { exception.raise() }.to(raiseException { (exception: NSException) in
 ```objc
 // Objective-C
 
-// Passes if actual, when evaluated, raises an exception:
+// Passes if 'actual', when evaluated, raises an exception:
 expect(actual).to(raiseException())
 
-// Passes if actual raises an exception with the given name
+// Passes if 'actual' raises an exception with the given name
 expect(actual).to(raiseException().named(name))
 
-// Passes if actual raises an exception with the given name and reason:
+// Passes if 'actual' raises an exception with the given name and reason:
 expect(actual).to(raiseException().named(name).reason(reason))
 
-// Passes if actual raises an exception and it passes expectations in the block
-// (in this case, if name begins with 'a r')
+// Passes if 'actual' raises an exception and it passes expectations defined in the given block:
+// (in this case, if name begins with "a r")
 expect(actual).to(raiseException().satisfyingBlock(^(NSException *exception) {
     expect(exception.name).to(beginWith(@"a r"));
 }));
 ```
 
-Note: Swift currently doesn't have exceptions (see [#220](https://github.com/Quick/Nimble/issues/220#issuecomment-172667064)). Only Objective-C code can raise
-exceptions that Nimble will catch.
+Note: Swift currently doesn't have exceptions (see [#220](https://github.com/Quick/Nimble/issues/220#issuecomment-172667064)). 
+Only Objective-C code can raise exceptions that Nimble will catch.
 
 ## Collection Membership
 
 ```swift
 // Swift
 
-// Passes if all of the expected values are members of actual:
+// Passes if all of the expected values are members of 'actual':
 expect(actual).to(contain(expected...))
 
-// Passes if actual is an empty collection (it contains no elements):
+// Passes if 'actual' is empty (i.e. it contains no elements):
 expect(actual).to(beEmpty())
 ```
 
 ```objc
 // Objective-C
 
-// Passes if expected is a member of actual:
+// Passes if expected is a member of 'actual':
 expect(actual).to(contain(expected));
 
-// Passes if actual is an empty collection (it contains no elements):
+// Passes if 'actual' is empty (i.e. it contains no elements):
 expect(actual).to(beEmpty());
 ```
 
@@ -955,20 +999,20 @@ an ordered collection, use `beginWith` and `endWith`:
 ```swift
 // Swift
 
-// Passes if the elements in expected appear at the beginning of actual:
+// Passes if the elements in expected appear at the beginning of 'actual':
 expect(actual).to(beginWith(expected...))
 
-// Passes if the the elements in expected come at the end of actual:
+// Passes if the the elements in expected come at the end of 'actual':
 expect(actual).to(endWith(expected...))
 ```
 
 ```objc
 // Objective-C
 
-// Passes if the elements in expected appear at the beginning of actual:
+// Passes if the elements in expected appear at the beginning of 'actual':
 expect(actual).to(beginWith(expected));
 
-// Passes if the the elements in expected come at the end of actual:
+// Passes if the the elements in expected come at the end of 'actual':
 expect(actual).to(endWith(expected));
 ```
 
@@ -983,14 +1027,17 @@ For code that returns collections of complex objects without a strict
 ordering, there is the `containElementSatisfying` matcher:
 
 ```swift
+// Swift
+
 struct Turtle {
-	var color: String!
+    let color: String
 }
 
-var turtles = functionThatReturnsSomeTurtlesInAnyOrder()
+let turtles: [Turtle] = functionThatReturnsSomeTurtlesInAnyOrder()
 
-// This set of matchers passes whether the array is [{color: "blue"}, {color: "green"}]
-// or [{color: "green"}, {color: "blue"}]
+// This set of matchers passes regardless of whether the array is 
+// [{color: "blue"}, {color: "green"}] or [{color: "green"}, {color: "blue"}]:
+
 expect(turtles).to(containElementSatisfying({ turtle in
 	return turtle.color == "green"
 }))
@@ -1003,20 +1050,25 @@ expect(turtles).to(containElementSatisfying({ turtle in
 ```
 
 ```objc
-@interface Turtle: NSObject
-@property(nonatomic) NSString *color;
+// Objective-C
+
+@interface Turtle : NSObject
+@property (nonatomic, readonly, nonnull) NSString *color;
 @end
-@implementation Turtle @end
 
-NSArray *turtles = functionThatReturnsSomeTurtlesInAnyOrder();
+@implementation Turtle 
+@end
 
-// This set of matchers passes whether the array is [{color: "blue"}, {color: "green"}]
-// or [{color: "green"}, {color: "blue"}]
-expect(turtles).to(containElementSatisfying(^BOOL(id object) {
-	return [turtle.color isEqualToString:@"green"];
+NSArray<Turtle *> * __nonnull turtles = functionThatReturnsSomeTurtlesInAnyOrder();
+
+// This set of matchers passes regardless of whether the array is 
+// [{color: "blue"}, {color: "green"}] or [{color: "green"}, {color: "blue"}]:
+
+expect(turtles).to(containElementSatisfying(^BOOL(id __nonnull object) {
+	return [[turtle color] isEqualToString:@"green"];
 }));
-expect(turtles).to(containElementSatisfying(^BOOL(id object) {
-	return [turtle.color isEqualToString:@"blue"];
+expect(turtles).to(containElementSatisfying(^BOOL(id __nonnull object) {
+	return [[turtle color] isEqualToString:@"blue"];
 }));
 ```
 
@@ -1025,93 +1077,108 @@ expect(turtles).to(containElementSatisfying(^BOOL(id object) {
 ```swift
 // Swift
 
-// Passes if actual contains substring expected:
-expect(actual).to(contain(expected))
+// Passes if 'actual' contains 'substring':
+expect(actual).to(contain(substring))
 
-// Passes if actual begins with substring:
-expect(actual).to(beginWith(expected))
+// Passes if 'actual' begins with 'prefix':
+expect(actual).to(beginWith(prefix))
 
-// Passes if actual ends with substring:
-expect(actual).to(endWith(expected))
+// Passes if 'actual' ends with 'suffix':
+expect(actual).to(endWith(suffix))
 
-// Passes if actual is an empty string, "":
+// Passes if 'actual' represents the empty string, "":
 expect(actual).to(beEmpty())
 
-// Passes if actual matches the regular expression defined in expected:
+// Passes if 'actual' matches the regular expression defined in 'expected':
 expect(actual).to(match(expected))
 ```
 
 ```objc
 // Objective-C
 
-// Passes if actual contains substring expected:
+// Passes if 'actual' contains 'substring':
 expect(actual).to(contain(expected));
 
-// Passes if actual begins with substring:
-expect(actual).to(beginWith(expected));
+// Passes if 'actual' begins with 'prefix':
+expect(actual).to(beginWith(prefix));
 
-// Passes if actual ends with substring:
-expect(actual).to(endWith(expected));
+// Passes if 'actual' ends with 'suffix':
+expect(actual).to(endWith(suffix));
 
-// Passes if actual is an empty string, "":
+// Passes if 'actual' represents the empty string, "":
 expect(actual).to(beEmpty());
 
-// Passes if actual matches the regular expression defined in expected:
+// Passes if 'actual' matches the regular expression defined in 'expected':
 expect(actual).to(match(expected))
 ```
 
-## Checking if all elements of a collection pass a condition
+## Collection Elements
+
+Nimble provides a means to check that all elements of a collection pass a given expectation.
+
+### Swift
+
+In Swift, the collection must be an instance of a type conforming to
+`Sequence`.
 
 ```swift
 // Swift
 
-// with a custom function:
-expect([1,2,3,4]).to(allPass({$0 < 5}))
+// Providing a custom function:
+expect([1, 2, 3, 4]).to(allPass { $0! < 5 })
 
-// with another matcher:
-expect([1,2,3,4]).to(allPass(beLessThan(5)))
+// Composing the expectation with another matcher:
+expect([1, 2, 3, 4]).to(allPass(beLessThan(5)))
 ```
+
+### Objective-C
+
+In Objective-C, the collection must be an instance of a type which implements
+the `NSFastEnumeration` protocol, and whose elements are instances of a type
+which subclasses `NSObject`.
+
+Additionally, unlike in Swift, there is no override to specify a custom
+matcher function.
 
 ```objc
 // Objective-C
 
-expect(@[@1, @2, @3,@4]).to(allPass(beLessThan(@5)));
+expect(@[@1, @2, @3, @4]).to(allPass(beLessThan(@5)));
 ```
 
-For Swift the actual value has to be a Sequence, e.g. an array, a set or a custom seqence type.
-
-For Objective-C the actual value has to be a NSFastEnumeration, e.g. NSArray and NSSet, of NSObjects and only the variant which
-uses another matcher is available here.
-
-## Verify collection count
+## Collection Count
 
 ```swift
 // Swift
 
-// passes if actual collection's count is equal to expected
+// Passes if 'actual' contains the 'expected' number of elements:
 expect(actual).to(haveCount(expected))
 
-// passes if actual collection's count is not equal to expected
+// Passes if 'actual' does _not_ contain the 'expected' number of elements:
 expect(actual).notTo(haveCount(expected))
 ```
 
 ```objc
 // Objective-C
 
-// passes if actual collection's count is equal to expected
+// Passes if 'actual' contains the 'expected' number of elements:
 expect(actual).to(haveCount(expected))
 
-// passes if actual collection's count is not equal to expected
+// Passes if 'actual' does _not_ contain the 'expected' number of elements:
 expect(actual).notTo(haveCount(expected))
 ```
 
-For Swift the actual value must be a `Collection` such as array, dictionary or set.
+For Swift, the actual value must be an instance of a type conforming to `Collection`.
+For example, instances of `Array`, `Dictionary`, or `Set`.
 
-For Objective-C the actual value has to be one of the following classes `NSArray`, `NSDictionary`, `NSSet`, `NSHashTable` or one of their subclasses.
+For Objective-C, the actual value must be one of the following classes, or their subclasses:
 
-## Foundation
+ - `NSArray`,
+ - `NSDictionary`,
+ - `NSSet`, or
+ - `NSHashTable`.
 
-### Verifying a Notification was posted
+## Notifications
 
 ```swift
 // Swift
@@ -1201,11 +1268,11 @@ value and return a `Predicate` closure. Take `equal`, for example:
 ```swift
 // Swift
 
-public func equal<T: Equatable>(expectedValue: T?) -> MatcherFunc<T?> {
-  // Can be shorted to:
+public func equal<T: Equatable>(expectedValue: T?) -> Predicate<T> {
+  // Can be shortened to:
   //   Predicate { actual in  ... }
   //
-  // But shown with types here for clarity
+  // But shown with types here for clarity.
   return Predicate { (actual: Expression<T>) throws -> PredicateResult in
     let msg = ExpectationMessage.expectedActualValueTo("equal <\(expectedValue)>")
     if let actualValue = try actualExpression.evaluate() {
@@ -1360,13 +1427,14 @@ outputs the following failure message when an expectation fails:
 
 You can customize this message by modifying the way you create a `Predicate`.
 
-### Basic Customication
+### Basic Customization
 
 For slightly more complex error messaging, receive the created failure message
 with `Predicate.define(..)`:
 
 ```swift
 // Swift
+
 public func equal<T: Equatable>(_ expectedValue: T?) -> Predicate<T> {
     return Predicate.define("equal <\(stringify(expectedValue))>") { actualExpression, msg in
         let actualValue = try actualExpression.evaluate()
@@ -1390,6 +1458,7 @@ In the example above, `msg` is defined based on the string given to
 
 ```swift
 // Swift
+
 let msg = ExpectationMessage.expectedActualValueTo("equal <\(stringify(expectedValue))>")
 ```
 

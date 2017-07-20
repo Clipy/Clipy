@@ -121,7 +121,7 @@ import Foundation
 				
 				handledfirstException = true
 			} else {
-				// If multiple fatal errors occur, don't handle subsquent errors (let the program crash)
+				// If multiple fatal errors occur, don't handle subsequent errors (let the program crash)
 				reply.RetCode = KERN_FAILURE
 			}
 			

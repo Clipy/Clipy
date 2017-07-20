@@ -2,6 +2,14 @@ import Foundation
 
 #if _runtime(_ObjC)
 
+fileprivate func from(objcPredicate: NMBPredicate) -> Predicate<NSObject> {
+    return Predicate { actualExpression in
+        let result = objcPredicate.satisfies(({ try! actualExpression.evaluate() }),
+                                             location: actualExpression.location)
+        return result.toSwift()
+    }
+}
+
 internal struct ObjCMatcherWrapper: Matcher {
     let matcher: NMBMatcher
 
@@ -49,29 +57,41 @@ public class NMBExpectation: NSObject {
 
     public var to: (NMBMatcher) -> Void {
         return ({ matcher in
-            self.expectValue.to(ObjCMatcherWrapper(matcher: matcher))
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.to(from(objcPredicate: pred))
+            } else {
+                self.expectValue.to(ObjCMatcherWrapper(matcher: matcher))
+            }
         })
     }
 
     public var toWithDescription: (NMBMatcher, String) -> Void {
         return ({ matcher, description in
-            self.expectValue.to(ObjCMatcherWrapper(matcher: matcher), description: description)
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.to(from(objcPredicate: pred), description: description)
+            } else {
+                self.expectValue.to(ObjCMatcherWrapper(matcher: matcher), description: description)
+            }
         })
     }
 
     public var toNot: (NMBMatcher) -> Void {
         return ({ matcher in
-            self.expectValue.toNot(
-                ObjCMatcherWrapper(matcher: matcher)
-            )
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.toNot(from(objcPredicate: pred))
+            } else {
+                self.expectValue.toNot(ObjCMatcherWrapper(matcher: matcher))
+            }
         })
     }
 
     public var toNotWithDescription: (NMBMatcher, String) -> Void {
         return ({ matcher, description in
-            self.expectValue.toNot(
-                ObjCMatcherWrapper(matcher: matcher), description: description
-            )
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.toNot(from(objcPredicate: pred), description: description)
+            } else {
+                self.expectValue.toNot(ObjCMatcherWrapper(matcher: matcher), description: description)
+            }
         })
     }
 
@@ -81,41 +101,73 @@ public class NMBExpectation: NSObject {
 
     public var toEventually: (NMBMatcher) -> Void {
         return ({ matcher in
-            self.expectValue.toEventually(
-                ObjCMatcherWrapper(matcher: matcher),
-                timeout: self._timeout,
-                description: nil
-            )
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.toEventually(
+                    from(objcPredicate: pred),
+                    timeout: self._timeout,
+                    description: nil
+                )
+            } else {
+                self.expectValue.toEventually(
+                    ObjCMatcherWrapper(matcher: matcher),
+                    timeout: self._timeout,
+                    description: nil
+                )
+            }
         })
     }
 
     public var toEventuallyWithDescription: (NMBMatcher, String) -> Void {
         return ({ matcher, description in
-            self.expectValue.toEventually(
-                ObjCMatcherWrapper(matcher: matcher),
-                timeout: self._timeout,
-                description: description
-            )
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.toEventually(
+                    from(objcPredicate: pred),
+                    timeout: self._timeout,
+                    description: description
+                )
+            } else {
+                self.expectValue.toEventually(
+                    ObjCMatcherWrapper(matcher: matcher),
+                    timeout: self._timeout,
+                    description: description
+                )
+            }
         })
     }
 
     public var toEventuallyNot: (NMBMatcher) -> Void {
         return ({ matcher in
-            self.expectValue.toEventuallyNot(
-                ObjCMatcherWrapper(matcher: matcher),
-                timeout: self._timeout,
-                description: nil
-            )
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.toEventuallyNot(
+                    from(objcPredicate: pred),
+                    timeout: self._timeout,
+                    description: nil
+                )
+            } else {
+                self.expectValue.toEventuallyNot(
+                    ObjCMatcherWrapper(matcher: matcher),
+                    timeout: self._timeout,
+                    description: nil
+                )
+            }
         })
     }
 
     public var toEventuallyNotWithDescription: (NMBMatcher, String) -> Void {
         return ({ matcher, description in
-            self.expectValue.toEventuallyNot(
-                ObjCMatcherWrapper(matcher: matcher),
-                timeout: self._timeout,
-                description: description
-            )
+            if let pred = matcher as? NMBPredicate {
+                self.expectValue.toEventuallyNot(
+                    from(objcPredicate: pred),
+                    timeout: self._timeout,
+                    description: description
+                )
+            } else {
+                self.expectValue.toEventuallyNot(
+                    ObjCMatcherWrapper(matcher: matcher),
+                    timeout: self._timeout,
+                    description: description
+                )
+            }
         })
     }
 

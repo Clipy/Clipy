@@ -20,12 +20,13 @@
 #define REALM_OS_OBJECT_HPP
 
 #include "impl/collection_notifier.hpp"
-#include "shared_realm.hpp"
 
 #include <realm/row.hpp>
 
 namespace realm {
 class ObjectSchema;
+struct Property;
+using RowExpr = BasicRowExpr<Table>;
 
 namespace _impl {
     class ObjectNotifier;
@@ -34,8 +35,8 @@ namespace _impl {
 class Object {
 public:
     Object();
-    Object(SharedRealm r, ObjectSchema const& s, BasicRowExpr<Table> const& o);
-    Object(SharedRealm r, ObjectSchema const& s, Row const& o);
+    Object(std::shared_ptr<Realm> r, ObjectSchema const& s, RowExpr const& o);
+    Object(std::shared_ptr<Realm> r, StringData object_type, size_t ndx);
 
     Object(Object const&);
     Object(Object&&);
@@ -44,51 +45,70 @@ public:
 
     ~Object();
 
-    // property getter/setter
-    template<typename ValueType, typename ContextType>
-    void set_property_value(ContextType ctx, std::string prop_name,
-                            ValueType value, bool try_update);
-
-    template<typename ValueType, typename ContextType>
-    ValueType get_property_value(ContextType ctx, std::string prop_name);
-
-    // create an Object from a native representation
-    template<typename ValueType, typename ContextType>
-    static Object create(ContextType ctx, SharedRealm realm,
-                         const ObjectSchema &object_schema, ValueType value,
-                         bool try_update);
-
-    template<typename ValueType, typename ContextType>
-    static Object get_for_primary_key(ContextType ctx, SharedRealm realm,
-                                      const ObjectSchema &object_schema,
-                                      ValueType primary_value);
-
-    SharedRealm const& realm() const { return m_realm; }
+    std::shared_ptr<Realm> const& realm() const { return m_realm; }
     ObjectSchema const& get_object_schema() const { return *m_object_schema; }
-    Row row() const { return m_row; }
+    RowExpr row() const { return m_row; }
 
     bool is_valid() const { return m_row.is_attached(); }
 
     NotificationToken add_notification_callback(CollectionChangeCallback callback) &;
 
+    // The following functions require an accessor context which converts from
+    // the binding's native data types to the core data types. See CppContext
+    // for a reference implementation of such a context.
+    //
+    // The actual definitions of these tempated functions is in object_accessor.hpp
+
+    // property getter/setter
+    template<typename ValueType, typename ContextType>
+    void set_property_value(ContextType& ctx, StringData prop_name,
+                            ValueType value, bool try_update);
+
+    template<typename ValueType, typename ContextType>
+    ValueType get_property_value(ContextType& ctx, StringData prop_name);
+
+    // create an Object from a native representation
+    template<typename ValueType, typename ContextType>
+    static Object create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
+                         const ObjectSchema &object_schema, ValueType value,
+                         bool try_update = false, Row* = nullptr);
+
+    template<typename ValueType, typename ContextType>
+    static Object create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
+                         StringData object_type, ValueType value,
+                         bool try_update = false, Row* = nullptr);
+
+    template<typename ValueType, typename ContextType>
+    static Object get_for_primary_key(ContextType& ctx,
+                                      std::shared_ptr<Realm> const& realm,
+                                      const ObjectSchema &object_schema,
+                                      ValueType primary_value);
+
+    template<typename ValueType, typename ContextType>
+    static Object get_for_primary_key(ContextType& ctx,
+                                      std::shared_ptr<Realm> const& realm,
+                                      StringData object_type,
+                                      ValueType primary_value);
+
 private:
-    SharedRealm m_realm;
+    std::shared_ptr<Realm> m_realm;
     const ObjectSchema *m_object_schema;
     Row m_row;
     _impl::CollectionNotifier::Handle<_impl::ObjectNotifier> m_notifier;
 
 
     template<typename ValueType, typename ContextType>
-    void set_property_value_impl(ContextType ctx, const Property &property, ValueType value, bool try_update, bool is_default=false);
+    void set_property_value_impl(ContextType& ctx, const Property &property,
+                                 ValueType value, bool try_update, bool is_default=false);
     template<typename ValueType, typename ContextType>
-    ValueType get_property_value_impl(ContextType ctx, const Property &property);
+    ValueType get_property_value_impl(ContextType& ctx, const Property &property);
 
     template<typename ValueType, typename ContextType>
-    static size_t get_for_primary_key_impl(ContextType ctx, Table const& table,
+    static size_t get_for_primary_key_impl(ContextType& ctx, Table const& table,
                                            const Property &primary_prop, ValueType primary_value);
 
     void verify_attached() const;
-    Property const& property_for_name(std::string const& prop_name) const;
+    Property const& property_for_name(StringData prop_name) const;
 };
 
 struct InvalidatedObjectException : public std::logic_error {

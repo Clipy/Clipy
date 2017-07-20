@@ -510,6 +510,16 @@ public:
         return !(*this == g);
     }
 
+    /// Compute the sum of the sizes in number of bytes of all the array nodes
+    /// that currently make up this group. When this group represents a snapshot
+    /// in a Realm file (such as during a read transaction via a SharedGroup
+    /// instance), this function computes the footprint of that snapshot within
+    /// the Realm file.
+    ///
+    /// If this group accessor is the detached state, this function returns
+    /// zero.
+    size_t compute_aggregated_byte_size() const noexcept;
+
     void verify() const;
 #ifdef REALM_DEBUG
     void print() const;

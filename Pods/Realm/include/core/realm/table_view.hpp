@@ -200,7 +200,10 @@ public:
     // Subtables
     size_t get_subtable_size(size_t column_ndx, size_t row_ndx) const noexcept;
 
-    // Searching (Int and String)
+    // Searching
+    template<typename T>
+    size_t find_first(size_t column_ndx, T value) const;
+
     size_t find_first_int(size_t column_ndx, int64_t value) const;
     size_t find_first_bool(size_t column_ndx, bool value) const;
     size_t find_first_olddatetime(size_t column_ndx, OldDateTime value) const;
@@ -208,6 +211,7 @@ public:
     size_t find_first_double(size_t column_ndx, double value) const;
     size_t find_first_string(size_t column_ndx, StringData value) const;
     size_t find_first_binary(size_t column_ndx, BinaryData value) const;
+    size_t find_first_timestamp(size_t column_ndx, Timestamp value) const;
 
     // Aggregate functions. count_target is ignored by all <int
     // function> except Count. Hack because of bug in optional
@@ -1107,6 +1111,36 @@ inline size_t TableViewBase::find_first_olddatetime(size_t column_ndx, OldDateTi
 {
     REALM_ASSERT_COLUMN_AND_TYPE(column_ndx, type_OldDateTime);
     return find_first_integer(column_ndx, int64_t(value.get_olddatetime()));
+}
+
+inline size_t TableViewBase::find_first_integer(size_t column_ndx, int64_t value) const
+{
+    return find_first<int64_t>(column_ndx, value);
+}
+
+inline size_t TableViewBase::find_first_float(size_t column_ndx, float value) const
+{
+    return find_first<float>(column_ndx, value);
+}
+
+inline size_t TableViewBase::find_first_double(size_t column_ndx, double value) const
+{
+    return find_first<double>(column_ndx, value);
+}
+
+inline size_t TableViewBase::find_first_string(size_t column_ndx, StringData value) const
+{
+    return find_first<StringData>(column_ndx, value);
+}
+
+inline size_t TableViewBase::find_first_binary(size_t column_ndx, BinaryData value) const
+{
+    return find_first<BinaryData>(column_ndx, value);
+}
+
+inline size_t TableViewBase::find_first_timestamp(size_t column_ndx, Timestamp value) const
+{
+    return find_first<Timestamp>(column_ndx, value);
 }
 
 

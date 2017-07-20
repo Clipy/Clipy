@@ -20,6 +20,7 @@
 #define REALM_OS_SYNC_PERMISSION_HPP
 
 #include "results.hpp"
+#include "shared_realm.hpp"
 
 namespace realm {
 
@@ -71,6 +72,8 @@ struct Permission {
         // FIXME: turn this back into a union type
         std::string user_id;
         std::pair<std::string, std::string> key_value;
+
+        Condition() {}
 
         Condition(std::string id)
         : type(Type::UserId)

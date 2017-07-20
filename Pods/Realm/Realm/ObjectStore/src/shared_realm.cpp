@@ -161,8 +161,7 @@ void Realm::open_with_config(const Config& config,
             };
             shared_group = std::make_unique<SharedGroup>(*history, options);
 
-#ifndef _WIN32
-            if (config.should_compact_on_launch_function) {
+            if (realm && config.should_compact_on_launch_function) {
                 size_t free_space = -1;
                 size_t used_space = -1;
                 // getting stats requires committing a write transaction beforehand.
@@ -174,7 +173,6 @@ void Realm::open_with_config(const Config& config,
                         realm->compact();
                 }
             }
-#endif
         }
     }
     catch (realm::FileFormatUpgradeRequired const&) {
@@ -248,7 +246,16 @@ void Realm::read_schema_from_group_if_needed()
                                     m_schema_transaction_version);
 
     if (m_dynamic_schema) {
-        m_schema = std::move(schema);
+        if (m_schema == schema) {
+            // The structure of the schema hasn't changed. Bring the table column indices up to date.
+            m_schema.copy_table_columns_from(schema);
+        }
+        else {
+            // The structure of the schema has changed, so replace our copy of the schema.
+            // FIXME: This invalidates any pointers to the object schemas within the schema vector,
+            // which will cause problems for anyone that caches such a pointer.
+            m_schema = std::move(schema);
+        }
     }
     else {
         ObjectStore::verify_valid_external_changes(m_schema.compare(schema));
@@ -425,9 +432,11 @@ void Realm::update_schema(Schema schema, uint64_t version,
         // migration function needs to see the target schema on the "new" Realm
         std::swap(m_schema, schema);
         std::swap(m_schema_version, version);
+        m_in_migration = true;
         auto restore = util::make_scope_exit([&]() noexcept {
             std::swap(m_schema, schema);
             std::swap(m_schema_version, version);
+            m_in_migration = false;
         });
 
         ObjectStore::apply_schema_changes(read_group(), version, m_schema, m_schema_version,
@@ -456,8 +465,11 @@ void Realm::add_schema_change_handler()
     m_group->set_schema_change_notification_handler([&] {
         m_new_schema = ObjectStore::schema_from_group(read_group());
         m_schema_version = ObjectStore::get_schema_version(read_group());
-        if (m_dynamic_schema)
+        if (m_dynamic_schema) {
+            // FIXME: This invalidates any pointers to the object schemas within the schema vector,
+            // which will cause problems for anyone that caches such a pointer.
             m_schema = *m_new_schema;
+        }
         else
             m_schema.copy_table_columns_from(*m_new_schema);
     });

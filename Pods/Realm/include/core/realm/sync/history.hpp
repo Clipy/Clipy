@@ -200,7 +200,8 @@ public:
     virtual void get_upload_download_bytes(uint_fast64_t& downloaded_bytes,
                                            uint_fast64_t& downloadable_bytes,
                                            uint_fast64_t& uploaded_bytes,
-                                           uint_fast64_t& uploadable_bytes) = 0;
+                                           uint_fast64_t& uploadable_bytes,
+                                           uint_fast64_t& snapshot_version) = 0;
 
     /// See set_cooked_progress().
     struct CookedProgress {

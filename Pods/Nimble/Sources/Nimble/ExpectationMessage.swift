@@ -1,3 +1,5 @@
+import Foundation
+
 public indirect enum ExpectationMessage {
     // --- Primary Expectations ---
     /// includes actual value in output ("expected to <message>, got <actual>")
@@ -43,8 +45,8 @@ public indirect enum ExpectationMessage {
             return msg
         case let .prepends(_, expectation):
             return expectation.expectedMessage
-        case let .appends(expectation, _):
-            return expectation.expectedMessage
+        case let .appends(expectation, msg):
+            return "\(expectation.expectedMessage)\(msg)"
         case let .details(expectation, _):
             return expectation.expectedMessage
         }
@@ -168,34 +170,16 @@ public indirect enum ExpectationMessage {
             }
         case let .appends(expectation, msg):
             expectation.update(failureMessage: failureMessage)
-            if failureMessage.hasOverriddenStringValue {
-                failureMessage.stringValue += "\(msg)"
-            } else {
-                if failureMessage.actualValue != nil {
-                    failureMessage.postfixActual += msg
-                } else {
-                    failureMessage.postfixMessage += msg
-                }
-            }
+            failureMessage.appendMessage(msg)
         case let .details(expectation, msg):
             expectation.update(failureMessage: failureMessage)
-            if failureMessage.hasOverriddenStringValue {
-                if let desc = failureMessage.userDescription {
-                    failureMessage.stringValue = "\(desc)\n\(failureMessage.stringValue)"
-                }
-                failureMessage.stringValue += "\n\(msg)"
-            } else {
-                if let desc = failureMessage.userDescription {
-                    failureMessage.userDescription = desc
-                }
-                failureMessage.extendedMessage = msg
-            }
+            failureMessage.appendDetails(msg)
         }
     }
 }
 
 extension FailureMessage {
-    var toExpectationMessage: ExpectationMessage {
+    internal func toExpectationMessage() -> ExpectationMessage {
         let defaultMsg = FailureMessage()
         if expected != defaultMsg.expected || _stringValueOverride != nil {
             return .fail(stringValue)
@@ -220,3 +204,58 @@ extension FailureMessage {
         return msg
     }
 }
+
+#if _runtime(_ObjC)
+
+public class NMBExpectationMessage: NSObject {
+    private let msg: ExpectationMessage
+
+    internal init(swift msg: ExpectationMessage) {
+        self.msg = msg
+    }
+
+    public init(expectedTo message: String) {
+        self.msg = .expectedTo(message)
+    }
+    public init(expectedActualValueTo message: String) {
+        self.msg = .expectedActualValueTo(message)
+    }
+
+    public init(expectedActualValueTo message: String, customActualValue actual: String) {
+        self.msg = .expectedCustomValueTo(message, actual)
+    }
+
+    public init(fail message: String) {
+        self.msg = .fail(message)
+    }
+
+    public init(prepend message: String, child: NMBExpectationMessage) {
+        self.msg = .prepends(message, child.msg)
+    }
+
+    public init(appendedMessage message: String, child: NMBExpectationMessage) {
+        self.msg = .appends(child.msg, message)
+    }
+
+    public init(prependedMessage message: String, child: NMBExpectationMessage) {
+        self.msg = .prepends(message, child.msg)
+    }
+
+    public init(details message: String, child: NMBExpectationMessage) {
+        self.msg = .details(child.msg, message)
+    }
+
+    public func appendedBeNilHint() -> NMBExpectationMessage {
+        return NMBExpectationMessage(swift: msg.appendedBeNilHint())
+    }
+
+    public func toSwift() -> ExpectationMessage { return self.msg }
+}
+
+extension ExpectationMessage {
+    func toObjectiveC() -> NMBExpectationMessage {
+        return NMBExpectationMessage(swift: self)
+    }
+}
+
+#endif

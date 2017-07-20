@@ -117,12 +117,13 @@ class ArrayWriterBase;
 }
 
 
-#ifdef REALM_DEBUG
 struct MemStats {
     size_t allocated = 0;
     size_t used = 0;
     size_t array_count = 0;
 };
+
+#ifdef REALM_DEBUG
 template <class C, class T>
 std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& out, MemStats stats);
 #endif
@@ -845,17 +846,20 @@ public:
     /// FIXME: Belongs in IntegerArray
     static size_t calc_aligned_byte_size(size_t size, int width);
 
+    class MemUsageHandler {
+    public:
+        virtual void handle(ref_type ref, size_t allocated, size_t used) = 0;
+    };
+
+    void report_memory_usage(MemUsageHandler&) const;
+
+    void stats(MemStats& stats_dest) const noexcept;
+
 #ifdef REALM_DEBUG
     void print() const;
     void verify() const;
     typedef size_t (*LeafVerifier)(MemRef, Allocator&);
     void verify_bptree(LeafVerifier) const;
-    class MemUsageHandler {
-    public:
-        virtual void handle(ref_type ref, size_t allocated, size_t used) = 0;
-    };
-    void report_memory_usage(MemUsageHandler&) const;
-    void stats(MemStats& stats_dest) const;
     typedef void (*LeafDumper)(MemRef, Allocator&, std::ostream&, int level);
     void dump_bptree_structure(std::ostream&, int level, LeafDumper) const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
@@ -1007,9 +1011,7 @@ protected:
     /// log2. Posssible results {0, 1, 2, 4, 8, 16, 32, 64}
     static size_t bit_width(int64_t value);
 
-#ifdef REALM_DEBUG
     void report_memory_usage_2(MemUsageHandler&) const;
-#endif
 
 private:
     Getter m_getter = nullptr; // cached to avoid indirection

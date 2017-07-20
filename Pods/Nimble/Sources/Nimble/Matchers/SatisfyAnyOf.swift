@@ -38,7 +38,7 @@ internal func satisfyAnyOf<T>(_ predicates: [Predicate<T>]) -> Predicate<T> {
                 if result.toBoolean(expectation: .toMatch) {
                     matches = true
                 }
-                postfixMessages.append(result.message.expectedMessage)
+                postfixMessages.append("{\(result.message.expectedMessage)}")
             }
 
             var msg: ExpectationMessage
@@ -74,24 +74,33 @@ public func || <T>(left: MatcherFunc<T>, right: MatcherFunc<T>) -> Predicate<T> 
 
 #if _runtime(_ObjC)
 extension NMBObjCMatcher {
-    public class func satisfyAnyOfMatcher(_ matchers: [NMBObjCMatcher]) -> NMBObjCMatcher {
-        return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
+    public class func satisfyAnyOfMatcher(_ matchers: [NMBMatcher]) -> NMBPredicate {
+        return NMBPredicate { actualExpression in
             if matchers.isEmpty {
-                failureMessage.stringValue = "satisfyAnyOf must be called with at least one matcher"
-                return false
+                return NMBPredicateResult(
+                    status: NMBPredicateStatus.fail,
+                    message: NMBExpectationMessage(
+                        fail: "satisfyAnyOf must be called with at least one matcher"
+                    )
+                )
             }
 
-            var elementEvaluators = [NonNilMatcherFunc<NSObject>]()
+            var elementEvaluators = [Predicate<NSObject>]()
             for matcher in matchers {
-                let elementEvaluator: (Expression<NSObject>, FailureMessage) -> Bool = {
-                    expression, failureMessage in
-                    return matcher.matches({try! expression.evaluate()}, failureMessage: failureMessage, location: actualExpression.location)
+                let elementEvaluator = Predicate<NSObject> { expression in
+                    if let predicate = matcher as? NMBPredicate {
+                        return predicate.satisfies({ try! expression.evaluate() }, location: actualExpression.location).toSwift()
+                    } else {
+                        let failureMessage = FailureMessage()
+                        let success = matcher.matches({ try! expression.evaluate() }, failureMessage: failureMessage, location: actualExpression.location)
+                        return PredicateResult(bool: success, message: failureMessage.toExpectationMessage())
+                    }
                 }
 
-                elementEvaluators.append(NonNilMatcherFunc(elementEvaluator))
+                elementEvaluators.append(elementEvaluator)
             }
 
-            return try! satisfyAnyOf(elementEvaluators).matches(actualExpression, failureMessage: failureMessage)
+            return try! satisfyAnyOf(elementEvaluators).satisfies(actualExpression).toObjectiveC()
         }
     }
 }

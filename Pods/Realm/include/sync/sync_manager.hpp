@@ -85,7 +85,12 @@ public:
     void set_client_should_reconnect_immediately(bool reconnect_immediately);
     bool client_should_reconnect_immediately() const noexcept;
 
-    /// Force sync client to reconnect immediately if the connection was lost.
+    /// Ask all valid sync sessions to perform whatever tasks might be necessary to
+    /// re-establish connectivity with the Realm Object Server. It is presumed that
+    /// the caller knows that network connectivity has been restored.
+    ///
+    /// Refer to `SyncSession::handle_reconnect()` to see what sort of work is done
+    /// on a per-session basis.
     void reconnect();
 
     util::Logger::Level log_level() const noexcept;

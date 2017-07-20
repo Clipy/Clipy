@@ -264,7 +264,6 @@ extension SharedSequenceConvertibleType where E : SharedSequenceConvertibleType,
     /**
     Merges elements from all observable sequences in the given enumerable sequence into a single observable sequence.
     
-    - parameter maxConcurrent: Maximum number of inner observable sequences being subscribed to concurrently.
     - returns: The observable sequence that merges the elements of the observable sequences.
     */
     public func merge() -> SharedSequence<SharingStrategy, E.E> {
@@ -277,6 +276,7 @@ extension SharedSequenceConvertibleType where E : SharedSequenceConvertibleType,
     /**
     Merges elements from all inner observable sequences into a single observable sequence, limiting the number of concurrent subscriptions to inner sequences.
     
+    - parameter maxConcurrent: Maximum number of inner observable sequences being subscribed to concurrently.
     - returns: The observable sequence that merges the elements of the inner sequences.
     */
     public func merge(maxConcurrent: Int)
@@ -489,6 +489,27 @@ extension SharedSequenceConvertibleType {
         -> SharedSequence<SharingStrategy, E> {
         let source = self.asObservable()
                 .startWith(element)
+
+        return SharedSequence(source)
+    }
+}
+
+// MARK: delay
+extension SharedSequenceConvertibleType {
+
+    /**
+     Returns an observable sequence by the source observable sequence shifted forward in time by a specified delay. Error events from the source observable sequence are not delayed.
+
+     - seealso: [delay operator on reactivex.io](http://reactivex.io/documentation/operators/delay.html)
+
+     - parameter dueTime: Relative time shift of the source by.
+     - parameter scheduler: Scheduler to run the subscription delay timer on.
+     - returns: the source Observable shifted in time by the specified delay.
+     */
+    public func delay(_ dueTime: RxTimeInterval)
+        -> SharedSequence<SharingStrategy, E> {
+        let source = self.asObservable()
+            .delay(dueTime, scheduler: SharingStrategy.scheduler)
 
         return SharedSequence(source)
     }
