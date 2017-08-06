@@ -1,0 +1,23 @@
+{
+  "name": "BartyCrouch",
+  "version": "3.8.1",
+  "summary": "Localization/I18n: Incrementally update your Strings files from .swift, .h, .m(m), .storyboard or .xib files and/or use machine-translation.",
+  "homepage": "https://github.com/Flinesoft/BartyCrouch",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE.md"
+  },
+  "authors": {
+    "Dschee": "github@dschee.com"
+  },
+  "source": {
+    "http": "https://github.com/Flinesoft/BartyCrouch/releases/download/3.8.1/portable_bartycrouch.zip"
+  },
+  "preserve_paths": "*",
+  "platforms": {
+    "osx": null,
+    "ios": null,
+    "tvos": null,
+    "watchos": null
+  }
+}

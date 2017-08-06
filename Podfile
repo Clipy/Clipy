@@ -4,7 +4,8 @@ use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Clipy' do
- 
+
+  # Application
   pod 'PINCache'
   pod 'Sparkle'
   pod 'RealmSwift'
@@ -17,7 +18,8 @@ target 'Clipy' do
   pod 'KeyHolder'
   pod 'RxScreeen'
   pod 'AEXML'
-
+  # Utility
+  pod 'BartyCrouch'
   pod 'SwiftLint'
 
   target 'ClipyTests' do
