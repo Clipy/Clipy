@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1510" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -27,7 +27,7 @@
                         <binding destination="zBg-yp-15f" name="value" keyPath="values.kCPYBetaPastePlainText" id="yWk-xb-ghE"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="3h0-VG-ZCf">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="3h0-VG-ZCf">
                     <rect key="frame" x="59" y="99" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Action" id="6RM-Ow-USQ">
@@ -39,7 +39,7 @@
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fya-Fc-ZWk" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="59" y="18" width="364" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Save the screen shots in history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pgE-3j-ZEy">
+                    <buttonCell key="cell" type="check" title="Save screenshots in history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pgE-3j-ZEy">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -47,7 +47,7 @@
                         <binding destination="zBg-yp-15f" name="value" keyPath="values.kCPYBetaObserveScreenshot" id="Wyb-lc-cVJ"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="2iQ-ta-6Z6">
+                <textField verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="2iQ-ta-6Z6">
                     <rect key="frame" x="59" y="42" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Screenshot" id="0f7-ic-bHq">
@@ -56,10 +56,10 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="436" translatesAutoresizingMaskIntoConstraints="NO" id="5vu-ef-NJt">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" preferredMaxLayoutWidth="436" translatesAutoresizingMaskIntoConstraints="NO" id="5vu-ef-NJt">
                     <rect key="frame" x="20" y="122" width="440" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Beta setting may not take over the same setting after the version up." id="c4z-RD-3UN">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Beta settings might be moved to a different pane in future versions." id="c4z-RD-3UN">
                         <font key="font" size="13" name=".HiraKakuInterface-W3"/>
                         <color key="textColor" red="0.26274509800000001" green="0.26274509800000001" blue="0.26274509800000001" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
