@@ -114,6 +114,8 @@ GEM
       xcodeproj (>= 1.4.4, < 2.0.0)
       xcpretty (>= 0.2.4, < 1.0.0)
       xcpretty-travis-formatter (>= 0.0.3)
+    fastlane-plugin-update_provisioning_profile_specifier (1.3.0)
+      xcodeproj (>= 1.3.3)
     fourflusher (2.0.1)
     fuzzy_match (2.0.4)
     gh_inspector (1.0.3)
@@ -212,6 +214,7 @@ DEPENDENCIES
   cocoapods
   danger
   fastlane
+  fastlane-plugin-update_provisioning_profile_specifier
 
 BUNDLED WITH
    1.14.6
