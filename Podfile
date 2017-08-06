@@ -19,7 +19,7 @@ target 'Clipy' do
   pod 'RxScreeen'
   pod 'AEXML'
   # Utility
-  pod 'BartyCrouch', :podspec => 'https://raw.githubusercontent.com/Flinesoft/BartyCrouch/stable/BartyCrouch.podspec'
+  pod 'BartyCrouch'
   pod 'SwiftLint'
 
   target 'ClipyTests' do

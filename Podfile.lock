@@ -32,7 +32,7 @@ PODS:
 
 DEPENDENCIES:
   - AEXML
-  - BartyCrouch (from `https://raw.githubusercontent.com/Flinesoft/BartyCrouch/stable/BartyCrouch.podspec`)
+  - BartyCrouch
   - Crashlytics
   - Fabric
   - KeyHolder
@@ -49,8 +49,6 @@ DEPENDENCIES:
   - SwiftLint
 
 EXTERNAL SOURCES:
-  BartyCrouch:
-    :podspec: https://raw.githubusercontent.com/Flinesoft/BartyCrouch/stable/BartyCrouch.podspec
   LoginServiceKit:
     :git: https://github.com/Clipy/LoginServiceKit.git
 
@@ -80,6 +78,6 @@ SPEC CHECKSUMS:
   Sparkle: ccfb47699feea7b40b51cf3176f69404e5b1da6c
   SwiftLint: f60095dc173a3f3ec505bb34f5229c3dfd779a54
 
-PODFILE CHECKSUM: 72fd44694e14cc7d6f1548e8703f316c4aba0b54
+PODFILE CHECKSUM: aab74e2b86e5ec92d549788b6ab0b632a458ef46
 
 COCOAPODS: 1.2.1
