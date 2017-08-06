@@ -8,13 +8,13 @@
 /* Class = "NSMenuItem"; title = "Alt"; ObjectID = "Ncl-nV-zr8"; */
 "Ncl-nV-zr8.title" = "Alt";
 
-/* Class = "NSTextFieldCell"; title = "Beta setting may not take over the same setting after the version up."; ObjectID = "c4z-RD-3UN"; */
+/* Class = "NSTextFieldCell"; title = "Beta settings might be moved to a different pane in future versions."; ObjectID = "c4z-RD-3UN"; */
 "c4z-RD-3UN.title" = "Le impostazioni delle versioni Beta potrebbero non essere più valide dopo il rilascio ufficiale.";
 
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "gRa-Te-dcH"; */
 "gRa-Te-dcH.title" = "Command";
 
-/* Class = "NSButtonCell"; title = "Save the screen shots in history"; ObjectID = "pgE-3j-ZEy"; */
+/* Class = "NSButtonCell"; title = "Save screenshots in history"; ObjectID = "pgE-3j-ZEy"; */
 "pgE-3j-ZEy.title" = "Salva gli screenshot nella Cronologia";
 
 /* Class = "NSButtonCell"; title = "Paste as PlainText"; ObjectID = "r0C-kF-Q0z"; */
