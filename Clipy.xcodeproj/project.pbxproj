@@ -69,6 +69,7 @@
 		FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */; };
 		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FAAFEB081F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCED1DE3230900309C49 /* NSColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -191,6 +192,7 @@
 		FAAA88881E6862850088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA888A1E6862D20088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA888E1E6862D90088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
+		FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYGeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataCleanService.swift; sourceTree = "<group>"; };
 		FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
 		FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+NSColor.swift"; sourceTree = "<group>"; };
@@ -442,6 +444,7 @@
 			children = (
 				FA1DB4F21DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift */,
 				FA1DB4F31DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift */,
+				FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */,
 				FA1DB4F41DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift */,
 				FA1DB4F51DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift */,
 				FA1DB4F61DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift */,
@@ -821,6 +824,7 @@
 				FA1DB4D41DDCB479007F95C8 /* CPYClipData.swift in Sources */,
 				FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */,
 				FA1DB4D51DDCB479007F95C8 /* CPYDraggedData.swift in Sources */,
+				FAAFEB081F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift in Sources */,
 				FA1DB5151DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift in Sources */,
 				FA1DB4EA1DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift in Sources */,
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,

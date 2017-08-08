@@ -128,6 +128,11 @@ final class CPYClipData: NSObject {
         self.image = image
     }
 
+    init(string: String) {
+        self.types = [NSStringPboardType]
+        self.stringValue = string
+    }
+
     deinit {
         self.RTFData = nil
         self.PDF = nil
