@@ -25,7 +25,7 @@ struct Environment {
          hotKeyService: HotKeyService = HotKeyService(),
          dataCleanService: DataCleanService = DataCleanService(),
          pasteService: PasteService = PasteService(),
-         excludeAppService: ExcludeAppService = ExcludeAppService(),
+         excludeAppService: ExcludeAppService = ExcludeAppService(applications: []),
          menuManager: MenuManager = MenuManager(),
          defaults: UserDefaults = .standard) {
 

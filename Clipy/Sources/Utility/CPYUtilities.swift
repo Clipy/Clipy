@@ -15,8 +15,8 @@ final class CPYUtilities {
 
     static func initSDKs() {
         // Fabric
-        UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
-        if UserDefaults.standard.bool(forKey: Constants.UserDefaults.collectCrashReport) {
+        AppEnvironment.current.defaults.register(defaults: ["NSApplicationCrashOnExceptions": true])
+        if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) {
             Fabric.with([Answers.self, Crashlytics.self])
             CPYUtilities.sendCustomLog(with: "applicationDidFinishLaunching")
         }
@@ -65,8 +65,8 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: 0), forKey: Constants.Beta.pastePlainTextModifier)
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.Beta.observerScreenshot)
 
-        UserDefaults.standard.register(defaults: defaultValues)
-        UserDefaults.standard.synchronize()
+        AppEnvironment.current.defaults.register(defaults: defaultValues)
+        AppEnvironment.current.defaults.synchronize()
     }
 
     static func applicationSupportFolder() -> String {
@@ -105,7 +105,7 @@ final class CPYUtilities {
     }
 
     static func sendCustomLog(with name: String) {
-        if UserDefaults.standard.bool(forKey: Constants.UserDefaults.collectCrashReport) {
+        if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) {
             Answers.logCustomEvent(withName: name, customAttributes: nil)
         }
     }

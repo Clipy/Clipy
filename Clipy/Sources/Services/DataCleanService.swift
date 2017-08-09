@@ -14,14 +14,12 @@ import PINCache
 final class DataCleanService {
 
     // MARK: - Properties
-    static let shared = DataCleanService()
-
-    fileprivate let disposeBag = DisposeBag()
+    fileprivate var disposeBag = DisposeBag()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .utility)
-    fileprivate let defaults = UserDefaults.standard
 
-    // MARK: - Initialize
-    init() {
+    // MARK: - Monitoring
+    func startMonitoring() {
+        disposeBag = DisposeBag()
         // Clean datas every 30 minutes
         Observable<Int>.interval(60 * 30, scheduler: scheduler)
             .subscribe(onNext: { [weak self] _ in
@@ -56,7 +54,7 @@ final class DataCleanService {
     private func trimDatabase() {
         let realm = try! Realm()
         let clips = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: false)
-        let maxHistorySize = defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+        let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
 
         if clips.count <= maxHistorySize { return }
         // Delete first clip

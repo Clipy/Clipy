@@ -32,7 +32,7 @@ extension CPYExcludeAppPreferenceViewController {
         fileURLs.forEach {
             guard let bundle = Bundle(url: $0), let info = bundle.infoDictionary else { return }
             guard let appInfo = CPYAppInfo(info: info as [String : AnyObject]) else { return }
-            ExcludeAppService.shared.add(with: appInfo)
+            AppEnvironment.current.excludeAppService.add(with: appInfo)
         }
         tableView.reloadData()
     }
@@ -43,7 +43,7 @@ extension CPYExcludeAppPreferenceViewController {
             NSBeep()
             return
         }
-        ExcludeAppService.shared.delete(with: index)
+        AppEnvironment.current.excludeAppService.delete(with: index)
         tableView.reloadData()
     }
 }
@@ -51,10 +51,10 @@ extension CPYExcludeAppPreferenceViewController {
 // MARK: - NSTableView DataSource
 extension CPYExcludeAppPreferenceViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return ExcludeAppService.shared.applications.count
+        return AppEnvironment.current.excludeAppService.applications.count
     }
 
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        return ExcludeAppService.shared.applications[safe: row]?.name
+        return AppEnvironment.current.excludeAppService.applications[safe: row]?.name
     }
 }
