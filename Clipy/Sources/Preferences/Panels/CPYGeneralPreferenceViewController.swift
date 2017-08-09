@@ -24,10 +24,8 @@ extension CPYGeneralPreferenceViewController {
         let xmlDocument = AEXMLDocument()
         let rootElement = xmlDocument.addChild(name: Constants.HistoryXml.rootElement)
 
-        var i = 0
-        for clip in clips {
-            if maxHistory <= i { break }
-            i += 1
+        for (index, clip) in clips.enumerated() {
+            if maxHistory <= index { break }
 
             guard !clip.isInvalidated else { continue }
             guard let clipData = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { continue }
