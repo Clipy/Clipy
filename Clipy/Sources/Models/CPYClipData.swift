@@ -55,9 +55,8 @@ final class CPYClipData: NSObject {
         return types == [NSStringPboardType]
     }
     var thumbnailImage: NSImage? {
-        let defaults = UserDefaults.standard
-        let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
-        let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
+        let width = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
+        let height = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
 
         if let image = image, fileNames.isEmpty {
             // Image only data

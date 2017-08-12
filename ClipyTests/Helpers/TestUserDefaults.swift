@@ -1,11 +1,3 @@
-//
-//  TestUserDefaults.swift
-//  Clipy
-//
-//  Created by 古林俊佑 on 2017/08/13.
-//  Copyright © 2017年 Shunsuke Furubayashi. All rights reserved.
-//
-
 import Foundation
 @testable import Clipy
 

@@ -72,6 +72,9 @@
 		FA7A68081F3F54B900D5D3AD /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68031F3F54B900D5D3AD /* SnippetSpec.swift */; };
 		FA7A680C1F3F54DB00D5D3AD /* KeyValueStoable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A680B1F3F54DB00D5D3AD /* KeyValueStoable.swift */; };
 		FA7A680E1F3F5B6100D5D3AD /* TestUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A680D1F3F5B6100D5D3AD /* TestUserDefaults.swift */; };
+		FA7A68111F3F631100D5D3AD /* QuickSpec+Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68101F3F631100D5D3AD /* QuickSpec+Environment.swift */; };
+		FA7A68141F3F7D3000D5D3AD /* export_history.xml in Resources */ = {isa = PBXBuildFile; fileRef = FA7A68131F3F7D3000D5D3AD /* export_history.xml */; };
+		FA7A68161F3F7D5900D5D3AD /* Fixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68151F3F7D5900D5D3AD /* Fixture.swift */; };
 		FAAFEB081F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCED1DE3230900309C49 /* NSColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */; };
@@ -184,6 +187,9 @@
 		FA7A68031F3F54B900D5D3AD /* SnippetSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnippetSpec.swift; sourceTree = "<group>"; };
 		FA7A680B1F3F54DB00D5D3AD /* KeyValueStoable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueStoable.swift; sourceTree = "<group>"; };
 		FA7A680D1F3F5B6100D5D3AD /* TestUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUserDefaults.swift; sourceTree = "<group>"; };
+		FA7A68101F3F631100D5D3AD /* QuickSpec+Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QuickSpec+Environment.swift"; sourceTree = "<group>"; };
+		FA7A68131F3F7D3000D5D3AD /* export_history.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = export_history.xml; sourceTree = "<group>"; };
+		FA7A68151F3F7D5900D5D3AD /* Fixture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fixture.swift; sourceTree = "<group>"; };
 		FAAA885C1E6853B80088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA88621E6858030088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA886C1E685DC70088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -500,6 +506,7 @@
 			isa = PBXGroup;
 			children = (
 				FA7A680D1F3F5B6100D5D3AD /* TestUserDefaults.swift */,
+				FA7A68151F3F7D5900D5D3AD /* Fixture.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -510,6 +517,22 @@
 				FA7A680B1F3F54DB00D5D3AD /* KeyValueStoable.swift */,
 			);
 			path = Protoocls;
+			sourceTree = "<group>";
+		};
+		FA7A680F1F3F630700D5D3AD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A68101F3F631100D5D3AD /* QuickSpec+Environment.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		FA7A68121F3F7D1E00D5D3AD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A68131F3F7D3000D5D3AD /* export_history.xml */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		FAC43DBD1B35D8B100C06102 = {
@@ -546,6 +569,8 @@
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
 			isa = PBXGroup;
 			children = (
+				FA7A68121F3F7D1E00D5D3AD /* Resources */,
+				FA7A680F1F3F630700D5D3AD /* Extensions */,
 				FA7A68091F3F54C400D5D3AD /* Helpers */,
 				FA7A67FE1F3F54A700D5D3AD /* Specs */,
 				FAC43DDC1B35D8B100C06102 /* Supporting Files */,
@@ -680,6 +705,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA7A68141F3F7D3000D5D3AD /* export_history.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -887,6 +913,8 @@
 				FA7A68081F3F54B900D5D3AD /* SnippetSpec.swift in Sources */,
 				FA7A68071F3F54B900D5D3AD /* HotKeyServiceSpec.swift in Sources */,
 				FA7A68051F3F54B900D5D3AD /* DraggedDataSpec.swift in Sources */,
+				FA7A68111F3F631100D5D3AD /* QuickSpec+Environment.swift in Sources */,
+				FA7A68161F3F7D5900D5D3AD /* Fixture.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

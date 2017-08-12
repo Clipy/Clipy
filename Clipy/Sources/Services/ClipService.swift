@@ -158,9 +158,8 @@ extension ClipService {
 extension ClipService {
     func exportClipboard() -> AEXMLDocument {
         let realm = try! Realm()
-        let defaults = UserDefaults.standard
-        let maxHistory = defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
-        let ascending = !defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+        let maxHistory = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+        let ascending = !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
         let clips = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
 
         let xmlDocument = AEXMLDocument()
