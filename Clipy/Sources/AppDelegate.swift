@@ -189,7 +189,7 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
         // Managers
-        AppEnvironment.current.menuManager.setup()
+        AppEnvironment.current.menuManager.setup()    
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
