@@ -38,13 +38,13 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet weak var updatesButton: NSButton!
     @IBOutlet weak var betaButton: NSButton!
     // ViewController
-    fileprivate let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
-                                  NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
-                                  CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
-                                  CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil)!,
-                                  CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
-                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!,
-                                  CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)!]
+    fileprivate let viewController = [CPYGeneralPreferenceViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
+                                      NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
+                                      CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,
+                                      CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil)!,
+                                      CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil)!,
+                                      CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil)!,
+                                      CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)!]
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {

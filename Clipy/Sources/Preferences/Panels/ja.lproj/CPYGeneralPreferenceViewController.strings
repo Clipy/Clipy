@@ -37,3 +37,15 @@
 
 /* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
 "nDk-8y-89n.title" = "動作";
+
+/* Class = "NSTextFieldCell"; title = "Export clipboard history"; ObjectID = "AJR-Gj-RPZ"; */
+"AJR-Gj-RPZ.title" = "クリップボード履歴を書き出す";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "Gi6-aA-c11"; */
+"Gi6-aA-c11.title" = "書き出し";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "jey-FM-4CE"; */
+"jey-FM-4CE.title" = "読み込み";
+
+/* Class = "NSTextFieldCell"; title = "Import Clipy history"; ObjectID = "oHA-fJ-o9n"; */
+"oHA-fJ-o9n.title" = "Clipyの履歴を読み込む";

@@ -10,7 +10,6 @@
 		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
-		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
 		FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */; };
 		FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */; };
@@ -64,11 +63,19 @@
 		FA3778931F3B691A003B5BAB /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778921F3B691A003B5BAB /* AppEnvironment.swift */; };
 		FA3778951F3B6920003B5BAB /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778941F3B6920003B5BAB /* Environment.swift */; };
 		FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */; };
-		FA6167921D3ABEB10049FA14 /* FolderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167911D3ABEB10049FA14 /* FolderSpec.swift */; };
-		FA6167941D3ACCB90049FA14 /* DraggedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */; };
-		FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */; };
 		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA7A68041F3F54B900D5D3AD /* ClipServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A67FF1F3F54B900D5D3AD /* ClipServiceSpec.swift */; };
+		FA7A68051F3F54B900D5D3AD /* DraggedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68001F3F54B900D5D3AD /* DraggedDataSpec.swift */; };
+		FA7A68061F3F54B900D5D3AD /* FolderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68011F3F54B900D5D3AD /* FolderSpec.swift */; };
+		FA7A68071F3F54B900D5D3AD /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68021F3F54B900D5D3AD /* HotKeyServiceSpec.swift */; };
+		FA7A68081F3F54B900D5D3AD /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68031F3F54B900D5D3AD /* SnippetSpec.swift */; };
+		FA7A680C1F3F54DB00D5D3AD /* KeyValueStoable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A680B1F3F54DB00D5D3AD /* KeyValueStoable.swift */; };
+		FA7A680E1F3F5B6100D5D3AD /* TestUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A680D1F3F5B6100D5D3AD /* TestUserDefaults.swift */; };
+		FA7A68111F3F631100D5D3AD /* QuickSpec+Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68101F3F631100D5D3AD /* QuickSpec+Environment.swift */; };
+		FA7A68141F3F7D3000D5D3AD /* export_history.xml in Resources */ = {isa = PBXBuildFile; fileRef = FA7A68131F3F7D3000D5D3AD /* export_history.xml */; };
+		FA7A68161F3F7D5900D5D3AD /* Fixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7A68151F3F7D5900D5D3AD /* Fixture.swift */; };
+		FAAFEB081F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCED1DE3230900309C49 /* NSColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -127,7 +134,6 @@
 		994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
 		CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Void.swift"; sourceTree = "<group>"; };
-		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceSpec.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
 		FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppService.swift; sourceTree = "<group>"; };
 		FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -174,9 +180,16 @@
 		FA3778921F3B691A003B5BAB /* AppEnvironment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		FA3778941F3B6920003B5BAB /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collection+Safe.swift"; sourceTree = "<group>"; };
-		FA6167911D3ABEB10049FA14 /* FolderSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderSpec.swift; sourceTree = "<group>"; };
-		FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggedDataSpec.swift; sourceTree = "<group>"; };
-		FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnippetSpec.swift; sourceTree = "<group>"; };
+		FA7A67FF1F3F54B900D5D3AD /* ClipServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipServiceSpec.swift; sourceTree = "<group>"; };
+		FA7A68001F3F54B900D5D3AD /* DraggedDataSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggedDataSpec.swift; sourceTree = "<group>"; };
+		FA7A68011F3F54B900D5D3AD /* FolderSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderSpec.swift; sourceTree = "<group>"; };
+		FA7A68021F3F54B900D5D3AD /* HotKeyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceSpec.swift; sourceTree = "<group>"; };
+		FA7A68031F3F54B900D5D3AD /* SnippetSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnippetSpec.swift; sourceTree = "<group>"; };
+		FA7A680B1F3F54DB00D5D3AD /* KeyValueStoable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueStoable.swift; sourceTree = "<group>"; };
+		FA7A680D1F3F5B6100D5D3AD /* TestUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUserDefaults.swift; sourceTree = "<group>"; };
+		FA7A68101F3F631100D5D3AD /* QuickSpec+Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QuickSpec+Environment.swift"; sourceTree = "<group>"; };
+		FA7A68131F3F7D3000D5D3AD /* export_history.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = export_history.xml; sourceTree = "<group>"; };
+		FA7A68151F3F7D5900D5D3AD /* Fixture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fixture.swift; sourceTree = "<group>"; };
 		FAAA885C1E6853B80088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA88621E6858030088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA886C1E685DC70088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -191,6 +204,7 @@
 		FAAA88881E6862850088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA888A1E6862D20088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYUpdatesPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA888E1E6862D90088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
+		FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYGeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataCleanService.swift; sourceTree = "<group>"; };
 		FAC0DCEC1DE3230900309C49 /* NSColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
 		FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+NSColor.swift"; sourceTree = "<group>"; };
@@ -298,6 +312,7 @@
 		FA1DB49C1DDCB3FB007F95C8 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				FA7A680A1F3F54D000D5D3AD /* Protoocls */,
 				FA3778911F3B690D003B5BAB /* Environments */,
 				FA0D5CE61DDCC5D000AC9052 /* Services */,
 				FA1DB4EC1DDCB4C0007F95C8 /* Preferences */,
@@ -442,6 +457,7 @@
 			children = (
 				FA1DB4F21DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift */,
 				FA1DB4F31DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift */,
+				FAAFEB071F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift */,
 				FA1DB4F41DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift */,
 				FA1DB4F51DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift */,
 				FA1DB4F61DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift */,
@@ -472,6 +488,51 @@
 				FA3778941F3B6920003B5BAB /* Environment.swift */,
 			);
 			path = Environments;
+			sourceTree = "<group>";
+		};
+		FA7A67FE1F3F54A700D5D3AD /* Specs */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A67FF1F3F54B900D5D3AD /* ClipServiceSpec.swift */,
+				FA7A68001F3F54B900D5D3AD /* DraggedDataSpec.swift */,
+				FA7A68011F3F54B900D5D3AD /* FolderSpec.swift */,
+				FA7A68021F3F54B900D5D3AD /* HotKeyServiceSpec.swift */,
+				FA7A68031F3F54B900D5D3AD /* SnippetSpec.swift */,
+			);
+			path = Specs;
+			sourceTree = "<group>";
+		};
+		FA7A68091F3F54C400D5D3AD /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A680D1F3F5B6100D5D3AD /* TestUserDefaults.swift */,
+				FA7A68151F3F7D5900D5D3AD /* Fixture.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		FA7A680A1F3F54D000D5D3AD /* Protoocls */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A680B1F3F54DB00D5D3AD /* KeyValueStoable.swift */,
+			);
+			path = Protoocls;
+			sourceTree = "<group>";
+		};
+		FA7A680F1F3F630700D5D3AD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A68101F3F631100D5D3AD /* QuickSpec+Environment.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		FA7A68121F3F7D1E00D5D3AD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FA7A68131F3F7D3000D5D3AD /* export_history.xml */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		FAC43DBD1B35D8B100C06102 = {
@@ -508,10 +569,10 @@
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
 			isa = PBXGroup;
 			children = (
-				FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */,
-				FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */,
-				FA6167911D3ABEB10049FA14 /* FolderSpec.swift */,
-				FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */,
+				FA7A68121F3F7D1E00D5D3AD /* Resources */,
+				FA7A680F1F3F630700D5D3AD /* Extensions */,
+				FA7A68091F3F54C400D5D3AD /* Helpers */,
+				FA7A67FE1F3F54A700D5D3AD /* Specs */,
 				FAC43DDC1B35D8B100C06102 /* Supporting Files */,
 			);
 			path = ClipyTests;
@@ -591,7 +652,7 @@
 					};
 					FAC43DD71B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0830;
 						TestTargetID = FAC43DC51B35D8B100C06102;
 					};
 				};
@@ -644,6 +705,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA7A68141F3F7D3000D5D3AD /* export_history.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,10 +879,12 @@
 				FAC0DCED1DE3230900309C49 /* NSColor+Hex.swift in Sources */,
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,
 				FA1DB5181DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift in Sources */,
+				FA7A680C1F3F54DB00D5D3AD /* KeyValueStoable.swift in Sources */,
 				FA1DB4B51DDCB452007F95C8 /* NSColor+Clipy.swift in Sources */,
 				FA1DB4D41DDCB479007F95C8 /* CPYClipData.swift in Sources */,
 				FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */,
 				FA1DB4D51DDCB479007F95C8 /* CPYDraggedData.swift in Sources */,
+				FAAFEB081F3A2E0C005FA3DD /* CPYGeneralPreferenceViewController.swift in Sources */,
 				FA1DB5151DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.swift in Sources */,
 				FA1DB4EA1DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift in Sources */,
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,
@@ -843,10 +907,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA6167921D3ABEB10049FA14 /* FolderSpec.swift in Sources */,
-				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */,
-				FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */,
-				FA6167941D3ACCB90049FA14 /* DraggedDataSpec.swift in Sources */,
+				FA7A680E1F3F5B6100D5D3AD /* TestUserDefaults.swift in Sources */,
+				FA7A68041F3F54B900D5D3AD /* ClipServiceSpec.swift in Sources */,
+				FA7A68061F3F54B900D5D3AD /* FolderSpec.swift in Sources */,
+				FA7A68081F3F54B900D5D3AD /* SnippetSpec.swift in Sources */,
+				FA7A68071F3F54B900D5D3AD /* HotKeyServiceSpec.swift in Sources */,
+				FA7A68051F3F54B900D5D3AD /* DraggedDataSpec.swift in Sources */,
+				FA7A68111F3F631100D5D3AD /* QuickSpec+Environment.swift in Sources */,
+				FA7A68161F3F7D5900D5D3AD /* Fixture.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1109,6 +1177,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -1122,6 +1191,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipyapp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clipy.app/Contents/MacOS/Clipy";
 			};
@@ -1133,6 +1203,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",

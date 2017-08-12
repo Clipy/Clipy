@@ -77,7 +77,7 @@ extension HotKeyService {
     }
 
     private func savedKeyCombo(forKey key: String) -> KeyCombo? {
-        guard let data = AppEnvironment.current.defaults.object(forKey: key) as? Data else { return nil }
+        guard let data = AppEnvironment.current.defaults.data(forKey: key) else { return nil }
         guard let keyCombo = NSKeyedUnarchiver.unarchiveObject(with: data) as? KeyCombo else { return nil }
         return keyCombo
     }
@@ -108,7 +108,7 @@ fileprivate extension HotKeyService {
      *  Changed framework, PTHotKey to Magnet
      */
     fileprivate func migrationKeyCombos() {
-        guard let keyCombos = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
+        guard let keyCombos = AppEnvironment.current.defaults.dictionary(forKey: Constants.UserDefaults.hotKeys) else { return }
 
         // Main menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.clip) {
@@ -141,7 +141,7 @@ fileprivate extension HotKeyService {
 extension HotKeyService {
     private var folderKeyCombos: [String: KeyCombo]? {
         get {
-            guard let data = AppEnvironment.current.defaults.object(forKey: Constants.HotKey.folderKeyCombos) as? Data else { return nil }
+            guard let data = AppEnvironment.current.defaults.data(forKey: Constants.HotKey.folderKeyCombos) else { return nil }
             return NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: KeyCombo]
         }
         set {

@@ -15,7 +15,7 @@ class CPYTypePreferenceViewController: NSViewController {
 
     // MARK: - Initialize
     override func loadView() {
-        if let dictionary = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: Any] {
+        if let dictionary = AppEnvironment.current.defaults.dictionary(forKey: Constants.UserDefaults.storeTypes) {
             storeTypes = NSMutableDictionary(dictionary: dictionary)
         } else {
             storeTypes = NSMutableDictionary()

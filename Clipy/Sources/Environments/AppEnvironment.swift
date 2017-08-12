@@ -38,7 +38,7 @@ struct AppEnvironment {
                      pasteService: PasteService = current.pasteService,
                      excludeAppService: ExcludeAppService = current.excludeAppService,
                      menuManager: MenuManager = current.menuManager,
-                     defaults: UserDefaults = current.defaults) {
+                     defaults: KeyValueStorable = current.defaults) {
         push(environment: Environment(clipService: clipService,
                                       hotKeyService: hotKeyService,
                                       dataCleanService: dataCleanService,
@@ -54,7 +54,7 @@ struct AppEnvironment {
                                pasteService: PasteService = current.pasteService,
                                excludeAppService: ExcludeAppService = current.excludeAppService,
                                menuManager: MenuManager = current.menuManager,
-                               defaults: UserDefaults = current.defaults) {
+                               defaults: KeyValueStorable = current.defaults) {
         replaceCurrent(environment: Environment(clipService: clipService,
                                                 hotKeyService: hotKeyService,
                                                 dataCleanService: dataCleanService,
@@ -66,7 +66,7 @@ struct AppEnvironment {
 
     static func fromStorage(defaults: UserDefaults = .standard) -> Environment {
         var excludeApplications = [CPYAppInfo]()
-        if let data = defaults.object(forKey: Constants.UserDefaults.excludeApplications) as? Data, let applications = NSKeyedUnarchiver.unarchiveObject(with: data) as? [CPYAppInfo] {
+        if let data = defaults.data(forKey: Constants.UserDefaults.excludeApplications), let applications = NSKeyedUnarchiver.unarchiveObject(with: data) as? [CPYAppInfo] {
             excludeApplications = applications
         }
         let excludeAppService = ExcludeAppService(applications: excludeApplications)

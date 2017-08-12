@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class CPYExcludeAppPreferenceViewController: NSViewController {
+final class CPYExcludeAppPreferenceViewController: NSViewController {
     // MARK: - Properties
     @IBOutlet weak var tableView: NSTableView!
 }
