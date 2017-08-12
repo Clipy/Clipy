@@ -12,15 +12,12 @@ import Cocoa
 final class PasteService {
 
     // MARK: - Properties
-    static let shared = PasteService()
-
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
-    fileprivate let defaults = UserDefaults.standard
     fileprivate var isPastePlainText: Bool {
         guard let flags = NSApp.currentEvent?.modifierFlags else { return false }
-        if !defaults.bool(forKey: Constants.Beta.pastePlainText) { return false }
+        if !AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) { return false }
 
-        let modifierSetting = defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
         if modifierSetting == 0 && flags.contains(.command) {
             return true
         } else if modifierSetting == 1 && flags.contains(.shift) {
@@ -94,7 +91,7 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        if !defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
+        if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
 
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
