@@ -38,7 +38,6 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet weak var updatesButton: NSButton!
     @IBOutlet weak var betaButton: NSButton!
     // ViewController
-    fileprivate let defaults = UserDefaults.standard
     fileprivate let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil)!,
                                   NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil)!,
                                   CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil)!,

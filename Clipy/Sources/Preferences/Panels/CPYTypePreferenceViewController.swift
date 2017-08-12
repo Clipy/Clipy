@@ -12,7 +12,6 @@ class CPYTypePreferenceViewController: NSViewController {
 
     // MARK: - Properties
     var storeTypes: NSMutableDictionary!
-    fileprivate let defaults = UserDefaults.standard
 
     // MARK: - Initialize
     override func loadView() {
