@@ -173,7 +173,7 @@ extension CPYSnippetsEditorWindowController {
             if let folder = item as? CPYFolder {
                 folders.removeObject(folder)
                 folder.remove()
-                HotKeyService.shared.unregisterSnippetHotKey(with: folder.identifier)
+                AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: folder.identifier)
             } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let indexSnippetInFolder = folder.snippets.index(of: snippet) {
                 folder.snippets.remove(objectAtIndex: indexSnippetInFolder)
                 snippet.remove()
@@ -207,11 +207,11 @@ extension CPYSnippetsEditorWindowController {
 
     fileprivate func askForExportSnippet() {
         let alert = NSAlert()
-        alert.messageText = LocalizedString.Snippet.value
-        alert.informativeText = LocalizedString.Preference.value
+        alert.messageText = LocalizedString.snippet.value
+        alert.informativeText = LocalizedString.preference.value
         alert.addButton(withTitle: Constants.ExtensionType.xml.rawValue)
         alert.addButton(withTitle: Constants.ExtensionType.json.rawValue)
-        alert.addButton(withTitle: LocalizedString.Cancel.value)
+        alert.addButton(withTitle: LocalizedString.cancel.value)
         NSApp.activate(ignoringOtherApps: true)
         let result = alert.runModal()
 
@@ -383,7 +383,7 @@ private extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             textView.string = ""
             folderTitleTextField.stringValue = folder.title
-            folderShortcutRecordView.keyCombo = HotKeyService.shared.snippetKeyCombo(forIdentifier: folder.identifier)
+            folderShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo(forIdentifier: folder.identifier)
             folderSettingView.isHidden = false
             textView.isHidden = true
         } else if let snippet = item as? CPYSnippet {
