@@ -61,6 +61,22 @@ final class ClipService {
         AppEnvironment.current.dataCleanService.cleanDatas()
     }
 
+    func clear(clip: CPYClip) {
+        let realm = try! Realm()
+
+        // Delete saved images
+        let path = clip.thumbnailPath
+        if !path.isEmpty {
+            PINCache.shared().removeObject(forKey: path)
+        }
+
+        // Delete Realm
+        realm.transaction { realm.delete(clip) }
+
+        // Delete writed datas
+        AppEnvironment.current.dataCleanService.cleanDatas()
+    }
+
 }
 
 // MARK: - Create Clip
