@@ -99,7 +99,7 @@ class AppDelegate: NSObject {
         let modifierFlags = NSEvent.modifierFlags()
 
         switch modifierFlags {
-        case .option:
+        case [.option]:
             AppEnvironment.current.clipService.clear(clip: clip)
 
         default:
