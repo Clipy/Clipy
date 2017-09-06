@@ -224,6 +224,39 @@ class HotKeyServiceSpec: QuickSpec {
             }
         }
 
+        describe("Clear Hisotry HotKey") {
+            beforeEach {
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.HotKey.clearHistoryKeyCombo)
+                defaults.synchronize()
+            }
+
+            it("Add and remove clear history hokey") {
+                let service = HotKeyService()
+
+                expect(service.clearHistoryKeyCombo).to(beNil())
+
+                let keyCombo = KeyCombo(keyCode: 10, carbonModifiers: cmdKey)
+                service.changeClearHistoryKeyCombo(keyCombo)
+
+                expect(service.clearHistoryKeyCombo).toNot(beNil())
+                expect(service.clearHistoryKeyCombo).to(equal(keyCombo))
+
+                let savedData = UserDefaults.standard.object(forKey: Constants.HotKey.clearHistoryKeyCombo) as? Data
+                let savedKeyCombo = NSKeyedUnarchiver.unarchiveObject(with: savedData!) as? KeyCombo
+                expect(savedKeyCombo).to(equal(keyCombo))
+
+                service.changeClearHistoryKeyCombo(nil)
+                expect(service.clearHistoryKeyCombo).to(beNil())
+            }
+
+            afterEach {
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: Constants.HotKey.clearHistoryKeyCombo)
+                defaults.synchronize()
+            }
+        }
+
         describe("Folder HotKey") {
             beforeEach {
                 let defaults = UserDefaults.standard
