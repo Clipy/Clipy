@@ -26,6 +26,7 @@ final class HotKeyService: NSObject {
     fileprivate(set) var mainKeyCombo: KeyCombo?
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
+    fileprivate(set) var clearHistoryKeyCombo: KeyCombo?
 
 }
 
@@ -41,6 +42,11 @@ extension HotKeyService {
 
     func popUpSnippetMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
+    }
+
+    func popUpClearHisotryAlert() {
+        guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
+        appDelegate.clearAllHistory()
     }
 }
 
@@ -62,6 +68,8 @@ extension HotKeyService {
         change(with: .history, keyCombo: savedKeyCombo(forKey: Constants.HotKey.historyKeyCombo))
         // Snippet menu
         change(with: .snippet, keyCombo: savedKeyCombo(forKey: Constants.HotKey.snippetKeyCombo))
+        // Clear History
+        changeClearHistoryKeyCombo(savedKeyCombo(forKey: Constants.HotKey.clearHistoryKeyCombo))
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
@@ -74,6 +82,18 @@ extension HotKeyService {
             snippetKeyCombo = keyCombo
         }
         register(with: type, keyCombo: keyCombo)
+    }
+
+    func changeClearHistoryKeyCombo(_ keyCombo: KeyCombo?) {
+        clearHistoryKeyCombo = keyCombo
+        AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: Constants.HotKey.clearHistoryKeyCombo)
+        AppEnvironment.current.defaults.synchronize()
+        // Reset hotkey
+        HotKeyCenter.shared.unregisterHotKey(with: "ClearHisotry")
+        // Register new hotkey
+        guard let keyCombo = keyCombo else { return }
+        let hotkey = HotKey(identifier: "ClearHisotry", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHisotryAlert))
+        hotkey.register()
     }
 
     private func savedKeyCombo(forKey key: String) -> KeyCombo? {

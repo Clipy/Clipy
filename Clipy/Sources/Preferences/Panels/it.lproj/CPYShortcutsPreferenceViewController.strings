@@ -1,9 +1,18 @@
 
-/* Class = "NSTextFieldCell"; title = "Main Menu:"; ObjectID = "5sL-G8-1io"; */
-"5sL-G8-1io.title" = "Menu principale:";
+/* Class = "NSTextFieldCell"; title = "Main:"; ObjectID = "5sL-G8-1io"; */
+"5sL-G8-1io.title" = "principale:";
 
-/* Class = "NSTextFieldCell"; title = "History Menu:"; ObjectID = "Abl-cO-JwU"; */
-"Abl-cO-JwU.title" = "Menu Cronologia:";
+/* Class = "NSTextFieldCell"; title = "History:"; ObjectID = "Abl-cO-JwU"; */
+"Abl-cO-JwU.title" = "Cronologia:";
 
-/* Class = "NSTextFieldCell"; title = "Snippets Menu:"; ObjectID = "fXr-ry-5ds"; */
-"fXr-ry-5ds.title" = "Menu Snippet:";
+/* Class = "NSTextFieldCell"; title = "Snippets:"; ObjectID = "fXr-ry-5ds"; */
+"fXr-ry-5ds.title" = "Snippet:";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "X5L-5V-1eH"; */
+"X5L-5V-1eH.title" = "Menu";
+
+/* Class = "NSTextFieldCell"; title = "History"; ObjectID = "Txl-Qh-RzP"; */
+"Txl-Qh-RzP.title" = "Cronologia";
+
+/* Class = "NSTextFieldCell"; title = "Clear History:"; ObjectID = "f3b-Ht-X5w"; */
+"f3b-Ht-X5w.title" = "Svuota:";

@@ -16,6 +16,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     @IBOutlet weak var mainShortcutRecordView: RecordView!
     @IBOutlet weak var historyShortcutRecordView: RecordView!
     @IBOutlet weak var snippetShortcutRecordView: RecordView!
+    @IBOutlet weak var clearHistoryShortcutRecordView: RecordView!
 
     // MARK: - Initialize
     override func loadView() {
@@ -23,6 +24,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
         mainShortcutRecordView.delegate = self
         historyShortcutRecordView.delegate = self
         snippetShortcutRecordView.delegate = self
+        clearHistoryShortcutRecordView.delegate = self
         prepareHotKeys()
     }
 
@@ -34,6 +36,7 @@ fileprivate extension CPYShortcutsPreferenceViewController {
         mainShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.mainKeyCombo
         historyShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.historyKeyCombo
         snippetShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo
+        clearHistoryShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.clearHistoryKeyCombo
     }
 }
 
@@ -55,6 +58,8 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
             AppEnvironment.current.hotKeyService.change(with: .history, keyCombo: nil)
         case snippetShortcutRecordView:
             AppEnvironment.current.hotKeyService.change(with: .snippet, keyCombo: nil)
+        case clearHistoryShortcutRecordView:
+            AppEnvironment.current.hotKeyService.changeClearHistoryKeyCombo(nil)
         default: break
         }
     }
@@ -67,6 +72,8 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
             AppEnvironment.current.hotKeyService.change(with: .history, keyCombo: keyCombo)
         case snippetShortcutRecordView:
             AppEnvironment.current.hotKeyService.change(with: .snippet, keyCombo: keyCombo)
+        case clearHistoryShortcutRecordView:
+            AppEnvironment.current.hotKeyService.changeClearHistoryKeyCombo(keyCombo)
         default: break
         }
     }
