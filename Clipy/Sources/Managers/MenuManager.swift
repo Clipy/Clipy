@@ -186,7 +186,7 @@ fileprivate extension MenuManager {
     }
 
     fileprivate func menuItemTitle(_ title: String, listNumber: NSInteger, isMarkWithNumber: Bool) -> String {
-        return (isMarkWithNumber) ? "\(listNumber) \(title)" : title
+        return (isMarkWithNumber) ? "\(listNumber). \(title)" : title
     }
 
     fileprivate func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
