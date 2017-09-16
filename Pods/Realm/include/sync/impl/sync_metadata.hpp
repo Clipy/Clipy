@@ -33,59 +33,72 @@ template<typename T> class BasicRowExpr;
 using RowExpr = BasicRowExpr<Table>;
 class SyncMetadataManager;
 
+// A facade for a metadata Realm object representing a sync user.
 class SyncUserMetadata {
 public:
     struct Schema {
+        // The ROS identity of the user. This, plus the auth server URL, uniquely identifies a user.
         size_t idx_identity;
+        // A locally issued UUID for the user. This is used to generate the on-disk user directory.
+        size_t idx_local_uuid;
+        // Whether or not this user has been marked for removal.
         size_t idx_marked_for_removal;
+        // The cached refresh token for this user.
         size_t idx_user_token;
+        // The URL of the authentication server this user resides upon.
         size_t idx_auth_server_url;
+        // Whether or not the auth server reported that this user is marked as an administrator.
         size_t idx_user_is_admin;
     };
 
+    // Cannot be set after creation.
     std::string identity() const;
-    bool is_admin() const;
-    util::Optional<std::string> server_url() const;
-    util::Optional<std::string> user_token() const;
 
-    void set_state(util::Optional<std::string> server_url, util::Optional<std::string> user_token);
+    // Cannot be set after creation.
+    std::string local_uuid() const;
+
+    util::Optional<std::string> user_token() const;
+    void set_user_token(util::Optional<std::string>);
+
+    // Cannot be set after creation.
+    std::string auth_server_url() const;
+
+    bool is_admin() const;
     void set_is_admin(bool);
 
-    // Remove the user from the metadata database.
-    void remove();
     // Mark the user as "ready for removal". Since Realm files cannot be safely deleted after being opened, the actual
     // deletion of a user must be deferred until the next time the host application is launched.
     void mark_for_removal();
 
-    bool is_valid() const;
+    void remove();
 
-    // Construct a new user.
-    //
-    // If `make_if_absent` is false and the user is absent or removed, a 'removed' user will be returned for which all
-    // set operations are no-ops and all get operations cause an assert to fail.
-    //
-    // If `make_if_absent` is true and the user was previously marked for deletion, it will be unmarked.
-    SyncUserMetadata(const SyncMetadataManager&, std::string, bool make_if_absent=true);
+    bool is_valid() const
+    {
+        return !m_invalid;
+    }
 
+    // INTERNAL USE ONLY
     SyncUserMetadata(Schema schema, SharedRealm realm, RowExpr row);
-
 private:
     bool m_invalid = false;
-
-    util::Optional<std::string> get_optional_string_field(size_t col_idx) const;
-
-    Schema m_schema;
     SharedRealm m_realm;
+    Schema m_schema;
     Row m_row;
 };
 
+// A facade for a metadata Realm object representing a pending action to be carried out upon a specific file(s).
 class SyncFileActionMetadata {
 public:
     struct Schema {
+        // The original path on disk of the file (generally, the main file for an on-disk Realm).
         size_t idx_original_name;
+        // A new path on disk for a file to be written to. Context-dependent.
         size_t idx_new_name;
+        // An enum describing the action to take.
         size_t idx_action;
+        // The full remote URL of the Realm on the ROS.
         size_t idx_url;
+        // The local UUID of the user to whom the file action applies (despite the internal column name).
         size_t idx_user_identity;
     };
 
@@ -93,38 +106,30 @@ public:
         // The Realm files at the given directory will be deleted.
         DeleteRealm,
         // The Realm file will be copied to a 'recovery' directory, and the original Realm files will be deleted.
-        HandleRealmForClientReset
+        BackUpThenDeleteRealm
     };
-
-    static util::Optional<SyncFileActionMetadata> metadata_for_path(const std::string&, const SyncMetadataManager&);
 
     // The absolute path to the Realm file in question.
     std::string original_name() const;
 
     // The meaning of this parameter depends on the `Action` specified.
-    // For `HandleRealmForClientReset`, it is the absolute path where the backup copy 
-    // of the Realm file found at `original_name()` will be placed. 
+    // For `BackUpThenDeleteRealm`, it is the absolute path where the backup copy
+    // of the Realm file found at `original_name()` will be placed.
     // For all other `Action`s, it is ignored.
     util::Optional<std::string> new_name() const;
 
+    // Get the local UUID of the user associated with this file action metadata.
+    std::string user_local_uuid() const;
+
     Action action() const;
     std::string url() const;
-    std::string user_identity() const;
-
-    // Remove the action from the metadata database, because it was completed or is now invalid.
     void remove();
 
-    SyncFileActionMetadata(const SyncMetadataManager& manager,
-                           Action action,
-                           const std::string& original_name,
-                           const std::string& url,
-                           const std::string& user_identity,
-                           util::Optional<std::string> new_name=none);
-
+    // INTERNAL USE ONLY
     SyncFileActionMetadata(Schema schema, SharedRealm realm, RowExpr row);
 private:
-    Schema m_schema;
     SharedRealm m_realm;
+    Schema m_schema;
     Row m_row;
 };
 
@@ -156,6 +161,7 @@ private:
 using SyncUserMetadataResults = SyncMetadataResults<SyncUserMetadata>;
 using SyncFileActionMetadataResults = SyncMetadataResults<SyncFileActionMetadata>;
 
+// A facade for the application's metadata Realm.
 class SyncMetadataManager {
 friend class SyncUserMetadata;
 friend class SyncFileActionMetadata;
@@ -171,7 +177,24 @@ public:
     // Return a Results object containing all pending actions.
     SyncFileActionMetadataResults all_pending_actions() const;
 
-    Realm::Config get_configuration() const;
+    // Delete an existing metadata action given the original name of the Realm it involves.
+    // Returns true iff there was an existing metadata action and it was deleted.
+    bool delete_metadata_action(const std::string&) const;
+
+    // Retrieve or create user metadata.
+    // Note: if `make_is_absent` is true and the user has been marked for deletion, it will be unmarked.
+    util::Optional<SyncUserMetadata> get_or_make_user_metadata(const std::string& identity, const std::string& url,
+                                                               bool make_if_absent=true) const;
+
+    // Retrieve file action metadata.
+    util::Optional<SyncFileActionMetadata> get_file_action_metadata(const std::string& path) const;
+
+    // Create file action metadata.
+    SyncFileActionMetadata make_file_action_metadata(const std::string& original_name,
+                                                     const std::string& url,
+                                                     const std::string& local_uuid,
+                                                     SyncFileActionMetadata::Action action,
+                                                     util::Optional<std::string> new_name=none) const;
 
     /// Construct the metadata manager.
     ///
@@ -184,12 +207,9 @@ public:
 
 private:
     SyncUserMetadataResults get_users(bool marked) const;
-
     Realm::Config m_metadata_config;
-
     SyncUserMetadata::Schema m_user_schema;
     SyncFileActionMetadata::Schema m_file_action_schema;
-    mutable std::mutex m_metadata_lock;
 };
 
 }

@@ -30,9 +30,7 @@ ListNotifier::ListNotifier(LinkViewRef lv, std::shared_ptr<Realm> realm)
 , m_prev_size(lv->size())
 {
     set_table(lv->get_target_table());
-
-    auto& sg = Realm::Internal::get_shared_group(*get_realm());
-    m_lv_handover = sg->export_linkview_for_handover(lv);
+    m_lv_handover = source_shared_group().export_linkview_for_handover(lv);
 }
 
 void ListNotifier::release_data() noexcept
@@ -63,17 +61,9 @@ bool ListNotifier::do_add_required_change_info(TransactionChangeInfo& info)
         return false; // origin row was deleted after the notification was added
     }
 
-    // Find the lv's column, since that isn't tracked directly
     auto& table = m_lv->get_origin_table();
     size_t row_ndx = m_lv->get_origin_row_index();
-    size_t col_ndx = not_found;
-    for (size_t i = 0, count = table.get_column_count(); i != count; ++i) {
-        if (table.get_column_type(i) == type_LinkList && table.get_linklist(i, row_ndx) == m_lv) {
-            col_ndx = i;
-            break;
-        }
-    }
-    REALM_ASSERT(col_ndx != not_found);
+    size_t col_ndx = find_container_column(table, row_ndx, m_lv, type_LinkList, &Table::get_linklist);
     info.lists.push_back({table.get_index_in_group(), row_ndx, col_ndx, &m_change});
 
     m_info = &info;

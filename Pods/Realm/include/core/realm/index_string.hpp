@@ -86,7 +86,7 @@ private:
 
     void from_list_all(StringData value, IntegerColumn& result, const IntegerColumn& rows, ColumnBase* column) const;
 
-    void from_list_all_ins(StringData value, IntegerColumn& result, const IntegerColumn& rows,
+    void from_list_all_ins(StringData value, std::vector<size_t>& result, const IntegerColumn& rows,
                            ColumnBase* column) const;
 
     template <IndexMethod method>

@@ -18,6 +18,8 @@
 
 #include "impl/results_notifier.hpp"
 
+#include "shared_realm.hpp"
+
 using namespace realm;
 using namespace realm::_impl;
 
@@ -28,9 +30,8 @@ ResultsNotifier::ResultsNotifier(Results& target)
 {
     Query q = target.get_query();
     set_table(*q.get_table());
-    m_query_handover = Realm::Internal::get_shared_group(*get_realm())->export_for_handover(q, MutableSourcePayload::Move);
-    SortDescriptor::generate_patch(target.get_sort(), m_sort_handover);
-    SortDescriptor::generate_patch(target.get_distinct(), m_distinct_handover);
+    m_query_handover = source_shared_group().export_for_handover(q, MutableSourcePayload::Move);
+    DescriptorOrdering::generate_patch(target.get_descriptor_ordering(), m_ordering_handover);
 }
 
 void ResultsNotifier::target_results_moved(Results& old_target, Results& new_target)
@@ -72,10 +73,22 @@ bool ResultsNotifier::do_add_required_change_info(TransactionChangeInfo& info)
     REALM_ASSERT(m_query);
     m_info = &info;
 
-    auto table_ndx = m_query->get_table()->get_index_in_group();
-    if (info.table_moves_needed.size() <= table_ndx)
-        info.table_moves_needed.resize(table_ndx + 1);
-    info.table_moves_needed[table_ndx] = true;
+    auto& table = *m_query->get_table();
+    if (!table.is_attached())
+        return false;
+
+    auto table_ndx = table.get_index_in_group();
+    if (table_ndx == npos) { // is a subtable
+        auto& parent = *table.get_parent_table();
+        size_t row_ndx = table.get_parent_row_index();
+        size_t col_ndx = find_container_column(parent, row_ndx, &table, type_Table, &Table::get_subtable);
+        info.lists.push_back({parent.get_index_in_group(), row_ndx, col_ndx, &m_changes});
+    }
+    else { // is a top-level table
+        if (info.table_moves_needed.size() <= table_ndx)
+            info.table_moves_needed.resize(table_ndx + 1);
+        info.table_moves_needed[table_ndx] = true;
+    }
 
     return has_run() && have_callbacks();
 }
@@ -105,7 +118,11 @@ void ResultsNotifier::calculate_changes()
 {
     size_t table_ndx = m_query->get_table()->get_index_in_group();
     if (has_run()) {
-        auto changes = table_ndx < m_info->tables.size() ? &m_info->tables[table_ndx] : nullptr;
+        CollectionChangeBuilder* changes = nullptr;
+        if (table_ndx == npos)
+            changes = &m_changes;
+        else if (table_ndx < m_info->tables.size())
+            changes = &m_info->tables[table_ndx];
 
         std::vector<size_t> next_rows;
         next_rows.reserve(m_tv.size());
@@ -116,16 +133,16 @@ void ResultsNotifier::calculate_changes()
         if (changes) {
             auto const& moves = changes->moves;
             for (auto& idx : m_previous_rows) {
-                auto it = lower_bound(begin(moves), end(moves), idx,
-                                      [](auto const& a, auto b) { return a.from < b; });
-                if (it != moves.end() && it->from == idx)
-                    idx = it->to;
-                else if (changes->deletions.contains(idx))
-                    idx = npos;
+                if (changes->deletions.contains(idx)) {
+                    // check if this deletion was actually a move
+                    auto it = lower_bound(begin(moves), end(moves), idx,
+                                          [](auto const& a, auto b) { return a.from < b; });
+                    idx = it != moves.end() && it->from == idx ? it->to : npos;
+                }
                 else
-                    REALM_ASSERT_DEBUG(!changes->insertions.contains(idx));
+                    idx = changes->insertions.shift(changes->deletions.unshift(idx));
             }
-            if (m_target_is_in_table_order && !m_sort)
+            if (m_target_is_in_table_order && !m_descriptor_ordering.will_apply_sort())
                 move_candidates = changes->insertions;
         }
 
@@ -144,17 +161,28 @@ void ResultsNotifier::calculate_changes()
 
 void ResultsNotifier::run()
 {
+    // Table's been deleted, so report all rows as deleted
+    if (!m_query->get_table()->is_attached()) {
+        m_changes = {};
+        m_changes.deletions.set(m_previous_rows.size());
+        m_previous_rows.clear();
+        return;
+    }
+
     if (!need_to_run())
         return;
 
     m_query->sync_view_if_needed();
     m_tv = m_query->find_all();
-    if (m_sort) {
-        m_tv.sort(m_sort);
-    }
-    if (m_distinct) {
-        m_tv.distinct(m_distinct);
-    }
+#if REALM_HAVE_COMPOSABLE_DISTINCT
+    m_tv.apply_descriptor_ordering(m_descriptor_ordering);
+#else
+    if (m_descriptor_ordering.sort)
+        m_tv.sort(m_descriptor_ordering.sort);
+
+    if (m_descriptor_ordering.distinct)
+        m_tv.distinct(m_descriptor_ordering.distinct);
+#endif
     m_last_seen_version = m_tv.sync_if_needed();
 
     calculate_changes();
@@ -170,7 +198,7 @@ void ResultsNotifier::do_prepare_handover(SharedGroup& sg)
 
         // add_changes() needs to be called even if there are no changes to
         // clear the skip flag on the callbacks
-        add_changes({});
+        add_changes(std::move(m_changes));
         return;
     }
 
@@ -218,8 +246,7 @@ void ResultsNotifier::do_attach_to(SharedGroup& sg)
 {
     REALM_ASSERT(m_query_handover);
     m_query = sg.import_from_handover(std::move(m_query_handover));
-    m_sort = SortDescriptor::create_from_and_consume_patch(m_sort_handover, *m_query->get_table());
-    m_distinct = SortDescriptor::create_from_and_consume_patch(m_distinct_handover, *m_query->get_table());
+    m_descriptor_ordering = DescriptorOrdering::create_from_and_consume_patch(m_ordering_handover, *m_query->get_table());
 }
 
 void ResultsNotifier::do_detach_from(SharedGroup& sg)
@@ -227,8 +254,7 @@ void ResultsNotifier::do_detach_from(SharedGroup& sg)
     REALM_ASSERT(m_query);
     REALM_ASSERT(!m_tv.is_attached());
 
-    SortDescriptor::generate_patch(m_sort, m_sort_handover);
-    SortDescriptor::generate_patch(m_distinct, m_distinct_handover);
+    DescriptorOrdering::generate_patch(m_descriptor_ordering, m_ordering_handover);
     m_query_handover = sg.export_for_handover(*m_query, MutableSourcePayload::Move);
     m_query = nullptr;
 }

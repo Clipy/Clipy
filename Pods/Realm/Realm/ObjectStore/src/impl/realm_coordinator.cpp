@@ -113,15 +113,21 @@ void RealmCoordinator::set_config(const Realm::Config& config)
 {
     if (config.encryption_key.data() && config.encryption_key.size() != 64)
         throw InvalidEncryptionKeyException();
-    if (config.schema_mode == SchemaMode::ReadOnly && config.sync_config)
-        throw std::logic_error("Synchronized Realms cannot be opened in read-only mode");
+    if (config.schema_mode == SchemaMode::Immutable && config.sync_config)
+        throw std::logic_error("Synchronized Realms cannot be opened in immutable mode");
     if (config.schema_mode == SchemaMode::Additive && config.migration_function)
         throw std::logic_error("Realms opened in Additive-only schema mode do not use a migration function");
-    if (config.schema_mode == SchemaMode::ReadOnly && config.migration_function)
+    if (config.schema_mode == SchemaMode::Immutable && config.migration_function)
+        throw std::logic_error("Realms opened in immutable mode do not use a migration function");
+    if (config.schema_mode == SchemaMode::ReadOnlyAlternative && config.migration_function)
         throw std::logic_error("Realms opened in read-only mode do not use a migration function");
+    if (config.schema_mode == SchemaMode::Immutable && config.initialization_function)
+        throw std::logic_error("Realms opened in immutable mode do not use an initialization function");
+    if (config.schema_mode == SchemaMode::ReadOnlyAlternative && config.initialization_function)
+        throw std::logic_error("Realms opened in read-only mode do not use an initialization function");
     if (config.schema && config.schema_version == ObjectStore::NotVersioned)
         throw std::logic_error("A schema version must be specified when the schema is specified");
-    if (!config.realm_data.is_null() && (!config.read_only() || !config.in_memory))
+    if (!config.realm_data.is_null() && (!config.immutable() || !config.in_memory))
         throw std::logic_error("In-memory realms initialized from memory buffers can only be opened in read-only mode");
     if (!config.realm_data.is_null() && !config.path.empty())
         throw std::logic_error("Specifying both memory buffer and path is invalid");
@@ -136,7 +142,7 @@ void RealmCoordinator::set_config(const Realm::Config& config)
         m_config = config;
     }
     else {
-        if (m_config.read_only() != config.read_only()) {
+        if (m_config.immutable() != config.immutable()) {
             throw MismatchedConfigException("Realm at path '%1' already opened with different read permissions.", config.path);
         }
         if (m_config.in_memory != config.in_memory) {
@@ -195,6 +201,7 @@ std::shared_ptr<Realm> RealmCoordinator::get_realm(Realm::Config config)
 
     auto schema = std::move(config.schema);
     auto migration_function = std::move(config.migration_function);
+    auto initialization_function = std::move(config.initialization_function);
     config.schema = {};
 
     if (config.cache) {
@@ -223,7 +230,7 @@ std::shared_ptr<Realm> RealmCoordinator::get_realm(Realm::Config config)
 
     if (!realm) {
         realm = Realm::make_shared_realm(std::move(config), shared_from_this());
-        if (!config.read_only() && !m_notifier && config.automatic_change_notifications) {
+        if (!config.immutable() && !m_notifier && config.automatic_change_notifications) {
             try {
                 m_notifier = std::make_unique<ExternalCommitHelper>(*this);
             }
@@ -236,7 +243,8 @@ std::shared_ptr<Realm> RealmCoordinator::get_realm(Realm::Config config)
 
     if (schema) {
         lock.unlock();
-        realm->update_schema(std::move(*schema), config.schema_version, std::move(migration_function));
+        realm->update_schema(std::move(*schema), config.schema_version, std::move(migration_function),
+                             std::move(initialization_function));
     }
 
     return realm;
@@ -385,7 +393,7 @@ void RealmCoordinator::wake_up_notifier_worker()
 
 void RealmCoordinator::commit_write(Realm& realm)
 {
-    REALM_ASSERT(!m_config.read_only());
+    REALM_ASSERT(!m_config.immutable());
     REALM_ASSERT(realm.is_in_transaction());
 
     {

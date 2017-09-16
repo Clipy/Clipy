@@ -47,8 +47,9 @@ private:
 
     struct ListInfo {
         BindingContext::ObserverState* observer;
-        size_t col;
         _impl::CollectionChangeBuilder builder;
+        size_t col;
+        size_t initial_size;
     };
     std::vector<ListInfo> m_lists;
     VersionID m_version;
@@ -76,9 +77,11 @@ KVOAdapter::KVOAdapter(std::vector<BindingContext::ObserverState>& observers, Bi
     for (auto& observer : observers) {
         auto table = group.get_table(observer.table_ndx);
         for (size_t i = 0, count = table->get_column_count(); i < count; ++i) {
-            if (table->get_column_type(i) != type_LinkList)
-                continue;
-            m_lists.push_back({&observer, i, {}});
+            auto type = table->get_column_type(i);
+            if (type == type_LinkList)
+                m_lists.push_back({&observer, {}, i, size_t(-1)});
+            else if (type == type_Table)
+                m_lists.push_back({&observer, {}, i, table->get_subtable_size(i, observer.row_ndx)});
         }
     }
 
@@ -141,8 +144,14 @@ void KVOAdapter::before(SharedGroup& sg)
     }
 
     for (auto& list : m_lists) {
-        if (list.builder.empty())
+        if (list.builder.empty()) {
+            // We may have pre-emptively marked the column as modified if the
+            // LinkList was selected but the actual changes made ended up being
+            // a no-op
+            if (list.col < list.observer->changes.size())
+                list.observer->changes[list.col].kind = BindingContext::ColumnInfo::Kind::None;
             continue;
+        }
         // If the containing row was deleted then changes will be empty
         if (list.observer->changes.empty()) {
             REALM_ASSERT_DEBUG(tables[new_table_ndx(list.observer->table_ndx)].deletions.contains(list.observer->row_ndx));
@@ -153,17 +162,40 @@ void KVOAdapter::before(SharedGroup& sg)
         auto& builder = list.builder;
         auto& changes = list.observer->changes[list.col];
 
+        builder.modifications.remove(builder.insertions);
+
         // KVO can't express moves (becaue NSArray doesn't have them), so
         // transform them into a series of sets on each affected index when possible
-        if (!builder.insertions.empty() && builder.insertions.count() == builder.moves.size()) {
+        if (!builder.moves.empty() && builder.insertions.count() == builder.moves.size() && builder.deletions.count() == builder.moves.size()) {
             changes.kind = BindingContext::ColumnInfo::Kind::Set;
             changes.indices = builder.modifications;
+            changes.indices.add(builder.deletions);
 
-            size_t start = std::min(builder.insertions.begin()->first, builder.deletions.begin()->first);
-            size_t end = std::max(std::prev(builder.insertions.end())->second,
-                                  std::prev(builder.deletions.end())->second);
-            for (size_t i = start; i < end; ++i)
-                changes.indices.add(i);
+            // Iterate over each of the rows which may have been shifted by
+            // the moves and check if it actually has been, or if it's ended
+            // up in the same place as it started (either because the moves were
+            // actually a swap that doesn't effect the rows in between, or the
+            // combination of moves happen to leave some intermediate rows in
+            // the same place)
+            auto in_range = [](auto& it, auto end, size_t i) {
+                if (it != end && i >= it->second)
+                    ++it;
+                return it != end && i >= it->first && i < it->second;
+            };
+
+            auto del_it = builder.deletions.begin(), del_end = builder.deletions.end();
+            auto ins_it = builder.insertions.begin(), ins_end = builder.insertions.end();
+            size_t start = std::min(ins_it->first, del_it->first);
+            size_t end = std::max(std::prev(ins_end)->second, std::prev(del_end)->second);
+            ptrdiff_t shift = 0;
+            for (size_t i = start; i < end; ++i) {
+                if (in_range(del_it, del_end, i))
+                    --shift;
+                else if (in_range(ins_it, ins_end, i + shift))
+                    ++shift;
+                if (shift != 0)
+                    changes.indices.add(i);
+            }
         }
         // KVO can't express multiple types of changes at once
         else if (builder.insertions.empty() + builder.modifications.empty() + builder.deletions.empty() < 2) {
@@ -180,7 +212,12 @@ void KVOAdapter::before(SharedGroup& sg)
         else {
             REALM_ASSERT(!builder.deletions.empty());
             changes.kind = BindingContext::ColumnInfo::Kind::Remove;
-            changes.indices = builder.deletions;
+            // Table clears don't come with the size, so we need to fix up the
+            // notification to make it just delete all rows that actually existed
+            if (std::prev(builder.deletions.end())->second > list.initial_size)
+                changes.indices.set(list.initial_size);
+            else
+                changes.indices = builder.deletions;
         }
     }
     m_context->will_change(m_observers, m_invalidated);
@@ -226,6 +263,8 @@ struct MarkDirtyMixin  {
 
     bool set_int_unique(size_t, size_t, size_t, int_fast64_t) { return true; }
     bool set_string_unique(size_t, size_t, size_t, StringData) { return true; }
+
+    bool add_row_with_key(size_t, size_t, size_t, int64_t) { return true; }
 };
 
 class TransactLogValidationMixin {
@@ -277,7 +316,7 @@ public:
     bool insert_empty_rows(size_t, size_t, size_t, bool) { return true; }
     bool erase_rows(size_t, size_t, size_t, bool) { return true; }
     bool swap_rows(size_t, size_t) { return true; }
-    bool clear_table() noexcept { return true; }
+    bool clear_table(size_t=0) noexcept { return true; }
     bool link_list_set(size_t, size_t, size_t) { return true; }
     bool link_list_insert(size_t, size_t, size_t) { return true; }
     bool link_list_erase(size_t, size_t) { return true; }
@@ -408,11 +447,10 @@ public:
     {
         TransactLogValidationMixin::select_table(group_level_ndx, len, path);
         m_active_table = nullptr;
-        m_active_descriptor = nullptr;
         m_is_top_level_table = true;
 
-        if (len > 0) {
-            // ignore changes to subtables for now
+        // Nested subtables currently not supported
+        if (len > 1) {
             m_is_top_level_table = false;
             return true;
         }
@@ -427,6 +465,20 @@ public:
             m_info.tables.resize(std::max(m_info.tables.size() * 2, tbl_ndx + 1));
         m_active_table = &m_info.tables[tbl_ndx];
 
+        if (len == 1) {
+            // Mark the cell containing the subtable as modified since selecting
+            // a table is always followed by a modification of some sort
+            size_t col = path[0];
+            size_t row = path[1];
+            mark_dirty(row, col);
+
+            m_active_table = nullptr;
+            m_is_top_level_table = false;
+            if (auto table = find_list(current_table(), col, row)) {
+                m_active_table = table;
+                m_need_move_info = true;
+            }
+        }
         return true;
     }
 
@@ -497,14 +549,19 @@ public:
         return true;
     }
 
+    bool add_row_with_key(size_t row_ndx, size_t prior_num_rows, size_t, int64_t)
+    {
+        insert_empty_rows(row_ndx, 1, prior_num_rows, false);
+        return true;
+    }
+
     bool erase_rows(size_t row_ndx, size_t, size_t prior_num_rows, bool unordered)
     {
         if (!unordered) {
             if (m_active_table)
-                m_active_table->deletions.add(row_ndx);
+                m_active_table->erase(row_ndx);
             return true;
         }
-        REALM_ASSERT(unordered);
         size_t last_row = prior_num_rows - 1;
         if (m_active_table)
             m_active_table->move_over(row_ndx, last_row, m_need_move_info);
@@ -530,11 +587,17 @@ public:
 
     bool swap_rows(size_t row_ndx_1, size_t row_ndx_2) {
         REALM_ASSERT(row_ndx_1 < row_ndx_2);
+        if (!m_is_top_level_table) {
+            if (m_active_table) {
+                m_active_table->move(row_ndx_1, row_ndx_2);
+                if (row_ndx_1 + 1 != row_ndx_2)
+                    m_active_table->move(row_ndx_2 - 1, row_ndx_1);
+            }
+            return true;
+        }
+
         if (m_active_table)
             m_active_table->swap(row_ndx_1, row_ndx_2, m_need_move_info);
-        if (!m_is_top_level_table)
-            return true;
-
         for (auto& list : m_info.lists) {
             if (list.table_ndx == current_table()) {
                 if (list.row_ndx == row_ndx_1)
@@ -559,7 +622,7 @@ public:
         return true;
     }
 
-    bool clear_table()
+    bool clear_table(size_t=0)
     {
         auto tbl_ndx = current_table();
         if (m_active_table)
@@ -574,6 +637,8 @@ public:
 
     bool insert_column(size_t ndx, DataType, StringData, bool)
     {
+        m_info.schema_changed = true;
+
         if (m_active_descriptor)
             m_active_descriptor->insert_column(ndx);
         if (m_active_descriptor != m_active_table || !m_is_top_level_table)
@@ -601,6 +666,8 @@ public:
 
     bool insert_group_level_table(size_t ndx, size_t, StringData)
     {
+        m_info.schema_changed = true;
+
         for (auto& list : m_info.lists) {
             if (list.table_ndx >= ndx)
                 ++list.table_ndx;
@@ -615,6 +682,8 @@ public:
 
     bool move_column(size_t from, size_t to)
     {
+        m_info.schema_changed = true;
+
         if (m_active_descriptor)
             m_active_descriptor->move_column(from, to);
         if (m_active_descriptor != m_active_table || !m_is_top_level_table)
@@ -632,6 +701,8 @@ public:
 
     bool move_group_level_table(size_t from, size_t to)
     {
+        m_info.schema_changed = true;
+
         for (auto& list : m_info.lists)
             adjust_for_move(list.table_ndx, from, to);
 
@@ -653,9 +724,9 @@ class KVOTransactLogObserver : public TransactLogObserver {
 
 public:
     KVOTransactLogObserver(std::vector<BindingContext::ObserverState>& observers,
-                     BindingContext* context,
-                     _impl::NotifierPackage& notifiers,
-                     SharedGroup& sg)
+                           BindingContext* context,
+                           _impl::NotifierPackage& notifiers,
+                           SharedGroup& sg)
     : TransactLogObserver(m_adapter)
     , m_adapter(observers, context)
     , m_notifiers(notifiers)
@@ -680,8 +751,8 @@ public:
 };
 
 template<typename Func>
-void advance_with_notifications(BindingContext* context, const std::unique_ptr<SharedGroup>& sg, Func&& func,
-                                _impl::NotifierPackage& notifiers)
+void advance_with_notifications(BindingContext* context, const std::unique_ptr<SharedGroup>& sg,
+                                Func&& func, _impl::NotifierPackage& notifiers)
 {
     auto old_version = sg->get_version_of_current_transaction();
     std::vector<BindingContext::ObserverState> observers;

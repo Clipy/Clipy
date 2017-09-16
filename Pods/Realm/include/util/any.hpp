@@ -19,9 +19,10 @@
 #ifndef REALM_OS_UTIL_ANY_HPP
 #define REALM_OS_UTIL_ANY_HPP
 
-#include <typeinfo>
-#include <type_traits>
+#include <memory>
 #include <stdexcept>
+#include <type_traits>
+#include <typeinfo>
 
 namespace realm {
 namespace util {

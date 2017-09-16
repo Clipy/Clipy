@@ -23,9 +23,17 @@ import Foundation
 /**
  An object representing a Realm Object Server user.
 
- - see: `SyncUser`
+ - see: `RLMSyncUser`
  */
 public typealias SyncUser = RLMSyncUser
+
+/**
+ An immutable data object representing information retrieved from the Realm Object
+ Server about a particular user.
+
+ - see: `RLMSyncUserInfo`
+ */
+public typealias SyncUserInfo = RLMSyncUserInfo
 
 /**
  A singleton which configures and manages the Realm Object Server synchronization-related
@@ -122,6 +130,11 @@ public extension SyncError {
         }
         return nil
     }
+
+    /// Given a permission denied error, extract and return the reset closure.
+    public func deleteRealmUserInfo() -> (() -> Void)? {
+        return _nsError.__rlmSync_deleteRealmBlock()
+    }
 }
 
 /**
@@ -170,13 +183,13 @@ public struct SyncConfiguration {
 
      Additional settings can be optionally specified. Descriptions of these
      settings follow.
-     
+
      `enableSSLValidation` is true by default. It can be disabled for debugging
      purposes.
 
      - warning: The URL must be absolute (e.g. `realms://example.com/~/foo`), and cannot end with
                 `.realm`, `.realm.lock` or `.realm.management`.
-     
+
      - warning: NEVER disable SSL validation for a system running in production.
      */
     public init(user: SyncUser, realmURL: URL, enableSSLValidation: Bool = true) {
@@ -273,6 +286,32 @@ extension SyncUser {
      */
     public static var current: SyncUser? {
         return __current()
+    }
+
+    /**
+     An optional error handler which can be set to notify the host application when
+     the user encounters an error.
+     
+     - note: Check for `.invalidAccessToken` to see if the user has been remotely logged
+             out because its refresh token expired, or because the third party authentication
+             service providing the user's identity has logged the user out.
+
+     - warning: Regardless of whether an error handler is defined, certain user errors
+                will automatically cause the user to enter the logged out state.
+     */
+    @nonobjc public var errorHandler: ((SyncUser, SyncAuthError) -> Void)? {
+        get {
+            return __errorHandler
+        }
+        set {
+            if let newValue = newValue {
+                __errorHandler = { (user, error) in
+                    newValue(user, error as! SyncAuthError)
+                }
+            } else {
+                __errorHandler = nil
+            }
+        }
     }
 
     /**

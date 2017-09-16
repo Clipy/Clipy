@@ -194,7 +194,8 @@ public:
                                                      const RemoteChangeset* changesets,
                                                      std::size_t num_changesets,
                                                      util::Logger* replay_logger,
-                                                     std::function<SyncTransactCallback>& callback) = 0;
+                                                     std::function<SyncTransactCallback>& callback,
+                                                     TransformerCallback& transformer_callback) = 0;
 
     /// Get the persisted upload/download progress in bytes.
     virtual void get_upload_download_bytes(uint_fast64_t& downloaded_bytes,

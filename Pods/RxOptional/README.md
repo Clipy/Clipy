@@ -163,13 +163,25 @@ Completed
 
 ## Installation
 
+### [CocoaPods](https://guides.cocoapods.org/using/using-cocoapods.html)
+
 RxOptional is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'RxOptional'
-pod 'RxCocoa', '3.0.0-beta.1'
-pod 'RxSwift', '3.0.0-beta.1'
+```
+
+### [Carthage](https://github.com/Carthage/Carthage)
+
+Add this to `Cartfile`
+
+```
+github "RxSwiftCommunity/RxOptional" ~> 3.1.3
+```
+
+```
+$ carthage update
 ```
 
 ## Author

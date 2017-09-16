@@ -116,12 +116,15 @@ static void compare(ObjectSchema const& existing_schema,
             changes.emplace_back(schema_change::RemoveProperty{&existing_schema, &current_prop});
             continue;
         }
-        if (current_prop.type != target_prop->type || current_prop.object_type != target_prop->object_type) {
+        if (current_prop.type != target_prop->type ||
+            current_prop.object_type != target_prop->object_type ||
+            is_array(current_prop.type) != is_array(target_prop->type)) {
+
             changes.emplace_back(schema_change::ChangePropertyType{&existing_schema, &current_prop, target_prop});
             continue;
         }
-        if (current_prop.is_nullable != target_prop->is_nullable) {
-            if (current_prop.is_nullable)
+        if (is_nullable(current_prop.type) != is_nullable(target_prop->type)) {
+            if (is_nullable(current_prop.type))
                 changes.emplace_back(schema_change::MakePropertyRequired{&existing_schema, &current_prop});
             else
                 changes.emplace_back(schema_change::MakePropertyNullable{&existing_schema, &current_prop});
@@ -184,11 +187,22 @@ void Schema::zip_matching(T&& a, U&& b, Func&& func)
 std::vector<SchemaChange> Schema::compare(Schema const& target_schema) const
 {
     std::vector<SchemaChange> changes;
+
+    // Add missing tables
+    zip_matching(target_schema, *this, [&](const ObjectSchema* target, const ObjectSchema* existing) {
+        if (target && !existing) {
+            changes.emplace_back(schema_change::AddTable{target});
+        }
+    });
+
+    // Modify columns
     zip_matching(target_schema, *this, [&](const ObjectSchema* target, const ObjectSchema* existing) {
         if (target && existing)
             ::compare(*existing, *target, changes);
-        else if (target)
-            changes.emplace_back(schema_change::AddTable{target});
+        else if (target) {
+            // Target is a new table -- add all properties
+            changes.emplace_back(schema_change::AddInitialProperties{target});
+        }
         // nothing for tables in existing but not target
     });
     return changes;
@@ -228,6 +242,7 @@ bool operator==(SchemaChange const& lft, SchemaChange const& rgt)
 
         REALM_SC_COMPARE(AddIndex, v.object, v.property)
         REALM_SC_COMPARE(AddProperty, v.object, v.property)
+        REALM_SC_COMPARE(AddInitialProperties, v.object)
         REALM_SC_COMPARE(AddTable, v.object)
         REALM_SC_COMPARE(ChangePrimaryKey, v.object, v.property)
         REALM_SC_COMPARE(ChangePropertyType, v.object, v.old_property, v.new_property)

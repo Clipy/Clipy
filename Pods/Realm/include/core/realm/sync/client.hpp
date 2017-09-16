@@ -37,6 +37,8 @@ namespace sync {
 
 class Client {
 public:
+    using port_type = util::network::Endpoint::port_type;
+
     enum class Error;
 
     enum class ReconnectMode {
@@ -89,7 +91,7 @@ public:
         ///
         // FIXME: This setting is ignored for now, due to limitations in the
         // load balancer.
-        bool one_connection_per_session = false;
+        bool one_connection_per_session = true;
 
         /// Do not access the local file system. Sessions will act as if
         /// initiated on behalf of an empty (or nonexisting) local Realm
@@ -135,7 +137,9 @@ public:
     ///
     /// This corresponds to calling Session::cancel_reconnect_delay() on all
     /// bound sessions, but will also cancel reconnect delays applying to
-     // servers for which there are currently no bound sessions.
+    /// servers for which there are currently no bound sessions.
+    ///
+    /// Thread-safe.
     void cancel_reconnect_delay();
 
 private:
@@ -206,10 +210,133 @@ public:
                                  std::uint_fast64_t progress_version,
                                  std::uint_fast64_t snapshot_version);
     using WaitOperCompletionHandler = std::function<void(std::error_code)>;
+    using SSLVerifyCallback = bool(const std::string& server_address,
+                                   port_type server_port,
+                                   const char* pem_data,
+                                   size_t pem_size,
+                                   int preverify_ok,
+                                   int depth);
 
     class Config {
     public:
         Config() {}
+
+        /// server_address is the fully qualified host name, or IP address of
+        /// the server.
+        std::string server_address = "localhost";
+
+        /// server_port is the port at which the server listens. If server_port
+        /// is zero, the default port for the specified protocol is used. See \ref
+        /// Protocol for information on default ports.
+        port_type server_port = 0;
+
+        /// server_path is  the virtual path by which the server identifies the
+        /// Realm. This path must always be an absolute path, and must therefore
+        /// always contain a leading slash (`/`). Further more, each segment of the
+        /// virtual path must consist of one or more characters that are either
+        /// alpha-numeric or in (`_`, `-`, `.`), and each segment is not allowed to
+        /// equal `.` or `..`, and must not end with `.realm`, `.realm.lock`, or
+        /// `.realm.management`. These rules are necessary because the server
+        /// currently reserves the right to use the specified path as part of the
+        /// file system path of a Realm file. It is expected that these rules will
+        /// be significantly relaxed in the future by completely decoupling the
+        /// virtual paths from actual file system paths.
+        std::string server_path = "/";
+
+        /// The protocol used for communicating with the server. See \ref Protocol.
+        Protocol protocol = Protocol::realm;
+
+        /// Sessions can be multiplexed over the same TCP/SSL connection.
+        /// Sessions might share connection if they have identical server_address,
+        /// server_port, and protocol. multiplex_ident is a parameter that allows
+        /// finer control over session multiplexing. If two sessions have distinct
+        /// multiplex_ident, they will never share connection. The typical use of
+        /// multilex_ident is to give sessions with incompatible SSL requirements
+        /// distinct multiplex_idents.
+        /// multiplex_ident can be any string and the value has no meaning except
+        /// for partitioning the sessions.
+        std::string multiplex_ident;
+
+        /// verify_servers_ssl_certificate controls whether the server
+        /// certificate is verified for SSL connections. It should generally be
+        /// true in production.
+        bool verify_servers_ssl_certificate = true;
+
+        /// ssl_trust_certificate_path is the path of a trust/anchor
+        /// certificate used by the client to verify the server certificate.
+        /// ssl_trust_certificate_path is only used if the protocol is ssl and
+        /// verify_servers_ssl_certificate is true.
+        ///
+        /// A server certificate is verified by first checking that the
+        /// certificate has a valid signature chain back to a trust/anchor
+        /// certificate, and secondly checking that the server_address matches
+        /// a host name contained in the certificate. The host name of the
+        /// certificate is stored in either Common Name or the Alternative
+        /// Subject Name (DNS section).
+        ///
+        /// If ssl_trust_certificate_path is None (default), ssl_verify_callback
+        /// (see below) is used if set, and the default device trust/anchor
+        /// store is used otherwise.
+        Optional<std::string> ssl_trust_certificate_path;
+
+        /// If Client::Config::ssl_verify_callback is set, that function is called
+        /// to verify the certificate, unless verify_servers_ssl_certificate is
+        /// false.
+
+        /// ssl_verify_callback is used to implement custom SSL certificate
+        /// verification. it is only used if the protocol is SSL,
+        /// verify_servers_ssl_certificate is true and ssl_trust_certificate_path
+        /// is None.
+        ///
+        /// The signature of ssl_verify_callback is
+        ///
+        /// bool(const std::string& server_address,
+        ///      port_type server_port,
+        ///      const char* pem_data,
+        ///      size_t pem_size,
+        ///      int preverify_ok,
+        ///      int depth);
+        ///
+        /// server address and server_port is the address and port of the server
+        /// that a SSL connection is being established to. They are identical to
+        /// the server_address and server_port set in this config file and are
+        /// passed for convenience.
+        /// pem_data is the certificate of length pem_size in
+        /// the PEM format. preverify_ok is OpenSSL's preverification of the
+        /// certificate. preverify_ok is either 0, or 1. If preverify_ok is 1,
+        /// OpenSSL has accepted the certificate and it will generally be safe
+        /// to trust that certificate. depth represents the position of the
+        /// certificate in the certificate chain sent by the server. depth = 0
+        /// represents the actual server certificate that should contain the
+        /// host name(server address) of the server. The highest depth is the
+        /// root certificate.
+        /// The callback function will receive the certificates starting from
+        /// the root certificate and moving down the chain until it reaches the
+        /// server's own certificate with a host name. The depth of the last
+        /// certificate is 0. The depth of the first certificate is chain
+        /// length - 1.
+        ///
+        /// The return value of the callback function decides whether the
+        /// client accepts the certificate. If the return value is false, the
+        /// processing of the certificate chain is interrupted and the SSL
+        /// connection is rejected. If the return value is true, the verification
+        /// process continues. If the callback function returns true for all
+        /// presented certificates including the depth == 0 certificate, the
+        /// SSL connection is accepted.
+        ///
+        /// A recommended way of using the callback function is to return true
+        /// if preverify_ok = 1 and depth > 0,
+        /// always check the host name if depth = 0,
+        /// and use an independent verification step if preverify_ok = 0.
+        ///
+        /// Another possible way of using the callback is to collect all the
+        /// certificates until depth = 0, and present the entire chain for
+        /// independent verification.
+        std::function<SSLVerifyCallback> ssl_verify_callback;
+
+        /// signed_user_token is a cryptographically signed token describing the
+        /// identity and access rights of the current user.
+        std::string signed_user_token;
 
         /// If not null, overrides whatever is specified by
         /// Client::Config::changeset_cooker.
@@ -232,6 +359,10 @@ public:
 
         /// The encryption key the SharedGroup will be opened with.
         Optional<std::array<char, 64>> encryption_key;
+
+        /// FIXME: This value must currently be true in a cluster setup.
+        /// This restriction will be lifted in the future.
+        bool one_connection_per_session = true;
     };
 
     /// \brief Start a new session for the specified client-side Realm.
@@ -339,23 +470,18 @@ public:
     /// unless the session is interrupted before a message from the server has
     /// been received.
     ///
-    /// The handler is called on the event loop thread.
-    /// The handler is called after or during set_progress_handler(),
-    /// after bind(), after each DOWNLOAD message, and after each local
-    /// transaction (nonsync_transact_notify).
+    /// The handler is called on the event loop thread.The handler after bind(),
+    /// after each DOWNLOAD message, and after each local transaction
+    /// (nonsync_transact_notify).
     ///
     /// set_progress_handler() is not thread safe and it must be called before
     /// bind() is called. Subsequent calls to set_progress_handler() overwrite
     /// the previous calls. Typically, this function is called once per session.
     ///
-    /// The progress handler is also posted to the event loop during the
-    /// execution of set_progress_handler().
-    ///
-    /// CAUTION: The specified callback function may be called before the call
-    /// to set_progress_handler() returns, and it may be called
+    /// CAUTION: The specified callback function may be called
     /// (or continue to execute) after the session object is destroyed.
     /// The application must pass a handler that can be safely called, and can
-    /// execute from the point in time where set_progress_handler() is called,
+    /// execute from the point in time where bind() is called,
     /// and up until the point in time where the last invocation of
     /// `client.run()` returns. Here, `client` refers to the associated
     /// Client object.
@@ -434,68 +560,30 @@ public:
     /// it is called while another thread is executing any member function on
     /// the same Session object.
     ///
-    /// \param server_url For example "realm://sync.realm.io/test". See \a
-    /// server_address, \a server_path, and \a server_port for information about
-    /// the individual components of the URL. See \ref Protocol for the list of
-    /// available URL schemes and the associated default ports. The 2-argument
-    /// version has exactly the same affect as the 5-argument version.
+    /// bind() binds this session to the specified server side Realm using the
+    /// parameters specified in the Session::Config object.
     ///
-    /// \param server_address The fully qualified host name, or IP address of
-    /// the server.
+    /// The two other forms of bind() are convenience functions.
+    /// void bind(std::string server_address, std::string server_path,
+    ///           std::string signed_user_token, port_type server_port = 0,
+    ///           Protocol protocol = Protocol::realm);
+    /// replaces the corresponding parameters from the Session::Config object
+    /// before the session is bound.
+    /// void bind(std::string server_url, std::string signed_user_token) parses
+    /// the \param server_url and replaces the parameters in the Session::Config object
+    /// before the session is bound.
     ///
-    /// \param server_path The virtual path by which the server identifies the
-    /// Realm. This path must always be an absolute path, and must therefore
-    /// always contain a leading slash (`/`). Further more, each segment of the
-    /// virtual path must consist of one or more characters that are either
-    /// alpha-numeric or in (`_`, `-`, `.`), and each segment is not allowed to
-    /// equal `.` or `..`, and must not end with `.realm`, `.realm.lock`, or
-    /// `.realm.management`. These rules are necessary because the server
-    /// currently reserves the right to use the specified path as part of the
-    /// file system path of a Realm file. It is expected that these rules will
-    /// be significantly relaxed in the future by completely decoupling the
-    /// virtual paths from actual file system paths.
-    ///
-    /// \param signed_user_token A cryptographically signed token describing the
-    /// identity and access rights of the current user. See \ref Protocol.
-    ///
-    /// \param server_port If zero, use the default port for the specified
-    /// protocol. See \ref Protocol for information on default ports.
-    ///
-    /// \param verify_servers_ssl_certificate controls whether the server
-    /// certificate is verified for SSL connections. It should generally be true
-    /// in production. The default value of verify_servers_ssl_certificate is
-    /// true.
-    ///
-    /// A server certificate is verified by first checking that the
-    /// certificate has a valid signature chain back to a trust/anchor certificate,
-    /// and secondly checking that the host name of the Realm URL matches
-    /// a host name contained in the certificate.
-    /// The host name of the certificate is stored in either Common Name or
-    /// the Alternative Subject Name (DNS section).
-    ///
-    /// From the point of view of OpenSSL, setting verify_servers_ssl_certificate
-    /// to false means calling `SSL_set_verify()` with `SSL_VERIFY_NONE`.
-    /// Setting verify_servers_ssl_certificate to true means calling `SSL_set_verify()`
-    /// with `SSL_VERIFY_PEER`, and setting the host name using the function
-    /// X509_VERIFY_PARAM_set1_host() (OpenSSL version 1.0.2 or newer).
-    /// For other platforms, an equivalent procedure is followed.
-    ///
-    /// \param ssl_trust_certificate_path is the path of a trust/anchor
-    /// certificate used by the client to verify the server certificate.
-    /// If ssl_trust_certificate_path is None (default), the default device
-    /// trust/anchor store is used.
-    ///
-    /// \param protocol See \ref Protocol.
+    /// \param server_url For example "realm://sync.realm.io/test". See
+    /// server_address, server_path, and server_port in Session::Config for information
+    /// about the individual components of the URL. See \ref Protocol for the list of
+    /// available URL schemes and the associated default ports.
     ///
     /// \throw BadServerUrl if the specified server URL is malformed.
-    void bind(std::string server_url, std::string signed_user_token,
-            bool verify_servers_ssl_certificate = true,
-            util::Optional<std::string> ssl_trust_certificate_path = util::none);
+    void bind();
+    void bind(std::string server_url, std::string signed_user_token);
     void bind(std::string server_address, std::string server_path,
-            std::string signed_user_token, port_type server_port = 0,
-            Protocol protocol = Protocol::realm,
-            bool verify_servers_ssl_certificate = true,
-            util::Optional<std::string> ssl_trust_certificate_path = util::none);
+              std::string signed_user_token, port_type server_port = 0,
+              Protocol protocol = Protocol::realm);
     /// @}
 
     /// \brief Refresh the user token associated with this session.
@@ -521,7 +609,7 @@ public:
     /// \brief Inform the synchronization agent about changes of local origin.
     ///
     /// This function must be called by the application after a transaction
-    /// performed on its behlaf, that is, after a transaction that is not
+    /// performed on its behalf, that is, after a transaction that is not
     /// performed to integrate a changeset that was downloaded from the server.
     ///
     /// It is an error to call this function before bind() has been called, and
@@ -548,8 +636,8 @@ public:
     /// i.e., prior to the invocation of async_wait_for_upload_completion() or
     /// async_wait_for_sync_completion(). Unannounced changesets may get picked
     /// up, but there is no guarantee that they will be, however, if a certain
-    /// changeset is announced, then all previous changesets are implicitely
-    /// announced. Also all preexisting changesets are implicitely announced
+    /// changeset is announced, then all previous changesets are implicitly
+    /// announced. Also all preexisting changesets are implicitly announced
     /// when the session is initiated.
     ///
     /// Download is considered complete when all non-empty changesets of remote
@@ -675,6 +763,7 @@ enum class Client::Error {
     bad_error_code              = 114, ///< Bad error code (ERROR),
     bad_compression             = 115, ///< Bad compression (DOWNLOAD)
     bad_client_version          = 116, ///< Bad last integrated client version in changeset header (DOWNLOAD)
+    ssl_server_cert_rejected    = 117, ///< SSL server certificate rejected
 };
 
 const std::error_category& client_error_category() noexcept;
