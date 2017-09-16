@@ -191,6 +191,7 @@ public:
 
 class TransformError; // Exception
 
+typedef std::function<bool(int)> TransformerCallback;
 
 class Transformer {
 public:
@@ -280,7 +281,8 @@ public:
     virtual size_t transform_remote_changeset(TransformHistory&,
                                               version_type current_local_version,
                                               RemoteChangeset changeset,
-                                              util::Buffer<char>& output_buffer) = 0;
+                                              util::Buffer<char>& output_buffer,
+                                              TransformerCallback& callback) = 0;
 
     virtual ~Transformer() noexcept {}
 };

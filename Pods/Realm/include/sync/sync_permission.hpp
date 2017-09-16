@@ -88,53 +88,12 @@ struct Permission {
     Condition condition;
 
     Timestamp updated_at;
-};
 
-class PermissionResults {
-public:
-    // The number of permissions represented by this PermissionResults.
-    size_t size()
-    {
-        return m_results.size();
-    }
+    /// Create a Permission value from an `Object`.
+    Permission(Object&);
 
-    // Get the permission value at the given index.
-    // Throws an `OutOfBoundsIndexException` if the index is invalid.
-    Permission get(size_t index);
-
-    // Create an async query from this Results.
-    // The query will be run on a background thread and delivered to the callback,
-    // and then rerun after each commit (if needed) and redelivered if it changed
-    NotificationToken async(std::function<void(std::exception_ptr)> target)
-    {
-        return m_results.async(std::move(target));
-    }
-
-    // Create a new instance by further filtering this instance.
-    PermissionResults filter(Query&& q) const
-    {
-        return PermissionResults(m_results.filter(std::move(q)));
-    }
-
-    // Create a new instance by sorting this instance.
-    PermissionResults sort(SortDescriptor&& s) const
-    {
-        return PermissionResults(m_results.sort(std::move(s)));
-    }
-
-    // Get the results.
-    Results& results()
-    {
-        return m_results;
-    }
-
-    // Don't use this constructor directly. Publicly exposed so `make_unique` can see it.
-    PermissionResults(Results&& results)
-    : m_results(results)
-    { }
-
-protected:
-    Results m_results;
+    /// Create a Permission value from raw values.
+    Permission(std::string path, AccessLevel, Condition, Timestamp updated_at=Timestamp());
 };
 
 class Permissions {
@@ -143,10 +102,10 @@ public:
     // SyncConfig and associated callbacks, as well as the path and other parameters.
     using ConfigMaker = std::function<Realm::Config(std::shared_ptr<SyncUser>, std::string url)>;
 
-    // Callback used to asynchronously vend a `PermissionResults` object.
-    using PermissionResultsCallback = std::function<void(std::unique_ptr<PermissionResults>, std::exception_ptr)>;
+    // Callback used to asynchronously vend permissions results.
+    using PermissionResultsCallback = std::function<void(Results, std::exception_ptr)>;
 
-    // Asynchronously retrieve the permissions for the provided user.
+    // Asynchronously retrieve a `Results` containing the permissions for the provided user.
     static void get_permissions(std::shared_ptr<SyncUser>, PermissionResultsCallback, const ConfigMaker&);
 
     // Callback used to monitor success or errors when changing permissions

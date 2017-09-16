@@ -194,6 +194,8 @@ void CollectionChangeBuilder::for_each_col(Func&& f)
 
 void CollectionChangeBuilder::insert(size_t index, size_t count, bool track_moves)
 {
+    REALM_ASSERT(count != 0);
+
     for_each_col([=](auto& col) { col.shift_for_insert_at(index, count); });
     if (!track_moves)
         return;
@@ -202,7 +204,7 @@ void CollectionChangeBuilder::insert(size_t index, size_t count, bool track_move
 
     for (auto& move : moves) {
         if (move.to >= index)
-            ++move.to;
+            move.to += count;
     }
 
     if (m_move_mapping.empty())

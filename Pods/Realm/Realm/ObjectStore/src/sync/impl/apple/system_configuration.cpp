@@ -65,7 +65,7 @@ SCNetworkReachabilityRef SystemConfiguration::network_reachability_create_with_a
 {
     if (m_create_with_address)
         return m_create_with_address(allocator, address);
-    
+
     return nullptr;
 }
 

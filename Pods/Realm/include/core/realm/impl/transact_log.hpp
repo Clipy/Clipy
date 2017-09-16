@@ -989,13 +989,13 @@ void TransactLogEncoder::append_mixed_instr(Instruction instr, const Mixed& valu
             return;
         case type_Mixed:
             // Mixed in mixed is not possible
-            REALM_ASSERT_RELEASE(false);
+            REALM_TERMINATE("Mixed in Mixed not possible");
         case type_Link:
         case type_LinkList:
             // FIXME: Need to handle new link types here.
-            REALM_ASSERT_RELEASE(false);
+            REALM_TERMINATE("Link types in Mixed not supported.");
     }
-    REALM_ASSERT_RELEASE(false);
+    REALM_TERMINATE("Invalid Mixed.");
 }
 
 inline void TransactLogConvenientEncoder::unselect_all() noexcept

@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////////////////////
 //
 // Copyright 2016 Realm Inc.
@@ -22,16 +21,22 @@
 
 #include "object.hpp"
 
+#include "feature_checks.hpp"
 #include "list.hpp"
 #include "object_schema.hpp"
 #include "object_store.hpp"
 #include "results.hpp"
 #include "schema.hpp"
+#include "shared_realm.hpp"
 #include "util/format.hpp"
 
 #include <realm/link_view.hpp>
 #include <realm/util/assert.hpp>
 #include <realm/table_view.hpp>
+
+#if REALM_HAVE_SYNC_STABLE_IDS
+#include <realm/sync/object.hpp>
+#endif // REALM_HAVE_SYNC_STABLE_IDS
 
 #include <string>
 
@@ -67,7 +72,7 @@ void Object::set_property_value_impl(ContextType& ctx, const Property &property,
     auto& table = *m_row.get_table();
     size_t col = property.table_column;
     size_t row = m_row.get_index();
-    if (property.is_nullable && ctx.is_null(value)) {
+    if (is_nullable(property.type) && ctx.is_null(value)) {
         if (property.type == PropertyType::Object) {
             if (!is_default)
                 table.nullify_link(col, row);
@@ -80,7 +85,24 @@ void Object::set_property_value_impl(ContextType& ctx, const Property &property,
         return;
     }
 
-    switch (property.type) {
+    if (is_array(property.type)) {
+        if (property.type == PropertyType::LinkingObjects)
+            throw ReadOnlyPropertyException(m_object_schema->name, property.name);
+
+        ContextType child_ctx(ctx, property);
+        List list(m_realm, *m_row.get_table(), col, m_row.get_index());
+        list.assign(child_ctx, value, try_update);
+        ctx.did_change();
+        return;
+    }
+
+    switch (property.type & ~PropertyType::Nullable) {
+        case PropertyType::Object: {
+            ContextType child_ctx(ctx, property);
+            auto link = child_ctx.template unbox<RowExpr>(value, true, try_update);
+            table.set_link(col, row, link.get_index(), is_default);
+            break;
+        }
         case PropertyType::Bool:
             table.set(col, row, ctx.template unbox<bool>(value), is_default);
             break;
@@ -104,25 +126,6 @@ void Object::set_property_value_impl(ContextType& ctx, const Property &property,
         case PropertyType::Date:
             table.set(col, row, ctx.template unbox<Timestamp>(value), is_default);
             break;
-        case PropertyType::Array: {
-            List list(m_realm, m_row.get_linklist(col));
-            list.remove_all();
-            if (!ctx.is_null(value)) {
-                ContextType child_ctx(ctx, property);
-                ctx.enumerate_list(value, [&](auto&& element) {
-                    list.add(child_ctx, element, try_update);
-                });
-            }
-            break;
-        }
-        case PropertyType::Object: {
-            ContextType child_ctx(ctx, property);
-            auto link = child_ctx.template unbox<RowExpr>(value, true, try_update);
-            table.set_link(col, row, link.get_index(), is_default);
-            break;
-        }
-        case PropertyType::LinkingObjects:
-            throw ReadOnlyPropertyException(m_object_schema->name, property.name);
         default:
             REALM_COMPILER_HINT_UNREACHABLE();
     }
@@ -135,11 +138,12 @@ ValueType Object::get_property_value_impl(ContextType& ctx, const Property &prop
     verify_attached();
 
     size_t column = property.table_column;
-    if (property.is_nullable && m_row.is_null(column)) {
+    if (is_nullable(property.type) && m_row.is_null(column))
         return ctx.null_value();
-    }
+    if (is_array(property.type) && property.type != PropertyType::LinkingObjects)
+        return ctx.box(List(m_realm, *m_row.get_table(), column, m_row.get_index()));
 
-    switch (property.type) {
+    switch (property.type & ~PropertyType::Flags) {
         case PropertyType::Bool:   return ctx.box(m_row.get_bool(column));
         case PropertyType::Int:    return ctx.box(m_row.get_int(column));
         case PropertyType::Float:  return ctx.box(m_row.get_float(column));
@@ -147,7 +151,6 @@ ValueType Object::get_property_value_impl(ContextType& ctx, const Property &prop
         case PropertyType::String: return ctx.box(m_row.get_string(column));
         case PropertyType::Data:   return ctx.box(m_row.get_binary(column));
         case PropertyType::Date:   return ctx.box(m_row.get_timestamp(column));
-        case PropertyType::Array:  return ctx.box(List(m_realm, m_row.get_linklist(column)));
         case PropertyType::Any:    return ctx.box(m_row.get_mixed(column));
         case PropertyType::Object: {
             auto linkObjectSchema = m_realm->schema().find(property.object_type);
@@ -197,27 +200,37 @@ Object Object::create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
         if (!primary_value)
             primary_value = ctx.default_value_for_property(object_schema, primary_prop->name);
         if (!primary_value) {
-            if (!primary_prop->is_nullable)
+            if (!is_nullable(primary_prop->type))
                 throw MissingPropertyValueException(object_schema.name, primary_prop->name);
             primary_value = ctx.null_value();
         }
         row_index = get_for_primary_key_impl(ctx, *table, *primary_prop, *primary_value);
 
         if (row_index == realm::not_found) {
-            row_index = table->add_empty_row();
             created = true;
-            if (ctx.is_null(*primary_value)) {
-                if (primary_prop->type == PropertyType::Int)
+            if (primary_prop->type == PropertyType::Int) {
+#if REALM_HAVE_SYNC_STABLE_IDS
+                row_index = sync::create_object_with_primary_key(realm->read_group(), *table, ctx.template unbox<util::Optional<int64_t>>(*primary_value));
+#else
+                row_index = table->add_empty_row();
+                if (ctx.is_null(*primary_value))
                     table->set_null_unique(primary_prop->table_column, row_index);
                 else
-                    table->set_string_unique(primary_prop->table_column, row_index, StringData());
+                    table->set_unique(primary_prop->table_column, row_index, ctx.template unbox<int64_t>(*primary_value));
+#endif // REALM_HAVE_SYNC_STABLE_IDS
             }
-            else if (primary_prop->type == PropertyType::Int)
-                table->set_unique(primary_prop->table_column, row_index,
-                                  ctx.template unbox<int64_t>(*primary_value));
-            else
-                table->set_unique(primary_prop->table_column, row_index,
-                                  ctx.template unbox<StringData>(*primary_value));
+            else if (primary_prop->type == PropertyType::String) {
+                auto value = ctx.template unbox<StringData>(*primary_value);
+#if REALM_HAVE_SYNC_STABLE_IDS
+                row_index = sync::create_object_with_primary_key(realm->read_group(), *table, value);
+#else
+                row_index = table->add_empty_row();
+                table->set_unique(primary_prop->table_column, row_index, value);
+#endif // REALM_HAVE_SYNC_STABLE_IDS
+            }
+            else {
+                REALM_TERMINATE("Unsupported primary key type.");
+            }
         }
         else if (!try_update) {
             if (realm->is_in_migration()) {
@@ -235,7 +248,11 @@ Object Object::create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
         }
     }
     else {
+#if REALM_HAVE_SYNC_STABLE_IDS
+        row_index = sync::create_object(realm->read_group(), *table);
+#else
         row_index = table->add_empty_row();
+#endif // REALM_HAVE_SYNC_STABLE_IDS
         created = true;
     }
 
@@ -257,7 +274,7 @@ Object Object::create(ContextType& ctx, std::shared_ptr<Realm> const& realm,
             v = ctx.default_value_for_property(object_schema, prop.name);
             is_default = true;
         }
-        if ((!v || ctx.is_null(*v)) && !prop.is_nullable && prop.type != PropertyType::Array) {
+        if ((!v || ctx.is_null(*v)) && !is_nullable(prop.type) && !is_array(prop.type)) {
             if (prop.is_primary || !ctx.allow_missing(value))
                 throw MissingPropertyValueException(object_schema.name, prop.name);
         }
@@ -299,13 +316,13 @@ size_t Object::get_for_primary_key_impl(ContextType& ctx, Table const& table,
                                         const Property &primary_prop,
                                         ValueType primary_value) {
     bool is_null = ctx.is_null(primary_value);
-    if (is_null && !primary_prop.is_nullable)
+    if (is_null && !is_nullable(primary_prop.type))
         throw std::logic_error("Invalid null value for non-nullable primary key.");
     if (primary_prop.type == PropertyType::String) {
         return table.find_first(primary_prop.table_column,
                                 ctx.template unbox<StringData>(primary_value));
     }
-    if (primary_prop.is_nullable)
+    if (is_nullable(primary_prop.type))
         return table.find_first(primary_prop.table_column,
                                 ctx.template unbox<util::Optional<int64_t>>(primary_value));
     return table.find_first(primary_prop.table_column,

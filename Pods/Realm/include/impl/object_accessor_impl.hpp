@@ -38,7 +38,7 @@ public:
     // (i.e. prop.type will always be Object or Array).
     CppContext(CppContext& c, Property const& prop)
     : realm(c.realm)
-    , object_schema(&*realm->schema().find(prop.object_type))
+    , object_schema(prop.type == PropertyType::Object ? &*realm->schema().find(prop.object_type) : c.object_schema)
     { }
 
     CppContext() = default;
@@ -82,6 +82,14 @@ public:
             fn(v);
     }
 
+    // Determine if `value` boxes the same List as `list`
+    bool is_same_list(List const& list, util::Any const& value)
+    {
+        if (auto list2 = any_cast<List>(&value))
+            return list == *list2;
+        return false;
+    }
+
     // Convert from core types to the boxed type
     util::Any box(BinaryData v) const { return std::string(v); }
     util::Any box(List v) const { return v; }
@@ -93,6 +101,10 @@ public:
     util::Any box(double v) const { return v; }
     util::Any box(float v) const { return v; }
     util::Any box(int64_t v) const { return v; }
+    util::Any box(util::Optional<bool> v) const { return v; }
+    util::Any box(util::Optional<double> v) const { return v; }
+    util::Any box(util::Optional<float> v) const { return v; }
+    util::Any box(util::Optional<int64_t> v) const { return v; }
     util::Any box(RowExpr) const;
 
     // Any properties are only supported by the Cocoa binding to enable reading

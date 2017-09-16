@@ -39,10 +39,10 @@ typedef BOOL (^RLMShouldCompactOnLaunchBlock)(NSUInteger totalBytes, NSUInteger 
  `RLMRealmConfiguration` instances are just plain `NSObject`s. Unlike `RLMRealm`s
  and `RLMObject`s, they can be freely shared between threads as long as you do not
  mutate them.
- 
+
  Creating configuration objects for class subsets (by setting the
  `objectClasses` property) can be expensive. Because of this, you will normally want to
- cache and reuse a single configuration object for each distinct configuration rather than 
+ cache and reuse a single configuration object for each distinct configuration rather than
  creating a new object each time you open a Realm.
  */
 @interface RLMRealmConfiguration : NSObject<NSCopying>
@@ -66,10 +66,12 @@ typedef BOOL (^RLMShouldCompactOnLaunchBlock)(NSUInteger totalBytes, NSUInteger 
 
 #pragma mark - Properties
 
-/// The local URL of the Realm file. Mutually exclusive with `inMemoryIdentifier`.
+/// The local URL of the Realm file. Mutually exclusive with `inMemoryIdentifier` and `syncConfiguration`;
+/// setting any one of the three properties will automatically nil out the other two.
 @property (nonatomic, copy, nullable) NSURL *fileURL;
 
-/// A string used to identify a particular in-memory Realm. Mutually exclusive with `fileURL`.
+/// A string used to identify a particular in-memory Realm. Mutually exclusive with `fileURL` and `syncConfiguration`;
+/// setting any one of the three properties will automatically nil out the other two.
 @property (nonatomic, copy, nullable) NSString *inMemoryIdentifier;
 
 /// A 64-byte key to use to encrypt the data, or `nil` if encryption is not enabled.

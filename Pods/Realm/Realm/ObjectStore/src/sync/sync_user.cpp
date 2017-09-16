@@ -27,8 +27,11 @@ namespace realm {
 SyncUserContextFactory SyncUser::s_binding_context_factory;
 std::mutex SyncUser::s_binding_context_factory_mutex;
 
-SyncUser::SyncUser(std::string refresh_token, std::string identity,
-                   util::Optional<std::string> server_url, TokenType token_type)
+SyncUser::SyncUser(std::string refresh_token,
+                   std::string identity,
+                   util::Optional<std::string> server_url,
+                   util::Optional<std::string> local_identity,
+                   TokenType token_type)
 : m_state(State::Active)
 , m_server_url(server_url.value_or(""))
 , m_token_type(token_type)
@@ -42,11 +45,19 @@ SyncUser::SyncUser(std::string refresh_token, std::string identity,
         }
     }
     if (token_type == TokenType::Normal) {
-        SyncManager::shared().perform_metadata_update([this, server_url=std::move(server_url)](const auto& manager) {
-            auto metadata = SyncUserMetadata(manager, m_identity);
-            metadata.set_state(server_url, m_refresh_token);
-            m_is_admin = metadata.is_admin();
+        REALM_ASSERT(m_server_url.length() > 0);
+        bool updated = SyncManager::shared().perform_metadata_update([=](const auto& manager) {
+            auto metadata = manager.get_or_make_user_metadata(m_identity, m_server_url);
+            metadata->set_user_token(m_refresh_token);
+            m_is_admin = metadata->is_admin();
+            m_local_identity = metadata->local_uuid();
         });
+        if (!updated)
+            m_local_identity = m_identity;
+    } else {
+        // Admin token users. The local identity serves as the directory path.
+        REALM_ASSERT(local_identity);
+        m_local_identity = std::move(*local_identity);
     }
 }
 
@@ -123,8 +134,8 @@ void SyncUser::update_refresh_token(std::string token)
         // Update persistent user metadata.
         if (m_token_type != TokenType::Admin) {
             SyncManager::shared().perform_metadata_update([=](const auto& manager) {
-                auto metadata = SyncUserMetadata(manager, m_identity);
-                metadata.set_state(m_server_url, token);
+                auto metadata = manager.get_or_make_user_metadata(m_identity, m_server_url);
+                metadata->set_user_token(token);
             });
         }
     }
@@ -165,8 +176,9 @@ void SyncUser::log_out()
 
     // Mark the user as 'dead' in the persisted metadata Realm.
     SyncManager::shared().perform_metadata_update([=](const auto& manager) {
-        auto metadata = SyncUserMetadata(manager, m_identity, false);
-        metadata.mark_for_removal();
+        auto metadata = manager.get_or_make_user_metadata(m_identity, m_server_url, false);
+        if (metadata)
+            metadata->mark_for_removal();
     });
 }
 
@@ -177,8 +189,8 @@ void SyncUser::set_is_admin(bool is_admin)
     }
     m_is_admin = is_admin;
     SyncManager::shared().perform_metadata_update([=](const auto& manager) {
-        auto metadata = SyncUserMetadata(manager, m_identity);
-        metadata.set_is_admin(is_admin);
+        auto metadata = manager.get_or_make_user_metadata(m_identity, m_server_url);
+        metadata->set_is_admin(is_admin);
     });
 }
 
@@ -248,4 +260,11 @@ void SyncUser::register_permission_session(const std::string& path)
     m_permission_session = SyncManager::shared().get_existing_session(path);
 }
 
+}
+
+namespace std {
+size_t hash<realm::SyncUserIdentifier>::operator()(const realm::SyncUserIdentifier& k) const
+{
+    return ((hash<string>()(k.user_id) ^ (hash<string>()(k.auth_server_url) << 1)) >> 1);
+}
 }

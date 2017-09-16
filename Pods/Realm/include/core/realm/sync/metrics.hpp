@@ -34,6 +34,9 @@ public:
     /// Increment the counter identified by the specified key.
     virtual void increment(const char* key, int value = 1) = 0;
 
+    /// Send the timing identified by the specified key.
+    virtual void timing(const char* key, double value) = 0;
+
     /// Set value of the guage identified by the specified key.
     virtual void gauge(const char* key, double value) = 0;
 
@@ -62,6 +65,12 @@ public:
     {
         const char* metric = key;
         m_dogless.increment(metric, value); // Throws
+    }
+
+    void timing(const char* key, double value) override
+    {
+        const char* metric = key;
+        m_dogless.timing(metric, value); // Throws
     }
 
     void gauge(const char* key, double value) override

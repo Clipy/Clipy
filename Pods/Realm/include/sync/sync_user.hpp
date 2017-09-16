@@ -42,6 +42,17 @@ public:
 
 using SyncUserContextFactory = std::function<std::shared_ptr<SyncUserContext>()>;
 
+// A struct that uniquely identifies a user. Consists of ROS identity and auth server URL.
+struct SyncUserIdentifier {
+    std::string user_id;
+    std::string auth_server_url;
+
+    bool operator==(const SyncUserIdentifier& other) const
+    {
+        return user_id == other.user_id && auth_server_url == other.auth_server_url;
+    }
+};
+
 // A `SyncUser` represents a single user account. Each user manages the sessions that
 // are associated with it.
 class SyncUser {
@@ -62,6 +73,7 @@ public:
     SyncUser(std::string refresh_token,
              std::string identity,
              util::Optional<std::string> server_url,
+             util::Optional<std::string> local_identity=none,
              TokenType token_type=TokenType::Normal);
 
     // Return a list of all sessions belonging to this user.
@@ -102,10 +114,14 @@ public:
         return m_identity;
     }
 
-    // FIXME: remove this APIs once the new token system is implemented.
     const std::string& server_url() const noexcept
     {
         return m_server_url;
+    }
+
+    const std::string& local_identity() const noexcept
+    {
+        return m_local_identity;
     }
 
     std::string refresh_token() const;
@@ -137,12 +153,14 @@ private:
 
     util::AtomicSharedPtr<SyncUserContext> m_binding_context;
 
+    // A locally assigned UUID intended to provide a level of indirection for various features.
+    std::string m_local_identity;
+
     std::weak_ptr<SyncSession> m_management_session;
     std::weak_ptr<SyncSession> m_permission_session;
 
-    // The auth server URL. Bindings should set this appropriately when they retrieve
-    // instances of `SyncUser`s.
-    // FIXME: once the new token system is implemented, this can be removed completely.
+    // The auth server URL associated with this user. Set upon creation. The empty string for
+    // auth token users.
     std::string m_server_url;
 
     // Mark the user as invalid, since a fatal user-related error was encountered.
@@ -169,6 +187,12 @@ private:
     std::unordered_map<std::string, std::weak_ptr<SyncSession>> m_waiting_sessions;
 };
 
+}
+
+namespace std {
+template<> struct hash<realm::SyncUserIdentifier> {
+    size_t operator()(realm::SyncUserIdentifier const&) const;
+};
 }
 
 #endif // REALM_OS_SYNC_USER_HPP

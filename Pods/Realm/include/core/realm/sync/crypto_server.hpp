@@ -49,8 +49,13 @@ public:
 
     /// Load RSA public key from \a pemfile.
     static PKey load_public(const std::string& pemfile);
+    /// Load RSA public key from a PEM buffer
+    static PKey load_public(BinaryData pem_buffer);
+
     /// Load RSA public/private keypair from \a pemfile.
     static PKey load_private(const std::string& pemfile);
+    /// Load RSA public/private keypair from a PEM buffer
+    static PKey load_private(BinaryData pem_buffer);
 
     /// Whether or not the key can be used for signing.
     ///

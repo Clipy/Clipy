@@ -179,9 +179,14 @@ util::Optional<HTTPResponse> make_http_response(const HTTPRequest& request,
         std::error_code& ec);
 
 enum class Error {
-    bad_handshake_request  = 1, ///< Bad WebSocket handshake response received
-    bad_handshake_response = 2, ///< Bad WebSocket handshake response received
-    bad_message            = 3, ///< Ill-formed WebSocket message
+    bad_request_header_upgrade            = 1,
+    bad_request_header_connection         = 2,
+    bad_request_header_websocket_version  = 3,
+    bad_request_header_websocket_protocol = 4,
+    bad_request_header_websocket_key      = 5,
+    bad_handshake_request                 = 6,
+    bad_handshake_response                = 7,
+    bad_message                           = 8
 };
 
 const std::error_category& error_category() noexcept;

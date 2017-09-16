@@ -44,6 +44,9 @@ public:
     // Schema version used for uninitialized Realms
     static const uint64_t NotVersioned;
 
+    // Column name used for subtables which store an array
+    static constexpr const char* const ArrayColumnName = "!ARRAY_VALUE";
+
     // get the last set schema version
     static uint64_t get_schema_version(Group const& group);
 
@@ -71,7 +74,7 @@ public:
     // property we were relying on)
     static void verify_valid_external_changes(std::vector<SchemaChange> const& changes);
 
-    static void verify_compatible_for_read_only(std::vector<SchemaChange> const& changes);
+    static void verify_compatible_for_immutable_and_readonly(std::vector<SchemaChange> const& changes);
 
     // check if changes is empty, and throw an exception if not
     static void verify_no_changes_required(std::vector<SchemaChange> const& changes);
