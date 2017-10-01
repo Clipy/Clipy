@@ -96,16 +96,7 @@ class AppDelegate: NSObject {
             return
         }
 
-        let modifierFlags = NSEvent.modifierFlags()
-
-        switch modifierFlags {
-        case [.option]:
-            AppEnvironment.current.clipService.clear(clip: clip)
-
-        default:
-            AppEnvironment.current.pasteService.copyToPasteboard(with: clip)
-            AppEnvironment.current.pasteService.paste()
-        }
+        AppEnvironment.current.pasteService.paste(with: clip)
     }
 
     func selectSnippetMenuItem(_ sender: AnyObject) {
