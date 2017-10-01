@@ -33,10 +33,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  The URL of the remote Realm upon the Realm Object Server.
- 
+
  @warning The URL cannot end with `.realm`, `.realm.lock` or `.realm.management`.
  */
 @property (nonatomic, readonly) NSURL *realmURL;
+
+
+/**
+ Whether SSL certificate validation is enabled for the connection associated
+ with this configuration value. SSL certificate validation is ON by default.
+
+ @warning NEVER disable certificate validation for clients and servers in production.
+ */
+@property (nonatomic) BOOL enableSSLValidation;
 
 /**
  Create a sync configuration instance.

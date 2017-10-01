@@ -30,6 +30,10 @@ public:
 
     explicit ArrayBigBlobs(Allocator&, bool nullable) noexcept;
 
+    // Disable copying, this is not allowed.
+    ArrayBigBlobs& operator=(const ArrayBigBlobs&) = delete;
+    ArrayBigBlobs(const ArrayBigBlobs&) = delete;
+
     BinaryData get(size_t ndx) const noexcept;
     BinaryData get_at(size_t ndx, size_t& pos) const noexcept;
     void set(size_t ndx, BinaryData value, bool add_zero_term = false);
@@ -129,7 +133,7 @@ inline void ArrayBigBlobs::erase(size_t ndx)
 {
     ref_type blob_ref = Array::get_as_ref(ndx);
     if (blob_ref != 0) {                       // nothing to destroy if null
-        Array::destroy(blob_ref, get_alloc()); // Shallow
+        Array::destroy_deep(blob_ref, get_alloc()); // Deep
     }
     Array::erase(ndx);
 }

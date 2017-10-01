@@ -28,8 +28,6 @@ namespace realm {
 
 
 class Table;
-template <class>
-class BasicTable;
 
 
 /// A reference-counting "smart pointer" for referring to table
@@ -41,13 +39,13 @@ class BasicTable;
 /// determined by scope (see below).
 ///
 /// Please take note of the distinction between a "table" and a "table
-/// accessor" here. A table accessor is an instance of `Table` or
-/// `BasicTable<Spec>`, and it may, or may not be attached to an
+/// accessor" here. A table accessor is an instance of `Table`,
+/// and it may, or may not be attached to an
 /// actual table at any specific point in time, but this state of
 /// attachment of the accessor has nothing to do with the function of
 /// the smart pointer. Also, in the rest of the documentation of this
 /// class, whenever you see `Table::%foo`, you are supposed to read it
-/// as, `Table::%foo` or `BasicTable<Spec>::%foo`.
+/// as, `Table::%foo`.
 ///
 ///
 /// Table accessors are either created directly by an application via
@@ -252,14 +250,6 @@ private:
         typedef void type;
     };
 
-    template <class Spec>
-    struct GetRowAccType<BasicTable<Spec>> {
-        typedef typename BasicTable<Spec>::RowAccessor type;
-    };
-    template <class Spec>
-    struct GetRowAccType<const BasicTable<Spec>> {
-        typedef typename BasicTable<Spec>::ConstRowAccessor type;
-    };
     typedef typename GetRowAccType<T>::type RowAccessor;
 
 public:
@@ -269,21 +259,18 @@ public:
         return (*this->get())[i];
     }
 
+    explicit BasicTableRef(T* t) noexcept
+        : util::bind_ptr<T>(t)
+    {
+    }
+
 private:
     friend class SubtableColumnBase;
     friend class Table;
     friend class Group;
 
     template <class>
-    friend class BasicTable;
-
-    template <class>
     friend class BasicTableRef;
-
-    explicit BasicTableRef(T* t) noexcept
-        : util::bind_ptr<T>(t)
-    {
-    }
 
     typedef typename util::bind_ptr<T>::casting_move_tag casting_move_tag;
     template <class U>

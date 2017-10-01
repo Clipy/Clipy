@@ -82,8 +82,8 @@ static inline bool nsnumber_is_like_float(__unsafe_unretained NSNumber *const ob
            data_type == *@encode(unsigned int) ||
            data_type == *@encode(unsigned long) ||
            data_type == *@encode(unsigned long long) ||
-           // A double is like float if it fits within float bounds
-           (data_type == *@encode(double) && ABS([obj doubleValue]) <= FLT_MAX);
+           // A double is like float if it fits within float bounds or is NaN.
+           (data_type == *@encode(double) && (ABS([obj doubleValue]) <= FLT_MAX || isnan([obj doubleValue])));
 }
 
 static inline bool nsnumber_is_like_double(__unsafe_unretained NSNumber *const obj)
@@ -136,8 +136,9 @@ BOOL RLMIsObjectValidForProperty(__unsafe_unretained id const obj,
             return [obj isKindOfClass:[NSData class]];
         case RLMPropertyTypeAny:
             return NO;
-        case RLMPropertyTypeObject:
-        case RLMPropertyTypeLinkingObjects: {
+        case RLMPropertyTypeLinkingObjects:
+            return YES;
+        case RLMPropertyTypeObject: {
             // only NSNull, nil, or objects which derive from RLMObject and match the given
             // object class are valid
             RLMObjectBase *objBase = RLMDynamicCast<RLMObjectBase>(obj);
@@ -167,6 +168,36 @@ BOOL RLMIsObjectValidForProperty(__unsafe_unretained id const obj,
         }
     }
     @throw RLMException(@"Invalid RLMPropertyType specified");
+}
+
+void RLMValidateValueForProperty(__unsafe_unretained id const obj,
+                                 __unsafe_unretained RLMProperty *const prop) {
+    switch (prop.type) {
+        case RLMPropertyTypeString:
+        case RLMPropertyTypeBool:
+        case RLMPropertyTypeDate:
+        case RLMPropertyTypeInt:
+        case RLMPropertyTypeFloat:
+        case RLMPropertyTypeDouble:
+        case RLMPropertyTypeData:
+            if (!RLMIsObjectValidForProperty(obj, prop)) {
+                @throw RLMException(@"Invalid value '%@' for property '%@'", obj, prop.name);
+            }
+            break;
+        case RLMPropertyTypeObject:
+            break;
+        case RLMPropertyTypeArray: {
+            if (obj && obj != NSNull.null && ![obj conformsToProtocol:@protocol(NSFastEnumeration)]) {
+                @throw RLMException(@"Array property value (%@) is not enumerable.", obj);
+            }
+            break;
+        }
+        case RLMPropertyTypeAny:
+        case RLMPropertyTypeLinkingObjects:
+            // It should not be possible to have either of these property types
+            // in the persisted properties array
+            REALM_UNREACHABLE();
+    }
 }
 
 NSDictionary *RLMDefaultValuesForObjectSchema(__unsafe_unretained RLMObjectSchema *const objectSchema) {
@@ -211,7 +242,7 @@ NSException *RLMException(NSString *fmt, ...) {
 }
 
 NSException *RLMException(std::exception const& exception) {
-    return RLMException(@"%@", @(exception.what()));
+    return RLMException(@"%s", exception.what());
 }
 
 NSError *RLMMakeError(RLMError code, std::exception const& exception) {
@@ -268,42 +299,6 @@ void RLMSetErrorOrThrow(NSError *error, NSError **outError) {
         }
         @throw RLMException(msg, @{NSUnderlyingErrorKey: error});
     }
-}
-
-// Determines if class1 descends from class2
-static inline BOOL RLMIsSubclass(Class class1, Class class2) {
-    class1 = class_getSuperclass(class1);
-    return RLMIsKindOfClass(class1, class2);
-}
-
-static bool treatFakeObjectAsRLMObject = false;
-
-void RLMSetTreatFakeObjectAsRLMObject(BOOL flag) {
-    treatFakeObjectAsRLMObject = flag;
-}
-
-BOOL RLMIsObjectOrSubclass(Class klass) {
-    if (RLMIsKindOfClass(klass, RLMObjectBase.class)) {
-        return YES;
-    }
-
-    if (treatFakeObjectAsRLMObject) {
-        static Class FakeObjectClass = NSClassFromString(@"FakeObject");
-        return RLMIsKindOfClass(klass, FakeObjectClass);
-    }
-    return NO;
-}
-
-BOOL RLMIsObjectSubclass(Class klass) {
-    if (RLMIsSubclass(class_getSuperclass(klass), RLMObjectBase.class)) {
-        return YES;
-    }
-
-    if (treatFakeObjectAsRLMObject) {
-        static Class FakeObjectClass = NSClassFromString(@"FakeObject");
-        return RLMIsSubclass(klass, FakeObjectClass);
-    }
-    return NO;
 }
 
 BOOL RLMIsDebuggerAttached()

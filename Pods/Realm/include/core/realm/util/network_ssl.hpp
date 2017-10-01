@@ -66,6 +66,42 @@ namespace util {
 namespace network {
 namespace ssl {
 
+enum class Error {
+    certificate_rejected = 1,
+};
+
+const std::error_category& ssl_error_category();
+
+std::error_condition make_error_condition(Error value);
+
+} // namespace ssl
+} // namespace network
+} // namespace util
+} // namespace realm
+
+namespace std {
+
+template <>
+struct is_error_condition_enum<realm::util::network::ssl::Error>: public true_type {};
+
+} // namespace std
+
+namespace realm {
+namespace util {
+namespace network {
+namespace ssl {
+
+#if REALM_HAVE_OPENSSL
+
+const std::error_category& openssl_error_category();
+
+#elif REALM_HAVE_SECURE_TRANSPORT
+
+const std::error_category& secure_transport_error_category();
+
+#endif
+
+
 class ProtocolNotSupported;
 
 
@@ -111,21 +147,9 @@ private:
     void ssl_use_verify_file(const std::string& path, std::error_code&);
 
 #if REALM_HAVE_OPENSSL
-    class OpensslErrorCategory: public std::error_category {
-    public:
-        const char* name() const noexcept override final;
-        std::string message(int value) const override final;
-    };
-    static OpensslErrorCategory s_openssl_error_category;
-
     SSL_CTX* m_ssl_ctx = nullptr;
+
 #elif REALM_HAVE_SECURE_TRANSPORT
-    class SecureTransportErrorCategory: public std::error_category {
-    public:
-        const char* name() const noexcept override final;
-        std::string message(int value) const override final;
-    };
-    static SecureTransportErrorCategory s_secure_transport_error_category;
 
 #if REALM_HAVE_KEYCHAIN_APIS
     static util::CFPtr<CFArrayRef> load_pem_file(const std::string& path, SecKeychainRef, std::error_code&);
@@ -144,6 +168,7 @@ private:
 
     util::CFPtr<CFArrayRef> m_trust_anchors;
 #endif // REALM_HAVE_KEYCHAIN_APIS
+
 #endif
 
     friend class Stream;
@@ -157,6 +182,14 @@ private:
 /// until its completion handler starts executing.
 class Stream {
 public:
+    using port_type = util::network::Endpoint::port_type;
+    using SSLVerifyCallback = bool(const std::string& server_address,
+                                   port_type server_port,
+                                   const char* pem_data,
+                                   size_t pem_size,
+                                   int preverify_ok,
+                                   int depth);
+
     enum HandshakeType { client, server };
 
     Stream(Socket&, Context&, HandshakeType);
@@ -189,6 +222,61 @@ public:
     /// set_check_host() is only useful if verify_mode is
     /// set to VerifyMode::peer.
     void set_check_host(std::string host_name);
+    const std::string& get_host_name();
+
+    /// get_server_port() and set_server_port() are getter and setter for
+    /// the server port. They are only used by the verify callback function
+    /// below.
+    port_type get_server_port();
+    void set_server_port(port_type server_port);
+
+    /// If use_verify_callback() is called, the SSL certificate chain of
+    /// the server is presented to callback, one certificate at a time.
+    /// The SSL connection is accepted if and only if callback returns true
+    /// for all certificates.
+    /// The signature of \param callback is
+    ///
+    /// bool(const std::string& server_address,
+    ///      port_type server_port,
+    ///      const char* pem_data,
+    ///      size_t pem_size,
+    ///      int preverify_ok,
+    ///      int depth);
+    //
+    /// server address and server_port is the address and port of the server
+    /// that a SSL connection is being established to.
+    /// pem_data is the certificate of length pem_size in
+    /// the PEM format. preverify_ok is OpenSSL's preverification of the
+    /// certificate. preverify_ok is either 0, or 1. If preverify_ok is 1,
+    /// OpenSSL has accepted the certificate and it will generally be safe
+    /// to trust that certificate. depth represents the position of the
+    /// certificate in the certificate chain sent by the server. depth = 0
+    /// represents the actual server certificate that should contain the
+    /// host name(server address) of the server. The highest depth is the
+    /// root certificate.
+    /// The callback function will receive the certificates starting from
+    /// the root certificate and moving down the chain until it reaches the
+    /// server's own certificate with a host name. The depth of the last
+    /// certificate is 0. The depth of the first certificate is chain
+    /// length - 1.
+    ///
+    /// The return value of the callback function decides whether the
+    /// client accepts the certificate. If the return value is false, the
+    /// processing of the certificate chain is interrupted and the SSL
+    /// connection is rejected. If the return value is true, the verification
+    /// process continues. If the callback function returns true for all
+    /// presented certificates including the depth == 0 certificate, the
+    /// SSL connection is accepted.
+    ///
+    /// A recommended way of using the callback function is to return true
+    /// if preverify_ok = 1 and depth > 0,
+    /// always check the host name if depth = 0,
+    /// and use an independent verification step if preverify_ok = 0.
+    ///
+    /// Another possible way of using the callback is to collect all the
+    /// certificates until depth = 0, and present the entire chain for
+    /// independent verification.
+    void use_verify_callback(std::function<SSLVerifyCallback>* callback);
 
     /// @{
     ///
@@ -197,7 +285,7 @@ public:
     /// operations (`lowest_layer().cancel()`), the stream may be left in a bad
     /// state (see below).
     ///
-    /// The handshake operation must complete sucessfully before any read,
+    /// The handshake operation must complete successfully before any read,
     /// write, or shutdown operations are performed.
     ///
     /// The shutdown operation sends the shutdown alert to the peer, and
@@ -205,7 +293,7 @@ public:
     /// underlying socket. It is an error if the shutdown operation is initiated
     /// while there are read or write operations in progress. No read or write
     /// operations are allowed to be initiated after the shutdown operation has
-    /// been initated. When the shutdown operation has completed, it is safe to
+    /// been initiated. When the shutdown operation has completed, it is safe to
     /// close the underlying socket (`lowest_layer().close()`).
     ///
     /// If a write operation is executing while, or is initiated after a close
@@ -287,7 +375,17 @@ private:
     const HandshakeType m_handshake_type;
 
     // The host name that the certificate should be checked against.
+    // The host name is called server address in the certificate verify
+    // callback function.
     std::string m_host_name;
+
+    // The port of the server which is used in the certificate verify
+    // callback function.
+    port_type m_server_port;
+
+    // The callback for certificate verification and an
+    // opaque argument that will be supplied to the callback.
+    std::function<SSLVerifyCallback>* m_ssl_verify_callback;
 
     // See Service::BasicStreamOps for details on these these 6 functions.
     void do_init_read_async(std::error_code&, Want&) noexcept;
@@ -313,7 +411,7 @@ private:
     // nonblocking mode, it must keep setting `want` to something other than
     // `Want::nothing` until the alert has been sent. When the shutdown alert
     // has been sent, it is safe to shut down the sending side of the underlying
-    // socket. On failure, ssl_shutdown() must set `ec` to something differet
+    // socket. On failure, ssl_shutdown() must set `ec` to something different
     // than `std::error_code()` and return false. On success, it must set `ec`
     // to `std::error_code()`, and return true if a shutdown alert from the peer
     // has already been received, otherwise it must return false. When it sets
@@ -324,12 +422,14 @@ private:
     // completed) must wait for reception on the peers shutdown alert.
     //
     // Note: The semantics around the second invocation of shutdown is currently
-    // unused by the higer level API, because of a requirement of compatibility
+    // unused by the higher level API, because of a requirement of compatibility
     // with Apple's Secure Transport API.
     void ssl_init();
     void ssl_destroy() noexcept;
     void ssl_set_verify_mode(VerifyMode, std::error_code&);
     void ssl_set_check_host(std::string, std::error_code&);
+    void ssl_use_verify_callback(std::function<SSLVerifyCallback>* callback, std::error_code&);
+
     void ssl_handshake(std::error_code&, Want& want) noexcept;
     bool ssl_shutdown(std::error_code& ec, Want& want) noexcept;
     std::size_t ssl_read(char* buffer, std::size_t size,
@@ -342,6 +442,8 @@ private:
     static BioMethod s_bio_method;
     SSL* m_ssl = nullptr;
     std::error_code m_bio_error_code;
+
+    int m_ssl_index = -1;
 
     template<class Oper>
     std::size_t ssl_perform(Oper oper, std::error_code& ec, Want& want) noexcept;
@@ -358,8 +460,15 @@ private:
     static long bio_ctrl(BIO*, int, long, void*) noexcept;
     static int bio_create(BIO*) noexcept;
     static int bio_destroy(BIO*) noexcept;
-    static int verify_callback(int preverify_ok, X509_STORE_CTX *ctx) noexcept;
 
+    // verify_callback_using_hostname is used as an argument to OpenSSL's SSL_set_verify function.
+    // verify_callback_using_hostname verifies that the certificate is valid and contains
+    // m_host_name as a Common Name or Subject Alternative Name.
+    static int verify_callback_using_hostname(int preverify_ok, X509_STORE_CTX *ctx) noexcept;
+
+    // verify_callback_using_delegate() is also used as an argument to OpenSSL's set_verify_function.
+    // verify_callback_using_delegate() calls out to the user supplied verify callback.
+    static int verify_callback_using_delegate(int preverify_ok, X509_STORE_CTX *ctx) noexcept;
 #elif REALM_HAVE_SECURE_TRANSPORT
     util::CFPtr<SSLContextRef> m_ssl;
     VerifyMode m_verify_mode = VerifyMode::none;
@@ -398,8 +507,6 @@ private:
     friend class Service::BasicStreamOps<Stream>;
     friend class network::ReadAheadBuffer;
 };
-
-
 
 
 // Implementation
@@ -450,7 +557,6 @@ inline void Context::use_verify_file(const std::string& path)
     if (ec)
         throw std::system_error(ec);
 }
-
 
 class Stream::HandshakeOperBase: public Service::IoOper {
 public:
@@ -605,12 +711,35 @@ inline void Stream::set_verify_mode(VerifyMode mode)
 
 inline void Stream::set_check_host(std::string host_name)
 {
+    m_host_name = host_name;
     std::error_code ec;
     ssl_set_check_host(host_name, ec);
     if (ec)
         throw std::system_error(ec);
 }
 
+inline const std::string& Stream::get_host_name()
+{
+    return m_host_name;
+}
+
+inline Stream::port_type Stream::get_server_port()
+{
+    return m_server_port;
+}
+
+inline void Stream::set_server_port(port_type server_port)
+{
+    m_server_port = server_port;
+}
+
+inline void Stream::use_verify_callback(std::function<SSLVerifyCallback>* callback)
+{
+    std::error_code ec;
+    ssl_use_verify_callback(callback, ec);
+    if (ec)
+        throw std::system_error(ec);
+}
 inline void Stream::handshake()
 {
     std::error_code ec;
@@ -927,7 +1056,7 @@ inline bool Stream::ssl_shutdown(std::error_code& ec, Want& want) noexcept
 // completed, nor failed), ssl_perform() will set `ec` to `std::system_error()`,
 // `want` to something other than `Want::nothing`, and return zero. Note that
 // read and write operations are partial in the sense that they do not need to
-// read or write everything before completing successfully. They only nead to
+// read or write everything before completing successfully. They only need to
 // read or write at least one byte to complete successfully.
 //
 // Such a situation will normally only happen when the underlying TCP socket is
@@ -965,7 +1094,7 @@ std::size_t Stream::ssl_perform(Oper oper, std::error_code& ec, Want& want) noex
     int ssl_error = SSL_get_error(m_ssl, ret);
     int sys_error = int(ERR_get_error());
 
-    // Guaranteed by the documentstion of SSL_get_error()
+    // Guaranteed by the documentation of SSL_get_error()
     REALM_ASSERT((ret > 0) == (ssl_error == SSL_ERROR_NONE));
 
     REALM_ASSERT(!m_bio_error_code || ssl_error == SSL_ERROR_SYSCALL);
@@ -1039,14 +1168,14 @@ std::size_t Stream::ssl_perform(Oper oper, std::error_code& ec, Want& want) noex
                 // errno = 0(Undefined error) in the observed case.
                 // At the moment. we will report
                 // premature_end_of_input.
-                // If we see this error case occuring in other situations in
+                // If we see this error case occurring in other situations in
                 // the future, we will have to update this case.
                 ec = network::premature_end_of_input;
             }
             want = Want::nothing;
             return 0;
         case SSL_ERROR_SSL:
-            ec = std::error_code(sys_error, Context::s_openssl_error_category);
+            ec = std::error_code(sys_error, openssl_error_category());
             want = Want::nothing;
             return 0;
         default:
@@ -1105,7 +1234,7 @@ inline int Stream::do_ssl_shutdown() noexcept
 // If an error occurred, ssl_perform() will set `ec` to something other than
 // `std::system_error()`, `want` to `Want::nothing`, and return 0.
 //
-// If no error occured, and the operation completed (`!ec && want ==
+// If no error occurred, and the operation completed (`!ec && want ==
 // Want::nothing`), then the return value indicates the outcome of the
 // operation.
 //
@@ -1159,7 +1288,7 @@ std::size_t Stream::ssl_perform(Oper oper, std::error_code& ec, Want& want) noex
         return n;
     }
 
-    ec = std::error_code(result, Context::s_secure_transport_error_category);
+    ec = std::error_code(result, secure_transport_error_category());
     want = Want::nothing;
     return 0;
 }

@@ -110,6 +110,6 @@ std::vector<char> metadata_realm_encryption_key()
     auto key_bytes = reinterpret_cast<const char *>(CFDataGetBytePtr(key_data.get()));
     return std::vector<char>(key_bytes, key_bytes + key_size);
 }
-    
+
 }
 }

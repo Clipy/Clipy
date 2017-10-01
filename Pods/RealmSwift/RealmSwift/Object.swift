@@ -28,8 +28,8 @@ import Realm.Private
 
  ```swift
  class Dog: Object {
-     dynamic var name: String = ""
-     dynamic var adopted: Bool = false
+     @objc dynamic var name: String = ""
+     @objc dynamic var adopted: Bool = false
      let siblings = List<Dog>()
  }
  ```
@@ -53,7 +53,7 @@ import Realm.Private
  number, use `RealmOptional<Int>`, `RealmOptional<Float>`, `RealmOptional<Double>`, or `RealmOptional<Bool>` instead,
  which wraps an optional numeric value.
 
- All property types except for `List` and `RealmOptional` *must* be declared as `dynamic var`. `List` and
+ All property types except for `List` and `RealmOptional` *must* be declared as `@objc dynamic var`. `List` and
  `RealmOptional` properties must be declared as non-dynamic `let` properties. Swift `lazy` properties are not allowed.
 
  Note that none of the restrictions listed above apply to properties that are configured to be ignored by Realm.
@@ -98,8 +98,7 @@ open class Object: RLMObjectBase, ThreadConfined {
      - parameter value:  The value used to populate the object.
      */
     public init(value: Any) {
-        type(of: self).sharedSchema() // ensure this class' objectSchema is loaded in the partialSharedSchema
-        super.init(value: value, schema: RLMSchema.partialShared())
+        super.init(value: value, schema: .partialPrivateShared())
     }
 
 
@@ -155,7 +154,7 @@ open class Object: RLMObjectBase, ThreadConfined {
 
      - returns: The name of the property designated as the primary key, or `nil` if the model has no primary key.
      */
-    open class func primaryKey() -> String? { return nil }
+    @objc open class func primaryKey() -> String? { return nil }
 
     /**
      Override this method to specify the names of properties to ignore. These properties will not be managed by
@@ -163,7 +162,7 @@ open class Object: RLMObjectBase, ThreadConfined {
 
      - returns: An array of property names to ignore.
      */
-    open class func ignoredProperties() -> [String] { return [] }
+    @objc open class func ignoredProperties() -> [String] { return [] }
 
     /**
      Returns an array of property names for properties which should be indexed.
@@ -172,12 +171,12 @@ open class Object: RLMObjectBase, ThreadConfined {
 
      - returns: An array of property names.
      */
-    open class func indexedProperties() -> [String] { return [] }
+    @objc open class func indexedProperties() -> [String] { return [] }
 
     // MARK: Key-Value Coding & Subscripting
 
     /// Returns or sets the value of the property with the given name.
-    open subscript(key: String) -> Any? {
+    @objc open subscript(key: String) -> Any? {
         get {
             if realm == nil {
                 return value(forKey: key)
@@ -449,7 +448,7 @@ public class ObjectUtil: NSObject {
             } else if type is RealmOptional<Bool>.Type {
                 properties[name] = NSNumber(value: PropertyType.bool.rawValue)
             } else if prop.value as? RLMOptionalBase != nil {
-                throwRealmException("'\(type)' is not a a valid RealmOptional type.")
+                throwRealmException("'\(type)' is not a valid RealmOptional type.")
             } else if mirror.displayStyle == .optional || type is ExpressibleByNilLiteral.Type {
                 properties[name] = NSNull()
             }

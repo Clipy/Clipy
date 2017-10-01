@@ -71,6 +71,7 @@ public:
     void adj_acc_erase_row(size_t) noexcept override;
     void adj_acc_move_over(size_t, size_t) noexcept override;
     void adj_acc_swap_rows(size_t, size_t) noexcept override;
+    void adj_acc_merge_rows(size_t, size_t) noexcept override;
     void adj_acc_clear_root_table() noexcept override;
     void mark(int) noexcept override;
 
@@ -182,6 +183,14 @@ inline void BacklinkColumn::adj_acc_move_over(size_t from_row_ndx, size_t to_row
 inline void BacklinkColumn::adj_acc_swap_rows(size_t row_ndx_1, size_t row_ndx_2) noexcept
 {
     Column::adj_acc_swap_rows(row_ndx_1, row_ndx_2);
+
+    using tf = _impl::TableFriend;
+    tf::mark(*m_origin_table);
+}
+
+inline void BacklinkColumn::adj_acc_merge_rows(size_t old_row_ndx, size_t new_row_ndx) noexcept
+{
+    Column::adj_acc_merge_rows(old_row_ndx, new_row_ndx);
 
     using tf = _impl::TableFriend;
     tf::mark(*m_origin_table);

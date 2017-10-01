@@ -20,15 +20,14 @@
 #define REALM_RESULTS_HPP
 
 #include "collection_notifications.hpp"
-#include "shared_realm.hpp"
+#include "descriptor_ordering.hpp"
 #include "impl/collection_notifier.hpp"
+#include "property.hpp"
 
 #include <realm/table_view.hpp>
 #include <realm/util/optional.hpp>
 
 namespace realm {
-template<typename T> class BasicRowExpr;
-using RowExpr = BasicRowExpr<Table>;
 class Mixed;
 class ObjectSchema;
 
@@ -42,10 +41,10 @@ public:
     // or a wrapper around a query and a sort order which creates and updates
     // the tableview as needed
     Results();
-    Results(SharedRealm r, Table& table);
-    Results(SharedRealm r, Query q, SortDescriptor s = {}, SortDescriptor d = {});
-    Results(SharedRealm r, TableView tv, SortDescriptor s = {}, SortDescriptor d = {});
-    Results(SharedRealm r, LinkViewRef lv, util::Optional<Query> q = {}, SortDescriptor s = {});
+    Results(std::shared_ptr<Realm> r, Table& table);
+    Results(std::shared_ptr<Realm> r, Query q, DescriptorOrdering o = {});
+    Results(std::shared_ptr<Realm> r, TableView tv, DescriptorOrdering o = {});
+    Results(std::shared_ptr<Realm> r, LinkViewRef lv, util::Optional<Query> q = {}, SortDescriptor s = {});
     ~Results();
 
     // Results is copyable and moveable
@@ -55,7 +54,7 @@ public:
     Results& operator=(const Results&);
 
     // Get the Realm
-    SharedRealm get_realm() const { return m_realm; }
+    std::shared_ptr<Realm> get_realm() const { return m_realm; }
 
     // Object schema describing the vendored object type
     const ObjectSchema &get_object_schema() const;
@@ -64,17 +63,16 @@ public:
     // Returned query will not be valid if the current mode is Empty
     Query get_query() const;
 
-    // Get the currently applied sort order for this Results
-    SortDescriptor const& get_sort() const noexcept { return m_sort; }
+    // Get the list of sort and distinct operations applied for this Results.
+    DescriptorOrdering const& get_descriptor_ordering() const noexcept { return m_descriptor_ordering; }
 
-    // Get the currently applied distinct condition for this Results
-    SortDescriptor const& get_distinct() const noexcept { return m_distinct; }
-    
     // Get a tableview containing the same rows as this Results
     TableView get_tableview();
 
     // Get the object type which will be returned by get()
     StringData get_object_type() const noexcept;
+
+    PropertyType get_type() const;
 
     // Get the LinkView this Results is derived from, if any
     LinkViewRef get_linkview() const { return m_link_view; }
@@ -85,18 +83,29 @@ public:
 
     // Get the row accessor for the given index
     // Throws OutOfBoundsIndexException if index >= size()
-    RowExpr get(size_t index);
+    template<typename T = RowExpr>
+    T get(size_t index);
+
+    // Get the boxed row accessor for the given index
+    // Throws OutOfBoundsIndexException if index >= size()
+    template<typename Context>
+    auto get(Context&, size_t index);
 
     // Get a row accessor for the first/last row, or none if the results are empty
     // More efficient than calling size()+get()
-    util::Optional<RowExpr> first();
-    util::Optional<RowExpr> last();
+    template<typename T = RowExpr>
+    util::Optional<T> first();
+    template<typename T = RowExpr>
+    util::Optional<T> last();
 
-    // Get the first index of the given row in this results, or not_found
+    // Get the index of the first row matching the query in this table
+    size_t index_of(Query&& q);
+
+    // Get the first index of the given value in this results, or not_found
     // Throws DetachedAccessorException if row is not attached
     // Throws IncorrectTableException if row belongs to a different table
-    size_t index_of(size_t row_ndx);
-    size_t index_of(Row const& row);
+    template<typename T>
+    size_t index_of(T const& value);
 
     // Delete all of the rows in this Results from the Realm
     // size() will always be zero afterwards
@@ -106,14 +115,12 @@ public:
     // Create a new Results by further filtering or sorting this Results
     Results filter(Query&& q) const;
     Results sort(SortDescriptor&& sort) const;
+    Results sort(std::vector<std::pair<std::string, bool>> const& keypaths) const;
 
     // Create a new Results by removing duplicates
-    // FIXME: The current implementation of distinct() breaks the Results API.
-    // This is tracked by the following issues:
-    // - https://github.com/realm/realm-object-store/issues/266
-    // - https://github.com/realm/realm-core/issues/2332
-    Results distinct(SortDescriptor&& uniqueness);
-    
+    Results distinct(DistinctDescriptor&& uniqueness) const;
+    Results distinct(std::vector<std::string> const& keypaths) const;
+
     // Return a snapshot of this Results that never updates to reflect changes in the underlying data.
     Results snapshot() const &;
     Results snapshot() &&;
@@ -123,10 +130,10 @@ public:
     // sum() returns 0, except for when it returns none
     // Throws UnsupportedColumnTypeException for sum/average on timestamp or non-numeric column
     // Throws OutOfBoundsIndexException for an out-of-bounds column
-    util::Optional<Mixed> max(size_t column);
-    util::Optional<Mixed> min(size_t column);
-    util::Optional<Mixed> average(size_t column);
-    util::Optional<Mixed> sum(size_t column);
+    util::Optional<Mixed> max(size_t column=0);
+    util::Optional<Mixed> min(size_t column=0);
+    util::Optional<double> average(size_t column=0);
+    util::Optional<Mixed> sum(size_t column=0);
 
     enum class Mode {
         Empty, // Backed by nothing (for missing tables)
@@ -172,7 +179,7 @@ public:
     struct UnsupportedColumnTypeException : public std::logic_error {
         size_t column_index;
         StringData column_name;
-        DataType column_type;
+        PropertyType property_type;
 
         UnsupportedColumnTypeException(size_t column, const Table* table, const char* operation);
     };
@@ -180,7 +187,8 @@ public:
     // Create an async query from this Results
     // The query will be run on a background thread and delivered to the callback,
     // and then rerun after each commit (if needed) and redelivered if it changed
-    NotificationToken async(std::function<void (std::exception_ptr)> target);
+    template<typename Func>
+    NotificationToken async(Func&& target);
     NotificationToken add_notification_callback(CollectionChangeCallback cb) &;
 
     bool wants_background_updates() const { return m_wants_background_updates; }
@@ -194,21 +202,26 @@ public:
         friend class _impl::ResultsNotifier;
         static void set_table_view(Results& results, TableView&& tv);
     };
-    
+
+    template<typename Context> auto first(Context&);
+    template<typename Context> auto last(Context&);
+
+    template<typename Context, typename T>
+    size_t index_of(Context&, T value);
+
 private:
     enum class UpdatePolicy {
         Auto,  // Update automatically to reflect changes in the underlying data.
         Never, // Never update.
     };
 
-    SharedRealm m_realm;
+    std::shared_ptr<Realm> m_realm;
     mutable const ObjectSchema *m_object_schema = nullptr;
     Query m_query;
     TableView m_table_view;
     LinkViewRef m_link_view;
-    Table* m_table = nullptr;
-    SortDescriptor m_sort;
-    SortDescriptor m_distinct;
+    TableRef m_table;
+    DescriptorOrdering m_descriptor_ordering;
 
     _impl::CollectionNotifier::Handle<_impl::ResultsNotifier> m_notifier;
 
@@ -225,14 +238,66 @@ private:
 
     void prepare_async();
 
+    template<typename T>
+    util::Optional<T> try_get(size_t);
+
     template<typename Int, typename Float, typename Double, typename Timestamp>
     util::Optional<Mixed> aggregate(size_t column,
                                     const char* name,
                                     Int agg_int, Float agg_float,
                                     Double agg_double, Timestamp agg_timestamp);
+    void prepare_for_aggregate(size_t column, const char* name);
 
     void set_table_view(TableView&& tv);
+
+    template<typename Fn>
+    auto dispatch(Fn&&) const;
 };
+
+template<typename Func>
+NotificationToken Results::async(Func&& target)
+{
+    return this->add_notification_callback([target = std::forward<Func>(target)](CollectionChangeSet const&, std::exception_ptr e) {
+        target(e);
+    });
 }
 
-#endif /* REALM_RESULTS_HPP */
+template<typename Fn>
+auto Results::dispatch(Fn&& fn) const
+{
+    return switch_on_type(get_type(), std::forward<Fn>(fn));
+}
+
+template<typename Context>
+auto Results::get(Context& ctx, size_t row_ndx)
+{
+    return dispatch([&](auto t) { return ctx.box(this->get<std::decay_t<decltype(*t)>>(row_ndx)); });
+}
+
+template<typename Context>
+auto Results::first(Context& ctx)
+{
+    // GCC 4.9 complains about `ctx` not being defined within the lambda without this goofy capture
+    return dispatch([this, ctx = &ctx](auto t) {
+        auto value = this->first<std::decay_t<decltype(*t)>>();
+        return value ? static_cast<decltype(ctx->no_value())>(ctx->box(*value)) : ctx->no_value();
+    });
+}
+
+template<typename Context>
+auto Results::last(Context& ctx)
+{
+    return dispatch([&](auto t) {
+        auto value = this->last<std::decay_t<decltype(*t)>>();
+        return value ? static_cast<decltype(ctx.no_value())>(ctx.box(*value)) : ctx.no_value();
+    });
+}
+
+template<typename Context, typename T>
+size_t Results::index_of(Context& ctx, T value)
+{
+    return dispatch([&](auto t) { return this->index_of(ctx.template unbox<std::decay_t<decltype(*t)>>(value)); });
+}
+} // namespace realm
+
+#endif // REALM_RESULTS_HPP

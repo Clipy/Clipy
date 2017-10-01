@@ -2,35 +2,32 @@ import Foundation
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
-public func beEmpty<S: Sequence>() -> NonNilMatcherFunc<S> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
-        failureMessage.postfixMessage = "be empty"
+public func beEmpty<S: Sequence>() -> Predicate<S> {
+    return Predicate.simple("be empty") { actualExpression in
         let actualSeq = try actualExpression.evaluate()
         if actualSeq == nil {
-            return true
+            return .fail
         }
         var generator = actualSeq!.makeIterator()
-        return generator.next() == nil
+        return PredicateStatus(bool: generator.next() == nil)
     }
 }
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
-public func beEmpty() -> NonNilMatcherFunc<String> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
-        failureMessage.postfixMessage = "be empty"
+public func beEmpty() -> Predicate<String> {
+    return Predicate.simple("be empty") { actualExpression in
         let actualString = try actualExpression.evaluate()
-        return actualString == nil || NSString(string: actualString!).length  == 0
+        return PredicateStatus(bool: actualString == nil || NSString(string: actualString!).length  == 0)
     }
 }
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For NSString instances, it is an empty string.
-public func beEmpty() -> NonNilMatcherFunc<NSString> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
-        failureMessage.postfixMessage = "be empty"
+public func beEmpty() -> Predicate<NSString> {
+    return Predicate.simple("be empty") { actualExpression in
         let actualString = try actualExpression.evaluate()
-        return actualString == nil || actualString!.length == 0
+        return PredicateStatus(bool: actualString == nil || actualString!.length == 0)
     }
 }
 
@@ -39,52 +36,56 @@ public func beEmpty() -> NonNilMatcherFunc<NSString> {
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
-public func beEmpty() -> NonNilMatcherFunc<NSDictionary> {
-	return NonNilMatcherFunc { actualExpression, failureMessage in
-		failureMessage.postfixMessage = "be empty"
+public func beEmpty() -> Predicate<NSDictionary> {
+	return Predicate.simple("be empty") { actualExpression in
 		let actualDictionary = try actualExpression.evaluate()
-		return actualDictionary == nil || actualDictionary!.count == 0
+        return PredicateStatus(bool: actualDictionary == nil || actualDictionary!.count == 0)
 	}
 }
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
-public func beEmpty() -> NonNilMatcherFunc<NSArray> {
-	return NonNilMatcherFunc { actualExpression, failureMessage in
-		failureMessage.postfixMessage = "be empty"
+public func beEmpty() -> Predicate<NSArray> {
+	return Predicate.simple("be empty") { actualExpression in
 		let actualArray = try actualExpression.evaluate()
-		return actualArray == nil || actualArray!.count == 0
+        return PredicateStatus(bool: actualArray == nil || actualArray!.count == 0)
 	}
 }
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
-public func beEmpty() -> NonNilMatcherFunc<NMBCollection> {
-    return NonNilMatcherFunc { actualExpression, failureMessage in
-        failureMessage.postfixMessage = "be empty"
+public func beEmpty() -> Predicate<NMBCollection> {
+    return Predicate.simple("be empty") { actualExpression in
         let actual = try actualExpression.evaluate()
-        return actual == nil || actual!.count == 0
+        return PredicateStatus(bool: actual == nil || actual!.count == 0)
     }
 }
 
 #if _runtime(_ObjC)
 extension NMBObjCMatcher {
-    public class func beEmptyMatcher() -> NMBObjCMatcher {
-        return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
+    public class func beEmptyMatcher() -> NMBPredicate {
+        return NMBPredicate { actualExpression in
             let location = actualExpression.location
             let actualValue = try! actualExpression.evaluate()
-            failureMessage.postfixMessage = "be empty"
+
             if let value = actualValue as? NMBCollection {
                 let expr = Expression(expression: ({ value as NMBCollection }), location: location)
-                return try! beEmpty().matches(expr, failureMessage: failureMessage)
+                return try! beEmpty().satisfies(expr).toObjectiveC()
             } else if let value = actualValue as? NSString {
                 let expr = Expression(expression: ({ value as String }), location: location)
-                return try! beEmpty().matches(expr, failureMessage: failureMessage)
+                return try! beEmpty().satisfies(expr).toObjectiveC()
             } else if let actualValue = actualValue {
-                failureMessage.postfixMessage = "be empty (only works for NSArrays, NSSets, NSIndexSets, NSDictionaries, NSHashTables, and NSStrings)"
-                failureMessage.actualValue = "\(String(describing: type(of: actualValue))) type"
+                let badTypeErrorMsg = "be empty (only works for NSArrays, NSSets, NSIndexSets, NSDictionaries, NSHashTables, and NSStrings)"
+                return NMBPredicateResult(
+                    status: NMBPredicateStatus.fail,
+                    message: NMBExpectationMessage(expectedActualValueTo: badTypeErrorMsg,
+                                                   customActualValue: "\(String(describing: type(of: actualValue))) type")
+                )
             }
-            return false
+            return NMBPredicateResult(
+                status: NMBPredicateStatus.fail,
+                message: NMBExpectationMessage(expectedActualValueTo: "be empty").appendedBeNilHint()
+            )
         }
     }
 }

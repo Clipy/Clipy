@@ -123,12 +123,21 @@ public:
     void initiate_client_handshake(std::string request_uri, std::string host,
                                    HTTPHeaders headers = HTTPHeaders{});
 
-    /// initiate_server_handshake() starts the Socket in server mode. It will wait for a
-    /// HTTP request from a client and respond with a HTTP response. After sending a HTTP
-    /// response, websocket_handshake_completion_handler() is called. Messages can only be sent and
-    /// received after the handshake has completed.
+    /// initiate_server_handshake() starts the Socket in server mode. It will
+    /// wait for a HTTP request from a client and respond with a HTTP response.
+    /// After sending a HTTP response, websocket_handshake_completion_handler()
+    /// is called. Messages can only be sent and received after the handshake
+    /// has completed.
     void initiate_server_handshake();
 
+    /// initiate_server_websocket_after_handshake() starts the Socket in a state
+    /// where it will read and write WebSocket messages but it will expect the
+    /// handshake to have been completed by the caller. The use of this
+    /// function is to perform HTTP routing externally and then start the
+    /// WebSocket in case the HTTP request is an Upgrade to WebSocket.
+    /// Typically, the caller will have used make_http_response() to send the
+    /// HTTP response itself.
+    void initiate_server_websocket_after_handshake();
 
     /// The async_write_* functions send frames. Only one frame should be sent at a time,
     /// meaning that the user must wait for the handler to be called before sending the next frame.
@@ -163,11 +172,21 @@ private:
     std::unique_ptr<Impl> m_impl;
 };
 
+/// make_http_response() takes \a request as a WebSocket handshake request,
+/// validates it, and makes a HTTP response. If the request is invalid, the
+/// return value is None, and ec is set to Error::bad_handshake_request.
+util::Optional<HTTPResponse> make_http_response(const HTTPRequest& request,
+        std::error_code& ec);
 
 enum class Error {
-    bad_handshake_request  = 1, ///< Bad WebSocket handshake response received
-    bad_handshake_response = 2, ///< Bad WebSocket handshake response received
-    bad_message            = 3, ///< Ill-formed WebSocket message
+    bad_request_header_upgrade            = 1,
+    bad_request_header_connection         = 2,
+    bad_request_header_websocket_version  = 3,
+    bad_request_header_websocket_protocol = 4,
+    bad_request_header_websocket_key      = 5,
+    bad_handshake_request                 = 6,
+    bad_handshake_response                = 7,
+    bad_message                           = 8
 };
 
 const std::error_category& error_category() noexcept;

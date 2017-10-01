@@ -1,8 +1,8 @@
 import Foundation
 
-public func containElementSatisfying<S: Sequence, T>(_ predicate: @escaping ((T) -> Bool), _ predicateDescription: String = "") -> NonNilMatcherFunc<S> where S.Iterator.Element == T {
+public func containElementSatisfying<S: Sequence, T>(_ predicate: @escaping ((T) -> Bool), _ predicateDescription: String = "") -> Predicate<S> where S.Iterator.Element == T {
 
-    return NonNilMatcherFunc { actualExpression, failureMessage in
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.actualValue = nil
 
         if predicateDescription == "" {
@@ -22,7 +22,7 @@ public func containElementSatisfying<S: Sequence, T>(_ predicate: @escaping ((T)
         }
 
         return false
-    }
+    }.requireNonNil
 }
 
 #if _runtime(_ObjC)
@@ -38,7 +38,7 @@ public func containElementSatisfying<S: Sequence, T>(_ predicate: @escaping ((T)
                     return false
                 }
 
-                let iterator = NSFastEnumerationIterator(enumeration)
+                var iterator = NSFastEnumerationIterator(enumeration)
                 while let item = iterator.next() {
                     guard let object = item as? NSObject else {
                         continue

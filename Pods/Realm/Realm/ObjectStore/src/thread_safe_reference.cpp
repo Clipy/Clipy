@@ -55,14 +55,14 @@ V ThreadSafeReferenceBase::invalidate_after_import(Realm& destination_realm, T c
     REALM_ASSERT_DEBUG(!m_source_realm->is_in_transaction());
     REALM_ASSERT_DEBUG(!is_invalidated());
 
-    SharedGroup& destination_shared_group = Realm::Internal::get_shared_group(destination_realm);
+    SharedGroup& destination_shared_group = *Realm::Internal::get_shared_group(destination_realm);
     auto unpin_version = util::make_scope_exit([&]() noexcept { invalidate(); });
 
     return construct_with_shared_group(destination_shared_group);
 }
 
 SharedGroup& ThreadSafeReferenceBase::get_source_shared_group() const {
-    return Realm::Internal::get_shared_group(*m_source_realm);
+    return *Realm::Internal::get_shared_group(*m_source_realm);
 }
 
 bool ThreadSafeReferenceBase::has_same_config(Realm& realm) const {
@@ -72,24 +72,27 @@ bool ThreadSafeReferenceBase::has_same_config(Realm& realm) const {
 void ThreadSafeReferenceBase::invalidate() {
     REALM_ASSERT_DEBUG(m_source_realm);
     SharedRealm thread_local_realm = Realm::Internal::get_coordinator(*m_source_realm).get_realm();
-    Realm::Internal::get_shared_group(*thread_local_realm).unpin_version(m_version_id);
+    Realm::Internal::get_shared_group(*thread_local_realm)->unpin_version(m_version_id);
     m_source_realm = nullptr;
 }
 
 ThreadSafeReference<List>::ThreadSafeReference(List const& list)
 : ThreadSafeReferenceBase(list.get_realm())
-, m_link_view(get_source_shared_group().export_linkview_for_handover(list.m_link_view)) { }
+, m_link_view(get_source_shared_group().export_linkview_for_handover(list.m_link_view))
+, m_table(get_source_shared_group().export_table_for_handover(list.m_table))
+{ }
 
 List ThreadSafeReference<List>::import_into_realm(SharedRealm realm) && {
     return invalidate_after_import<List>(*realm, [&](SharedGroup& shared_group) {
-        LinkViewRef link_view = shared_group.import_linkview_from_handover(std::move(m_link_view));
-        return List(std::move(realm), std::move(link_view));
+        if (auto link_view = shared_group.import_linkview_from_handover(std::move(m_link_view)))
+            return List(std::move(realm), std::move(link_view));
+        return List(std::move(realm), shared_group.import_table_from_handover(std::move(m_table)));
     });
 }
 
 ThreadSafeReference<Object>::ThreadSafeReference(Object const& object)
 : ThreadSafeReferenceBase(object.realm())
-, m_row(get_source_shared_group().export_for_handover(object.row()))
+, m_row(get_source_shared_group().export_for_handover(Row(object.row())))
 , m_object_schema_name(object.get_object_schema().name) { }
 
 Object ThreadSafeReference<Object>::import_into_realm(SharedRealm realm) && {
@@ -104,23 +107,17 @@ Object ThreadSafeReference<Object>::import_into_realm(SharedRealm realm) && {
 ThreadSafeReference<Results>::ThreadSafeReference(Results const& results)
 : ThreadSafeReferenceBase(results.get_realm())
 , m_query(get_source_shared_group().export_for_handover(results.get_query(), ConstSourcePayload::Copy))
-, m_sort_order([&]() {
-    SortDescriptor::HandoverPatch sort_order;
-    SortDescriptor::generate_patch(results.get_sort(), sort_order);
-    return sort_order;
-}())
-, m_distinct_descriptor([&]() {
-    SortDescriptor::HandoverPatch distinct_descriptor;
-    SortDescriptor::generate_patch(results.get_distinct(), distinct_descriptor);
-    return distinct_descriptor;
+, m_ordering_patch([&]() {
+    DescriptorOrdering::HandoverPatch ordering_patch;
+    DescriptorOrdering::generate_patch(results.get_descriptor_ordering(), ordering_patch);
+    return ordering_patch;
 }()){ }
 
 Results ThreadSafeReference<Results>::import_into_realm(SharedRealm realm) && {
     return invalidate_after_import<Results>(*realm, [&](SharedGroup& shared_group) {
         Query query = *shared_group.import_from_handover(std::move(m_query));
         Table& table = *query.get_table();
-        SortDescriptor sort_descriptor = SortDescriptor::create_from_and_consume_patch(m_sort_order, table);
-        SortDescriptor distinct_descriptor = SortDescriptor::create_from_and_consume_patch(m_distinct_descriptor, table);
-        return Results(std::move(realm), std::move(query), std::move(sort_descriptor), std::move(distinct_descriptor));
+        DescriptorOrdering descriptors = DescriptorOrdering::create_from_and_consume_patch(m_ordering_patch, table);
+        return Results(std::move(realm), std::move(query), std::move(descriptors));
     });
 }

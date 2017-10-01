@@ -14,67 +14,61 @@ import PINCache
 final class DataCleanService {
 
     // MARK: - Properties
-    static let shared = DataCleanService()
-
-    fileprivate let disposeBag = DisposeBag()
+    fileprivate var disposeBag = DisposeBag()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .utility)
-    fileprivate let defaults = UserDefaults.standard
 
-    // MARK: - Initialize
-    init() {
+    // MARK: - Monitoring
+    func startMonitoring() {
+        disposeBag = DisposeBag()
         // Clean datas every 30 minutes
         Observable<Int>.interval(60 * 30, scheduler: scheduler)
             .subscribe(onNext: { [weak self] _ in
                 self?.cleanDatas()
             })
-            .addDisposableTo(disposeBag)
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Delete Data
     func cleanDatas() {
-        trimDatabase()
-        clean()
+        let realm = try! Realm()
+        let flowHistories = overflowingClips(with: realm)
+        flowHistories
+            .filter { !$0.isInvalidated && !$0.thumbnailPath.isEmpty }
+            .map { $0.thumbnailPath }
+            .forEach { PINCache.shared().removeObject(forKey: $0) }
+        realm.transaction { realm.delete(flowHistories) }
+        cleanFiles(with: realm)
     }
 
-    private func clean() {
+    private func overflowingClips(with realm: Realm) -> Results<CPYClip> {
+        let clips = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: false)
+        let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+
+        if clips.count <= maxHistorySize { return realm.objects(CPYClip.self).filter("FALSEPREDICATE") }
+        // Delete first clip
+        let lastClip = clips[maxHistorySize - 1]
+        if lastClip.isInvalidated { return realm.objects(CPYClip.self).filter("FALSEPREDICATE") }
+
+        // Deletion target
+        let updateTime = lastClip.updateTime
+        let targetClips = realm.objects(CPYClip.self).filter("updateTime < %d", updateTime)
+
+        return targetClips
+    }
+
+    private func cleanFiles(with realm: Realm) {
         let fileManager = FileManager.default
         guard let paths = try? fileManager.contentsOfDirectory(atPath: CPYUtilities.applicationSupportFolder()) else { return }
 
-        let realm = try! Realm()
         let allClipPaths = Array(realm.objects(CPYClip.self)
-                                    .filter { !$0.isInvalidated }
-                                    .flatMap { $0.dataPath.components(separatedBy: "/").last })
+            .filter { !$0.isInvalidated }
+            .flatMap { $0.dataPath.components(separatedBy: "/").last })
 
         // Delete diff datas
         DispatchQueue.main.async {
             Set(allClipPaths).symmetricDifference(paths)
                 .map { CPYUtilities.applicationSupportFolder() + "/" + "\($0)" }
                 .forEach { CPYUtilities.deleteData(at: $0) }
-        }
-    }
-
-    private func trimDatabase() {
-        let realm = try! Realm()
-        let clips = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: false)
-        let maxHistorySize = defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
-
-        if clips.count <= maxHistorySize { return }
-        // Delete first clip
-        let lastClip = clips[maxHistorySize - 1]
-        if lastClip.isInvalidated { return }
-
-        // Deletion target
-        let updateTime = lastClip.updateTime
-        let targetClips = realm.objects(CPYClip.self).filter("updateTime < %d", updateTime)
-
-        // Delete saved images
-        targetClips
-            .filter { !$0.isInvalidated && !$0.thumbnailPath.isEmpty }
-            .map { $0.thumbnailPath }
-            .forEach { PINCache.shared().removeObject(forKey: $0) }
-        // Delete at database
-        realm.transaction {
-            realm.delete(targetClips)
         }
     }
 }

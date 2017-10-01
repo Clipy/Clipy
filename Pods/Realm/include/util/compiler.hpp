@@ -25,7 +25,9 @@
 #define REALM_HAS_CPP_ATTRIBUTE(attr) 0
 #endif
 
-#if REALM_HAS_CPP_ATTRIBUTE(clang::fallthrough)
+#if REALM_HAS_CPP_ATTRIBUTE(fallthrough)
+#define REALM_FALLTHROUGH [[fallthrough]]
+#elif REALM_HAS_CPP_ATTRIBUTE(clang::fallthrough)
 #define REALM_FALLTHROUGH [[clang::fallthrough]]
 #else
 #define REALM_FALLTHROUGH

@@ -12,8 +12,8 @@ public class FailureMessage: NSObject {
     /// An optional message that will be appended as a new line and provides additional details
     /// about the failure. This message will only be visible in the issue navigator / in logs but
     /// not directly in the source editor since only a single line is presented there.
-    public var extendedMessage: String? = nil
-    public var userDescription: String? = nil
+    public var extendedMessage: String?
+    public var userDescription: String?
 
     public var stringValue: String {
         get {
@@ -29,6 +29,9 @@ public class FailureMessage: NSObject {
     }
 
     internal var _stringValueOverride: String?
+    internal var hasOverriddenStringValue: Bool {
+        return _stringValueOverride != nil
+    }
 
     public override init() {
     }
@@ -61,5 +64,29 @@ public class FailureMessage: NSObject {
         }
 
         return value
+    }
+
+    internal func appendMessage(_ msg: String) {
+        if hasOverriddenStringValue {
+            stringValue += "\(msg)"
+        } else if actualValue != nil {
+            postfixActual += msg
+        } else {
+            postfixMessage += msg
+        }
+    }
+
+    internal func appendDetails(_ msg: String) {
+        if hasOverriddenStringValue {
+            if let desc = userDescription {
+                stringValue = "\(desc)\n\(stringValue)"
+            }
+            stringValue += "\n\(msg)"
+        } else {
+            if let desc = userDescription {
+                userDescription = desc
+            }
+            extendedMessage = msg
+        }
     }
 }

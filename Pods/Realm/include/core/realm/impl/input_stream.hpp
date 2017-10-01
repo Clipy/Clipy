@@ -63,7 +63,7 @@ public:
         size_t n = std::min(size, size_t(m_end - m_ptr));
         const char* begin = m_ptr;
         m_ptr += n;
-        std::copy_n(begin, n, buffer);
+        realm::safe_copy_n(begin, n, buffer);
         return n;
     }
 
@@ -159,7 +159,7 @@ public:
                 // Replication::InputStream such that blocks can be handed over
                 // without copying. This is a straight forward change, but the
                 // result is going to be more complicated and less conventional.
-                std::copy_n(data, size_2, buffer);
+                realm::safe_copy_n(data, size_2, buffer);
                 return size_2;
             }
 

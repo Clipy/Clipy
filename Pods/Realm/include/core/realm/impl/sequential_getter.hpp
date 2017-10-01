@@ -40,9 +40,7 @@ public:
 
     SequentialGetter(const Table& table, size_t column_ndx)
     {
-        if (column_ndx != not_found)
-            m_column = static_cast<const ColType*>(&table.get_column_base(column_ndx));
-        init(m_column);
+        init(static_cast<const ColType*>(&table.get_column_base(column_ndx)));
     }
 
     SequentialGetter(const ColType* column)
@@ -56,6 +54,7 @@ public:
 
     void init(const ColType* column)
     {
+        REALM_ASSERT(column != nullptr);
         m_array_ptr.reset(); // Explicitly destroy the old one first, because we're reusing the memory.
         m_array_ptr.reset(new (&m_leaf_accessor_storage) ArrayType(column->get_alloc()));
         m_column = column;
@@ -93,9 +92,10 @@ public:
 
         // FIXME: Below optimization is skipped because array leafs might relocate during the lifetime of the
         // object that owns this SequentialGetter. Enable again when we have proper support for that.
-        cache_next(index);
-        T av = m_leaf_ptr->get(index - m_leaf_start);
-        return av;
+//
+//      cache_next(index);
+//      T av = m_leaf_ptr->get(index - m_leaf_start);
+//      return av;
 
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -110,8 +110,8 @@ public:
             return global_end - m_leaf_start;
     }
 
-    size_t m_leaf_start;
-    size_t m_leaf_end;
+    size_t m_leaf_start = 0;
+    size_t m_leaf_end = 0;
     const ColType* m_column = nullptr;
 
     const ArrayType* m_leaf_ptr = nullptr;

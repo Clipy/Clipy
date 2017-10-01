@@ -39,7 +39,6 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         }
     }
 
-    fileprivate let defaults = UserDefaults.standard
     fileprivate var folders = [CPYFolder]()
     fileprivate var selectedSnippet: CPYSnippet? {
         guard let snippet = outlineView.item(atRow: outlineView.selectedRow) as? CPYSnippet else { return nil }
@@ -114,10 +113,10 @@ extension CPYSnippetsEditorWindowController {
         }
 
         let alert = NSAlert()
-        alert.messageText = LocalizedString.DeleteItem.value
-        alert.informativeText = LocalizedString.ConfirmDeleteItem.value
-        alert.addButton(withTitle: LocalizedString.DeleteItem.value)
-        alert.addButton(withTitle: LocalizedString.Cancel.value)
+        alert.messageText = LocalizedString.deleteItem.value
+        alert.informativeText = LocalizedString.confirmDeleteItem.value
+        alert.addButton(withTitle: LocalizedString.deleteItem.value)
+        alert.addButton(withTitle: LocalizedString.cancel.value)
         NSApp.activate(ignoringOtherApps: true)
         let result = alert.runModal()
         if result != NSAlertFirstButtonReturn { return }
@@ -125,7 +124,7 @@ extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             folders.removeObject(folder)
             folder.remove()
-            HotKeyService.shared.unregisterSnippetHotKey(with: folder.identifier)
+            AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: folder.identifier)
         } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let index = folder.snippets.index(of: snippet) {
             folder.snippets.remove(objectAtIndex: index)
             snippet.remove()
@@ -262,7 +261,7 @@ private extension CPYSnippetsEditorWindowController {
         if let folder = item as? CPYFolder {
             textView.string = ""
             folderTitleTextField.stringValue = folder.title
-            folderShortcutRecordView.keyCombo = HotKeyService.shared.snippetKeyCombo(forIdentifier: folder.identifier)
+            folderShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo(forIdentifier: folder.identifier)
             folderSettingView.isHidden = false
             textView.isHidden = true
         } else if let snippet = item as? CPYSnippet {
@@ -341,7 +340,6 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        if index < 0 { return NSDragOperation() }
         let pasteboard = info.draggingPasteboard()
         guard let data = pasteboard.data(forType: Constants.Common.draggedDataType) else { return NSDragOperation() }
         guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return NSDragOperation() }
@@ -357,13 +355,13 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-        if index < 0 { return false  }
         let pasteboard = info.draggingPasteboard()
         guard let data = pasteboard.data(forType: Constants.Common.draggedDataType) else { return false }
         guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return false }
 
         switch draggedData.type {
         case .folder where index != draggedData.index:
+            guard index >= 0 else { return false }
             guard let folder = folders.filter({ $0.identifier == draggedData.folderIdentifier }).first else { return false }
             folders.insert(folder, at: index)
             let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
@@ -379,6 +377,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
             guard let snippet = fromFolder.snippets.filter({ $0.identifier == draggedData.snippetIdentifier }).first else { return false }
 
             if fromFolder.identifier == toFolder.identifier {
+                guard index >= 0 else { return false }
                 if index == draggedData.index { return false }
                 // Move to same folder
                 fromFolder.snippets.insert(snippet, at: index)
@@ -391,6 +390,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
                 return true
             } else {
                 // Move to other folder
+                let index = max(0, index)
                 toFolder.snippets.insert(snippet, at: index)
                 fromFolder.snippets.remove(objectAtIndex: draggedData.index)
                 outlineView.reloadData()
@@ -455,23 +455,23 @@ extension CPYSnippetsEditorWindowController: NSTextViewDelegate {
 // MARK: - RecordView Delegate
 extension CPYSnippetsEditorWindowController: RecordViewDelegate {
     func recordViewShouldBeginRecording(_ recordView: RecordView) -> Bool {
-        guard let _ = selectedFolder else { return false }
+        guard selectedFolder != nil else { return false }
         return true
     }
 
     func recordView(_ recordView: RecordView, canRecordKeyCombo keyCombo: KeyCombo) -> Bool {
-        guard let _ = selectedFolder else { return false }
+        guard selectedFolder != nil else { return false }
         return true
     }
 
     func recordViewDidClearShortcut(_ recordView: RecordView) {
         guard let selectedFolder = selectedFolder else { return }
-        HotKeyService.shared.unregisterSnippetHotKey(with: selectedFolder.identifier)
+        AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: selectedFolder.identifier)
     }
 
     func recordView(_ recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo) {
         guard let selectedFolder = selectedFolder else { return }
-        HotKeyService.shared.registerSnippetHotKey(with: selectedFolder.identifier, keyCombo: keyCombo)
+        AppEnvironment.current.hotKeyService.registerSnippetHotKey(with: selectedFolder.identifier, keyCombo: keyCombo)
     }
 
     func recordViewDidEndRecording(_ recordView: RecordView) {}

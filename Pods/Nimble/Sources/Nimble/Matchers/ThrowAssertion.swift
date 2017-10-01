@@ -1,7 +1,7 @@
 import Foundation
 
-public func throwAssertion() -> MatcherFunc<Void> {
-    return MatcherFunc { actualExpression, failureMessage in
+public func throwAssertion() -> Predicate<Void> {
+    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
     #if arch(x86_64) && _runtime(_ObjC) && !SWIFT_PACKAGE
         failureMessage.postfixMessage = "throw an assertion"
         failureMessage.actualValue = nil

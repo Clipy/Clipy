@@ -57,16 +57,34 @@ public:
 
     Realm::Config get_config() const { return m_config; }
 
-    const Schema* get_schema() const noexcept;
     uint64_t get_schema_version() const noexcept { return m_schema_version; }
     const std::string& get_path() const noexcept { return m_config.path; }
     const std::vector<char>& get_encryption_key() const noexcept { return m_config.encryption_key; }
     bool is_in_memory() const noexcept { return m_config.in_memory; }
 
+    // To avoid having to re-read and validate the file's schema every time a
+    // new read transaction is begun, RealmCoordinator maintains a cache of the
+    // most recently seen file schema and the range of transaction versions
+    // which it applies to. Note that this schema may not be identical to that
+    // of any Realm instances managed by this coordinator, as individual Realms
+    // may only be using a subset of it.
+
+    // Get the latest cached schema and the transaction version which it applies
+    // to. Returns false if there is no cached schema.
+    bool get_cached_schema(Schema& schema, uint64_t& schema_version, uint64_t& transaction) const noexcept;
+
+    // Cache the state of the schema at the given transaction version
+    void cache_schema(Schema const& new_schema, uint64_t new_schema_version,
+                      uint64_t transaction_version);
+    // If there is a schema cached for transaction version `previous`, report
+    // that it is still valid at transaction version `next`
+    void advance_schema_cache(uint64_t previous, uint64_t next);
+    void clear_schema_cache_and_set_schema_version(uint64_t new_schema_version);
+
+
     // Asynchronously call notify() on every Realm instance for this coordinator's
     // path, including those in other processes
     void send_commit_notifications(Realm&);
-    
     void wake_up_notifier_worker();
 
     // Clear the weak Realm cache for all paths
@@ -91,9 +109,6 @@ public:
     // Called by m_notifier when there's a new commit to send notifications for
     void on_change();
 
-    // Update the cached schema
-    void update_schema(Schema const& new_schema, uint64_t new_schema_version);
-
     static void register_notifier(std::shared_ptr<CollectionNotifier> notifier);
 
     // Advance the Realm to the most recent transaction version which all async
@@ -108,6 +123,7 @@ public:
     // Deliver any notifications which are ready for the Realm's version
     void process_available_async(Realm& realm);
 
+    // Register a function which is called whenever sync makes a write to the Realm
     void set_transaction_callback(std::function<void(VersionID, VersionID)>);
 
     // Deliver notifications for the Realm, blocking if some aren't ready yet
@@ -123,8 +139,12 @@ public:
 
 private:
     Realm::Config m_config;
-    Schema m_schema;
+
+    mutable std::mutex m_schema_cache_mutex;
+    util::Optional<Schema> m_cached_schema;
     uint64_t m_schema_version = -1;
+    uint64_t m_schema_transaction_version_min = 0;
+    uint64_t m_schema_transaction_version_max = 0;
 
     std::mutex m_realm_mutex;
     std::vector<WeakRealmNotifier> m_weak_realm_notifiers;

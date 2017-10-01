@@ -1,11 +1,3 @@
-//
-//  Options.swift
-//  AEXML
-//
-//  Created by Marko Tadic on 9/10/16.
-//  Copyright © 2016 AE. All rights reserved.
-//
-
 import Foundation
 
 /// Options used in `AEXMLDocument`

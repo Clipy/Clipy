@@ -22,6 +22,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <streambuf>
@@ -54,16 +55,25 @@ void make_dir(const std::string& path);
 // did not already exist and was newly created, this returns true.
 bool try_make_dir(const std::string& path);
 
-/// Remove the specified directory path from the file system. If the
-/// specified path is a directory, this function is equivalent to
-/// std::remove(const char*).
+/// Remove the specified empty directory path from the file system. It is an
+/// error if the specified path is not a directory, or if it is a nonempty
+/// directory. In so far as the specified path is a directory, std::remove(const
+/// char*) is equivalent to this function.
 ///
-/// \throw File::AccessError If the directory could not be removed. If
-/// the reason corresponds to one of the exception types that are
-/// derived from File::AccessError, the derived exception type is
-/// thrown (as long as the underlying system provides the information
-/// to unambiguously distinguish that particular reason).
+/// \throw File::AccessError If the directory could not be removed. If the
+/// reason corresponds to one of the exception types that are derived from
+/// File::AccessError, the derived exception type is thrown (as long as the
+/// underlying system provides the information to unambiguously distinguish that
+/// particular reason).
 void remove_dir(const std::string& path);
+
+/// Remove the specified directory after removing all its contents. Files
+/// (nondirectory entries) will be removed as if by a call to File::remove(),
+/// and empty directories as if by a call to remove_dir().
+///
+/// \throw File::AccessError If removal of the directory, or any of its contents
+/// fail.
+void remove_dir_recursive(const std::string& path);
 
 /// Create a new unique directory for temporary files. The absolute
 /// path to the new directory is returned without a trailing slash.
@@ -114,6 +124,11 @@ public:
 
     File(File&&) noexcept;
     File& operator=(File&&) noexcept;
+
+    // Disable copying by l-value. Copying an open file will create a scenario
+    // where the same file descriptor will be opened once but closed twice.
+    File(const File&) = delete;
+    File& operator=(const File&) = delete;
 
     /// Calling this function on an instance that is already attached
     /// to an open file has undefined behavior.
@@ -311,6 +326,9 @@ public:
     /// \param key A 64-byte encryption key, or null to disable encryption.
     void set_encryption_key(const char* key);
 
+    /// Get the encryption key set by set_encryption_key(),
+    /// null_ptr if no key set.
+    const char* get_encryption_key();
     enum {
         /// If possible, disable opportunistic flushing of dirted
         /// pages of a memory mapped file to physical medium. On some
@@ -382,9 +400,11 @@ public:
     /// this function returns false.
     static bool is_dir(const std::string& path);
 
-    /// Remove the specified file path from the file system. If the
-    /// specified path is not a directory, this function is equivalent
-    /// to std::remove(const char*).
+    /// Remove the specified file path from the file system. It is an error if
+    /// the specified path is a directory. If the specified file is a symbolic
+    /// link, the link is removed, leaving the liked file intact. In so far as
+    /// the specified path is not a directory, std::remove(const char*) is
+    /// equivalent to this function.
     ///
     /// The specified file must not be open by the calling process. If
     /// it is, this function has undefined behaviour. Note that an
@@ -467,6 +487,22 @@ public:
     /// string is interpreted as a relative path.
     static std::string resolve(const std::string& path, const std::string& base_dir);
 
+    using ForEachHandler = std::function<bool(const std::string& file, const std::string& dir)>;
+
+    /// Scan the specified directory recursivle, and report each file
+    /// (nondirectory entry) via the specified handler.
+    ///
+    /// The first argument passed to the handler is the name of a file (not the
+    /// whole path), and the second argument is the directory in which that file
+    /// resides. The directory will be specified as a path, and relative to \a
+    /// dir_path. The directory will be the empty string for files residing
+    /// directly in \a dir_path.
+    ///
+    /// If the handler returns false, scanning will be aborted immediately, and
+    /// for_each() will return false. Otherwise for_each() will return true.
+    ///
+    /// Scanning is done as if by a recursive set of DirScanner objects.
+    static bool for_each(const std::string& dir_path, ForEachHandler handler);
 
     struct UniqueID {
 #ifdef _WIN32 // Windows version
@@ -512,7 +548,7 @@ private:
     int m_fd;
 #endif
 
-    std::unique_ptr<const char[]> m_encryption_key;
+    std::unique_ptr<const char[]> m_encryption_key = nullptr;
 
     bool lock(bool exclusive, bool non_blocking);
     void open_internal(const std::string& path, AccessMode, CreateMode, int flags, bool* success);
@@ -523,6 +559,11 @@ private:
 
         MapBase() noexcept;
         ~MapBase() noexcept;
+
+        // Disable copying. Copying an opened MapBase will create a scenario
+        // where the same memory will be mapped once but unmapped twice.
+        MapBase(const MapBase&) = delete;
+        MapBase& operator=(const MapBase&) = delete;
 
         void map(const File&, AccessMode, size_t size, int map_flags, size_t offset = 0);
         void remap(const File&, AccessMode, size_t size, int map_flags);
@@ -555,6 +596,9 @@ public:
     {
         m_file.unlock();
     }
+    // Disable copying. It is not how this class should be used.
+    ExclusiveLock(const ExclusiveLock&) = delete;
+    ExclusiveLock& operator=(const ExclusiveLock&) = delete;
 
 private:
     File& m_file;
@@ -571,6 +615,9 @@ public:
     {
         m_file.unlock();
     }
+    // Disable copying. It is not how this class should be used.
+    SharedLock(const SharedLock&) = delete;
+    SharedLock& operator=(const SharedLock&) = delete;
 
 private:
     File& m_file;
@@ -606,6 +653,11 @@ public:
     Map() noexcept;
 
     ~Map() noexcept;
+
+    // Disable copying. Copying an opened Map will create a scenario
+    // where the same memory will be mapped once but unmapped twice.
+    Map(const Map&) = delete;
+    Map& operator=(const Map&) = delete;
 
     /// Move the mapping from another Map object to this Map object
     File::Map<T>& operator=(File::Map<T>&& other)
@@ -702,6 +754,11 @@ public:
     {
         m_file = nullptr;
     }
+    // Disallow the default implementation of copy/assign, this is not how this
+    // class is intended to be used. For example we could get unexpected
+    // behaviour if one CloseGuard is copied and released but the other is not.
+    CloseGuard(const CloseGuard&) = delete;
+    CloseGuard& operator=(const CloseGuard&) = delete;
 
 private:
     File* m_file;
@@ -723,6 +780,11 @@ public:
     {
         m_file = nullptr;
     }
+    // Disallow the default implementation of copy/assign, this is not how this
+    // class is intended to be used. For example we could get unexpected
+    // behaviour if one UnlockGuard is copied and released but the other is not.
+    UnlockGuard(const UnlockGuard&) = delete;
+    UnlockGuard& operator=(const UnlockGuard&) = delete;
 
 private:
     File* m_file;
@@ -745,6 +807,11 @@ public:
     {
         m_map = nullptr;
     }
+    // Disallow the default implementation of copy/assign, this is not how this
+    // class is intended to be used. For example we could get unexpected
+    // behaviour if one UnmapGuard is copied and released but the other is not.
+    UnmapGuard(const UnmapGuard&) = delete;
+    UnmapGuard& operator=(const UnmapGuard&) = delete;
 
 private:
     MapBase* m_map;
@@ -757,6 +824,10 @@ public:
     explicit Streambuf(File*);
     ~Streambuf() noexcept;
 
+    // Disable copying
+    Streambuf(const Streambuf&) = delete;
+    Streambuf& operator=(const Streambuf&) = delete;
+
 private:
     static const size_t buffer_size = 4096;
 
@@ -767,10 +838,6 @@ private:
     int sync() override;
     pos_type seekpos(pos_type, std::ios_base::openmode) override;
     void flush();
-
-    // Disable copying
-    Streambuf(const Streambuf&);
-    Streambuf& operator=(const Streambuf&);
 };
 
 

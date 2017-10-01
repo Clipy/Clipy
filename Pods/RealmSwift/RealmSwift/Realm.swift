@@ -93,6 +93,37 @@ public final class Realm {
         try self.init(configuration: configuration)
     }
 
+    // MARK: Async
+
+    /**
+     Asynchronously open a Realm and deliver it to a block on the given queue.
+
+     Opening a Realm asynchronously will perform all work needed to get the Realm to
+     a usable state (such as running potentially time-consuming migrations) on a
+     background thread before dispatching to the given queue. In addition,
+     synchronized Realms wait for all remote content available at the time the
+     operation began to be downloaded and available locally.
+
+     - parameter configuration: A configuration object to use when opening the Realm.
+     - parameter callbackQueue: The dispatch queue on which the callback should be run.
+     - parameter callback:      A callback block. If the Realm was successfully opened, an
+                                it will be passed in as an argument.
+                                Otherwise, a `Swift.Error` describing what went wrong will be
+                                passed to the block instead.
+
+     - note: The returned Realm is confined to the thread on which it was created.
+             Because GCD does not guarantee that queues will always use the same
+             thread, accessing the returned Realm outside the callback block (even if
+             accessed from `callbackQueue`) is unsafe.
+     */
+    public static func asyncOpen(configuration: Realm.Configuration = .defaultConfiguration,
+                                 callbackQueue: DispatchQueue = .main,
+                                 callback: @escaping (Realm?, Swift.Error?) -> Void) {
+        RLMRealm.asyncOpen(with: configuration.rlmConfiguration, callbackQueue: callbackQueue) { rlmRealm, error in
+            callback(rlmRealm.flatMap(Realm.init), error)
+        }
+    }
+
     // MARK: Transactions
 
     /**
@@ -235,7 +266,7 @@ public final class Realm {
     /**
      Adds or updates an existing object into the Realm.
 
-     Only pass `true` to `update` if the object has a primary key. If no objects exist in the Realm with the same
+     Only pass `true` to `update` if the object has a primary key. If no object exists in the Realm with the same
      primary key value, the object is inserted. Otherwise, the existing object is updated with any changed values.
 
      When added, all child relationships referenced by this object will also be added to the Realm if they are not
@@ -275,17 +306,26 @@ public final class Realm {
     /**
      Creates or updates a Realm object with a given value, adding it to the Realm and returning it.
 
-     Only pass `true` to `update` if the object has a primary key. If no objects exist in
-     the Realm with the same primary key value, the object is inserted. Otherwise,
-     the existing object is updated with any changed values.
+     You may only pass `true` to `update` if the object has a primary key. If no object exists
+     in the Realm with the same primary key value, the object is inserted. Otherwise, the
+     existing object is updated with any changed values.
 
-     The `value` argument can be a key-value coding compliant object, an array or dictionary returned from the methods
-     in `NSJSONSerialization`, or an `Array` containing one element for each managed property. An exception will be
-     thrown if any required properties are not present and those properties were not defined with default values. Do not
-     pass in a `LinkingObjects` instance, either by itself or as a member of a collection.
+     The `value` argument can be a Realm object, a key-value coding compliant object, an array
+     or dictionary returned from the methods in `NSJSONSerialization`, or an `Array` containing
+     one element for each managed property. Do not pass in a `LinkingObjects` instance, either
+     by itself or as a member of a collection.
 
-     When passing in an `Array` as the `value` argument, all properties must be present, valid and in the same order as
-     the properties defined in the model.
+     If the object is being created, all required properties that were not defined with default
+     values must be given initial values through the `value` argument. Otherwise, an Objective-C
+     exception will be thrown.
+
+     If the object is being updated, all properties defined in its schema will be set by copying
+     from `value` using key-value coding. If the `value` argument does not respond to `value(forKey:)`
+     for a given property name (or getter name, if defined), that value will remain untouched.
+     Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+
+     If the `value` argument is an array, all properties must be present, valid and in the same
+     order as the properties defined in the model.
 
      - warning: This method may only be called during a write transaction.
 
@@ -313,17 +353,26 @@ public final class Realm {
      Creates or updates an object with the given class name and adds it to the `Realm`, populating
      the object with the given value.
 
-     When 'update' is 'true', the object must have a primary key. If no objects exist in
-     the Realm instance with the same primary key value, the object is inserted. Otherwise,
-     the existing object is updated with any changed values.
+     You may only pass `true` to `update` if the object has a primary key. If no object exists
+     in the Realm with the same primary key value, the object is inserted. Otherwise, the
+     existing object is updated with any changed values.
 
-     The `value` argument is used to populate the object. It can be a key-value coding compliant object, an array or
-     dictionary returned from the methods in `NSJSONSerialization`, or an `Array` containing one element for each
-     managed property. An exception will be thrown if any required properties are not present and those properties were
-     not defined with default values.
+     The `value` argument can be a Realm object, a key-value coding compliant object, an array
+     or dictionary returned from the methods in `NSJSONSerialization`, or an `Array` containing
+     one element for each managed property. Do not pass in a `LinkingObjects` instance, either
+     by itself or as a member of a collection.
 
-     When passing in an `Array` as the `value` argument, all properties must be present, valid and in the same order as
-     the properties defined in the model.
+     If the object is being created, all required properties that were not defined with default
+     values must be given initial values through the `value` argument. Otherwise, an Objective-C
+     exception will be thrown.
+
+     If the object is being updated, all properties defined in its schema will be set by copying
+     from `value` using key-value coding. If the `value` argument does not respond to `value(forKey:)`
+     for a given property name (or getter name, if defined), that value will remain untouched.
+     Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+
+     If the `value` argument is an array, all properties must be present, valid and in the same
+     order as the properties defined in the model.
 
      - warning: This method can only be called during a write transaction.
 
@@ -387,7 +436,7 @@ public final class Realm {
 
      :nodoc:
      */
-    public func delete<T: Object>(_ objects: List<T>) {
+    public func delete<T>(_ objects: List<T>) {
         rlmRealm.deleteObjects(objects._rlmArray)
     }
 
@@ -400,7 +449,7 @@ public final class Realm {
 
      :nodoc:
      */
-    public func delete<T: Object>(_ objects: Results<T>) {
+    public func delete<T>(_ objects: Results<T>) {
         rlmRealm.deleteObjects(objects.rlmResults)
     }
 
@@ -422,7 +471,7 @@ public final class Realm {
 
      - returns: A `Results` containing the objects.
      */
-    public func objects<T: Object>(_ type: T.Type) -> Results<T> {
+    public func objects<T>(_ type: T.Type) -> Results<T> {
         return Results<T>(RLMGetObjects(rlmRealm, (type as Object.Type).className(), nil))
     }
 
@@ -623,7 +672,7 @@ public final class Realm {
 // MARK: Equatable
 
 extension Realm: Equatable {
-    /// Returns whether two `Realm` isntances are equal.
+    /// Returns whether two `Realm` instances are equal.
     public static func == (lhs: Realm, rhs: Realm) -> Bool {
         return lhs.rlmRealm == rhs.rlmRealm
     }

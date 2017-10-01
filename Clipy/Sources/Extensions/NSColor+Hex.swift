@@ -47,9 +47,15 @@ extension NSColor {
     }
 
     public convenience init?(hex rgba: String) {
-        guard rgba.hasPrefix("#") else { return nil }
-
-        let hexString: String = rgba.substring(from: rgba.characters.index(rgba.startIndex, offsetBy: 1))
+        let hexString: String
+        let hexCount = rgba.characters.count
+        if rgba.hasPrefix("#") {
+            hexString = rgba.substring(from: rgba.characters.index(rgba.startIndex, offsetBy: 1))
+        } else if hexCount == 3 || hexCount == 6 {
+            hexString = rgba
+        } else {
+            return nil
+        }
         var hexValue: UInt32 = 0
 
         guard Scanner(string: hexString).scanHexInt32(&hexValue) else { return nil }

@@ -63,6 +63,7 @@ public:
     void copy_table_columns_from(Schema const&);
 
     friend bool operator==(Schema const&, Schema const&);
+    friend bool operator!=(Schema const& a, Schema const& b) { return !(a == b); }
 
     using base::iterator;
     using base::const_iterator;
@@ -70,10 +71,18 @@ public:
     using base::end;
     using base::empty;
     using base::size;
+
+private:
+    template<typename T, typename U, typename Func>
+    static void zip_matching(T&& a, U&& b, Func&& func);
 };
 
 namespace schema_change {
 struct AddTable {
+    const ObjectSchema* object;
+};
+
+struct AddInitialProperties {
     const ObjectSchema* object;
 };
 
@@ -121,6 +130,7 @@ struct ChangePrimaryKey {
 
 #define REALM_FOR_EACH_SCHEMA_CHANGE_TYPE(macro) \
     macro(AddTable) \
+    macro(AddInitialProperties) \
     macro(AddProperty) \
     macro(RemoveProperty) \
     macro(ChangePropertyType) \

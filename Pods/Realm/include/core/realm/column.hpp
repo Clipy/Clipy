@@ -196,6 +196,10 @@ public:
     {
     }
 
+    // Disable copying, this is not supported.
+    ColumnBase& operator=(const ColumnBase&) = delete;
+    ColumnBase(const ColumnBase&) = delete;
+
     // Getter function for index. For integer index, the caller must supply a
     // buffer that we can store the extracted value in (it may be bitpacked, so
     // we cannot return a pointer in to the Array as we do with String index).
@@ -208,8 +212,7 @@ public:
     virtual void destroy_search_index() noexcept;
     virtual const StringIndex* get_search_index() const noexcept;
     virtual StringIndex* get_search_index() noexcept;
-    virtual void set_search_index_ref(ref_type, ArrayParent*, size_t ndx_in_parent, bool allow_duplicate_values);
-    virtual void set_search_index_allow_duplicate_values(bool) noexcept;
+    virtual void set_search_index_ref(ref_type, ArrayParent*, size_t ndx_in_parent);
 
     virtual Allocator& get_alloc() const noexcept = 0;
 
@@ -503,8 +506,7 @@ public:
         return m_search_index.get();
     }
     void destroy_search_index() noexcept override;
-    void set_search_index_ref(ref_type ref, ArrayParent* parent, size_t ndx_in_parent,
-                              bool allow_duplicate_valaues) final;
+    void set_search_index_ref(ref_type ref, ArrayParent* parent, size_t ndx_in_parent) final;
     StringIndex* create_search_index() override = 0;
 
 protected:
@@ -805,11 +807,7 @@ inline StringIndex* ColumnBase::get_search_index() noexcept
     return nullptr;
 }
 
-inline void ColumnBase::set_search_index_ref(ref_type, ArrayParent*, size_t, bool)
-{
-}
-
-inline void ColumnBase::set_search_index_allow_duplicate_values(bool) noexcept
+inline void ColumnBase::set_search_index_ref(ref_type, ArrayParent*, size_t)
 {
 }
 

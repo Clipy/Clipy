@@ -116,12 +116,15 @@ static void compare(ObjectSchema const& existing_schema,
             changes.emplace_back(schema_change::RemoveProperty{&existing_schema, &current_prop});
             continue;
         }
-        if (current_prop.type != target_prop->type || current_prop.object_type != target_prop->object_type) {
+        if (current_prop.type != target_prop->type ||
+            current_prop.object_type != target_prop->object_type ||
+            is_array(current_prop.type) != is_array(target_prop->type)) {
+
             changes.emplace_back(schema_change::ChangePropertyType{&existing_schema, &current_prop, target_prop});
             continue;
         }
-        if (current_prop.is_nullable != target_prop->is_nullable) {
-            if (current_prop.is_nullable)
+        if (is_nullable(current_prop.type) != is_nullable(target_prop->type)) {
+            if (is_nullable(current_prop.type))
                 changes.emplace_back(schema_change::MakePropertyRequired{&existing_schema, &current_prop});
             else
                 changes.emplace_back(schema_change::MakePropertyNullable{&existing_schema, &current_prop});
@@ -152,36 +155,72 @@ static void compare(ObjectSchema const& existing_schema,
               [](auto a, auto b) { return GetRemovedColumn()(a) > GetRemovedColumn()(b); });
 }
 
+template<typename T, typename U, typename Func>
+void Schema::zip_matching(T&& a, U&& b, Func&& func)
+{
+    size_t i = 0, j = 0;
+    while (i < a.size() && j < b.size()) {
+        auto& object_schema = a[i];
+        auto& matching_schema = b[j];
+        int cmp = object_schema.name.compare(matching_schema.name);
+        if (cmp == 0) {
+            func(&object_schema, &matching_schema);
+            ++i;
+            ++j;
+        }
+        else if (cmp < 0) {
+            func(&object_schema, nullptr);
+            ++i;
+        }
+        else {
+            func(nullptr, &matching_schema);
+            ++j;
+        }
+    }
+    for (; i < a.size(); ++i)
+        func(&a[i], nullptr);
+    for (; j < b.size(); ++j)
+        func(nullptr, &b[j]);
+
+}
+
 std::vector<SchemaChange> Schema::compare(Schema const& target_schema) const
 {
     std::vector<SchemaChange> changes;
-    for (auto &object_schema : target_schema) {
-        auto matching_schema = find(object_schema);
-        if (matching_schema == end()) {
-            changes.emplace_back(schema_change::AddTable{&object_schema});
-            continue;
-        }
 
-        ::compare(*matching_schema, object_schema, changes);
-    }
+    // Add missing tables
+    zip_matching(target_schema, *this, [&](const ObjectSchema* target, const ObjectSchema* existing) {
+        if (target && !existing) {
+            changes.emplace_back(schema_change::AddTable{target});
+        }
+    });
+
+    // Modify columns
+    zip_matching(target_schema, *this, [&](const ObjectSchema* target, const ObjectSchema* existing) {
+        if (target && existing)
+            ::compare(*existing, *target, changes);
+        else if (target) {
+            // Target is a new table -- add all properties
+            changes.emplace_back(schema_change::AddInitialProperties{target});
+        }
+        // nothing for tables in existing but not target
+    });
     return changes;
 }
 
 void Schema::copy_table_columns_from(realm::Schema const& other)
 {
-    for (auto& source_schema : other) {
-        auto matching_schema = find(source_schema);
-        if (matching_schema == end()) {
-            continue;
-        }
+    zip_matching(*this, other, [&](ObjectSchema* existing, const ObjectSchema* other) {
+        if (!existing || !other)
+            return;
 
-        for (auto& current_prop : source_schema.persisted_properties) {
-            auto target_prop = matching_schema->property_for_name(current_prop.name);
+        for (auto& current_prop : other->persisted_properties) {
+            auto target_prop = existing->property_for_name(current_prop.name);
             if (target_prop) {
                 target_prop->table_column = current_prop.table_column;
             }
         }
-    }
+    });
 }
 
 namespace realm {
@@ -203,6 +242,7 @@ bool operator==(SchemaChange const& lft, SchemaChange const& rgt)
 
         REALM_SC_COMPARE(AddIndex, v.object, v.property)
         REALM_SC_COMPARE(AddProperty, v.object, v.property)
+        REALM_SC_COMPARE(AddInitialProperties, v.object)
         REALM_SC_COMPARE(AddTable, v.object)
         REALM_SC_COMPARE(ChangePrimaryKey, v.object, v.property)
         REALM_SC_COMPARE(ChangePropertyType, v.object, v.old_property, v.new_property)

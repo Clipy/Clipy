@@ -12,17 +12,12 @@ import RxSwift
 final class ExcludeAppService {
 
     // MARK: - Properties
-    static let shared = ExcludeAppService()
-
     fileprivate(set) var applications = [CPYAppInfo]()
     fileprivate var frontApplication = Variable<NSRunningApplication?>(nil)
-    fileprivate let defaults = UserDefaults.standard
-    fileprivate var notificationDisposeBag = DisposeBag()
+    fileprivate var disposeBag = DisposeBag()
 
     // MARK: - Initialize
-    init() {
-        guard let data = defaults.object(forKey: Constants.UserDefaults.excludeApplications) as? Data else { return }
-        guard let applications = NSKeyedUnarchiver.unarchiveObject(with: data) as? [CPYAppInfo] else { return }
+    init(applications: [CPYAppInfo]) {
         self.applications = applications
     }
 
@@ -30,13 +25,13 @@ final class ExcludeAppService {
 
 // MARK: - Monitor Applications
 extension ExcludeAppService {
-    func startAppMonitoring() {
-        notificationDisposeBag = DisposeBag()
+    func startMonitoring() {
+        disposeBag = DisposeBag()
         // Monitoring top active application
         NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceDidActivateApplication)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
-            .bindTo(frontApplication)
-            .addDisposableTo(notificationDisposeBag)
+            .bind(to: frontApplication)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -72,8 +67,8 @@ extension ExcludeAppService {
 
     private func save() {
         let data = applications.archive()
-        defaults.set(data, forKey: Constants.UserDefaults.excludeApplications)
-        defaults.synchronize()
+        AppEnvironment.current.defaults.set(data, forKey: Constants.UserDefaults.excludeApplications)
+        AppEnvironment.current.defaults.synchronize()
     }
 }
 

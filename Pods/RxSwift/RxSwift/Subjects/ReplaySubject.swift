@@ -15,7 +15,10 @@ public class ReplaySubject<Element>
     , ObserverType
     , Disposable {
     public typealias SubjectObserverType = ReplaySubject<Element>
-    
+
+    typealias Observers = AnyObserver<Element>.s
+    typealias DisposeKey = Observers.KeyType
+
     /// Indicates whether the subject has any observers
     public var hasObservers: Bool {
         _lock.lock()
@@ -34,12 +37,14 @@ public class ReplaySubject<Element>
             _isStopped = _stoppedEvent != nil
         }
     }
-    fileprivate var _observers = Bag<(Event<Element>) -> ()>()
-    
-    typealias DisposeKey = Bag<AnyObserver<Element>>.KeyType
-    
+    fileprivate var _observers = Observers()
+
+    #if DEBUG
+        fileprivate let _synchronizationTracker = SynchronizationTracker()
+    #endif
+
     func unsubscribe(_ key: DisposeKey) {
-        abstractMethod()
+        rxAbstractMethod()
     }
 
     final var isStopped: Bool {
@@ -50,7 +55,7 @@ public class ReplaySubject<Element>
     ///
     /// - parameter event: Event to send to the observers.
     public func on(_ event: Event<E>) {
-        abstractMethod()
+        rxAbstractMethod()
     }
     
     /// Returns observer interface for subject.
@@ -81,6 +86,16 @@ public class ReplaySubject<Element>
     public static func createUnbounded() -> ReplaySubject<Element> {
         return ReplayAll()
     }
+
+    #if TRACE_RESOURCES
+        override init() {
+            _ = Resources.incrementTotal()
+        }
+
+        deinit {
+            _ = Resources.decrementTotal()
+        }
+    #endif
 }
 
 fileprivate class ReplayBufferBase<Element>
@@ -88,34 +103,38 @@ fileprivate class ReplayBufferBase<Element>
     , SynchronizedUnsubscribeType {
     
     func trim() {
-        abstractMethod()
+        rxAbstractMethod()
     }
     
     func addValueToBuffer(_ value: Element) {
-        abstractMethod()
+        rxAbstractMethod()
     }
     
     func replayBuffer<O: ObserverType>(_ observer: O) where O.E == Element {
-        abstractMethod()
+        rxAbstractMethod()
     }
     
     override func on(_ event: Event<Element>) {
+        #if DEBUG
+            _synchronizationTracker.register(synchronizationErrorMessage: .default)
+            defer { _synchronizationTracker.unregister() }
+        #endif
         dispatch(_synchronized_on(event), event)
     }
 
-    func _synchronized_on(_ event: Event<E>) -> Bag<(Event<Element>) -> ()> {
+    func _synchronized_on(_ event: Event<E>) -> Observers {
         _lock.lock(); defer { _lock.unlock() }
         if _isDisposed {
-            return Bag()
+            return Observers()
         }
         
         if _isStopped {
-            return Bag()
+            return Observers()
         }
         
         switch event {
-        case .next(let value):
-            addValueToBuffer(value)
+        case .next(let element):
+            addValueToBuffer(element)
             trim()
             return _observers
         case .error, .completed:
@@ -185,7 +204,7 @@ fileprivate class ReplayBufferBase<Element>
     }
 }
 
-final class ReplayOne<Element> : ReplayBufferBase<Element> {
+fileprivate final class ReplayOne<Element> : ReplayBufferBase<Element> {
     private var _value: Element?
     
     override init() {
@@ -212,7 +231,7 @@ final class ReplayOne<Element> : ReplayBufferBase<Element> {
     }
 }
 
-class ReplayManyBase<Element> : ReplayBufferBase<Element> {
+fileprivate class ReplayManyBase<Element> : ReplayBufferBase<Element> {
     fileprivate var _queue: Queue<Element>
     
     init(queueSize: Int) {
@@ -235,7 +254,7 @@ class ReplayManyBase<Element> : ReplayBufferBase<Element> {
     }
 }
 
-final class ReplayMany<Element> : ReplayManyBase<Element> {
+fileprivate final class ReplayMany<Element> : ReplayManyBase<Element> {
     private let _bufferSize: Int
     
     init(bufferSize: Int) {
@@ -251,7 +270,7 @@ final class ReplayMany<Element> : ReplayManyBase<Element> {
     }
 }
 
-final class ReplayAll<Element> : ReplayManyBase<Element> {
+fileprivate final class ReplayAll<Element> : ReplayManyBase<Element> {
     init() {
         super.init(queueSize: 0)
     }

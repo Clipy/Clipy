@@ -18,27 +18,50 @@
 
 #import "RLMSyncSessionRefreshHandle.hpp"
 
-#import "RLMAuthResponseModel.h"
+#import "RLMJSONModels.h"
 #import "RLMNetworkClient.h"
 #import "RLMSyncManager_Private.h"
 #import "RLMSyncUser_Private.hpp"
-#import "RLMTokenModels.h"
+#import "RLMSyncUtil_Private.hpp"
 #import "RLMUtil.hpp"
 
 #import "sync/sync_session.hpp"
 
 using namespace realm;
 
+namespace {
+
+void unregisterRefreshHandle(const std::weak_ptr<SyncUser>& user, const std::string& path) {
+    if (auto strong_user = user.lock()) {
+        context_for(strong_user).unregister_refresh_handle(path);
+    }
+}
+
+void reportInvalidAccessToken(const std::weak_ptr<SyncUser>& user, NSError *error) {
+    if (auto strong_user = user.lock()) {
+        if (RLMUserErrorReportingBlock block = context_for(strong_user).error_handler()) {
+            RLMSyncUser *theUser = [[RLMSyncUser alloc] initWithSyncUser:std::move(strong_user)];
+            [theUser logOut];
+            block(theUser, error);
+        }
+    }
+}
+
+}
+
+static const NSTimeInterval RLMRefreshBuffer = 10;
+
 @interface RLMSyncSessionRefreshHandle () {
+    std::weak_ptr<SyncUser> _user;
+    std::string _path;
     std::weak_ptr<SyncSession> _session;
     std::shared_ptr<SyncSession> _strongSession;
 }
 
-@property (nonatomic, weak) RLMSyncUser *user;
-@property (nonatomic, strong) NSString *pathToRealm;
 @property (nonatomic) NSTimer *timer;
 
 @property (nonatomic) NSURL *realmURL;
+@property (nonatomic) NSURL *authServerURL;
 @property (nonatomic, copy) RLMSyncBasicErrorReportingBlock completionBlock;
 
 @end
@@ -46,18 +69,22 @@ using namespace realm;
 @implementation RLMSyncSessionRefreshHandle
 
 - (instancetype)initWithRealmURL:(NSURL *)realmURL
-                            user:(RLMSyncUser *)user
+                            user:(std::shared_ptr<realm::SyncUser>)user
                          session:(std::shared_ptr<realm::SyncSession>)session
                  completionBlock:(RLMSyncBasicErrorReportingBlock)completionBlock {
     if (self = [super init]) {
         NSString *path = [realmURL path];
-        self.pathToRealm = path;
-        self.user = user;
+        _path = [path UTF8String];
+        self.authServerURL = [NSURL URLWithString:@(user->server_url().c_str())];
+        if (!self.authServerURL) {
+            @throw RLMException(@"User object isn't configured with an auth server URL.");
+        }
         self.completionBlock = completionBlock;
         self.realmURL = realmURL;
         // For the initial bind, we want to prolong the session's lifetime.
         _strongSession = std::move(session);
         _session = _strongSession;
+        _user = user;
         // Immediately fire off the network request.
         [self _timerFired:nil];
         return self;
@@ -75,8 +102,7 @@ using namespace realm;
 }
 
 + (NSDate *)fireDateForTokenExpirationDate:(NSDate *)date nowDate:(NSDate *)nowDate {
-    static const NSTimeInterval refreshBuffer = 10;
-    NSDate *fireDate = [date dateByAddingTimeInterval:-refreshBuffer];
+    NSDate *fireDate = [date dateByAddingTimeInterval:-RLMRefreshBuffer];
     // Only fire times in the future are valid.
     return ([fireDate compare:nowDate] == NSOrderedDescending ? fireDate : nil);
 }
@@ -92,7 +118,7 @@ using namespace realm;
         NSDate *fireDate = [RLMSyncSessionRefreshHandle fireDateForTokenExpirationDate:dateWhenTokenExpires
                                                                                nowDate:[NSDate date]];
         if (!fireDate) {
-            [self.user _unregisterRefreshHandleForURLPath:self.pathToRealm];
+            unregisterRefreshHandle(_user, _path);
             return;
         }
         self.timer = [[NSTimer alloc] initWithFireDate:fireDate
@@ -106,12 +132,12 @@ using namespace realm;
 }
 
 /// Handler for network requests whose responses successfully parse into an auth response model.
-- (BOOL)_handleSuccessfulRequest:(RLMAuthResponseModel *)model strongUser:(RLMSyncUser *)user {
+- (BOOL)_handleSuccessfulRequest:(RLMAuthResponseModel *)model {
     // Success
     std::shared_ptr<SyncSession> session = _session.lock();
     if (!session) {
         // The session is dead or in a fatal error state.
-        [user _unregisterRefreshHandleForURLPath:self.pathToRealm];
+        unregisterRefreshHandle(_user, _path);
         [self invalidate];
         return NO;
     }
@@ -139,38 +165,35 @@ using namespace realm;
             [self scheduleRefreshTimer:expires];
         } else {
             // The session is dead or in a fatal error state.
-            [user _unregisterRefreshHandleForURLPath:self.pathToRealm];
+            unregisterRefreshHandle(_user, _path);
             [self invalidate];
         }
     }
     if (self.completionBlock) {
-        self.completionBlock(success ? nil : [NSError errorWithDomain:RLMSyncErrorDomain
-                                                                 code:RLMSyncErrorClientSessionError
-                                                             userInfo:nil]);
+        self.completionBlock(success ? nil : make_auth_error_client_issue());
     }
     return success;
 }
 
 /// Handler for network requests that failed before the JSON parsing stage.
-- (BOOL)_handleFailedRequest:(NSError *)error strongUser:(RLMSyncUser *)user {
-    NSError *syncError;
-    if ([error.domain isEqualToString:RLMSyncErrorDomain]) {
+- (void)_handleFailedRequest:(NSError *)error {
+    NSError *authError;
+    if ([error.domain isEqualToString:RLMSyncAuthErrorDomain]) {
         // Network client may return sync related error
-        syncError = error;
+        authError = error;
+        // Try to report this error to the expiration callback.
+        reportInvalidAccessToken(_user, authError);
     } else {
         // Something else went wrong
-        syncError = [NSError errorWithDomain:RLMSyncErrorDomain
-                                        code:RLMSyncErrorBadResponse
-                                    userInfo:@{kRLMSyncUnderlyingErrorKey: error}];
+        authError = make_auth_error_bad_response();
     }
-
     if (self.completionBlock) {
-        self.completionBlock(syncError);
+        self.completionBlock(authError);
     }
-    [[RLMSyncManager sharedManager] _fireError:syncError];
+    [[RLMSyncManager sharedManager] _fireError:make_sync_error(authError)];
     // Certain errors related to network connectivity should trigger a retry.
     NSDate *nextTryDate = nil;
-    if (error.domain == NSURLErrorDomain) {
+    if ([error.domain isEqualToString:NSURLErrorDomain]) {
         switch (error.code) {
             case NSURLErrorCannotConnectToHost:
             case NSURLErrorNotConnectedToInternet:
@@ -179,7 +202,7 @@ using namespace realm;
             case NSURLErrorDNSLookupFailed:
             case NSURLErrorCannotFindHost:
                 // FIXME: 10 seconds is an arbitrarily chosen value, consider rationalizing it.
-                nextTryDate = [NSDate dateWithTimeIntervalSinceNow:10];
+                nextTryDate = [NSDate dateWithTimeIntervalSinceNow:RLMRefreshBuffer + 10];
                 break;
             default:
                 break;
@@ -187,63 +210,56 @@ using namespace realm;
     }
     if (!nextTryDate) {
         // This error isn't a network failure error. Just invalidate the refresh handle and stop.
-        [user _unregisterRefreshHandleForURLPath:self.pathToRealm];
+        unregisterRefreshHandle(_user, _path);
         [self invalidate];
-        return NO;
+        return;
     }
     // If we tried to initially bind the session and failed, we'll try again. However, each
     // subsequent attempt will use a weak pointer to avoid prolonging the session's lifetime
     // unnecessarily.
     _strongSession = nullptr;
     [self scheduleRefreshTimer:nextTryDate];
-    return NO;
+    return;
 }
 
 /// Callback handler for network requests.
 - (BOOL)_onRefreshCompletionWithError:(NSError *)error json:(NSDictionary *)json {
-    RLMSyncUser *user = self.user;
-    if (!user) {
-        return NO;
-    }
     if (json && !error) {
         RLMAuthResponseModel *model = [[RLMAuthResponseModel alloc] initWithDictionary:json
                                                                     requireAccessToken:YES
                                                                    requireRefreshToken:NO];
         if (model) {
-            return [self _handleSuccessfulRequest:model strongUser:user];
+            return [self _handleSuccessfulRequest:model];
         }
         // Otherwise, malformed JSON
-        error = [NSError errorWithDomain:RLMSyncErrorDomain
-                                    code:RLMSyncErrorBadResponse
-                                userInfo:@{kRLMSyncErrorJSONKey: json}];
-        [user _unregisterRefreshHandleForURLPath:self.pathToRealm];
+        unregisterRefreshHandle(_user, _path);
         [self.timer invalidate];
+        NSError *error = make_sync_error(make_auth_error_bad_response(json));
         if (self.completionBlock) {
             self.completionBlock(error);
         }
         [[RLMSyncManager sharedManager] _fireError:error];
-        return NO;
     } else {
         REALM_ASSERT(error);
-        return [self _handleFailedRequest:error strongUser:user];
+        [self _handleFailedRequest:error];
     }
+    return NO;
 }
 
 - (void)_timerFired:(__unused NSTimer *)timer {
-    RLMSyncUser *user = self.user;
-    if (!user) {
-        return;
+    RLMServerToken refreshToken = nil;
+    if (auto user = _user.lock()) {
+        refreshToken = @(user->refresh_token().c_str());
     }
-    RLMServerToken refreshToken = user._refreshToken;
     if (!refreshToken) {
-        [user _unregisterRefreshHandleForURLPath:self.pathToRealm];
+        unregisterRefreshHandle(_user, _path);
         [self.timer invalidate];
         return;
     }
 
     NSDictionary *json = @{
                            kRLMSyncProviderKey: @"realm",
-                           kRLMSyncPathKey: self.pathToRealm,
+                           kRLMSyncPathKey: @(_path.c_str()),
                            kRLMSyncDataKey: refreshToken,
                            kRLMSyncAppIDKey: [RLMSyncManager sharedManager].appID,
                            };
@@ -252,8 +268,8 @@ using namespace realm;
     RLMSyncCompletionBlock handler = ^(NSError *error, NSDictionary *json) {
         [weakSelf _onRefreshCompletionWithError:error json:json];
     };
-    [RLMNetworkClient postRequestToEndpoint:RLMServerEndpointAuth
-                                     server:user.authenticationServer
+    [RLMNetworkClient sendRequestToEndpoint:[RLMSyncAuthEndpoint endpoint]
+                                     server:self.authServerURL
                                        JSON:json
                                  completion:handler];
 }

@@ -21,6 +21,7 @@
 
 #include "impl/collection_change_builder.hpp"
 
+#include <realm/util/assert.hpp>
 #include <realm/version_id.hpp>
 
 #include <array>
@@ -53,6 +54,7 @@ struct TransactionChangeInfo {
     std::vector<std::vector<size_t>> column_indices;
     std::vector<size_t> table_indices;
     bool track_all;
+    bool schema_changed;
 };
 
 class DeepChangeChecker {
@@ -89,7 +91,7 @@ private:
         size_t col;
         bool depth_exceeded;
     };
-    std::array<Path, 16> m_current_path;
+    std::array<Path, 4> m_current_path;
 
     bool check_row(Table const& table, size_t row_ndx, size_t depth = 0);
     bool check_outgoing_links(size_t table_ndx, Table const& table,
@@ -191,6 +193,7 @@ protected:
     void add_changes(CollectionChangeBuilder change);
     void set_table(Table const& table);
     std::unique_lock<std::mutex> lock_target();
+    SharedGroup& source_shared_group();
 
     std::function<bool (size_t)> get_modification_checker(TransactionChangeInfo const&, Table const&);
 
@@ -265,7 +268,14 @@ public:
     Handle& operator=(Handle&& other)
     {
         reset();
-        std::shared_ptr<T>::shared_ptr::operator=(std::move(other));
+        std::shared_ptr<T>::operator=(std::move(other));
+        return *this;
+    }
+
+    Handle& operator=(std::shared_ptr<T>&& other)
+    {
+        reset();
+        std::shared_ptr<T>::operator=(std::move(other));
         return *this;
     }
 
@@ -314,6 +324,22 @@ private:
     RealmCoordinator* m_coordinator = nullptr;
     std::exception_ptr m_error;
 };
+
+// Find which column of the row in the table contains the given container.
+//
+// LinkViews and Subtables know what row of their parent they're in, but not
+// what column, so we have to just check each one.
+template<typename Table, typename T, typename U>
+size_t find_container_column(Table& table, size_t row_ndx, T const& expected, int type, U (Table::*getter)(size_t, size_t))
+{
+    for (size_t i = 0, count = table.get_column_count(); i != count; ++i) {
+        if (table.get_column_type(i) == type && (table.*getter)(i, row_ndx) == expected) {
+            return i;
+        }
+    }
+    REALM_UNREACHABLE();
+}
+
 
 } // namespace _impl
 } // namespace realm

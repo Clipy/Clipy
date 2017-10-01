@@ -21,7 +21,6 @@ import RealmSwift
 class AppDelegate: NSObject {
 
     // MARK: - Properties
-    let defaults = UserDefaults.standard
     let screenshotObserver = ScreenShotObserver()
     let disposeBag = DisposeBag()
 
@@ -60,13 +59,13 @@ class AppDelegate: NSObject {
     }
 
     func clearAllHistory() {
-        let isShowAlert = defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+        let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = LocalizedString.ClearHistory.value
-            alert.informativeText = LocalizedString.ConfirmClearHistory.value
-            alert.addButton(withTitle: LocalizedString.ClearHistory.value)
-            alert.addButton(withTitle: LocalizedString.Cancel.value)
+            alert.messageText = LocalizedString.clearHistory.value
+            alert.informativeText = LocalizedString.confirmClearHistory.value
+            alert.addButton(withTitle: LocalizedString.clearHistory.value)
+            alert.addButton(withTitle: LocalizedString.cancel.value)
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -75,12 +74,12 @@ class AppDelegate: NSObject {
             if result != NSAlertFirstButtonReturn { return }
 
             if alert.suppressionButton?.state == NSOnState {
-                defaults.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+                AppEnvironment.current.defaults.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
             }
-            defaults.synchronize()
+            AppEnvironment.current.defaults.synchronize()
         }
 
-        ClipService.shared.clearAll()
+        AppEnvironment.current.clipService.clearAll()
     }
 
     func selectClipMenuItem(_ sender: NSMenuItem) {
@@ -97,8 +96,7 @@ class AppDelegate: NSObject {
             return
         }
 
-        PasteService.shared.copyToPasteboard(with: clip)
-        PasteService.shared.paste()
+        AppEnvironment.current.pasteService.paste(with: clip)
     }
 
     func selectSnippetMenuItem(_ sender: AnyObject) {
@@ -114,8 +112,8 @@ class AppDelegate: NSObject {
             NSBeep()
             return
         }
-        PasteService.shared.copyToPasteboard(with: snippet.content)
-        PasteService.shared.paste()
+        AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
+        AppEnvironment.current.pasteService.paste()
     }
 
     func terminateApplication() {
@@ -125,23 +123,23 @@ class AppDelegate: NSObject {
     // MARK: - Login Item Methods
     fileprivate func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = LocalizedString.LaunchClipy.value
-        alert.informativeText = LocalizedString.LaunchSettingInfo.value
-        alert.addButton(withTitle: LocalizedString.LaunchOnStartup.value)
-        alert.addButton(withTitle: LocalizedString.DontLaunch.value)
+        alert.messageText = LocalizedString.launchClipy.value
+        alert.informativeText = LocalizedString.launchSettingInfo.value
+        alert.addButton(withTitle: LocalizedString.launchOnStartup.value)
+        alert.addButton(withTitle: LocalizedString.dontLaunch.value)
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
         //  Launch on system startup
         if alert.runModal() == NSAlertFirstButtonReturn {
-            defaults.set(true, forKey: Constants.UserDefaults.loginItem)
+            AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
             toggleLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSOnState {
-            defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+            AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         }
-        defaults.synchronize()
+        AppEnvironment.current.defaults.synchronize()
     }
 
     fileprivate func toggleAddingToLoginItems(_ enable: Bool) {
@@ -153,7 +151,7 @@ class AppDelegate: NSObject {
     }
 
     fileprivate func toggleLoginItemState() {
-        let isInLoginItems = UserDefaults.standard.bool(forKey: Constants.UserDefaults.loginItem)
+        let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
 }
@@ -162,34 +160,35 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // Environments
+        AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
-
         // SDKs
         CPYUtilities.initSDKs()
 
         // Show Login Item
-        if !defaults.bool(forKey: Constants.UserDefaults.loginItem) && !defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
+        if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
 
         // Sparkle
         let updater = SUUpdater.shared()
         updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(defaults.integer(forKey: Constants.Update.checkInterval))
+        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
+        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
 
         // Binding Events
         bind()
 
         // Services
-        _ = ClipService.shared
-        _ = DataCleanService.shared
-        ExcludeAppService.shared.startAppMonitoring()
-        HotKeyService.shared.setupDefaultHotKeys()
+        AppEnvironment.current.clipService.startMonitoring()
+        AppEnvironment.current.dataCleanService.startMonitoring()
+        AppEnvironment.current.excludeAppService.startMonitoring()
+        AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
         // Managers
-        MenuManager.sharedManager.setup()
+        AppEnvironment.current.menuManager.setup()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -201,21 +200,24 @@ extension AppDelegate: NSApplicationDelegate {
 fileprivate extension AppDelegate {
     fileprivate func bind() {
         // Login Item
-        defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
                 self?.toggleLoginItemState()
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Observe Screenshot
-        defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
-            }).addDisposableTo(disposeBag)
+            })
+            .disposed(by: disposeBag)
         // Observe Screenshot image
         screenshotObserver.rx.addedImage
             .subscribe(onNext: { image in
-                ClipService.shared.create(with: image)
-            }).addDisposableTo(disposeBag)
+                AppEnvironment.current.clipService.create(with: image)
+            })
+            .disposed(by: disposeBag)
     }
 }

@@ -24,7 +24,7 @@ import Realm
  */
 public final class RLMIterator<T: Object>: IteratorProtocol {
     private var i: UInt = 0
-    private let generatorBase: NSFastEnumerationIterator
+    private var generatorBase: NSFastEnumerationIterator
 
     init(collection: RLMCollection) {
         generatorBase = NSFastEnumerationIterator(collection)
@@ -32,11 +32,7 @@ public final class RLMIterator<T: Object>: IteratorProtocol {
 
     /// Advance to the next element and return it, or `nil` if no next element exists.
     public func next() -> T? {
-        let accessor = unsafeBitCast(generatorBase.next() as! Object?, to: Optional<T>.self)
-        if let accessor = accessor {
-            RLMInitializeSwiftAccessorGenerics(accessor)
-        }
-        return accessor
+        return unsafeBitCast(generatorBase.next() as! Object?, to: Optional<T>.self)
     }
 }
 
@@ -49,7 +45,7 @@ public final class RLMIterator<T: Object>: IteratorProtocol {
  in a requested section suitable for passing directly to `UITableView`'s batch
  update methods.
 
- The arrays of indices in the `.Update` case follow `UITableView`'s batching
+ The arrays of indices in the `.update` case follow `UITableView`'s batching
  conventions, and can be passed as-is to a table view's batch update functions after being converted to index paths.
  For example, for a simple one-section table view, you can do the following:
 
@@ -63,12 +59,12 @@ public final class RLMIterator<T: Object>: IteratorProtocol {
      case .update(_, let deletions, let insertions, let modifications):
          // Query results have changed, so apply them to the TableView
          self.tableView.beginUpdates()
-         self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
-            withRowAnimation: .Automatic)
-         self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
-            withRowAnimation: .Automatic)
-         self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
-            withRowAnimation: .Automatic)
+         self.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0) },
+            with: .automatic)
+         self.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0) },
+            with: .automatic)
+         self.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0) },
+            with: .automatic)
          self.tableView.endUpdates()
          break
      case .error(let err):
@@ -127,14 +123,23 @@ private func forceCast<A, U>(_ from: A, to type: U.Type) -> U {
     return from as! U
 }
 
+#if swift(>=3.2)
+/// :nodoc:
+public protocol RealmCollectionBase: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible, ThreadConfined where Element: Object {
+}
+#else
+/// :nodoc:
+public protocol RealmCollectionBase: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible, ThreadConfined {
+    /// The type of the objects contained in the collection.
+    associatedtype Element: Object
+}
+#endif
+
 /**
  A homogenous collection of `Object`s which can be retrieved, filtered, sorted, and operated upon.
 */
-public protocol RealmCollection: RandomAccessCollection, LazyCollectionProtocol, CustomStringConvertible, ThreadConfined {
+public protocol RealmCollection: RealmCollectionBase {
     // Must also conform to `AssistedObjectiveCBridgeable`
-
-    /// The type of the objects contained in the collection.
-    associatedtype Element: Object
 
     // MARK: Properties
 
@@ -472,7 +477,11 @@ private final class _AnyRealmCollection<C: RealmCollection>: _AnyRealmCollection
     // MARK: Sequence Support
 
     override subscript(position: Int) -> C.Element {
-        return base[position as! C.Index] as! C.Element
+        #if swift(>=3.2)
+            return base[position as! C.Index]
+        #else
+            return base[position as! C.Index] as! C.Element
+        #endif
     }
 
     override func makeIterator() -> RLMIterator<Element> {

@@ -51,6 +51,8 @@ void RLMSetErrorOrThrow(NSError *error, NSError **outError);
 
 // returns if the object can be inserted as the given type
 BOOL RLMIsObjectValidForProperty(id obj, RLMProperty *prop);
+// throw an exception if the object is not a valid value for the property
+void RLMValidateValueForProperty(id obj, RLMProperty *prop);
 
 // gets default values for the given schema (+defaultPropertyValues)
 // merges with native property defaults if Swift class
@@ -67,12 +69,6 @@ static inline BOOL RLMIsKindOfClass(Class class1, Class class2) {
     }
     return NO;
 }
-
-// Returns whether the class is a descendent of RLMObjectBase
-BOOL RLMIsObjectOrSubclass(Class klass);
-
-// Returns whether the class is an indirect descendant of RLMObjectBase
-BOOL RLMIsObjectSubclass(Class klass);
 
 template<typename T>
 static inline T *RLMDynamicCast(__unsafe_unretained id obj) {
@@ -91,35 +87,6 @@ static inline T RLMCoerceToNil(__unsafe_unretained T obj) {
         return RLMCoerceToNil(optional.underlyingValue);
     }
     return obj;
-}
-
-// Translate an rlmtype to a string representation
-static inline NSString *RLMTypeToString(RLMPropertyType type) {
-    switch (type) {
-        case RLMPropertyTypeString:
-            return @"string";
-        case RLMPropertyTypeInt:
-            return @"int";
-        case RLMPropertyTypeBool:
-            return @"bool";
-        case RLMPropertyTypeDate:
-            return @"date";
-        case RLMPropertyTypeData:
-            return @"data";
-        case RLMPropertyTypeDouble:
-            return @"double";
-        case RLMPropertyTypeFloat:
-            return @"float";
-        case RLMPropertyTypeAny:
-            return @"any";
-        case RLMPropertyTypeObject:
-            return @"object";
-        case RLMPropertyTypeArray:
-            return @"array";
-        case RLMPropertyTypeLinkingObjects:
-            return @"linking objects";
-    }
-    return @"Unknown";
 }
 
 // String conversion utilities
@@ -194,10 +161,6 @@ static inline NSUInteger RLMConvertNotFound(size_t index) {
 }
 
 id RLMMixedToObjc(realm::Mixed const& value);
-
-// For unit testing purposes, allow an Objective-C class named FakeObject to also be used
-// as the base class of managed objects. This allows for testing invalid schemas.
-void RLMSetTreatFakeObjectAsRLMObject(BOOL flag);
 
 // Given a bundle identifier, return the base directory on the disk within which Realm database and support files should
 // be stored.

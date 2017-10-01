@@ -80,6 +80,9 @@ public:
     // Get the info for the target of the link at the given property index.
     RLMClassInfo &linkTargetType(size_t propertyIndex);
 
+    // Get the info for the target of the given property
+    RLMClassInfo &linkTargetType(realm::Property const& property);
+
     void releaseTable() { m_table = nullptr; }
 
 private:
@@ -92,7 +95,9 @@ class RLMSchemaInfo {
     using impl = std::unordered_map<NSString *, RLMClassInfo>;
 public:
     RLMSchemaInfo() = default;
-    RLMSchemaInfo(RLMRealm *realm, RLMSchema *rlmSchema, realm::Schema const& schema);
+    RLMSchemaInfo(RLMRealm *realm);
+
+    RLMSchemaInfo clone(realm::Schema const& source_schema, RLMRealm *target_realm);
 
     // Look up by name, throwing if it's not present
     RLMClassInfo& operator[](NSString *name);

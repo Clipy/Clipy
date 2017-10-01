@@ -1,27 +1,3 @@
-//
-// Element.swift
-//
-// Copyright (c) 2014-2016 Marko Tadić <tadija@me.com> http://tadija.net
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
-
 import Foundation
 
 /**
@@ -55,14 +31,14 @@ open class AEXMLElement {
     /// String representation of `value` property (if `value` is `nil` this is empty String).
     open var string: String { return value ?? String() }
     
-    /// Boolean representation of `value` property (if `value` is "true" or 1 this is `True`, otherwise `False`).
-    open var bool: Bool { return string.lowercased() == "true" || Int(string) == 1 ? true : false }
+    /// Boolean representation of `value` property (`nil` if `value` can't be represented as Bool).
+    open var bool: Bool? { return Bool(string) }
     
-    /// Integer representation of `value` property (this is **0** if `value` can't be represented as Integer).
-    open var int: Int { return Int(string) ?? 0 }
+    /// Integer representation of `value` property (`nil` if `value` can't be represented as Integer).
+    open var int: Int? { return Int(string) }
     
-    /// Double representation of `value` property (this is **0.00** if `value` can't be represented as Double).
-    open var double: Double { return Double(string) ?? 0.00 }
+    /// Double representation of `value` property (`nil` if `value` can't be represented as Double).
+    open var double: Double? { return Double(string) }
     
     // MARK: - Lifecycle
     
@@ -106,19 +82,6 @@ open class AEXMLElement {
     
     /// Returns number of all elements with equal name as `self`.
     open var count: Int { return all?.count ?? 0 }
-
-    fileprivate func filter(withCondition condition: (AEXMLElement) -> Bool) -> [AEXMLElement]? {
-        guard let elements = all else { return nil }
-        
-        var found = [AEXMLElement]()
-        for element in elements {
-            if condition(element) {
-                found.append(element)
-            }
-        }
-        
-        return found.count > 0 ? found : nil
-    }
     
     /**
         Returns all elements with given value.
@@ -128,8 +91,24 @@ open class AEXMLElement {
         - returns: Optional Array of found XML elements.
     */
     open func all(withValue value: String) -> [AEXMLElement]? {
-        let found = filter { (element) -> Bool in
-            return element.value == value
+        let found = all?.flatMap {
+            $0.value == value ? $0 : nil
+        }
+        return found
+    }
+    
+    /**
+        Returns all elements containing given attributes.
+
+        - parameter attributes: Array of attribute names.
+
+        - returns: Optional Array of found XML elements.
+    */
+    open func all(containingAttributeKeys keys: [String]) -> [AEXMLElement]? {
+        let found = all?.flatMap { element in
+            keys.reduce(true) { (result, key) in
+                result && Array(element.attributes.keys).contains(key)
+            } ? element : nil
         }
         return found
     }
@@ -142,14 +121,11 @@ open class AEXMLElement {
         - returns: Optional Array of found XML elements.
     */
     open func all(withAttributes attributes: [String : String]) -> [AEXMLElement]? {
-        let found = filter { (element) -> Bool in
-            var countAttributes = 0
-            for (key, value) in attributes {
-                if element.attributes[key] == value {
-                    countAttributes += 1
-                }
-            }
-            return countAttributes == attributes.count
+        let keys = Array(attributes.keys)
+        let found = all(containingAttributeKeys: keys)?.flatMap { element in
+            attributes.reduce(true) { (result, attribute) in
+                result && element.attributes[attribute.key] == attribute.value
+            } ? element : nil
         }
         return found
     }

@@ -24,7 +24,7 @@ import Realm.Private
 /// Internal class. Do not use directly.
 public class ListBase: RLMListBase {
     // Printable requires a description property defined in Swift (and not obj-c),
-    // and it has to be defined as @objc override, which can't be done in a
+    // and it has to be defined as override, which can't be done in a
     // generic class.
     /// Returns a human-readable description of the objects contained in the List.
     @objc public override var description: String {
@@ -32,8 +32,7 @@ public class ListBase: RLMListBase {
     }
 
     @objc private func descriptionWithMaxDepth(_ depth: UInt) -> String {
-        let type = "List<\(_rlmArray.objectClassName)>"
-        return gsub(pattern: "RLMArray <0x[a-z0-9]+>", template: type, string: _rlmArray.description(withMaxDepth: depth)) ?? type
+        return RLMDescriptionWithMaxDepth("List", _rlmArray, depth)
     }
 
     /// Returns the number of objects in this List.
@@ -245,7 +244,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose minimum value is desired.
      */
     public func min<U: MinMaxType>(ofProperty property: String) -> U? {
-        return filter(NSPredicate(value: true)).min(ofProperty: property)
+        return _rlmArray.min(ofProperty: property).map(dynamicBridgeCast)
     }
 
     /**
@@ -257,7 +256,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose maximum value is desired.
      */
     public func max<U: MinMaxType>(ofProperty property: String) -> U? {
-        return filter(NSPredicate(value: true)).max(ofProperty: property)
+        return _rlmArray.max(ofProperty: property).map(dynamicBridgeCast)
     }
 
     /**
@@ -268,7 +267,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose values should be summed.
      */
     public func sum<U: AddableType>(ofProperty property: String) -> U {
-        return filter(NSPredicate(value: true)).sum(ofProperty: property)
+        return dynamicBridgeCast(fromObjectiveC: _rlmArray.sum(ofProperty: property))
     }
 
     /**
@@ -279,7 +278,7 @@ public final class List<T: Object>: ListBase {
      - parameter property: The name of a property whose average value should be calculated.
      */
     public func average<U: AddableType>(ofProperty property: String) -> U? {
-        return filter(NSPredicate(value: true)).average(ofProperty: property)
+        return _rlmArray.average(ofProperty: property).map(dynamicBridgeCast)
     }
 
     // MARK: Mutation
@@ -504,6 +503,10 @@ extension List: RealmCollection, RangeReplaceableCollection {
             insert(x, at: subrange.lowerBound)
         }
     }
+
+    // This should be inferred, but Xcode 8.1 is unable to
+    /// :nodoc:
+    public typealias Indices = DefaultRandomAccessIndices<List>
 
     /// The position of the first element in a non-empty collection.
     /// Identical to endIndex in an empty collection.

@@ -54,9 +54,15 @@ struct IncompatibleLockFile : std::runtime_error {
     }
 };
 
-/// Thrown by SharedGroup::open() if the realm database was generated with
-/// a format for Realm Mobile Platform but is being opened as a Realm
-/// Mobile Database or vice versa.
+/// Thrown by SharedGroup::open() if the type of history
+/// (Replication::HistoryType) in the opened Realm file is incompatible with the
+/// mode in which the Realm file is opened. For example, if there is a mismatch
+/// between the history type in the file, and the history type associated with
+/// the replication plugin passed to SharedGroup::open().
+///
+/// This exception will also be thrown if the history schema version is lower
+/// than required, and no migration is possible
+/// (Replication::is_upgradable_history_schema()).
 struct IncompatibleHistories : util::File::AccessError {
     IncompatibleHistories(const std::string& msg, const std::string& path)
         : util::File::AccessError("Incompatible histories. " + msg, path)
@@ -170,6 +176,11 @@ public:
     SharedGroup(unattached_tag) noexcept;
 
     ~SharedGroup() noexcept;
+
+    // Disable copying to prevent accessor errors. If you really want another
+    // instance, open another SharedGroup object on the same file.
+    SharedGroup(const SharedGroup&) = delete;
+    SharedGroup& operator=(const SharedGroup&) = delete;
 
     /// Attach this SharedGroup instance to the specified database file.
     ///
@@ -350,6 +361,11 @@ public:
     const Group& begin_read(VersionID version = VersionID());
     void end_read() noexcept;
     Group& begin_write();
+    // Return true (and take the write lock) if there is no other write
+    // in progress. In case of contention return false immediately.
+    // If the write lock is obtained, also provide the Group associated
+    // with the SharedGroup for further operations.
+    bool try_begin_write(Group*& group);
     version_type commit();
     void rollback() noexcept;
     // report statistics of last commit done on THIS shared group.
@@ -555,6 +571,7 @@ private:
     util::InterprocessCondVar m_daemon_becomes_ready;
 #endif
     util::InterprocessCondVar m_new_commit_available;
+    util::InterprocessCondVar m_pick_next_writer;
 #endif
     std::function<void(int, int)> m_upgrade_callback;
 
@@ -593,6 +610,8 @@ private:
 
     void do_begin_read(VersionID, bool writable);
     void do_end_read() noexcept;
+    /// return true if write transaction can commence, false otherwise.
+    bool do_try_begin_write();
     void do_begin_write();
     version_type do_commit();
     void do_end_write() noexcept;
@@ -615,7 +634,9 @@ private:
 
     void do_async_commits();
 
-    void upgrade_file_format(bool allow_file_format_upgrade, int target_file_format_version);
+    /// Upgrade file format and/or history schema
+    void upgrade_file_format(bool allow_file_format_upgrade, int target_file_format_version,
+                             int current_hist_schema_version, int target_hist_schema_version);
 
     //@{
     /// See LangBindHelper.
@@ -639,6 +660,9 @@ private:
     _impl::History* get_history();
 
     int get_file_format_version() const noexcept;
+
+    /// finish up the process of starting a write transaction. Internal use only.
+    void finish_begin_write();
 
     friend class _impl::SharedGroupFriend;
 };
@@ -676,12 +700,6 @@ public:
     ConstTableRef get_table(StringData name) const
     {
         return get_group().get_table(name); // Throws
-    }
-
-    template <class T>
-    BasicTableRef<const T> get_table(StringData name) const
-    {
-        return get_group().get_table<T>(name); // Throws
     }
 
     const Group& get_group() const noexcept;
@@ -731,24 +749,6 @@ public:
     TableRef get_or_add_table(StringData name, bool* was_added = nullptr) const
     {
         return get_group().get_or_add_table(name, was_added); // Throws
-    }
-
-    template <class T>
-    BasicTableRef<T> get_table(StringData name) const
-    {
-        return get_group().get_table<T>(name); // Throws
-    }
-
-    template <class T>
-    BasicTableRef<T> add_table(StringData name, bool require_unique_name = true) const
-    {
-        return get_group().add_table<T>(name, require_unique_name); // Throws
-    }
-
-    template <class T>
-    BasicTableRef<T> get_or_add_table(StringData name, bool* was_added = nullptr) const
-    {
-        return get_group().get_or_add_table<T>(name, was_added); // Throws
     }
 
     Group& get_group() const noexcept;

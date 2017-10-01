@@ -22,6 +22,7 @@
 #include <realm/column_fwd.hpp>
 #include <realm/column_type.hpp>
 #include <realm/data_type.hpp>
+#include <realm/array.hpp>
 
 namespace realm {
 

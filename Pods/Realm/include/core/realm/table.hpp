@@ -57,6 +57,8 @@ template <class>
 class SubQuery;
 struct LinkTargetInfo;
 
+struct SubTable {
+};
 struct Link {
 };
 typedef Link LinkList;
@@ -69,14 +71,6 @@ class TableFriend;
 class Replication;
 
 
-/// The Table class is non-polymorphic, that is, it has no virtual
-/// functions. This is important because it ensures that there is no run-time
-/// distinction between a Table instance and an instance of any variation of
-/// BasicTable<T>, and this, in turn, makes it valid to cast a pointer from
-/// Table to BasicTable<T> even when the instance is constructed as a Table. Of
-/// course, this also assumes that BasicTable<> is non-polymorphic, has no
-/// destructor, and adds no extra data members.
-///
 /// FIXME: Table assignment (from any group to any group) could be made aliasing
 /// safe as follows: Start by cloning source table into target allocator. On
 /// success, assign, and then deallocate any previous structure at the target.
@@ -412,6 +406,12 @@ public:
     DataType get_mixed_type(size_t column_ndx, size_t row_ndx) const noexcept;
     Timestamp get_timestamp(size_t column_ndx, size_t row_ndx) const noexcept;
 
+    /// Return data from position 'pos' and onwards. If the blob is distributed
+    /// across multiple arrays, you will only get data from one array. 'pos'
+    /// will be updated to be an index to next available data. It will be 0
+    /// if no more data.
+    BinaryData get_binary_at(size_t col_ndx, size_t ndx, size_t& pos) const noexcept;
+
     template <class T>
     T get(size_t c, size_t r) const noexcept;
 
@@ -425,9 +425,6 @@ public:
 
     TableRef get_link_target(size_t column_ndx) noexcept;
     ConstTableRef get_link_target(size_t column_ndx) const noexcept;
-
-    template <class T>
-    typename T::RowAccessor get_link_accessor(size_t column_ndx, size_t row_ndx);
 
     //@{
 
@@ -483,7 +480,7 @@ public:
     ///
     /// String level modifications performed via insert_substring() and
     /// remove_substring() are mergable and subject to operational
-    /// trsnaformation. That is, the effect of two causally unrelated
+    /// transformation. That is, the effect of two causally unrelated
     /// modifications will in general both be retained during synchronization.
 
     static const size_t max_string_size = 0xFFFFF8 - Array::header_size - 1;
@@ -495,6 +492,12 @@ public:
     // not guaranteed by the standard.
     static constexpr int_fast64_t max_integer = std::numeric_limits<int64_t>::max();
     static constexpr int_fast64_t min_integer = std::numeric_limits<int64_t>::min();
+
+    template <class T>
+    void set(size_t c, size_t r, T value, bool is_default = false);
+
+    template <class T>
+    size_t set_unique(size_t c, size_t r, T value);
 
     void set_int(size_t column_ndx, size_t row_ndx, int_fast64_t value, bool is_default = false);
     size_t set_int_unique(size_t column_ndx, size_t row_ndx, int_fast64_t value);
@@ -513,6 +516,11 @@ public:
     void nullify_link(size_t column_ndx, size_t row_ndx);
     void set_null(size_t column_ndx, size_t row_ndx, bool is_default = false);
     void set_null_unique(size_t col_ndx, size_t row_ndx);
+
+    // Sync needs to store blobs bigger than 16 M. This function can be used for that. Data should be read
+    // out again using the get_binary_at() function. Should not be used for user data as normal get_binary()
+    // will just return null if the data is bigger than the limit.
+    void set_binary_big(size_t column_ndx, size_t row_ndx, BinaryData value, bool is_default = false);
 
     void add_int(size_t column_ndx, size_t row_ndx, int_fast64_t value);
 
@@ -602,6 +610,9 @@ public:
     double average_double(size_t column_ndx, size_t* value_count = nullptr) const;
 
     // Searching
+    template <class T>
+    size_t find_first(size_t column_ndx, T value) const;
+
     size_t find_first_link(size_t target_row_index) const;
     size_t find_first_int(size_t column_ndx, int64_t value) const;
     size_t find_first_bool(size_t column_ndx, bool value) const;
@@ -673,8 +684,6 @@ public:
     uint_fast64_t get_version_counter() const noexcept;
 
 private:
-    template <class T>
-    size_t find_first(size_t column_ndx, T value) const; // called by above methods
     template <class T>
     TableView find_all(size_t column_ndx, T value);
 
@@ -829,6 +838,14 @@ public:
     /// if, and only if the table accessor is attached to such a subtable. This
     /// function is mainly intended for debugging purposes.
     bool is_degenerate() const noexcept;
+
+    /// Compute the sum of the sizes in number of bytes of all the array nodes
+    /// that currently make up this table. See also
+    /// Group::compute_aggregate_byte_size().
+    ///
+    /// If this table accessor is the detached state, this function returns
+    /// zero.
+    size_t compute_aggregated_byte_size() const noexcept;
 
     // Debug
     void verify() const;
@@ -995,7 +1012,7 @@ private:
     /// assign() would not check for spec compatibility. This would
     /// make it ideal as a basis for implementing operator=() for
     /// typed tables.
-    Table& operator=(const Table&);
+    Table& operator=(const Table&) = delete;
 
     /// Used when constructing an accessor whose lifetime is going to be managed
     /// by reference counting. The lifetime of accessors of free-standing tables
@@ -1171,6 +1188,8 @@ private:
     LinkListColumn& get_column_link_list(size_t ndx);
     const BacklinkColumn& get_column_backlink(size_t ndx) const noexcept;
     BacklinkColumn& get_column_backlink(size_t ndx);
+
+    void verify_column(size_t col_ndx, const ColumnBase* col) const;
 
     void instantiate_before_change();
     void validate_column_type(const ColumnBase& col, ColumnType expected_type, size_t ndx) const;
@@ -1451,7 +1470,6 @@ private:
     friend class Group;
 };
 
-
 class Table::Parent : public ArrayParent {
 public:
     ~Parent() noexcept override
@@ -1652,6 +1670,18 @@ inline bool Table::has_shared_type() const noexcept
     return !m_top.is_attached();
 }
 
+inline void Table::verify_column(size_t col_ndx, const ColumnBase* col) const
+{
+    // Check if the column exists at the expected location
+    if (REALM_LIKELY(col_ndx < m_cols.size() && m_cols[col_ndx] == col))
+        return;
+    // The column might be elsewhere in the list
+    for (auto c : m_cols) {
+        if (c == col)
+            return;
+    }
+    throw LogicError(LogicError::column_does_not_exist);
+}
 
 class Table::UnbindGuard {
 public:
@@ -1993,17 +2023,6 @@ inline size_t* Table::Parent::record_subtable_path(size_t* begin, size_t*) noexc
     return begin;
 }
 
-template <class T>
-typename T::RowAccessor Table::get_link_accessor(size_t column_ndx, size_t row_ndx)
-{
-    size_t row_pos_in_target = get_link(column_ndx, row_ndx);
-    TableRef target_table = get_link_target(column_ndx);
-
-    Table* table = &*target_table;
-    T* typed_table = reinterpret_cast<T*>(table);
-    return (*typed_table)[row_pos_in_target];
-}
-
 inline bool Table::is_marked() const noexcept
 {
     return m_mark;
@@ -2035,6 +2054,157 @@ inline void Table::set_ndx_in_parent(size_t ndx_in_parent) noexcept
         m_columns.set_ndx_in_parent(ndx_in_parent);
     }
 }
+
+// Declare our explicit specializations so that the inline wrappers don't try
+// to instantiate them
+template<> int64_t Table::get<int64_t>(size_t, size_t) const noexcept;
+template<> util::Optional<int64_t> Table::get<util::Optional<int64_t>>(size_t, size_t) const noexcept;
+template<> bool Table::get<bool>(size_t, size_t) const noexcept;
+template<> Optional<bool> Table::get<Optional<bool>>(size_t, size_t) const noexcept;
+template<> float Table::get<float>(size_t, size_t) const noexcept;
+template<> util::Optional<float> Table::get<util::Optional<float>>(size_t, size_t) const noexcept;
+template<> double Table::get<double>(size_t, size_t) const noexcept;
+template<> util::Optional<double> Table::get<util::Optional<double>>(size_t, size_t) const noexcept;
+template<> OldDateTime Table::get<OldDateTime>(size_t, size_t) const noexcept;
+template<> Timestamp Table::get<Timestamp>(size_t, size_t) const noexcept;
+template<> StringData Table::get<StringData>(size_t, size_t) const noexcept;
+template<> BinaryData Table::get<BinaryData>(size_t, size_t) const noexcept;
+template<> Mixed Table::get<Mixed>(size_t, size_t) const noexcept;
+
+template<> void Table::set<int64_t>(size_t, size_t, int64_t, bool);
+template<> void Table::set<bool>(size_t, size_t, bool, bool);
+template<> void Table::set<float>(size_t, size_t, float, bool);
+template<> void Table::set<double>(size_t, size_t, double, bool);
+template<> void Table::set<OldDateTime>(size_t, size_t, OldDateTime, bool);
+template<> void Table::set<Timestamp>(size_t, size_t, Timestamp, bool);
+template<> void Table::set<StringData>(size_t, size_t, StringData, bool);
+template<> void Table::set<BinaryData>(size_t, size_t, BinaryData, bool);
+template<> void Table::set<Mixed>(size_t, size_t, Mixed, bool);
+template<> void Table::set<null>(size_t, size_t, null, bool);
+
+template<> size_t Table::set_unique<int64_t>(size_t, size_t, int64_t);
+template<> size_t Table::set_unique<StringData>(size_t, size_t, StringData);
+template<> size_t Table::set_unique<null>(size_t, size_t, null);
+
+
+inline int64_t Table::get_int(size_t col_ndx, size_t ndx) const noexcept
+{
+    if (is_nullable(col_ndx))
+        return get<util::Optional<int64_t>>(col_ndx, ndx).value_or(0);
+    else
+        return get<int64_t>(col_ndx, ndx);
+}
+
+inline size_t Table::set_int_unique(size_t col_ndx, size_t ndx, int_fast64_t value)
+{
+    return set_unique(col_ndx, ndx, value);
+}
+
+inline void Table::set_int(size_t col_ndx, size_t ndx, int_fast64_t value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline Timestamp Table::get_timestamp(size_t col_ndx, size_t ndx) const noexcept
+{
+    return get<Timestamp>(col_ndx, ndx);
+}
+
+inline void Table::set_timestamp(size_t col_ndx, size_t ndx, Timestamp value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline bool Table::get_bool(size_t col_ndx, size_t ndx) const noexcept
+{
+    if (is_nullable(col_ndx))
+        return get<util::Optional<bool>>(col_ndx, ndx).value_or(false);
+    else
+        return get<bool>(col_ndx, ndx);
+}
+
+inline void Table::set_bool(size_t col_ndx, size_t ndx, bool value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline OldDateTime Table::get_olddatetime(size_t col_ndx, size_t ndx) const noexcept
+{
+    return get<OldDateTime>(col_ndx, ndx);
+}
+
+inline void Table::set_olddatetime(size_t col_ndx, size_t ndx, OldDateTime value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline float Table::get_float(size_t col_ndx, size_t ndx) const noexcept
+{
+    float f = get<float>(col_ndx, ndx);
+    return null::is_null_float(f) ? 0.0f : f;
+}
+
+inline void Table::set_float(size_t col_ndx, size_t ndx, float value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline double Table::get_double(size_t col_ndx, size_t ndx) const noexcept
+{
+    double d = get<double>(col_ndx, ndx);
+    return null::is_null_float(d) ? 0.0 : d;
+}
+
+inline void Table::set_double(size_t col_ndx, size_t ndx, double value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline StringData Table::get_string(size_t col_ndx, size_t ndx) const noexcept
+{
+    return get<StringData>(col_ndx, ndx);
+}
+
+inline void Table::set_string(size_t col_ndx, size_t ndx, StringData value, bool is_default)
+{
+    return set(col_ndx, ndx, value, is_default);
+}
+
+inline size_t Table::set_string_unique(size_t col_ndx, size_t ndx, StringData value)
+{
+    return set_unique(col_ndx, ndx, value);
+}
+
+inline BinaryData Table::get_binary(size_t col_ndx, size_t ndx) const noexcept
+{
+    return get<BinaryData>(col_ndx, ndx);
+}
+
+inline void Table::set_binary(size_t col_ndx, size_t ndx, BinaryData value, bool is_default)
+{
+    set(col_ndx, ndx, value, is_default);
+}
+
+inline Mixed Table::get_mixed(size_t col_ndx, size_t ndx) const noexcept
+{
+    return get<Mixed>(col_ndx, ndx);
+}
+
+inline void Table::set_mixed(size_t col_ndx, size_t ndx, Mixed value, bool is_default)
+{
+    set(col_ndx, ndx, value, is_default);
+}
+
+inline void Table::set_null(size_t col_ndx, size_t ndx, bool is_default)
+{
+    set(col_ndx, ndx, null(), is_default);
+}
+
+inline void Table::set_null_unique(size_t col_ndx, size_t ndx)
+{
+    set_unique(col_ndx, ndx, null());
+}
+
 
 // This class groups together information about the target of a link column
 // This is not a valid link if the target table == nullptr
