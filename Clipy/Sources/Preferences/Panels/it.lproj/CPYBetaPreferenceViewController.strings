@@ -25,3 +25,33 @@
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "vtQ-7v-nLJ"; */
 "vtQ-7v-nLJ.title" = "Control";
+
+/* Class = "NSMenuItem"; title = "Command"; ObjectID = "HZd-yn-p4o"; */
+"HZd-yn-p4o.title" = "Command";
+
+/* Class = "NSButtonCell"; title = "Paste and delete history"; ObjectID = "M5n-Mr-02l"; */
+"M5n-Mr-02l.title" = "Paste and delete history";
+
+/* Class = "NSMenuItem"; title = "Alt"; ObjectID = "M9s-9f-OKA"; */
+"M9s-9f-OKA.title" = "Alt";
+
+/* Class = "NSMenuItem"; title = "Shift"; ObjectID = "NFq-oQ-VKz"; */
+"NFq-oQ-VKz.title" = "Maiuscolo";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "kZF-3Q-Tge"; */
+"kZF-3Q-Tge.title" = "Control";
+
+/* Class = "NSMenuItem"; title = "Shift"; ObjectID = "oNH-8M-ZSE"; */
+"oNH-8M-ZSE.title" = "Maiuscolo";
+
+/* Class = "NSMenuItem"; title = "Alt"; ObjectID = "orJ-AB-Oxl"; */
+"orJ-AB-Oxl.title" = "Alt";
+
+/* Class = "NSButtonCell"; title = "Delete history"; ObjectID = "sYs-Da-TSj"; */
+"sYs-Da-TSj.title" = "Delete history";
+
+/* Class = "NSMenuItem"; title = "Command"; ObjectID = "yZK-TZ-SNb"; */
+"yZK-TZ-SNb.title" = "Command";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "z3A-El-En9"; */
+"z3A-El-En9.title" = "Control";

@@ -39,7 +39,7 @@ final class ClipService {
         AppEnvironment.current.defaults.rx
             .observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
             .filterNil()
-            .asDriver(onErrorJustReturn: [:])
+            .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] in
                 self?.storeTypes = $0
             })
@@ -61,20 +61,19 @@ final class ClipService {
         AppEnvironment.current.dataCleanService.cleanDatas()
     }
 
-    func clear(clip: CPYClip) {
+    func delete(with clip: CPYClip) {
         let realm = try! Realm()
-
         // Delete saved images
         let path = clip.thumbnailPath
         if !path.isEmpty {
             PINCache.shared().removeObject(forKey: path)
         }
-
         // Delete Realm
         realm.transaction { realm.delete(clip) }
+    }
 
-        // Delete writed datas
-        AppEnvironment.current.dataCleanService.cleanDatas()
+    func incrementChangeCount() {
+        cachedChangeCount.value += 1
     }
 
 }
@@ -114,6 +113,8 @@ extension ClipService {
         // Copy already copied history
         let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
         if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
+        // Don't save invalidated clip
+        if let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), clip.isInvalidated { return }
 
         // Don't save empty string history
         if data.isOnlyStringType && data.stringValue.isEmpty { return }

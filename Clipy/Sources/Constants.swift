@@ -63,9 +63,13 @@ struct Constants {
     }
 
     struct Beta {
-        static let pastePlainText = "kCPYBetaPastePlainText"
-        static let pastePlainTextModifier = "kCPYBetaPastePlainTextModifier"
-        static let observerScreenshot = "kCPYBetaObserveScreenshot"
+        static let pastePlainText                   = "kCPYBetaPastePlainText"
+        static let pastePlainTextModifier           = "kCPYBetaPastePlainTextModifier"
+        static let deleteHistory                    = "kCPYBetaDeleteHistory"
+        static let deleteHistoryModifier            = "kCPYBetaDeleteHistoryModifier"
+        static let pasteAndDeleteHistory            = "kCPYBetaPasteAndDeleteHistory"
+        static let pasteAndDeleteHistoryModifier    = "kCPYBetapasteAndDeleteHistoryModifier"
+        static let observerScreenshot               = "kCPYBetaObserveScreenshot"
     }
 
     struct Update {
