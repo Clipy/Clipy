@@ -68,6 +68,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         folders = realm.objects(CPYFolder.self)
                     .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
                     .map { $0.deepCopy() }
+        outlineView.reloadData()
         // Select first folder
         if let folder = folders.first {
             outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: folder)), byExtendingSelection: false)
