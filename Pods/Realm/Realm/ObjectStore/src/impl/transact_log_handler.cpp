@@ -316,6 +316,7 @@ public:
     bool insert_empty_rows(size_t, size_t, size_t, bool) { return true; }
     bool erase_rows(size_t, size_t, size_t, bool) { return true; }
     bool swap_rows(size_t, size_t) { return true; }
+    bool move_row(size_t, size_t) { return true; }
     bool clear_table(size_t=0) noexcept { return true; }
     bool link_list_set(size_t, size_t, size_t) { return true; }
     bool link_list_insert(size_t, size_t, size_t) { return true; }
@@ -606,6 +607,15 @@ public:
                     list.row_ndx = row_ndx_1;
             }
         }
+        return true;
+    }
+
+    bool move_row(size_t from_ndx, size_t to_ndx) {
+        // Move row is not supported for top level tables:
+        REALM_ASSERT(!m_active_table || !m_is_top_level_table);
+
+        if (m_active_table)
+            m_active_table->move(from_ndx, to_ndx);
         return true;
     }
 

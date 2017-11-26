@@ -1,4 +1,4 @@
-#if os(OSX) || os(iOS) || os(watchOS) || os(tvOS)
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 import Foundation
 
 public extension NSString {
@@ -12,7 +12,7 @@ public extension NSString {
             .controlCharacters,
             .punctuationCharacters,
             .nonBaseCharacters,
-            .symbols,
+            .symbols
         ]
 
         for invalidSet in invalidCharacterSets {

@@ -89,33 +89,9 @@ ObjectSchema::ObjectSchema(Group const& group, StringData name, size_t index) : 
     size_t count = table->get_column_count();
     persisted_properties.reserve(count);
     for (size_t col = 0; col < count; col++) {
-        StringData column_name = table->get_column_name(col);
-
-#if REALM_HAVE_SYNC_STABLE_IDS
-        // The object ID column is an implementation detail, and is omitted from the schema.
-        // FIXME: Consider filtering out all column names starting with `__`.
-        if (column_name == sync::object_id_column_name)
-            continue;
-#endif
-
-        if (table->get_column_type(col) == type_Table) {
-            auto subdesc = table->get_subdescriptor(col);
-            if (subdesc->get_column_count() != 1 || subdesc->get_column_name(0) != ObjectStore::ArrayColumnName)
-                continue;
+        if (auto property = ObjectStore::property_for_column_index(table, col)) {
+            persisted_properties.push_back(std::move(property.value()));
         }
-
-        Property property;
-        property.name = column_name;
-        property.type = from_core_type(*table->get_descriptor(), col);
-        property.is_indexed = table->has_search_index(col);
-        property.table_column = col;
-
-        if (property.type == PropertyType::Object) {
-            // set link type for objects and arrays
-            ConstTableRef linkTable = table->get_link_target(col);
-            property.object_type = ObjectStore::object_type_for_table_name(linkTable->get_name().data());
-        }
-        persisted_properties.push_back(std::move(property));
     }
 
     primary_key = realm::ObjectStore::get_primary_key_for_object(group, name);

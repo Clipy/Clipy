@@ -67,9 +67,9 @@ public func contain(_ items: [Any?]) -> Predicate<NMBContainer> {
     }.requireNonNil
 }
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 extension NMBObjCMatcher {
-    public class func containMatcher(_ expected: [NSObject]) -> NMBObjCMatcher {
+    @objc public class func containMatcher(_ expected: [NSObject]) -> NMBObjCMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
             let location = actualExpression.location
             let actualValue = try! actualExpression.evaluate()
@@ -83,6 +83,7 @@ extension NMBObjCMatcher {
                 let expr = Expression(expression: ({ value as String }), location: location)
                 return try! contain(expected as! [String]).matches(expr, failureMessage: failureMessage)
             } else if actualValue != nil {
+                // swiftlint:disable:next line_length
                 failureMessage.postfixMessage = "contain <\(arrayAsString(expected))> (only works for NSArrays, NSSets, NSHashTables, and NSStrings)"
             } else {
                 failureMessage.postfixMessage = "contain <\(arrayAsString(expected))>"

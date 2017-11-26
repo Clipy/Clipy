@@ -20,16 +20,18 @@
 #define REALM_UTIL_FILE_MAPPER_HPP
 
 #include <realm/util/file.hpp>
+#include <realm/utilities.hpp>
 #include <realm/util/thread.hpp>
 #include <realm/util/encrypted_file_mapping.hpp>
 
 namespace realm {
 namespace util {
 
-void* mmap(int fd, size_t size, File::AccessMode access, size_t offset, const char* encryption_key);
+void* mmap(FileDesc fd, size_t size, File::AccessMode access, size_t offset, const char* encryption_key);
 void munmap(void* addr, size_t size) noexcept;
-void* mremap(int fd, size_t file_offset, void* old_addr, size_t old_size, File::AccessMode a, size_t new_size, const char* encryption_key);
-void msync(void* addr, size_t size);
+void* mremap(FileDesc fd, size_t file_offset, void* old_addr, size_t old_size, File::AccessMode a, size_t new_size,
+             const char* encryption_key);
+void msync(FileDesc fd, void* addr, size_t size);
 
 // A function which may be given to encryption_read_barrier. If present, the read barrier is a
 // a barrier for a full array. If absent, the read barrier is a barrier only for the address
@@ -43,7 +45,7 @@ class EncryptedFileMapping;
 
 // This variant allows the caller to obtain direct access to the encrypted file mapping
 // for optimization purposes.
-void* mmap(int fd, size_t size, File::AccessMode access, size_t offset, const char* encryption_key,
+void* mmap(FileDesc fd, size_t size, File::AccessMode access, size_t offset, const char* encryption_key,
            EncryptedFileMapping*& mapping);
 
 void do_encryption_read_barrier(const void* addr, size_t size, HeaderToSize header_to_size,

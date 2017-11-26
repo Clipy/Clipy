@@ -19,7 +19,7 @@
 #ifndef REALM_VERSION_ID_HPP
 #define REALM_VERSION_ID_HPP
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__STDC_LIMIT_MACROS)
 #define __STDC_LIMIT_MACROS
 #endif
 

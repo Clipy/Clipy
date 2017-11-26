@@ -12,6 +12,19 @@ public typealias SharedExampleContext = () -> [String: Any]
 */
 public typealias SharedExampleClosure = (@escaping SharedExampleContext) -> Void
 
+// `#if swift(>=3.2) && (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) && !SWIFT_PACKAGE`
+// does not work as expected.
+#if swift(>=3.2)
+    #if (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) && !SWIFT_PACKAGE
+    @objcMembers
+    internal class _WorldBase: NSObject {}
+    #else
+    internal class _WorldBase: NSObject {}
+    #endif
+#else
+internal class _WorldBase: NSObject {}
+#endif
+
 /**
     A collection of state Quick builds up in order to work its magic.
     World is primarily responsible for maintaining a mapping of QuickSpec
@@ -23,7 +36,7 @@ public typealias SharedExampleClosure = (@escaping SharedExampleContext) -> Void
     You may configure how Quick behaves by calling the -[World configure:]
     method from within an overridden +[QuickConfiguration configure:] method.
 */
-final internal class World: NSObject {
+final internal class World: _WorldBase {
     /**
         The example group that is currently being run.
         The DSL requires that this group is correctly set in order to build a
@@ -44,7 +57,7 @@ final internal class World: NSObject {
         within this test suite. This is only true within the context of Quick
         functional tests.
     */
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     // Convention of generating Objective-C selector has been changed on Swift 3
     @objc(isRunningAdditionalSuites)
     internal var isRunningAdditionalSuites = false
@@ -64,6 +77,7 @@ final internal class World: NSObject {
     // MARK: Singleton Constructor
 
     private override init() {}
+
     static let sharedWorld = World()
 
     // MARK: Public Interface
@@ -144,7 +158,7 @@ final internal class World: NSObject {
         }
     }
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     @objc(examplesForSpecClass:)
     private func objc_examples(_ specClass: AnyClass) -> [Example] {
         return examples(specClass)

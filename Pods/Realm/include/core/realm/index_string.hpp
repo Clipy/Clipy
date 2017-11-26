@@ -105,6 +105,9 @@ public:
     ~StringIndex() noexcept
     {
     }
+
+    static ref_type create_empty(Allocator& alloc);
+
     void set_target(ColumnBase* target_column) noexcept;
 
     // Accessor concept:
@@ -158,10 +161,12 @@ public:
 
     void verify() const;
 #ifdef REALM_DEBUG
-    void verify_entries(const StringColumn& column) const;
+    template <typename T>
+    void verify_entries(const T& column) const;
     void do_dump_node_structure(std::ostream&, int) const;
     void to_dot() const;
     void to_dot(std::ostream&, StringData title = StringData()) const;
+    void to_dot_2(std::ostream&, StringData title = StringData()) const;
 #endif
 
     typedef int32_t key_type;
@@ -252,7 +257,6 @@ private:
 
 #ifdef REALM_DEBUG
     static void dump_node_structure(const Array& node, std::ostream&, int level);
-    void to_dot_2(std::ostream&, StringData title = StringData()) const;
     static void array_to_dot(std::ostream&, const Array&);
     static void keys_to_dot(std::ostream&, const Array&, StringData title = StringData());
 #endif

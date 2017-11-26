@@ -35,7 +35,7 @@ namespace sync {
 
 class Server {
 public:
-    class Clock;
+    class TokenExpirationClock;
 
     struct Config {
         Config() {}
@@ -45,10 +45,9 @@ public:
         /// files for efficiency reasons.
         long max_open_files = 256;
 
-        /// An optional time provider to be used by the server.
-        /// If no time provider is specified, the server will use the
-        /// system clock.
-        Clock* clock = nullptr;
+        /// An optional custom clock to be used for token expiration checks. If
+        /// no clock is specified, the server will use the system clock.
+        TokenExpirationClock* token_expiration_clock = nullptr;
 
         /// An optional logger to be used by the server. If no logger is
         /// specified, the server will use an instance of util::StderrLogger
@@ -62,6 +61,10 @@ public:
         /// of the server. For the list of counters and gauges see
         /// "doc/monitoring.md".
         Metrics* metrics = nullptr;
+
+        /// A unique id of this server. Used in the backup protocol to tell
+        /// slaves apart.
+        std::string id = "unknown";
 
         /// The address at which the listening socket is bound.
         /// The address can be a name or on numerical form.
@@ -103,6 +106,96 @@ public:
 
         // How often the server scans through the connection list to drop idle ones.
         uint_fast64_t drop_period_ms = 60000;
+
+        /// @{ \brief The operating mode of the Sync worker.
+        ///
+        /// MasterWithNoSlave is a standard Sync worker without backup.
+        /// If a backup slave attempts to contact a MasterNoBackup server,
+        /// the slave will be rejected.
+        ///
+        /// MasterWithAsynchronousSlave represents a Sync worker that operates
+        /// independently of a backup slave. If a slave connects to the
+        /// MasterAsynchronousSlave server, the server will accept the connection
+        /// and send backup information to the slave. This type of master server
+        /// will never wait for the slave, however.
+        ///
+        /// MasterWithSynchronousSlave represents a Sync worker that works in
+        /// coordination with a slave. The master will send all updates to the
+        /// slave and wait for acknowledgment before the master sends its own
+        /// acknowledgment to the clients. This mode of operation is the safest
+        /// type of backup, but it generally will have higher latency than the previous
+        /// two types of server.
+        ///
+        /// Slave represents a backup server. A slave is used to backup a master.
+        /// The slave connects to the master and reconnects in case a network fallout.
+        /// The slave receives updates from the master and acknowledges them.
+        /// A slave rejects all connections from Sync clients.
+        enum class OperatingMode {
+            MasterWithNoSlave,
+            MasterWithAsynchronousSlave,
+            MasterWithSynchronousSlave,
+            Slave
+        };
+        OperatingMode operating_mode = OperatingMode::MasterWithNoSlave;
+        /// @}
+
+        /// @{ \brief Adress of master sync work.
+        ///
+        /// master_address and master_port are only meaningful in Slave mode.
+        /// The parameters represent the address of the master from which this
+        /// slave obtains Realm updates.
+        std::string master_address;
+        std::string master_port;
+        /// @}
+
+        /// @{ \brief SSL for master slave communication.
+        ///
+        /// The master and slave communicate over a SSL connection if
+        /// master_slave_ssl is set to true(default = false). The certificate of the
+        /// master is verified if master_verify_ssl_certificate is set to true.
+        /// The certificate verification attempts to use the default trust store of the
+        /// instance if master_ssl_trust_certificate_path is none(default), otherwise
+        /// the certificate at the master_ssl_trust_certificate_path is used for
+        /// verification.
+        bool master_slave_ssl = false;
+        bool master_verify_ssl_certificate = true;
+        util::Optional<std::string> master_ssl_trust_certificate_path = util::none;
+        /// @}
+
+        /// A master Sync server will only accept a backup connection from a slave
+        /// that can present the correct master_slave_shared_secret.
+        /// The configuration of the master and the slave must contain the same
+        /// secret string.
+        /// The secret is sent in a HTTP header and must be a valid HTTP header value.
+        std::string master_slave_shared_secret = "replace-this-string-with-a-secret";
+
+        /// A callback which gets called by the backup master every time the slave
+        /// changes its status to up-to-date or back. The arguments carry the
+        /// slave's id (string) and its up-to-dateness state (bool).
+        std::function<void(std::string, bool)> slave_status_callback;
+
+        /// The feature token is used by the server to gate access to various
+        /// features.
+        util::Optional<std::string> feature_token;
+
+        /// The server can try to eliminate redundant instructions from
+        /// changesets before sending them to clients, minimizing download sizes
+        /// at the expense of server CPU usage.
+        bool enable_download_log_compaction = true;
+
+        /// The accumulated size of changesets that are included in download
+        /// messages. The size of the changesets is calculated before log
+        /// compaction (if enabled). A larger value leads to more efficient
+        /// log compaction and download, at the expense of higher memory pressure,
+        /// higher latency for sending the first changeset, and a higher probability
+        /// for the need to resend the same changes after network disconnects.
+        size_t max_download_size = 0x20000; // 128 KB
+
+        /// Set the `TCP_NODELAY` option on all TCP/IP sockets. This disables
+        /// the Nagle algorithm. Disabling it, can in some cases be used to
+        /// decrease latencies, but possibly at the expense of scalability. Be
+        /// sure to research the subject before you enable this option.
+        bool tcp_no_delay = false;
     };
 
     Server(const std::string& root_dir, util::Optional<PKey> public_key, Config = {});
@@ -153,11 +246,13 @@ private:
 };
 
 
-class Server::Clock {
+class Server::TokenExpirationClock {
 public:
-    virtual int_fast64_t now() = 0;
+    /// Number of seconds since the Epoch. The Epoch is the epoch of
+    /// std::chrono::system_clock.
+    virtual std::int_fast64_t now() noexcept = 0;
 
-    virtual ~Clock() {}
+    virtual ~TokenExpirationClock() {}
 };
 
 } // namespace sync

@@ -30,12 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DEFINE_NMB_EXPECT_OVERLOAD(TYPE, EXPR) \
         NIMBLE_EXPORT_INLINE NIMBLE_OVERLOADABLE \
-        NMBExpectation *NMB_expect(TYPE(^actualBlock)(), NSString *file, NSUInteger line) { \
+        NMBExpectation *NMB_expect(TYPE(^actualBlock)(void), NSString *file, NSUInteger line) { \
             return NMB_expect(^id { return EXPR; }, file, line); \
         }
 
     NIMBLE_EXPORT NIMBLE_OVERLOADABLE
-    NMBExpectation *NMB_expect(id(^actualBlock)(), NSString *file, NSUInteger line);
+    NMBExpectation *NMB_expect(id(^actualBlock)(void), NSString *file, NSUInteger line);
 
     // overloaded dispatch for nils - expect(nil)
     DEFINE_NMB_EXPECT_OVERLOAD(void*, nil)
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-NIMBLE_EXPORT NMBExpectation *NMB_expectAction(void(^actualBlock)(), NSString *file, NSUInteger line);
+NIMBLE_EXPORT NMBExpectation *NMB_expectAction(void(^actualBlock)(void), NSString *file, NSUInteger line);
 
 
 

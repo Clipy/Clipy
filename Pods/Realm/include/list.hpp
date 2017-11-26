@@ -77,6 +77,7 @@ public:
     void remove(size_t list_ndx);
     void remove_all();
     void swap(size_t ndx1, size_t ndx2);
+    void delete_at(size_t list_ndx);
     void delete_all();
 
     template<typename T = RowExpr>

@@ -2,7 +2,7 @@ import CoreFoundation
 import Dispatch
 import Foundation
 
-#if !_runtime(_ObjC)
+#if !(os(macOS) || os(iOS) || os(tvOS) || os(watchOS))
     import CDispatch
 #endif
 
@@ -32,7 +32,7 @@ internal class AssertionWaitLock: WaitLock {
 
     func acquireWaitingLock(_ fnName: String, file: FileString, line: UInt) {
         let info = WaitingInfo(name: fnName, file: file, lineNumber: line)
-        #if _runtime(_ObjC)
+        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
             let isMainThread = Thread.isMainThread
         #else
             let isMainThread = _CFIsMainThread()
@@ -89,7 +89,7 @@ internal enum AwaitResult<T> {
 
     func isCompleted() -> Bool {
         switch self {
-        case .completed(_): return true
+        case .completed: return true
         default: return false
         }
     }
@@ -103,6 +103,10 @@ internal class AwaitPromise<T> {
 
     init() {
         signal = DispatchSemaphore(value: 1)
+    }
+
+    deinit {
+        signal.signal()
     }
 
     /// Resolves the promise with the given result if it has not been resolved. Repeated calls to
@@ -176,16 +180,25 @@ internal class AwaitPromiseBuilder<T> {
         // checked.
         //
         // In addition, stopping the run loop is used to halt code executed on the main run loop.
+        #if swift(>=4.0)
+        trigger.timeoutSource.schedule(
+            deadline: DispatchTime.now() + timeoutInterval,
+            repeating: .never,
+            leeway: timeoutLeeway
+        )
+        #else
         trigger.timeoutSource.scheduleOneshot(
             deadline: DispatchTime.now() + timeoutInterval,
-            leeway: timeoutLeeway)
+            leeway: timeoutLeeway
+        )
+        #endif
         trigger.timeoutSource.setEventHandler {
             guard self.promise.asyncResult.isIncomplete() else { return }
             let timedOutSem = DispatchSemaphore(value: 0)
             let semTimedOutOrBlocked = DispatchSemaphore(value: 0)
             semTimedOutOrBlocked.signal()
             let runLoop = CFRunLoopGetMain()
-            #if _runtime(_ObjC)
+            #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
                 let runLoopMode = CFRunLoopMode.defaultMode.rawValue
             #else
                 let runLoopMode = kCFRunLoopDefaultMode
@@ -252,7 +265,7 @@ internal class AwaitPromiseBuilder<T> {
                 // Stopping the run loop does not work unless we run only 1 mode
                 _ = RunLoop.current.run(mode: .defaultRunLoopMode, before: .distantFuture)
             }
-            self.trigger.timeoutSource.suspend()
+
             self.trigger.timeoutSource.cancel()
             if let asyncSource = self.trigger.actionSource {
                 asyncSource.cancel()
@@ -316,7 +329,11 @@ internal class Awaiter {
         let asyncSource = createTimerSource(asyncQueue)
         let trigger = AwaitTrigger(timeoutSource: timeoutSource, actionSource: asyncSource) {
             let interval = DispatchTimeInterval.nanoseconds(Int(pollInterval * TimeInterval(NSEC_PER_SEC)))
+            #if swift(>=4.0)
+            asyncSource.schedule(deadline: .now(), repeating: interval, leeway: pollLeeway)
+            #else
             asyncSource.scheduleRepeating(deadline: .now(), interval: interval, leeway: pollLeeway)
+            #endif
             asyncSource.setEventHandler {
                 do {
                     if let result = try closure() {

@@ -28,9 +28,18 @@
 #include <ostream>
 
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+
+#ifdef _WIN32
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <stdio.h>
+#  include <Ws2def.h>
+#  pragma comment(lib, "Ws2_32.lib")
+#else
+#  include <sys/socket.h>
+#  include <arpa/inet.h>
+#  include <netdb.h>
+#endif
 
 #include <realm/util/features.h>
 #include <realm/util/assert.hpp>
@@ -318,16 +327,19 @@ public:
 
     /// @{ \brief Stop event loop execution.
     ///
-    /// stop() puts the event loop into the stopped mode. If a thread is currently
-    /// executing run(), it will be made to return in a timely fashion, that is,
-    /// without further blocking. If a thread is currently blocked in run(), it
-    /// will be unblocked. Handlers that can be executed immediately, may, or
-    /// may not be executed before run() returns, but new handlers submitted by
-    /// these, will not be executed.
+    /// stop() puts the event loop into the stopped mode. If a thread is
+    /// currently executing run(), it will be made to return in a timely
+    /// fashion, that is, without further blocking. If a thread is currently
+    /// blocked in run(), it will be unblocked. Handlers that can be executed
+    /// immediately, may, or may not be executed before run() returns, but new
+    /// handlers submitted by these, will not be executed before run()
+    /// returns. Also, if a handler is submitted by a call to post, and that
+    /// call happens after stop() returns, then that handler is guaranteed to
+    /// not be executed before run() returns.
     ///
     /// The event loop will remain in the stopped mode until reset() is
     /// called. If reset() is called before run() returns, it may, or may not
-    /// cause run() to continue normal operation without returning.
+    /// cause run() to resume normal operation without returning.
     ///
     /// Both stop() and reset() are thread-safe, that is, they may be called by
     /// any thread. Also, both of these function may be called from completion
@@ -432,7 +444,11 @@ private:
 
 class Service::Descriptor {
 public:
+#ifdef _WIN32
+    using native_handle_type = SOCKET;
+#else
     using native_handle_type = int;
+#endif
 
     Impl& service_impl;
 
@@ -445,7 +461,7 @@ public:
     ///
     /// The passed file descriptor must have the file descriptor flag FD_CLOEXEC
     /// set.
-    void assign(int fd, bool in_blocking_mode) noexcept;
+    void assign(native_handle_type fd, bool in_blocking_mode) noexcept;
     void close() noexcept;
 
     bool is_open() const noexcept;
@@ -471,7 +487,7 @@ public:
     void ensure_nonblocking_mode();
 
 private:
-    int m_fd = -1;
+    native_handle_type m_fd = -1;
     bool m_in_blocking_mode; // Not in nonblocking mode
 
 #if REALM_HAVE_EPOLL || REALM_HAVE_KQUEUE
@@ -682,12 +698,14 @@ private:
     enum opt_enum {
         opt_ReuseAddr, ///< `SOL_SOCKET`, `SO_REUSEADDR`
         opt_Linger,    ///< `SOL_SOCKET`, `SO_LINGER`
+        opt_NoDelay,   ///< `IPPROTO_TCP`, `TCP_NODELAY` (disable the Nagle algorithm)
     };
 
     template<class, int, class> class Option;
 
 public:
     using reuse_address = Option<bool, opt_ReuseAddr, int>;
+    using no_delay      = Option<bool, opt_NoDelay,   int>;
 
     // linger struct defined by POSIX sys/socket.h.
     struct linger_opt;
@@ -706,7 +724,7 @@ protected:
     SocketBase(Service&);
 
     const StreamProtocol& get_protocol() const noexcept;
-    std::error_code do_assign(const StreamProtocol&, int sock_fd, std::error_code& ec);
+    std::error_code do_assign(const StreamProtocol&, native_handle_type, std::error_code&);
     void do_close() noexcept;
 
     void get_option(opt_enum, void* value_data, std::size_t& value_size, std::error_code&) const;
@@ -1055,14 +1073,20 @@ public:
     template<class H> void async_write_some(const char* data, std::size_t size, H handler);
 
     enum shutdown_type {
-        /// Shutdown the receive side of the socket.
+#ifdef _WIN32
+        /// Shutdown the receiving side of the socket.
+        shutdown_receive = SD_RECEIVE,
+
+        /// Shutdown the sending side of the socket.
+        shutdown_send = SD_SEND,
+
+        /// Shutdown both sending and receiving side of the socket.
+        shutdown_both = SD_BOTH
+#else
         shutdown_receive = SHUT_RD,
-
-        /// Shutdown the send side of the socket.
         shutdown_send = SHUT_WR,
-
-        /// Shutdown both send and receive on the socket.
         shutdown_both = SHUT_RDWR
+#endif
     };
 
     /// @{ \brief Shut down the connected sockets sending and/or receiving
@@ -1437,7 +1461,12 @@ inline std::basic_ostream<C,T>& operator<<(std::basic_ostream<C,T>& out, const A
     };
     char buffer[sizeof (buffer_union)];
     int af = addr.m_is_ip_v6 ? AF_INET6 : AF_INET;
-    const char* ret = ::inet_ntop(af, &addr.m_union, buffer, sizeof buffer);
+#ifdef _WIN32
+    void* src = const_cast<void*>(reinterpret_cast<const void*>(&addr.m_union));
+#else
+    const void* src = &addr.m_union;
+#endif
+    const char* ret = ::inet_ntop(af, src, buffer, sizeof buffer);
     if (ret == 0) {
         std::error_code ec = make_basic_system_error_code(errno);
         throw std::system_error(ec);
@@ -1658,7 +1687,7 @@ inline Service::Descriptor::~Descriptor() noexcept
         close();
 }
 
-inline void Service::Descriptor::assign(int fd, bool in_blocking_mode) noexcept
+inline void Service::Descriptor::assign(native_handle_type fd, bool in_blocking_mode) noexcept
 {
     REALM_ASSERT(!is_open());
     m_fd = fd;

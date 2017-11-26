@@ -2,7 +2,7 @@ import Foundation
 
 public func throwAssertion() -> Predicate<Void> {
     return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
-    #if arch(x86_64) && _runtime(_ObjC) && !SWIFT_PACKAGE
+    #if arch(x86_64) && (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) && !SWIFT_PACKAGE
         failureMessage.postfixMessage = "throw an assertion"
         failureMessage.actualValue = nil
 
@@ -49,7 +49,8 @@ public func throwAssertion() -> Predicate<Void> {
     #else
         fatalError("The throwAssertion Nimble matcher can only run on x86_64 platforms with " +
             "Objective-C (e.g. Mac, iPhone 5s or later simulators). You can silence this error " +
-            "by placing the test case inside an #if arch(x86_64) or _runtime(_ObjC) conditional statement")
+            "by placing the test case inside an #if arch(x86_64) or (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) conditional statement")
+        // swiftlint:disable:previous line_length
     #endif
     }
 }

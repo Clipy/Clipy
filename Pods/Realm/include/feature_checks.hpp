@@ -31,6 +31,7 @@
 
 #include <realm/sync/version.hpp>
 #define REALM_HAVE_SYNC_STABLE_IDS (REALM_SYNC_VER_MAJOR > 1)
+#define REALM_HAVE_SYNC_OVERRIDE_SERVER (REALM_SYNC_VER_MAJOR > 1)
 
 #else
 

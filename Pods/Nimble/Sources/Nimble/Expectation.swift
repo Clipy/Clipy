@@ -92,6 +92,7 @@ public struct Expectation<T> {
     /// DEPRECATED: Tests the actual value using a matcher to not match.
     public func toNot<U>(_ matcher: U, description: String? = nil)
         where U: Matcher, U.ValueType == T {
+        // swiftlint:disable:next line_length
         let (pass, msg) = expressionDoesNotMatch(expression, matcher: matcher, toNot: "to not", description: description)
         verify(pass, msg)
     }

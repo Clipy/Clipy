@@ -80,7 +80,7 @@ void ChunkedRangeVector::push_back(value_type value)
         range.end = value.second;
     }
     else {
-        m_data.push_back({{std::move(value)}, value.first, value.second, value.second - value.first});
+        m_data.push_back({{value}, value.first, value.second, value.second - value.first});
     }
     verify();
 }

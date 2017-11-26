@@ -23,7 +23,7 @@
 using namespace realm;
 using namespace realm::_impl;
 
-NotificationToken::NotificationToken(std::shared_ptr<_impl::CollectionNotifier> notifier, size_t token)
+NotificationToken::NotificationToken(std::shared_ptr<_impl::CollectionNotifier> notifier, uint64_t token)
 : m_notifier(std::move(notifier)), m_token(token)
 {
 }

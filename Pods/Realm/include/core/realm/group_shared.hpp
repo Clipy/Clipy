@@ -19,22 +19,17 @@
 #ifndef REALM_GROUP_SHARED_HPP
 #define REALM_GROUP_SHARED_HPP
 
-#ifdef REALM_DEBUG
-#include <ctime> // usleep()
-#endif
-
 #include <functional>
 #include <limits>
 #include <realm/util/features.h>
 #include <realm/util/thread.hpp>
-#ifndef _WIN32
 #include <realm/util/interprocess_condvar.hpp>
-#endif
 #include <realm/util/interprocess_mutex.hpp>
 #include <realm/group.hpp>
 #include <realm/group_shared_options.hpp>
 #include <realm/handover_defs.hpp>
 #include <realm/impl/transact_log.hpp>
+#include <realm/metrics/metrics.hpp>
 #include <realm/replication.hpp>
 #include <realm/version_id.hpp>
 
@@ -532,6 +527,27 @@ public:
     // Release pinned version (not thread safe)
     void unpin_version(VersionID version);
 
+#if REALM_METRICS
+    std::shared_ptr<metrics::Metrics> get_metrics();
+#endif // REALM_METRICS
+
+    // Try to grab a exclusive lock of the given realm path's lock file. If the lock
+    // can be acquired, the callback will be executed with the lock and then return true.
+    // Otherwise false will be returned directly.
+    // The lock taken precludes races with other threads or processes accessing the
+    // files through a SharedGroup.
+    // It is safe to delete/replace realm files inside the callback.
+    // WARNING: It is not safe to delete the lock file in the callback.
+    using CallbackWithLock = std::function<void(const std::string& realm_path)>;
+    static bool call_with_lock(const std::string& realm_path, CallbackWithLock callback);
+
+    // Return a list of files/directories core may use of the given realm file path.
+    // The first element of the pair in the returned list is the path string, the
+    // second one is to indicate the path is a directory or not.
+    // The temporary files are not returned by this function.
+    // It is safe to delete those returned files/directories in the call_with_lock's callback.
+    static std::vector<std::pair<std::string, bool>> get_core_files(const std::string& realm_path);
+
 private:
     struct SharedInfo;
     struct ReadCount;
@@ -564,7 +580,6 @@ private:
     util::InterprocessMutex m_balancemutex;
 #endif
     util::InterprocessMutex m_controlmutex;
-#ifndef _WIN32
 #ifdef REALM_ASYNC_DAEMON
     util::InterprocessCondVar m_room_to_write;
     util::InterprocessCondVar m_work_to_do;
@@ -572,8 +587,11 @@ private:
 #endif
     util::InterprocessCondVar m_new_commit_available;
     util::InterprocessCondVar m_pick_next_writer;
-#endif
     std::function<void(int, int)> m_upgrade_callback;
+
+#if REALM_METRICS
+    std::shared_ptr<metrics::Metrics> m_metrics;
+#endif // REALM_METRICS
 
     void do_open(const std::string& file, bool no_create, bool is_backend, const SharedGroupOptions options);
 
@@ -615,6 +633,7 @@ private:
     void do_begin_write();
     version_type do_commit();
     void do_end_write() noexcept;
+    void set_transact_stage(TransactStage stage) noexcept;
 
     /// Returns the version of the latest snapshot.
     version_type get_version_of_latest_snapshot();
@@ -664,6 +683,7 @@ private:
     /// finish up the process of starting a write transaction. Internal use only.
     void finish_begin_write();
 
+    void close_internal(std::unique_lock<InterprocessMutex>) noexcept;
     friend class _impl::SharedGroupFriend;
 };
 
@@ -975,7 +995,7 @@ inline void SharedGroup::promote_to_write(O* observer)
         throw;
     }
 
-    m_transact_stage = transact_Writing;
+    set_transact_stage(transact_Writing);
 }
 
 template <class O>
@@ -1019,7 +1039,7 @@ inline void SharedGroup::rollback_and_continue_as_read(O* observer)
     REALM_ASSERT(repl); // Presence of `repl` follows from the presence of `hist`
     repl->abort_transact();
 
-    m_transact_stage = transact_Reading;
+    set_transact_stage(transact_Reading);
 }
 
 template <class O>
