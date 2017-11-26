@@ -19,6 +19,8 @@
 #ifndef REALM_OS_SYNC_CONFIG_HPP
 #define REALM_OS_SYNC_CONFIG_HPP
 
+#include "sync_user.hpp"
+
 #include <realm/util/assert.hpp>
 #include <realm/sync/client.hpp>
 #include <realm/sync/protocol.hpp>
@@ -100,24 +102,42 @@ struct SyncError {
 
 struct SyncConfig {
     std::shared_ptr<SyncUser> user;
-    std::string realm_url;
+    // The URL of the Realm, or of the reference Realm if partial sync is being used.
+    // The URL that will be used when connecting to the object server is that returned by `realm_url()`,
+    // and will differ from `reference_realm_url` if partial sync is being used.
+    // Set this field, but read from `realm_url()`.
+    std::string reference_realm_url;
     SyncSessionStopPolicy stop_policy;
     std::function<SyncBindSessionHandler> bind_session_handler;
     std::function<SyncSessionErrorHandler> error_handler;
     std::shared_ptr<ChangesetTransformer> transformer;
     util::Optional<std::array<char, 64>> realm_encryption_key;
-    bool client_validate_ssl = true;
+    bool client_validate_ssl;
     util::Optional<std::string> ssl_trust_certificate_path;
-#if __GNUC__ < 5
-    // GCC 4.9 does not support C++14 braced-init
-    SyncConfig(std::shared_ptr<SyncUser> user, std::string realm_url, SyncSessionStopPolicy stop_policy,
+    std::function<sync::Session::SSLVerifyCallback> ssl_verify_callback;
+    bool is_partial;
+    util::Optional<std::string> custom_partial_sync_identifier;
+
+    bool validate_sync_history = true;
+
+    // The URL that will be used when connecting to the object server.
+    // This will differ from `reference_realm_url` when partial sync is being used.
+    std::string realm_url() const;
+
+    SyncConfig(std::shared_ptr<SyncUser> user, std::string reference_realm_url,
+               SyncSessionStopPolicy stop_policy,
                std::function<SyncBindSessionHandler> bind_session_handler,
                std::function<SyncSessionErrorHandler> error_handler = nullptr,
                std::shared_ptr<ChangesetTransformer> transformer = nullptr,
                util::Optional<std::array<char, 64>> realm_encryption_key = util::none,
-               bool client_validate_ssl = true, util::Optional<std::string> ssl_trust_certificate_path = util::none)
+               bool client_validate_ssl = true, 
+               util::Optional<std::string> ssl_trust_certificate_path = util::none, 
+               std::function<realm::sync::Session::SSLVerifyCallback> ssl_verify_callback = nullptr,
+               bool is_partial = false,
+               util::Optional<std::string> custom_partial_sync_identifier = util::none
+        )
         : user(std::move(user))
-        , realm_url(std::move(realm_url))
+        , reference_realm_url(std::move(reference_realm_url))
         , stop_policy(stop_policy)
         , bind_session_handler(std::move(bind_session_handler))
         , error_handler(std::move(error_handler))
@@ -125,12 +145,11 @@ struct SyncConfig {
         , realm_encryption_key(std::move(realm_encryption_key))
         , client_validate_ssl(client_validate_ssl)
         , ssl_trust_certificate_path(std::move(ssl_trust_certificate_path))
+        , ssl_verify_callback(std::move(ssl_verify_callback))
+        , is_partial(is_partial)
+        , custom_partial_sync_identifier(std::move(custom_partial_sync_identifier))
     {
     }
-
-     SyncConfig() {}
-
-#endif
 };
 
 } // namespace realm

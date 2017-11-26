@@ -133,6 +133,14 @@ private:
     Row m_row;
 };
 
+class SyncClientMetadata {
+public:
+    struct Schema {
+        // A UUID that identifies this client.
+        size_t idx_uuid;
+    };
+};
+
 template<class T>
 class SyncMetadataResults {
 public:
@@ -196,6 +204,9 @@ public:
                                                      SyncFileActionMetadata::Action action,
                                                      util::Optional<std::string> new_name=none) const;
 
+    // Get the unique identifier of this client, generating one if it does not already exist.
+    std::string client_uuid() const;
+
     /// Construct the metadata manager.
     ///
     /// If the platform supports it, setting `should_encrypt` to `true` and not specifying an encryption key will make
@@ -210,6 +221,7 @@ private:
     Realm::Config m_metadata_config;
     SyncUserMetadata::Schema m_user_schema;
     SyncFileActionMetadata::Schema m_file_action_schema;
+    SyncClientMetadata::Schema m_client_schema;
 };
 
 }

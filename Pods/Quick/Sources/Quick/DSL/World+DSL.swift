@@ -56,7 +56,7 @@ extension World {
         currentExampleGroup.hooks.appendBefore(closure)
     }
 
-#if _runtime(_ObjC)
+#if (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) && !SWIFT_PACKAGE
     @objc(beforeEachWithMetadata:)
     internal func beforeEach(closure: @escaping BeforeExampleWithMetadataClosure) {
         currentExampleGroup.hooks.appendBefore(closure)
@@ -74,7 +74,7 @@ extension World {
         currentExampleGroup.hooks.appendAfter(closure)
     }
 
-#if _runtime(_ObjC)
+#if (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) && !SWIFT_PACKAGE
     @objc(afterEachWithMetadata:)
     internal func afterEach(closure: @escaping AfterExampleWithMetadataClosure) {
         currentExampleGroup.hooks.appendAfter(closure)
@@ -137,7 +137,37 @@ extension World {
         self.itBehavesLike(name, sharedExampleContext: sharedExampleContext, flags: focusedFlags, file: file, line: line)
     }
 
-#if _runtime(_ObjC)
+    internal func itBehavesLike<C>(_ behavior: Behavior<C>.Type, context: @escaping () -> C, flags: FilterFlags, file: String, line: UInt) {
+        guard currentExampleMetadata == nil else {
+            raiseError("'itBehavesLike' cannot be used inside '\(currentPhase)', 'itBehavesLike' may only be used inside 'context' or 'describe'. ")
+        }
+        let callsite = Callsite(file: file, line: line)
+        let closure = behavior.spec
+        let group = ExampleGroup(description: behavior.name, flags: flags)
+        currentExampleGroup.appendExampleGroup(group)
+        performWithCurrentExampleGroup(group) {
+            closure(context)
+        }
+
+        group.walkDownExamples { (example: Example) in
+            example.isSharedExample = true
+            example.callsite = callsite
+        }
+    }
+
+    internal func fitBehavesLike<C>(_ behavior: Behavior<C>.Type, context: @escaping () -> C, flags: FilterFlags, file: String, line: UInt) {
+        var focusedFlags = flags
+        focusedFlags[Filter.focused] = true
+        self.itBehavesLike(behavior, context: context, flags: focusedFlags, file: file, line: line)
+    }
+
+    internal func xitBehavesLike<C>(_ behavior: Behavior<C>.Type, context: @escaping () -> C, flags: FilterFlags, file: String, line: UInt) {
+        var pendingFlags = flags
+        pendingFlags[Filter.pending] = true
+        self.itBehavesLike(behavior, context: context, flags: pendingFlags, file: file, line: line)
+    }
+
+#if (os(macOS) || os(iOS) || os(tvOS) || os(watchOS)) && !SWIFT_PACKAGE
     @objc(itWithDescription:flags:file:line:closure:)
     private func objc_it(_ description: String, flags: FilterFlags, file: String, line: UInt, closure: @escaping () -> Void) {
         it(description, flags: flags, file: file, line: line, closure: closure)

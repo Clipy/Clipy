@@ -29,7 +29,7 @@
 
 #include <realm/util/logger.hpp>
 #include <realm/util/network.hpp>
-#include <realm/impl/continuous_transactions_history.hpp>
+#include <realm/impl/cont_transact_hist.hpp>
 #include <realm/sync/history.hpp>
 
 namespace realm {
@@ -114,6 +114,20 @@ public:
 
         /// The number of ms to wait for urgent pongs.
         uint_fast64_t pong_urgent_timeout_ms = 5000;
+
+        /// If enable_upload_log_compaction is true, every changeset will be
+        /// compacted before it is uploaded to the server. Compaction will
+        /// reduce the size of a changeset if the same field is set multiple
+        /// times or if newly created objects are deleted within the same
+        /// transaction. Log compaction increeses CPU usage and memory
+        /// consumption.
+        bool enable_upload_log_compaction = true;
+
+        /// Set the `TCP_NODELAY` option on all TCP/IP sockets. This disables
+        /// the Nagle algorithm. Disabling it, can in some cases be used to
+        /// decrease latencies, but possibly at the expense of scalability. Be
+        /// sure to research the subject before you enable this option.
+        bool tcp_no_delay = false;
     };
 
     /// \throw util::EventLoop::Implementation::NotAvailable if no event loop
@@ -141,6 +155,42 @@ public:
     ///
     /// Thread-safe.
     void cancel_reconnect_delay();
+
+    /// \brief Wait for session termination to complete.
+    ///
+    /// Wait for termination of all sessions whose termination was initiated
+    /// prior this call (the completion condition), or until the client's event
+    /// loop thread exits from Client::run(), whichever happens
+    /// first. Termination of a session can be initiated implicitly (e.g., via
+    /// destruction of the session object), or explicitly by Session::detach().
+    ///
+    /// Note: After session termination (when this function returns true) no
+    /// session specific callback function can be called or continue to execute,
+    /// and the client is guaranteed to no longer have a Realm file open on
+    /// behalf of the terminated session.
+    ///
+    /// CAUTION: If run() returns while a wait operation is in progress, this
+    /// waiting function will return immediately, even if the completion
+    /// condition is not yet satisfied. The completion condition is guaranteed
+    /// to be satisfied only when these functions return true. If it returns
+    /// false, session specific callback functions may still be executing or get
+    /// called, and the associated Realm files may still not have been closed.
+    ///
+    /// If a new wait operation is initiated while another wait operation is in
+    /// progress by another thread, the waiting period of fist operation may, or
+    /// may not get extended. The application must not assume either.
+    ///
+    /// Note: Session termination does not imply that the client has received an
+    /// UNBOUND message from the server (see the protocol specification). This
+    /// may happen later.
+    ///
+    /// \return True only if the completion condition was satisfied. False if
+    /// the client's event loop thread exited from Client::run() in which case
+    /// the completion condition may, or may not have been satisfied.
+    ///
+    /// Note: These functions are fully thread-safe. That is, they may be called
+    /// by any thread, and by multiple threads concurrently.
+    bool wait_for_session_terminations_or_client_stopped();
 
 private:
     class Impl;
@@ -182,22 +232,43 @@ class BadServerUrl; // Exception
 /// execution of bind() starts, i.e., before bind() returns.
 ///
 /// At most one session is allowed to exist for a particular local Realm file
-/// (file system inode) at any point in time. Multiple objects may coexists, as
-/// long as bind() has been called on at most one of them. Additionally, two
-/// sessions are allowed to exist at different times, and with no overlap in
-/// time, as long as they are associated with the same client object, or with
-/// two different client objects that do not overlap in time. This means, in
-/// particular, that it is an error to create two nonoverlapping sessions for
-/// the same local Realm file, it they are associated with two different client
-/// objects that overlap in time. It is the responsibility of the application to
-/// ensure that these rules are adhered to. The consequences of a violation are
-/// unspecified.
+/// (file system inode) at any point in time. Multiple session objects may
+/// coexists for a single file, as long as bind() has been called on at most one
+/// of them. Additionally, two bound session objects for the same file are
+/// allowed to exist at different times, if they have no overlap in time (in
+/// their bound state), as long as they are associated with the same client
+/// object, or with two different client objects that do not overlap in
+/// time. This means, in particular, that it is an error to create two bound
+/// session objects for the same local Realm file, it they are associated with
+/// two different client objects that overlap in time, even if the session
+/// objects do not overlap in time (in their bound state). It is the
+/// responsibility of the application to ensure that these rules are adhered
+/// to. The consequences of a violation are unspecified.
 ///
 /// Thread-safety: It is safe for multiple threads to construct, use (with some
 /// exceptions), and destroy session objects concurrently, regardless of whether
 /// those session objects are associated with the same, or with different Client
 /// objects. Please note that some of the public member functions are fully
 /// thread-safe, while others are not.
+///
+/// Callback semantics: All session specific callback functions will be executed
+/// by the event loop thread, i.e., the thread that calls Client::run(). No
+/// callback function will be called before Session::bind() is called. Callback
+/// functions that are specified prior to calling bind() (e.g., any passed to
+/// set_progress_handler()) may start to execute before bind() returns, as long
+/// as some thread is executing Client::run(). Likewise, completion handlers,
+/// such as those passed to async_wait_for_sync_completion() may start to
+/// execute before the submitting function returns. All session specific
+/// callback functions (including completion handlers) are guaranteed to no
+/// longer be executing when session termination completes, and they are
+/// guaranteed to not be called after session termination completes. Termination
+/// is an event that completes asynchronously with respect to the application,
+/// but is initiated by calling detach(), or implicitely by destroying a session
+/// object. After having initiated one or more session terminations, the
+/// application can wait for those terminations to complete by calling
+/// Client::wait_for_session_terminations_or_client_stopped(). Since callback
+/// functinos are always executed by the event loop thread, they are also
+/// guaranteed to not be executing after Client::run() has returned.
 class Session {
 public:
     using port_type = util::network::Endpoint::port_type;
@@ -245,6 +316,13 @@ public:
 
         /// The protocol used for communicating with the server. See \ref Protocol.
         Protocol protocol = Protocol::realm;
+
+        /// url_prefix is a prefix that is prepended to the server_path
+        /// in the HTTP GET request that initiates a sync connection. The value
+        /// specified here must match with the server's expectation. Changing
+        /// the value of url_prefix should be matched with a corresponding
+        /// change of the server side proxy.
+        std::string url_prefix = "/realm-sync";
 
         /// Sessions can be multiplexed over the same TCP/SSL connection.
         /// Sessions might share connection if they have identical server_address,
@@ -348,11 +426,8 @@ public:
         /// CAUTION: ChangesetCooker::cook_changeset() of the specified cooker
         /// may get called before the call to bind() returns, and it may get
         /// called (or continue to execute) after the session object is
-        /// destroyed. The application must specify an object for which that
-        /// function can safely be called, and continue to execute from the
-        /// point in time where bind() starts executing, and up until the point
-        /// in time where the last invocation of `client.run()` returns. Here,
-        /// `client` refers to the associated Client object.
+        /// destroyed. Please see "Callback semantics" section under Client for
+        /// more on this.
         ///
         /// \sa make_client_history(), TrivialChangesetCooker.
         std::shared_ptr<ClientHistory::ChangesetCooker> changeset_cooker;
@@ -375,9 +450,41 @@ public:
     /// file.
     Session(Client&, std::string realm_path, Config = {});
 
+    /// This leaves the right-hand side session object detached. See "Thread
+    /// safety" section under detach().
     Session(Session&&) noexcept;
 
+    /// Create a detached session object (see detach()).
+    Session() noexcept;
+
+    /// Implies detachment. See "Thread safety" section under detach().
     ~Session() noexcept;
+
+    /// Detach the object on the left-hand side, then "steal" the session from
+    /// the object on the right-hand side, if there is one. This leaves the
+    /// object on the right-hand side detached. See "Thread safety" section
+    /// under detach().
+    Session& operator=(Session&&) noexcept;
+
+    /// Detach this sesion object from the client object (Client). If the
+    /// session object is already detached, this function has no effect
+    /// (idempotency).
+    ///
+    /// Detachment initiates session termination, which is an event that takes
+    /// place shortly therafter in the context of the client's event loop
+    /// thread.
+    ///
+    /// A detached session object may be destroyed, move-assigned to, and moved
+    /// from. Apart from that, it is an error to call any function other than
+    /// detach() on a detached session object.
+    ///
+    /// Thread safety: Detachment is not a thread-safe operation. This means
+    /// that detach() may not be executed by two threads concurrently, and may
+    /// not execute concurrently with object destruction. Additionally,
+    /// detachment must not execute concurrently with a moving operation
+    /// involving the session object on the left or right-hand side. See move
+    /// constructor and assigment operator.
+    void detach() noexcept;
 
     /// \brief Set a function to be called when the local Realm has changed due
     /// to integration of a downloaded changeset.
@@ -399,13 +506,10 @@ public:
     /// it is called while another thread is executing any member function on
     /// the same Session object.
     ///
-    /// CAUTION: The specified callback function may be called before the call
-    /// to bind() returns, and it may be called (or continue to execute) after
-    /// the session object is destroyed. The application must pass a handler
-    /// that can be safely called, and can safely continue to execute from the
-    /// point in time where bind() starts executing, and up until the point in
-    /// time where the last invocation of `client.run()` returns. Here, `client`
-    /// refers to the associated Client object.
+    /// CAUTION: The specified callback function may get called before the call
+    /// to bind() returns, and it may get called (or continue to execute) after
+    /// the session object is destroyed. Please see "Callback semantics" section
+    /// under Session for more on this.
     void set_sync_transact_callback(std::function<SyncTransactCallback>);
 
     /// \brief Set a handler to monitor the state of download and upload
@@ -478,13 +582,10 @@ public:
     /// bind() is called. Subsequent calls to set_progress_handler() overwrite
     /// the previous calls. Typically, this function is called once per session.
     ///
-    /// CAUTION: The specified callback function may be called
-    /// (or continue to execute) after the session object is destroyed.
-    /// The application must pass a handler that can be safely called, and can
-    /// execute from the point in time where bind() is called,
-    /// and up until the point in time where the last invocation of
-    /// `client.run()` returns. Here, `client` refers to the associated
-    /// Client object.
+    /// CAUTION: The specified callback function may get called before the call
+    /// to bind() returns, and it may get called (or continue to execute) after
+    /// the session object is destroyed. Please see "Callback semantics" section
+    /// under Session for more on this.
     void set_progress_handler(std::function<ProgressHandler>);
 
     /// \brief Signature of an error handler.
@@ -532,14 +633,17 @@ public:
     /// it is called while another thread is executing any member function on
     /// the same Session object.
     ///
-    /// CAUTION: The specified callback function may be called before the call
-    /// to bind() returns, and it may be called (or continue to execute) after
-    /// the session object is destroyed. The application must pass a handler
-    /// that can be safely called, and can safely continue to execute from the
-    /// point in time where bind() starts executing, and up until the point in
-    /// time where the last invocation of `client.run()` returns. Here, `client`
-    /// refers to the associated Client object.
+    /// CAUTION: The specified callback function may get called before the call
+    /// to bind() returns, and it may get called (or continue to execute) after
+    /// the session object is destroyed. Please see "Callback semantics" section
+    /// under Session for more on this.
     void set_error_handler(std::function<ErrorHandler>);
+
+    /// \brief Override the server address and port.
+    ///
+    /// This causes a reconnection, if the session has an connection object
+    /// associated with it.
+    void override_server(std::string address, port_type port);
 
     /// @{ \brief Bind this session to the specified server side Realm.
     ///
@@ -650,11 +754,12 @@ public:
     /// async_wait_for_sync_completion() therefore requires a full client <->
     /// server round-trip.
     ///
-    /// If a new wait operation is initiated while other wait operations are in
-    /// progress, the waiting period of operations in progress may, or may not
-    /// get extended. The client must not assume either. The client may assume,
-    /// however, that async_wait_for_upload_completion() will not affect the
-    /// waiting period of async_wait_for_download_completion(), and vice versa.
+    /// If a new wait operation is initiated while another wait operation is in
+    /// progress by another thread, the waiting period of first operation may,
+    /// or may not get extended. The application must not assume either. The
+    /// application may assume, however, that async_wait_for_upload_completion()
+    /// will not affect the waiting period of
+    /// async_wait_for_download_completion(), and vice versa.
     ///
     /// It is an error to call these functions before bind() has been called,
     /// and has returned.
@@ -674,15 +779,10 @@ public:
     /// loop thread is running, all completion handlers will be called
     /// regardless of whether the operations get canceled or not.
     ///
-    /// CAUTION: The specified completion handlers may be called before the
-    /// initiation function returns (e.g. before
-    /// async_wait_for_upload_completion() returns), and it may be called (or
-    /// continue to execute) after the session object is destroyed. The
-    /// application must pass a handler that can be safely called, and can
-    /// safely continue to execute from the point in time where the initiating
-    /// function starts executing, and up until the point in time where the last
-    /// invocation of `clint.run()` returns. Here, `client` refers to the
-    /// associated Client object.
+    /// CAUTION: The specified completion handlers may get called before the
+    /// call to the waiting function returns, and it may get called (or continue
+    /// to execute) after the session object is destroyed. Please see "Callback
+    /// semantics" section under Session for more on this.
     ///
     /// Note: These functions are fully thread-safe. That is, they may be called
     /// by any thread, and by multiple threads concurrently.
@@ -697,15 +797,25 @@ public:
     /// async_wait_for_upload_completion() and
     /// async_wait_for_download_completion() respectively. This means that they
     /// block the caller until the completion condition is satisfied, or the
-    /// client event loop is stopped (Client::stop()).
+    /// client's event loop thread exits from Client::run(), whichever happens
+    /// first.
     ///
     /// It is an error to call these functions before bind() has been called,
     /// and has returned.
     ///
+    /// CAUTION: If Client::run() returns while a wait operation is in progress,
+    /// these waiting functions return immediately, even if the completion
+    /// condition is not yet satisfied. The completion condition is guaranteed
+    /// to be satisfied only when these functions return true.
+    ///
+    /// \return True only if the completion condition was satisfied. False if
+    /// the client's event loop thread exited from Client::run() in which case
+    /// the completion condition may, or may not have been satisfied.
+    ///
     /// Note: These functions are fully thread-safe. That is, they may be called
     /// by any thread, and by multiple threads concurrently.
-    void wait_for_upload_complete_or_client_stopped();
-    void wait_for_download_complete_or_client_stopped();
+    bool wait_for_upload_complete_or_client_stopped();
+    bool wait_for_download_complete_or_client_stopped();
     /// @}
 
     /// \brief Cancel the current or next reconnect delay for the server
@@ -733,8 +843,9 @@ public:
 
 private:
     class Impl;
-    Impl* m_impl;
+    Impl* m_impl = nullptr;
 
+    void do_detach() noexcept;
     void async_wait_for(bool upload_completion, bool download_completion,
                         WaitOperCompletionHandler);
 };
@@ -764,6 +875,7 @@ enum class Client::Error {
     bad_compression             = 115, ///< Bad compression (DOWNLOAD)
     bad_client_version          = 116, ///< Bad last integrated client version in changeset header (DOWNLOAD)
     ssl_server_cert_rejected    = 117, ///< SSL server certificate rejected
+    pong_timeout                = 118, ///< Timeout on reception of PONG respone message
 };
 
 const std::error_category& client_error_category() noexcept;
@@ -795,6 +907,35 @@ public:
         return "Bad server URL";
     }
 };
+
+inline Session::Session(Session&& sess) noexcept:
+    m_impl{sess.m_impl}
+{
+    sess.m_impl = nullptr;
+}
+
+inline Session::Session() noexcept
+{
+}
+
+inline Session::~Session() noexcept
+{
+    do_detach();
+}
+
+inline Session& Session::operator=(Session&& sess) noexcept
+{
+    do_detach();
+    m_impl = sess.m_impl;
+    sess.m_impl = nullptr;
+    return *this;
+}
+
+inline void Session::detach() noexcept
+{
+    do_detach();
+    m_impl = nullptr;
+}
 
 inline void Session::async_wait_for_sync_completion(WaitOperCompletionHandler handler)
 {

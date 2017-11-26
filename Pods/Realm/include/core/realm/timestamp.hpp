@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <ostream>
 #include <realm/util/assert.hpp>
+#include <realm/null.hpp>
 
 namespace realm {
 

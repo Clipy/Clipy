@@ -241,7 +241,7 @@ extension Predicate {
     }
 }
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 public typealias PredicateBlock = (_ actualExpression: Expression<NSObject>) -> NMBPredicateResult
 
 public class NMBPredicate: NSObject {

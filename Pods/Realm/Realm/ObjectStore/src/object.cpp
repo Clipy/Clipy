@@ -68,6 +68,7 @@ Object& Object::operator=(Object&&) = default;
 
 NotificationToken Object::add_notification_callback(CollectionChangeCallback callback) &
 {
+    verify_attached();
     if (!m_notifier) {
         m_notifier = std::make_shared<_impl::ObjectNotifier>(m_row, m_realm);
         _impl::RealmCoordinator::register_notifier(m_notifier);

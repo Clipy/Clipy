@@ -73,7 +73,7 @@ void SyncManager::configure_file_system(const std::string& base_file_path,
                 try {
                     m_metadata_manager = std::make_unique<SyncMetadataManager>(m_file_manager->metadata_path(),
                                                                                true,
-                                                                               std::move(custom_encryption_key));
+                                                                               custom_encryption_key);
                 } catch (RealmFileException const& ex) {
                     if (reset_metadata_on_error && m_file_manager->remove_metadata_realm()) {
                         m_metadata_manager = std::make_unique<SyncMetadataManager>(m_file_manager->metadata_path(),
@@ -212,14 +212,12 @@ void SyncManager::reset_for_testing()
         {
             std::lock_guard<std::mutex> lock(m_session_mutex);
 
-#if REALM_ASSERTIONS_ENABLED
             // Callers of `SyncManager::reset_for_testing` should ensure there are no active sessions
             // prior to calling `reset_for_testing`.
             auto no_active_sessions = std::none_of(m_sessions.begin(), m_sessions.end(), [](auto& element){
                 return element.second->existing_external_reference();
             });
-            REALM_ASSERT(no_active_sessions);
-#endif
+            REALM_ASSERT_RELEASE(no_active_sessions);
 
             // Destroy any inactive sessions.
             // FIXME: We shouldn't have any inactive sessions at this point! Sessions are expected to
@@ -463,14 +461,14 @@ std::shared_ptr<SyncSession> SyncManager::get_session(const std::string& path, c
         return session->external_reference();
     }
 
-    std::shared_ptr<SyncSession> shared_session(new SyncSession(client, path, sync_config));
+    auto shared_session = SyncSession::create(client, path, sync_config);
     m_sessions[path] = shared_session;
 
     // Create the external reference immediately to ensure that the session will become
     // inactive if an exception is thrown in the following code.
     auto external_reference = shared_session->external_reference();
 
-    sync_config.user->register_session(shared_session);
+    sync_config.user->register_session(std::move(shared_session));
 
     return external_reference;
 }
@@ -513,4 +511,10 @@ std::unique_ptr<SyncClient> SyncManager::create_sync_client() const
     }
     return std::make_unique<SyncClient>(std::move(logger),
                                         m_client_reconnect_mode);
+}
+
+std::string SyncManager::client_uuid() const
+{
+    REALM_ASSERT(m_metadata_manager);
+    return m_metadata_manager->client_uuid();
 }

@@ -78,7 +78,7 @@ public:
     void clear();
 
     void sort(size_t column, bool ascending = true);
-    void sort(const SortDescriptor& order);
+    void sort(SortDescriptor&& order);
 
     TableView get_sorted_view(size_t column_index, bool ascending = true) const;
     TableView get_sorted_view(SortDescriptor order) const;

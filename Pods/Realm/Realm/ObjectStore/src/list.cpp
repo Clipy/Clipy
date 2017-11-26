@@ -120,6 +120,8 @@ void List::validate(RowExpr row) const
 
 bool List::is_valid() const
 {
+    if (!m_realm)
+        return false;
     m_realm->verify_thread();
     if (m_link_view)
         return m_link_view->is_attached();
@@ -136,9 +138,7 @@ void List::verify_attached() const
 void List::verify_in_transaction() const
 {
     verify_attached();
-    if (!m_realm->is_in_transaction()) {
-        throw InvalidTransactionException("Must be in a write transaction");
-    }
+    m_realm->verify_in_write();
 }
 
 size_t List::size() const
@@ -276,6 +276,12 @@ void List::move(size_t source_ndx, size_t dest_ndx)
     if (m_link_view)
         m_link_view->move(source_ndx, dest_ndx);
     else {
+#if (REALM_VERSION_MAJOR >= 4)
+        // Core 4.0 and up has Table::move_row for use on subtables
+        m_table->move_row(source_ndx, dest_ndx);
+#else
+	// Older versions of Core requires emulation using swap_rows().
+
         // If to and from are next to each other we can just swap instead
         if (source_ndx == dest_ndx + 1 || dest_ndx == source_ndx + 1) {
             m_table->swap_rows(source_ndx, dest_ndx);
@@ -291,6 +297,7 @@ void List::move(size_t source_ndx, size_t dest_ndx)
         m_table->insert_empty_row(dest_ndx);
         m_table->swap_rows(source_ndx, dest_ndx);
         m_table->remove(source_ndx);
+#endif
     }
 }
 
@@ -345,6 +352,16 @@ void List::swap(size_t ndx1, size_t ndx2)
         m_link_view->swap(ndx1, ndx2);
     else
         m_table->swap_rows(ndx1, ndx2);
+}
+
+void List::delete_at(size_t row_ndx)
+{
+    verify_in_transaction();
+    verify_valid_row(row_ndx);
+    if (m_link_view)
+        m_link_view->remove_target_row(row_ndx);
+    else
+        m_table->remove(row_ndx);
 }
 
 void List::delete_all()

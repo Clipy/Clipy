@@ -86,6 +86,11 @@ struct Contains : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "contains";
+    }
+
     static const int condition = -1;
 };
 
@@ -125,6 +130,11 @@ struct Like : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "is like";
+    }
+
     static const int condition = -1;
 };
 
@@ -154,6 +164,11 @@ struct BeginsWith : public HackClass {
     {
         REALM_ASSERT(false);
         return false;
+    }
+
+    static std::string description()
+    {
+        return "begins with";
     }
 
     static const int condition = -1;
@@ -187,6 +202,11 @@ struct EndsWith : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "ends with";
+    }
+
     static const int condition = -1;
 };
 
@@ -216,6 +236,11 @@ struct Equal {
     bool will_match(int64_t v, int64_t lbound, int64_t ubound)
     {
         return (v == 0 && ubound == 0 && lbound == 0);
+    }
+
+    static std::string description()
+    {
+        return "is equal to";
     }
 };
 
@@ -254,6 +279,11 @@ struct NotEqual {
     {
         REALM_ASSERT(false);
         return false;
+    }
+
+    static std::string description()
+    {
+        return "is not equal to";
     }
 };
 
@@ -316,6 +346,11 @@ struct ContainsIns : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "contains (insensitive)";
+    }
+
     static const int condition = -1;
 };
 
@@ -361,6 +396,11 @@ struct LikeIns : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "is like (insensitive)";
+    }
+
     static const int condition = -1;
 };
 
@@ -403,6 +443,11 @@ struct BeginsWithIns : public HackClass {
     {
         REALM_ASSERT(false);
         return false;
+    }
+
+    static std::string description()
+    {
+        return "begins with (insensitive)";
     }
 
     static const int condition = -1;
@@ -450,6 +495,11 @@ struct EndsWithIns : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "ends with (insensitive)";
+    }
+
     static const int condition = -1;
 };
 
@@ -494,6 +544,11 @@ struct EqualIns : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "is equal to (insensitive)";
+    }
+
     static const int condition = -1;
 };
 
@@ -532,6 +587,11 @@ struct NotEqualIns : public HackClass {
         return false;
     }
 
+    static std::string description()
+    {
+        return "is not equal to (insensitive)";
+    }
+
     static const int condition = -1;
 };
 
@@ -563,6 +623,11 @@ struct Greater {
         static_cast<void>(ubound);
         return lbound > v;
     }
+
+    static std::string description()
+    {
+        return "is greater than";
+    }
 };
 
 struct None {
@@ -592,6 +657,11 @@ struct None {
         static_cast<void>(v);
         return true;
     }
+
+    static std::string description()
+    {
+        return "none";
+    }
 };
 
 struct NotNull {
@@ -620,6 +690,10 @@ struct NotNull {
         static_cast<void>(ubound);
         static_cast<void>(v);
         return true;
+    }
+    static std::string description()
+    {
+        return "is not null";
     }
 };
 
@@ -651,6 +725,10 @@ struct Less {
         static_cast<void>(lbound);
         return ubound < v;
     }
+    static std::string description()
+    {
+        return "is less than";
+    }
 };
 
 struct LessEqual : public HackClass {
@@ -668,6 +746,10 @@ struct LessEqual : public HackClass {
     {
         REALM_ASSERT(false);
         return false;
+    }
+    static std::string description()
+    {
+        return "is less than or equal to";
     }
     static const int condition = -1;
 };
@@ -687,6 +769,10 @@ struct GreaterEqual : public HackClass {
     {
         REALM_ASSERT(false);
         return false;
+    }
+    static std::string description()
+    {
+        return "is greater than or equal to";
     }
     static const int condition = -1;
 };

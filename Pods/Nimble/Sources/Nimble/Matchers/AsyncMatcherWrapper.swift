@@ -7,7 +7,7 @@ public struct AsyncDefaults {
     public static var PollInterval: TimeInterval = 0.01
 }
 
-fileprivate func async<T>(style: ExpectationStyle, predicate: Predicate<T>, timeout: TimeInterval, poll: TimeInterval, fnName: String) -> Predicate<T> {
+private func async<T>(style: ExpectationStyle, predicate: Predicate<T>, timeout: TimeInterval, poll: TimeInterval, fnName: String) -> Predicate<T> {
     return Predicate { actualExpression in
         let uncachedExpression = actualExpression.withoutCaching()
         let fnName = "expect(...).\(fnName)(...)"
@@ -29,6 +29,7 @@ fileprivate func async<T>(style: ExpectationStyle, predicate: Predicate<T>, time
         case let .raisedException(exception):
             return PredicateResult(status: .fail, message: .fail("unexpected exception raised: \(exception)"))
         case .blockedRunLoop:
+            // swiftlint:disable:next line_length
             return PredicateResult(status: .fail, message: lastPredicateResult!.message.appended(message: " (timed out, but main thread was unresponsive)."))
         case .incomplete:
             internalError("Reached .incomplete state for toEventually(...).")
@@ -105,7 +106,10 @@ internal struct AsyncMatcherWrapper<T, U>: Matcher
     }
 }
 
-private let toEventuallyRequiresClosureError = FailureMessage(stringValue: "expect(...).toEventually(...) requires an explicit closure (eg - expect { ... }.toEventually(...) )\nSwift 1.2 @autoclosure behavior has changed in an incompatible way for Nimble to function")
+private let toEventuallyRequiresClosureError = FailureMessage(
+    // swiftlint:disable:next line_length
+    stringValue: "expect(...).toEventually(...) requires an explicit closure (eg - expect { ... }.toEventually(...) )\nSwift 1.2 @autoclosure behavior has changed in an incompatible way for Nimble to function"
+)
 
 extension Expectation {
     /// Tests the actual value using a matcher to match by checking continuously
@@ -140,7 +144,13 @@ extension Expectation {
         let (pass, msg) = execute(
             expression,
             .toNotMatch,
-            async(style: .toNotMatch, predicate: predicate, timeout: timeout, poll: pollInterval, fnName: "toEventuallyNot"),
+            async(
+                style: .toNotMatch,
+                predicate: predicate,
+                timeout: timeout,
+                poll: pollInterval,
+                fnName: "toEventuallyNot"
+            ),
             to: "to eventually not",
             description: description,
             captureExceptions: false

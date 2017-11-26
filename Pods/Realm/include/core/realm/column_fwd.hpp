@@ -32,6 +32,7 @@ class SubtableColumn;
 class MixedColumn;
 class LinkColumn;
 class LinkListColumn;
+class TimestampColumn;
 
 // Templated classes
 template <class T>

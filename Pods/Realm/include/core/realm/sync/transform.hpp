@@ -24,11 +24,13 @@
 #include <stddef.h>
 
 #include <realm/util/buffer.hpp>
-#include <realm/impl/continuous_transactions_history.hpp>
+#include <realm/impl/cont_transact_hist.hpp>
 #include <realm/group_shared.hpp>
 
 namespace realm {
 namespace sync {
+
+struct Changeset;
 
 /// Represents an entry in the history of changes in a sync-enabled Realm
 /// file. Server and client use different history formats, but this class is
@@ -191,61 +193,22 @@ public:
 
 class TransformError; // Exception
 
-typedef std::function<bool(int)> TransformerCallback;
-
 class Transformer {
 public:
     using timestamp_type  = HistoryEntry::timestamp_type;
     using file_ident_type = HistoryEntry::file_ident_type;
     using version_type    = HistoryEntry::version_type;
 
-    struct RemoteChangeset {
-        /// The version produced on the remote peer by this changeset.
-        ///
-        /// On the server, the remote peer is the client from which the
-        /// changeset originated, and `remote_version` is the client version
-        /// produced by the changeset on that client.
-        ///
-        /// On a client, the remote peer is the server, and `remote_version` is
-        /// the server version produced by this changeset on the server. Since
-        /// the server is never the originator of changes, this changeset must
-        /// in turn have been produced on the server by integration of a
-        /// changeset uploaded by some other client.
-        version_type remote_version;
+    class RemoteChangeset;
+    class Reporter;
 
-        /// The last local version that has been integrated into
-        /// `remote_version`.
-        ///
-        /// A local version, L, has been integrated into a remote version, R,
-        /// when, and only when L is the latest local version such that all
-        /// preceeding changesets in the local history have been integrated by
-        /// the remote peer prior to R.
-        ///
-        /// On the server, this is the last server version integrated into the
-        /// client version `remote_version`. On a client, it is the last client
-        /// version integrated into the server version `remote_version`.
-        version_type last_integrated_local_version;
-
-        /// The changeset itself.
-        BinaryData data;
-
-        /// Same meaning as `HistoryEntry::origin_timestamp`.
-        timestamp_type origin_timestamp;
-
-        /// Same meaning as `HistoryEntry::origin_client_file_ident`.
-        file_ident_type origin_client_file_ident;
-
-        RemoteChangeset(version_type rv, version_type lv, BinaryData d, timestamp_type ot,
-                        file_ident_type fi);
-    };
-
-    /// Produce an operationally transformed version of the specified changeset,
-    /// which is assumed to be of remote origin, and received from remote peer
+    /// Produce an operationally transformed version of the specified changesets,
+    /// which are assumed to be of remote origin, and received from remote peer
     /// P. Note that P is not necessarily the peer from which the changes
     /// originated.
     ///
     /// Operational transformation is carried out between the specified
-    /// changeset and all causally unrelated changesets in the local history. A
+    /// changesets and all causally unrelated changesets in the local history. A
     /// changeset in the local history is causally unrelated if, and only if it
     /// occurs after the local changeset that produced
     /// `remote_changeset.last_integrated_local_version` and is not a produced
@@ -273,25 +236,77 @@ public:
     /// version.
     ///
     /// \return The size of the transformed version of the specified
-    /// changeset. Upon return, the changeset itself is stored in the specified
-    /// output buffer.
+    /// changesets. Upon return, the transformed changesets are concatenated
+    /// and placed in \a output_buffer.
     ///
     /// \throw TransformError Thrown if operational transformation fails due to
     /// a problem with the specified changeset.
-    virtual size_t transform_remote_changeset(TransformHistory&,
-                                              version_type current_local_version,
-                                              RemoteChangeset changeset,
-                                              util::Buffer<char>& output_buffer,
-                                              TransformerCallback& callback) = 0;
+    virtual void transform_remote_changesets(TransformHistory&,
+                                             version_type current_local_version,
+                                             Changeset* changesets,
+                                             std::size_t num_changesets,
+                                             Reporter* = nullptr) = 0;
 
     virtual ~Transformer() noexcept {}
 };
-
 
 /// \param local_client_file_ident The server assigned local client file
 /// identifier. This must be zero on the server-side, and only on the
 /// server-side.
 std::unique_ptr<Transformer> make_transformer(Transformer::file_ident_type local_client_file_ident);
+
+class Transformer::RemoteChangeset {
+public:
+    /// The version produced on the remote peer by this changeset.
+    ///
+    /// On the server, the remote peer is the client from which the changeset
+    /// originated, and `remote_version` is the client version produced by the
+    /// changeset on that client.
+    ///
+    /// On a client, the remote peer is the server, and `remote_version` is the
+    /// server version produced by this changeset on the server. Since the
+    /// server is never the originator of changes, this changeset must in turn
+    /// have been produced on the server by integration of a changeset uploaded
+    /// by some other client.
+    version_type remote_version = 0;
+
+    /// The last local version that has been integrated into `remote_version`.
+    ///
+    /// A local version, L, has been integrated into a remote version, R, when,
+    /// and only when L is the latest local version such that all preceeding
+    /// changesets in the local history have been integrated by the remote peer
+    /// prior to R.
+    ///
+    /// On the server, this is the last server version integrated into the
+    /// client version `remote_version`. On a client, it is the last client
+    /// version integrated into the server version `remote_version`.
+    version_type last_integrated_local_version = 0;
+
+    /// The changeset itself.
+    BinaryData data;
+
+    /// Same meaning as `HistoryEntry::origin_timestamp`.
+    timestamp_type origin_timestamp = 0;
+
+    /// Same meaning as `HistoryEntry::origin_client_file_ident`.
+    file_ident_type origin_client_file_ident = 0;
+
+    /// If the changeset was compacted during download, the size of the original
+    /// changeset.
+    size_t original_changeset_size = 0;
+
+    RemoteChangeset() {}
+    RemoteChangeset(version_type rv, version_type lv, BinaryData d, timestamp_type ot,
+                    file_ident_type fi);
+};
+
+class Transformer::Reporter {
+public:
+    virtual void report_merges(long num_merges) = 0;
+};
+
+
+void parse_remote_changeset(const Transformer::RemoteChangeset&, Changeset&);
 
 
 

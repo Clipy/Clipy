@@ -187,6 +187,22 @@ private:
 };
 
 
+/// uri_percent_encode() uri encodes a string as defined in according to
+/// https://tools.ietf.org/html/rfc3986#section-2.1
+/// The unescaped input must be UTF-8 encoded. uri_percent_encode() works
+/// by replacing each UTF-8 character by three charatcers.
+/// pct-encoded = "%" HEXDIG HEXDIG
+/// where HEXDIG HEXDIG is the hexadecimal value of the character.
+/// HEXDIG is a capital letter for A - F.
+/// Unreserved chracters are not encoded.
+/// unreseved = ALPHA / DIGIT / "-" / "." / "_" / "~"
+///
+/// uri_percent_decode() is the inverse of uri_percent_encode().
+/// uri_percent_decode() throws std::runtime_error if the input
+/// is invalid and cannot be decoded.
+std::string uri_percent_encode(const std::string& unescaped);
+std::string uri_percent_decode(const std::string& escaped);
+
 
 // Implementation
 

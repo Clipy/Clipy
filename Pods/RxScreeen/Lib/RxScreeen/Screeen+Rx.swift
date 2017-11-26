@@ -18,8 +18,8 @@ extension Reactive where Base: ScreenShotObserver {
 
      For more information take a look at `DelegateProxyType` protocol documentation.
      */
-    public var delegate: DelegateProxy {
-        return RxScreeenDelegateProxy.proxyForObject(base)
+    public var delegate: DelegateProxy<ScreenShotObserver, ScreenShotObserverDelegate> {
+        return RxScreeenDelegateProxy.proxy(for: base)
     }
 
     // MARK: - Responding to screenshot image

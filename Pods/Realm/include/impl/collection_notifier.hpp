@@ -118,13 +118,13 @@ public:
     // Add a callback to be called each time the collection changes
     // This can only be called from the target collection's thread
     // Returns a token which can be passed to remove_callback()
-    size_t add_callback(CollectionChangeCallback callback);
+    uint64_t add_callback(CollectionChangeCallback callback);
     // Remove a previously added token. The token is no longer valid after
     // calling this function and must not be used again. This function can be
     // called from any thread.
-    void remove_callback(size_t token);
+    void remove_callback(uint64_t token);
 
-    void suppress_next_notification(size_t token);
+    void suppress_next_notification(uint64_t token);
 
     // ------------------------------------------------------------------------
     // API for RealmCoordinator to manage running things and calling callbacks
@@ -218,7 +218,7 @@ private:
         CollectionChangeCallback fn;
         CollectionChangeBuilder accumulated_changes;
         CollectionChangeSet changes_to_deliver;
-        size_t token;
+        uint64_t token;
         bool initial_delivered;
         bool skip_next;
     };
@@ -237,11 +237,18 @@ private:
     // Iteration variable for looping over callbacks
     // remove_callback() updates this when needed
     size_t m_callback_index = -1;
+    // The number of callbacks which were present when the notifier was packaged
+    // for delivery which are still present.
+    // Updated by packaged_for_delivery and removd_callback(), and used in
+    // for_each_callback() to avoid calling callbacks registered during delivery.
+    size_t m_callback_count = -1;
+
+    uint64_t m_next_token = 0;
 
     template<typename Fn>
     void for_each_callback(Fn&& fn);
 
-    std::vector<Callback>::iterator find_callback(size_t token);
+    std::vector<Callback>::iterator find_callback(uint64_t token);
 };
 
 // A smart pointer to a CollectionNotifier that unregisters the notifier when

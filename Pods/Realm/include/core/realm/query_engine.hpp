@@ -86,6 +86,7 @@ AggregateState      State of the aggregate - contains a state variable that stor
 
 #include <algorithm>
 #include <functional>
+#include <sstream>
 #include <string>
 #include <array>
 
@@ -104,6 +105,7 @@ AggregateState      State of the aggregate - contains a state variable that stor
 #include <realm/column_type_traits.hpp>
 #include <realm/impl/sequential_getter.hpp>
 #include <realm/link_view.hpp>
+#include <realm/metrics/query_info.hpp>
 #include <realm/query_conditions.hpp>
 #include <realm/query_operators.hpp>
 #include <realm/table.hpp>
@@ -136,7 +138,6 @@ const size_t probe_matches = 4;
 const size_t bitwidth_time_unit = 64;
 
 typedef bool (*CallbackDummy)(int64_t);
-
 
 class ParentNode {
     typedef ParentNode ThisType;
@@ -266,6 +267,40 @@ public:
 
     virtual void verify_column() const = 0;
 
+    virtual std::string describe_column() const
+    {
+        return describe_column(m_condition_column_idx);
+    }
+
+    virtual std::string describe_column(size_t col_ndx) const
+    {
+        if (m_table && col_ndx != npos) {
+            return std::string(m_table->get_name()) + metrics::value_separator
+                + std::string(m_table->get_column_name(col_ndx));
+        }
+        return "";
+    }
+
+    virtual std::string describe() const
+    {
+        return "";
+    }
+
+    virtual std::string describe_condition() const
+    {
+        return "matches";
+    }
+
+    virtual std::string describe_expression() const
+    {
+        std::string s;
+        s = describe();
+        if (m_child) {
+            s = s + " and " + m_child->describe_expression();
+        }
+        return s;
+    }
+
     std::unique_ptr<ParentNode> m_child;
     std::vector<ParentNode*> m_children;
     size_t m_condition_column_idx = npos; // Column of search criteria
@@ -377,6 +412,11 @@ public:
         else
             return m_condition->validate();
     }
+    std::string describe() const override
+    {
+        return "subtable expression";
+    }
+
 
     size_t find_first_local(size_t start, size_t end) override
     {
@@ -384,11 +424,11 @@ public:
         REALM_ASSERT(m_condition);
 
         for (size_t s = start; s < end; ++s) {
-            const Table* subtable;
+            ConstTableRef subtable; // TBD: optimize this back to Table*
             if (m_col_type == col_type_Table)
-                subtable = static_cast<const SubtableColumn*>(m_column)->get_subtable_ptr(s);
+                subtable = static_cast<const SubtableColumn*>(m_column)->get_subtable_tableref(s);
             else {
-                subtable = static_cast<const MixedColumn*>(m_column)->get_subtable_ptr(s);
+                subtable = static_cast<const MixedColumn*>(m_column)->get_subtable_tableref(s);
                 if (!subtable)
                     continue;
             }
@@ -696,6 +736,7 @@ protected:
     TFind_callback_specialized m_find_callback_specialized = nullptr;
 };
 
+
 // FIXME: Add specialization that uses index for TConditionFunction = Equal
 template <class ColType, class TConditionFunction>
 class IntegerNode : public IntegerNodeBase<ColType> {
@@ -763,6 +804,16 @@ public:
         }
 
         return not_found;
+    }
+
+    virtual std::string describe() const override
+    {
+        return this->describe_column() + " " + describe_condition() + " " + metrics::print_value(IntegerNodeBase<ColType>::m_value);
+    }
+
+    virtual std::string describe_condition() const override
+    {
+        return TConditionFunction::description();
     }
 
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
@@ -834,6 +885,7 @@ protected:
     }
 };
 
+
 // This node is currently used for floats and doubles only
 template <class ColType, class TConditionFunction>
 class FloatDoubleNode : public ParentNode {
@@ -892,6 +944,15 @@ public:
             return find(false);
     }
 
+    virtual std::string describe() const override
+    {
+        return this->describe_column() + " " + describe_condition() + " " + metrics::print_value(FloatDoubleNode::m_value);
+    }
+    virtual std::string describe_condition() const override
+    {
+        return TConditionFunction::description();
+    }
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
         return std::unique_ptr<ParentNode>(new FloatDoubleNode(*this, patches));
@@ -938,9 +999,11 @@ public:
     {
         for (size_t s = start; s < end; ++s) {
             TConditionValue v = m_condition_column->get(s);
-            int64_t sz = m_size_operator(v);
-            if (TConditionFunction()(sz, m_value, !bool(v)))
-                return s;
+            if (v) {
+                int64_t sz = m_size_operator(v);
+                if (TConditionFunction()(sz, m_value))
+                    return s;
+            }
         }
         return not_found;
     }
@@ -1014,6 +1077,12 @@ public:
         return not_found;
     }
 
+    virtual std::string describe() const override
+    {
+        return this->describe_column() + " " + TConditionFunction::description() + " \""
+            + metrics::print_value(BinaryNode::m_value.data()) + "\"";
+    }
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
         return std::unique_ptr<ParentNode>(new BinaryNode(*this, patches));
@@ -1072,6 +1141,11 @@ public:
     {
         size_t ret = m_condition_column->find<TConditionFunction>(m_value, start, end);
         return ret;
+    }
+
+    virtual std::string describe() const override
+    {
+        return this->describe_column() + " " + TConditionFunction::description() + " " + metrics::print_value(TimestampNode::m_value);
     }
 
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
@@ -1141,6 +1215,11 @@ public:
     {
         if (m_condition_column && patches)
             m_condition_column_idx = m_condition_column->get_column_index();
+    }
+
+    virtual std::string describe() const override
+    {
+        return this->describe_column() + " " + describe_condition() + " \"" + metrics::print_value(StringNodeBase::m_value) + "\"";
     }
 
 protected:
@@ -1235,6 +1314,11 @@ public:
         return not_found;
     }
 
+    virtual std::string describe_condition() const override
+    {
+        return TConditionFunction::description();
+    }
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
         return std::unique_ptr<ParentNode>(new StringNode<TConditionFunction>(*this, patches));
@@ -1296,7 +1380,13 @@ public:
         }
         return not_found;
     }
-    
+
+    virtual std::string describe_condition() const override
+    {
+        return Contains::description();
+    }
+
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
         return std::unique_ptr<ParentNode>(new StringNode<Contains>(*this, patches));
@@ -1328,17 +1418,17 @@ public:
             m_ucase = std::move(*upper);
             m_lcase = std::move(*lower);
         }
-        
+
         if (v.size() == 0)
             return;
-        
+
         // Build a dictionary of char-to-last distances in the search string
         // (zero indicates that the char is not in needle)
         size_t last_char_pos = m_ucase.size()-1;
         for (size_t i = 0; i < last_char_pos; ++i) {
             // we never jump longer increments than 255 chars, even if needle is longer (to fit in one byte)
             uint8_t jump = last_char_pos-i < 255 ? static_cast<uint8_t>(last_char_pos-i) : 255;
-            
+
             unsigned char uc = m_ucase[i];
             unsigned char lc = m_lcase[i];
             m_charmap[uc] = jump;
@@ -1346,35 +1436,44 @@ public:
         }
 
     }
-    
+
     void init() override
     {
         clear_leaf_state();
-        
+
         m_dD = 100.0;
-        
+
         StringNodeBase::init();
     }
-    
-    
+
+
     size_t find_first_local(size_t start, size_t end) override
     {
         ContainsIns cond;
-        
+
         for (size_t s = start; s < end; ++s) {
             StringData t = get_string(s);
-            
+            // The current behaviour is to return all results when querying for a null string.
+            // See comment above Query_NextGen_StringConditions on why every string including "" contains null.
+            if (!bool(m_value)) {
+                return s;
+            }
             if (cond(StringData(m_value), m_ucase.data(), m_lcase.data(), m_charmap, t))
                 return s;
         }
         return not_found;
     }
-    
+
+    virtual std::string describe_condition() const override
+    {
+        return ContainsIns::description();
+    }
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
         return std::unique_ptr<ParentNode>(new StringNode<ContainsIns>(*this, patches));
     }
-    
+
     StringNode(const StringNode& from, QueryNodeHandoverPatches* patches)
     : StringNodeBase(from, patches)
     , m_charmap(from.m_charmap)
@@ -1382,7 +1481,7 @@ public:
     , m_lcase(from.m_lcase)
     {
     }
-    
+
 protected:
     std::array<uint8_t, 256> m_charmap;
     std::string m_ucase;
@@ -1408,6 +1507,10 @@ public:
     void init() override;
     size_t find_first_local(size_t start, size_t end) override;
 
+    virtual std::string describe_condition() const override
+    {
+        return Equal::description();
+    }
 
 protected:
     inline BinaryData str_to_bin(const StringData& s) noexcept
@@ -1475,6 +1578,11 @@ public:
 
     void _search_index_init() override;
 
+    virtual std::string describe_condition() const override
+    {
+        return EqualIns::description();
+    }
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
         return std::unique_ptr<ParentNode>(new StringNode(*this, patches));
@@ -1500,10 +1608,8 @@ private:
 //
 // For 'second.equal(23).begin_group().first.equal(111).Or().first.equal(222).end_group().third().equal(555)', this
 // will first set m_conditions[0] = left-hand-side through constructor, and then later, when .first.equal(222) is
-// invoked,
-// invocation will set m_conditions[1] = right-hand-side through Query& Query::Or() (see query.cpp). In there, m_child
-// is
-// also set to next AND condition (if any exists) following the OR.
+// invoked, invocation will set m_conditions[1] = right-hand-side through Query& Query::Or() (see query.cpp).
+// In there, m_child is also set to next AND condition (if any exists) following the OR.
 class OrNode : public ParentNode {
 public:
     OrNode(std::unique_ptr<ParentNode> condition)
@@ -1534,6 +1640,23 @@ public:
             condition->verify_column();
         }
     }
+    std::string describe() const override
+    {
+        if (m_conditions.size() >= 2) {
+
+        }
+        std::string s;
+        for (size_t i = 0; i < m_conditions.size(); ++i) {
+            if (m_conditions[i]) {
+                s += m_conditions[i]->describe_expression();
+                if (i != m_conditions.size() - 1) {
+                    s += " or ";
+                }
+            }
+        }
+        return s;
+    }
+
 
     void init() override
     {
@@ -1693,6 +1816,15 @@ public:
             return s;
         return "";
     }
+
+    virtual std::string describe() const override
+    {
+        if (m_condition) {
+            return "not(" + m_condition->describe_expression() + ")";
+        }
+        return "not()";
+    }
+
 
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override
     {
@@ -1860,6 +1992,8 @@ public:
     void table_changed() override;
     void verify_column() const override;
 
+    virtual std::string describe() const override;
+
     std::unique_ptr<ParentNode> clone(QueryNodeHandoverPatches* patches) const override;
     void apply_handover_patch(QueryNodeHandoverPatches& patches, Group& group) override;
 
@@ -1896,6 +2030,16 @@ public:
     {
         do_verify_column(m_column, m_origin_column);
     }
+
+    virtual std::string describe() const override
+    {
+        return this->describe_column(m_origin_column) + " " + describe_condition() + " " + metrics::print_value(m_target_row.get_index());
+    }
+    virtual std::string describe_condition() const override
+    {
+        return "links to";
+    }
+
 
     size_t find_first_local(size_t start, size_t end) override
     {

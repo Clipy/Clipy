@@ -136,18 +136,6 @@ inline bool equal_sequence(const char*& begin, const char* end, const char* begi
 /// Returns none if invalid UTF-8 encoding was encountered.
 util::Optional<std::string> case_map(StringData source, bool upper);
 
-#if REALM_UWP
-// Converts unicodes 0...last_greek_unicode to their respective lower case characters using a popular
-// UnicodeData.txtfile (http://www.opensource.apple.com/source/Heimdal/Heimdal-247.9/lib/wind/UnicodeData.txt) that
-// contains case conversion information. The conversion does not take your current locale in count; it can be
-// slightly wrong in some countries! If the input is already lower case, or outside range 0...last_greek_unicode, then input value
-// is returned untouched.
-//
-// The method is called from case_map() on Windows 10 UWP only, because CharLowerW() / CharUpperW() is not supported
-// on early Windows 10 devices (it's supported on newer versions though).
-unsigned int unicode_case_convert(unsigned int unicode, bool upper);
-#endif
-
 enum IgnoreErrorsTag { IgnoreErrors };
 std::string case_map(StringData source, bool upper, IgnoreErrorsTag);
 

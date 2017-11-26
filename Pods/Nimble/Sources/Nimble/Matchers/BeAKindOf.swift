@@ -29,7 +29,7 @@ public func beAKindOf<T>(_ expectedType: T.Type) -> Predicate<Any> {
     }
 }
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 
 /// A Nimble matcher that succeeds when the actual value is an instance of the given class.
 /// @see beAnInstanceOf if you want to match against the exact class
@@ -58,7 +58,7 @@ public func beAKindOf(_ expectedClass: AnyClass) -> Predicate<NSObject> {
 }
 
 extension NMBObjCMatcher {
-    public class func beAKindOfMatcher(_ expected: AnyClass) -> NMBMatcher {
+    @objc public class func beAKindOfMatcher(_ expected: AnyClass) -> NMBMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
             return try! beAKindOf(expected).matches(actualExpression, failureMessage: failureMessage)
         }

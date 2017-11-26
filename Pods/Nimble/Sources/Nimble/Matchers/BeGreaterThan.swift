@@ -16,7 +16,8 @@ public func beGreaterThan(_ expectedValue: NMBComparable?) -> Predicate<NMBCompa
     return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be greater than <\(stringify(expectedValue))>"
         let actualValue = try actualExpression.evaluate()
-        let matches = actualValue != nil && actualValue!.NMB_compare(expectedValue) == ComparisonResult.orderedDescending
+        let matches = actualValue != nil
+            && actualValue!.NMB_compare(expectedValue) == ComparisonResult.orderedDescending
         return matches
     }.requireNonNil
 }
@@ -29,9 +30,9 @@ public func > (lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
     lhs.to(beGreaterThan(rhs))
 }
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 extension NMBObjCMatcher {
-    public class func beGreaterThanMatcher(_ expected: NMBComparable?) -> NMBObjCMatcher {
+    @objc public class func beGreaterThanMatcher(_ expected: NMBComparable?) -> NMBObjCMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
             let expr = actualExpression.cast { $0 as? NMBComparable }
             return try! beGreaterThan(expected).matches(expr, failureMessage: failureMessage)

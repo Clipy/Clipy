@@ -42,6 +42,11 @@ inline void MixedColumn::adj_acc_swap_rows(size_t row_ndx_1, size_t row_ndx_2) n
     m_data->adj_acc_swap_rows(row_ndx_1, row_ndx_2);
 }
 
+inline void MixedColumn::adj_acc_move_row(size_t from_ndx, size_t to_ndx) noexcept
+{
+    m_data->adj_acc_move_row(from_ndx, to_ndx);
+}
+
 inline void MixedColumn::adj_acc_move_over(size_t from_row_ndx, size_t to_row_ndx) noexcept
 {
     m_data->adj_acc_move_over(from_row_ndx, to_row_ndx);
@@ -68,7 +73,7 @@ inline size_t MixedColumn::get_subtable_size(size_t row_ndx) const noexcept
     return _impl::TableFriend::get_size_from_ref(top_ref, m_data->get_alloc());
 }
 
-inline Table* MixedColumn::get_subtable_accessor(size_t row_ndx) const noexcept
+inline TableRef MixedColumn::get_subtable_accessor(size_t row_ndx) const noexcept
 {
     return m_data->get_subtable_accessor(row_ndx);
 }
@@ -78,17 +83,17 @@ inline void MixedColumn::discard_subtable_accessor(size_t row_ndx) noexcept
     m_data->discard_subtable_accessor(row_ndx);
 }
 
-inline Table* MixedColumn::get_subtable_ptr(size_t row_ndx)
+inline TableRef MixedColumn::get_subtable_tableref(size_t row_ndx)
 {
     REALM_ASSERT_3(row_ndx, <, m_types->size());
     if (m_types->get(row_ndx) != type_Table)
-        return 0;
-    return m_data->get_subtable_ptr(row_ndx); // Throws
+        return {};
+    return m_data->get_subtable_tableref(row_ndx); // Throws
 }
 
-inline const Table* MixedColumn::get_subtable_ptr(size_t subtable_ndx) const
+inline ConstTableRef MixedColumn::get_subtable_tableref(size_t subtable_ndx) const
 {
-    return const_cast<MixedColumn*>(this)->get_subtable_ptr(subtable_ndx);
+    return const_cast<MixedColumn*>(this)->get_subtable_tableref(subtable_ndx);
 }
 
 inline void MixedColumn::discard_child_accessors() noexcept
@@ -503,8 +508,7 @@ inline void MixedColumn::refresh_accessor_tree(size_t col_ndx, const Spec& spec)
 inline void MixedColumn::RefsColumn::refresh_accessor_tree(size_t col_ndx, const Spec& spec)
 {
     SubtableColumnBase::refresh_accessor_tree(col_ndx, spec); // Throws
-    size_t spec_ndx_in_parent = 0;                            // Ignored because these are root tables
-    m_subtable_map.refresh_accessor_tree(spec_ndx_in_parent); // Throws
+    m_subtable_map.refresh_accessor_tree();                   // Throws
 }
 
 } // namespace realm

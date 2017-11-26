@@ -1,6 +1,6 @@
 {
   "name": "LoginServiceKit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "Easy manage loigin items in MacOSX",
   "license": {
     "type": "apache2",
@@ -12,7 +12,7 @@
   },
   "source": {
     "git": "https://github.com/Clipy/LoginServiceKit.git",
-    "tag": "v1.0.0"
+    "tag": "v1.1.0"
   },
   "platforms": {
     "osx": "10.9"

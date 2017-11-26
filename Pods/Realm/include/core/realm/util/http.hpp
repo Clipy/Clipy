@@ -24,6 +24,7 @@
 #include <map>
 #include <system_error>
 #include <iosfwd>
+#include <locale>
 
 #include <realm/util/optional.hpp>
 #include <realm/util/network.hpp>
@@ -126,6 +127,13 @@ enum class HTTPMethod {
     Trace,
     Connect,
 };
+
+struct HTTPAuthorization {
+    std::string scheme;
+    std::map<std::string, std::string> values;
+};
+
+HTTPAuthorization parse_authorization(const std::string&);
 
 struct CaseInsensitiveCompare {
     bool operator()(const std::string& a, const std::string& b) const

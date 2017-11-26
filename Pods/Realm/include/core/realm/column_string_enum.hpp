@@ -85,6 +85,7 @@ public:
     void insert(size_t ndx, StringData value);
     void erase(size_t row_ndx);
     void move_last_over(size_t row_ndx);
+    void swap_rows(size_t row_ndx_1, size_t row_ndx_2) override;
     void clear();
     bool is_nullable() const noexcept final;
 

@@ -26,11 +26,10 @@
 #include <cstdint>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <semaphore.h>
 #include <mutex>
 
 // Condvar Emulation is required if RobustMutex emulation is enabled
-#ifdef REALM_ROBUST_MUTEX_EMULATION
+#if defined(REALM_ROBUST_MUTEX_EMULATION) || defined(_WIN32)
 #define REALM_CONDVAR_EMULATION
 #endif
 
@@ -66,8 +65,14 @@ public:
 
 #ifdef REALM_CONDVAR_EMULATION
     struct SharedPart {
+#ifdef _WIN32
+        // Number of waiting threads.
+        int32_t m_waiters_count;
+        size_t m_was_broadcast;
+#else
         uint64_t signal_counter;
         uint64_t wait_counter;
+#endif
     };
 #else
     typedef CondVar SharedPart;
@@ -117,6 +122,21 @@ private:
     // When using an anonymous pipe (currently only for tvOS) m_fd_read is read-only and m_fd_write is write-only.
     int m_fd_read = -1;
     int m_fd_write = -1;
+
+#ifdef _WIN32
+    // Semaphore used to queue up threads waiting for the condition to
+    // become signaled. 
+    HANDLE m_sema = 0;
+    // An auto-reset event used by the broadcast/signal thread to wait
+    // for all the waiting thread(s) to wake up and be released from the
+    // semaphore. 
+    HANDLE m_waiters_done = 0;
+    std::string m_name;
+
+    // Serialize access to m_waiters_count
+    InterprocessMutex m_waiters_lockcount;
+#endif
+
 #endif
 };
 

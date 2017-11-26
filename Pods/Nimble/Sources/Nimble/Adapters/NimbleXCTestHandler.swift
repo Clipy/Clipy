@@ -53,7 +53,7 @@ class NimbleXCTestUnavailableHandler: AssertionHandler {
 #endif
 
 func isXCTestAvailable() -> Bool {
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     // XCTest is weakly linked and so may not be present
     return NSClassFromString("XCTestCase") != nil
 #else
@@ -66,7 +66,12 @@ private func recordFailure(_ message: String, location: SourceLocation) {
     XCTFail("\(message)", file: location.file, line: location.line)
 #else
     if let testCase = CurrentTestCaseTracker.sharedInstance.currentTestCase {
-        testCase.recordFailure(withDescription: message, inFile: location.file, atLine: location.line, expected: true)
+        #if swift(>=4)
+        let line = Int(location.line)
+        #else
+        let line = location.line
+        #endif
+        testCase.recordFailure(withDescription: message, inFile: location.file, atLine: line, expected: true)
     } else {
         let msg = "Attempted to report a test failure to XCTest while no test case was running. " +
         "The failure was:\n\"\(message)\"\nIt occurred at: \(location.file):\(location.line)"

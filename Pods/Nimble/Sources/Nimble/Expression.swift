@@ -77,7 +77,11 @@ public struct Expression<T> {
     /// @param block The block that can cast the current Expression value to a
     ///              new type.
     public func cast<U>(_ block: @escaping (T?) throws -> U?) -> Expression<U> {
-        return Expression<U>(expression: ({ try block(self.evaluate()) }), location: self.location, isClosure: self.isClosure)
+        return Expression<U>(
+            expression: ({ try block(self.evaluate()) }),
+            location: self.location,
+            isClosure: self.isClosure
+        )
     }
 
     public func evaluate() throws -> T? {
@@ -85,6 +89,11 @@ public struct Expression<T> {
     }
 
     public func withoutCaching() -> Expression<T> {
-        return Expression(memoizedExpression: self._expression, location: location, withoutCaching: true, isClosure: isClosure)
+        return Expression(
+            memoizedExpression: self._expression,
+            location: location,
+            withoutCaching: true,
+            isClosure: isClosure
+        )
     }
 }

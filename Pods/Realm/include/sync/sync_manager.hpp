@@ -138,6 +138,9 @@ public:
     // Get the path of the recovery directory for backed-up or recovered Realms.
     std::string recovery_directory_path() const;
 
+    // Get the unique identifier of this client.
+    std::string client_uuid() const;
+
     // Reset the singleton state for testing purposes. DO NOT CALL OUTSIDE OF TESTING CODE.
     // Precondition: any synced Realms or `SyncSession`s must be closed or rendered inactive prior to
     // calling this method.

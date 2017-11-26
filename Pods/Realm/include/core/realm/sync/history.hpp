@@ -21,7 +21,8 @@
 #include <memory>
 #include <string>
 
-#include <realm/impl/continuous_transactions_history.hpp>
+#include <realm/impl/cont_transact_hist.hpp>
+#include <realm/sync/instruction_replication.hpp>
 #include <realm/sync/transform.hpp>
 
 #ifndef REALM_SYNC_HISTORY_HPP
@@ -56,7 +57,7 @@ struct SyncProgress {
 
 
 class ClientHistory:
-        public TrivialReplication {
+        public InstructionReplication {
 public:
     using version_type    = TrivialReplication::version_type;
     using file_ident_type = HistoryEntry::file_ident_type;
@@ -167,6 +168,24 @@ public:
                                                        HistoryEntry& entry,
                                                        std::unique_ptr<char[]>& buffer) const = 0;
 
+
+    struct UploadChangeset {
+        HistoryEntry::timestamp_type timestamp;
+        version_type client_version;
+        version_type server_version;
+        BinaryData changeset;
+        std::unique_ptr<char[]> buffer;
+    };
+
+    /// find_uploadable_changesets() returns a vector of history entries. The
+    /// history entries are returned in order and starts from the first available
+    /// entry. The number of entries returned is at least one, if possible, and
+    /// is size limited by a soft limit. Returned changesets produced a version
+    /// that succeeds `begin_version` and, and does not succeed `end_version`.
+    /// Returned changesets are also locally produced and non-empty.
+    virtual std::vector<UploadChangeset> find_uploadable_changesets(version_type begin_version,
+                                                            version_type end_version) const = 0;
+
     using RemoteChangeset = Transformer::RemoteChangeset;
 
     /// \brief Integrate a sequence of remote changesets using a single Realm
@@ -194,8 +213,7 @@ public:
                                                      const RemoteChangeset* changesets,
                                                      std::size_t num_changesets,
                                                      util::Logger* replay_logger,
-                                                     std::function<SyncTransactCallback>& callback,
-                                                     TransformerCallback& transformer_callback) = 0;
+                                                     std::function<SyncTransactCallback>&) = 0;
 
     /// Get the persisted upload/download progress in bytes.
     virtual void get_upload_download_bytes(uint_fast64_t& downloaded_bytes,
@@ -333,7 +351,7 @@ std::unique_ptr<ClientHistory> make_client_history(const std::string& realm_path
 // Implementation
 
 inline ClientHistory::ClientHistory(const std::string& realm_path):
-    TrivialReplication(realm_path)
+    InstructionReplication(realm_path)
 {
 }
 

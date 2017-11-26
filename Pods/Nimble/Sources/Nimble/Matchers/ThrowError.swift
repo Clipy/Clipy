@@ -52,7 +52,13 @@ public func throwError<T: Error>(_ error: T, closure: ((Error) -> Void)? = nil) 
             actualError = catchedError
         }
 
-        setFailureMessageForError(failureMessage, actualError: actualError, error: error, errorType: nil, closure: closure)
+        setFailureMessageForError(
+            failureMessage,
+            actualError: actualError,
+            error: error,
+            errorType: nil,
+            closure: closure
+        )
         var matches = false
         if let actualError = actualError, errorMatchesExpectedError(actualError, expectedError: error) {
             matches = true
@@ -91,7 +97,13 @@ public func throwError<T: Error & Equatable>(_ error: T, closure: ((T) -> Void)?
             actualError = catchedError
         }
 
-        setFailureMessageForError(failureMessage, actualError: actualError, error: error, errorType: nil, closure: closure)
+        setFailureMessageForError(
+            failureMessage,
+            actualError: actualError,
+            error: error,
+            errorType: nil,
+            closure: closure
+        )
         var matches = false
         if let actualError = actualError as? T, error == actualError {
             matches = true
@@ -133,7 +145,13 @@ public func throwError<T: Error>(
             actualError = catchedError
         }
 
-        setFailureMessageForError(failureMessage, actualError: actualError, error: nil, errorType: errorType, closure: closure)
+        setFailureMessageForError(
+            failureMessage,
+            actualError: actualError,
+            error: nil,
+            errorType: errorType,
+            closure: closure
+        )
         var matches = false
         if let actualError = actualError {
             matches = true

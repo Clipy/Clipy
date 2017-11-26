@@ -43,7 +43,7 @@ internal func nimblePrecondition(
     line: UInt = #line) {
         let result = expr()
         if !result {
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
             let e = NSException(
                 name: NSExceptionName(name()),
                 reason: message(),

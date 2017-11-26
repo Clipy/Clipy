@@ -25,6 +25,7 @@
 #include <realm/utilities.hpp>
 #include <mutex>
 #include <map>
+#include <iostream>
 
 // Enable this only on platforms where it might be needed
 #if REALM_PLATFORM_APPLE || REALM_ANDROID
@@ -55,7 +56,7 @@ public:
     InterprocessMutex(const InterprocessMutex&) = delete;
     InterprocessMutex& operator=(const InterprocessMutex&) = delete;
 
-#ifdef REALM_ROBUST_MUTEX_EMULATION
+#if defined(REALM_ROBUST_MUTEX_EMULATION) || defined(_WIN32)
     struct SharedPart {
     };
 #else
@@ -131,6 +132,11 @@ private:
     void free_lock_info();
 #else
     SharedPart* m_shared_part = nullptr;
+
+#ifdef _WIN32
+    HANDLE m_handle = 0;
+#endif
+
 #endif
     friend class InterprocessCondVar;
 };
@@ -144,6 +150,13 @@ inline InterprocessMutex::InterprocessMutex()
 
 inline InterprocessMutex::~InterprocessMutex() noexcept
 {
+#ifdef _WIN32
+    if (m_handle) {
+        bool b = CloseHandle(m_handle);
+        REALM_ASSERT_RELEASE(b);
+    }
+#endif
+
 #ifdef REALM_ROBUST_MUTEX_EMULATION
     free_lock_info();
 #endif
@@ -209,6 +222,21 @@ inline void InterprocessMutex::set_shared_part(SharedPart& shared_part, const st
     m_fileuid = m_lock_info->m_file.get_unique_id();
 
     (*s_info_map)[m_fileuid] = m_lock_info;
+#elif defined(_WIN32)
+    if (m_handle) {
+        bool b = CloseHandle(m_handle);
+        REALM_ASSERT_RELEASE(b);
+    }
+    // replace backslashes because they're significant in object namespace names
+    std::string path_escaped = path;
+    std::replace(path_escaped.begin(), path_escaped.end(), '\\', '/');
+    std::string name = "Local\\realm_named_intermutex_" + path_escaped + mutex_name;
+
+    std::wstring wname(name.begin(), name.end());
+    m_handle = CreateMutexW(0, false, wname.c_str());
+    if (!m_handle) {
+        throw std::system_error(std::error_code(::GetLastError(), std::system_category()), "Error opening mutex");
+    }
 #else
     m_shared_part = &shared_part;
     static_cast<void>(path);
@@ -262,8 +290,14 @@ inline void InterprocessMutex::lock()
     m_lock_info->m_file.lock_exclusive();
     mutex_lock.release();
 #else
+
+#ifdef _WIN32
+    DWORD d = WaitForSingleObject(m_handle, INFINITE);
+    REALM_ASSERT_RELEASE(d != WAIT_FAILED);
+#else
     REALM_ASSERT(m_shared_part);
     m_shared_part->lock([]() {});
+#endif
 #endif
 }
 
@@ -283,8 +317,21 @@ inline bool InterprocessMutex::try_lock()
         return false;
     }
 #else
+
+#ifdef _WIN32
+    DWORD ret = WaitForSingleObject(m_handle, 0);
+    REALM_ASSERT_RELEASE(ret != WAIT_FAILED);
+
+    if (ret == WAIT_OBJECT_0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+#else
     REALM_ASSERT(m_shared_part);
     return m_shared_part->try_lock([]() {});
+#endif
 #endif
 }
 
@@ -295,8 +342,13 @@ inline void InterprocessMutex::unlock()
     m_lock_info->m_file.unlock();
     m_lock_info->m_local_mutex.unlock();
 #else
+#ifdef _WIN32
+    bool b = ReleaseMutex(m_handle);
+    REALM_ASSERT_RELEASE(b);
+#else
     REALM_ASSERT(m_shared_part);
     m_shared_part->unlock();
+#endif
 #endif
 }
 
@@ -304,6 +356,11 @@ inline void InterprocessMutex::unlock()
 inline bool InterprocessMutex::is_valid() noexcept
 {
 #ifdef REALM_ROBUST_MUTEX_EMULATION
+    return true;
+#elif defined(_WIN32)
+    // There is no safe way of testing if the m_handle mutex handle is valid on Windows, without having bad side effects
+    // for the cases where it is indeed invalid. If m_handle contains an arbitrary value, it might by coincidence be equal
+    // to a real live handle of another kind. This excludes a try_lock implementation and many other ideas.
     return true;
 #else
     REALM_ASSERT(m_shared_part);
