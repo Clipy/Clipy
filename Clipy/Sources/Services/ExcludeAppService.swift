@@ -28,7 +28,7 @@ extension ExcludeAppService {
     func startMonitoring() {
         disposeBag = DisposeBag()
         // Monitoring top active application
-        NSWorkspace.shared().notificationCenter.rx.notification(.NSWorkspaceDidActivateApplication)
+        NSWorkspace.shared.notificationCenter.rx.notification(NSWorkspace.didActivateApplicationNotification)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
             .bind(to: frontApplication)
             .disposed(by: disposeBag)
@@ -100,7 +100,7 @@ extension ExcludeAppService {
 
     func copiedProcessIsExcludedApplications(pasteboard: NSPasteboard) -> Bool {
         guard let types = pasteboard.types else { return false }
-        guard let application = types.flatMap({ Application(rawValue: $0) }).first else { return false }
+        guard let application = types.flatMap({ Application(rawValue: $0.rawValue) }).first else { return false }
         return application.isExcluded(applications: applications)
     }
 }

@@ -67,7 +67,7 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation(), in: nil)
+        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
     func popUpSnippetFolder(_ folder: CPYFolder) {
@@ -86,7 +86,7 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
-        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation(), in: nil)
+        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 }
 
@@ -96,13 +96,13 @@ fileprivate extension MenuManager {
     fileprivate func bind() {
         // Realm Notification
         clipToken = realm.objects(CPYClip.self)
-                        .addNotificationBlock { [weak self] _ in
+                        .observe { [weak self] _ in
                             DispatchQueue.main.async { [weak self] in
                                 self?.createClipMenu()
                             }
                         }
         snippetToken = realm.objects(CPYFolder.self)
-                        .addNotificationBlock { [weak self] _ in
+                        .observe { [weak self] _ in
                             DispatchQueue.main.async { [weak self] in
                                 self?.createClipMenu()
                             }
@@ -180,7 +180,7 @@ fileprivate extension MenuManager {
         clipMenu?.addItem(NSMenuItem(title: LocalizedString.editSnippets.value, action: #selector(AppDelegate.showSnippetEditorWindow)))
         clipMenu?.addItem(NSMenuItem(title: LocalizedString.preference.value, action: #selector(AppDelegate.showPreferenceWindow)))
         clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: LocalizedString.quitClipy.value, action: #selector(AppDelegate.terminateApplication)))
+        clipMenu?.addItem(NSMenuItem(title: LocalizedString.quitClipy.value, action: #selector(AppDelegate.terminate)))
 
         statusItem?.menu = clipMenu
     }
@@ -328,11 +328,11 @@ fileprivate extension MenuManager {
             menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
         }
 
-        if primaryPboardType == NSTIFFPboardType {
+        if primaryPboardType == NSPasteboard.PasteboardType(rawValue: "NSTIFFPboardType").rawValue {
             menuItem.title = menuItemTitle("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == NSPDFPboardType {
+        } else if primaryPboardType == NSPasteboard.PasteboardType(rawValue: "NSPDFPboardType").rawValue {
             menuItem.title = menuItemTitle("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == NSFilenamesPboardType && title.isEmpty {
+        } else if primaryPboardType == NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType").rawValue && title.isEmpty {
             menuItem.title = menuItemTitle("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
 
@@ -426,7 +426,7 @@ private extension MenuManager {
         }
         image?.isTemplate = true
 
-        statusItem = NSStatusBar.system().statusItem(withLength: -1)
+        statusItem = NSStatusBar.system.statusItem(withLength: -1)
         statusItem?.image = image
         statusItem?.highlightMode = true
         statusItem?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
@@ -435,7 +435,7 @@ private extension MenuManager {
 
     func removeStatusItem() {
         if let item = statusItem {
-            NSStatusBar.system().removeStatusItem(item)
+            NSStatusBar.system.removeStatusItem(item)
             statusItem = nil
         }
     }

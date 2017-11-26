@@ -26,12 +26,12 @@ extension CPYExcludeAppPreferenceViewController {
         openPanel.directoryURL = URL(fileURLWithPath: basePath)
 
         let returnCode = openPanel.runModal()
-        if returnCode != NSModalResponseOK { return }
+        if returnCode != NSApplication.ModalResponse.OK { return }
 
         let fileURLs = openPanel.urls
         fileURLs.forEach {
             guard let bundle = Bundle(url: $0), let info = bundle.infoDictionary else { return }
-            guard let appInfo = CPYAppInfo(info: info as [String : AnyObject]) else { return }
+            guard let appInfo = CPYAppInfo(info: info as [String: AnyObject]) else { return }
             AppEnvironment.current.excludeAppService.add(with: appInfo)
         }
         tableView.reloadData()
@@ -40,7 +40,7 @@ extension CPYExcludeAppPreferenceViewController {
     @IBAction func deleteAppButtonTapped(_ sender: AnyObject) {
         let index = tableView.selectedRow
         if index == -1 {
-            NSBeep()
+            NSSound.beep()
             return
         }
         AppEnvironment.current.excludeAppService.delete(with: index)

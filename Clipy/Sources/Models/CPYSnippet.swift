@@ -12,12 +12,12 @@ import RealmSwift
 final class CPYSnippet: Object {
 
     // MARK: - Properties
-    dynamic var index   = 0
-    dynamic var enable  = true
-    dynamic var title   = ""
-    dynamic var content = ""
-    dynamic var identifier = UUID().uuidString
-    let folders = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
+    @objc dynamic var index         = 0
+    @objc dynamic var enable        = true
+    @objc dynamic var title         = ""
+    @objc dynamic var content       = ""
+    @objc dynamic var identifier    = UUID().uuidString
+    let folders                     = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
 
     var folder: CPYFolder? {
         return folders.first

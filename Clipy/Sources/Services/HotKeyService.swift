@@ -32,19 +32,19 @@ final class HotKeyService: NSObject {
 
 // MARK: - Actions
 extension HotKeyService {
-    func popupMainMenu() {
+    @objc func popupMainMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.main)
     }
 
-    func popupHistoryMenu() {
+    @objc func popupHistoryMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.history)
     }
 
-    func popUpSnippetMenu() {
+    @objc func popUpSnippetMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
     }
 
-    func popUpClearHistoryAlert() {
+    @objc func popUpClearHistoryAlert() {
         guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
         appDelegate.clearAllHistory()
     }
@@ -199,7 +199,7 @@ extension HotKeyService {
         folderKeyCombos = keyCombos
     }
 
-    func popupSnippetFolder(_ object: AnyObject) {
+    @objc func popupSnippetFolder(_ object: AnyObject) {
         guard let hotKey = object as? HotKey else { return }
         let realm = try! Realm()
         guard let folder = realm.object(ofType: CPYFolder.self, forPrimaryKey: hotKey.identifier) else {

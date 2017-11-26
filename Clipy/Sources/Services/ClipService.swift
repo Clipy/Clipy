@@ -27,7 +27,7 @@ final class ClipService {
         disposeBag = DisposeBag()
         // Pasteboard observe timer
         Observable<Int>.interval(0.75, scheduler: scheduler)
-            .map { _ in NSPasteboard.general().changeCount }
+            .map { _ in NSPasteboard.general.changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
             .subscribe(onNext: { [weak self] (changeCount, _) in
@@ -86,7 +86,7 @@ extension ClipService {
         // Store types
         if !storeTypes.values.contains(NSNumber(value: true)) { return }
         // Pasteboard types
-        let pasteboard = NSPasteboard.general()
+        let pasteboard = NSPasteboard.general
         let types = self.types(with: pasteboard)
         if types.isEmpty { return }
 
@@ -132,7 +132,7 @@ extension ClipService {
         clip.title = data.stringValue[0...10000]
         clip.dataHash = "\(savedHash)"
         clip.updateTime = unixTime
-        clip.primaryType = data.primaryType ?? ""
+        clip.primaryType = data.primaryType?.rawValue ?? ""
 
         DispatchQueue.main.async {
             // Save thumbnail image
@@ -157,12 +157,12 @@ extension ClipService {
         }
     }
 
-    private func types(with pasteboard: NSPasteboard) -> [String] {
+    private func types(with pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
         let types = pasteboard.types?.filter { canSave(with: $0) } ?? []
-        return NSOrderedSet(array: types).array as? [String] ?? []
+        return NSOrderedSet(array: types).array as? [NSPasteboard.PasteboardType] ?? []
     }
 
-    private func canSave(with type: String) -> Bool {
+    private func canSave(with type: NSPasteboard.PasteboardType) -> Bool {
         let dictionary = CPYClipData.availableTypesDictinary
         guard let value = dictionary[type] else { return false }
         guard let number = storeTypes[value] else { return false }

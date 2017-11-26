@@ -48,17 +48,21 @@ class AppDelegate: NSObject {
     }
 
     // MARK: - Menu Actions
-    func showPreferenceWindow() {
+    @objc func showPreferenceWindow() {
         NSApp.activate(ignoringOtherApps: true)
         CPYPreferencesWindowController.sharedController.showWindow(self)
     }
 
-    func showSnippetEditorWindow() {
+    @objc func showSnippetEditorWindow() {
         NSApp.activate(ignoringOtherApps: true)
         CPYSnippetsEditorWindowController.sharedController.showWindow(self)
     }
 
-    func clearAllHistory() {
+    @objc func terminate() {
+        terminateApplication()
+    }
+
+    @objc func clearAllHistory() {
         let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
@@ -71,9 +75,9 @@ class AppDelegate: NSObject {
             NSApp.activate(ignoringOtherApps: true)
 
             let result = alert.runModal()
-            if result != NSAlertFirstButtonReturn { return }
+            if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
 
-            if alert.suppressionButton?.state == NSOnState {
+            if alert.suppressionButton?.state == NSControl.StateValue.on {
                 AppEnvironment.current.defaults.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
             }
             AppEnvironment.current.defaults.synchronize()
@@ -82,34 +86,34 @@ class AppDelegate: NSObject {
         AppEnvironment.current.clipService.clearAll()
     }
 
-    func selectClipMenuItem(_ sender: NSMenuItem) {
+    @objc func selectClipMenuItem(_ sender: NSMenuItem) {
         CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch clip primary key")
-            NSBeep()
+            NSSound.beep()
             return
         }
         let realm = try! Realm()
         guard let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey) else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch clip data")
-            NSBeep()
+            NSSound.beep()
             return
         }
 
         AppEnvironment.current.pasteService.paste(with: clip)
     }
 
-    func selectSnippetMenuItem(_ sender: AnyObject) {
+    @objc func selectSnippetMenuItem(_ sender: AnyObject) {
         CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
         guard let primaryKey = sender.representedObject as? String else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
-            NSBeep()
+            NSSound.beep()
             return
         }
         let realm = try! Realm()
         guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
             CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
-            NSBeep()
+            NSSound.beep()
             return
         }
         AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
@@ -117,7 +121,7 @@ class AppDelegate: NSObject {
     }
 
     func terminateApplication() {
-        NSApplication.shared().terminate(nil)
+        NSApplication.shared.terminate(nil)
     }
 
     // MARK: - Login Item Methods
@@ -131,12 +135,12 @@ class AppDelegate: NSObject {
         NSApp.activate(ignoringOtherApps: true)
 
         //  Launch on system startup
-        if alert.runModal() == NSAlertFirstButtonReturn {
+        if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
             toggleLoginItemState()
         }
         // Do not show this message again
-        if alert.suppressionButton?.state == NSOnState {
+        if alert.suppressionButton?.state == NSControl.StateValue.on {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         }
         AppEnvironment.current.defaults.synchronize()
