@@ -19,6 +19,6 @@ extension NSColor {
     }
 
     static func tabTitleColor() -> NSColor {
-        return NSColor(white:0.6, alpha: 1)
+        return NSColor(white: 0.6, alpha: 1)
     }
 }

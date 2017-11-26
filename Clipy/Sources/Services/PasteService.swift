@@ -34,7 +34,7 @@ final class PasteService {
 
     // MARK: - Modifiers
     private func isPressedModifier(_ flag: Int) -> Bool {
-        let flags = NSEvent.modifierFlags()
+        let flags = NSEvent.modifierFlags
         if flag == 0 && flags.contains(.command) {
             return true
         } else if flag == 1 && flags.contains(.shift) {
@@ -85,9 +85,9 @@ extension PasteService {
     func copyToPasteboard(with string: String) {
         lock.lock(); defer { lock.unlock() }
 
-        let pasteboard = NSPasteboard.general()
-        pasteboard.declareTypes([NSStringPboardType], owner: nil)
-        pasteboard.setString(string, forType: NSStringPboardType)
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes([NSPasteboard.PasteboardType(rawValue: "NSStringPboardType")], owner: nil)
+        pasteboard.setString(string, forType: NSPasteboard.PasteboardType(rawValue: "NSStringPboardType"))
     }
 
     func copyToPasteboard(with clip: CPYClip) {
@@ -100,35 +100,35 @@ extension PasteService {
             return
         }
 
-        let pasteboard = NSPasteboard.general()
+        let pasteboard = NSPasteboard.general
         let types = data.types
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
             switch type {
-            case NSStringPboardType:
+            case NSPasteboard.PasteboardType(rawValue: "NSStringPboardType"):
                 let pbString = data.stringValue
-                pasteboard.setString(pbString, forType: NSStringPboardType)
-            case NSRTFDPboardType:
+                pasteboard.setString(pbString, forType: NSPasteboard.PasteboardType(rawValue: "NSStringPboardType"))
+            case NSPasteboard.PasteboardType(rawValue: "NSRTFDPboardType"):
                 if let rtfData = data.RTFData {
-                    pasteboard.setData(rtfData, forType: NSRTFDPboardType)
+                    pasteboard.setData(rtfData, forType: NSPasteboard.PasteboardType(rawValue: "NSRTFDPboardType"))
                 }
-            case NSRTFPboardType:
+            case NSPasteboard.PasteboardType(rawValue: "NSRTFPboardType"):
                 if let rtfData = data.RTFData {
-                    pasteboard.setData(rtfData, forType: NSRTFPboardType)
+                    pasteboard.setData(rtfData, forType: NSPasteboard.PasteboardType(rawValue: "NSRTFPboardType"))
                 }
-            case NSPDFPboardType:
+            case NSPasteboard.PasteboardType(rawValue: "NSPDFPboardType"):
                 if let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) {
-                    pasteboard.setData(pdfRep.pdfRepresentation, forType: NSPDFPboardType)
+                    pasteboard.setData(pdfRep.pdfRepresentation, forType: NSPasteboard.PasteboardType(rawValue: "NSPDFPboardType"))
                 }
-            case NSFilenamesPboardType:
+            case NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType"):
                 let fileNames = data.fileNames
-                pasteboard.setPropertyList(fileNames, forType: NSFilenamesPboardType)
-            case NSURLPboardType:
+                pasteboard.setPropertyList(fileNames, forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType"))
+            case NSPasteboard.PasteboardType(rawValue: "NSURLPboardType"):
                 let url = data.URLs
-                pasteboard.setPropertyList(url, forType: NSURLPboardType)
-            case NSTIFFPboardType:
+                pasteboard.setPropertyList(url, forType: NSPasteboard.PasteboardType(rawValue: "NSURLPboardType"))
+            case NSPasteboard.PasteboardType(rawValue: "NSTIFFPboardType"):
                 if let image = data.image, let imageData = image.tiffRepresentation {
-                    pasteboard.setData(imageData, forType: NSTIFFPboardType)
+                    pasteboard.setData(imageData, forType: NSPasteboard.PasteboardType(rawValue: "NSTIFFPboardType"))
                 }
             default: break
             }
