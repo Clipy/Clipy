@@ -1,4 +1,4 @@
-fastlane_version "2.66.2"
+fastlane_version "2.71.0"
 
 default_platform :mac
 
@@ -9,28 +9,6 @@ platform :mac do
   before_all do
   end
 
-  ######################## SETUP LANES ########################
-
-  desc "Setup development"
-  lane :setup do
-  end
-
-  desc "Setup release developer id account settings. (only use admin)"
-  lane :setup_release_id do
-    # Update Project Team
-    update_project_team(
-      path: "Clipy.xcodeproj",
-      teamid: "BBCHAJ584H"
-    )
-    # Update Provisioning Profile
-    update_provisioning_profile_specifier(
-      xcodeproj: "Clipy.xcodeproj",
-      new_specifier: "ClipyDistribution",
-      configuration: "Release",
-      target: "^Clipy$"
-    )
-  end
-
   ####################### PUBLIC LANES ########################
 
   desc "Runs all the tests"
@@ -39,11 +17,22 @@ platform :mac do
     scan_clipy
     slack(message: "Passed All Tests")
   end
-  
+
   desc "Release"
   lane :release do
-    # TODO: Use :codesigning_identity options (Developer ID Application: Shunsuke Furubayashi (BBCHAJ584H))
-    # TODO: Use :export_method options (developer-id)
+    # Check Xcode Version
+    xcversion(version: "9.2")
+    # Check Git Status is Clean
+    ensure_git_status_clean
+    # Build Clipy.app
+    gym(
+      xcargs: "CODE_SIGN_IDENTITY='Developer ID Application: Shunsuke Furubayashi (BBCHAJ584H)' DEVELOPMENT_TEAM='BBCHAJ584H'",
+      export_options: {
+        provisioningProfiles: {
+          "com.clipy-app.Clipy" => "ClipyDistribution2"
+        }
+      }
+    )
   end
 
   ####################### PRIVATE LANES ########################

@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (2.3.5)
+    CFPropertyList (2.3.6)
     activesupport (4.2.10)
       i18n (~> 0.7)
       minitest (~> 5.1)
@@ -73,7 +73,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.2.1)
     escape (0.0.4)
-    excon (0.59.0)
+    excon (0.60.0)
     faraday (0.13.1)
       multipart-post (>= 1.2, < 3)
     faraday-cookie_jar (0.0.6)
@@ -83,8 +83,8 @@ GEM
       faraday (~> 0.8)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
-    fastimage (2.1.0)
-    fastlane (2.66.2)
+    fastimage (2.1.1)
+    fastlane (2.71.0)
       CFPropertyList (>= 2.3, < 3.0.0)
       addressable (>= 2.3, < 3.0.0)
       babosa (>= 1.0.2, < 2.0.0)
@@ -112,7 +112,7 @@ GEM
       slack-notifier (>= 1.3, < 2.0.0)
       terminal-notifier (>= 1.6.2, < 2.0.0)
       terminal-table (>= 1.4.5, < 2.0.0)
-      tty-screen (~> 0.6.2)
+      tty-screen (~> 0.6.3)
       word_wrap (~> 1.0.0)
       xcodeproj (>= 1.5.2, < 2.0.0)
       xcpretty (>= 0.2.4, < 1.0.0)
@@ -146,7 +146,7 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.1.0)
     jwt (2.1.0)
-    kramdown (1.15.0)
+    kramdown (1.16.2)
     little-plugger (1.1.4)
     logging (2.2.2)
       little-plugger (~> 1.1)
@@ -165,11 +165,11 @@ GEM
     nap (1.1.0)
     netrc (0.11.0)
     no_proxy_fix (0.1.2)
-    octokit (4.7.0)
+    octokit (4.8.0)
       sawyer (~> 0.8.0, >= 0.5.3)
     open4 (1.3.4)
     os (0.9.6)
-    plist (3.3.0)
+    plist (3.4.0)
     public_suffix (2.0.5)
     representable (3.0.4)
       declarative (< 0.1.0)
@@ -193,7 +193,7 @@ GEM
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     thread_safe (0.3.6)
-    tty-screen (0.6.3)
+    tty-screen (0.6.4)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
     uber (0.1.0)
@@ -202,7 +202,10 @@ GEM
     unf_ext (0.0.7.4)
     unicode-display_width (1.3.0)
     word_wrap (1.0.0)
-    xcodeproj (1.5.3)
+    xcode-install (2.3.1)
+      claide (>= 0.9.1, < 1.1.0)
+      fastlane (>= 2.1.0, < 3.0.0)
+    xcodeproj (1.5.4)
       CFPropertyList (~> 2.3.3)
       claide (>= 1.0.2, < 2.0)
       colored2 (~> 3.1)
@@ -220,6 +223,7 @@ DEPENDENCIES
   danger
   fastlane
   fastlane-plugin-update_provisioning_profile_specifier
+  xcode-install
 
 BUNDLED WITH
    1.15.3
