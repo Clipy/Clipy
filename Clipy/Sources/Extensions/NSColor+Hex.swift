@@ -48,9 +48,9 @@ extension NSColor {
 
     public convenience init?(hex rgba: String) {
         let hexString: String
-        let hexCount = rgba.characters.count
+        let hexCount = rgba.count
         if rgba.hasPrefix("#") {
-            hexString = rgba.substring(from: rgba.characters.index(rgba.startIndex, offsetBy: 1))
+            hexString = rgba.substring(from: rgba.index(rgba.startIndex, offsetBy: 1))
         } else if hexCount == 3 || hexCount == 6 {
             hexString = rgba
         } else {
@@ -63,7 +63,7 @@ extension NSColor {
         /**
          *  Images with alpha cannot be previewed and not be created
          */
-        switch hexString.characters.count {
+        switch hexString.count {
         case 3:
             self.init(hex3: UInt16(hexValue))
         case 6:

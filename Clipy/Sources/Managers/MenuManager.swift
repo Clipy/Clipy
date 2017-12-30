@@ -229,12 +229,12 @@ fileprivate extension MenuManager {
         var titleString = (lineEnd == theString.length) ? theString as String : theString.substring(to: contentsEnd)
 
         var maxMenuItemTitleLength = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        if maxMenuItemTitleLength < shortenSymbol.characters.count {
-            maxMenuItemTitleLength = shortenSymbol.characters.count
+        if maxMenuItemTitleLength < shortenSymbol.count {
+            maxMenuItemTitleLength = shortenSymbol.count
         }
 
         if titleString.utf16.count > maxMenuItemTitleLength {
-            titleString = (titleString as NSString).substring(to: maxMenuItemTitleLength - shortenSymbol.characters.count) + shortenSymbol
+            titleString = (titleString as NSString).substring(to: maxMenuItemTitleLength - shortenSymbol.count) + shortenSymbol
         }
 
         return titleString as String
@@ -324,7 +324,7 @@ fileprivate extension MenuManager {
 
         if isShowToolTip {
             let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
-            let toIndex = (clipString.characters.count < maxLengthOfToolTip) ? clipString.characters.count : maxLengthOfToolTip
+            let toIndex = (clipString.count < maxLengthOfToolTip) ? clipString.count : maxLengthOfToolTip
             menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
         }
 
