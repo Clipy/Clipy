@@ -1,0 +1,47 @@
+/* 
+  Localizable.strings
+  Clipy
+
+  Created by 古林俊佑 on 2015/06/21.
+  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
+*/
+
+"Launch Clipy on system startup?" = "Clipy beim Starten öffnen?";
+
+"You can change this setting in the Preferences if you want." = "Sie können diese Option in den Einstellungen ändern.";
+
+"Launch on system startup" = "Anwendung automatisch starten";
+
+"Don't Launch" = "Nicht starten";
+
+"Clear History" = "Verlauf löschen";
+
+"Are you sure you want to clear your clipboard history?" = "Möchten sie den Verlauf ihrer Zwischenablage wirklich löschen?";
+
+"Cancel" = "Abbrechen";
+
+"Edit Snippets..." = "Snippets bearbeiten...";
+
+"Preferences..." = "Einstellungen...";
+
+"Quit Clipy" = "Clipy beenden";
+
+"History" = "Verlauf";
+
+"Snippet" = "Snippet";
+
+"General" = "Allgemein";
+
+"Menu" = "Menü";
+
+"Type" = "Typ";
+
+"Shortcuts" = "Tastenkombinationen";
+
+"Updates" = "Aktualisierungen";
+
+"Delete Item" = "Einträge löschen";
+
+"Are you sure want to delete this item?" = "Möchten sie diesen Eintrag wirklich löschen?";
+
+"Add" = "Hinzufügen";
