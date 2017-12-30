@@ -14,7 +14,7 @@ platform :mac do
   desc "Runs all the tests"
   lane :test do
     slack(message: "Start Testing")
-    scan_clipy
+    scan
     slack(message: "Passed All Tests")
   end
 
@@ -36,16 +36,6 @@ platform :mac do
   end
 
   ####################### PRIVATE LANES ########################
-
-  private_lane :scan_clipy do
-    scan(
-      workspace: "Clipy.xcworkspace",
-      scheme: "Clipy",
-      skip_build: true,
-      verbose: true,
-      clean: true
-    )
-  end
 
   ############################ POST ############################
 
