@@ -9,6 +9,7 @@
 import Foundation
 
 enum LocalizedString: String {
+    
     case clearHistory           = "Clear History"
     case confirmClearHistory    = "Are you sure you want to clear your clipboard history?"
     case editSnippets           = "Edit Snippets..."
@@ -22,7 +23,7 @@ enum LocalizedString: String {
     case launchOnStartup        = "Launch on system startup"
     case dontLaunch             = "Don't Launch"
     case deleteItem             = "Delete Item"
-    case confirmDeleteItem      = "Are you sure want to delete this item?"
+    case confirmDeleteItem      = "Are you sure want to delete those items?"
     case add                    = "Add"
 
     case tabGeneral             = "General"
