@@ -1,0 +1,27 @@
+
+/* Class = "NSWindow"; title = "Clipy - Setting"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Clipy - 设置";
+
+/* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
+"Fxs-BH-hPx.title" = "Beta测试";
+
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "N5e-ba-0Q0"; */
+"N5e-ba-0Q0.title" = "更新";
+
+/* Class = "NSTextFieldCell"; title = "No Pane is Selected."; ObjectID = "Vy6-Ui-lLf"; */
+"Vy6-Ui-lLf.title" = "没有选中面板。";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "avh-w8-RcC"; */
+"avh-w8-RcC.title" = "类型";
+
+/* Class = "NSTextFieldCell"; title = "Exclude"; ObjectID = "odU-xs-hZL"; */
+"odU-xs-hZL.title" = "排除";
+
+/* Class = "NSTextFieldCell"; title = "General"; ObjectID = "qS1-uo-9im"; */
+"qS1-uo-9im.title" = "通用";
+
+/* Class = "NSTextFieldCell"; title = "Shortcuts"; ObjectID = "qx8-Vm-eow"; */
+"qx8-Vm-eow.title" = "快捷键";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "vEM-JU-92T"; */
+"vEM-JU-92T.title" = "菜单";
