@@ -6,42 +6,42 @@
   Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
 */
 
-"Launch Clipy on system startup?" = "Launch Clipy on system startup?";
+"Launch Clipy on system startup?" = "系统启动时打开 Clipy?";
 
-"You can change this setting in the Preferences if you want." = "You can change this setting in the Preferences if you want.";
+"You can change this setting in the Preferences if you want." = "如有需要可在偏好设置中修改本设置。";
 
-"Launch on system startup" = "Launch on system startup";
+"Launch on system startup" = "系统启动时打开";
 
-"Don't Launch" = "Don't Launch";
+"Don't Launch" = "不要打开";
 
-"Clear History" = "Clear History";
+"Clear History" = "清除历史";
 
-"Are you sure you want to clear your clipboard history?" = "Are you sure you want to clear your clipboard history?";
+"Are you sure you want to clear your clipboard history?" = "确定想要清空剪贴板历史？";
 
-"Cancel" = "Cancel";
+"Cancel" = "取消";
 
-"Edit Snippets..." = "Edit Snippets...";
+"Edit Snippets..." = "编辑片断...";
 
-"Preferences..." = "Preferences...";
+"Preferences..." = "偏好设置...";
 
-"Quit Clipy" = "Quit Clipy";
+"Quit Clipy" = "退出 Clipy";
 
-"History" = "History";
+"History" = "历史";
 
-"Snippet" = "Snippet";
+"Snippet" = "片断";
 
-"General" = "General";
+"General" = "通用";
 
-"Menu" = "Menu";
+"Menu" = "菜单";
 
-"Type" = "Type";
+"Type" = "类型";
 
-"Shortcuts" = "Shortcuts";
+"Shortcuts" = "快捷键";
 
-"Updates" = "Updates";
+"Updates" = "更新";
 
-"Delete Item" = "Delete Item";
+"Delete Item" = "删除";
 
-"Are you sure want to delete this item?" = "Are you sure want to delete this item?";
+"Are you sure want to delete this item?" = "确定要删除此项？";
 
-"Add" = "Add";
+"Add" = "添加";
