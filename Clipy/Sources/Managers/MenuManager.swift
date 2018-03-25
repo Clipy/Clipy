@@ -17,9 +17,9 @@ final class MenuManager: NSObject {
 
     // MARK: - Properties
     // Menus
-    fileprivate var clipMenu: NSMenu?
-    fileprivate var historyMenu: NSMenu?
-    fileprivate var snippetMenu: NSMenu?
+    fileprivate var clipMenu: MGKMenuWithFilter?
+    fileprivate var historyMenu: MGKMenuWithFilter?
+    fileprivate var snippetMenu: MGKMenuWithFilter?
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
@@ -161,9 +161,9 @@ fileprivate extension MenuManager {
 // MARK: - Menus
 fileprivate extension MenuManager {
     fileprivate func createClipMenu() {
-        clipMenu = NSMenu(title: Constants.Application.name)
-        historyMenu = NSMenu(title: Constants.Menu.history)
-        snippetMenu = NSMenu(title: Constants.Menu.snippet)
+        clipMenu = MGKMenuWithFilter(title: Constants.Application.name)
+        historyMenu = MGKMenuWithFilter(title: Constants.Menu.history)
+        snippetMenu = MGKMenuWithFilter(title: Constants.Menu.snippet)
 
         addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)
