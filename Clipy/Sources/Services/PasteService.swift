@@ -68,7 +68,7 @@ extension PasteService {
         if isPasteAndDeleteHistory {
             AppEnvironment.current.clipService.incrementChangeCount()
         }
-        // Paste hisotry
+        // Paste history
         if isPastePlainText {
             copyToPasteboard(with: data.stringValue)
             paste()
