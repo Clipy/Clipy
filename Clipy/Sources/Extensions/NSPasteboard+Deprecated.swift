@@ -1,9 +1,13 @@
 //
 //  NSPasteboard+Deprecated.swift
-//  Clipy
 //
-//  Created by Shunsuke Furubayashi on 2017/12/30.
-//  Copyright © 2017年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2017/12/30.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
