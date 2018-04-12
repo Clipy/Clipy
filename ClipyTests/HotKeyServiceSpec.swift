@@ -97,7 +97,7 @@ class HotKeyServiceSpec: QuickSpec {
             }
         }
 
-        describe("Save HotKey") { 
+        describe("Save HotKey") {
 
             beforeEach {
                 let defaults = UserDefaults.standard
@@ -224,7 +224,7 @@ class HotKeyServiceSpec: QuickSpec {
             }
         }
 
-        describe("Clear Hisotry HotKey") {
+        describe("Clear History HotKey") {
             beforeEach {
                 let defaults = UserDefaults.standard
                 defaults.removeObject(forKey: Constants.HotKey.clearHistoryKeyCombo)

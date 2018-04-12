@@ -44,7 +44,7 @@ extension HotKeyService {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
     }
 
-    func popUpClearHisotryAlert() {
+    func popUpClearHistoryAlert() {
         guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
         appDelegate.clearAllHistory()
     }
@@ -89,10 +89,10 @@ extension HotKeyService {
         AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: Constants.HotKey.clearHistoryKeyCombo)
         AppEnvironment.current.defaults.synchronize()
         // Reset hotkey
-        HotKeyCenter.shared.unregisterHotKey(with: "ClearHisotry")
+        HotKeyCenter.shared.unregisterHotKey(with: "ClearHistory")
         // Register new hotkey
         guard let keyCombo = keyCombo else { return }
-        let hotkey = HotKey(identifier: "ClearHisotry", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHisotryAlert))
+        let hotkey = HotKey(identifier: "ClearHistory", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHistoryAlert))
         hotkey.register()
     }
 
@@ -157,7 +157,7 @@ fileprivate extension HotKeyService {
     }
 }
 
-// MARK: - Snippet HotKey 
+// MARK: - Snippet HotKey
 extension HotKeyService {
     private var folderKeyCombos: [String: KeyCombo]? {
         get {
