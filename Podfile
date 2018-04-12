@@ -18,6 +18,7 @@ target 'Clipy' do
   pod 'KeyHolder'
   pod 'RxScreeen'
   pod 'AEXML'
+  pod 'LetsMove'
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftLint'

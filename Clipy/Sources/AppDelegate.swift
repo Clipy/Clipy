@@ -20,6 +20,7 @@ import Magnet
 import Screeen
 import RxScreeen
 import RealmSwift
+import LetsMove
 
 @NSApplicationMain
 class AppDelegate: NSObject {
@@ -197,6 +198,12 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Managers
         AppEnvironment.current.menuManager.setup()
+    }
+
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        #if RELEASE
+            PFMoveToApplicationsFolderIfNecessary()
+        #endif
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
