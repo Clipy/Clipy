@@ -15,12 +15,13 @@ import Cocoa
 import RealmSwift
 import PINCache
 import RxSwift
+import RxCocoa
 import RxOptional
 
 final class ClipService {
 
     // MARK: - Properties
-    fileprivate var cachedChangeCount = Variable<Int>(0)
+    fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
@@ -35,7 +36,7 @@ final class ClipService {
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
             .subscribe(onNext: { [weak self] (changeCount, _) in
-                self?.cachedChangeCount.value = changeCount
+                self?.cachedChangeCount.accept(changeCount)
                 self?.create()
             })
             .disposed(by: disposeBag)
@@ -77,7 +78,7 @@ final class ClipService {
     }
 
     func incrementChangeCount() {
-        cachedChangeCount.value += 1
+        cachedChangeCount.accept(cachedChangeCount.value + 1)
     }
 
 }
