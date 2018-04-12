@@ -603,7 +603,7 @@
 				CLASSPREFIX = CPY;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = "Shunsuke Furubayashi";
+				ORGANIZATIONNAME = "Clipy Project";
 				TargetAttributes = {
 					FAC43DC51B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;

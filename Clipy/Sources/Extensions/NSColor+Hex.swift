@@ -1,11 +1,15 @@
 //
 //  NSColor+Hex.swift
+//
 //  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
 //
-//  Created by 古林俊佑 on 2016/11/21.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Created by Econa77 on 2016/11/21.
 //
-// Rewrote it for NSColor with reference to the following
+//  Copyright © 2015-2018 Clipy Project.
+//
+// Rewrote it for NSColor with reference to the following codes.
 // https://github.com/yeahdongcn/UIColor-Hex-Swift
 
 import Cocoa
