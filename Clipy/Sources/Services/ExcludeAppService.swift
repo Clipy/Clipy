@@ -12,12 +12,13 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 final class ExcludeAppService {
 
     // MARK: - Properties
     fileprivate(set) var applications = [CPYAppInfo]()
-    fileprivate var frontApplication = Variable<NSRunningApplication?>(nil)
+    fileprivate var frontApplication = BehaviorRelay<NSRunningApplication?>(value: nil)
     fileprivate var disposeBag = DisposeBag()
 
     // MARK: - Initialize
