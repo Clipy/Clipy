@@ -69,6 +69,7 @@ public:
     {
         return {};
     }
+    virtual std::string get_description(TableRef attached_table) const;
 
 protected:
     std::vector<std::vector<const ColumnBase*>> m_columns;
@@ -92,6 +93,7 @@ public:
 
     // handover support
     std::vector<bool> export_order() const override;
+    std::string get_description(TableRef attached_table) const override;
 
 private:
     std::vector<bool> m_ascending;
@@ -117,6 +119,7 @@ public:
     const CommonDescriptor* operator[](size_t ndx) const;
     bool will_apply_sort() const;
     bool will_apply_distinct() const;
+    std::string get_description(TableRef target_table) const;
 
     // handover support
     using HandoverPatch = std::unique_ptr<DescriptorOrderingHandoverPatch>;

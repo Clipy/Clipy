@@ -35,16 +35,6 @@ class Query; // forward declare in namespace realm
 
 namespace metrics {
 
-template <typename T>
-std::string print_value(T value)
-{
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
-}
-
-const std::string value_separator = ".";
-
 class QueryInfo {
 public:
 
@@ -78,23 +68,5 @@ private:
 } // namespace metrics
 } // namespace realm
 
-#else
-
-namespace realm {
-namespace metrics {
-
-template <typename T>
-std::string print_value(T)
-{
-    return "";
-}
-
-const std::string value_separator = ".";
-
-} // end namespace metrics
-} // end namespace realm
-
 #endif // REALM_METRICS
-
-
 #endif // REALM_QUERY_INFO_HPP

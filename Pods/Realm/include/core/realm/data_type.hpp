@@ -19,6 +19,8 @@
 #ifndef REALM_DATA_TYPE_HPP
 #define REALM_DATA_TYPE_HPP
 
+#include <stdint.h>
+
 namespace realm {
 
 class StringData;

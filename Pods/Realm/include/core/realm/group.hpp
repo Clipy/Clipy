@@ -351,17 +351,6 @@ public:
 
     //@}
 
-    /// Move the table at \a from_index such that it ends up at \a
-    /// to_index. Other tables are shifted as necessary in such a way that their
-    /// order is preserved.
-    ///
-    /// Note that \a to_index is the desired final index of the moved table,
-    /// therefore, `move_table(1,1)` is a no-op, while `move_table(1,2)` moves
-    /// the table at index 1 by one position, such that it ends up at index 2. A
-    /// side-effect of that, is that the table, that was originally at index 2,
-    /// is moved to index 1.
-    void move_table(size_t from_index, size_t to_index);
-
     // Serialization
 
     /// Write this database to the specified output stream.

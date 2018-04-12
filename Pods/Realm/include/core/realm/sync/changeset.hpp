@@ -33,7 +33,7 @@ using InternStrings = std::unordered_map<uint32_t, StringBufferRange>;
 
 struct BadChangesetError : std::exception {
     const char* message;
-    BadChangesetError() : BadChangesetError("Bad bad changeset") {}
+    BadChangesetError() : BadChangesetError("Bad changeset") {}
     BadChangesetError(const char* msg) : message(msg) {}
     const char* what() const noexcept override
     {
@@ -156,11 +156,13 @@ struct Changeset {
     /// the last integrated client version.
     version_type last_integrated_remote_version = 0;
 
-    /// Timestamp at origin when producting this changeset.
+    /// Timestamp at origin when the original untransformed changeset was
+    /// produced.
     timestamp_type origin_timestamp = 0;
 
-    /// Client file identifier that produced this changeset.
-    file_ident_type origin_client_file_ident = 0;
+    /// The identifier of the file in the context of which the original
+    /// untransformed changeset was produced.
+    file_ident_type origin_file_ident = 0;
 
 private:
     struct MultiInstruction {

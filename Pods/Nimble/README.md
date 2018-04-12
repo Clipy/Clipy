@@ -226,9 +226,9 @@ exception once evaluated:
 //       that Nimble will catch.
 //       (see https://github.com/Quick/Nimble/issues/220#issuecomment-172667064)
 let exception = NSException(
-  name: NSInternalInconsistencyException,
-  reason: "Not enough fish in the sea.",
-  userInfo: ["something": "is fishy"])
+    name: NSInternalInconsistencyException,
+    reason: "Not enough fish in the sea.",
+    userInfo: ["something": "is fishy"])
 expect { exception.raise() }.to(raiseException())
 
 // Also, you can customize raiseException to be more specific
@@ -714,7 +714,7 @@ expect(actual) ≈ expected
 expect(actual) ≈ (expected, delta)
 
 ```
-(Type Option-x to get ≈ on a U.S. keyboard)
+(Type <kbd>option</kbd>+<kbd>x</kbd> to get `≈` on a U.S. keyboard)
 
 The former version uses the default delta of 0.0001. Here is yet another way to do this:
 
@@ -725,7 +725,7 @@ expect(actual) ≈ expected ± delta
 expect(actual) == expected ± delta
 
 ```
-(Type Option-Shift-= to get ± on a U.S. keyboard)
+(Type <kbd>option</kbd>+<kbd>shift</kbd>+<kbd>=</kbd> to get `±` on a U.S. keyboard)
 
 If you are comparing arrays of floating point numbers, you'll find the following useful:
 
@@ -1043,10 +1043,10 @@ let turtles: [Turtle] = functionThatReturnsSomeTurtlesInAnyOrder()
 // [{color: "blue"}, {color: "green"}] or [{color: "green"}, {color: "blue"}]:
 
 expect(turtles).to(containElementSatisfying({ turtle in
-	return turtle.color == "green"
+    return turtle.color == "green"
 }))
 expect(turtles).to(containElementSatisfying({ turtle in
-	return turtle.color == "blue"
+    return turtle.color == "blue"
 }, "that is a turtle with color 'blue'"))
 
 // The second matcher will incorporate the provided string in the error message
@@ -1069,10 +1069,10 @@ NSArray<Turtle *> * __nonnull turtles = functionThatReturnsSomeTurtlesInAnyOrder
 // [{color: "blue"}, {color: "green"}] or [{color: "green"}, {color: "blue"}]:
 
 expect(turtles).to(containElementSatisfying(^BOOL(id __nonnull object) {
-	return [[turtle color] isEqualToString:@"green"];
+    return [[turtle color] isEqualToString:@"green"];
 }));
 expect(turtles).to(containElementSatisfying(^BOOL(id __nonnull object) {
-	return [[turtle color] isEqualToString:@"blue"];
+    return [[turtle color] isEqualToString:@"blue"];
 }));
 ```
 
@@ -1273,24 +1273,24 @@ value and return a `Predicate` closure. Take `equal`, for example:
 // Swift
 
 public func equal<T: Equatable>(expectedValue: T?) -> Predicate<T> {
-  // Can be shortened to:
-  //   Predicate { actual in  ... }
-  //
-  // But shown with types here for clarity.
-  return Predicate { (actual: Expression<T>) throws -> PredicateResult in
-    let msg = ExpectationMessage.expectedActualValueTo("equal <\(expectedValue)>")
-    if let actualValue = try actualExpression.evaluate() {
-    	return PredicateResult(
-            bool: actualValue == expectedValue!,
-            message: msg
-        )
-    } else {
-    	return PredicateResult(
-            status: .fail,
-            message: msg.appendedBeNilHint()
-        )
+    // Can be shortened to:
+    //   Predicate { actual in  ... }
+    //
+    // But shown with types here for clarity.
+    return Predicate { (actual: Expression<T>) throws -> PredicateResult in
+        let msg = ExpectationMessage.expectedActualValueTo("equal <\(expectedValue)>")
+        if let actualValue = try actualExpression.evaluate() {
+            return PredicateResult(
+                bool: actualValue == expectedValue!,
+                message: msg
+            )
+        } else {
+            return PredicateResult(
+                status: .fail,
+                message: msg.appendedBeNilHint()
+            )
+        }
     }
-  }
 }
 ```
 
@@ -1382,11 +1382,11 @@ custom matchers should call `actualExpression.evaluate()`:
 // Swift
 
 public func beNil<T>() -> Predicate<T> {
-	// Predicate.simpleNilable(..) automatically generates ExpectationMessage for
-	// us based on the string we provide to it. Also, the 'Nilable' postfix indicates
-	// that this Predicate supports matching against nil actualExpressions, instead of
-	// always resulting in a PredicateStatus.fail result -- which is true for
-	// Predicate.simple(..)
+    // Predicate.simpleNilable(..) automatically generates ExpectationMessage for
+    // us based on the string we provide to it. Also, the 'Nilable' postfix indicates
+    // that this Predicate supports matching against nil actualExpressions, instead of
+    // always resulting in a PredicateStatus.fail result -- which is true for
+    // Predicate.simple(..)
     return Predicate.simpleNilable("be nil") { actualExpression in
         let actualValue = try actualExpression.evaluate()
         return PredicateStatus(bool: actualValue == nil)
@@ -1412,9 +1412,9 @@ against the one provided to the matcher function, and passes if they are the sam
 // Swift
 
 public func haveDescription(description: String) -> Predicate<Printable?> {
-  return Predicate.simple("have description") { actual in
-    return PredicateStatus(bool: actual.evaluate().description == description)
-  }
+    return Predicate.simple("have description") { actual in
+        return PredicateStatus(bool: actual.evaluate().description == description)
+    }
 }
 ```
 
@@ -1489,7 +1489,7 @@ case expectedCustomValueTo(/* message: */ String, /* actual: */ String)
 
 // Emits standard error message without mentioning the actual value
 // eg - "expected to <message>"
-case expectedTo(/* message: */ String, /* actual: */ String)
+case expectedTo(/* message: */ String)
 
 // ...
 }
@@ -1526,13 +1526,13 @@ custom matcher. The example below defines the class method
 // Swift
 
 extension NMBObjCMatcher {
-  public class func beNilMatcher() -> NMBObjCMatcher {
-    return NMBObjCMatcher { actualBlock, failureMessage, location in
-      let block = ({ actualBlock() as NSObject? })
-      let expr = Expression(expression: block, location: location)
-      return beNil().matches(expr, failureMessage: failureMessage)
+    public class func beNilMatcher() -> NMBObjCMatcher {
+        return NMBObjCMatcher { actualBlock, failureMessage, location in
+            let block = ({ actualBlock() as NSObject? })
+            let expr = Expression(expression: block, location: location)
+            return beNil().matches(expr, failureMessage: failureMessage)
+        }
     }
-  }
 }
 ```
 
@@ -1551,7 +1551,7 @@ class method:
 // Objective-C
 
 FOUNDATION_EXPORT id<NMBMatcher> beNil() {
-  return [NMBObjCMatcher beNilMatcher];
+    return [NMBObjCMatcher beNilMatcher];
 }
 ```
 

@@ -32,12 +32,15 @@ inline std::tm localtime(std::time_t time)
 {
     std::tm calendar_time;
 #ifdef _WIN32
-    auto* result = localtime_s(&time, &calendar_time);
+    // note that VC++'s localtime_s has a different signature from what C++11 specifies
+    auto error = localtime_s(&calendar_time, &time);
+    if (error)
+        throw std::system_error(error, std::system_category());
 #else
-    auto* result = localtime_r(&time, &calendar_time);
-#endif
+    auto result = localtime_r(&time, &calendar_time);
     if (!result)
         throw std::system_error(errno, std::system_category());
+#endif
 
     return calendar_time;
 }

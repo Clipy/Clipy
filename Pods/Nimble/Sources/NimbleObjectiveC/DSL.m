@@ -141,6 +141,10 @@ NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAnyOfWithMatchers(id matchers) {
     return [NMBObjCMatcher satisfyAnyOfMatcher:matchers];
 }
 
+NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAllOfWithMatchers(id matchers) {
+    return [NMBObjCMatcher satisfyAllOfMatcher:matchers];
+}
+
 NIMBLE_EXPORT NMBObjCRaiseExceptionMatcher *NMB_raiseException() {
     return [NMBObjCMatcher raiseExceptionMatcher];
 }

@@ -6,10 +6,7 @@
 //  Copyright © 2017 Krunoslav Zaher. All rights reserved.
 //
 
-#if !RX_NO_MODULE
-    import RxSwift
-#endif
-
+import RxSwift
 import Dispatch
 
 extension ObservableType {
@@ -400,9 +397,7 @@ extension Reactive where Base: UIImageView {
     }
 #endif
 
-#if !RX_NO_MODULE
-    import RxSwift
-#endif
+import RxSwift
 
 extension Variable {
     /// Converts `Variable` to `Driver` trait.
@@ -449,54 +444,45 @@ extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingSt
     }
 }
 
-extension ObservableConvertibleType {
+extension ObservableType {
     /**
-     Converts anything convertible to `Observable` to `SharedSequence` unit.
+     Creates new subscription and sends elements to variable.
 
-     - parameter onErrorJustReturn: Element to return in case of error and after that complete the sequence.
-     - returns: Driving observable sequence.
+     In case error occurs in debug mode, `fatalError` will be raised.
+     In case error occurs in release mode, `error` will be logged.
+
+     - parameter to: Target variable for sequence elements.
+     - returns: Disposable object that can be used to unsubscribe the observer.
      */
-    @available(*, deprecated, message: "Please use conversion methods to some SharedSequence specialization.")
-    public func asSharedSequence<S>(sharingStrategy: S.Type = S.self, onErrorJustReturn: E) -> SharedSequence<S, E> {
-        let source = self
-            .asObservable()
-            .observeOn(S.scheduler)
-            .catchErrorJustReturn(onErrorJustReturn)
-        return SharedSequence(source)
+    public func bind(to variable: Variable<E>) -> Disposable {
+        return subscribe { e in
+            switch e {
+            case let .next(element):
+                variable.value = element
+            case let .error(error):
+                let error = "Binding error to variable: \(error)"
+                #if DEBUG
+                    rxFatalError(error)
+                #else
+                    print(error)
+                #endif
+            case .completed:
+                break
+            }
+        }
     }
 
     /**
-     Converts anything convertible to `Observable` to `SharedSequence` unit.
+     Creates new subscription and sends elements to variable.
 
-     - parameter onErrorDriveWith: SharedSequence that provides elements of the sequence in case of error.
-     - returns: Driving observable sequence.
+     In case error occurs in debug mode, `fatalError` will be raised.
+     In case error occurs in release mode, `error` will be logged.
+
+     - parameter to: Target variable for sequence elements.
+     - returns: Disposable object that can be used to unsubscribe the observer.
      */
-    @available(*, deprecated, message: "Please use conversion methods to some SharedSequence specialization.")
-    public func asSharedSequence<S>(sharingStrategy: S.Type = S.self, onErrorDriveWith: SharedSequence<S, E>) -> SharedSequence<S, E> {
-        let source = self
-            .asObservable()
-            .observeOn(S.scheduler)
-            .catchError { _ in
-                onErrorDriveWith.asObservable()
-        }
-        return SharedSequence(source)
-    }
-
-    /**
-     Converts anything convertible to `Observable` to `SharedSequence` unit.
-
-     - parameter onErrorRecover: Calculates driver that continues to drive the sequence in case of error.
-     - returns: Driving observable sequence.
-     */
-    @available(*, deprecated, message: "Please use conversion methods to some SharedSequence specialization.")
-    public func asSharedSequence<S>(sharingStrategy: S.Type = S.self, onErrorRecover: @escaping (_ error: Swift.Error) -> SharedSequence<S, E>) -> SharedSequence<S, E> {
-        let source = self
-            .asObservable()
-            .observeOn(S.scheduler)
-            .catchError { error in
-                onErrorRecover(error).asObservable()
-        }
-        return SharedSequence(source)
+    public func bind(to variable: Variable<E?>) -> Disposable {
+        return self.map { $0 as E? }.bind(to: variable)
     }
 }
 

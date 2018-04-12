@@ -45,6 +45,15 @@ extern RLMIdentityProvider const RLMIdentityProviderGoogle;
 /// A CloudKit account as an identity provider.
 extern RLMIdentityProvider const RLMIdentityProviderCloudKit;
 
+/// A JSON Web Token as an identity provider.
+extern RLMIdentityProvider const RLMIdentityProviderJWT;
+
+/// An Anonymous account as an identity provider.
+extern RLMIdentityProvider const RLMIdentityProviderAnonymous;
+
+/// A Nickname account as an identity provider.
+extern RLMIdentityProvider const RLMIdentityProviderNickname;
+
 /**
  Opaque credentials representing a specific Realm Object Server user.
  */
@@ -80,6 +89,21 @@ extern RLMIdentityProvider const RLMIdentityProviderCloudKit;
 + (instancetype)credentialsWithUsername:(NSString *)username
                                password:(NSString *)password
                                register:(BOOL)shouldRegister;
+
+/**
+ Construct and return credentials from a JSON Web Token.
+ */
++ (instancetype)credentialsWithJWT:(NSString *)token;
+
+/**
+ Construct and return anonymous credentials
+ */
++ (instancetype)anonymousCredentials;
+    
+/**
+ Construct and return credentials from a nickname
+ */
++ (instancetype)credentialsWithNickname:(NSString *)nickname isAdmin:(BOOL)isAdmin;
 
 /**
  Construct and return special credentials representing a token that can

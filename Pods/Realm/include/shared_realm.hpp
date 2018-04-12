@@ -45,14 +45,20 @@ template <typename T> class ThreadSafeReference;
 struct VersionID;
 template<typename Table> class BasicRow;
 typedef BasicRow<Table> Row;
+template<typename> class BasicRowExpr;
+using RowExpr = BasicRowExpr<Table>;
 typedef std::shared_ptr<Realm> SharedRealm;
 typedef std::weak_ptr<Realm> WeakRealm;
 
 namespace _impl {
     class AnyHandover;
     class CollectionNotifier;
+    class PartialSyncHelper;
     class RealmCoordinator;
     class RealmFriend;
+}
+namespace sync {
+    struct PermissionsCache;
 }
 
 // How to handle update_schema() being called on a file which has
@@ -127,6 +133,23 @@ enum class SchemaMode : uint8_t {
     // This mode requires that all threads and processes which open a
     // file use identical schemata.
     Manual
+};
+
+enum class ComputedPrivileges : uint8_t {
+    None = 0,
+
+    Read = (1 << 0),
+    Update = (1 << 1),
+    Delete = (1 << 2),
+    SetPermissions = (1 << 3),
+    Query = (1 << 4),
+    Create = (1 << 5),
+    ModifySchema = (1 << 6),
+
+    AllRealm = Read | Update | SetPermissions | ModifySchema,
+    AllClass = Read | Update | Create | Query | SetPermissions,
+    AllObject = Read | Update | Delete | SetPermissions,
+    All = (1 << 7) - 1
 };
 
 class Realm : public std::enable_shared_from_this<Realm> {
@@ -248,6 +271,9 @@ public:
     Schema const& schema() const { return m_schema; }
     uint64_t schema_version() const { return m_schema_version; }
 
+    // Returns `true` if this Realm is a Partially synchronized Realm.
+    bool is_partial() const noexcept;
+
     void begin_transaction();
     void commit_transaction();
     void cancel_transaction();
@@ -298,6 +324,10 @@ public:
     template <typename T>
     T resolve_thread_safe_reference(ThreadSafeReference<T> reference);
 
+    ComputedPrivileges get_privileges();
+    ComputedPrivileges get_privileges(StringData object_type);
+    ComputedPrivileges get_privileges(RowExpr row);
+
     static SharedRealm make_shared_realm(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator = nullptr) {
         struct make_shared_enabler : public Realm {
             make_shared_enabler(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator)
@@ -310,6 +340,7 @@ public:
     // without making it public to everyone
     class Internal {
         friend class _impl::CollectionNotifier;
+        friend class _impl::PartialSyncHelper;
         friend class _impl::RealmCoordinator;
         friend class ThreadSafeReferenceBase;
         friend class GlobalNotifier;
@@ -357,6 +388,7 @@ private:
     bool m_dynamic_schema = true;
 
     std::shared_ptr<_impl::RealmCoordinator> m_coordinator;
+    std::unique_ptr<sync::PermissionsCache> m_permissions_cache;
 
     // File format versions populated when a file format upgrade takes place during realm opening
     int upgrade_initial_version = 0, upgrade_final_version = 0;
@@ -383,7 +415,11 @@ private:
 
     void add_schema_change_handler();
     void cache_new_schema();
+    void translate_schema_error();
     void notify_schema_changed();
+
+    bool init_permission_cache();
+    void invalidate_permission_cache();
 
 public:
     std::unique_ptr<BindingContext> m_binding_context;

@@ -97,8 +97,9 @@ import Foundation
 			// Request the next mach message from the port
 			request.Head.msgh_local_port = context.currentExceptionPort
 			request.Head.msgh_size = UInt32(MemoryLayout<request_mach_exception_raise_t>.size)
+			let requestSize = request.Head.msgh_size
 			try kernCheck { request.withMsgHeaderPointer { requestPtr in
-				mach_msg(requestPtr, MACH_RCV_MSG | MACH_RCV_INTERRUPT, 0, request.Head.msgh_size, context.currentExceptionPort, 0, UInt32(MACH_PORT_NULL))
+				mach_msg(requestPtr, MACH_RCV_MSG | MACH_RCV_INTERRUPT, 0, requestSize, context.currentExceptionPort, 0, UInt32(MACH_PORT_NULL))
 			} }
 			
 			// Prepare the reply structure
@@ -121,8 +122,9 @@ import Foundation
 			}
 			
 			// Send the reply
+			let replySize = reply.Head.msgh_size
 			try kernCheck { reply.withMsgHeaderPointer { replyPtr in
-				mach_msg(replyPtr, MACH_SEND_MSG, reply.Head.msgh_size, 0, UInt32(MACH_PORT_NULL), 0, UInt32(MACH_PORT_NULL))
+				mach_msg(replyPtr, MACH_SEND_MSG, replySize, 0, UInt32(MACH_PORT_NULL), 0, UInt32(MACH_PORT_NULL))
 			} }
 		} catch let error as NSError where (error.domain == NSMachErrorDomain && (error.code == Int(MACH_RCV_PORT_CHANGED) || error.code == Int(MACH_RCV_INVALID_NAME))) {
 			// Port was already closed before we started or closed while we were listening.

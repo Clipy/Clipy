@@ -34,12 +34,38 @@ public:
     void set_short_circuit(bool) noexcept;
     bool is_short_circuited() const noexcept;
 
+    // reset() resets the encoder, the selected tables and the cache. It is
+    // called by do_initiate_transact(), but can be called at the other times
+    // as well.
+    virtual void reset();
+
     ChangesetEncoder& get_instruction_encoder() noexcept;
 
-    // AddTable needs special handling because of primary key columns.
-    // (`insert_group_level_table()` does nothing on its own.)
-    void add_table(StringData name);
-    void add_table_with_primary_key(StringData table_name, DataType pk_type, StringData pk_field, bool nullable);
+    //@{
+    /// Generate instructions for Object Store tables. These must be called
+    /// prior to calling the equivalent functions in Core's API. When creating a
+    /// class-like table, `add_class()` must be called prior to
+    /// `Group::insert_group_level_table()`. Similarly, `create_object()` or
+    /// `create_object_with_primary_key()` must be called prior to
+    /// `Table::insert_empty_row()` and/or `Table::set_int_unique()` or
+    /// `Table::set_string_unique()` or `Table::set_null_unique()`.
+    ///
+    /// If a class-like table is added, or an object-like row is inserted,
+    /// without calling these methods first, an exception will be thrown.
+    ///
+    /// A "class-like table" is defined as a table whose name begins with
+    /// "class_" (this is the convention used by Object Store). Non-class-like
+    /// tables can be created and modified using Core's API without calling
+    /// these functions, because they do not result in instructions being
+    /// emitted.
+    void add_class(StringData table_name);
+    void add_class_with_primary_key(StringData table_name, DataType pk_type, StringData pk_field, bool nullable);
+    void create_object(const Table*, ObjectID);
+    void create_object_with_primary_key(const Table*, ObjectID, StringData);
+    void create_object_with_primary_key(const Table*, ObjectID, int_fast64_t);
+    void create_object_with_primary_key(const Table*, ObjectID, realm::util::None);
+    void prepare_erase_table(StringData table_name);
+    //@}
 
     // TrivialReplication interface:
     void initialize(SharedGroup&) override;
@@ -48,12 +74,10 @@ public:
     void insert_group_level_table(size_t table_ndx, size_t num_tables, StringData name) override;
     void erase_group_level_table(size_t table_ndx, size_t num_tables) override;
     void rename_group_level_table(size_t table_ndx, StringData new_name) override;
-    void move_group_level_table(size_t from_table_ndx, size_t to_table_ndx) override;
     void insert_column(const Descriptor&, size_t col_ndx, DataType type, StringData name, LinkTargetInfo& link,
                                bool nullable = false) override;
     void erase_column(const Descriptor&, size_t col_ndx) override;
     void rename_column(const Descriptor&, size_t col_ndx, StringData name) override;
-    void move_column(const Descriptor&, size_t from, size_t to) override;
 
     void set_int(const Table*, size_t col_ndx, size_t ndx, int_fast64_t value, _impl::Instruction variant) override;
     void add_int(const Table*, size_t col_ndx, size_t ndx, int_fast64_t value) override;
@@ -103,19 +127,40 @@ private:
     SharedGroup* m_sg = nullptr;
     std::unique_ptr<TableInfoCache> m_cache;
 
-    // FIXME: The base class already caches this.
-    const Table* m_selected_table = nullptr;
-    const LinkView* m_selected_link_list = nullptr;
+    enum class TableBehavior {
+        Class,
+        Array,
+        Ignore
+    };
 
+    // FIXME: The base class already caches this.
+    ConstTableRef m_selected_table;
+    TableBehavior m_selected_table_behavior; // cache
+    ConstLinkViewRef m_selected_link_list = nullptr;
+
+    // Consistency checks:
     std::string m_table_being_created;
     std::string m_table_being_created_primary_key;
-    bool is_metadata_table(const Table*) const;
+    std::string m_table_being_erased;
+    util::Optional<ObjectID> m_object_being_created;
 
     void unsupported_instruction(); // Throws TransformError
-    void select_table(const Table*);
-    void select_array(const Table* parent, size_t col, size_t row);
-    void select_table(const Descriptor&);
-    void select_link_list(const LinkView&);
+    TableBehavior select_table(const Table*);
+    TableBehavior select_table(const Descriptor&);
+    bool select_link_list(const LinkView&); // returns true if table behavior != ignored
+
+    TableBehavior get_table_behavior(const Table*) const;
+
+    template <class T>
+    void set(const Table*, size_t row_ndx, size_t col_ndx, T payload,
+             _impl::Instruction variant);
+    template <class T>
+    void set_pk(const Table*, size_t row_ndx, size_t col_ndx, T payload,
+                _impl::Instruction variant);
+    template <class T>
+    auto as_payload(T value);
+    template <class T>
+    void emit(T instruction);
 };
 
 inline void InstructionReplication::set_short_circuit(bool b) noexcept
@@ -142,7 +187,8 @@ public:
         bridge.set_short_circuit(true);
     }
 
-    ~TempShortCircuitReplication() {
+    ~TempShortCircuitReplication()
+    {
         m_bridge.set_short_circuit(m_was_short_circuited);
     }
 private:

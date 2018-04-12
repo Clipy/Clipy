@@ -22,6 +22,7 @@
 #include <realm/util/logger.hpp>
 #include <realm/table_ref.hpp>
 #include <realm/string_data.hpp>
+#include <realm/group.hpp>
 
 #include <realm/sync/object_id.hpp>
 
@@ -96,6 +97,16 @@ TableRef create_table(Group&, StringData name);
 /// The Group must be in a write transaction.
 TableRef create_table_with_primary_key(Group&, StringData name, DataType pk_type,
                                        StringData pk_column_name, bool nullable = false);
+
+
+//@{
+/// Erase table and update metadata.
+///
+/// It is an error to erase tables via the Group API, because it does not
+/// correctly update metadata tables (such as the `pk` table).
+void erase_table(Group&, StringData name);
+void erase_table(Group&, TableRef);
+//@}
 
 /// Create an array column with the specified element type.
 ///
@@ -204,6 +215,30 @@ struct TableInfoCache {
 /// `Replication::hist_SyncServer` and whose history schema version is 0 (i.e.,
 /// Realm files without stable identifiers).
 void import_from_legacy_format(const Group& old_group, Group& new_group, util::Logger&);
+
+using TableNameBuffer = std::array<char, Group::max_table_name_length>;
+StringData table_name_to_class_name(StringData);
+StringData class_name_to_table_name(StringData, TableNameBuffer&);
+
+
+// Implementation:
+
+inline StringData table_name_to_class_name(StringData table_name)
+{
+    REALM_ASSERT(table_name.begins_with("class_"));
+    return table_name.substr(6);
+}
+
+
+inline StringData class_name_to_table_name(StringData class_name, TableNameBuffer& buffer)
+{
+    constexpr const char class_prefix[] = "class_";
+    constexpr size_t class_prefix_len = sizeof(class_prefix) - 1;
+    char* p = std::copy_n(class_prefix, class_prefix_len, buffer.data());
+    size_t len = std::min(class_name.size(), buffer.size() - class_prefix_len);
+    std::copy_n(class_name.data(), len, p);
+    return StringData(buffer.data(), class_prefix_len + len);
+}
 
 } // namespace sync
 } // namespace realm

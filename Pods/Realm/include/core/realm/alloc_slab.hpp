@@ -216,6 +216,12 @@ public:
     /// attached to a file. Doing so will result in undefined behavior.
     void resize_file(size_t new_file_size);
 
+#ifdef REALM_DEBUG
+    /// Deprecated method, only called from a unit test
+    ///
+    /// WARNING: This method is NOT thread safe on multiple platforms; see
+    /// File::prealloc().
+    ///
     /// Reserve disk space now to avoid allocation errors at a later point in
     /// time, and to minimize on-disk fragmentation. In some cases, less
     /// fragmentation translates into improved performance. On SSD-drives
@@ -227,15 +233,14 @@ public:
     /// allocation is done lazily by default). If the file is already bigger
     /// than the specified size, the size will be unchanged, and on-disk
     /// allocation will occur only for the initial section that corresponds to
-    /// the specified size. On systems that do not support preallocation, this
-    /// function has no effect. To know whether preallocation is supported by
-    /// Realm on your platform, call util::File::is_prealloc_supported().
+    /// the specified size.
     ///
     /// This function will call File::sync() if it changes the size of the file.
     ///
     /// It is an error to call this function on an allocator that is not
     /// attached to a file. Doing so will result in undefined behavior.
     void reserve_disk_space(size_t size_in_bytes);
+#endif
 
     /// Get the size of the attached database file or buffer in number
     /// of bytes. This size is not affected by new allocations. After

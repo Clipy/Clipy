@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include "util/compiler.hpp"
+#include <realm/util/features.h>
 
 namespace realm {
 class ObjectSchema;
@@ -58,7 +58,7 @@ public:
     void validate() const;
 
     // Get the changes which must be applied to this schema to produce the passed-in schema
-    std::vector<SchemaChange> compare(Schema const&) const;
+    std::vector<SchemaChange> compare(Schema const&, bool include_removals=false) const;
 
     void copy_table_columns_from(Schema const&);
 
@@ -79,6 +79,10 @@ private:
 
 namespace schema_change {
 struct AddTable {
+    const ObjectSchema* object;
+};
+
+struct RemoveTable {
     const ObjectSchema* object;
 };
 
@@ -130,6 +134,7 @@ struct ChangePrimaryKey {
 
 #define REALM_FOR_EACH_SCHEMA_CHANGE_TYPE(macro) \
     macro(AddTable) \
+    macro(RemoveTable) \
     macro(AddInitialProperties) \
     macro(AddProperty) \
     macro(RemoveProperty) \

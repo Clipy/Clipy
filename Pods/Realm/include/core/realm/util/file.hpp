@@ -269,11 +269,7 @@ public:
     /// a file that is opened in read-only mode, is an error.
     void resize(SizeType);
 
-    /// The same as prealloc_if_supported() but when the operation is
-    /// not supported by the system, this function will still increase
-    /// the file size when the specified region extends beyond the
-    /// current end of the file. This allows you to both extend and
-    /// allocate in one operation.
+    /// Same effect as prealloc_if_supported(original_size, new_size);
     ///
     /// The downside is that this function is not guaranteed to have
     /// atomic behaviour on all systems, that is, two processes, or
@@ -282,7 +278,7 @@ public:
     /// through distinct File instances.
     ///
     /// \sa prealloc_if_supported()
-    void prealloc(SizeType offset, size_t size);
+    void prealloc(size_t new_size);
 
     /// When supported by the system, allocate space on the target
     /// device for the specified region of the file. If the region

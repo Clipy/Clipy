@@ -24,10 +24,7 @@
 
 namespace realm {
 
-namespace {
-
-// Construct an identifier for this partially synced Realm by combining client and user identifiers.
-std::string partial_sync_identifier(const SyncUser& user)
+std::string SyncConfig::partial_sync_identifier(const SyncUser& user)
 {
     std::string raw_identifier = SyncManager::shared().client_uuid() + "/" + user.local_identity();
     uint8_t identifier[20];
@@ -39,8 +36,6 @@ std::string partial_sync_identifier(const SyncUser& user)
         ss << std::setw(2) << (unsigned)c;
     return ss.str();
 }
-
-} // unnamed namespace
 
 std::string SyncConfig::realm_url() const
 {
@@ -55,9 +50,8 @@ std::string SyncConfig::realm_url() const
         base_url.pop_back();
 
     if (custom_partial_sync_identifier)
-        return base_url + "/__partial/" + *custom_partial_sync_identifier;
-
-    return base_url + "/__partial/" + partial_sync_identifier(*user);
+        return util::format("%1/__partial/%2", base_url, *custom_partial_sync_identifier);
+    return util::format("%1/__partial/%2/%3", base_url, user->identity(), partial_sync_identifier(*user));
 }
 
 } // namespace realm

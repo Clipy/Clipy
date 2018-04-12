@@ -53,6 +53,9 @@ public:
 
     NotificationToken add_notification_callback(CollectionChangeCallback callback) &;
 
+    void ensure_user_in_everyone_role();
+    void ensure_private_role_exists_for_user();
+
     // The following functions require an accessor context which converts from
     // the binding's native data types to the core data types. See CppContext
     // for a reference implementation of such a context.

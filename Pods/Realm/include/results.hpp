@@ -20,7 +20,6 @@
 #define REALM_RESULTS_HPP
 
 #include "collection_notifications.hpp"
-#include "descriptor_ordering.hpp"
 #include "impl/collection_notifier.hpp"
 #include "property.hpp"
 
@@ -121,6 +120,9 @@ public:
     Results distinct(DistinctDescriptor&& uniqueness) const;
     Results distinct(std::vector<std::string> const& keypaths) const;
 
+    // Create a new Results by adding sort and distinct combinations
+    Results apply_ordering(DescriptorOrdering&& ordering);
+
     // Return a snapshot of this Results that never updates to reflect changes in the underlying data.
     Results snapshot() const &;
     Results snapshot() &&;
@@ -209,6 +211,11 @@ public:
     template<typename Context, typename T>
     size_t index_of(Context&, T value);
 
+    // Execute the query immediately if needed. When the relevant query is slow, size()
+    // may cost similar time compared with creating the tableview. Use this function to
+    // avoid running the query twice for size() and other accessors.
+    void evaluate_query_if_needed(bool wants_notifications = true);
+
 private:
     enum class UpdatePolicy {
         Auto,  // Update automatically to reflect changes in the underlying data.
@@ -230,7 +237,6 @@ private:
     bool m_has_used_table_view = false;
     bool m_wants_background_updates = true;
 
-    void update_tableview(bool wants_notifications = true);
     bool update_linkview();
 
     void validate_read() const;

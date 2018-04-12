@@ -51,6 +51,7 @@ public extension SharedSequenceConvertibleType where SharingStrategy == DriverSh
     }
 }
 
+#if !swift(>=3.3) || (swift(>=4.0) && !swift(>=4.1))
 public extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy, E: OptionalType, E.Wrapped: Equatable {
     /**
      Returns an observable sequence that contains only distinct contiguous elements according to equality operator.
@@ -66,3 +67,4 @@ public extension SharedSequenceConvertibleType where SharingStrategy == DriverSh
         }
     }
 }
+#endif

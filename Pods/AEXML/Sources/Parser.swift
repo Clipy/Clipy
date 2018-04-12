@@ -1,3 +1,9 @@
+/**
+ *  https://github.com/tadija/AEXML
+ *  Copyright (c) Marko Tadić 2014-2018
+ *  Licensed under the MIT license. See LICENSE file.
+ */
+
 import Foundation
 
 /// Simple wrapper around `Foundation.XMLParser`.
@@ -61,7 +67,7 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
-        currentValue.append(trimWhitespace ? string.trimmingCharacters(in: .whitespacesAndNewlines) : string)
+        currentValue.append(string)
         currentElement?.value = currentValue.isEmpty ? nil : currentValue
     }
     
@@ -70,6 +76,9 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
                       namespaceURI: String?,
                       qualifiedName qName: String?)
     {
+        if trimWhitespace {
+            currentElement?.value = currentElement?.value?.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
         currentParent = currentParent?.parent
         currentElement = nil
     }

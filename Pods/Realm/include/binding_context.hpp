@@ -27,7 +27,7 @@
 
 namespace realm {
 // BindingContext is the extension point for adding binding-specific behavior to
-// a SharedRealm. It can be used to store additonal data associated with the
+// a SharedRealm. It can be used to store additional data associated with the
 // Realm which is needed by the binding, and there are several methods which
 // can be overridden to receive notifications of state changes within the Realm.
 //
@@ -78,6 +78,15 @@ public:
     // If the user adds a notification handler to the Realm, will it ever
     // actually be called?
     virtual bool can_deliver_notifications() const noexcept { return true; }
+
+    // Called when the Realm is about to send notifications about Realm,
+    // Collection or Object changes. This method will be called even if
+    // no notification callbacks have been registered.
+    virtual void will_send_notifications() { }
+
+    // Called when the Realm is done sending all change notifications. This method
+    // will be called even if no notification callbacks have been registered.
+    virtual void did_send_notifications() { }
 
     // Called by the Realm when refresh called or a notification arrives which
     // is triggered through write transaction committed by itself or a different

@@ -43,14 +43,14 @@ struct Configuration {
     realm::util::Logger::Level log_level = realm::util::Logger::Level::info;
     realm::util::Optional<std::string> log_path;
     long max_open_files = 256;
+    std::string authorization_header_name = "Authorization";
     bool ssl = false;
     std::string ssl_certificate_path;
     std::string ssl_certificate_key_path;
     std::string dashboard_stats_endpoint = "localhost:28125";
-    uint_fast64_t drop_period_s = 60;
-    uint_fast64_t idle_timeout_s = 1800;
-    realm::sync::Server::Config::OperatingMode operating_mode =
-       realm::sync::Server::Config::OperatingMode::MasterWithNoSlave;
+    uint_fast64_t drop_period_s = 60; // 1 minute
+    uint_fast64_t idle_timeout_s = 1800; // 30 minutes
+    sync::Server::BackupMode backup_mode = sync::Server::BackupMode::Disabled;
     std::string master_address;
     std::string master_port;
     bool master_slave_ssl = false;
@@ -60,7 +60,12 @@ struct Configuration {
     util::Optional<std::string> feature_token;
     util::Optional<std::string> feature_token_path;
     bool enable_download_log_compaction = true;
-    size_t max_download_size = 0x20000; // 128 KB
+    size_t max_download_size = 0x20000; // 128 KiB
+    int listen_backlog = util::network::Acceptor::max_connections;
+    bool tcp_no_delay = false;
+    bool is_subtier_server = false;
+    std::string upstream_url;
+    std::string upstream_access_token;
 };
 
 #if !REALM_MOBILE

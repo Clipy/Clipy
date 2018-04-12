@@ -1,3 +1,9 @@
+/**
+ *  https://github.com/tadija/AEXML
+ *  Copyright (c) Marko Tadić 2014-2018
+ *  Licensed under the MIT license. See LICENSE file.
+ */
+
 import Foundation
 
 /// A type representing error value that can be thrown or inside `error` property of `AEXMLElement`.

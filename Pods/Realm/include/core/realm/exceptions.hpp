@@ -100,6 +100,12 @@ public:
 };
 
 
+class SerialisationError : public std::runtime_error {
+public:
+    SerialisationError(const std::string& msg);
+    /// runtime_error::what() returns the msg provided in the constructor.
+};
+
 /// The \c LogicError exception class is intended to be thrown only when
 /// applications (or bindings) violate rules that are stated (or ought to have
 /// been stated) in the documentation of the public API, and only in cases
@@ -285,6 +291,11 @@ inline MaximumFileSizeExceeded::MaximumFileSizeExceeded(const std::string& msg)
 }
 
 inline OutOfDiskSpace::OutOfDiskSpace(const std::string& msg)
+: std::runtime_error(msg)
+{
+}
+
+inline SerialisationError::SerialisationError(const std::string& msg)
 : std::runtime_error(msg)
 {
 }

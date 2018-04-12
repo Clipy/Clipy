@@ -161,6 +161,7 @@ void Permissions::get_permissions(std::shared_ptr<SyncUser> user,
             TableRef table = ObjectStore::table_for_object_type(results->get_realm()->read_group(), "Permission");
             size_t col_idx = table->get_descriptor()->get_column_index("path");
             auto query = !(table->column<StringData>(col_idx).ends_with("/__permission")
+                           || table->column<StringData>(col_idx).ends_with("/__perm")
                            || table->column<StringData>(col_idx).ends_with("/__management"));
             // Call the callback with our new permissions object. This object will exclude the
             // private Realms.
