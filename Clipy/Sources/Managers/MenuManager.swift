@@ -133,20 +133,19 @@ fileprivate extension MenuManager {
             .disposed(by: disposeBag)
         // Observe change preference settings
         let defaults = AppEnvironment.current.defaults
-        Observable.of(defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxHistorySize, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showIconInTheMenu, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInline, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInsideFolder, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxMenuItemTitleLength, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsTitleStartWithZero, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsAreMarkedWithNumbers, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showToolTipOnMenuItem, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showImageInTheMenu, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.addNumericKeyEquivalents, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new]).mapVoidDistinctUntilChanged(),
-                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new]).mapVoidDistinctUntilChanged())
-            .merge()
+        Observable.merge(defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxHistorySize, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showIconInTheMenu, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInline, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInsideFolder, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxMenuItemTitleLength, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsTitleStartWithZero, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsAreMarkedWithNumbers, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showToolTipOnMenuItem, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showImageInTheMenu, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.addNumericKeyEquivalents, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new]).filterNil().mapVoidDistinctUntilChanged(),
+                      defaults.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new]).filterNil().mapVoidDistinctUntilChanged())
             .skip(1)
             .throttle(1, scheduler: MainScheduler.instance)
             .asDriver(onErrorDriveWith: .empty())

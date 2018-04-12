@@ -100,7 +100,7 @@ extension ExcludeAppService {
 
     func copiedProcessIsExcludedApplications(pasteboard: NSPasteboard) -> Bool {
         guard let types = pasteboard.types else { return false }
-        guard let application = types.flatMap({ Application(rawValue: $0.rawValue) }).first else { return false }
+        guard let application = types.compactMap({ Application(rawValue: $0.rawValue) }).first else { return false }
         return application.isExcluded(applications: applications)
     }
 }

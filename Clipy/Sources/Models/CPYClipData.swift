@@ -155,7 +155,7 @@ final class CPYClipData: NSObject {
     }
 
     @objc required init(coder aDecoder: NSCoder) {
-        types          = (aDecoder.decodeObject(forKey: kTypesKey)       as? [String])?.flatMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
+        types          = (aDecoder.decodeObject(forKey: kTypesKey)       as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
         fileNames      = aDecoder.decodeObject(forKey: kFileNamesKey)    as? [String] ?? [String]()
         URLs           = aDecoder.decodeObject(forKey: kURLsKey)         as? [String] ?? [String]()
         stringValue    = aDecoder.decodeObject(forKey: kStringValueKey)  as? String ?? ""
