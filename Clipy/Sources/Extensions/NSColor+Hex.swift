@@ -50,7 +50,7 @@ extension NSColor {
         let hexString: String
         let hexCount = rgba.count
         if rgba.hasPrefix("#") {
-            hexString = rgba.substring(from: rgba.index(rgba.startIndex, offsetBy: 1))
+            hexString = String(rgba[String.Index.init(encodedOffset: 1)...])
         } else if hexCount == 3 || hexCount == 6 {
             hexString = rgba
         } else {
