@@ -17,7 +17,7 @@ public final class HotKeyCenter {
     fileprivate var hotKeyMap = [NSNumber: HotKey]()
     fileprivate var hotKeyCount: UInt32 = 0
 
-    fileprivate var tappedModifierKey = NSEventModifierFlags(rawValue: 0)
+    fileprivate var tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
     fileprivate var multiModifiers = false
 
     // MARK: - Initialize
@@ -182,7 +182,7 @@ private extension HotKeyCenter {
             (tappedModifierKey.contains(.control) && controlTapped) ||
             (tappedModifierKey.contains(.option) && altTapped) {
             doubleTapped(with: KeyTransformer.carbonFlags(from: tappedModifierKey))
-            tappedModifierKey = NSEventModifierFlags(rawValue: 0)
+            tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
         } else {
             if commandTapped {
                 tappedModifierKey = .command
@@ -193,7 +193,7 @@ private extension HotKeyCenter {
             } else if altTapped {
                 tappedModifierKey = .option
             } else {
-                tappedModifierKey = NSEventModifierFlags(rawValue: 0)
+                tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
             }
         }
 
@@ -201,7 +201,7 @@ private extension HotKeyCenter {
         let delay = 0.3 * Double(NSEC_PER_SEC)
         let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
         DispatchQueue.main.asyncAfter(deadline: time, execute: { [unowned self] in
-            self.tappedModifierKey = NSEventModifierFlags(rawValue: 0)
+            self.tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
         })
 
         return Unmanaged.passRetained(event)

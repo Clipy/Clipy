@@ -9,7 +9,7 @@
 import Foundation
 
 extension Collection {
-    subscript(safe index: Index) -> _Element? {
+    subscript(safe index: Index) -> Element? {
         return index >= startIndex && index < endIndex ? self[index] : nil
     }
 }

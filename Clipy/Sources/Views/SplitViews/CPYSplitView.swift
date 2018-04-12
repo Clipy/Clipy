@@ -20,7 +20,7 @@ class CPYSplitView: NSSplitView {
     // MARK: - Draw
     override func drawDivider(in rect: NSRect) {
         separatorColor.setFill()
-        NSRectFill(rect)
+        rect.fill()
     }
 
 }

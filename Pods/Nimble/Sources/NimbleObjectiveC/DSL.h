@@ -30,12 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DEFINE_NMB_EXPECT_OVERLOAD(TYPE, EXPR) \
         NIMBLE_EXPORT_INLINE NIMBLE_OVERLOADABLE \
-        NMBExpectation *NMB_expect(TYPE(^actualBlock)(), NSString *file, NSUInteger line) { \
+        NMBExpectation *NMB_expect(TYPE(^actualBlock)(void), NSString *file, NSUInteger line) { \
             return NMB_expect(^id { return EXPR; }, file, line); \
         }
 
     NIMBLE_EXPORT NIMBLE_OVERLOADABLE
-    NMBExpectation *NMB_expect(id(^actualBlock)(), NSString *file, NSUInteger line);
+    NMBExpectation *NMB_expect(id(^actualBlock)(void), NSString *file, NSUInteger line);
 
     // overloaded dispatch for nils - expect(nil)
     DEFINE_NMB_EXPECT_OVERLOAD(void*, nil)
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-NIMBLE_EXPORT NMBExpectation *NMB_expectAction(void(^actualBlock)(), NSString *file, NSUInteger line);
+NIMBLE_EXPORT NMBExpectation *NMB_expectAction(void(^actualBlock)(void), NSString *file, NSUInteger line);
 
 
 
@@ -348,6 +348,12 @@ NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAnyOfWithMatchers(id matchers);
 #define NMB_satisfyAnyOf(...) NMB_satisfyAnyOfWithMatchers(@[__VA_ARGS__])
 #ifndef NIMBLE_DISABLE_SHORT_SYNTAX
 #define satisfyAnyOf(...) NMB_satisfyAnyOf(__VA_ARGS__)
+#endif
+
+NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAllOfWithMatchers(id matchers);
+#define NMB_satisfyAllOf(...) NMB_satisfyAllOfWithMatchers(@[__VA_ARGS__])
+#ifndef NIMBLE_DISABLE_SHORT_SYNTAX
+#define satisfyAllOf(...) NMB_satisfyAllOf(__VA_ARGS__)
 #endif
 
 // In order to preserve breakpoint behavior despite using macros to fill in __FILE__ and __LINE__,

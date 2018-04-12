@@ -23,9 +23,9 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Next(Three)
-Completed
+next(One)
+next(Three)
+completed
 ```
 
 ##### replaceNilWith
@@ -37,10 +37,10 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Next(Two)
-Next(Three)
-Completed
+next(One)
+next(Two)
+next(Three)
+completed
 ```
 
 ##### errorOnNil
@@ -55,8 +55,8 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Error(Found nil while trying to unwrap type <Optional<String>>)
+next(One)
+error(Found nil while trying to unwrap type <Optional<String>>)
 ```
 
 ##### catchOnNil
@@ -70,10 +70,10 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Next(A String from a new Observable)
-Next(Three)
-Completed
+next(One)
+next(A String from a new Observable)
+next(Three)
+completed
 ```
 
 ##### distinctUntilChanged
@@ -84,11 +84,11 @@ Observable<Int?>
     .subscribe { print($0) }
 ```
 ```text
-Next(Optional(5))
-Next(Optional(6))
-Next(nil)
-Next(Optional(3))
-Completed
+next(Optional(5))
+next(Optional(6))
+next(nil)
+next(Optional(3))
+completed
 ```
 
 ### Occupiable Operators
@@ -112,9 +112,9 @@ Observable<[String]>
     .subscribe { print($0) }
 ```
 ```text
-Next(["Single Element"])
-Next(["Two", "Elements"])
-Completed
+next(["Single Element"])
+next(["Two", "Elements"])
+completed
 ```
 
 ##### errorOnEmpty
@@ -128,8 +128,8 @@ Observable<[String]>
     .subscribe { print($0) }
 ```
 ```text
-Next(["Single Element"])
-Error(Empty occupiable of type <Array<String>>)
+next(["Single Element"])
+error(Empty occupiable of type <Array<String>>)
 ```
 
 ##### catchOnEmpty
@@ -142,10 +142,10 @@ Observable<[String]>
     .subscribe { print($0) }
 ```
 ```text
-Next(["Single Element"])
-Next(["Not Empty"])
-Next(["Two", "Elements"])
-Completed
+next(["Single Element"])
+next(["Not Empty"])
+next(["Two", "Elements"])
+completed
 ```
 
 ## Running Examples.playground

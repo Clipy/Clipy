@@ -20,23 +20,50 @@
 #ifndef REALM_SYNC_FEATURE_TOKEN_HPP
 #define REALM_SYNC_FEATURE_TOKEN_HPP
 
-#include <realm/string_data.hpp>
 #include <realm/util/features.h>
 
-namespace realm {
-namespace sync {
-
-#if !REALM_MOBILE
+#if !REALM_MOBILE && !defined(REALM_EXCLUDE_FEATURE_TOKENS)
 #define REALM_HAVE_FEATURE_TOKENS 1
-
-void set_feature_token(StringData token);
-
-bool is_feature_enabled(StringData feature_name);
 #else
 #define REALM_HAVE_FEATURE_TOKENS 0
 #endif
 
+#if REALM_HAVE_FEATURE_TOKENS
+
+#include <memory>
+
+#include <realm/string_data.hpp>
+
+namespace realm {
+namespace sync {
+
+class FeatureGate {
+public:
+
+    // The constructor takes a JWT token as argument.
+    // The constructor throws a std::runtime_error if
+    // the token is invalid. An invalid token is a token
+    // that has bad syntax, is not signed by Realm, or is 
+    // expired.
+    FeatureGate(StringData token);
+
+    // Constructs a feature gate without any features.
+    FeatureGate();
+    ~FeatureGate();
+
+    FeatureGate(FeatureGate&&);
+    FeatureGate& operator=(FeatureGate&&);
+
+    bool has_feature(StringData feature_name);
+
+private:
+    struct Impl;
+    std::unique_ptr<Impl> m_impl;
+};
+
+
 } // namespace sync
 } // namespace realm
 
+#endif // REALM_HAVE_FEATURE_TOKENS
 #endif // REALM_SYNC_FEATURE_TOKEN_HPP

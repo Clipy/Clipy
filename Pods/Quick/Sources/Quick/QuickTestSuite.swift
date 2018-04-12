@@ -1,4 +1,4 @@
-#if os(OSX) || os(iOS) || os(watchOS) || os(tvOS)
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 
 import XCTest
 
@@ -36,17 +36,17 @@ public class QuickTestSuite: XCTestSuite {
      It is expected that the first call should return a valid test suite, and
      all subsequent calls should return `nil`.
      */
+    @objc
     public static func selectedTestSuite(forTestCaseWithName name: String) -> QuickTestSuite? {
         guard let builder = QuickSelectedTestSuiteBuilder(forTestCaseWithName: name) else { return nil }
 
-        if builtTestSuites.contains(builder.testSuiteClassName) {
-            return nil
-        } else {
-            builtTestSuites.insert(builder.testSuiteClassName)
+        let (inserted, _) = builtTestSuites.insert(builder.testSuiteClassName)
+        if inserted {
             return builder.buildTestSuite()
+        } else {
+            return nil
         }
     }
-
 }
 
 #endif

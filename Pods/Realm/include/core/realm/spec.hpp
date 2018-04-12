@@ -29,12 +29,9 @@
 namespace realm {
 
 class Table;
-class SubspecRef;
-class ConstSubspecRef;
 
 class Spec {
 public:
-    Spec(SubspecRef) noexcept;
     ~Spec() noexcept;
 
     Allocator& get_alloc() const noexcept;
@@ -43,7 +40,6 @@ public:
 
     void insert_column(size_t column_ndx, ColumnType type, StringData name, ColumnAttr attr = col_attr_None);
     void rename_column(size_t column_ndx, StringData new_name);
-    void move_column(size_t from, size_t to);
 
     /// Erase the column at the specified index, and move columns at
     /// succeeding indexes to the next lower index.
@@ -59,8 +55,7 @@ public:
     // reference, it is the responsibility of the application that the
     // parent Spec object (this) is kept alive for at least as long as
     // the new Spec object.
-    SubspecRef get_subtable_spec(size_t column_ndx) noexcept;
-    ConstSubspecRef get_subtable_spec(size_t column_ndx) const noexcept;
+    Spec* get_subtable_spec(size_t column_ndx) noexcept;
     //@}
 
     // Column info
@@ -78,8 +73,8 @@ public:
 
     size_t get_subspec_ndx(size_t column_ndx) const noexcept;
     ref_type get_subspec_ref(size_t subspec_ndx) const noexcept;
-    SubspecRef get_subspec_by_ndx(size_t subspec_ndx) noexcept;
-    ConstSubspecRef get_subspec_by_ndx(size_t subspec_ndx) const noexcept;
+    Spec* get_subspec_by_ndx(size_t subspec_ndx) noexcept;
+    const Spec* get_subspec_by_ndx(size_t subspec_ndx) const noexcept;
 
     // Auto Enumerated string columns
     void upgrade_string_to_enum(size_t column_ndx, ref_type keys_ref, ArrayParent*& keys_parent, size_t& keys_ndx);
@@ -90,7 +85,11 @@ public:
     // Links
     size_t get_opposite_link_table_ndx(size_t column_ndx) const noexcept;
     void set_opposite_link_table_ndx(size_t column_ndx, size_t table_ndx);
+
+    // Backlinks
     bool has_backlinks() const noexcept;
+    size_t first_backlink_column_index() const noexcept;
+    size_t backlink_column_count() const noexcept;
     void set_backlink_origin_column(size_t backlink_col_ndx, size_t origin_col_ndx);
     size_t get_origin_column_ndx(size_t backlink_col_ndx) const noexcept;
     size_t find_backlink_column(size_t origin_table_ndx, size_t origin_col_ndx) const noexcept;
@@ -107,6 +106,7 @@ public:
     bool operator!=(const Spec&) const noexcept;
     //@}
 
+    void detach() noexcept;
     void destroy() noexcept;
 
     size_t get_ndx_in_parent() const noexcept;
@@ -134,17 +134,28 @@ private:
     ArrayInteger m_attr;  // 3rd slot in m_top
     Array m_subspecs;     // 4th slot in m_top (optional)
     Array m_enumkeys;     // 5th slot in m_top (optional)
+    struct SubspecPtr {
+        SubspecPtr(bool is_spec_ptr = false)
+            : m_is_spec_ptr(is_spec_ptr)
+        {
+        }
+        std::unique_ptr<Spec> m_spec;
+        bool m_is_spec_ptr;
+    };
+    using SubspecPtrs = std::vector<SubspecPtr>;
+    SubspecPtrs m_subspec_ptrs;
     bool m_has_strong_link_columns;
 
     Spec(Allocator&) noexcept; // Unattached
 
-    void init(ref_type) noexcept;
+    bool init(ref_type) noexcept;
     void init(MemRef) noexcept;
-    void init(SubspecRef) noexcept;
     void update_has_strong_link_columns() noexcept;
+    void reset_subspec_ptrs();
+    void adj_subspec_ptrs();
 
-    // Similar in function to Array::init_from_parent().
-    void init_from_parent() noexcept;
+    // Returns true in case the ref has changed.
+    bool init_from_parent() noexcept;
 
     ref_type get_ref() const noexcept;
 
@@ -153,7 +164,7 @@ private:
     /// note that this works only for non-transactional commits. Table
     /// accessors obtained during a transaction are always detached
     /// when the transaction ends.
-    void update_from_parent(size_t old_baseline) noexcept;
+    bool update_from_parent(size_t old_baseline) noexcept;
 
     void set_parent(ArrayParent*, size_t ndx_in_parent) noexcept;
 
@@ -184,52 +195,6 @@ private:
     friend class Table;
 };
 
-
-class SubspecRef {
-public:
-    struct const_cast_tag {
-    };
-    SubspecRef(const_cast_tag, ConstSubspecRef r) noexcept;
-    ~SubspecRef() noexcept
-    {
-    }
-    Allocator& get_alloc() const noexcept
-    {
-        return m_parent->get_alloc();
-    }
-
-private:
-    Array* const m_parent;
-    size_t const m_ndx_in_parent;
-
-    SubspecRef(Array* parent, size_t ndx_in_parent) noexcept;
-
-    friend class Spec;
-    friend class ConstSubspecRef;
-};
-
-class ConstSubspecRef {
-public:
-    ConstSubspecRef(SubspecRef r) noexcept;
-    ~ConstSubspecRef() noexcept
-    {
-    }
-    Allocator& get_alloc() const noexcept
-    {
-        return m_parent->get_alloc();
-    }
-
-private:
-    const Array* const m_parent;
-    size_t const m_ndx_in_parent;
-
-    ConstSubspecRef(const Array* parent, size_t ndx_in_parent) noexcept;
-
-    friend class Spec;
-    friend class SubspecRef;
-};
-
-
 // Implementation:
 
 inline Allocator& Spec::get_alloc() const noexcept
@@ -251,17 +216,6 @@ inline ref_type Spec::get_subspec_ref(size_t subspec_ndx) const noexcept
     return m_subspecs.get_as_ref(subspec_ndx);
 }
 
-inline Spec::Spec(SubspecRef r) noexcept
-    : m_top(r.m_parent->get_alloc())
-    , m_types(r.m_parent->get_alloc())
-    , m_names(r.m_parent->get_alloc())
-    , m_attr(r.m_parent->get_alloc())
-    , m_subspecs(r.m_parent->get_alloc())
-    , m_enumkeys(r.m_parent->get_alloc())
-{
-    init(r);
-}
-
 // Uninitialized Spec (call init() to init)
 inline Spec::Spec(Allocator& alloc) noexcept
     : m_top(alloc)
@@ -273,49 +227,23 @@ inline Spec::Spec(Allocator& alloc) noexcept
 {
 }
 
-inline SubspecRef Spec::get_subtable_spec(size_t column_ndx) noexcept
+inline Spec* Spec::get_subtable_spec(size_t column_ndx) noexcept
 {
     REALM_ASSERT(column_ndx < get_column_count());
     REALM_ASSERT(get_column_type(column_ndx) == col_type_Table);
     size_t subspec_ndx = get_subspec_ndx(column_ndx);
-    return SubspecRef(&m_subspecs, subspec_ndx);
+    return get_subspec_by_ndx(subspec_ndx);
 }
 
-inline ConstSubspecRef Spec::get_subtable_spec(size_t column_ndx) const noexcept
-{
-    REALM_ASSERT(column_ndx < get_column_count());
-    REALM_ASSERT(get_column_type(column_ndx) == col_type_Table);
-    size_t subspec_ndx = get_subspec_ndx(column_ndx);
-    return ConstSubspecRef(&m_subspecs, subspec_ndx);
-}
-
-inline SubspecRef Spec::get_subspec_by_ndx(size_t subspec_ndx) noexcept
-{
-    return SubspecRef(&m_subspecs, subspec_ndx);
-}
-
-inline ConstSubspecRef Spec::get_subspec_by_ndx(size_t subspec_ndx) const noexcept
+inline const Spec* Spec::get_subspec_by_ndx(size_t subspec_ndx) const noexcept
 {
     return const_cast<Spec*>(this)->get_subspec_by_ndx(subspec_ndx);
 }
 
-inline void Spec::init(ref_type ref) noexcept
-{
-    MemRef mem(ref, get_alloc());
-    init(mem);
-}
-
-inline void Spec::init(SubspecRef r) noexcept
-{
-    m_top.set_parent(r.m_parent, r.m_ndx_in_parent);
-    ref_type ref = r.m_parent->get_as_ref(r.m_ndx_in_parent);
-    init(ref);
-}
-
-inline void Spec::init_from_parent() noexcept
+inline bool Spec::init_from_parent() noexcept
 {
     ref_type ref = m_top.get_ref_from_parent();
-    init(ref);
+    return init(ref);
 }
 
 inline void Spec::destroy() noexcept
@@ -431,6 +359,16 @@ inline bool Spec::has_backlinks() const noexcept
     // the user.
 }
 
+inline size_t Spec::first_backlink_column_index() const noexcept
+{
+    return m_names.size();
+}
+
+inline size_t Spec::backlink_column_count() const noexcept
+{
+    return m_types.size() - m_names.size();
+}
+
 // Spec will have a subspec when it contains a column which is one of:
 // link, linklist, backlink, or subtable. It is possible for m_top.size()
 // to contain an entry for m_subspecs (at index 3) but this reference
@@ -444,32 +382,6 @@ inline bool Spec::operator!=(const Spec& s) const noexcept
 {
     return !(*this == s);
 }
-
-
-inline SubspecRef::SubspecRef(Array* parent, size_t ndx_in_parent) noexcept
-    : m_parent(parent)
-    , m_ndx_in_parent(ndx_in_parent)
-{
-}
-
-inline SubspecRef::SubspecRef(const_cast_tag, ConstSubspecRef r) noexcept
-    : m_parent(const_cast<Array*>(r.m_parent))
-    , m_ndx_in_parent(r.m_ndx_in_parent)
-{
-}
-
-inline ConstSubspecRef::ConstSubspecRef(const Array* parent, size_t ndx_in_parent) noexcept
-    : m_parent(parent)
-    , m_ndx_in_parent(ndx_in_parent)
-{
-}
-
-inline ConstSubspecRef::ConstSubspecRef(SubspecRef r) noexcept
-    : m_parent(r.m_parent)
-    , m_ndx_in_parent(r.m_ndx_in_parent)
-{
-}
-
 
 } // namespace realm
 

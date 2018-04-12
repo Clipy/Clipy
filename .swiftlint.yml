@@ -9,3 +9,6 @@ included:
 excluded:
   - Pods
 line_length: 200
+identifier_name:
+  excluded:
+    - i

@@ -28,6 +28,8 @@
 #include <stddef.h>
 #include <memory>
 
+#include <realm/binary_data.hpp>
+
 namespace realm {
 namespace util {
 namespace compression {
@@ -142,6 +144,13 @@ std::error_code compress(const char* uncompressed_buf, size_t uncompressed_size,
 /// compression::error_category.
 std::error_code decompress(const char* compressed_buf, size_t compressed_size,
                            char* decompressed_buf, size_t decompressed_size);
+
+
+size_t allocate_and_compress(CompressMemoryArena& compress_memory_arena,
+                             BinaryData uncompressed_buf,
+                             std::vector<char>& compressed_buf);
+
+
 
 } // namespace compression
 } // namespace util

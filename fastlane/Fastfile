@@ -1,4 +1,4 @@
-fastlane_version "2.56.0"
+fastlane_version "2.89.0"
 
 default_platform :mac
 

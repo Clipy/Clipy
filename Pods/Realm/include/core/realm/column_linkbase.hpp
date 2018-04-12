@@ -61,6 +61,7 @@ public:
     void adj_acc_erase_row(size_t) noexcept override;
     void adj_acc_move_over(size_t, size_t) noexcept override;
     void adj_acc_swap_rows(size_t, size_t) noexcept override;
+    void adj_acc_move_row(size_t, size_t) noexcept override;
     void adj_acc_clear_root_table() noexcept override;
     void mark(int) noexcept override;
     void refresh_accessor_tree(size_t, const Spec&) override;
@@ -161,6 +162,14 @@ inline void LinkColumnBase::adj_acc_swap_rows(size_t row_ndx_1, size_t row_ndx_2
     IntegerColumn::adj_acc_swap_rows(row_ndx_1, row_ndx_2);
 
     typedef _impl::TableFriend tf;
+    tf::mark(*m_target_table);
+}
+
+inline void LinkColumnBase::adj_acc_move_row(size_t from_ndx, size_t to_ndx) noexcept
+{
+    IntegerColumn::adj_acc_move_row(from_ndx, to_ndx);
+
+    using tf = _impl::TableFriend;
     tf::mark(*m_target_table);
 }
 

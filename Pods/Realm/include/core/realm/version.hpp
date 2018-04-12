@@ -21,18 +21,16 @@
 
 #include <string>
 
-#include <realm/util/features.h>
+// Do not use `cmakedefine` here, as certain versions can be 0, which CMake
+// interprets as being undefined.
+#define REALM_VERSION_MAJOR 5
+#define REALM_VERSION_MINOR 4
+#define REALM_VERSION_PATCH 2
+#define REALM_VERSION_EXTRA ""
+#define REALM_VERSION_STRING "5.4.2"
 
-
-#define REALM_VER_MAJOR 2
-#define REALM_VER_MINOR 8
-#define REALM_VER_PATCH 6
-#define REALM_VER_EXTRA ""
 #define REALM_PRODUCT_NAME "realm-core"
-
-#define REALM_VER_STRING                                                                                             \
-    REALM_QUOTE(REALM_VER_MAJOR) "." REALM_QUOTE(REALM_VER_MINOR) "." REALM_QUOTE(REALM_VER_PATCH)
-#define REALM_VER_CHUNK "[" REALM_PRODUCT_NAME "-" REALM_VER_STRING "]"
+#define REALM_VER_CHUNK "[" REALM_PRODUCT_NAME "-" REALM_VERSION_STRING "]"
 
 namespace realm {
 
@@ -45,18 +43,9 @@ class StringData;
 
 class Version {
 public:
-    static int get_major()
-    {
-        return REALM_VER_MAJOR;
-    }
-    static int get_minor()
-    {
-        return REALM_VER_MINOR;
-    }
-    static int get_patch()
-    {
-        return REALM_VER_PATCH;
-    }
+    static int get_major() { return REALM_VERSION_MAJOR; }
+    static int get_minor() { return REALM_VERSION_MINOR; }
+    static int get_patch() { return REALM_VERSION_PATCH; }
     static StringData get_extra();
     static std::string get_version();
     static bool is_at_least(int major, int minor, int patch, StringData extra);

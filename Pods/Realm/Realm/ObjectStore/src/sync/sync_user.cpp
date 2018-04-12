@@ -220,13 +220,8 @@ void SyncUser::register_session(std::shared_ptr<SyncSession> session)
         case State::Active:
             // Immediately ask the session to come online.
             m_sessions[path] = session;
-            // FIXME: `SyncUser`s shouldn't even wrap admin tokens; the bindings should do that.
-            if (m_token_type == TokenType::Admin) {
-                session->bind_with_admin_token(m_refresh_token, session->config().realm_url);
-            } else {
-                lock.unlock();
-                session->revive_if_needed();
-            }
+            lock.unlock();
+            session->revive_if_needed();
             break;
         case State::LoggedOut:
             m_waiting_sessions[path] = session;

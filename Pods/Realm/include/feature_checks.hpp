@@ -21,20 +21,9 @@
 
 #include <realm/version.hpp>
 
-#ifndef REALM_VERSION_MAJOR
-#define REALM_VERSION_MAJOR REALM_VER_MAJOR
-#endif
-
-#define REALM_HAVE_COMPOSABLE_DISTINCT (REALM_VERSION_MAJOR > 2)
-
 #if REALM_ENABLE_SYNC
 
 #include <realm/sync/version.hpp>
-#define REALM_HAVE_SYNC_STABLE_IDS (REALM_SYNC_VER_MAJOR > 1)
-
-#else
-
-#define REALM_HAVE_SYNC_STABLE_IDS 0
 
 #endif // REALM_ENABLE_SYNC
 

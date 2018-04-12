@@ -62,7 +62,7 @@ final class DataCleanService {
 
         let allClipPaths = Array(realm.objects(CPYClip.self)
             .filter { !$0.isInvalidated }
-            .flatMap { $0.dataPath.components(separatedBy: "/").last })
+            .compactMap { $0.dataPath.components(separatedBy: "/").last })
 
         // Delete diff datas
         DispatchQueue.main.async {

@@ -87,6 +87,7 @@ private:
     ArrayInteger m_free_versions;  // 6th slot in Group::m_top
     uint64_t m_current_version;
     uint64_t m_readlock_version;
+    size_t m_alloc_position;
 
     // Currently cached memory mappings. We keep as many as 16 1MB windows
     // open for writing. The allocator will favor sequential allocation

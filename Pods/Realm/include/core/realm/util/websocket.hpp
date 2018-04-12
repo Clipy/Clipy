@@ -40,23 +40,28 @@ using ReadCompletionHandler =
 
 class Config {
 public:
-
     /// The Socket uses the caller supplied logger for logging.
-    virtual util::Logger& get_logger() = 0;
+    virtual util::Logger& websocket_get_logger() noexcept = 0;
 
     /// The Socket needs random numbers to satisfy the Websocket protocol.
     /// The caller must supply a random number generator.
-    virtual std::mt19937_64& get_random() = 0;
+    virtual std::mt19937_64& websocket_get_random() noexcept = 0;
 
+    //@{
     /// The three functions below are used by the Socket to read and write to the underlying
     /// stream. The functions will typically be implemented as wrappers to a TCP/TLS stream,
     /// but could also map to pure memory streams. These functions abstract away the details of
     /// the underlying sockets.
     /// The functions have the same semantics as util::Socket.
+    ///
+    /// FIXME: Require that implementations ensure no callback reentrance, i.e.,
+    /// that the completion handler is never called from within the execution of
+    /// async_write(), async_read(), or async_read_until(). This guarantee is
+    /// provided by both network::Socket and network::ssl::Stream.
     virtual void async_write(const char* data, size_t size, WriteCompletionHandler handler) = 0;
     virtual void async_read(char* buffer, size_t size, ReadCompletionHandler handler) = 0;
     virtual void async_read_until(char* buffer, size_t size, char delim, ReadCompletionHandler handler) = 0;
-
+    //@}
 
     /// websocket_handshake_completion_handler() is called when the websocket is connected, .i.e.
     /// after the handshake is done. It is not allowed to send messages on the socket before the
@@ -67,13 +72,16 @@ public:
     /// websocket_read_error_handler() and websocket_write_error_handler() are called when an
     /// error occurs on the underlying stream given by the async_read and async_write functions above.
     /// The error_code is passed through.
+    /// websocket_handshake_error_handler() will be called when there is an error in the handshake
+    /// such as "404 Not found".
     /// websocket_protocol_error_handler() is called when there is an protocol error in the incoming
-    /// messages.
+    /// websocket messages.
     /// After calling any of these error callbacks, the Socket will move into the stopped state, and
     /// no more messages should be sent, or will be received.
     /// It is safe to destroy the WebSocket object in these handlers.
     virtual void websocket_read_error_handler(std::error_code) = 0;
     virtual void websocket_write_error_handler(std::error_code) = 0;
+    virtual void websocket_handshake_error_handler(std::error_code, const HTTPHeaders&) = 0;
     virtual void websocket_protocol_error_handler(std::error_code) = 0;
     //@}
 
@@ -114,13 +122,16 @@ public:
     /// will send the HTTP request that initiates the WebSocket protocol and
     /// wait for the HTTP response from the server. The HTTP request will
     /// contain the \param request_uri in the HTTP request line. The \param host
-    /// will be sent as the value in a HTTP Host header line. Extra HTTP headers
-    /// can be provided in \a headers.
+    /// will be sent as the value in a HTTP Host header line.
+    /// \param sec_websocket_protocol will be set as header value for
+    /// Sec-WebSocket-Protocol. Extra HTTP headers can be provided in \a headers.
     ///
     /// When the server responds with a valid HTTP response, the callback
     /// function websocket_handshake_completion_handler() is called. Messages
     /// can only be sent and received after the handshake has completed.
-    void initiate_client_handshake(std::string request_uri, std::string host,
+    void initiate_client_handshake(const std::string& request_uri,
+                                   const std::string& host,
+                                   const std::string& sec_websocket_protocol,
                                    HTTPHeaders headers = HTTPHeaders{});
 
     /// initiate_server_handshake() starts the Socket in server mode. It will
@@ -150,21 +161,36 @@ public:
     /// websocket_write_error_handler() in Config.
     /// This function is rather low level and should only be used with knowledge of the WebSocket protocol.
     /// The five utility functions below are recommended for message sending.
+    ///
+    /// FIXME: Guarantee no callback reentrance, i.e., that the completion
+    /// handler, or the error handler in case an error occurs, is never called
+    /// from within the execution of async_write_frame().
     void async_write_frame(bool fin, Opcode opcode, const char* data, size_t size, std::function<void()> handler);
 
-    /// Five utility functions used to send whole messages. These five functions are implemented in terms of
-    /// async_write_frame(). These functions send whole unfragmented messages. These functions should be
+    //@{
+    /// Five utility functions used to send whole messages. These five
+    /// functions are implemented in terms of async_write_frame(). These
+    /// functions send whole unfragmented messages. These functions should be
     /// preferred over async_write_frame() for most use cases.
+    ///
+    /// FIXME: Guarantee no callback reentrance, i.e., that the completion
+    /// handler, or the error handler in case an error occurs, is never called
+    /// from within the execution of async_write_text(), and its friends. This
+    /// is already assumed by the client and server implementations of the sync
+    /// protocol.
     void async_write_text(const char* data, size_t size, std::function<void()> handler);
     void async_write_binary(const char* data, size_t size, std::function<void()> handler);
     void async_write_close(const char* data, size_t size, std::function<void()> handler);
     void async_write_ping(const char* data, size_t size, std::function<void()> handler);
     void async_write_pong(const char* data, size_t size, std::function<void()> handler);
+    //@}
 
-    /// stop() stops the socket. The socket will stop processing incoming data, sending data, and calling callbacks.
-    /// It is an error to attempt to send a message after stop() has been called. stop() will typically be called
-    /// before the underlying TCP/TLS connection is closed. The Socket can be restarted with
-    /// initiate_client_handshake() and initiate_server_handshake().
+    /// stop() stops the socket. The socket will stop processing incoming data,
+    /// sending data, and calling callbacks.  It is an error to attempt to send
+    /// a message after stop() has been called. stop() will typically be called
+    /// before the underlying TCP/TLS connection is closed. The Socket can be
+    /// restarted with initiate_client_handshake() and
+    /// initiate_server_handshake().
     void stop() noexcept;
 
 private:
@@ -172,21 +198,43 @@ private:
     std::unique_ptr<Impl> m_impl;
 };
 
+
+/// read_sec_websocket_protocol() returns the value of the
+/// header Sec-WebSocket-Protocol in the http request \a request.
+/// None is returned if the header Sec-WebSocket-Protocol is absent
+/// in the request.
+util::Optional<std::string> read_sec_websocket_protocol(const HTTPRequest& request);
+
 /// make_http_response() takes \a request as a WebSocket handshake request,
 /// validates it, and makes a HTTP response. If the request is invalid, the
-/// return value is None, and ec is set to Error::bad_handshake_request.
+/// return value is None, and ec is set to Error::bad_request_header_*.
 util::Optional<HTTPResponse> make_http_response(const HTTPRequest& request,
-        std::error_code& ec);
+                                                const std::string& sec_websocket_protocol,
+                                                std::error_code& ec);
 
 enum class Error {
-    bad_request_header_upgrade            = 1,
-    bad_request_header_connection         = 2,
-    bad_request_header_websocket_version  = 3,
-    bad_request_header_websocket_protocol = 4,
-    bad_request_header_websocket_key      = 5,
-    bad_handshake_request                 = 6,
-    bad_handshake_response                = 7,
-    bad_message                           = 8
+    bad_request_malformed_http,
+    bad_request_header_upgrade,
+    bad_request_header_connection,
+    bad_request_header_websocket_version,
+    bad_request_header_websocket_key,
+    bad_response_invalid_http,
+    bad_response_2xx_successful,
+    bad_response_200_ok,
+    bad_response_3xx_redirection,
+    bad_response_301_moved_permanently,
+    bad_response_4xx_client_errors,
+    bad_response_401_unauthorized,
+    bad_response_403_forbidden,
+    bad_response_404_not_found,
+    bad_response_5xx_server_error,
+    bad_response_500_internal_server_error,
+    bad_response_502_bad_gateway,
+    bad_response_503_service_unavailable,
+    bad_response_504_gateway_timeout,
+    bad_response_unexpected_status_code,
+    bad_response_header_protocol_violation,
+    bad_message
 };
 
 const std::error_category& error_category() noexcept;

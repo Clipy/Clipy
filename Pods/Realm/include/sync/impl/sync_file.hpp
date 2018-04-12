@@ -56,9 +56,6 @@ std::string create_timestamped_template(const std::string& prefix, int wildcard_
 /// Returns the path of the file.
 std::string reserve_unique_file_name(const std::string& path, const std::string& template_string);
 
-/// Remove a directory, including non-empty directories.
-void remove_nonempty_dir(const std::string& path);
-
 } // util
 
 class SyncFileManager {

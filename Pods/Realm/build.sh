@@ -42,6 +42,7 @@ Usage: sh $0 command [argument]
 command:
   clean:                clean up/remove all generated files
   download-core:        downloads core library (binary version)
+  download-object-server:  downloads and installs the Realm Object Server
   download-sync:        downloads sync library (binary version, core+sync)
   build:                builds all iOS  and OS X frameworks
   ios-static:           builds fat iOS static framework
@@ -68,6 +69,7 @@ command:
   test-osx:             tests OS X framework
   test-osx-swift:       tests RealmSwift OS X framework
   verify:               verifies docs, osx, osx-swift, ios-static, ios-dynamic, ios-swift, ios-device in both Debug and Release configurations, swiftlint
+  verify-osx-object-server:  downloads the Realm Object Server and runs the Objective-C and Swift integration tests
   docs:                 builds docs in docs/output
   examples:             builds all examples
   examples-ios:         builds all static iOS examples
@@ -197,12 +199,6 @@ move_to_clean_dir() {
 }
 
 test_ios_static() {
-    local previous_realm_xcode_version="$REALM_XCODE_VERSION"
-    local previous_realm_swift_version="$REALM_SWIFT_VERSION"
-    if [[ "$IS_RUNNING_PACKAGING" == "1" ]]; then
-        force_xcode_82
-    fi
-
     destination="$1"
     xc "-scheme 'Realm iOS static' -configuration $CONFIGURATION -sdk iphonesimulator -destination '$destination' build"
     if (( $(xcode_version_major) < 9 )); then
@@ -216,21 +212,6 @@ test_ios_static() {
     rm "$path"
 
     xc "-scheme 'Realm iOS static' -configuration $CONFIGURATION -sdk iphonesimulator -destination '$destination' test"
-
-    if [[ "$IS_RUNNING_PACKAGING" == "1" ]]; then
-        # Reset to state before forcing Xcode 8.2
-        REALM_XCODE_VERSION="$previous_realm_xcode_version"
-        REALM_SWIFT_VERSION="$previous_realm_swift_version"
-        set_xcode_and_swift_versions
-        sh build.sh prelaunch-simulator
-    fi
-}
-
-force_xcode_82() {
-  REALM_XCODE_VERSION=8.2
-  REALM_SWIFT_VERSION=
-  set_xcode_and_swift_versions
-  sh build.sh prelaunch-simulator
 }
 
 ######################################
@@ -239,9 +220,21 @@ force_xcode_82() {
 
 test_devices() {
     local serial_numbers=()
-    local serial_numbers_text=$(/usr/sbin/system_profiler SPUSBDataType | /usr/bin/awk '/^ +Serial Number: / { match($0, /^ +Serial Number: /); print substr($0, RLENGTH + 1) }')
+    local awk_script="
+    /^ +Vendor ID: / { is_apple = 0; }
+    /^ +Vendor ID: 0x05[aA][cC] / { is_apple = 1; }
+    /^ +Serial Number: / {
+        if (is_apple) {
+            match(\$0, /^ +Serial Number: /);
+            print substr(\$0, RLENGTH + 1);
+        }
+    }
+    "
+    local serial_numbers_text=$(/usr/sbin/system_profiler SPUSBDataType | /usr/bin/awk "$awk_script")
     while read -r number; do
-        serial_numbers+=("$number")
+        if [[ "$number" != "" ]]; then
+            serial_numbers+=("$number")
+        fi
     done <<< "$serial_numbers_text"
     if [[ ${#serial_numbers[@]} == 0 ]]; then
         echo "At least one iOS/tvOS device must be connected to this computer to run device tests"
@@ -312,25 +305,21 @@ fi
 ######################################
 
 kill_object_server() {
-    (pgrep -f realm-object-server || true) | while read pid; do
-        kill $pid 2>/dev/null
-    done
+# Based on build.sh conventions we always run ROS from a path ending in 'ros/bin/ros'.
+    pkill -f ros/bin/ros\ start
 }
 
 download_object_server() {
-    local archive_name="realm-object-server-bundled_node_darwin-developer-$REALM_OBJECT_SERVER_VERSION.tar.gz"
-    /usr/bin/curl -L -O "https://static.realm.io/downloads/object-server/$archive_name"
-    rm -rf sync
-    mkdir sync
-    tar xf $archive_name -C sync
-    rm $archive_name
-    cp Configuration/object-server-config.yml sync/object-server/configuration.yml
-    touch "sync/object-server/do_not_open_browser"
+    rm -rf ./test-ros-instance
+    mkdir -p ./test-ros-instance/ros
+    chmod 777 ./test-ros-instance
+    /usr/local/bin/node /usr/local/bin/npm install --scripts-prepend-node-path=auto --prefix ./test-ros-instance/ros \
+        -g realm-object-server@${REALM_OBJECT_SERVER_VERSION}
 }
 
 download_common() {
     local download_type=$1 tries_left=3 version url error temp_dir temp_path tar_path
-    
+
     if [ "$download_type" == "core" ]; then
         version=$REALM_CORE_VERSION
         url="https://static.realm.io/downloads/core/realm-core-${version}.tar.xz"
@@ -341,9 +330,9 @@ download_common() {
         echo "Unknown dowload_type: $download_type"
         exit 1
     fi
-    
+
     echo "Downloading dependency: ${download_type} ${version}"
-    
+
     if [ -z "$TMPDIR" ]; then
         TMPDIR='/tmp'
     fi
@@ -351,7 +340,7 @@ download_common() {
     mkdir -p "$temp_dir"
     tar_path="${temp_dir}/${download_type}-${version}.tar.xz"
     temp_path="${tar_path}.tmp"
-        
+
     while [ 0 -lt $tries_left ] && [ ! -f "$tar_path" ]; do
         if ! error=$(/usr/bin/curl --fail --silent --show-error --location "$url" --output "$temp_path" 2>&1); then
             tries_left=$[$tries_left-1]
@@ -359,12 +348,12 @@ download_common() {
             mv "$temp_path" "$tar_path"
         fi
     done
-    
+
     if [ ! -f "$tar_path" ]; then
         printf "Downloading ${download_type} failed:\n\t$url\n\t$error\n"
         exit 1
     fi
-    
+
     (
         cd "$temp_dir"
         rm -rf "$download_type"
@@ -433,17 +422,16 @@ case "$COMMAND" in
         exit 0
         ;;
 
-    "start-object-server")
-        kill_object_server
-        ./sync/start-object-server.command
+    "reset-ros-server-state")
+        rm -rf "./test-ros-instance/data"
+        rm -rf "./test-ros-instance/realm-object-server"
         exit 0
         ;;
 
-    "reset-object-server-between-tests")
-        # Leave the server files alone to avoid 'bad_server_ident' errors
-        rm -rf "~/Library/Application Support/xctest"
-        rm -rf "~/Library/Application Support/io.realm.TestHost"
-        rm -rf "~/Library/Application Support/xctest-child"
+    "reset-ros-client-state")
+        rm -rf ~/Library/Application\ Support/xctest
+        rm -rf ~/Library/Application\ Support/io.realm.TestHost
+        rm -rf ~/Library/Application\ Support/xctest-child
         exit 0
         ;;
 
@@ -451,16 +439,10 @@ case "$COMMAND" in
         kill_object_server
         # Add a short delay, so file system doesn't complain about files in use
         sleep 1
-        package="${source_root}/sync"
-        for file in "$package"/realm-object-server-*; do
-            if [ -d "$file" ]; then
-                package="$file"
-                break
-            fi
-        done
-        rm -rf "$package/object-server/root_dir/"
-        rm -rf "$package/object-server/temp_dir/"
-        sh build.sh reset-object-server-between-tests
+        sh build.sh reset-ros-server-state
+        sh build.sh reset-ros-client-state
+        # Add another delay to ensure files are actually gone from file system
+        sleep 1
         exit 0
         ;;
 
@@ -647,11 +629,6 @@ case "$COMMAND" in
         exit 0
         ;;
 
-    "test-ios7-static")
-        test_ios_static "name=iPhone 5S,OS=7.1"
-        exit 0
-        ;;
-
     "test-ios-dynamic")
         xc "-scheme Realm -configuration $CONFIGURATION -sdk iphonesimulator -destination 'name=iPhone 6' build"
         if (( $(xcode_version_major) < 9 )); then
@@ -743,8 +720,6 @@ case "$COMMAND" in
         sh build.sh verify-osx-swift-debug
         sh build.sh verify-ios-static
         sh build.sh verify-ios-static-debug
-        sh build.sh verify-ios7-static
-        sh build.sh verify-ios7-static-debug
         sh build.sh verify-ios-dynamic
         sh build.sh verify-ios-dynamic-debug
         sh build.sh verify-ios-swift
@@ -809,10 +784,6 @@ case "$COMMAND" in
     "verify-ios-static")
         sh build.sh test-ios-static
         sh build.sh examples-ios
-        ;;
-
-    "verify-ios7-static")
-        sh build.sh test-ios7-static
         ;;
 
     "verify-ios-dynamic")
@@ -974,7 +945,7 @@ case "$COMMAND" in
     ######################################
     "get-version")
         version_file="Realm/Realm-Info.plist"
-        echo "$(PlistBuddy -c "Print :CFBundleVersion" "$version_file")"
+        echo "$(PlistBuddy -c "Print :CFBundleShortVersionString" "$version_file")"
         exit 0
         ;;
 
@@ -986,8 +957,11 @@ case "$COMMAND" in
             echo "You must specify a version."
             exit 1
         fi
+        # The bundle version can contain only three groups of digits separated by periods,
+        # so strip off any -beta.x tag from the end of the version string.
+        bundle_version=$(echo "$realm_version" | cut -d - -f 1)
         for version_file in $version_files; do
-            PlistBuddy -c "Set :CFBundleVersion $realm_version" "$version_file"
+            PlistBuddy -c "Set :CFBundleVersion $bundle_version" "$version_file"
             PlistBuddy -c "Set :CFBundleShortVersionString $realm_version" "$version_file"
         done
         sed -i '' "s/^VERSION=.*/VERSION=$realm_version/" dependencies.list
@@ -1114,12 +1088,12 @@ EOM
             sh build.sh prelaunch-simulator
 
             # Reset CoreSimulator.log
-            mkdir -p "~/Library/Logs/CoreSimulator"
-            echo > "~/Library/Logs/CoreSimulator/CoreSimulator.log"
+            mkdir -p ~/Library/Logs/CoreSimulator
+            echo > ~/Library/Logs/CoreSimulator/CoreSimulator.log
 
-            if [ -d "~/Library/Developer/CoreSimulator/Devices/" ]; then
+            if [ -d ~/Library/Developer/CoreSimulator/Devices/ ]; then
                 # Verify that no Realm files still exist
-                ! find "~/Library/Developer/CoreSimulator/Devices/" -name '*.realm' | grep -q .
+                ! find ~/Library/Developer/CoreSimulator/Devices/ -name '*.realm' | grep -q .
             fi
 
             failed=0
@@ -1138,7 +1112,7 @@ EOM
             fi
             if [ "$failed" = "1" ]; then
                 echo "\n\n***\nbuild/build.log\n***\n\n" && cat build/build.log || true
-                echo "\n\n***\nCoreSimulator.log\n***\n\n" && cat "~/Library/Logs/CoreSimulator/CoreSimulator.log"
+                echo "\n\n***\nCoreSimulator.log\n***\n\n" && cat ~/Library/Logs/CoreSimulator/CoreSimulator.log
                 exit 1
             fi
         fi
@@ -1160,8 +1134,8 @@ EOM
         ;;
 
     "package-test-examples")
-        if ! VERSION=$(echo realm-objc-*.zip | grep -o '\d*\.\d*\.\d*-[a-z]*'); then
-            VERSION=$(echo realm-objc-*.zip | grep -o '\d*\.\d*\.\d*')
+        if ! VERSION=$(echo realm-objc-*.zip | egrep -o '\d*\.\d*\.\d*-[a-z]*(\.\d*)?'); then
+            VERSION=$(echo realm-objc-*.zip | egrep -o '\d*\.\d*\.\d*')
         fi
         OBJC="realm-objc-${VERSION}"
         SWIFT="realm-swift-${VERSION}"
@@ -1209,54 +1183,12 @@ EOM
         zip --symlinks -r realm-framework-osx.zip Realm.framework
         ;;
 
-    "package-ios-swift")
-        for version in 8.0 8.1 8.2 8.3.3 9.0; do
-            REALM_XCODE_VERSION=$version
-            REALM_SWIFT_VERSION=
-            set_xcode_and_swift_versions
-            sh build.sh prelaunch-simulator
-            sh build.sh ios-swift
-        done
-
-        cd build/ios
-        ln -s swift-4.0 swift-3.2
-        zip --symlinks -r realm-swift-framework-ios.zip swift-3.0 swift-3.0.1 swift-3.0.2 swift-3.1 swift-3.2 swift-4.0
-        ;;
-
-    "package-osx-swift")
-        for version in 8.0 8.1 8.2 8.3.3 9.0; do
-            REALM_XCODE_VERSION=$version
-            REALM_SWIFT_VERSION=
-            set_xcode_and_swift_versions
-            sh build.sh prelaunch-simulator
-            sh build.sh osx-swift
-        done
-
-        cd build/osx
-        ln -s swift-4.0 swift-3.2
-        zip --symlinks -r realm-swift-framework-osx.zip swift-3.0 swift-3.0.1 swift-3.0.2 swift-3.1 swift-3.2 swift-4.0
-        ;;
-
     "package-watchos")
         sh build.sh prelaunch-simulator
         sh build.sh watchos
 
         cd build/watchos
         zip --symlinks -r realm-framework-watchos.zip Realm.framework
-        ;;
-
-    "package-watchos-swift")
-        for version in 8.0 8.1 8.2 8.3.3 9.0; do
-            REALM_XCODE_VERSION=$version
-            REALM_SWIFT_VERSION=
-            set_xcode_and_swift_versions
-            sh build.sh prelaunch-simulator
-            sh build.sh watchos-swift
-        done
-
-        cd build/watchos
-        ln -s swift-4.0 swift-3.2
-        zip --symlinks -r realm-swift-framework-watchos.zip swift-3.0 swift-3.0.1 swift-3.0.2 swift-3.1 swift-3.2 swift-4.0
         ;;
 
     "package-tvos")
@@ -1267,18 +1199,23 @@ EOM
         zip --symlinks -r realm-framework-tvos.zip Realm.framework
         ;;
 
-    "package-tvos-swift")
-        for version in 8.0 8.1 8.2 8.3.3 9.0; do
+    package-*-swift)
+        PLATFORM=$(echo $COMMAND | cut -d - -f 2)
+        for version in 8.3.3 9.0 9.1 9.2 9.3; do
             REALM_XCODE_VERSION=$version
             REALM_SWIFT_VERSION=
             set_xcode_and_swift_versions
             sh build.sh prelaunch-simulator
-            sh build.sh tvos-swift
+            sh build.sh $PLATFORM-swift
         done
 
-        cd build/tvos
+        cd build/$PLATFORM
         ln -s swift-4.0 swift-3.2
-        zip --symlinks -r realm-swift-framework-tvos.zip swift-3.0 swift-3.0.1 swift-3.0.2 swift-3.1 swift-3.2 swift-4.0
+        ln -s swift-4.0.2 swift-3.2.2
+        ln -s swift-4.0.2 swift-3.2.3
+        ln -s swift-4.0.2 swift-4.0.3
+        ln -s swift-4.1 swift-3.3
+        zip --symlinks -r realm-swift-framework-$PLATFORM.zip swift-3.1 swift-3.2 swift-3.2.2 swift-3.2.3 swift-3.3 swift-4.0 swift-4.0.2 swift-4.0.3 swift-4.1
         ;;
 
     package-*-swift-3.2)
@@ -1287,6 +1224,38 @@ EOM
         cd build/$PLATFORM
         ln -s swift-4.0 swift-3.2
         zip --symlinks -r realm-swift-framework-$PLATFORM-swift-3.2.zip swift-3.2
+        ;;
+
+    package-*-swift-3.2.2)
+        PLATFORM=$(echo $COMMAND | cut -d - -f 2)
+        mkdir -p build/$PLATFORM
+        cd build/$PLATFORM
+        ln -s swift-4.0.2 swift-3.2.2
+        zip --symlinks -r realm-swift-framework-$PLATFORM-swift-3.2.2.zip swift-3.2.2
+        ;;
+
+    package-*-swift-3.2.3)
+        PLATFORM=$(echo $COMMAND | cut -d - -f 2)
+        mkdir -p build/$PLATFORM
+        cd build/$PLATFORM
+        ln -s swift-4.0.2 swift-3.2.3
+        zip --symlinks -r realm-swift-framework-$PLATFORM-swift-3.2.3.zip swift-3.2.3
+        ;;
+
+    package-*-swift-3.3)
+        PLATFORM=$(echo $COMMAND | cut -d - -f 2)
+        mkdir -p build/$PLATFORM
+        cd build/$PLATFORM
+        ln -s swift-4.1 swift-3.3
+        zip --symlinks -r realm-swift-framework-$PLATFORM-swift-3.3.zip swift-3.3
+        ;;
+
+    package-*-swift-4.0.3)
+        PLATFORM=$(echo $COMMAND | cut -d - -f 2)
+        mkdir -p build/$PLATFORM
+        cd build/$PLATFORM
+        ln -s swift-4.0.2 swift-4.0.3
+        zip --symlinks -r realm-swift-framework-$PLATFORM-swift-4.0.3.zip swift-4.0.3
         ;;
 
     package-*-swift-*)
@@ -1476,11 +1445,11 @@ EOF
         ;;
 
     "add-empty-changelog")
-        read -r -d '' empty_section << EOS
+        empty_section=$(cat <<EOS
 x.x.x Release notes (yyyy-MM-dd)
 =============================================================
 
-### API Breaking Changes
+### Breaking Changes
 
 * None.
 
@@ -1491,7 +1460,7 @@ x.x.x Release notes (yyyy-MM-dd)
 ### Bugfixes
 
 * None.
-EOS
+EOS)
         changelog=$(cat CHANGELOG.md)
         echo "$empty_section" > CHANGELOG.md
         echo >> CHANGELOG.md

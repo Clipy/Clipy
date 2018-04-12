@@ -217,6 +217,14 @@ public:
     /// \sa Table::rename_column()
     void rename_column(size_t col_ndx, StringData new_name);
 
+    /// If the descriptor is describing a subtable column, the add_search_index()
+    /// and remove_search_index() will add or remove search indexes of *all*
+    /// subtables of the subtable column. This may take a while if there are many
+    /// subtables with many rows each.
+    bool has_search_index(size_t column_ndx) const noexcept;
+    void add_search_index(size_t column_ndx);
+    void remove_search_index(size_t column_ndx);
+
     /// There are two kinds of links, 'weak' and 'strong'. A strong link is one
     /// that implies ownership, i.e., that the origin row (parent) owns the
     /// target row (child). Simply stated, this means that when the origin row
@@ -507,11 +515,8 @@ private:
     // return null.
     DescriptorRef get_subdesc_accessor(size_t column_ndx) noexcept;
 
-    void move_column(size_t from_ndx, size_t to_ndx);
-
     void adj_insert_column(size_t col_ndx) noexcept;
     void adj_erase_column(size_t col_ndx) noexcept;
-    void adj_move_column(size_t col_ndx_1, size_t col_ndx_2) noexcept;
 
     friend class util::bind_ptr<Descriptor>;
     friend class util::bind_ptr<const Descriptor>;
@@ -643,14 +648,6 @@ inline void Descriptor::rename_column(size_t col_ndx, StringData name)
     tf::rename_column(*this, col_ndx, name); // Throws
 }
 
-inline void Descriptor::move_column(size_t from_ndx, size_t to_ndx)
-{
-    REALM_ASSERT(is_attached());
-    typedef _impl::TableFriend tf;
-    tf::move_column(*this, from_ndx, to_ndx); // Throws
-    adj_move_column(from_ndx, to_ndx);
-}
-
 inline void Descriptor::set_link_type(size_t col_ndx, LinkType link_type)
 {
     typedef _impl::TableFriend tf;
@@ -764,6 +761,11 @@ public:
         desc.detach();
     }
 
+    static void detach_subdesc_accessors(Descriptor& desc) noexcept
+    {
+        desc.detach_subdesc_accessors();
+    }
+
     static Table& get_root_table(Descriptor& desc) noexcept
     {
         return *desc.m_root_table;
@@ -794,11 +796,6 @@ public:
         return desc.get_subdesc_accessor(column_ndx);
     }
 
-    static void move_column(Descriptor& desc, size_t from_ndx, size_t to_ndx)
-    {
-        return desc.move_column(from_ndx, to_ndx);
-    }
-
     static void adj_insert_column(Descriptor& desc, size_t col_ndx) noexcept
     {
         desc.adj_insert_column(col_ndx);
@@ -807,11 +804,6 @@ public:
     static void adj_erase_column(Descriptor& desc, size_t col_ndx) noexcept
     {
         desc.adj_erase_column(col_ndx);
-    }
-
-    static void adj_move_column(Descriptor& desc, size_t col_ndx_1, size_t col_ndx_2) noexcept
-    {
-        desc.adj_move_column(col_ndx_1, col_ndx_2);
     }
 };
 

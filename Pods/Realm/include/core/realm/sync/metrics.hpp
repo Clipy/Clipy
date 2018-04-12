@@ -76,14 +76,15 @@ public:
     void gauge(const char* key, double value) override
     {
         const char* metric = key;
-        m_dogless.gauge(metric, value); // Throws
+        m_gauges[key] = value;
+        m_dogless.gauge(metric, m_gauges[key]); // Throws
     }
 
     void gauge_relative(const char* key, double value) override
     {
         const char* metric = key;
-        double amount = value;
-        m_dogless.gauge_relative(metric, amount); // Throws
+        m_gauges[key] += value;
+        m_dogless.gauge(metric, m_gauges[key]); // Throws
     }
 
     void add_endpoint(const std::string& endpoint) override
@@ -93,6 +94,7 @@ public:
 
 private:
     dogless::BufferedStatsd m_dogless;
+    std::map<std::string, double> m_gauges;
 };
 
 #endif

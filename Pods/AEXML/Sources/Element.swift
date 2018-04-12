@@ -1,3 +1,9 @@
+/**
+ *  https://github.com/tadija/AEXML
+ *  Copyright (c) Marko Tadić 2014-2018
+ *  Licensed under the MIT license. See LICENSE file.
+ */
+
 import Foundation
 
 /**
@@ -91,7 +97,7 @@ open class AEXMLElement {
         - returns: Optional Array of found XML elements.
     */
     open func all(withValue value: String) -> [AEXMLElement]? {
-        let found = all?.flatMap {
+        let found = all?.compactMap {
             $0.value == value ? $0 : nil
         }
         return found
@@ -105,7 +111,7 @@ open class AEXMLElement {
         - returns: Optional Array of found XML elements.
     */
     open func all(containingAttributeKeys keys: [String]) -> [AEXMLElement]? {
-        let found = all?.flatMap { element in
+        let found = all?.compactMap { element in
             keys.reduce(true) { (result, key) in
                 result && Array(element.attributes.keys).contains(key)
             } ? element : nil
@@ -122,12 +128,66 @@ open class AEXMLElement {
     */
     open func all(withAttributes attributes: [String : String]) -> [AEXMLElement]? {
         let keys = Array(attributes.keys)
-        let found = all(containingAttributeKeys: keys)?.flatMap { element in
+        let found = all(containingAttributeKeys: keys)?.compactMap { element in
             attributes.reduce(true) { (result, attribute) in
                 result && element.attributes[attribute.key] == attribute.value
             } ? element : nil
         }
         return found
+    }
+    
+    /**
+        Returns all descendant elements which satisfy the given predicate.
+     
+        Searching is done vertically; children are tested before siblings. Elements appear in the list
+        in the order in which they are found.
+     
+        - parameter predicate: Function which returns `true` for a desired element and `false` otherwise.
+     
+        - returns: Array of found XML elements.
+    */
+    open func allDescendants(where predicate: (AEXMLElement) -> Bool) -> [AEXMLElement] {
+        var result: [AEXMLElement] = []
+        
+        for child in children {
+            if predicate(child) {
+                result.append(child)
+            }
+            result.append(contentsOf: child.allDescendants(where: predicate))
+        }
+        
+        return result
+    }
+    
+    /**
+        Returns the first descendant element which satisfies the given predicate, or nil if no such element is found.
+     
+        Searching is done vertically; children are tested before siblings.
+     
+        - parameter predicate: Function which returns `true` for the desired element and `false` otherwise.
+     
+        - returns: Optional AEXMLElement.
+    */
+    open func firstDescendant(where predicate: (AEXMLElement) -> Bool) -> AEXMLElement? {
+        for child in children {
+            if predicate(child) {
+                return child
+            } else if let descendant = child.firstDescendant(where: predicate) {
+                return descendant
+            }
+        }
+        return nil
+    }
+    
+    /**
+        Indicates whether the element has a descendant satisfying the given predicate.
+     
+        - parameter predicate: Function which returns `true` for the desired element and `false` otherwise.
+     
+        - returns: Bool.
+    */
+    open func hasDescendant(where predicate: (AEXMLElement) -> Bool) -> Bool {
+        return firstDescendant(where: predicate) != nil
     }
     
     // MARK: - XML Write
@@ -160,6 +220,18 @@ open class AEXMLElement {
     {
         let child = AEXMLElement(name: name, value: value, attributes: attributes)
         return addChild(child)
+    }
+    
+    /**
+        Adds an array of XML elements to `self`.
+    
+        - parameter children: Child XML element array to add.
+    
+        - returns: Child XML elements with `self` as `parent`.
+    */
+    @discardableResult open func addChildren(_ children: [AEXMLElement]) -> [AEXMLElement] {
+        children.forEach{ addChild($0) }
+        return children
     }
     
     /// Removes `self` from `parent` XML element.
@@ -240,6 +312,11 @@ open class AEXMLElement {
         return xml.components(separatedBy: chars).joined(separator: "")
     }
     
+    /// Same as `xmlString` but with 4 spaces instead '\t' characters
+    open var xmlSpaces: String {
+        let chars = CharacterSet(charactersIn: "\t")
+        return xml.components(separatedBy: chars).joined(separator: "    ")
+    }
 }
 
 public extension String {

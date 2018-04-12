@@ -31,14 +31,22 @@
 #include "schema.hpp"
 #include "thread_safe_reference.hpp"
 
-#include "util/compiler.hpp"
-#include "util/format.hpp"
-
 #include <realm/history.hpp>
 #include <realm/util/scope_exit.hpp>
 
 #if REALM_ENABLE_SYNC
+#include "sync/impl/sync_file.hpp"
+#include "sync/sync_config.hpp"
+#include "sync/sync_manager.hpp"
+
 #include <realm/sync/history.hpp>
+#include <realm/sync/permissions.hpp>
+#else
+namespace realm {
+namespace sync {
+    struct PermissionsCache {};
+}
+}
 #endif
 
 using namespace realm;
@@ -130,12 +138,21 @@ REALM_NOINLINE static void translate_file_exception(StringData path, bool immuta
     }
 }
 
+#if REALM_ENABLE_SYNC
+static bool is_nonupgradable_history(IncompatibleHistories const& ex)
+{
+    // FIXME: Replace this with a proper specific exception type once Core adds support for it.
+    return ex.what() == std::string("Incompatible histories. Nonupgradable history schema");
+}
+#endif
+
 void Realm::open_with_config(const Config& config,
                              std::unique_ptr<Replication>& history,
                              std::unique_ptr<SharedGroup>& shared_group,
                              std::unique_ptr<Group>& read_only_group,
                              Realm* realm)
 {
+    bool server_synchronization_mode = bool(config.sync_config) || config.force_sync_history;
     try {
         if (config.immutable()) {
             if (config.realm_data.is_null()) {
@@ -147,7 +164,6 @@ void Realm::open_with_config(const Config& config,
             }
         }
         else {
-            bool server_synchronization_mode = bool(config.sync_config) || config.force_sync_history;
             if (server_synchronization_mode) {
 #if REALM_ENABLE_SYNC
                 history = realm::sync::make_client_history(config.path);
@@ -181,6 +197,25 @@ void Realm::open_with_config(const Config& config,
         util::File::remove(config.path);
         open_with_config(config, history, shared_group, read_only_group, realm);
     }
+#if REALM_ENABLE_SYNC
+    catch (IncompatibleHistories const& ex) {
+        if (!server_synchronization_mode || !is_nonupgradable_history(ex))
+            translate_file_exception(config.path, config.immutable()); // Throws
+
+        // Move the Realm file into the recovery directory.
+        std::string recovery_directory = SyncManager::shared().recovery_directory_path();
+        std::string new_realm_path = util::reserve_unique_file_name(recovery_directory, "synced-realm-XXXXXXX");
+        util::File::move(config.path, new_realm_path);
+
+        const char* message = "The local copy of this synced Realm was created with an incompatible version of "
+                              "Realm. It has been moved aside, and the Realm will be re-downloaded the next time it "
+                              "is opened. You should write a handler for this error that uses the provided "
+                              "configuration to open the old Realm in read-only mode to recover any pending changes "
+                              "and then remove the Realm file.";
+        throw RealmFileException(RealmFileException::Kind::IncompatibleSyncedRealm, std::move(new_realm_path),
+                                 message, ex.what());
+    }
+#endif // REALM_ENABLE_SYNC
     catch (...) {
         translate_file_exception(config.path, config.immutable());
     }
@@ -191,6 +226,15 @@ Realm::~Realm()
     if (m_coordinator) {
         m_coordinator->unregister_realm(this);
     }
+}
+
+bool Realm::is_partial() const noexcept
+{
+#if REALM_ENABLE_SYNC
+    return m_config.sync_config && m_config.sync_config->is_partial;
+#else
+    return false;
+#endif
 }
 
 Group& Realm::read_group()
@@ -445,11 +489,16 @@ void Realm::update_schema(Schema schema, uint64_t version, MigrationFunction mig
         });
 
         ObjectStore::apply_schema_changes(read_group(), version, m_schema, m_schema_version,
-                                          m_config.schema_mode, required_changes, wrapper);
+                                          m_config.schema_mode, required_changes, util::none, wrapper);
     }
     else {
+        util::Optional<std::string> sync_user_id;
+#if REALM_ENABLE_SYNC
+        if (m_config.sync_config && m_config.sync_config->is_partial)
+            sync_user_id = m_config.sync_config->user->identity();
+#endif
         ObjectStore::apply_schema_changes(read_group(), m_schema_version, schema, version,
-                                          m_config.schema_mode, required_changes);
+                                          m_config.schema_mode, required_changes, std::move(sync_user_id));
         REALM_ASSERT_DEBUG(additive || (required_changes = ObjectStore::schema_from_group(read_group()).compare(schema)).empty());
     }
 
@@ -511,7 +560,24 @@ void Realm::cache_new_schema()
     m_new_schema = util::none;
 }
 
-void Realm::notify_schema_changed() {
+void Realm::translate_schema_error()
+{
+    // Open another copy of the file to read the new (incompatible) schema without changing
+    // our read transaction
+    auto config = m_config;
+    config.schema = util::none;
+    auto realm = Realm::make_shared_realm(std::move(config), nullptr);
+    auto& new_schema = realm->schema();
+
+    // Should always throw
+    ObjectStore::verify_valid_external_changes(m_schema.compare(new_schema, true));
+
+    // Something strange happened so just rethrow the old exception
+    throw;
+}
+
+void Realm::notify_schema_changed()
+{
     if (m_binding_context) {
         m_binding_context->schema_did_change(m_schema);
     }
@@ -592,7 +658,12 @@ void Realm::begin_transaction()
     m_is_sending_notifications = true;
     auto cleanup = util::make_scope_exit([this]() noexcept { m_is_sending_notifications = false; });
 
-    m_coordinator->promote_to_write(*this);
+    try {
+        m_coordinator->promote_to_write(*this);
+    }
+    catch (_impl::UnsupportedSchemaChange const&) {
+        translate_schema_error();
+    }
     cache_new_schema();
 }
 
@@ -607,6 +678,7 @@ void Realm::commit_transaction()
 
     m_coordinator->commit_write(*this);
     cache_new_schema();
+    invalidate_permission_cache();
 }
 
 void Realm::cancel_transaction()
@@ -619,6 +691,7 @@ void Realm::cancel_transaction()
     }
 
     transaction::cancel(*m_shared_group, m_binding_context.get());
+    invalidate_permission_cache();
 }
 
 void Realm::invalidate()
@@ -638,6 +711,7 @@ void Realm::invalidate()
         return;
     }
 
+    m_permissions_cache = nullptr;
     m_shared_group->end_read();
     m_group = nullptr;
 }
@@ -694,6 +768,7 @@ void Realm::notify()
     }
 
     verify_thread();
+    invalidate_permission_cache();
 
     // Any of the callbacks to user code below could drop the last remaining
     // strong reference to `this`
@@ -722,7 +797,12 @@ void Realm::notify()
     m_is_sending_notifications = true;
     if (m_auto_refresh) {
         if (m_group) {
-            m_coordinator->advance_to_ready(*this);
+            try {
+                m_coordinator->advance_to_ready(*this);
+            }
+            catch (_impl::UnsupportedSchemaChange const&) {
+                translate_schema_error();
+            }
             cache_new_schema();
         }
         else  {
@@ -750,6 +830,7 @@ bool Realm::refresh()
     if (m_is_sending_notifications) {
         return false;
     }
+    invalidate_permission_cache();
 
     // Any of the callbacks to user code below could drop the last remaining
     // strong reference to `this`
@@ -762,9 +843,14 @@ bool Realm::refresh()
         m_binding_context->before_notify();
     }
     if (m_group) {
-        bool version_changed = m_coordinator->advance_to_latest(*this);
-        cache_new_schema();
-        return version_changed;
+        try {
+            bool version_changed = m_coordinator->advance_to_latest(*this);
+            cache_new_schema();
+            return version_changed;
+        }
+        catch (_impl::UnsupportedSchemaChange const&) {
+            translate_schema_error();
+        }
     }
 
     // No current read transaction, so just create a new one
@@ -802,6 +888,7 @@ void Realm::close()
         m_coordinator->unregister_realm(this);
     }
 
+    m_permissions_cache = nullptr;
     m_group = nullptr;
     m_shared_group = nullptr;
     m_history = nullptr;
@@ -846,6 +933,7 @@ T Realm::resolve_thread_safe_reference(ThreadSafeReference<T> reference)
         throw MismatchedRealmException("Cannot resolve thread safe reference in Realm with different configuration "
                                        "than the source Realm.");
     }
+    invalidate_permission_cache();
 
     // Any of the callbacks to user code below could drop the last remaining
     // strong reference to `this`
@@ -881,6 +969,8 @@ T Realm::resolve_thread_safe_reference(ThreadSafeReference<T> reference)
             // With reference imported, advance temporary Realm to our version
             T imported_value = std::move(reference).import_into_realm(temporary_realm);
             transaction::advance(*temporary_realm->m_shared_group, nullptr, current_version);
+            if (!imported_value.is_valid())
+                return T{};
             reference = ThreadSafeReference<T>(imported_value);
         }
     }
@@ -891,6 +981,98 @@ T Realm::resolve_thread_safe_reference(ThreadSafeReference<T> reference)
 template Object Realm::resolve_thread_safe_reference(ThreadSafeReference<Object> reference);
 template List Realm::resolve_thread_safe_reference(ThreadSafeReference<List> reference);
 template Results Realm::resolve_thread_safe_reference(ThreadSafeReference<Results> reference);
+
+#if REALM_ENABLE_SYNC
+static_assert(static_cast<int>(ComputedPrivileges::Read) == static_cast<int>(sync::Privilege::Read), "");
+static_assert(static_cast<int>(ComputedPrivileges::Update) == static_cast<int>(sync::Privilege::Update), "");
+static_assert(static_cast<int>(ComputedPrivileges::Delete) == static_cast<int>(sync::Privilege::Delete), "");
+static_assert(static_cast<int>(ComputedPrivileges::SetPermissions) == static_cast<int>(sync::Privilege::SetPermissions), "");
+static_assert(static_cast<int>(ComputedPrivileges::Query) == static_cast<int>(sync::Privilege::Query), "");
+static_assert(static_cast<int>(ComputedPrivileges::Create) == static_cast<int>(sync::Privilege::Create), "");
+static_assert(static_cast<int>(ComputedPrivileges::ModifySchema) == static_cast<int>(sync::Privilege::ModifySchema), "");
+
+static constexpr const uint8_t s_allRealmPrivileges = sync::Privilege::Read
+                                                    | sync::Privilege::Update
+                                                    | sync::Privilege::SetPermissions
+                                                    | sync::Privilege::ModifySchema;
+static constexpr const uint8_t s_allClassPrivileges = sync::Privilege::Read
+                                                    | sync::Privilege::Update
+                                                    | sync::Privilege::Create
+                                                    | sync::Privilege::Query
+                                                    | sync::Privilege::SetPermissions;
+static constexpr const uint8_t s_allObjectPrivileges = sync::Privilege::Read
+                                                     | sync::Privilege::Update
+                                                     | sync::Privilege::Delete
+                                                     | sync::Privilege::SetPermissions;
+
+bool Realm::init_permission_cache()
+{
+    verify_thread();
+
+    if (m_permissions_cache) {
+        // Rather than trying to track changes to permissions tables, just skip the caching
+        // entirely within write transactions for now
+        if (is_in_transaction())
+            m_permissions_cache->clear();
+        return true;
+    }
+
+    // Admin users bypass permissions checks outside of the logic in PermissionsCache
+    if (m_config.sync_config && m_config.sync_config->is_partial && !m_config.sync_config->user->is_admin()) {
+        m_permissions_cache = std::make_unique<sync::PermissionsCache>(read_group(), m_config.sync_config->user->identity());
+        return true;
+    }
+    return false;
+}
+
+void Realm::invalidate_permission_cache()
+{
+    if (m_permissions_cache)
+        m_permissions_cache->clear();
+}
+
+ComputedPrivileges Realm::get_privileges()
+{
+    if (!init_permission_cache())
+        return static_cast<ComputedPrivileges>(s_allRealmPrivileges);
+    return static_cast<ComputedPrivileges>(m_permissions_cache->get_realm_privileges() & s_allRealmPrivileges);
+}
+
+static uint8_t inherited_mask(uint32_t privileges)
+{
+    uint8_t mask = ~0;
+    if (!(privileges & sync::Privilege::Read))
+        mask = 0;
+    else if (!(privileges & sync::Privilege::Update))
+        mask = static_cast<uint8_t>(sync::Privilege::Read | sync::Privilege::Query);
+    return mask;
+}
+
+ComputedPrivileges Realm::get_privileges(StringData object_type)
+{
+    if (!init_permission_cache())
+        return static_cast<ComputedPrivileges>(s_allClassPrivileges);
+    auto privileges = inherited_mask(m_permissions_cache->get_realm_privileges())
+                    & m_permissions_cache->get_class_privileges(object_type);
+    return static_cast<ComputedPrivileges>(privileges & s_allClassPrivileges);
+}
+
+ComputedPrivileges Realm::get_privileges(RowExpr row)
+{
+    if (!init_permission_cache())
+        return static_cast<ComputedPrivileges>(s_allObjectPrivileges);
+
+    auto& table = *row.get_table();
+    auto object_type = ObjectStore::object_type_for_table_name(table.get_name());
+    sync::GlobalID global_id{object_type, sync::object_id_for_row(read_group(), table, row.get_index())};
+    auto privileges = inherited_mask(m_permissions_cache->get_realm_privileges())
+                    & inherited_mask(m_permissions_cache->get_class_privileges(object_type))
+                    & m_permissions_cache->get_object_privileges(global_id);
+    return static_cast<ComputedPrivileges>(privileges & s_allObjectPrivileges);
+}
+#else
+void Realm::invalidate_permission_cache() { }
+#endif
 
 MismatchedConfigException::MismatchedConfigException(StringData message, StringData path)
 : std::logic_error(util::format(message.data(), path)) { }

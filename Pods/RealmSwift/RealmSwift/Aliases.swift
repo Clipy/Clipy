@@ -52,6 +52,11 @@ public typealias PropertyType = RLMPropertyType
 /**
  An opaque token which is returned from methods which subscribe to changes to a Realm.
 
- - see: `addNotificationBlock(_:)`
+ - see: `Realm.observe(_:)`
  */
 public typealias NotificationToken = RLMNotificationToken
+
+extension NotificationToken {
+    @available(*, unavailable, renamed: "invalidate()")
+    @nonobjc public func stop() { fatalError() }
+}

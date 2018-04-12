@@ -30,44 +30,104 @@ const int64_t detached_ref = -1;
 
 class RowIndexes;
 
-// SortDescriptor encapsulates a reference to a set of columns (possibly over links), which is
-// used to indicate the criteria columns for sort and distinct. Although the input is column
-// indices, it does not rely on those indices remaining stable as long as the columns continue to exist.
-class SortDescriptor {
-public:
-    SortDescriptor() = default;
-    SortDescriptor(SortDescriptor const&) = default;
-    SortDescriptor(SortDescriptor&&) = default;
-    SortDescriptor& operator=(SortDescriptor const&) = default;
-    SortDescriptor& operator=(SortDescriptor&&) = default;
+// Forward declaration needed for deleted CommonDescriptor constructor
+class SortDescriptor;
 
-    // Create a sort descriptor for the given columns on the given table.
+// CommonDescriptor encapsulates a reference to a set of columns (possibly over
+// links), which is used to indicate the criteria columns for sort and distinct.
+// Although the input is column indices, it does not rely on those indices
+// remaining stable as long as the columns continue to exist.
+class CommonDescriptor {
+public:
+    CommonDescriptor() = default;
+    // Enforce type saftey to prevent automatic conversion of derived class
+    // SortDescriptor into CommonDescriptor at compile time.
+    CommonDescriptor(const SortDescriptor&) = delete;
+    virtual ~CommonDescriptor() = default;
+
+    // Create a descriptor for the given columns on the given table.
     // Each vector in `column_indices` represents a chain of columns, where
     // all but the last are Link columns (n.b.: LinkList and Backlink are not
     // supported), and the final is any column type that can be sorted on.
     // `column_indices` must be non-empty, and each vector within it must also
-    // be non-empty. `ascending` must either be empty or have one entry for each
-    // column index chain.
-    SortDescriptor(Table const& table, std::vector<std::vector<size_t>> column_indices,
-                   std::vector<bool> ascending = {});
+    // be non-empty.
+    CommonDescriptor(Table const& table, std::vector<std::vector<size_t>> column_indices);
+    virtual std::unique_ptr<CommonDescriptor> clone() const;
 
     // returns whether this descriptor is valid and can be used to sort
-    explicit operator bool() const noexcept
+    bool is_valid() const noexcept
     {
         return !m_columns.empty();
     }
 
-    // handover support
-    using HandoverPatch = std::unique_ptr<SortDescriptorHandoverPatch>;
-    static void generate_patch(SortDescriptor const&, HandoverPatch&);
-    static SortDescriptor create_from_and_consume_patch(HandoverPatch&, Table const&);
-
     class Sorter;
-    Sorter sorter(IntegerColumn const& row_indexes) const;
+    virtual Sorter sorter(IntegerColumn const& row_indexes) const;
+
+    // handover support
+    std::vector<std::vector<size_t>> export_column_indices() const;
+    virtual std::vector<bool> export_order() const
+    {
+        return {};
+    }
+    virtual std::string get_description(TableRef attached_table) const;
+
+protected:
+    std::vector<std::vector<const ColumnBase*>> m_columns;
+};
+
+class SortDescriptor : public CommonDescriptor {
+public:
+    // Create a sort descriptor for the given columns on the given table.
+    // See CommonDescriptor for restrictions on `column_indices`.
+    // The sort order can be specified by using `ascending` which must either be
+    // empty or have one entry for each column index chain.
+    SortDescriptor(Table const& table, std::vector<std::vector<size_t>> column_indices,
+                   std::vector<bool> ascending = {});
+    SortDescriptor() = default;
+    ~SortDescriptor() = default;
+    std::unique_ptr<CommonDescriptor> clone() const override;
+
+    void merge_with(SortDescriptor&& other);
+
+    Sorter sorter(IntegerColumn const& row_indexes) const override;
+
+    // handover support
+    std::vector<bool> export_order() const override;
+    std::string get_description(TableRef attached_table) const override;
 
 private:
-    std::vector<std::vector<const ColumnBase*>> m_columns;
     std::vector<bool> m_ascending;
+};
+
+// Distinct uses the same syntax as sort except that the order is meaningless.
+typedef CommonDescriptor DistinctDescriptor;
+
+class DescriptorOrdering {
+public:
+    DescriptorOrdering() = default;
+    DescriptorOrdering(const DescriptorOrdering&);
+    DescriptorOrdering(DescriptorOrdering&&) = default;
+    DescriptorOrdering& operator=(const DescriptorOrdering&);
+    DescriptorOrdering& operator=(DescriptorOrdering&&) = default;
+
+    void append_sort(SortDescriptor sort);
+    void append_distinct(DistinctDescriptor distinct);
+    bool descriptor_is_sort(size_t index) const;
+    bool descriptor_is_distinct(size_t index) const;
+    bool is_empty() const { return m_descriptors.empty(); }
+    size_t size() const { return m_descriptors.size(); }
+    const CommonDescriptor* operator[](size_t ndx) const;
+    bool will_apply_sort() const;
+    bool will_apply_distinct() const;
+    std::string get_description(TableRef target_table) const;
+
+    // handover support
+    using HandoverPatch = std::unique_ptr<DescriptorOrderingHandoverPatch>;
+    static void generate_patch(DescriptorOrdering const&, HandoverPatch&);
+    static DescriptorOrdering create_from_and_consume_patch(HandoverPatch&, Table const&);
+
+private:
+    std::vector<std::unique_ptr<CommonDescriptor>> m_descriptors;
 };
 
 // This class is for common functionality of ListView and LinkView which inherit from it. Currently it only
@@ -113,7 +173,7 @@ public:
     IntegerColumn m_row_indexes;
 
 protected:
-    void do_sort(const SortDescriptor& sorting_predicate, const SortDescriptor& distinct_columns);
+    void do_sort(const DescriptorOrdering& ordering);
 
     static const uint64_t cookie_expected = 0x7765697677777777ull; // 0x77656976 = 'view'; 0x77777777 = '7777' = alive
     uint64_t m_debug_cookie;

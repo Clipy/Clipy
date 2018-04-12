@@ -46,6 +46,9 @@ static const char * const c_sync_new_name = "new_name";
 static const char * const c_sync_action = "action";
 static const char * const c_sync_url = "url";
 
+static const char * const c_sync_clientMetadata = "ClientMetadata";
+static const char * const c_sync_uuid = "uuid";
+
 realm::Schema make_schema()
 {
     using namespace realm;
@@ -65,6 +68,9 @@ realm::Schema make_schema()
             {c_sync_url, PropertyType::String},
             {c_sync_identity, PropertyType::String},
         }},
+        {c_sync_clientMetadata, {
+            {c_sync_uuid, PropertyType::String},
+        }}
     };
 }
 
@@ -81,13 +87,13 @@ SyncMetadataManager::SyncMetadataManager(std::string path,
     constexpr uint64_t SCHEMA_VERSION = 2;
 
     Realm::Config config;
-    config.path = std::move(path);
+    config.path = path;
     config.schema = make_schema();
     config.schema_version = SCHEMA_VERSION;
     config.schema_mode = SchemaMode::Automatic;
 #if REALM_PLATFORM_APPLE
     if (should_encrypt && !encryption_key) {
-        encryption_key = keychain::metadata_realm_encryption_key();
+        encryption_key = keychain::metadata_realm_encryption_key(File::exists(path));
     }
 #endif
     if (should_encrypt) {
@@ -143,6 +149,11 @@ SyncMetadataManager::SyncMetadataManager(std::string path,
         object_schema->persisted_properties[2].table_column,
         object_schema->persisted_properties[3].table_column,
         object_schema->persisted_properties[4].table_column,
+    };
+
+    object_schema = realm->schema().find(c_sync_clientMetadata);
+    m_client_schema = {
+        object_schema->persisted_properties[0].table_column,
     };
 
     m_metadata_config = std::move(config);
@@ -296,6 +307,26 @@ util::Optional<SyncFileActionMetadata> SyncMetadataManager::get_file_action_meta
         return none;
 
     return SyncFileActionMetadata(std::move(schema), std::move(realm), table->get(row_idx));
+}
+
+std::string SyncMetadataManager::client_uuid() const
+{
+    auto realm = Realm::get_shared_realm(m_metadata_config);
+    TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_clientMetadata);
+    if (table->is_empty()) {
+        realm->begin_transaction();
+        if (table->is_empty()) {
+            size_t idx = table->add_empty_row();
+            REALM_ASSERT_DEBUG(idx == 0);
+            auto uuid = uuid_string();
+            table->set_string(m_client_schema.idx_uuid, idx, uuid);
+            realm->commit_transaction();
+            return uuid;
+        }
+        realm->cancel_transaction();
+    }
+
+    return table->get_string(m_client_schema.idx_uuid, 0);
 }
 
 // MARK: - Sync user metadata

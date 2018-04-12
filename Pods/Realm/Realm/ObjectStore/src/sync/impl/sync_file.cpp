@@ -83,35 +83,6 @@ char decoded_char_for(const std::string& percent_encoding, size_t index)
 
 namespace util {
 
-void remove_nonempty_dir(const std::string& path)
-{
-    // Open the directory and list all the files.
-    DIR *dir_listing = opendir(path.c_str());
-    if (!dir_listing) {
-        return;
-    }
-    auto cleanup = util::make_scope_exit([=]() noexcept { closedir(dir_listing); });
-    while (struct dirent *file = readdir(dir_listing)) {
-        auto file_type = file->d_type;
-        std::string file_name = file->d_name;
-        if (file_name == "." || file_name == "..") {
-            continue;
-        }
-        if (file_type == DT_REG || file_type == DT_FIFO) {
-            File::try_remove(file_path_by_appending_component(path, file_name));
-        } else if (file_type == DT_DIR) {
-            // Directory, recurse
-            remove_nonempty_dir(file_path_by_appending_component(path, file_name, FilePathType::Directory));
-        }
-    }
-    // Delete the directory itself
-    try {
-        util::remove_dir(path);
-    }
-    catch (File::NotFound const&) {
-    }
-}
-
 std::string make_percent_encoded_string(const std::string& raw_string)
 {
     std::string buffer;
@@ -218,8 +189,13 @@ std::string reserve_unique_file_name(const std::string& path, const std::string&
         throw std::system_error(err, std::system_category());
     }
     // Remove the file so we can use the name for our own file.
+#ifdef _WIN32
+    _close(fd);
+    _unlink(path_buffer.c_str());
+#else
     close(fd);
     unlink(path_buffer.c_str());
+#endif
     return path_buffer;
 }
 
@@ -286,7 +262,7 @@ void SyncFileManager::remove_user_directory(const std::string& local_identity) c
     auto user_path = file_path_by_appending_component(get_base_sync_directory(),
                                                       escaped,
                                                       util::FilePathType::Directory);
-    util::remove_nonempty_dir(user_path);
+    util::try_remove_dir_recursive(user_path);
 }
 
 bool SyncFileManager::try_rename_user_directory(const std::string& old_name, const std::string& new_name) const
@@ -321,9 +297,7 @@ bool SyncFileManager::remove_realm(const std::string& absolute_path) const
     // Remove the management directory (e.g. "example.realm.management").
     auto management_path = util::file_path_by_appending_extension(absolute_path, "management");
     try {
-        util::remove_nonempty_dir(management_path);
-    }
-    catch (File::NotFound const&) {
+        util::try_remove_dir_recursive(management_path);
     }
     catch (File::AccessError const&) {
         success = false;
@@ -389,7 +363,7 @@ bool SyncFileManager::remove_metadata_realm() const
                                                      c_metadata_directory,
                                                      util::FilePathType::Directory);
     try {
-        util::remove_nonempty_dir(dir_path);
+        util::try_remove_dir_recursive(dir_path);
         return true;
     }
     catch (File::AccessError const&) {

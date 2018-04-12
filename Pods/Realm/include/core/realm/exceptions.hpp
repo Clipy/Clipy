@@ -85,6 +85,26 @@ public:
     /// runtime_error::what() returns the msg provided in the constructor.
 };
 
+/// Thrown when creating references that are too large to be contained in our ref_type (size_t)
+class MaximumFileSizeExceeded : public std::runtime_error {
+public:
+    MaximumFileSizeExceeded(const std::string& msg);
+    /// runtime_error::what() returns the msg provided in the constructor.
+};
+
+/// Thrown when writing fails because the disk is full.
+class OutOfDiskSpace : public std::runtime_error {
+public:
+    OutOfDiskSpace(const std::string& msg);
+    /// runtime_error::what() returns the msg provided in the constructor.
+};
+
+
+class SerialisationError : public std::runtime_error {
+public:
+    SerialisationError(const std::string& msg);
+    /// runtime_error::what() returns the msg provided in the constructor.
+};
 
 /// The \c LogicError exception class is intended to be thrown only when
 /// applications (or bindings) violate rules that are stated (or ought to have
@@ -208,7 +228,10 @@ public:
         table_has_no_columns,
 
         /// Referring to a column that has been deleted.
-        column_does_not_exist
+        column_does_not_exist,
+
+        /// You can not add index on a subtable of a subtable
+        subtable_of_subtable_index
     };
 
     LogicError(ErrorKind message);
@@ -259,6 +282,21 @@ inline const char* MultipleSyncAgents::what() const noexcept
 
 inline AddressSpaceExhausted::AddressSpaceExhausted(const std::string& msg)
     : std::runtime_error(msg)
+{
+}
+
+inline MaximumFileSizeExceeded::MaximumFileSizeExceeded(const std::string& msg)
+    : std::runtime_error(msg)
+{
+}
+
+inline OutOfDiskSpace::OutOfDiskSpace(const std::string& msg)
+: std::runtime_error(msg)
+{
+}
+
+inline SerialisationError::SerialisationError(const std::string& msg)
+: std::runtime_error(msg)
 {
 }
 

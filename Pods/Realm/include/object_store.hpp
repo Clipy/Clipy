@@ -22,11 +22,11 @@
 #include "property.hpp"
 
 #include <realm/table_ref.hpp>
+#include <realm/util/optional.hpp>
 
 #include <functional>
 #include <string>
 #include <vector>
-
 namespace realm {
 class Group;
 class Schema;
@@ -42,7 +42,7 @@ std::string format(const char* fmt, Args&&... args);
 class ObjectStore {
 public:
     // Schema version used for uninitialized Realms
-    static const uint64_t NotVersioned;
+    static constexpr uint64_t NotVersioned = std::numeric_limits<uint64_t>::max();
 
     // Column name used for subtables which store an array
     static constexpr const char* const ArrayColumnName = "!ARRAY_VALUE";
@@ -53,7 +53,6 @@ public:
     // set the schema version without any checks
     // and the tables for the schema version and the primary key are created if they don't exist
     // NOTE: must be performed within a write transaction
-    // FIXME remove this after integrating OS's migration related logic into Realm java
     static void set_schema_version(Group& group, uint64_t version);
 
     // check if all of the changes in the list can be applied automatically, or
@@ -86,7 +85,10 @@ public:
     static void apply_schema_changes(Group& group, uint64_t schema_version,
                                      Schema& target_schema, uint64_t target_schema_version,
                                      SchemaMode mode, std::vector<SchemaChange> const& changes,
+                                     util::Optional<std::string> sync_user_id,
                                      std::function<void()> migration_function={});
+
+    static void apply_additive_changes(Group&, std::vector<SchemaChange> const&, bool update_indexes);
 
     // get a table for an object type
     static realm::TableRef table_for_object_type(Group& group, StringData object_type);
@@ -94,6 +96,10 @@ public:
 
     // get existing Schema from a group
     static Schema schema_from_group(Group const& group);
+
+    // get the property for a existing column in the given table. return none if the column is reserved internally.
+    // NOTE: is_primary won't be set for the returned property.
+    static util::Optional<Property> property_for_column_index(ConstTableRef& table, size_t column_index);
 
     static void set_schema_columns(Group const& group, Schema& schema);
 
@@ -115,6 +121,9 @@ public:
 
     static std::string table_name_for_object_type(StringData class_name);
     static StringData object_type_for_table_name(StringData table_name);
+
+    // creates the private role for the given user if it does not exist
+    static void ensure_private_role_exists_for_user(Group& group, StringData sync_user_id);
 
 private:
     friend class ObjectSchema;
@@ -159,6 +168,10 @@ struct SchemaMismatchException : public std::logic_error {
 
 struct InvalidSchemaChangeException : public std::logic_error {
     InvalidSchemaChangeException(std::vector<ObjectSchemaValidationException> const& errors);
+};
+
+struct InvalidExternalSchemaChangeException : public std::logic_error {
+    InvalidExternalSchemaChangeException(std::vector<ObjectSchemaValidationException> const& errors);
 };
 } // namespace realm
 

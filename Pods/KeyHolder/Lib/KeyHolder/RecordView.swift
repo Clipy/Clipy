@@ -60,10 +60,10 @@ public protocol RecordViewDelegate: class {
     fileprivate let clearButton = NSButton()
     fileprivate let clearNormalImage = Util.bundleImage(name: "clear-off")
     fileprivate let clearAlternateImage = Util.bundleImage(name: "clear-on")
-    fileprivate let validModifiers: [NSEventModifierFlags] = [.shift, .control, .option, .command]
+    fileprivate let validModifiers: [NSEvent.ModifierFlags] = [.shift, .control, .option, .command]
     fileprivate let validModifiersText: [NSString] = ["⇧", "⌃", "⌥", "⌘"]
-    fileprivate var inputModifiers = NSEventModifierFlags(rawValue: 0)
-    fileprivate var doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+    fileprivate var inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
+    fileprivate var doubleTapModifier = NSEvent.ModifierFlags(rawValue: 0)
     fileprivate var multiModifiers = false
     fileprivate var fontSize: CGFloat {
         return bounds.height / 1.7
@@ -137,7 +137,7 @@ public protocol RecordViewDelegate: class {
 
     fileprivate func drawModifiers(_ dirtyRect: NSRect) {
         let fontSize = self.fontSize
-        let modifiers: NSEventModifierFlags
+        let modifiers: NSEvent.ModifierFlags
         if let keyCombo = self.keyCombo {
             modifiers = KeyTransformer.cocoaFlags(from: keyCombo.modifiers)
         } else {
@@ -275,7 +275,7 @@ public protocol RecordViewDelegate: class {
                         endRecording()
                     }
                 }
-                doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+                doubleTapModifier = NSEvent.ModifierFlags(rawValue: 0)
             } else {
                 if commandTapped {
                     doubleTapModifier = .command
@@ -286,7 +286,7 @@ public protocol RecordViewDelegate: class {
                 } else if optionTapped {
                     doubleTapModifier = .option
                 } else {
-                    doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+                    doubleTapModifier = NSEvent.ModifierFlags(rawValue: 0)
                 }
             }
 
@@ -294,10 +294,10 @@ public protocol RecordViewDelegate: class {
             let delay = 0.3 * Double(NSEC_PER_SEC)
             let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
-                self?.doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+                self?.doubleTapModifier = NSEvent.ModifierFlags(rawValue: 0)
             })
         } else {
-            inputModifiers = NSEventModifierFlags(rawValue: 0)
+            inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
         }
         
         super.flagsChanged(with: theEvent)
@@ -307,10 +307,10 @@ public protocol RecordViewDelegate: class {
 
 // MARK: - Text Attributes
 private extension RecordView {
-    func modifierTextAttributes(_ modifiers: NSEventModifierFlags, checkModifier: NSEventModifierFlags) -> [String: Any] {
+    func modifierTextAttributes(_ modifiers: NSEvent.ModifierFlags, checkModifier: NSEvent.ModifierFlags) -> [NSAttributedStringKey: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSCenterTextAlignment
-        paragraphStyle.lineBreakMode = NSLineBreakMode.byTruncatingTail
+        paragraphStyle.alignment = NSTextAlignment.center
+        paragraphStyle.lineBreakMode = NSParagraphStyle.LineBreakMode.byTruncatingTail
         paragraphStyle.baseWritingDirection = NSWritingDirection.leftToRight
         let textColor: NSColor
         if !enabled {
@@ -320,18 +320,18 @@ private extension RecordView {
         } else {
             textColor = .lightGray
         }
-        return [NSFontAttributeName: NSFont.systemFont(ofSize: floor(fontSize)),
-                NSForegroundColorAttributeName: textColor,
-                NSParagraphStyleAttributeName: paragraphStyle]
+        return [.font: NSFont.systemFont(ofSize: floor(fontSize)),
+                .foregroundColor: textColor,
+                .paragraphStyle: paragraphStyle]
     }
 
-    func keyCodeTextAttributes() -> [String: Any] {
+    func keyCodeTextAttributes() -> [NSAttributedStringKey: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSLineBreakMode.byTruncatingTail
+        paragraphStyle.lineBreakMode = NSParagraphStyle.LineBreakMode.byTruncatingTail
         paragraphStyle.baseWritingDirection = NSWritingDirection.leftToRight
-        return [NSFontAttributeName: NSFont.systemFont(ofSize: floor(fontSize)),
-                NSForegroundColorAttributeName: tintColor,
-                NSParagraphStyleAttributeName: paragraphStyle]
+        return [.font: NSFont.systemFont(ofSize: floor(fontSize)),
+                .foregroundColor: tintColor,
+                .paragraphStyle: paragraphStyle]
     }
 }
 
@@ -344,7 +344,7 @@ public extension RecordView {
         needsDisplay = true
 
         if let delegate = delegate , !delegate.recordViewShouldBeginRecording(self) {
-            NSBeep()
+            NSSound.beep()
             return false
         }
 
@@ -360,8 +360,8 @@ public extension RecordView {
     public func endRecording() {
         if !recording { return }
 
-        inputModifiers = NSEventModifierFlags(rawValue: 0)
-        doubleTapModifier = NSEventModifierFlags(rawValue: 0)
+        inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
+        doubleTapModifier = NSEvent.ModifierFlags(rawValue: 0)
         multiModifiers = false
 
         willChangeValue(forKey: "recording")
@@ -380,12 +380,12 @@ public extension RecordView {
 public extension RecordView {
     public func clear() {
         keyCombo = nil
-        inputModifiers = NSEventModifierFlags(rawValue: 0)
+        inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
         needsDisplay = true
         delegate?.recordViewDidClearShortcut(self)
     }
 
-    public func clearAndEndRecording() {
+    @objc public func clearAndEndRecording() {
         clear()
         endRecording()
     }
@@ -393,7 +393,7 @@ public extension RecordView {
 
 // MARK: - Modifiers
 private extension RecordView {
-    func validateModifiers(_ modifiers: NSEventModifierFlags?) -> Bool {
+    func validateModifiers(_ modifiers: NSEvent.ModifierFlags?) -> Bool {
         guard let modifiers = modifiers else { return false }
         return KeyTransformer.carbonFlags(from: modifiers) != 0
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
+		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
@@ -146,6 +147,7 @@
 		8460049F1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
+		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
 		CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Void.swift"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceSpec.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
@@ -369,6 +371,7 @@
 				FA1DB4B11DDCB452007F95C8 /* Realm+NoCatch.swift */,
 				FA1DB4B21DDCB452007F95C8 /* String+Substring.swift */,
 				FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */,
+				C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -560,7 +563,6 @@
 				FA4A5CDC1C7CAEDD0031BCEF /* Fabric */,
 				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				07B47785AE0AC2185B570C28 /* [CP] Embed Pods Frameworks */,
-				40BF6BFF1639341024558E7B /* [CP] Copy Pods Resources */,
 				FAAA88991E686CED0088FB34 /* BartyCrouch */,
 			);
 			buildRules = (
@@ -581,7 +583,6 @@
 				FAC43DD51B35D8B100C06102 /* Frameworks */,
 				FAC43DD61B35D8B100C06102 /* Resources */,
 				321A1AC02A519AFA3A4D43D2 /* [CP] Embed Pods Frameworks */,
-				80698BEE3B106BF31712F217 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -601,17 +602,17 @@
 			attributes = {
 				CLASSPREFIX = CPY;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Shunsuke Furubayashi";
 				TargetAttributes = {
 					FAC43DC51B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;
 						DevelopmentTeam = BBCHAJ584H;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0910;
 					};
 					FAC43DD71B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 0910;
 						TestTargetID = FAC43DC51B35D8B100C06102;
 					};
 				};
@@ -736,21 +737,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		40BF6BFF1639341024558E7B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clipy/Pods-Clipy-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7BFBD366B210014B03083E71 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -767,21 +753,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		80698BEE3B106BF31712F217 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8E8162F076D1C3115EAAB644 /* [CP] Check Pods Manifest.lock */ = {
@@ -861,6 +832,7 @@
 				FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */,
 				FA1DB4D31DDCB479007F95C8 /* CPYClip.swift in Sources */,
 				FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */,
+				C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */,
 				FA1DB4E61DDCB49C007F95C8 /* LocalizedString.swift in Sources */,
 				FA1DB4A31DDCB433007F95C8 /* Constants.swift in Sources */,
 				FA1DB4D61DDCB479007F95C8 /* CPYFolder.swift in Sources */,
@@ -1055,14 +1027,22 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1103,14 +1083,22 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1155,7 +1143,8 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1181,7 +1170,8 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1204,7 +1194,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipyapp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clipy.app/Contents/MacOS/Clipy";
 			};
 			name = Debug;
@@ -1224,7 +1215,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipyapp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clipy.app/Contents/MacOS/Clipy";
 			};
 			name = Release;

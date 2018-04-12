@@ -29,6 +29,9 @@ RLMIdentityProvider const RLMIdentityProviderFacebook               = @"facebook
 RLMIdentityProvider const RLMIdentityProviderTwitter                = @"twitter";
 RLMIdentityProvider const RLMIdentityProviderGoogle                 = @"google";
 RLMIdentityProvider const RLMIdentityProviderCloudKit               = @"cloudkit";
+RLMIdentityProvider const RLMIdentityProviderJWT                    = @"jwt";
+RLMIdentityProvider const RLMIdentityProviderAnonymous              = @"anonymous";
+RLMIdentityProvider const RLMIdentityProviderNickname               = @"nickname";
 
 @interface RLMSyncCredentials ()
 
@@ -63,6 +66,27 @@ RLMIdentityProvider const RLMIdentityProviderCloudKit               = @"cloudkit
                                     provider:RLMIdentityProviderUsernamePassword
                                     userInfo:@{kRLMSyncPasswordKey: password,
                                                kRLMSyncRegisterKey: @(shouldRegister)}];
+}
+
++ (instancetype)credentialsWithJWT:(NSString *)token {
+    return [[self alloc] initWithCustomToken:token provider:RLMIdentityProviderJWT userInfo:nil];
+}
+    
++ (instancetype)anonymousCredentials {
+    return [[self alloc] initWithCustomToken:@"" provider:RLMIdentityProviderAnonymous userInfo:nil];
+}
+    
++ (instancetype)credentialsWithNickname:(NSString *)nickname isAdmin:(BOOL)isAdmin {
+    return [[self alloc] initWithCustomToken:nickname
+                                    provider:RLMIdentityProviderNickname
+                                    userInfo:@{kRLMSyncIsAdminKey: @(isAdmin), kRLMSyncDataKey: nickname}];
+}
+
+/// Intended only for testing use. Will only work if the ROS is started with the `debug` provider enabled.
++ (instancetype)credentialsWithDebugUserID:(NSString *)userID isAdmin:(BOOL)isAdmin {
+    return [[self alloc] initWithCustomToken:userID
+                                    provider:RLMIdentityProviderDebug
+                                    userInfo:@{kRLMSyncIsAdminKey: @(isAdmin)}];
 }
 
 + (instancetype)credentialsWithAccessToken:(RLMServerToken)accessToken identity:(NSString *)identity {

@@ -24,7 +24,7 @@ class CPYDesignableButton: NSButton {
     }
 
     private func initView() {
-        let attributedString = NSAttributedString(string: title, attributes: [NSForegroundColorAttributeName: textColor])
+        let attributedString = NSAttributedString(string: title, attributes: [.foregroundColor: textColor])
         attributedTitle = attributedString
     }
 }

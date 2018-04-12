@@ -164,7 +164,7 @@ public func stringify<T>(_ value: T?) -> String {
     return "nil"
 }
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 @objc public class NMBStringer: NSObject {
     @objc public class func stringify(_ obj: Any?) -> String {
         return Nimble.stringify(obj)

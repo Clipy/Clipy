@@ -23,12 +23,6 @@ extension ObservableType where E: Equatable {
     }
 }
 
-extension ObservableType where E: OptionalType, E.Wrapped: Equatable {
-    func mapVoidDistinctUntilChanged() -> Observable<Void> {
-        return filterNil().distinctUntilChanged().map { _ in }
-    }
-}
-
 extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy {
     func mapVoid() -> Driver<Void> {
         return map { _ in  }
@@ -38,11 +32,5 @@ extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingSt
 extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy, E: Equatable {
     func mapVoidDistinctUntilChanged() -> Driver<Void> {
         return distinctUntilChanged().map { _ in }
-    }
-}
-
-extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy, E: OptionalType, E.Wrapped: Equatable {
-    func mapVoidDistinctUntilChanged() -> Driver<Void> {
-        return filterNil().distinctUntilChanged().map { _ in }
     }
 }

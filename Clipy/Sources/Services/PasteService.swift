@@ -34,7 +34,7 @@ final class PasteService {
 
     // MARK: - Modifiers
     private func isPressedModifier(_ flag: Int) -> Bool {
-        let flags = NSEvent.modifierFlags()
+        let flags = NSEvent.modifierFlags
         if flag == 0 && flags.contains(.command) {
             return true
         } else if flag == 1 && flags.contains(.shift) {
@@ -85,9 +85,9 @@ extension PasteService {
     func copyToPasteboard(with string: String) {
         lock.lock(); defer { lock.unlock() }
 
-        let pasteboard = NSPasteboard.general()
-        pasteboard.declareTypes([NSStringPboardType], owner: nil)
-        pasteboard.setString(string, forType: NSStringPboardType)
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes([.deprecatedString], owner: nil)
+        pasteboard.setString(string, forType: .deprecatedString)
     }
 
     func copyToPasteboard(with clip: CPYClip) {
@@ -100,36 +100,32 @@ extension PasteService {
             return
         }
 
-        let pasteboard = NSPasteboard.general()
+        let pasteboard = NSPasteboard.general
         let types = data.types
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
             switch type {
-            case NSStringPboardType:
+            case .deprecatedString:
                 let pbString = data.stringValue
-                pasteboard.setString(pbString, forType: NSStringPboardType)
-            case NSRTFDPboardType:
-                if let rtfData = data.RTFData {
-                    pasteboard.setData(rtfData, forType: NSRTFDPboardType)
-                }
-            case NSRTFPboardType:
-                if let rtfData = data.RTFData {
-                    pasteboard.setData(rtfData, forType: NSRTFPboardType)
-                }
-            case NSPDFPboardType:
-                if let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) {
-                    pasteboard.setData(pdfRep.pdfRepresentation, forType: NSPDFPboardType)
-                }
-            case NSFilenamesPboardType:
+                pasteboard.setString(pbString, forType: .deprecatedString)
+            case .deprecatedRTFD:
+                guard let rtfData = data.RTFData else { return }
+                pasteboard.setData(rtfData, forType: .deprecatedRTFD)
+            case .deprecatedRTF:
+                guard let rtfData = data.RTFData else { return }
+                pasteboard.setData(rtfData, forType: .deprecatedRTF)
+            case .deprecatedPDF:
+                guard let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
+                pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
+            case .deprecatedFilenames:
                 let fileNames = data.fileNames
-                pasteboard.setPropertyList(fileNames, forType: NSFilenamesPboardType)
-            case NSURLPboardType:
+                pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
+            case .deprecatedURL:
                 let url = data.URLs
-                pasteboard.setPropertyList(url, forType: NSURLPboardType)
-            case NSTIFFPboardType:
-                if let image = data.image, let imageData = image.tiffRepresentation {
-                    pasteboard.setData(imageData, forType: NSTIFFPboardType)
-                }
+                pasteboard.setPropertyList(url, forType: .deprecatedURL)
+            case .deprecatedTIFF:
+                guard let image = data.image, let imageData = image.tiffRepresentation else { return }
+                pasteboard.setData(imageData, forType: .deprecatedTIFF)
             default: break
             }
         }

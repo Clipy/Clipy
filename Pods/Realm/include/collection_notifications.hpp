@@ -35,7 +35,7 @@ namespace _impl {
 // A token which keeps an asynchronous query alive
 struct NotificationToken {
     NotificationToken() = default;
-    NotificationToken(std::shared_ptr<_impl::CollectionNotifier> notifier, size_t token);
+    NotificationToken(std::shared_ptr<_impl::CollectionNotifier> notifier, uint64_t token);
     ~NotificationToken();
 
     NotificationToken(NotificationToken&&);
@@ -48,7 +48,7 @@ struct NotificationToken {
 
 private:
     util::AtomicSharedPtr<_impl::CollectionNotifier> m_notifier;
-    size_t m_token;
+    uint64_t m_token;
 };
 
 struct CollectionChangeSet {

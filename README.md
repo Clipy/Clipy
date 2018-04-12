@@ -21,9 +21,9 @@ __Distribution Site__ : <https://clipy-app.com>
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
 ### Development Environment
-* OS X Sierra
-* Xcode 8.2
-* Swift 3.0
+* macOS 10.13 High Sierra
+* Xcode 9.3
+* Swift 4.1
 
 ### How to Build
 0. Move to the project root directory

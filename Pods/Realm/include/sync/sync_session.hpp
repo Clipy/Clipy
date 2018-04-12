@@ -19,10 +19,11 @@
 #ifndef REALM_OS_SYNC_SESSION_HPP
 #define REALM_OS_SYNC_SESSION_HPP
 
+#include "feature_checks.hpp"
+#include "sync/sync_config.hpp"
+
 #include <realm/util/optional.hpp>
 #include <realm/version_id.hpp>
-
-#include "sync_config.hpp"
 
 #include <mutex>
 #include <unordered_map>
@@ -35,13 +36,13 @@ class SyncUser;
 namespace _impl {
 class RealmCoordinator;
 struct SyncClient;
+class WriteTransactionNotifyingSync;
 
 namespace sync_session_states {
 struct WaitingForAccessToken;
 struct Active;
 struct Dying;
 struct Inactive;
-struct Error;
 }
 }
 
@@ -52,6 +53,63 @@ class Session;
 using SyncSessionTransactCallback = void(VersionID old_version, VersionID new_version);
 using SyncProgressNotifierCallback = void(uint64_t transferred_bytes, uint64_t transferrable_bytes);
 
+namespace _impl {
+class SyncProgressNotifier {
+public:
+    enum class NotifierType {
+        upload, download
+    };
+
+    uint64_t register_callback(std::function<SyncProgressNotifierCallback>,
+                               NotifierType direction, bool is_streaming);
+    void unregister_callback(uint64_t);
+
+    void set_local_version(uint64_t);
+    void update(uint64_t downloaded, uint64_t downloadable,
+                uint64_t uploaded, uint64_t uploadable, uint64_t, uint64_t);
+
+private:
+    mutable std::mutex m_mutex;
+
+    // How many bytes are uploadable or downloadable.
+    struct Progress {
+        uint64_t uploadable;
+        uint64_t downloadable;
+        uint64_t uploaded;
+        uint64_t downloaded;
+        uint64_t snapshot_version;
+    };
+
+    // A PODS encapsulating some information for progress notifier callbacks a binding
+    // can register upon this session.
+    struct NotifierPackage {
+        std::function<SyncProgressNotifierCallback> notifier;
+        util::Optional<uint64_t> captured_transferrable;
+        uint64_t snapshot_version;
+        bool is_streaming;
+        bool is_download;
+
+        std::function<void()> create_invocation(const Progress&, bool&);
+    };
+
+    // A counter used as a token to identify progress notifier callbacks registered on this session.
+    uint64_t m_progress_notifier_token = 1;
+    // Version of the last locally-created transaction that we're expecting to be uploaded.
+    uint64_t m_local_transaction_version = 0;
+
+    // Will be `none` until we've received the initial notification from sync.  Note that this
+    // happens only once ever during the lifetime of a given `SyncSession`, since these values are
+    // expected to semi-monotonically increase, and a lower-bounds estimate is still useful in the
+    // event more up-to-date information isn't yet available.  FIXME: If we support transparent
+    // client reset in the future, we might need to reset the progress state variables if the Realm
+    // is rolled back.
+    util::Optional<Progress> m_current_progress;
+
+    std::unordered_map<uint64_t, NotifierPackage> m_packages;
+};
+
+} // namespace _impl
+
 class SyncSession : public std::enable_shared_from_this<SyncSession> {
 public:
     enum class PublicState {
@@ -59,13 +117,14 @@ public:
         Active,
         Dying,
         Inactive,
+
+        // FIXME: This state no longer exists. This should be removed.
         Error,
     };
     PublicState state() const;
 
-    bool is_in_error_state() const {
-        return state() == PublicState::Error;
-    }
+    // FIXME: The error state no longer exists. This should be removed.
+    bool is_in_error_state() const { return false; }
 
     // The on-disk path of the Realm file backing the Realm this `SyncSession` represents.
     std::string const& path() const { return m_realm_path; }
@@ -84,9 +143,7 @@ public:
     // Works the same way as `wait_for_upload_completion()`.
     bool wait_for_download_completion(std::function<void(std::error_code)> callback);
 
-    enum class NotifierType {
-        upload, download
-    };
+    using NotifierType = _impl::SyncProgressNotifier::NotifierType;
     // Register a notifier that updates the app regarding progress.
     //
     // If `m_current_progress` is populated when this method is called, the notifier
@@ -134,14 +191,28 @@ public:
     // FIXME: we need an API to allow the binding to tell sync that the access token fetch failed
     // or was cancelled, and cannot be retried.
 
-    // Give the `SyncSession` an administrator token, and ask it to immediately `bind()` the session.
-    void bind_with_admin_token(std::string admin_token, std::string server_url);
+    // Set the multiplex identifier used for this session. Sessions with different identifiers are
+    // never multiplexed into a single connection, even if they are connecting to the same host.
+    // The value of the token is otherwise treated as an opaque token.
+    //
+    // Has no effect if session multiplexing is not enabled (see SyncManager::enable_session_multiplexing())
+    // or if called after the Sync session is created. In particular, changing the multiplex identity will
+    // not make the session reconnect.
+    void set_multiplex_identifier(std::string multiplex_identity);
 
     // Inform the sync session that it should close.
     void close();
 
     // Inform the sync session that it should log out.
     void log_out();
+
+    // Override the address and port of the server that this `SyncSession` is connected to. If the
+    // session is already connected, it will disconnect and then reconnect to the specified address.
+    // If it's not already connected, future connection attempts will be to the specified address.
+    //
+    // NOTE: This is intended for use only in very specific circumstances. Please check with the
+    // object store team before using it.
+    void override_server(std::string address, int port);
 
     // An object representing the user who owns the Realm this `SyncSession` represents.
     std::shared_ptr<SyncUser> user() const
@@ -173,16 +244,12 @@ public:
     // without making it public to everyone
     class Internal {
         friend class _impl::RealmCoordinator;
+        friend class _impl::WriteTransactionNotifyingSync;
 
         static void set_sync_transact_callback(SyncSession& session,
                                                std::function<SyncSessionTransactCallback> callback)
         {
             session.set_sync_transact_callback(std::move(callback));
-        }
-
-        static void set_error_handler(SyncSession& session, std::function<SyncSessionErrorHandler> callback)
-        {
-            session.set_error_handler(std::move(callback));
         }
 
         static void nonsync_transact_notify(SyncSession& session, VersionID::version_type version)
@@ -197,21 +264,6 @@ public:
         {
             session.handle_error(std::move(error));
         }
-
-        static void handle_progress_update(SyncSession& session, uint64_t downloaded, uint64_t downloadable,
-                                           uint64_t uploaded, uint64_t uploadable, bool is_fresh=true) {
-            session.handle_progress_update(downloaded, downloadable, uploaded, uploadable, is_fresh);
-        }
-
-        static bool has_stale_progress(SyncSession& session)
-        {
-            return session.m_current_progress != none && !session.m_latest_progress_data_is_fresh;
-        }
-
-        static bool has_fresh_progress(SyncSession& session)
-        {
-            return session.m_latest_progress_data_is_fresh;
-        }
     };
 
 private:
@@ -222,22 +274,30 @@ private:
     friend struct _impl::sync_session_states::Active;
     friend struct _impl::sync_session_states::Dying;
     friend struct _impl::sync_session_states::Inactive;
-    friend struct _impl::sync_session_states::Error;
 
     friend class realm::SyncManager;
     // Called by SyncManager {
-    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
+    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
+    {
+        struct MakeSharedEnabler : public SyncSession {
+            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
+            : SyncSession(client, std::move(realm_path), std::move(config))
+            {}
+        };
+        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config));
+    }
     // }
 
+    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
 
     void handle_error(SyncError);
+    void cancel_pending_waits();
     enum class ShouldBackup { yes, no };
     void update_error_and_mark_file_for_deletion(SyncError&, ShouldBackup);
     static std::string get_recovery_file_path();
-    void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t, bool);
+    void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
-    void set_error_handler(std::function<SyncSessionErrorHandler>);
     void nonsync_transact_notify(VersionID::version_type);
 
     void advance_state(std::unique_lock<std::mutex>& lock, const State&);
@@ -247,44 +307,8 @@ private:
     void did_drop_external_reference();
 
     std::function<SyncSessionTransactCallback> m_sync_transact_callback;
-    std::function<SyncSessionErrorHandler> m_error_handler;
-
-    // How many bytes are uploadable or downloadable.
-    struct Progress {
-        uint64_t uploadable;
-        uint64_t downloadable;
-        uint64_t uploaded;
-        uint64_t downloaded;
-    };
-
-    // A PODS encapsulating some information for progress notifier callbacks a binding
-    // can register upon this session.
-    struct NotifierPackage {
-        std::function<SyncProgressNotifierCallback> notifier;
-        bool is_streaming;
-        NotifierType direction;
-        util::Optional<uint64_t> captured_transferrable;
-
-        void update(const Progress&, bool);
-        std::function<void()> create_invocation(const Progress&, bool&) const;
-    };
-
-    // A counter used as a token to identify progress notifier callbacks registered on this session.
-    uint64_t m_progress_notifier_token = 1;
-    bool m_latest_progress_data_is_fresh;
-
-    // Will be `none` until we've received the initial notification from sync.  Note that this
-    // happens only once ever during the lifetime of a given `SyncSession`, since these values are
-    // expected to semi-monotonically increase, and a lower-bounds estimate is still useful in the
-    // event more up-to-date information isn't yet available.  FIXME: If we support transparent
-    // client reset in the future, we might need to reset the progress state variables if the Realm
-    // is rolled back.
-    util::Optional<Progress> m_current_progress;
-
-    std::unordered_map<uint64_t, NotifierPackage> m_notifiers;
 
     mutable std::mutex m_state_mutex;
-    mutable std::mutex m_progress_notifier_mutex;
 
     const State* m_state = nullptr;
     size_t m_death_count = 0;
@@ -300,6 +324,12 @@ private:
         std::function<void(std::error_code)> callback;
     };
     std::vector<CompletionWaitPackage> m_completion_wait_packages;
+
+    struct ServerOverride {
+        std::string address;
+        int port;
+    };
+    util::Optional<ServerOverride> m_server_override;
 
     // The underlying `Session` object that is owned and managed by this `SyncSession`.
     // The session is first created when the `SyncSession` is moved out of its initial `inactive` state.
@@ -317,6 +347,10 @@ private:
 
     // The fully-resolved URL of this Realm, including the server and the path.
     util::Optional<std::string> m_server_url;
+
+    std::string m_multiplex_identity;
+
+    _impl::SyncProgressNotifier m_notifier;
 
     class ExternalReference;
     std::weak_ptr<ExternalReference> m_external_reference;

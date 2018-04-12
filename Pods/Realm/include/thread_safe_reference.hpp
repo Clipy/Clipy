@@ -19,7 +19,6 @@
 #ifndef REALM_THREAD_SAFE_REFERENCE_HPP
 #define REALM_THREAD_SAFE_REFERENCE_HPP
 
-#include "descriptor_ordering.hpp"
 
 #include <realm/group_shared.hpp>
 

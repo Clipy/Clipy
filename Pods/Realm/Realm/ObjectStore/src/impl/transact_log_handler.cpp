@@ -275,7 +275,7 @@ class TransactLogValidationMixin {
     REALM_NOINLINE
     void schema_error()
     {
-        throw std::logic_error("Schema mismatch detected: another process has modified the Realm file's schema in an incompatible way");
+        throw _impl::UnsupportedSchemaChange();
     }
 
 protected:
@@ -316,6 +316,7 @@ public:
     bool insert_empty_rows(size_t, size_t, size_t, bool) { return true; }
     bool erase_rows(size_t, size_t, size_t, bool) { return true; }
     bool swap_rows(size_t, size_t) { return true; }
+    bool move_row(size_t, size_t) { return true; }
     bool clear_table(size_t=0) noexcept { return true; }
     bool link_list_set(size_t, size_t, size_t) { return true; }
     bool link_list_insert(size_t, size_t, size_t) { return true; }
@@ -609,6 +610,15 @@ public:
         return true;
     }
 
+    bool move_row(size_t from_ndx, size_t to_ndx) {
+        // Move row is not supported for top level tables:
+        REALM_ASSERT(!m_active_table || !m_is_top_level_table);
+
+        if (m_active_table)
+            m_active_table->move(from_ndx, to_ndx);
+        return true;
+    }
+
     bool merge_rows(size_t from, size_t to)
     {
         if (m_active_table)
@@ -769,27 +779,41 @@ void advance_with_notifications(BindingContext* context, const std::unique_ptr<S
         auto new_version = sg->get_version_of_current_transaction();
         if (context && old_version != new_version)
             context->did_change({}, {});
-        // did_change() could close the Realm. Just return if it does.
-        if (!sg)
+        if (!sg) // did_change() could close the Realm. Just return if it does.
+            return;
+        if (context)
+            context->will_send_notifications();
+        if (!sg) // will_send_notifications() could close the Realm. Just return if it does.
             return;
         // did_change() can change the read version, and if it does we can't
         // deliver notifiers
         if (new_version == sg->get_version_of_current_transaction())
             notifiers.deliver(*sg);
         notifiers.after_advance();
+        if (sg && context)
+            context->did_send_notifications();
         return;
     }
 
+    if (context)
+        context->will_send_notifications();
     func(KVOTransactLogObserver(observers, context, notifiers, *sg));
     notifiers.package_and_wait(sg->get_version_of_current_transaction().version); // is a no-op if parse_complete() was called
     notifiers.deliver(*sg);
     notifiers.after_advance();
+    if (context)
+        context->did_send_notifications();
 }
 
 } // anonymous namespace
 
 namespace realm {
 namespace _impl {
+
+UnsupportedSchemaChange::UnsupportedSchemaChange()
+: std::logic_error("Schema mismatch detected: another process has modified the Realm file's schema in an incompatible way")
+{
+}
 
 namespace transaction {
 void advance(SharedGroup& sg, BindingContext*, VersionID version)
@@ -844,7 +868,6 @@ void advance(SharedGroup& sg, TransactionChangeInfo& info, VersionID version)
     else {
         LangBindHelper::advance_read(sg, TransactLogObserver(info), version);
     }
-
 }
 
 } // namespace transaction

@@ -43,7 +43,7 @@ public final class ScreenShotObserver: NSObject {
         query.delegate = nil
     }
 
-    func updateQuery(_ notification: Notification) {
+    @objc func updateQuery(_ notification: Notification) {
         if !isEnabled { return }
 
         if let items = notification.userInfo?[kMDQueryUpdateAddedItems as String] as? [NSMetadataItem] {

@@ -42,6 +42,7 @@
 #include <realm/link_view_fwd.hpp>
 #include <realm/descriptor_fwd.hpp>
 #include <realm/row.hpp>
+#include <realm/util/serializer.hpp>
 
 namespace realm {
 
@@ -56,6 +57,10 @@ class Array;
 class Expression;
 class SequentialGetterBase;
 class Group;
+
+namespace metrics {
+class QueryInfo;
+}
 
 struct QueryGroup {
     enum class State {
@@ -228,11 +233,12 @@ public:
     Query& not_equal(size_t column_ndx, const char* c_str, bool case_sensitive = true);
 
     // Conditions: binary data
-    Query& equal(size_t column_ndx, BinaryData value);
-    Query& not_equal(size_t column_ndx, BinaryData value);
-    Query& begins_with(size_t column_ndx, BinaryData value);
-    Query& ends_with(size_t column_ndx, BinaryData value);
-    Query& contains(size_t column_ndx, BinaryData value);
+    Query& equal(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& not_equal(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& begins_with(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& ends_with(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& contains(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& like(size_t column_ndx, BinaryData b, bool case_sensitive = true);
 
     // Negation
     Query& Not();
@@ -337,6 +343,9 @@ public:
 
     std::string validate();
 
+    std::string get_description() const;
+    std::string get_description(util::serializer::SerialisationState& state) const;
+
 private:
     Query(Table& table, TableViewBase* tv = nullptr);
     void create();
@@ -429,6 +438,7 @@ private:
 
     friend class Table;
     friend class TableViewBase;
+    friend class metrics::QueryInfo;
 
     std::string error_code;
 

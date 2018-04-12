@@ -7,8 +7,8 @@ Easy manage login items in MacOSX
 
 ## Requirements
 - macOS 10.9+
-- Xcode 8.0+
-- Swift 3.0+
+- Xcode 9.0+
+- Swift 4.0+
 
 ## Usage
 ### CocoaPods

@@ -126,14 +126,6 @@ public:
     /// instance), the caller (SharedGroup::do_open()) must take steps to ensure
     /// cross-process mutual exclusion.
     ///
-    /// If the attached file contains an empty Realm (one whose top-ref is
-    /// zero), the file format version may remain undecided upon return from
-    /// this function. The file format is undecided if, and only if
-    /// get_file_format_version() returns zero. The caller is required to check
-    /// for this case, and decide on a file format version. This must happen
-    /// before the Realm opening process completes, and the decided file format
-    /// must be set in the allocator by calling set_file_format_version().
-    ///
     /// Except for \a file_path, the parameters are passed in through a
     /// configuration object.
     ///
@@ -157,14 +149,6 @@ public:
 
     /// Attach this allocator to the specified memory buffer.
     ///
-    /// If the attached buffer contains an empty Realm (one whose top-ref is
-    /// zero), the file format version may remain undecided upon return from
-    /// this function. The file format is undecided if, and only if
-    /// get_file_format_version() returns zero. The caller is required to check
-    /// for this case, and decide on a file format version. This must happen
-    /// before the Realm opening process completes, and the decided file format
-    /// must be set in the allocator by calling set_file_format_version().
-    ///
     /// It is an error to call this function on an attached
     /// allocator. Doing so will result in undefined behavor.
     ///
@@ -180,12 +164,6 @@ public:
     int get_committed_file_format_version() const noexcept;
 
     /// Attach this allocator to an empty buffer.
-    ///
-    /// Upon return from this function, the file format is undecided
-    /// (get_file_format_version() returns zero). The caller is required to
-    /// decide on a file format version. This must happen before the Realm
-    /// opening process completes, and the decided file format must be set in
-    /// the allocator by calling set_file_format_version().
     ///
     /// It is an error to call this function on an attached
     /// allocator. Doing so will result in undefined behavor.
@@ -238,6 +216,12 @@ public:
     /// attached to a file. Doing so will result in undefined behavior.
     void resize_file(size_t new_file_size);
 
+#ifdef REALM_DEBUG
+    /// Deprecated method, only called from a unit test
+    ///
+    /// WARNING: This method is NOT thread safe on multiple platforms; see
+    /// File::prealloc().
+    ///
     /// Reserve disk space now to avoid allocation errors at a later point in
     /// time, and to minimize on-disk fragmentation. In some cases, less
     /// fragmentation translates into improved performance. On SSD-drives
@@ -249,15 +233,14 @@ public:
     /// allocation is done lazily by default). If the file is already bigger
     /// than the specified size, the size will be unchanged, and on-disk
     /// allocation will occur only for the initial section that corresponds to
-    /// the specified size. On systems that do not support preallocation, this
-    /// function has no effect. To know whether preallocation is supported by
-    /// Realm on your platform, call util::File::is_prealloc_supported().
+    /// the specified size.
     ///
     /// This function will call File::sync() if it changes the size of the file.
     ///
     /// It is an error to call this function on an allocator that is not
     /// attached to a file. Doing so will result in undefined behavior.
     void reserve_disk_space(size_t size_in_bytes);
+#endif
 
     /// Get the size of the attached database file or buffer in number
     /// of bytes. This size is not affected by new allocations. After
@@ -304,18 +287,6 @@ public:
     /// call to SlabAlloc::alloc() corresponds to a mutation event.
     bool is_free_space_clean() const noexcept;
 
-    /// \brief Update the file format version field of the allocator.
-    ///
-    /// This must be done during the opening of the Realm if the stored file
-    /// format version is zero (empty Realm), or after the file format is
-    /// upgraded.
-    ///
-    /// Note that this does not modify the attached file, only the "cached"
-    /// value subsequenty returned by get_file_format_version().
-    ///
-    /// \sa get_file_format_version()
-    void set_file_format_version(int) noexcept;
-
     void verify() const override;
 #ifdef REALM_DEBUG
     void enable_debug(bool enable)
@@ -333,6 +304,36 @@ protected:
     // FIXME: It would be very nice if we could detect an invalid free operation in debug mode
     void do_free(ref_type, const char*) noexcept override;
     char* do_translate(ref_type) const noexcept override;
+
+    /// Returns the first section boundary *above* the given position.
+    size_t get_upper_section_boundary(size_t start_pos) const noexcept;
+
+    /// Returns the first section boundary *at or below* the given position.
+    size_t get_lower_section_boundary(size_t start_pos) const noexcept;
+
+    /// Returns true if the given position is at a section boundary
+    bool matches_section_boundary(size_t pos) const noexcept;
+
+    /// Returns the index of the section holding a given address.
+    /// The section index is determined solely by the minimal section size,
+    /// and does not necessarily reflect the mapping. A mapping may
+    /// cover multiple sections - the initial mapping often does.
+    size_t get_section_index(size_t pos) const noexcept;
+
+    /// Reverse: get the base offset of a section at a given index. Since the
+    /// computation is very time critical, this method just looks it up in
+    /// a table. The actual computation and setup of that table is done
+    /// during initialization with the help of compute_section_base() below.
+    inline size_t get_section_base(size_t index) const noexcept;
+
+    /// Actually compute the starting offset of a section. Only used to initialize
+    /// a table of predefined results, which are then used by get_section_base().
+    size_t compute_section_base(size_t index) const noexcept;
+
+    /// Find a possible allocation of 'request_size' that will fit into a section
+    /// which is inside the range from 'start_pos' to 'start_pos'+'free_chunk_size'
+    /// If found return the position, if not return 0.
+    size_t find_section_in_range(size_t start_pos, size_t free_chunk_size, size_t request_size) const noexcept;
 
 private:
     void internal_invalidate_cache() noexcept;
@@ -407,7 +408,6 @@ private:
     std::unique_ptr<size_t[]> m_section_bases;
     size_t m_num_section_bases = 0;
     AttachMode m_attach_mode = attach_None;
-    bool m_file_on_streaming_form = false;
     enum FeeeSpaceState {
         free_space_Clean,
         free_space_Dirty,
@@ -447,11 +447,12 @@ private:
     /// Throws InvalidDatabase if the file is not a Realm file, if the file is
     /// corrupted, or if the specified encryption key is incorrect. This
     /// function will not detect all forms of corruption, though.
-    void validate_buffer(const char* data, size_t len, const std::string& path, bool is_shared);
+    void validate_buffer(const char* data, size_t len, const std::string& path);
 
+    static bool is_file_on_streaming_form(const Header& header);
     /// Read the top_ref from the given buffer and set m_file_on_streaming_form
     /// if the buffer contains a file in streaming form
-    ref_type get_top_ref(const char* data, size_t len);
+    static ref_type get_top_ref(const char* data, size_t len);
 
     class ChunkRefEq;
     class ChunkRefEndEq;
@@ -466,36 +467,6 @@ private:
     {
         m_replication = r;
     }
-
-    /// Returns the first section boundary *above* the given position.
-    size_t get_upper_section_boundary(size_t start_pos) const noexcept;
-
-    /// Returns the first section boundary *at or below* the given position.
-    size_t get_lower_section_boundary(size_t start_pos) const noexcept;
-
-    /// Returns true if the given position is at a section boundary
-    bool matches_section_boundary(size_t pos) const noexcept;
-
-    /// Returns the index of the section holding a given address.
-    /// The section index is determined solely by the minimal section size,
-    /// and does not necessarily reflect the mapping. A mapping may
-    /// cover multiple sections - the initial mapping often does.
-    size_t get_section_index(size_t pos) const noexcept;
-
-    /// Reverse: get the base offset of a section at a given index. Since the
-    /// computation is very time critical, this method just looks it up in
-    /// a table. The actual computation and setup of that table is done
-    /// during initialization with the help of compute_section_base() below.
-    inline size_t get_section_base(size_t index) const noexcept;
-
-    /// Actually compute the starting offset of a section. Only used to initialize
-    /// a table of predefined results, which are then used by get_section_base().
-    size_t compute_section_base(size_t index) const noexcept;
-
-    /// Find a possible allocation of 'request_size' that will fit into a section
-    /// which is inside the range from 'start_pos' to 'start_pos'+'free_chunk_size'
-    /// If found return the position, if not return 0.
-    size_t find_section_in_range(size_t start_pos, size_t free_chunk_size, size_t request_size) const noexcept;
 
     friend class Group;
     friend class SharedGroup;

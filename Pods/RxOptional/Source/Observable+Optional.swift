@@ -88,6 +88,7 @@ public extension ObservableType where E: OptionalType {
     }
 }
 
+#if !swift(>=3.3) || (swift(>=4.0) && !swift(>=4.1))
 public extension ObservableType where E: OptionalType, E.Wrapped: Equatable {
     /**
      Returns an observable sequence that contains only distinct contiguous elements according to equality operator.
@@ -103,3 +104,4 @@ public extension ObservableType where E: OptionalType, E.Wrapped: Equatable {
         }
     }
 }
+#endif

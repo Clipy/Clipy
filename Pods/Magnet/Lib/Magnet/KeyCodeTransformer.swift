@@ -20,7 +20,7 @@ public extension KeyCodeTransformer {
         return transformValue(keyCode, modifiers: carbonModifiers)
     }
 
-    public func transformValue(_ keyCode: Int, cocoaModifiers: NSEventModifierFlags) -> String {
+    public func transformValue(_ keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String {
         return transformValue(keyCode, modifiers: KeyTransformer.carbonFlags(from: cocoaModifiers))
     }
 

@@ -4,8 +4,8 @@
 SWIFT_CLASS("_TtC6Nimble7NMBWait")
 @interface NMBWait : NSObject
 
-+ (void)untilTimeout:(NSTimeInterval)timeout file:(NSString *)file line:(NSUInteger)line action:(void(^)())action;
-+ (void)untilFile:(NSString *)file line:(NSUInteger)line action:(void(^)())action;
++ (void)untilTimeout:(NSTimeInterval)timeout file:(NSString *)file line:(NSUInteger)line action:(void (^ _Nonnull)(void (^ _Nonnull)(void)))action;
++ (void)untilFile:(NSString *)file line:(NSUInteger)line action:(void (^ _Nonnull)(void (^ _Nonnull)(void)))action;
 
 @end
 
@@ -13,14 +13,14 @@ SWIFT_CLASS("_TtC6Nimble7NMBWait")
 NS_ASSUME_NONNULL_BEGIN
 
 
-NIMBLE_EXPORT NIMBLE_OVERLOADABLE NMBExpectation *__nonnull NMB_expect(id __nullable(^actualBlock)(), NSString *__nonnull file, NSUInteger line) {
+NIMBLE_EXPORT NIMBLE_OVERLOADABLE NMBExpectation *__nonnull NMB_expect(id __nullable(^actualBlock)(void), NSString *__nonnull file, NSUInteger line) {
     return [[NMBExpectation alloc] initWithActualBlock:actualBlock
                                               negative:NO
                                                   file:file
                                                   line:line];
 }
 
-NIMBLE_EXPORT NMBExpectation *NMB_expectAction(void(^actualBlock)(), NSString *file, NSUInteger line) {
+NIMBLE_EXPORT NMBExpectation *NMB_expectAction(void(^actualBlock)(void), NSString *file, NSUInteger line) {
     return NMB_expect(^id{
         actualBlock();
         return nil;
@@ -141,18 +141,22 @@ NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAnyOfWithMatchers(id matchers) {
     return [NMBObjCMatcher satisfyAnyOfMatcher:matchers];
 }
 
+NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAllOfWithMatchers(id matchers) {
+    return [NMBObjCMatcher satisfyAllOfMatcher:matchers];
+}
+
 NIMBLE_EXPORT NMBObjCRaiseExceptionMatcher *NMB_raiseException() {
     return [NMBObjCMatcher raiseExceptionMatcher];
 }
 
 NIMBLE_EXPORT NMBWaitUntilTimeoutBlock NMB_waitUntilTimeoutBuilder(NSString *file, NSUInteger line) {
-    return ^(NSTimeInterval timeout, void (^action)(void (^)(void))) {
+    return ^(NSTimeInterval timeout, void (^ _Nonnull action)(void (^ _Nonnull)(void))) {
         [NMBWait untilTimeout:timeout file:file line:line action:action];
     };
 }
 
 NIMBLE_EXPORT NMBWaitUntilBlock NMB_waitUntilBuilder(NSString *file, NSUInteger line) {
-  return ^(void (^action)(void (^)(void))) {
+  return ^(void (^ _Nonnull action)(void (^ _Nonnull)(void))) {
     [NMBWait untilFile:file line:line action:action];
   };
 }

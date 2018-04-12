@@ -78,12 +78,15 @@ public:
     // The metadata and file management subsystems must also have already been configured.
     bool immediately_run_file_actions(const std::string& original_name);
 
+    // Use a single connection for all sync sessions for each host/port rather
+    // than one per session.
+    // This must be called before any sync sessions are created, cannot be
+    // disabled afterwards, and currently is incompatible with using a load
+    // balancer or automatic failover.
+    void enable_session_multiplexing();
+
     void set_log_level(util::Logger::Level) noexcept;
     void set_logger_factory(SyncLoggerFactory&) noexcept;
-
-    /// Control whether the sync client attempts to reconnect immediately. Only set this to `true` for testing purposes.
-    void set_client_should_reconnect_immediately(bool reconnect_immediately);
-    bool client_should_reconnect_immediately() const noexcept;
 
     /// Ask all valid sync sessions to perform whatever tasks might be necessary to
     /// re-establish connectivity with the Realm Object Server. It is presumed that
@@ -138,6 +141,9 @@ public:
     // Get the path of the recovery directory for backed-up or recovered Realms.
     std::string recovery_directory_path() const;
 
+    // Get the unique identifier of this client.
+    std::string client_uuid() const;
+
     // Reset the singleton state for testing purposes. DO NOT CALL OUTSIDE OF TESTING CODE.
     // Precondition: any synced Realms or `SyncSession`s must be closed or rendered inactive prior to
     // calling this method.
@@ -180,6 +186,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<SyncUser>> m_admin_token_users;
 
     mutable std::unique_ptr<_impl::SyncClient> m_sync_client;
+    bool m_multiplex_sessions = false;
 
     // Protects m_file_manager and m_metadata_manager
     mutable std::mutex m_file_system_mutex;
@@ -193,6 +200,9 @@ private:
     // Sessions remove themselves from this map by calling `unregister_session` once they're
     // inactive and have performed any necessary cleanup work.
     std::unordered_map<std::string, std::shared_ptr<SyncSession>> m_sessions;
+
+    // The unique identifier of this client.
+    util::Optional<std::string> m_client_uuid;
 };
 
 } // namespace realm

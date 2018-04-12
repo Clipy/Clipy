@@ -20,6 +20,9 @@
 #import "RLMConstants.h"
 
 @class RLMRealmConfiguration, RLMRealm, RLMObject, RLMSchema, RLMMigration, RLMNotificationToken, RLMThreadSafeReference;
+struct RLMRealmPrivileges;
+struct RLMClassPrivileges;
+struct RLMObjectPrivileges;
 
 /**
  A callback block for opening Realms asynchronously.
@@ -490,12 +493,12 @@ NS_REFINED_FOR_SWIFT;
 
  @warning This method may only be called during a write transaction.
 
- @param array   An enumerable object such as `NSArray` or `RLMResults` which contains objects to be added to
-                the Realm.
+ @param objects   An enumerable collection such as `NSArray`, `RLMArray`, or `RLMResults`,
+                  containing Realm objects to be added to the Realm.
 
  @see   `addObject:`
  */
-- (void)addObjects:(id<NSFastEnumeration>)array;
+- (void)addObjects:(id<NSFastEnumeration>)objects;
 
 /**
  Adds or updates an existing object into the Realm.
@@ -507,6 +510,10 @@ NS_REFINED_FOR_SWIFT;
  As with `addObject:`, the object cannot already be managed by a different
  Realm. Use `-[RLMObject createOrUpdateInRealm:withValue:]` to copy values to
  a different Realm.
+
+ If there is a property or KVC value on `object` whose value is nil, and it corresponds
+ to a nullable property on an existing object being updated, that nullable property will
+ be set to nil.
 
  @warning This method may only be called during a write transaction.
 
@@ -521,11 +528,12 @@ NS_REFINED_FOR_SWIFT;
 
  @warning This method may only be called during a write transaction.
 
- @param array  An `NSArray`, `RLMArray`, or `RLMResults` of `RLMObject`s (or subclasses) to be added to the Realm.
+ @param objects  An enumerable collection such as `NSArray`, `RLMArray`, or `RLMResults`,
+                 containing Realm objects to be added to or updated within the Realm.
 
  @see   `addOrUpdateObject:`
  */
-- (void)addOrUpdateObjectsFromArray:(id)array;
+- (void)addOrUpdateObjects:(id<NSFastEnumeration>)objects;
 
 /**
  Deletes an object from the Realm. Once the object is deleted it is considered invalidated.
@@ -543,11 +551,12 @@ NS_REFINED_FOR_SWIFT;
 
  @warning This method may only be called during a write transaction.
 
- @param array  An `RLMArray`, `NSArray`, or `RLMResults` of `RLMObject`s (or subclasses) to be deleted.
+ @param objects  An enumerable collection such as `NSArray`, `RLMArray`, or `RLMResults`,
+                 containing objects to be deleted from the Realm.
 
  @see `deleteObject:`
  */
-- (void)deleteObjects:(id)array;
+- (void)deleteObjects:(id<NSFastEnumeration>)objects;
 
 /**
  Deletes all objects from the Realm.
@@ -598,22 +607,89 @@ NS_REFINED_FOR_SWIFT;
 
  @see                 RLMMigration
  */
-+ (nullable NSError *)migrateRealm:(RLMRealmConfiguration *)configuration
-__deprecated_msg("Use `performMigrationForConfiguration:error:`") NS_REFINED_FOR_SWIFT;
++ (BOOL)performMigrationForConfiguration:(RLMRealmConfiguration *)configuration error:(NSError **)error;
+
+#pragma mark - Privileges
 
 /**
- Performs the given Realm configuration's migration block on a Realm at the given path.
+ Returns the computed privileges which the current user has for this Realm.
 
- This method is called automatically when opening a Realm for the first time and does
- not need to be called explicitly. You can choose to call this method to control
- exactly when and how migrations are performed.
+ This combines all privileges granted on the Realm by all Roles which the
+ current User is a member of into the final privileges which will be enforced by
+ the server.
 
- @param configuration The Realm configuration used to open and migrate the Realm.
- @return              The error that occurred while applying the migration, if any.
+ The privilege calculation is done locally using cached data, and inherently may
+ be stale. It is possible that this method may indicate that an operation is
+ permitted but the server will still reject it if permission is revoked before
+ the changes have been integrated on the server.
 
- @see                 RLMMigration
+ Non-synchronized Realms always have permission to perform all operations.
+
+ @warning This currently returns incorrect results for non-partially-synchronized read-only Realms.
+ @return The privileges which the current user has for the current Realm.
  */
-+ (BOOL)performMigrationForConfiguration:(RLMRealmConfiguration *)configuration error:(NSError **)error;
+- (struct RLMRealmPrivileges)privilegesForRealm;
+
+/**
+ Returns the computed privileges which the current user has for the given object.
+
+ This combines all privileges granted on the object by all Roles which the
+ current User is a member of into the final privileges which will be enforced by
+ the server.
+
+ The privilege calculation is done locally using cached data, and inherently may
+ be stale. It is possible that this method may indicate that an operation is
+ permitted but the server will still reject it if permission is revoked before
+ the changes have been integrated on the server.
+
+ Non-synchronized Realms always have permission to perform all operations.
+
+ The object must be a valid object managed by this Realm. Passing in an
+ invalidated object, an unmanaged object, or an object managed by a different
+ Realm will throw an exception.
+
+ @warning This currently returns incorrect results for non-partially-synchronized read-only Realms.
+ @return The privileges which the current user has for the given object.
+ */
+- (struct RLMObjectPrivileges)privilegesForObject:(RLMObject *)object;
+
+/**
+ Returns the computed privileges which the current user has for the given class.
+
+ This combines all privileges granted on the class by all Roles which the
+ current User is a member of into the final privileges which will be enforced by
+ the server.
+
+ The privilege calculation is done locally using cached data, and inherently may
+ be stale. It is possible that this method may indicate that an operation is
+ permitted but the server will still reject it if permission is revoked before
+ the changes have been integrated on the server.
+
+ Non-synchronized Realms always have permission to perform all operations.
+
+ @warning This currently returns incorrect results for non-partially-synchronized read-only Realms.
+ @return The privileges which the current user has for the given object.
+ */
+- (struct RLMClassPrivileges)privilegesForClass:(Class)cls;
+
+/**
+ Returns the computed privileges which the current user has for the named class.
+
+ This combines all privileges granted on the class by all Roles which the
+ current User is a member of into the final privileges which will be enforced by
+ the server.
+
+ The privilege calculation is done locally using cached data, and inherently may
+ be stale. It is possible that this method may indicate that an operation is
+ permitted but the server will still reject it if permission is revoked before
+ the changes have been integrated on the server.
+
+ Non-synchronized Realms always have permission to perform all operations.
+
+ @warning This currently returns incorrect results for non-partially-synchronized read-only Realms.
+ @return The privileges which the current user has for the given object.
+ */
+- (struct RLMClassPrivileges)privilegesForClassNamed:(NSString *)className;
 
 #pragma mark - Unavailable Methods
 
@@ -633,7 +709,12 @@ __deprecated_msg("Use `performMigrationForConfiguration:error:`") NS_REFINED_FOR
  */
 + (instancetype)new __attribute__((unavailable("Use +defaultRealm, +realmWithConfiguration: or +realmWithURL:.")));
 
+/// :nodoc:
+- (void)addOrUpdateObjectsFromArray:(id)array __attribute__((unavailable("Renamed to -addOrUpdateObjects:.")));
+
 @end
+
+// MARK: - RLMNotificationToken
 
 /**
  A token which is returned from methods which subscribe to changes to a Realm.
@@ -641,12 +722,15 @@ __deprecated_msg("Use `performMigrationForConfiguration:error:`") NS_REFINED_FOR
  Change subscriptions in Realm return an `RLMNotificationToken` instance,
  which can be used to unsubscribe from the changes. You must store a strong
  reference to the token for as long as you want to continue to receive notifications.
- When you wish to stop, call the `-stop` method. Notifications are also stopped if
+ When you wish to stop, call the `-invalidate` method. Notifications are also stopped if
  the token is deallocated.
  */
 @interface RLMNotificationToken : NSObject
 /// Stops notifications for the change subscription that returned this token.
-- (void)stop;
+- (void)invalidate;
+
+/// Stops notifications for the change subscription that returned this token.
+- (void)stop __attribute__((unavailable("Renamed to -invalidate."))) NS_REFINED_FOR_SWIFT;
 @end
 
 NS_ASSUME_NONNULL_END

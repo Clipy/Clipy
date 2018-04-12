@@ -23,8 +23,6 @@
 #include "object_schema.hpp"
 #include "object_store.hpp"
 #include "schema.hpp"
-#include "util/compiler.hpp"
-#include "util/format.hpp"
 
 #include <stdexcept>
 
@@ -138,7 +136,7 @@ size_t Results::size()
                 return m_query.count();
             REALM_FALLTHROUGH;
         case Mode::TableView:
-            update_tableview();
+            evaluate_query_if_needed();
             return m_table_view.size();
     }
     REALM_COMPILER_HINT_UNREACHABLE();
@@ -201,7 +199,7 @@ util::Optional<T> Results::try_get(size_t row_ndx)
             REALM_FALLTHROUGH;
         case Mode::Query:
         case Mode::TableView:
-            update_tableview();
+            evaluate_query_if_needed();
             if (row_ndx >= m_table_view.size())
                 break;
             if (m_update_policy == UpdatePolicy::Never && !m_table_view.is_row_attached(row_ndx))
@@ -230,7 +228,7 @@ util::Optional<T> Results::last()
 {
     validate_read();
     if (m_mode == Mode::Query)
-        update_tableview(); // avoid running the query twice (for size() and for get())
+        evaluate_query_if_needed(); // avoid running the query twice (for size() and for get())
     return try_get<T>(size() - 1);
 }
 
@@ -241,13 +239,13 @@ bool Results::update_linkview()
     if (!m_descriptor_ordering.is_empty()) {
         m_query = get_query();
         m_mode = Mode::Query;
-        update_tableview();
+        evaluate_query_if_needed();
         return false;
     }
     return true;
 }
 
-void Results::update_tableview(bool wants_notifications)
+void Results::evaluate_query_if_needed(bool wants_notifications)
 {
     if (m_update_policy == UpdatePolicy::Never) {
         REALM_ASSERT(m_mode == Mode::TableView);
@@ -263,15 +261,7 @@ void Results::update_tableview(bool wants_notifications)
             m_query.sync_view_if_needed();
             m_table_view = m_query.find_all();
             if (!m_descriptor_ordering.is_empty()) {
-#if REALM_HAVE_COMPOSABLE_DISTINCT
                 m_table_view.apply_descriptor_ordering(m_descriptor_ordering);
-#else
-                if (m_descriptor_ordering.sort)
-                    m_table_view.sort(m_descriptor_ordering.sort);
-
-                if (m_descriptor_ordering.distinct)
-                    m_table_view.distinct(m_descriptor_ordering.distinct);
-#endif
             }
             m_mode = Mode::TableView;
             REALM_FALLTHROUGH;
@@ -312,7 +302,7 @@ size_t Results::index_of(RowExpr const& row)
             REALM_FALLTHROUGH;
         case Mode::Query:
         case Mode::TableView:
-            update_tableview();
+            evaluate_query_if_needed();
             return m_table_view.find_by_source_ndx(row.get_index());
     }
     REALM_COMPILER_HINT_UNREACHABLE();
@@ -331,7 +321,7 @@ size_t Results::index_of(T const& value)
             REALM_UNREACHABLE();
         case Mode::Query:
         case Mode::TableView:
-            update_tableview();
+            evaluate_query_if_needed();
             return m_table_view.find_first(0, value);
     }
     REALM_COMPILER_HINT_UNREACHABLE();
@@ -363,7 +353,7 @@ void Results::prepare_for_aggregate(size_t column, const char* name)
             REALM_FALLTHROUGH;
         case Mode::Query:
         case Mode::TableView:
-            update_tableview();
+            evaluate_query_if_needed();
             break;
         default:
             REALM_COMPILER_HINT_UNREACHABLE();
@@ -446,14 +436,17 @@ void Results::clear()
             return;
         case Mode::Table:
             validate_write();
-            m_table->clear();
+            if (m_realm->is_partial())
+                Results(m_realm, m_table->where()).clear();
+            else
+                m_table->clear();
             break;
         case Mode::Query:
             // Not using Query:remove() because building the tableview and
             // clearing it is actually significantly faster
         case Mode::TableView:
             validate_write();
-            update_tableview();
+            evaluate_query_if_needed();
 
             switch (m_update_policy) {
                 case UpdatePolicy::Auto:
@@ -533,7 +526,7 @@ TableView Results::get_tableview()
             REALM_FALLTHROUGH;
         case Mode::Query:
         case Mode::TableView:
-            update_tableview();
+            evaluate_query_if_needed();
             return m_table_view;
         case Mode::Table:
             return m_table->where().find_all();
@@ -622,6 +615,24 @@ Results Results::filter(Query&& q) const
     return Results(m_realm, get_query().and_query(std::move(q)), m_descriptor_ordering);
 }
 
+Results Results::apply_ordering(DescriptorOrdering&& ordering)
+{
+    DescriptorOrdering new_order = m_descriptor_ordering;
+    for (size_t i = 0; i < ordering.size(); ++i) {
+        const CommonDescriptor* desc = ordering[i];
+        if (const SortDescriptor* sort = dynamic_cast<const SortDescriptor*>(desc)) {
+            new_order.append_sort(std::move(*sort));
+            continue;
+        }
+        if (const DistinctDescriptor* distinct = dynamic_cast<const DistinctDescriptor*>(desc)) {
+            new_order.append_distinct(std::move(*distinct));
+            continue;
+        }
+        REALM_COMPILER_HINT_UNREACHABLE();
+    }
+    return Results(m_realm, get_query(), std::move(new_order));
+}
+
 Results Results::distinct(DistinctDescriptor&& uniqueness) const
 {
     DescriptorOrdering new_order = m_descriptor_ordering;
@@ -672,7 +683,7 @@ Results Results::snapshot() &&
             REALM_FALLTHROUGH;
         case Mode::Query:
         case Mode::TableView:
-            update_tableview(false);
+            evaluate_query_if_needed(false);
             m_notifier.reset();
             m_update_policy = UpdatePolicy::Never;
             return std::move(*this);

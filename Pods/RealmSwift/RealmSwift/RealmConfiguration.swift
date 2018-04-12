@@ -195,7 +195,7 @@ extension Realm {
                 self.customSchema = newValue.map { RLMSchema(objectClasses: $0) }
             }
             get {
-                return self.customSchema.map { $0.objectSchema.map { $0.objectClass as! Object.Type } }
+                return self.customSchema.map { $0.objectSchema.flatMap { $0.objectClass as? Object.Type } }
             }
         }
 
@@ -228,7 +228,7 @@ extension Realm {
             } else {
                 configuration.shouldCompactOnLaunch = nil
             }
-            configuration.customSchema = self.customSchema
+            configuration.setCustomSchemaWithoutCopying(self.customSchema)
             configuration.disableFormatUpgrade = self.disableFormatUpgrade
             return configuration
         }
