@@ -447,3 +447,37 @@ private extension MenuManager {
         return AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero) ? 0 : 1
     }
 }
+
+// MARK: - NSSearchFieldDelegate
+extension MenuManager: NSSearchFieldDelegate {
+    func setupSearchField(_  menu: NSMenu) {
+        if #available(OSX 10.11, *) {
+            let maxLengthOfToolTip = defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip) + 100
+            let itemFrame = NSRect(x: 16, y: 2, width: maxLengthOfToolTip, height: 30)
+            searchField = NSSearchField(frame: itemFrame)
+            searchField?.delegate = self
+            searchField?.translatesAutoresizingMaskIntoConstraints = false
+            searchField?.searchMenuTemplate = menu
+            searchField?.stringValue = searchFieldStringFilter
+        }
+    }
+    
+    override func controlTextDidChange(_ obj: Notification) {
+        searchFieldStringFilter = (obj.object as? NSSearchField)?.stringValue ?? ""
+        checkResultsForFilter()
+    }
+    
+    func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
+        updatePopUpMenu()
+        return true
+    }
+    
+    fileprivate func checkResultsForFilter() {
+        if searchFieldStringFilter.characters.count > 2 {
+            clipResults = clipResultsBackup.filter("title CONTAINS '\(searchFieldStringFilter)'")
+        } else {
+            clipResults = clipResultsBackup
+        }
+    }    
+}
+
