@@ -68,7 +68,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             newFrame.size.height -= 2
         }
 
-        textColor = (!isItemEnabled) ? .lightGray : (isHighlighted) ? .white : .titleColor()
+        textColor = (!isItemEnabled) ? .lightGray : (isHighlighted) ? .white : ColorName.title.color
 
         super.draw(withFrame: newFrame, in: controlView)
     }
@@ -76,7 +76,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
     // MARK: - Frame
     override func select(withFrame aRect: NSRect, in controlView: NSView, editor textObj: NSText, delegate anObject: Any?, start selStart: Int, length selLength: Int) {
         let textFrame = titleRect(forBounds: aRect)
-        textColor = .titleColor()
+        textColor = ColorName.title.color
         super.select(withFrame: textFrame, in: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
     }
 
