@@ -51,7 +51,7 @@ DEPENDENCIES:
   - SwiftLint
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - AEXML
     - BartyCrouch
     - Crashlytics
@@ -105,4 +105,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5bfba38b861ea53d3450451957fe3049d1584f60
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3
