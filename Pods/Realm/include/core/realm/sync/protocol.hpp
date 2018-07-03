@@ -133,7 +133,7 @@ using salt_type          = std::int_fast64_t;
 using timestamp_type     = std::uint_fast64_t;
 using session_ident_type = std::uint_fast64_t;
 using request_ident_type = std::uint_fast64_t;
-
+using milliseconds_type  = std::int_fast64_t;
 
 constexpr file_ident_type get_max_file_ident()
 {
@@ -242,7 +242,7 @@ enum class ProtocolError {
     bad_client_version           = 210, // Bad client version (IDENT, UPLOAD)
     diverging_histories          = 211, // Diverging histories (IDENT)
     bad_changeset                = 212, // Bad changeset (UPLOAD)
-    superseded                   = 213, // Superseded by new session for same client-side file
+    superseded                   = 213, // Superseded by new session for same client-side file (deprecated)
     disabled_session             = 213, // Alias for `superseded` (deprecated)
     partial_sync_disabled        = 214, // Partial sync disabled (BIND)
     unsupported_session_feature  = 215, // Unsupported session-level feature

@@ -117,7 +117,7 @@ bool ResultsNotifier::need_to_run()
 void ResultsNotifier::calculate_changes()
 {
     size_t table_ndx = m_query->get_table()->get_index_in_group();
-    if (has_run()) {
+    if (has_run() && have_callbacks()) {
         CollectionChangeBuilder* changes = nullptr;
         if (table_ndx == npos)
             changes = &m_changes;

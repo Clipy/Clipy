@@ -16,11 +16,11 @@ import RealmSwift
 final class CPYFolder: Object {
 
     // MARK: - Properties
-    @objc dynamic var index         = 0
-    @objc dynamic var enable        = true
-    @objc dynamic var title         = ""
-    @objc dynamic var identifier    = UUID().uuidString
-    let snippets                    = List<CPYSnippet>()
+    @objc dynamic var index = 0
+    @objc dynamic var enable = true
+    @objc dynamic var title = ""
+    @objc dynamic var identifier = UUID().uuidString
+    let snippets = List<CPYSnippet>()
 
     // MARK: Primary Key
     override static func primaryKey() -> String? {

@@ -376,6 +376,27 @@ public:
     /// before B.
     template<class H> void post(H handler);
 
+    /// Argument `saturation` is the fraction of time that is not spent
+    /// sleeping. Argument `inefficiency` is the fraction of time not spent
+    /// sleeping, and not spent executing completion handlers. Both values are
+    /// guaranteed to always be in the range 0 to 1 (both inclusive). The value
+    /// passed as `inefficiency` is guaranteed to always be less than, or equal
+    /// to the value passed as `saturation`.
+    using EventLoopMetricsHandler = void(double saturation, double inefficiency);
+
+    /// \brief Report event loop metrics via the specified handler.
+    ///
+    /// The handler will be called approximately every 30 seconds.
+    ///
+    /// report_event_loop_metrics() must be called prior to any invocation of
+    /// run(). report_event_loop_metrics() is not thread-safe.
+    ///
+    /// This feature is only available if
+    /// `REALM_UTIL_NETWORK_EVENT_LOOP_METRICS` was defined during
+    /// compilation. When the feature is not available, the specified handler
+    /// will never be called.
+    void report_event_loop_metrics(std::function<EventLoopMetricsHandler>);
+
 private:
     enum class Want { nothing = 0, read, write };
 
@@ -470,6 +491,7 @@ public:
     /// set.
     void assign(native_handle_type fd, bool in_blocking_mode) noexcept;
     void close() noexcept;
+    native_handle_type release() noexcept;
 
     bool is_open() const noexcept;
 
@@ -517,6 +539,7 @@ private:
     void add_initiated_oper(LendersIoOperPtr, Want);
 
     void do_close() noexcept;
+    native_handle_type do_release() noexcept;
 
     friend class IoReactor;
 };
@@ -697,6 +720,16 @@ public:
 
     Endpoint local_endpoint() const;
     Endpoint local_endpoint(std::error_code&) const;
+
+    /// Release the ownership of this socket object over the native handle and
+    /// return the native handle to the caller. The caller assumes ownership
+    /// over the returned handle. The socket is left in a closed
+    /// state. Incomplete asynchronous operations will be canceled as if close()
+    /// had been called.
+    ///
+    /// If called on a closed socket, this function is a no-op, and returns the
+    /// same value as would be returned by native_handle()
+    native_handle_type release_native_handle() noexcept;
 
 private:
     enum opt_enum {
@@ -1781,6 +1814,17 @@ inline void Service::Descriptor::close() noexcept
     do_close();
 }
 
+inline auto Service::Descriptor::release() noexcept -> native_handle_type
+{
+    REALM_ASSERT(is_open());
+#if REALM_HAVE_EPOLL || REALM_HAVE_KQUEUE
+    if (m_is_registered)
+        deregister_for_async();
+    m_is_registered = false;
+#endif
+    return do_release();
+}
+
 inline bool Service::Descriptor::is_open() const noexcept
 {
     return (m_fd != -1);
@@ -2121,7 +2165,7 @@ public:
 // zero. Otherwise they must set `ec` to `std::system_error()` and return the
 // number of bytes read or written, which **must** be at least 1. If the
 // underlying socket is in nonblocking mode, and no bytes could be immediately
-// read or written these functions must fail with
+// read or written, these functions must fail with
 // `error::resource_unavailable_try_again`.
 //
 // If an error occurs during reading or writing, do_*_some_async() must set `ec`
@@ -2999,6 +3043,15 @@ inline Endpoint SocketBase::local_endpoint() const
     if (ec)
         throw std::system_error(ec);
     return ep;
+}
+
+inline auto SocketBase::release_native_handle() noexcept -> native_handle_type
+{
+    if (is_open()) {
+        cancel();
+        return m_desc.release();
+    }
+    return m_desc.native_handle();
 }
 
 inline const StreamProtocol& SocketBase::get_protocol() const noexcept

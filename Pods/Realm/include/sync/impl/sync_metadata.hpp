@@ -204,8 +204,8 @@ public:
                                                      SyncFileActionMetadata::Action action,
                                                      util::Optional<std::string> new_name=none) const;
 
-    // Get the unique identifier of this client, generating one if it does not already exist.
-    std::string client_uuid() const;
+    // Get the unique identifier of this client.
+    const std::string& client_uuid() const { return m_client_uuid; }
 
     /// Construct the metadata manager.
     ///
@@ -222,6 +222,7 @@ private:
     SyncUserMetadata::Schema m_user_schema;
     SyncFileActionMetadata::Schema m_file_action_schema;
     SyncClientMetadata::Schema m_client_schema;
+    std::string m_client_uuid;
 };
 
 }

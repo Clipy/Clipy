@@ -35,9 +35,11 @@ typedef enum : NSUInteger {
     ServerError         = 5, // 5XX
 } RLMServerHTTPErrorCodeType;
 
-static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
+static NSRange rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     return NSMakeRange(type*100, kHTTPCodeRange);
 }
+
+static std::atomic<NSTimeInterval> g_defaultTimeout{60.0};
 
 @interface RLMSyncServerEndpoint ()
 - (instancetype)initPrivate NS_DESIGNATED_INITIALIZER;
@@ -52,10 +54,29 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
 - (NSData *)httpBodyForPayload:(NSDictionary *)json error:(NSError **)error;
 
 /// The HTTP headers to be added to the request, if any.
-- (NSDictionary<NSString *, NSString *> *)httpHeadersForPayload:(NSDictionary *)json;
+- (NSDictionary<NSString *, NSString *> *)httpHeadersForPayload:(NSDictionary *)json
+                                                        options:(nullable RLMNetworkRequestOptions *)options;
 @end
 
 @implementation RLMSyncServerEndpoint
+
++ (void)sendRequestToServer:(NSURL *)serverURL
+                       JSON:(NSDictionary *)jsonDictionary
+                    options:(nullable RLMNetworkRequestOptions *)options
+                 completion:(void (^)(NSError *))completionBlock {
+    [RLMNetworkClient sendRequestToEndpoint:[self endpoint]
+                                     server:serverURL
+                                       JSON:jsonDictionary
+                                    timeout:g_defaultTimeout.load()
+                                    options:options
+                                 completion:^(NSError *error, NSDictionary *) {
+                                     completionBlock(error);
+                                 }];
+}
+
++ (instancetype)endpoint {
+    return [[self alloc] initPrivate];
+}
 
 - (instancetype)initPrivate {
     return (self = [super init]);
@@ -85,31 +106,26 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     return nil;
 }
 
-- (NSDictionary<NSString *, NSString *> *)httpHeadersForPayload:(__unused NSDictionary *)json {
-    return @{@"Content-Type":   @"application/json;charset=utf-8",
-             @"Accept":         @"application/json"};
-}
+- (NSDictionary<NSString *, NSString *> *)httpHeadersForPayload:(__unused NSDictionary *)json options:(nullable RLMNetworkRequestOptions *)options {
+    NSMutableDictionary<NSString *, NSString *> *headers = [[NSMutableDictionary alloc] init];
+    headers[@"Content-Type"] = @"application/json;charset=utf-8";
+    headers[@"Accept"] = @"application/json";
 
+    if (NSDictionary<NSString *, NSString *> *customHeaders = options.customHeaders) {
+        [headers addEntriesFromDictionary:customHeaders];
+    }
+
+    return headers;
+}
 @end
 
 @implementation RLMSyncAuthEndpoint
-
-+ (instancetype)endpoint {
-    return [[RLMSyncAuthEndpoint alloc] initPrivate];
-}
-
 - (NSURL *)urlForAuthServer:(NSURL *)authServerURL payload:(__unused NSDictionary *)json {
     return [authServerURL URLByAppendingPathComponent:@"auth"];
 }
-
 @end
 
 @implementation RLMSyncChangePasswordEndpoint
-
-+ (instancetype)endpoint {
-    return [[RLMSyncChangePasswordEndpoint alloc] initPrivate];
-}
-
 - (NSString *)httpMethod {
     return @"PUT";
 }
@@ -118,24 +134,24 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     return [authServerURL URLByAppendingPathComponent:@"auth/password"];
 }
 
-- (NSDictionary *)httpHeadersForPayload:(NSDictionary *)json {
+- (NSDictionary *)httpHeadersForPayload:(NSDictionary *)json options:(nullable RLMNetworkRequestOptions *)options {
     NSString *authToken = [json objectForKey:kRLMSyncTokenKey];
     if (!authToken) {
         @throw RLMException(@"Malformed request; this indicates an internal error.");
     }
-    NSMutableDictionary *headers = [[super httpHeadersForPayload:json] mutableCopy];
-    [headers setObject:authToken forKey:@"Authorization"];
-    return [headers copy];
+    NSMutableDictionary *headers = [[super httpHeadersForPayload:json options:options] mutableCopy];
+    headers[options.authorizationHeaderName ?: @"Authorization"] = authToken;
+    return headers;
 }
+@end
 
+@implementation RLMSyncUpdateAccountEndpoint
+- (NSURL *)urlForAuthServer:(NSURL *)authServerURL payload:(__unused NSDictionary *)json {
+    return [authServerURL URLByAppendingPathComponent:@"auth/password/updateAccount"];
+}
 @end
 
 @implementation RLMSyncGetUserInfoEndpoint
-
-+ (instancetype)endpoint {
-    return [[RLMSyncGetUserInfoEndpoint alloc] initPrivate];
-}
-
 - (NSString *)httpMethod {
     return @"GET";
 }
@@ -156,18 +172,22 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     return nil;
 }
 
-- (NSDictionary<NSString *, NSString *> *)httpHeadersForPayload:(NSDictionary *)json {
+- (NSDictionary<NSString *, NSString *> *)httpHeadersForPayload:(NSDictionary *)json options:(nullable RLMNetworkRequestOptions *)options {
     NSString *authToken = [json objectForKey:kRLMSyncTokenKey];
     if (!authToken) {
         @throw RLMException(@"Malformed request; this indicates an internal error.");
     }
-    return @{@"Authorization": authToken};
+    NSMutableDictionary *headers = [[super httpHeadersForPayload:json options:options] mutableCopy];
+    headers[options.authorizationHeaderName ?: @"Authorization"] = authToken;
+    return headers;
 }
-
 @end
 
 
 @implementation RLMNetworkClient
++ (void)setDefaultTimeout:(NSTimeInterval)timeOut {
+    g_defaultTimeout = timeOut;
+}
 
 + (NSURLSession *)session {
     return [NSURLSession sharedSession];
@@ -176,19 +196,8 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
 + (void)sendRequestToEndpoint:(RLMSyncServerEndpoint *)endpoint
                        server:(NSURL *)serverURL
                          JSON:(NSDictionary *)jsonDictionary
-                   completion:(RLMSyncCompletionBlock)completionBlock {
-    static NSTimeInterval const defaultTimeout = 60;
-    [self sendRequestToEndpoint:endpoint
-                         server:serverURL
-                           JSON:jsonDictionary
-                        timeout:defaultTimeout
-                     completion:completionBlock];
-}
-
-+ (void)sendRequestToEndpoint:(RLMSyncServerEndpoint *)endpoint
-                       server:(NSURL *)serverURL
-                         JSON:(NSDictionary *)jsonDictionary
                       timeout:(NSTimeInterval)timeout
+                      options:(nullable RLMNetworkRequestOptions *)options
                    completion:(RLMSyncCompletionBlock)completionBlock {
     // Create the request
     NSError *localError = nil;
@@ -201,7 +210,7 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     }
     request.HTTPMethod = [endpoint httpMethod];
     request.timeoutInterval = MAX(timeout, 10);
-    NSDictionary<NSString *, NSString *> *headers = [endpoint httpHeadersForPayload:jsonDictionary];
+    NSDictionary<NSString *, NSString *> *headers = [endpoint httpHeadersForPayload:jsonDictionary options:options];
     for (NSString *key in headers) {
         [request addValue:headers[key] forHTTPHeaderField:key];
     }
@@ -258,8 +267,8 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     }
 
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-    BOOL badResponse = (NSLocationInRange(httpResponse.statusCode, RLM_rangeForErrorType(ClientError))
-                        || NSLocationInRange(httpResponse.statusCode, RLM_rangeForErrorType(ServerError)));
+    BOOL badResponse = (NSLocationInRange(httpResponse.statusCode, rangeForErrorType(ClientError))
+                        || NSLocationInRange(httpResponse.statusCode, rangeForErrorType(ServerError)));
     if (badResponse) {
         if (RLMSyncErrorResponseModel *responseModel = [self responseModelFromData:data]) {
             switch (responseModel.code) {
@@ -309,5 +318,9 @@ static NSRange RLM_rangeForErrorType(RLMServerHTTPErrorCodeType type) {
     }
     return [[RLMSyncErrorResponseModel alloc] initWithDictionary:json];
 }
+
+@end
+
+@implementation RLMNetworkRequestOptions
 
 @end

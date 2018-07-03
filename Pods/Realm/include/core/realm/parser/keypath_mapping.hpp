@@ -61,9 +61,11 @@ public:
     bool has_mapping(ConstTableRef table, std::string name);
     KeyPathElement process_next_path(ConstTableRef table, KeyPath& path, size_t& index);
     void set_allow_backlinks(bool allow);
+    void set_backlink_class_prefix(std::string prefix);
     static Table* table_getter(TableRef table, const std::vector<KeyPathElement>& links);
 protected:
     bool m_allow_backlinks;
+    std::string m_backlink_class_prefix;
     std::unordered_map<std::pair<ConstTableRef, std::string>, std::string, TableAndColHash> m_mapping;
 };
 

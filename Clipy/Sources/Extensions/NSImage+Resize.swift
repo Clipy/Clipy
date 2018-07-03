@@ -40,7 +40,7 @@ extension NSImage {
         var newWidth: CGFloat
         var newHeight: CGFloat
 
-        if 1 <= aspect {
+        if aspect >= 1 {
             newWidth = targetWidth
             newHeight = newWidth / aspect
 

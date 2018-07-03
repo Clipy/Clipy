@@ -32,7 +32,7 @@ final class CPYClipData: NSObject {
     var image: NSImage?
 
     override var hash: Int {
-        var hash = types.map { $0.rawValue }.joined(separator: "").hash
+        var hash = types.map { $0.rawValue }.joined().hash
         if let image = self.image, let imageData = image.tiffRepresentation {
             hash ^= imageData.count
         } else if let image = self.image {
@@ -159,13 +159,13 @@ final class CPYClipData: NSObject {
     }
 
     @objc required init(coder aDecoder: NSCoder) {
-        types          = (aDecoder.decodeObject(forKey: kTypesKey)       as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
-        fileNames      = aDecoder.decodeObject(forKey: kFileNamesKey)    as? [String] ?? [String]()
-        URLs           = aDecoder.decodeObject(forKey: kURLsKey)         as? [String] ?? [String]()
-        stringValue    = aDecoder.decodeObject(forKey: kStringValueKey)  as? String ?? ""
-        RTFData        = aDecoder.decodeObject(forKey: kRTFDataKey)      as? Data
-        PDF            = aDecoder.decodeObject(forKey: kPDFKey)          as? Data
-        image          = aDecoder.decodeObject(forKey: kImageKey)        as? NSImage
+        types = (aDecoder.decodeObject(forKey: kTypesKey) as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
+        fileNames = aDecoder.decodeObject(forKey: kFileNamesKey) as? [String] ?? [String]()
+        URLs = aDecoder.decodeObject(forKey: kURLsKey) as? [String] ?? [String]()
+        stringValue = aDecoder.decodeObject(forKey: kStringValueKey) as? String ?? ""
+        RTFData = aDecoder.decodeObject(forKey: kRTFDataKey) as? Data
+        PDF = aDecoder.decodeObject(forKey: kPDFKey) as? Data
+        image = aDecoder.decodeObject(forKey: kImageKey) as? NSImage
         super.init()
     }
 }

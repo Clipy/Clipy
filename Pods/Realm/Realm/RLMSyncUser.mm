@@ -24,6 +24,8 @@
 #import "RLMRealmConfiguration_Private.hpp"
 #import "RLMRealmUtil.hpp"
 #import "RLMResults_Private.hpp"
+#import "RLMSyncConfiguration.h"
+#import "RLMSyncConfiguration_Private.hpp"
 #import "RLMSyncManager_Private.h"
 #import "RLMSyncPermissionResults.h"
 #import "RLMSyncPermission_Private.hpp"
@@ -156,11 +158,9 @@ PermissionChangeCallback RLMWrapPermissionStatusCallback(RLMPermissionStatusBloc
 - (instancetype)initPrivate {
     if (self = [super init]) {
         _configMaker = std::make_unique<ConfigMaker>([](std::shared_ptr<SyncUser> user, std::string url) {
-            RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
             NSURL *objCUrl = [NSURL URLWithString:@(url.c_str())];
             RLMSyncUser *objCUser = [[RLMSyncUser alloc] initWithSyncUser:std::move(user)];
-            config.syncConfiguration = [[RLMSyncConfiguration alloc] initWithUser:objCUser realmURL:objCUrl];
-            return [config config];
+            return [objCUser configurationWithURL:objCUrl fullSynchronization:true].config;
         });
         return self;
     }
@@ -204,6 +204,44 @@ PermissionChangeCallback RLMWrapPermissionStatusCallback(RLMPermissionStatusBloc
                               timeout:timeout
                         callbackQueue:callbackQueue
                       completionBlock:completion];
+}
+
+- (RLMRealmConfiguration *)configuration {
+    return [self configurationWithURL:nil
+                  fullSynchronization:NO
+                  enableSSLValidation:YES
+                            urlPrefix:nil];
+}
+
+- (RLMRealmConfiguration *)configurationWithURL:(NSURL *)url {
+    return [self configurationWithURL:url
+                  fullSynchronization:NO
+                  enableSSLValidation:YES
+                            urlPrefix:nil];
+}
+
+- (RLMRealmConfiguration *)configurationWithURL:(NSURL *)url fullSynchronization:(bool)fullSynchronization {
+    return [self configurationWithURL:url
+                  fullSynchronization:fullSynchronization
+                  enableSSLValidation:YES
+                            urlPrefix:nil];
+}
+
+- (RLMRealmConfiguration *)configurationWithURL:(NSURL *)url
+                            fullSynchronization:(bool)fullSynchronization
+                            enableSSLValidation:(bool)enableSSLValidation
+                                      urlPrefix:(NSString * _Nullable)urlPrefix {
+    auto syncConfig = [[RLMSyncConfiguration alloc] initWithUser:self
+                                                        realmURL:url ?: self.defaultRealmURL
+                                                   customFileURL:nil
+                                                       isPartial:!fullSynchronization
+                                                      stopPolicy:RLMSyncStopPolicyAfterChangesUploaded
+                                                    errorHandler:nullptr];
+    syncConfig.urlPrefix = urlPrefix;
+    syncConfig.enableSSLValidation = enableSSLValidation;
+    RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
+    config.syncConfiguration = syncConfig;
+    return config;
 }
 
 - (void)logOut {
@@ -299,16 +337,53 @@ PermissionChangeCallback RLMWrapPermissionStatusCallback(RLMPermissionStatusBloc
                                    userInfo:nil]);
         return;
     }
-    [RLMNetworkClient sendRequestToEndpoint:[RLMSyncChangePasswordEndpoint endpoint]
-                                     server:self.authenticationServer
+    [RLMSyncChangePasswordEndpoint sendRequestToServer:self.authenticationServer
                                        JSON:@{kRLMSyncTokenKey: self._refreshToken,
                                               kRLMSyncUserIDKey: userID,
-                                              kRLMSyncDataKey: @{ kRLMSyncNewPasswordKey: newPassword }
-                                              }
-                                    timeout:60
-                                 completion:^(NSError *error, __unused NSDictionary *json) {
-        completion(error);
-    }];
+                                              kRLMSyncDataKey: @{kRLMSyncNewPasswordKey: newPassword}}
+                                    options:[[RLMSyncManager sharedManager] networkRequestOptions]
+                                 completion:completion];
+}
+
++ (void)requestPasswordResetForAuthServer:(NSURL *)serverURL
+                                userEmail:(NSString *)email
+                               completion:(RLMPasswordChangeStatusBlock)completion {
+    [RLMSyncUpdateAccountEndpoint sendRequestToServer:serverURL
+                                                 JSON:@{@"provider_id": email, @"data": @{@"action": @"reset_password"}}
+                                              options:[[RLMSyncManager sharedManager] networkRequestOptions]
+                                           completion:completion];
+}
+
++ (void)completePasswordResetForAuthServer:(NSURL *)serverURL
+                                     token:(NSString *)token
+                                  password:(NSString *)newPassword
+                                completion:(RLMPasswordChangeStatusBlock)completion {
+    [RLMSyncUpdateAccountEndpoint sendRequestToServer:serverURL
+                                                 JSON:@{@"data": @{@"action": @"complete_reset",
+                                                                   @"token": token,
+                                                                   @"new_password": newPassword}}
+                                              options:[[RLMSyncManager sharedManager] networkRequestOptions]
+                                           completion:completion];
+}
+
++ (void)requestEmailConfirmationForAuthServer:(NSURL *)serverURL
+                                    userEmail:(NSString *)email
+                                   completion:(RLMPasswordChangeStatusBlock)completion {
+    [RLMSyncUpdateAccountEndpoint sendRequestToServer:serverURL
+                                                 JSON:@{@"data": @{@"provider_id": email,
+                                                                   @"action": @"request_email_confirmation"}}
+                                              options:[[RLMSyncManager sharedManager] networkRequestOptions]
+                                           completion:completion];
+}
+
++ (void)confirmEmailForAuthServer:(NSURL *)serverURL
+                            token:(NSString *)token
+                       completion:(RLMPasswordChangeStatusBlock)completion {
+    [RLMSyncUpdateAccountEndpoint sendRequestToServer:serverURL
+                                                 JSON:@{@"data": @{@"action": @"confirm_email",
+                                                                   @"token": token}}
+                                              options:[[RLMSyncManager sharedManager] networkRequestOptions]
+                                           completion:completion];
 }
 
 #pragma mark - Administrator API
@@ -323,6 +398,8 @@ PermissionChangeCallback RLMWrapPermissionStatusCallback(RLMPermissionStatusBloc
                                               kRLMSyncProviderIDKey: providerUserIdentity,
                                               kRLMSyncTokenKey: self._refreshToken
                                               }
+                                    timeout:60
+                                    options:[[RLMSyncManager sharedManager] networkRequestOptions]
                                  completion:^(NSError *error, NSDictionary *json) {
                                      if (error) {
                                          completion(nil, error);
@@ -534,10 +611,12 @@ static void verifyInRunLoop() {
             });
         }
     };
+
     [RLMNetworkClient sendRequestToEndpoint:[RLMSyncAuthEndpoint endpoint]
                                      server:authServerURL
                                        JSON:json
                                     timeout:timeout
+                                    options:[[RLMSyncManager sharedManager] networkRequestOptions]
                                  completion:^(NSError *error, NSDictionary *dictionary) {
                                      dispatch_async(callbackQueue, ^{
                                          handler(error, dictionary);

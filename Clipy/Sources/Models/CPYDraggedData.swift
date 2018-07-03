@@ -36,10 +36,10 @@ final class CPYDraggedData: NSObject, NSCoding {
 
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
-        self.type               = DragType(rawValue: aDecoder.decodeInteger(forKey: "type")) ?? .folder
-        self.folderIdentifier   = aDecoder.decodeObject(forKey: "folderIdentifier") as? String
-        self.snippetIdentifier  = aDecoder.decodeObject(forKey: "snippetIdentifier") as? String
-        self.index              = aDecoder.decodeInteger(forKey: "index")
+        self.type = DragType(rawValue: aDecoder.decodeInteger(forKey: "type")) ?? .folder
+        self.folderIdentifier = aDecoder.decodeObject(forKey: "folderIdentifier") as? String
+        self.snippetIdentifier = aDecoder.decodeObject(forKey: "snippetIdentifier") as? String
+        self.index = aDecoder.decodeInteger(forKey: "index")
         super.init()
     }
 

@@ -364,13 +364,14 @@ struct sync_session_states::Dying : public SyncSession::State {
 struct sync_session_states::Inactive : public SyncSession::State {
     void enter_state(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
     {
-        // Inform any queued-up completion handlers that they were cancelled.
-        for (auto& package : session.m_completion_wait_packages) {
-            package.callback(util::error::operation_aborted);
-        }
+        auto completion_wait_packages = std::move(session.m_completion_wait_packages);
         session.m_completion_wait_packages.clear();
         session.m_session = nullptr;
-        session.unregister(lock);
+        session.unregister(lock); // releases lock
+
+        // Inform any queued-up completion handlers that they were cancelled.
+        for (auto& package : completion_wait_packages)
+            package.callback(util::error::operation_aborted);
     }
 
     bool revive_if_needed(std::unique_lock<std::mutex>& lock, SyncSession& session) const override
@@ -519,7 +520,7 @@ void SyncSession::handle_error(SyncError error)
                 {
                     std::unique_lock<std::mutex> lock(m_state_mutex);
                     user_to_invalidate = user();
-                    cancel_pending_waits();
+                    cancel_pending_waits(lock);
                 }
                 if (user_to_invalidate)
                     user_to_invalidate->invalidate();
@@ -546,6 +547,8 @@ void SyncSession::handle_error(SyncError error)
             case ClientError::pong_timeout:
                 // Not real errors, don't need to be reported to the binding.
                 return;
+            case ClientError::bad_timestamp:
+            case ClientError::connect_timeout:
             case ClientError::unknown_message:
             case ClientError::bad_syntax:
             case ClientError::limits_exceeded:
@@ -584,7 +587,7 @@ void SyncSession::handle_error(SyncError error)
         }
         case NextStateAfterError::error: {
             std::unique_lock<std::mutex> lock(m_state_mutex);
-            cancel_pending_waits();
+            cancel_pending_waits(lock);
             break;
         }
     }
@@ -593,13 +596,15 @@ void SyncSession::handle_error(SyncError error)
     }
 }
 
-void SyncSession::cancel_pending_waits()
+void SyncSession::cancel_pending_waits(std::unique_lock<std::mutex>& lock)
 {
+    auto packages = std::move(m_completion_wait_packages);
+    lock.unlock();
+
     // Inform any queued-up completion handlers that they were cancelled.
-    for (auto& package : m_completion_wait_packages) {
+    for (auto& package : packages) {
         package.callback(util::error::operation_aborted);
     }
-    m_completion_wait_packages.clear();
 }
 
 void SyncSession::handle_progress_update(uint64_t downloaded, uint64_t downloadable,
@@ -621,6 +626,16 @@ void SyncSession::create_sync_session()
     session_config.ssl_trust_certificate_path = m_config.ssl_trust_certificate_path;
     session_config.ssl_verify_callback = m_config.ssl_verify_callback;
     session_config.multiplex_ident = m_multiplex_identity;
+
+    if (m_config.authorization_header_name) {
+        session_config.authorization_header_name = *m_config.authorization_header_name;
+    }
+    session_config.custom_http_headers = m_config.custom_http_headers;
+
+    if (m_config.url_prefix) {
+        session_config.url_prefix = *m_config.url_prefix;
+    }
+
     m_session = m_client.make_session(m_realm_path, std::move(session_config));
 
     // The next time we get a token, call `bind()` instead of `refresh()`.

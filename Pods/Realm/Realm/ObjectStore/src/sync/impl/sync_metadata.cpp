@@ -157,6 +157,23 @@ SyncMetadataManager::SyncMetadataManager(std::string path,
     };
 
     m_metadata_config = std::move(config);
+
+    m_client_uuid = [&]() -> std::string {
+        TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_clientMetadata);
+        if (table->is_empty()) {
+            realm->begin_transaction();
+            if (table->is_empty()) {
+                size_t idx = table->add_empty_row();
+                REALM_ASSERT_DEBUG(idx == 0);
+                auto uuid = uuid_string();
+                table->set_string(m_client_schema.idx_uuid, idx, uuid);
+                realm->commit_transaction();
+                return uuid;
+            }
+            realm->cancel_transaction();
+        }
+        return table->get_string(m_client_schema.idx_uuid, 0);
+    }();
 }
 
 SyncUserMetadataResults SyncMetadataManager::all_unmarked_users() const
@@ -307,26 +324,6 @@ util::Optional<SyncFileActionMetadata> SyncMetadataManager::get_file_action_meta
         return none;
 
     return SyncFileActionMetadata(std::move(schema), std::move(realm), table->get(row_idx));
-}
-
-std::string SyncMetadataManager::client_uuid() const
-{
-    auto realm = Realm::get_shared_realm(m_metadata_config);
-    TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_clientMetadata);
-    if (table->is_empty()) {
-        realm->begin_transaction();
-        if (table->is_empty()) {
-            size_t idx = table->add_empty_row();
-            REALM_ASSERT_DEBUG(idx == 0);
-            auto uuid = uuid_string();
-            table->set_string(m_client_schema.idx_uuid, idx, uuid);
-            realm->commit_transaction();
-            return uuid;
-        }
-        realm->cancel_transaction();
-    }
-
-    return table->get_string(m_client_schema.idx_uuid, 0);
 }
 
 // MARK: - Sync user metadata

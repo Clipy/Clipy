@@ -15,7 +15,7 @@ import Cocoa
 class CPYUpdatesPreferenceViewController: NSViewController {
 
     // MARK: - Properties
-    @IBOutlet weak var versionTextField: NSTextField!
+    @IBOutlet private weak var versionTextField: NSTextField!
 
     // MARK: - Initialize
     override func loadView() {

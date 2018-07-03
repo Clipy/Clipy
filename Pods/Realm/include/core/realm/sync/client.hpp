@@ -20,7 +20,8 @@
 #ifndef REALM_SYNC_CLIENT_HPP
 #define REALM_SYNC_CLIENT_HPP
 
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <utility>
 #include <functional>
@@ -60,10 +61,17 @@ public:
         testing
     };
 
-    static constexpr std::uint_fast64_t default_connection_linger_time_ms =  30000; // 30 seconds
-    static constexpr std::uint_fast64_t default_ping_keepalive_period_ms  = 600000; // 10 minutes
-    static constexpr std::uint_fast64_t default_pong_keepalive_timeout_ms = 300000; //  5 minutes
-    static constexpr std::uint_fast64_t default_pong_urgent_timeout_ms    =   5000; //  5 seconds
+    using RoundtripTimeHandler = void(milliseconds_type roundtrip_time);
+
+    // FIXME: The default values for `connect_timeout`, `ping_keepalive_period`,
+    // and `pong_keepalive_timeout` ought to be much lower (2 minutes, 1 minute,
+    // and 2 minutes) than they are. Their current values are due to the fact
+    // that the server is single threaded, and that some operations take more
+    // than 5 minutes to complete.
+    static constexpr milliseconds_type default_connect_timeout        = 600000; // 10 minutes
+    static constexpr milliseconds_type default_connection_linger_time =  30000; // 30 seconds
+    static constexpr milliseconds_type default_ping_keepalive_period  = 600000; // 10 minutes
+    static constexpr milliseconds_type default_pong_keepalive_timeout = 600000; // 10 minutes
 
     struct Config {
         Config() {}
@@ -109,6 +117,12 @@ public:
         /// \sa make_client_history(), TrivialChangesetCooker.
         std::shared_ptr<ClientHistory::ChangesetCooker> changeset_cooker;
 
+        /// The maximum number of milliseconds to allow for a connection to
+        /// become fully established. This includes the time to resolve the
+        /// network address, the TCP connect operation, the SSL handshake, and
+        /// the WebSocket handshake.
+        milliseconds_type connect_timeout = default_connect_timeout;
+
         /// The number of milliseconds to keep a connection open after all
         /// sessions have been abandoned (or suspended by errors).
         ///
@@ -119,16 +133,23 @@ public:
         /// If the connection gets closed due to an error before the linger time
         /// expires, the connection will be kept closed until there are sessions
         /// willing to use it again.
-        std::uint_fast64_t connection_linger_time_ms = default_connection_linger_time_ms;
+        milliseconds_type connection_linger_time = default_connection_linger_time;
 
-        /// The number of ms between periodic keep-alive pings.
-        std::uint_fast64_t ping_keepalive_period_ms = default_ping_keepalive_period_ms;
+        /// The client will send PING messages periodically to allow the server
+        /// to detect dead connections (heartbeat). This parameter specifies the
+        /// time, in milliseconds, between these PING messages. When scheduling
+        /// the next PING message, the client will deduct a small random amount
+        /// from the specified value to help spread the load on the server from
+        /// many clients.
+        milliseconds_type ping_keepalive_period = default_ping_keepalive_period;
 
-        /// The number of ms to wait for keep-alive pongs.
-        std::uint_fast64_t pong_keepalive_timeout_ms = default_pong_keepalive_timeout_ms;
-
-        /// The number of ms to wait for urgent pongs.
-        std::uint_fast64_t pong_urgent_timeout_ms = default_pong_urgent_timeout_ms;
+        /// Whenever the server receives a PING message, it is supposed to
+        /// respond with a PONG messsage to allow the client to detect dead
+        /// connections (heartbeat). This parameter specifies the time, in
+        /// milliseconds, that the client will wait for the PONG response
+        /// message before it assumes that the connection is dead, and
+        /// terminates it.
+        milliseconds_type pong_keepalive_timeout = default_pong_keepalive_timeout;
 
         /// If enable_upload_log_compaction is true, every changeset will be
         /// compacted before it is uploaded to the server. Compaction will
@@ -143,6 +164,13 @@ public:
         /// decrease latencies, but possibly at the expense of scalability. Be
         /// sure to research the subject before you enable this option.
         bool tcp_no_delay = false;
+
+        /// The specified function will be called whenever a PONG message is
+        /// received on any connection. The round-trip time in milliseconds will
+        /// be pased to the function. The specified function will always be
+        /// called by the client's event loop thread, i.e., the thread that
+        /// calls `Client::run()`. This feature is mainly for testing purposes.
+        std::function<RoundtripTimeHandler> roundtrip_time_handler;
     };
 
     /// \throw util::EventLoop::Implementation::NotAvailable if no event loop
@@ -941,6 +969,8 @@ enum class Client::Error {
     pong_timeout                = 118, ///< Timeout on reception of PONG respone message
     bad_client_file_ident_salt  = 119, ///< Bad client file identifier salt (IDENT)
     bad_file_ident              = 120, ///< Bad file identifier (ALLOC)
+    connect_timeout             = 121, ///< Sync connection was not fully established in time
+    bad_timestamp               = 122, ///< Bad timestamp (PONG)
 };
 
 const std::error_category& client_error_category() noexcept;
