@@ -1,0 +1,9 @@
+strings:
+  paths: Clipy/Resources/en.lproj/Localizable.strings
+  templateName: structured-swift4
+  output: Clipy/Generated/LocalizedStrings.swift
+xcassets:
+  paths:
+   - Clipy/Resources/Images.xcassets
+  templateName: swift4
+  output: Clipy/Generated/AssetsImages.swift

@@ -12,7 +12,7 @@
 
 "Launch Clipy on system startup?" = "Launch Clipy on system startup?";
 
-"You can change this setting in the Preferences if you want." = "You can change this setting in the Preferences if you want.";
+"You can change this setting in the Preferences if you want" = "You can change this setting in the Preferences if you want.";
 
 "Launch on system startup" = "Launch on system startup";
 
@@ -24,9 +24,9 @@
 
 "Cancel" = "Cancel";
 
-"Edit Snippets..." = "Edit Snippets...";
+"Edit Snippets" = "Edit Snippets...";
 
-"Preferences..." = "Preferences...";
+"Preferences" = "Preferences...";
 
 "Quit Clipy" = "Quit Clipy";
 

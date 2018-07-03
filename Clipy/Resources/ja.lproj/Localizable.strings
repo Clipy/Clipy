@@ -12,7 +12,7 @@
 
 "Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?";
 
-"You can change this setting in the Preferences if you want." = "この設定はいつでも変更できます";
+"You can change this setting in the Preferences if you want" = "この設定はいつでも変更できます";
 
 "Launch on system startup" = "起動する";
 
@@ -24,9 +24,9 @@
 
 "Cancel" = "キャンセル";
 
-"Edit Snippets..." = "スニペットを編集...";
+"Edit Snippets" = "スニペットを編集...";
 
-"Preferences..." = "環境設定...";
+"Preferences" = "環境設定...";
 
 "Quit Clipy" = "Clipyを終了";
 

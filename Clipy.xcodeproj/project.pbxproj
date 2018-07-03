@@ -13,6 +13,8 @@
 		CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
+		FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897B20EC22E200A3FEFC /* AssetsImages.swift */; };
+		FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */; };
 		FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */; };
 		FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */; };
 		FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */; };
@@ -40,7 +42,6 @@
 		FA1DB4D61DDCB479007F95C8 /* CPYFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D01DDCB479007F95C8 /* CPYFolder.swift */; };
 		FA1DB4D71DDCB479007F95C8 /* CPYSnippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D11DDCB479007F95C8 /* CPYSnippet.swift */; };
 		FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */; };
-		FA1DB4E61DDCB49C007F95C8 /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4DA1DDCB49C007F95C8 /* LocalizedString.swift */; };
 		FA1DB4E71DDCB49C007F95C8 /* CPYDesignableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4DD1DDCB49C007F95C8 /* CPYDesignableButton.swift */; };
 		FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */; };
 		FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4E01DDCB49C007F95C8 /* CPYSplitView.swift */; };
@@ -151,6 +152,8 @@
 		CAFD12AF1F207DBC00DF1CEB /* Observable+Void.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Observable+Void.swift"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceSpec.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
+		FA10897B20EC22E200A3FEFC /* AssetsImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsImages.swift; sourceTree = "<group>"; };
+		FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
 		FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppService.swift; sourceTree = "<group>"; };
 		FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
@@ -180,7 +183,6 @@
 		FA1DB4D01DDCB479007F95C8 /* CPYFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYFolder.swift; sourceTree = "<group>"; };
 		FA1DB4D11DDCB479007F95C8 /* CPYSnippet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSnippet.swift; sourceTree = "<group>"; };
 		FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
-		FA1DB4DA1DDCB49C007F95C8 /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		FA1DB4DD1DDCB49C007F95C8 /* CPYDesignableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableButton.swift; sourceTree = "<group>"; };
 		FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
 		FA1DB4E01DDCB49C007F95C8 /* CPYSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSplitView.swift; sourceTree = "<group>"; };
@@ -308,6 +310,15 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		FA10897A20EC229300A3FEFC /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				FA10897B20EC22E200A3FEFC /* AssetsImages.swift */,
+				FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
 		FA1DB4911DDCB205007F95C8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,7 +412,6 @@
 			isa = PBXGroup;
 			children = (
 				FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */,
-				FA1DB4DA1DDCB49C007F95C8 /* LocalizedString.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -524,6 +534,7 @@
 				FA1DB49D1DDCB405007F95C8 /* Xibs */,
 				FA1DB49C1DDCB3FB007F95C8 /* Sources */,
 				FA1DB4911DDCB205007F95C8 /* Supporting Files */,
+				FA10897A20EC229300A3FEFC /* Generated */,
 			);
 			path = Clipy;
 			sourceTree = "<group>";
@@ -564,6 +575,7 @@
 				FAAD02201CA98E20007C6EEE /* SwiftLint */,
 				07B47785AE0AC2185B570C28 /* [CP] Embed Pods Frameworks */,
 				FAAA88991E686CED0088FB34 /* BartyCrouch */,
+				FA10897F20EC24F700A3FEFC /* SwiftGen */,
 			);
 			buildRules = (
 			);
@@ -775,6 +787,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		FA10897F20EC24F700A3FEFC /* SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftGen;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftGen/bin/swiftgen\"";
+		};
 		FA4A5CDC1C7CAEDD0031BCEF /* Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -835,7 +861,6 @@
 				FA1DB4D31DDCB479007F95C8 /* CPYClip.swift in Sources */,
 				FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */,
 				C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */,
-				FA1DB4E61DDCB49C007F95C8 /* LocalizedString.swift in Sources */,
 				FA1DB4A31DDCB433007F95C8 /* Constants.swift in Sources */,
 				FA1DB4D61DDCB479007F95C8 /* CPYFolder.swift in Sources */,
 				CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */,
@@ -862,11 +887,13 @@
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,
 				FA1DB4B61DDCB452007F95C8 /* NSImage+AssetCatalog.swift in Sources */,
 				FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */,
+				FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */,
 				FA1DB4E71DDCB49C007F95C8 /* CPYDesignableButton.swift in Sources */,
 				FA1DB4D21DDCB479007F95C8 /* CPYAppInfo.swift in Sources */,
 				FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */,
 				FA1DB4D71DDCB479007F95C8 /* CPYSnippet.swift in Sources */,
 				FA1DB5201DDCB4C0007F95C8 /* CPYSnippetsEditorWindowController.swift in Sources */,
+				FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */,
 				FA1DB4EB1DDCB49C007F95C8 /* CPYPlaceHolderTextView.swift in Sources */,
 				FA1DB4BB1DDCB452007F95C8 /* Realm+Migration.swift in Sources */,
 				FA1DB5121DDCB4C0007F95C8 /* CPYPreferencesWindowController.swift in Sources */,

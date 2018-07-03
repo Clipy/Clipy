@@ -12,7 +12,7 @@
 
 "Launch Clipy on system startup?" = "Clipy beim Starten öffnen?";
 
-"You can change this setting in the Preferences if you want." = "Sie können diese Option in den Einstellungen ändern.";
+"You can change this setting in the Preferences if you want" = "Sie können diese Option in den Einstellungen ändern.";
 
 "Launch on system startup" = "Anwendung automatisch starten";
 
@@ -24,9 +24,9 @@
 
 "Cancel" = "Abbrechen";
 
-"Edit Snippets..." = "Snippets bearbeiten...";
+"Edit Snippets" = "Snippets bearbeiten...";
 
-"Preferences..." = "Einstellungen...";
+"Preferences" = "Einstellungen...";
 
 "Quit Clipy" = "Clipy beenden";
 

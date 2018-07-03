@@ -12,7 +12,7 @@
 
 "Launch Clipy on system startup?" = "系统启动时打开 Clipy?";
 
-"You can change this setting in the Preferences if you want." = "如有需要可在偏好设置中修改本设置。";
+"You can change this setting in the Preferences if you want" = "如有需要可在偏好设置中修改本设置。";
 
 "Launch on system startup" = "系统启动时打开";
 
@@ -24,9 +24,9 @@
 
 "Cancel" = "取消";
 
-"Edit Snippets..." = "编辑片断...";
+"Edit Snippets" = "编辑片断...";
 
-"Preferences..." = "偏好设置...";
+"Preferences" = "偏好设置...";
 
 "Quit Clipy" = "退出 Clipy";
 
