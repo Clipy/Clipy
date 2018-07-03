@@ -212,8 +212,8 @@ extension AppDelegate: NSApplicationDelegate {
 }
 
 // MARK: - Bind
-private extension AppDelegate {
-    func bind() {
+fileprivate extension AppDelegate {
+    fileprivate func bind() {
         // Login Item
         AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
             .filterNil()
