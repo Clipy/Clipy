@@ -68,7 +68,7 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
-    danger-swiftlint (0.17.0)
+    danger-swiftlint (0.16.0)
       danger
       rake (> 10)
       thor (~> 0.19)
@@ -237,7 +237,7 @@ PLATFORMS
 DEPENDENCIES
   cocoapods
   danger
-  danger-swiftlint
+  danger-swiftlint (= 0.16.0)
   fastlane
   fastlane-plugin-update_provisioning_profile_specifier
 
