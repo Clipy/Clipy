@@ -29,10 +29,9 @@ namespace _impl {
 
 /// Limit the amount of dumped data to 1024 bytes. For use in connection with
 /// logging.
-inline std::string clamped_hex_dump(BinaryData blob)
+inline std::string clamped_hex_dump(BinaryData blob, std::size_t max_size = 1024)
 {
     bool was_clipped = false;
-    std::size_t max_size = 1024;
     std::size_t size_2 = blob.size();
     if (size_2 > max_size) {
         size_2 = max_size;

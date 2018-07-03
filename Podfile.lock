@@ -1,35 +1,35 @@
 PODS:
   - AEXML (4.3.0)
-  - BartyCrouch (3.11.1)
-  - Crashlytics (3.10.1):
-    - Fabric (~> 1.7.5)
-  - Fabric (1.7.6)
+  - BartyCrouch (3.13.0)
+  - Crashlytics (3.10.3):
+    - Fabric (~> 1.7.8)
+  - Fabric (1.7.8)
   - KeyHolder (2.1.0):
     - Magnet (~> 2.1)
   - LetsMove (1.24)
   - LoginServiceKit (1.2.0)
   - Magnet (2.1.0)
-  - Nimble (7.1.0)
+  - Nimble (7.1.2)
   - PINCache (2.3)
-  - Quick (1.2.0)
-  - Realm (3.3.2):
-    - Realm/Headers (= 3.3.2)
-  - Realm/Headers (3.3.2)
-  - RealmSwift (3.3.2):
-    - Realm (= 3.3.2)
-  - RxCocoa (4.1.2):
+  - Quick (1.3.0)
+  - Realm (3.7.4):
+    - Realm/Headers (= 3.7.4)
+  - Realm/Headers (3.7.4)
+  - RealmSwift (3.7.4):
+    - Realm (= 3.7.4)
+  - RxCocoa (4.2.0):
     - RxSwift (~> 4.0)
-  - RxOptional (3.4.0):
+  - RxOptional (3.5.0):
     - RxCocoa (~> 4.0)
     - RxSwift (~> 4.0)
   - RxScreeen (1.3.0):
     - RxCocoa (~> 4.0)
     - RxSwift (~> 4.0)
     - Screeen (~> 1.2)
-  - RxSwift (4.1.2)
+  - RxSwift (4.2.0)
   - Screeen (1.2.0)
-  - Sparkle (1.18.1)
-  - SwiftLint (0.25.1)
+  - Sparkle (1.19.0)
+  - SwiftLint (0.26.0)
 
 DEPENDENCIES:
   - AEXML
@@ -83,25 +83,25 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AEXML: bae92c01e0da64132fd72f748721cda07466032b
-  BartyCrouch: 14986f4adc676174f28c93bcf3bb53885d9f7c84
-  Crashlytics: aee1a064cbbf99b32efa3f056a5f458d846bc8ff
-  Fabric: f8d42c893bb187326a7968b62abe55c36a987a46
+  BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
+  Crashlytics: 2aea305161a2122492698c75af27f2b98aa49a25
+  Fabric: fba4684a95df789565b0b27fc5b6e68f1755af32
   KeyHolder: 22fc9d2c939bf5a24078d0bbb2a354d9da1386e3
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
   LoginServiceKit: 4e51d3007cd6fc1d0453ba98c3328fcf06fa27c1
   Magnet: 6c26f03a279b9340bb6a86a73a1314d2da110219
-  Nimble: 9c6651c3021af6de54c3ed90a4a0a87d548f7359
+  Nimble: 3835ba9f459daa6b347f8a8e110aaae8ca1920a8
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
-  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
-  Realm: d927fbf66df5532cfafc08afb5f7e53ded37b894
-  RealmSwift: 4e903a494e05d866581d69ad6f7e7b879d446baf
-  RxCocoa: d88ba0f1f6abf040011a9eb4b539324fc426843a
-  RxOptional: fabc37fc8e3cf4c336ebaeb5c92b576c64b2e6c5
+  Quick: 03278013f71aa05fe9ecabc94fbcc6835f1ee76f
+  Realm: a469bb59e33f9926102ccaea4349822c53b9117e
+  RealmSwift: a45861b21c180f5cf0f122144b9759fa8dde3e9e
+  RxCocoa: 0b54909c902e1e581212a03e690bbd94032d8baa
+  RxOptional: bd32ff8ca9df4177683d56ffeb618a9d4d5d5cad
   RxScreeen: 56b432893feaab6b50cf807fb6bd1aefd79e7346
-  RxSwift: e49536837d9901277638493ea537394d4b55f570
+  RxSwift: 99e10317ddfcc7fbe01356aafd118fde4a0be104
   Screeen: c725fd8035f07dd4d1db9d8e94d3a07534b43801
-  Sparkle: 06ea33170007c5937ee54da481b4481af98fac79
-  SwiftLint: ce933681be10c3266e82576dad676fa815a602e9
+  Sparkle: 8486d2493599665e466b5076e72b28849776e32f
+  SwiftLint: f6b83e8d95ee1e91e11932d843af4fdcbf3fc764
 
 PODFILE CHECKSUM: 5bfba38b861ea53d3450451957fe3049d1584f60
 

@@ -961,6 +961,7 @@ T Realm::resolve_thread_safe_reference(ThreadSafeReference<T> reference)
         if (reference_version < current_version) {
             // Duplicate config for uncached Realm so we don't advance the user's Realm
             Realm::Config config = m_coordinator->get_config();
+            config.automatic_change_notifications = false;
             config.cache = false;
             config.schema = util::none;
             SharedRealm temporary_realm = m_coordinator->get_realm(config);

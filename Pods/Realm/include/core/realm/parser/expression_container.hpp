@@ -45,6 +45,7 @@ public:
     CollectionOperatorExpression<parser::Expression::KeyPathOp::Sum>& get_sum();
     CollectionOperatorExpression<parser::Expression::KeyPathOp::Avg>& get_avg();
     CollectionOperatorExpression<parser::Expression::KeyPathOp::Count>& get_count();
+    CollectionOperatorExpression<parser::Expression::KeyPathOp::BacklinkCount>& get_backlink_count();
     CollectionOperatorExpression<parser::Expression::KeyPathOp::SizeString>& get_size_string();
     CollectionOperatorExpression<parser::Expression::KeyPathOp::SizeBinary>& get_size_binary();
     SubqueryExpression& get_subexpression();
@@ -63,6 +64,7 @@ public:
         exp_OpCount,
         exp_OpSizeString,
         exp_OpSizeBinary,
+        exp_OpBacklinkCount,
         exp_SubQuery
     };
 

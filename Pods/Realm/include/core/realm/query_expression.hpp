@@ -343,25 +343,9 @@ struct RowIndex {
     {
         return !(*this == other);
     }
-    template <class C, class T>
-    friend std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>&, const RowIndex&);
-
 private:
     util::Optional<size_t> m_row_index;
 };
-
-template <class C, class T>
-inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& out, const RowIndex& r)
-{
-    if (!r.is_attached()) {
-        out << "detached row";
-    } else if (r.is_null()) {
-        out << "null row";
-    } else {
-        out << r.m_row_index;
-    }
-    return out;
-}
 
 struct ValueBase {
     static const size_t default_size = 8;
@@ -1767,6 +1751,27 @@ struct CountLinks : public LinkMapFunction {
     size_t m_link_count = 0;
 };
 
+struct CountBacklinks : public LinkMapFunction {
+    CountBacklinks(const Table* t)
+        : m_table(t)
+    {
+    }
+
+    bool consume(size_t row_index) override
+    {
+        m_link_count += m_table->get_backlink_count(row_index);
+        return true;
+    }
+
+    size_t result() const
+    {
+        return m_link_count;
+    }
+
+    const Table* m_table;
+    size_t m_link_count = 0;
+};
+
 
 /*
 The LinkMap and LinkMapFunction classes are used for query conditions on links themselves (contrary to conditions on
@@ -1879,6 +1884,13 @@ public:
     size_t count_links(size_t row)
     {
         CountLinks counter;
+        map_links(row, counter);
+        return counter.result();
+    }
+
+    size_t count_all_backlinks(size_t row)
+    {
+        CountBacklinks counter(target_table());
         map_links(row, counter);
         return counter.result();
     }
@@ -2353,6 +2365,71 @@ private:
     LinkMap m_link_map;
 };
 
+// Gives a count of all backlinks across all columns for the specified row.
+// The unused template parameter is a hack to avoid a circular dependency between table.hpp and query_expression.hpp.
+template <class>
+class BacklinkCount : public Subexpr2<Int> {
+public:
+    BacklinkCount(LinkMap link_map)
+    : m_link_map(std::move(link_map))
+    {
+    }
+    BacklinkCount(const Table* table, std::vector<size_t> links = {})
+    : m_link_map(table, std::move(links))
+    {
+    }
+    BacklinkCount(BacklinkCount const& other, QueryNodeHandoverPatches* patches)
+    : Subexpr2<Int>(other)
+    , m_link_map(other.m_link_map, patches)
+    {
+    }
+
+    std::unique_ptr<Subexpr> clone(QueryNodeHandoverPatches* patches) const override
+    {
+        return make_subexpr<BacklinkCount<Int> >(*this, patches);
+    }
+
+    const Table* get_base_table() const override
+    {
+        return m_link_map.base_table();
+    }
+
+    void set_base_table(const Table* table) override
+    {
+        m_link_map.set_base_table(table);
+    }
+
+    void verify_column() const override
+    {
+        m_link_map.verify_columns();
+    }
+
+    void evaluate(size_t index, ValueBase& destination) override
+    {
+        size_t count;
+        if (m_link_map.links_exist()) {
+            count = m_link_map.count_all_backlinks(index);
+        }
+        else {
+            count = m_link_map.target_table()->get_backlink_count(index);
+        }
+        destination.import(Value<Int>(false, 1, count));
+    }
+
+    virtual std::string description(util::serializer::SerialisationState& state) const override
+    {
+        std::string s;
+        if (m_link_map.links_exist()) {
+            s += state.describe_columns(m_link_map, realm::npos) + util::serializer::value_separator;
+        }
+        s += "@links.@count";
+        return s;
+    }
+private:
+    LinkMap m_link_map;
+};
+
+
 template <class oper, class TExpr>
 class SizeOperator : public Subexpr2<Int> {
 public:
@@ -2535,6 +2612,12 @@ public:
     LinkCount count() const
     {
         return LinkCount(m_link_map);
+    }
+
+    template <class T>
+    BacklinkCount<T> backlink_count() const
+    {
+        return BacklinkCount<T>(m_link_map);
     }
 
     template <typename C>

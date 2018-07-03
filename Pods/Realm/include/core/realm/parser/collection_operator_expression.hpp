@@ -48,7 +48,8 @@ struct CollectionOperatorExpression
 
         const bool requires_suffix_path = !(OpType == parser::Expression::KeyPathOp::SizeString
                                             || OpType == parser::Expression::KeyPathOp::SizeBinary
-                                            || OpType == parser::Expression::KeyPathOp::Count);
+                                            || OpType == parser::Expression::KeyPathOp::Count
+                                            || OpType == parser::Expression::KeyPathOp::BacklinkCount);
 
         if (requires_suffix_path) {
             Table* pre_link_table = pe.table_getter();
@@ -88,7 +89,9 @@ struct CollectionOperatorExpression
             post_link_col_type = element.col_type;
         }
         else {  // !requires_suffix_path
-            post_link_col_type = pe.get_dest_type();
+            if (!pe.link_chain.empty()) {
+                post_link_col_type = pe.get_dest_type();
+            }
 
             realm_precondition(suffix_path.empty(),
                          util::format("An extraneous property '%1' was found for operation '%2'",
@@ -180,6 +183,26 @@ struct CollectionOperatorGetter<RetType, parser::Expression::KeyPathOp::Count,
         }
     }
 };
+
+
+template <typename RetType>
+struct CollectionOperatorGetter<RetType, parser::Expression::KeyPathOp::BacklinkCount,
+typename std::enable_if_t<realm::is_any<RetType, Int, Float, Double>::value> >{
+    static BacklinkCount<Int> convert(const CollectionOperatorExpression<parser::Expression::KeyPathOp::BacklinkCount>& expr)
+    {
+        if (expr.pe.link_chain.empty() || expr.pe.get_dest_ndx() == realm::npos) {
+            // here we are operating on the current table from a "@links.@count" query with no link keypath prefix
+            return expr.table_getter()->template get_backlink_count<Int>();
+        } else {
+            if (expr.pe.dest_type_is_backlink()) {
+                return expr.table_getter()->template column<Link>(*expr.pe.get_dest_table(), expr.pe.get_dest_ndx()).template backlink_count<Int>();
+            } else {
+                return expr.table_getter()->template column<Link>(expr.pe.get_dest_ndx()).template backlink_count<Int>();
+            }
+        }
+    }
+};
+
 
 template <>
 struct CollectionOperatorGetter<Int, parser::Expression::KeyPathOp::SizeString>{

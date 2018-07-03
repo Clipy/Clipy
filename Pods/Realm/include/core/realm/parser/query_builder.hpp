@@ -112,8 +112,15 @@ private:
 
     const ValueType& at(size_t index) const
     {
-        if (index >= m_count)
-            throw std::out_of_range("vector");
+        if (index >= m_count) {
+            std::string error_message;
+            if (m_count) {
+                error_message = util::format("Request for argument at index %1 but only %2 argument%3 provided", index, m_count, m_count == 1 ? " is" : "s are");
+            } else {
+                error_message = util::format("Request for argument at index %1 but no arguments are provided", index);
+            }
+            throw std::out_of_range(error_message);
+        }
         return m_arguments[index];
     }
 

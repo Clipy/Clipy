@@ -43,7 +43,7 @@ public class NMBObjCBeCloseToMatcher: NSObject, NMBMatcher {
         _delta = within
     }
 
-    @objc public func matches(_ actualExpression: @escaping () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool {
+    @objc public func matches(_ actualExpression: @escaping () -> NSObject?, failureMessage: FailureMessage, location: SourceLocation) -> Bool {
         let actualBlock: () -> NMBDoubleConvertible? = ({
             return actualExpression() as? NMBDoubleConvertible
         })
@@ -52,7 +52,7 @@ public class NMBObjCBeCloseToMatcher: NSObject, NMBMatcher {
         return try! matcher.matches(expr, failureMessage: failureMessage)
     }
 
-    @objc public func doesNotMatch(_ actualExpression: @escaping () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool {
+    @objc public func doesNotMatch(_ actualExpression: @escaping () -> NSObject?, failureMessage: FailureMessage, location: SourceLocation) -> Bool {
         let actualBlock: () -> NMBDoubleConvertible? = ({
             return actualExpression() as? NMBDoubleConvertible
         })

@@ -1,7 +1,11 @@
 #import "QuickSpec.h"
 #import "QuickConfiguration.h"
 #import "World.h"
+#if __has_include("Quick-Swift.h")
+#import "Quick-Swift.h"
+#else
 #import <Quick/Quick-Swift.h>
+#endif
 
 static QuickSpec *currentSpec = nil;
 
@@ -74,6 +78,10 @@ static QuickSpec *currentSpec = nil;
 #pragma mark - Public Interface
 
 - (void)spec { }
+
++ (QuickSpec*) current {
+    return currentSpec;
+}
 
 #pragma mark - Internal Methods
 

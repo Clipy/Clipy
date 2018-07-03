@@ -41,6 +41,8 @@
 namespace realm {
 
 class BacklinkColumn;
+template <class>
+class BacklinkCount;
 class BinaryColumy;
 class ConstTableView;
 class Group;
@@ -338,6 +340,9 @@ public:
     Columns<T> column(size_t column); // FIXME: Should this one have been declared noexcept?
     template <class T>
     Columns<T> column(const Table& origin, size_t origin_column_ndx);
+    // BacklinkCount is a total count per row and therefore not attached to a specific column
+    template <class T>
+    BacklinkCount<T> get_backlink_count();
 
     template <class T>
     SubQuery<T> column(size_t column, Query subquery);
@@ -1980,6 +1985,14 @@ inline Columns<T> Table::column(const Table& origin, size_t origin_col_ndx)
     link_chain.push_back(backlink_col_ndx);
 
     return Columns<T>(backlink_col_ndx, this, std::move(link_chain));
+}
+
+template <class T>
+inline BacklinkCount<T> Table::get_backlink_count()
+{
+    std::vector<size_t> link_chain = std::move(m_link_chain);
+    m_link_chain.clear();
+    return BacklinkCount<T>(this, std::move(link_chain));
 }
 
 template <class T>
