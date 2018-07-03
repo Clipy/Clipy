@@ -27,8 +27,8 @@ final class MenuManager: NSObject {
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
-    fileprivate let folderIcon = NSImage(assetIdentifier: .iconFolder)
-    fileprivate let snippetIcon = NSImage(assetIdentifier: .iconText)
+    fileprivate let folderIcon = Asset.Common.iconFolder.image
+    fileprivate let snippetIcon = Asset.Common.iconText.image
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let notificationCenter = NotificationCenter.default
@@ -420,9 +420,9 @@ private extension MenuManager {
         let image: NSImage?
         switch type {
         case .black:
-            image = NSImage(assetIdentifier: .menuBlack)
+            image = Asset.StatusIcon.statusbarMenuBlack.image
         case .white:
-            image = NSImage(assetIdentifier: .menuWhite)
+            image = Asset.StatusIcon.statusbarMenuWhite.image
         case .none: return
         }
         image?.isTemplate = true
