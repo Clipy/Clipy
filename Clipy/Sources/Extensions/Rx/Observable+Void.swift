@@ -29,7 +29,7 @@ extension ObservableType where E: Equatable {
 
 extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingStrategy {
     func mapVoid() -> Driver<Void> {
-        return map { _ in  }
+        return map { _ in }
     }
 }
 

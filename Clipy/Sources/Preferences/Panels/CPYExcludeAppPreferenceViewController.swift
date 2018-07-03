@@ -14,12 +14,12 @@ import Cocoa
 
 class CPYExcludeAppPreferenceViewController: NSViewController {
     // MARK: - Properties
-    @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet private weak var tableView: NSTableView!
 }
 
 // MARK: - IBActions
 extension CPYExcludeAppPreferenceViewController {
-    @IBAction func addAppButtonTapped(_ sender: AnyObject) {
+    @IBAction private func addAppButtonTapped(_ sender: AnyObject) {
         let openPanel = NSOpenPanel()
         openPanel.allowedFileTypes = ["app"]
         openPanel.allowsMultipleSelection = true
@@ -41,7 +41,7 @@ extension CPYExcludeAppPreferenceViewController {
         tableView.reloadData()
     }
 
-    @IBAction func deleteAppButtonTapped(_ sender: AnyObject) {
+    @IBAction private func deleteAppButtonTapped(_ sender: AnyObject) {
         let index = tableView.selectedRow
         if index == -1 {
             NSSound.beep()

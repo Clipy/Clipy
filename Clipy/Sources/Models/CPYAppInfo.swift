@@ -33,7 +33,7 @@ final class CPYAppInfo: NSObject, NSCoding {
         guard let name = aDecoder.decodeObject(forKey: "name") as? String else { return nil }
 
         self.identifier = identifier
-        self.name       = name
+        self.name = name
     }
 
     func encode(with aCoder: NSCoder) {

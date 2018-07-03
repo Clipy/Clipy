@@ -35,7 +35,7 @@ final class ClipService {
             .map { _ in NSPasteboard.general.changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
-            .subscribe(onNext: { [weak self] (changeCount, _) in
+            .subscribe(onNext: { [weak self] changeCount, _ in
                 self?.cachedChangeCount.accept(changeCount)
                 self?.create()
             })

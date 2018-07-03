@@ -13,7 +13,7 @@
 import Foundation
 
 extension NSRecursiveLock {
-    public convenience init(name: String) {
+    convenience init(name: String) {
         self.init()
         self.name = name
     }

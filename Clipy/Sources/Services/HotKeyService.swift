@@ -108,8 +108,8 @@ extension HotKeyService {
 }
 
 // MARK: - Register
-fileprivate extension HotKeyService {
-    fileprivate func register(with type: MenuType, keyCombo: KeyCombo?) {
+private extension HotKeyService {
+    func register(with type: MenuType, keyCombo: KeyCombo?) {
         save(with: type, keyCombo: keyCombo)
         // Reset hotkey
         HotKeyCenter.shared.unregisterHotKey(with: type.rawValue)
@@ -119,7 +119,7 @@ fileprivate extension HotKeyService {
         hotKey.register()
     }
 
-    fileprivate func save(with type: MenuType, keyCombo: KeyCombo?) {
+    func save(with type: MenuType, keyCombo: KeyCombo?) {
         AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: type.userDefaultsKey)
         AppEnvironment.current.defaults.synchronize()
     }
