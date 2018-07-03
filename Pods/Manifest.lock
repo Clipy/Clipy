@@ -6,6 +6,7 @@ PODS:
   - Fabric (1.7.6)
   - KeyHolder (2.1.0):
     - Magnet (~> 2.1)
+  - LetsMove (1.24)
   - LoginServiceKit (1.2.0)
   - Magnet (2.1.0)
   - Nimble (7.1.0)
@@ -36,6 +37,7 @@ DEPENDENCIES:
   - Crashlytics
   - Fabric
   - KeyHolder
+  - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
   - Nimble
   - PINCache
@@ -55,6 +57,7 @@ SPEC REPOS:
     - Crashlytics
     - Fabric
     - KeyHolder
+    - LetsMove
     - Magnet
     - Nimble
     - PINCache
@@ -84,6 +87,7 @@ SPEC CHECKSUMS:
   Crashlytics: aee1a064cbbf99b32efa3f056a5f458d846bc8ff
   Fabric: f8d42c893bb187326a7968b62abe55c36a987a46
   KeyHolder: 22fc9d2c939bf5a24078d0bbb2a354d9da1386e3
+  LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
   LoginServiceKit: 4e51d3007cd6fc1d0453ba98c3328fcf06fa27c1
   Magnet: 6c26f03a279b9340bb6a86a73a1314d2da110219
   Nimble: 9c6651c3021af6de54c3ed90a4a0a87d548f7359
@@ -99,6 +103,6 @@ SPEC CHECKSUMS:
   Sparkle: 06ea33170007c5937ee54da481b4481af98fac79
   SwiftLint: ce933681be10c3266e82576dad676fa815a602e9
 
-PODFILE CHECKSUM: aab74e2b86e5ec92d549788b6ab0b632a458ef46
+PODFILE CHECKSUM: 5bfba38b861ea53d3450451957fe3049d1584f60
 
 COCOAPODS: 1.5.0
