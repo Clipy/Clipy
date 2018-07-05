@@ -12,6 +12,7 @@
 
 import Foundation
 import Cocoa
+import Magnet
 
 final class PasteService {
 
@@ -35,6 +36,15 @@ final class PasteService {
         let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
         return isPressedModifier(modifierSetting)
     }
+    fileprivate var pasteKeyCode: CGKeyCode = {
+        for keyCode in 0...128 {
+            let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: 0)
+            if keyCombo?.characters == "V" {
+                return CGKeyCode(keyCode)
+            }
+        }
+        return CGKeyCode(9)
+    }()
 
     // MARK: - Modifiers
     private func isPressedModifier(_ flag: Int) -> Bool {
@@ -140,16 +150,17 @@ extension PasteService {
 extension PasteService {
     func paste() {
         if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
+        let scanCode = pasteKeyCode
 
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting
             source?.setLocalEventsFilterDuringSuppressionState([.permitLocalMouseEvents, .permitSystemDefinedEvents], state: .eventSuppressionStateSuppressionInterval)
             // Press Command + V
-            let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: true)
+            let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: scanCode, keyDown: true)
             keyVDown?.flags = .maskCommand
             // Release Command + V
-            let keyVUp = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: false)
+            let keyVUp = CGEvent(keyboardEventSource: source, virtualKey: scanCode, keyDown: false)
             keyVUp?.flags = .maskCommand
             // Post Paste Command
             keyVDown?.post(tap: .cgAnnotatedSessionEventTap)
