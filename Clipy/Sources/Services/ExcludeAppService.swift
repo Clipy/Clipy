@@ -89,16 +89,17 @@ extension ExcludeAppService {
         case onePassword = "com.agilebits.onepassword"
 
         // MARK: - Properties
-        private var macApplicationIdentifier: String {
+        private var macApplicationIdentifiers: [String] {
             switch self {
             case .onePassword:
-                return "com.agilebits.onepassword-osx"
+                return ["com.agilebits.onepassword-osx", // for 1Password 6
+                        "com.agilebits.onepassword7"] // for 1Password 7
             }
         }
 
         // MARK: - Excluded
         func isExcluded(applications: [CPYAppInfo]) -> Bool {
-            return !applications.filter { $0.identifier == macApplicationIdentifier }.isEmpty
+            return !applications.filter { macApplicationIdentifiers.contains($0.identifier) }.isEmpty
         }
 
     }
