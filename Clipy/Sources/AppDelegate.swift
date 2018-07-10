@@ -130,7 +130,7 @@ class AppDelegate: NSObject {
     }
 
     // MARK: - Login Item Methods
-    fileprivate func promptToAddLoginItems() {
+    private func promptToAddLoginItems() {
         let alert = NSAlert()
         alert.messageText = L10n.launchClipyOnSystemStartup
         alert.informativeText = L10n.youCanChangeThisSettingInThePreferencesIfYouWant
@@ -142,24 +142,24 @@ class AppDelegate: NSObject {
         //  Launch on system startup
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
-            toggleLoginItemState()
+            AppEnvironment.current.defaults.synchronize()
+            reflectLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSControl.StateValue.on {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+            AppEnvironment.current.defaults.synchronize()
         }
-        AppEnvironment.current.defaults.synchronize()
     }
 
-    fileprivate func toggleAddingToLoginItems(_ enable: Bool) {
+    private func toggleAddingToLoginItems(_ isEnable: Bool) {
         let appPath = Bundle.main.bundlePath
         LoginServiceKit.removeLoginItems(at: appPath)
-        if enable {
-            LoginServiceKit.addLoginItems(at: appPath)
-        }
+        guard isEnable else { return }
+        LoginServiceKit.addLoginItems(at: appPath)
     }
 
-    fileprivate func toggleLoginItemState() {
+    private func reflectLoginItemState() {
         let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
@@ -215,10 +215,10 @@ extension AppDelegate: NSApplicationDelegate {
 private extension AppDelegate {
     func bind() {
         // Login Item
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem)
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
-                self?.toggleLoginItemState()
+                self?.reflectLoginItemState()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
