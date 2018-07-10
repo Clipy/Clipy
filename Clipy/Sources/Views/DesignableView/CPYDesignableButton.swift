@@ -14,7 +14,7 @@ import Cocoa
 
 class CPYDesignableButton: NSButton {
 
-    @IBInspectable var textColor: NSColor = NSColor.titleColor()
+    @IBInspectable var textColor: NSColor = ColorName.title.color
 
     // MARK: - Initialize
     override init(frame frameRect: NSRect) {

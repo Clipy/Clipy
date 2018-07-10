@@ -15,7 +15,7 @@ import Cocoa
 class CPYTypePreferenceViewController: NSViewController {
 
     // MARK: - Properties
-    var storeTypes: NSMutableDictionary!
+    @objc var storeTypes: NSMutableDictionary!
 
     // MARK: - Initialize
     override func loadView() {

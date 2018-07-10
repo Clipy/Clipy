@@ -99,21 +99,21 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 // MARK: - Layout
 fileprivate extension CPYPreferencesWindowController {
     private func resetImages() {
-        generalImageView.image = NSImage(assetIdentifier: .generalOff)
-        menuImageView.image = NSImage(assetIdentifier: .menuOff)
-        typeImageView.image = NSImage(assetIdentifier: .typeOff)
-        excludeImageView.image = NSImage(assetIdentifier: .excludedOff)
-        shortcutsImageView.image = NSImage(assetIdentifier: .shortcutsOff)
-        updatesImageView.image = NSImage(assetIdentifier: .updatesOff)
-        betaImageView.image = NSImage(assetIdentifier: .betaOff)
+        generalImageView.image = Asset.Preference.prefGeneral.image
+        menuImageView.image = Asset.Preference.prefMenu.image
+        typeImageView.image = Asset.Preference.prefType.image
+        excludeImageView.image = Asset.Preference.prefExcluded.image
+        shortcutsImageView.image = Asset.Preference.prefShortcut.image
+        updatesImageView.image = Asset.Preference.prefUpdate.image
+        betaImageView.image = Asset.Preference.prefBeta.image
 
-        generalTextField.textColor = NSColor.tabTitleColor()
-        menuTextField.textColor = NSColor.tabTitleColor()
-        typeTextField.textColor = NSColor.tabTitleColor()
-        excludeTextField.textColor = NSColor.tabTitleColor()
-        shortcutsTextField.textColor = NSColor.tabTitleColor()
-        updatesTextField.textColor = NSColor.tabTitleColor()
-        betaTextField.textColor = NSColor.tabTitleColor()
+        generalTextField.textColor = ColorName.tabTitle.color
+        menuTextField.textColor = ColorName.tabTitle.color
+        typeTextField.textColor = ColorName.tabTitle.color
+        excludeTextField.textColor = ColorName.tabTitle.color
+        shortcutsTextField.textColor = ColorName.tabTitle.color
+        updatesTextField.textColor = ColorName.tabTitle.color
+        betaTextField.textColor = ColorName.tabTitle.color
     }
 
     func selectedTab(_ index: Int) {
@@ -121,26 +121,26 @@ fileprivate extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalImageView.image = NSImage(assetIdentifier: .generalOn)
-            generalTextField.textColor = NSColor.clipyColor()
+            generalImageView.image = Asset.Preference.prefGeneralOn.image
+            generalTextField.textColor = ColorName.clipy.color
         case 1:
-            menuImageView.image = NSImage(assetIdentifier: .menuOn)
-            menuTextField.textColor = NSColor.clipyColor()
+            menuImageView.image = Asset.Preference.prefMenuOn.image
+            menuTextField.textColor = ColorName.clipy.color
         case 2:
-            typeImageView.image = NSImage(assetIdentifier: .typeOn)
-            typeTextField.textColor = NSColor.clipyColor()
+            typeImageView.image = Asset.Preference.prefTypeOn.image
+            typeTextField.textColor = ColorName.clipy.color
         case 3:
-            excludeImageView.image = NSImage(assetIdentifier: .excludedOn)
-            excludeTextField.textColor = NSColor.clipyColor()
+            excludeImageView.image = Asset.Preference.prefExcludedOn.image
+            excludeTextField.textColor = ColorName.clipy.color
         case 4:
-            shortcutsImageView.image = NSImage(assetIdentifier: .shortcutsOn)
-            shortcutsTextField.textColor = NSColor.clipyColor()
+            shortcutsImageView.image = Asset.Preference.prefShortcutOn.image
+            shortcutsTextField.textColor = ColorName.clipy.color
         case 5:
-            updatesImageView.image = NSImage(assetIdentifier: .updatesOn)
-            updatesTextField.textColor = NSColor.clipyColor()
+            updatesImageView.image = Asset.Preference.prefUpdateOn.image
+            updatesTextField.textColor = ColorName.clipy.color
         case 6:
-            betaImageView.image = NSImage(assetIdentifier: .betaOn)
-            betaTextField.textColor = NSColor.clipyColor()
+            betaImageView.image = Asset.Preference.prefBetaOn.image
+            betaTextField.textColor = ColorName.clipy.color
         default: break
         }
     }

@@ -71,10 +71,10 @@ class AppDelegate: NSObject {
         let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = LocalizedString.clearHistory.value
-            alert.informativeText = LocalizedString.confirmClearHistory.value
-            alert.addButton(withTitle: LocalizedString.clearHistory.value)
-            alert.addButton(withTitle: LocalizedString.cancel.value)
+            alert.messageText = L10n.clearHistory
+            alert.informativeText = L10n.areYouSureYouWantToClearYourClipboardHistory
+            alert.addButton(withTitle: L10n.clearHistory)
+            alert.addButton(withTitle: L10n.cancel)
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -132,10 +132,10 @@ class AppDelegate: NSObject {
     // MARK: - Login Item Methods
     fileprivate func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = LocalizedString.launchClipy.value
-        alert.informativeText = LocalizedString.launchSettingInfo.value
-        alert.addButton(withTitle: LocalizedString.launchOnStartup.value)
-        alert.addButton(withTitle: LocalizedString.dontLaunch.value)
+        alert.messageText = L10n.launchClipyOnSystemStartup
+        alert.informativeText = L10n.youCanChangeThisSettingInThePreferencesIfYouWant
+        alert.addButton(withTitle: L10n.launchOnSystemStartup)
+        alert.addButton(withTitle: L10n.donTLaunch)
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
