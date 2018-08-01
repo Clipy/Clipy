@@ -7,6 +7,7 @@ target 'Clipy' do
 
   # Application
   pod 'PINCache'
+  pod 'Sauce'
   pod 'Sparkle'
   pod 'RealmSwift'
   pod 'Fabric'
