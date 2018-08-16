@@ -201,6 +201,8 @@ struct TableInfoCache {
         size_t primary_key_index;
         DataType primary_key_type = DataType(-1);
         bool primary_key_nullable = false;
+        mutable size_t last_row_index = size_t(-1);
+        mutable ObjectID last_object_id;
     };
 
     mutable std::vector<util::Optional<TableInfo>> m_table_info;
@@ -208,6 +210,7 @@ struct TableInfoCache {
     const TableInfo& get_table_info(const Table&) const;
     const TableInfo& get_table_info(size_t table_index) const;
     void clear();
+    void verify();
 };
 
 

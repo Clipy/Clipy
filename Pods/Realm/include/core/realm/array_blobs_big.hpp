@@ -108,8 +108,8 @@ inline BinaryData ArrayBigBlobs::get(size_t ndx) const noexcept
     const char* blob_header = get_alloc().translate(ref);
     if (!get_context_flag_from_header(blob_header)) {
         const char* value = ArrayBlob::get(blob_header, 0);
-        size_t blob_size = get_size_from_header(blob_header);
-        return BinaryData(value, blob_size);
+        size_t sz = get_size_from_header(blob_header);
+        return BinaryData(value, sz);
     }
     return {};
 }
@@ -123,8 +123,8 @@ inline BinaryData ArrayBigBlobs::get(const char* header, size_t ndx, Allocator& 
     const char* blob_header = alloc.translate(blob_ref);
     if (!get_context_flag_from_header(blob_header)) {
         const char* blob_data = Array::get_data_from_header(blob_header);
-        size_t blob_size = Array::get_size_from_header(blob_header);
-        return BinaryData(blob_data, blob_size);
+        size_t sz = Array::get_size_from_header(blob_header);
+        return BinaryData(blob_data, sz);
     }
     return {};
 }

@@ -206,9 +206,6 @@ extension AppDelegate: NSApplicationDelegate {
         #endif
     }
 
-    func applicationWillTerminate(_ aNotification: Notification) {
-        HotKeyCenter.shared.unregisterAll()
-    }
 }
 
 // MARK: - Bind

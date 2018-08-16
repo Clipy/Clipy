@@ -210,10 +210,10 @@ inline void ArrayBinary::truncate(size_t new_size)
 {
     REALM_ASSERT_3(new_size, <, m_offsets.size());
 
-    size_t blob_size = new_size ? to_size_t(m_offsets.get(new_size - 1)) : 0;
+    size_t sz = new_size ? to_size_t(m_offsets.get(new_size - 1)) : 0;
 
     m_offsets.truncate(new_size);
-    m_blob.truncate(blob_size);
+    m_blob.truncate(sz);
     if (!legacy_array_type())
         m_nulls.truncate(new_size);
 }

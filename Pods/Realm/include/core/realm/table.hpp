@@ -394,7 +394,8 @@ public:
 
     size_t add_empty_row(size_t num_rows = 1);
     void insert_empty_row(size_t row_ndx, size_t num_rows = 1);
-    size_t add_row_with_key(size_t col_ndx, int64_t key);
+    size_t add_row_with_key(size_t col_ndx, util::Optional<int64_t> key);
+    size_t add_row_with_keys(size_t col_1_ndx, int64_t key1, size_t col_2_ndx, StringData key2);
     void remove(size_t row_ndx);
     void remove_recursive(size_t row_ndx);
     void remove_last();

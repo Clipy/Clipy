@@ -11,7 +11,7 @@ import Carbon
 
 open class KeyCodeTransformer {
     // MARK: - Properties
-    static let shared = KeyCodeTransformer()
+    public static let shared = KeyCodeTransformer()
 }
 
 // MARK: - Transform
