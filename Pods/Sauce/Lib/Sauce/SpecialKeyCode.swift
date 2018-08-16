@@ -107,8 +107,8 @@ enum SpecialKeyCode {
         case .escape: return 0x238B.string // ⎋
         case .f17: return "F17"
         case .f18: return "F18"
-        case .f19: return "f19"
-        case .f20: return "f20"
+        case .f19: return "F19"
+        case .f20: return "F20"
         case .f5: return "F5"
         case .f6: return "F6"
         case .f7: return "F7"

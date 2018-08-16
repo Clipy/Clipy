@@ -63,6 +63,21 @@ extension KeyboardLayout {
     }
 }
 
+// MARK: - Characters
+extension KeyboardLayout {
+    func currentCharacter(by keyCode: Int, modifiers: Int) -> String? {
+        return character(with: currentInputSource.source, keyCode: keyCode, modifiers: modifiers)
+    }
+
+    func character(with source: InputSource, keyCode: Int, modifiers: Int) -> String? {
+        return character(with: source.source, keyCode: keyCode, modifiers: modifiers)
+    }
+
+    func currentASCIICapableCharacter(by keyCode: Int, modifiers: Int) -> String? {
+        return character(with: currentASCIICapableInputSouce.source, keyCode: keyCode, modifiers: modifiers)
+    }
+}
+
 // MARK: - Notifications
 extension KeyboardLayout {
     private func observeNotifications() {
@@ -114,7 +129,13 @@ private extension KeyboardLayout {
         mappedKeyCodes[source] = keyCodes
     }
 
-    func character(with data: Data, keyCode: Int, modifiers: Int) -> String? {
+    func character(with source: TISInputSource, keyCode: Int, modifiers: Int) -> String? {
+        guard let layoutData = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else { return nil }
+        let data = Unmanaged<CFData>.fromOpaque(layoutData).takeUnretainedValue() as Data
+        return character(with: data, keyCode: keyCode, modifiers: modifiers)
+    }
+
+    func character(with layoutData: Data, keyCode: Int, modifiers: Int) -> String? {
         // In the case of the special key code, it does not depend on the keyboard layout
         if let specialKeyCode = SpecialKeyCode(keyCode: keyCode) { return specialKeyCode.character }
 
@@ -122,7 +143,7 @@ private extension KeyboardLayout {
         let maxChars = 256
         var chars = [UniChar](repeating: 0, count: maxChars)
         var length = 0
-        let error = data.withUnsafeBytes {
+        let error = layoutData.withUnsafeBytes {
             return CoreServices.UCKeyTranslate($0,
                                                UInt16(keyCode),
                                                UInt16(CoreServices.kUCKeyActionDisplay),

@@ -36,25 +36,38 @@ github "Clipy/Sauce"
 
 ## Example
 ### Key codes
-Get the key code of the current input source
+Get the key code of the current input source.
 
 ```swift
-let keyCode = Sauce.shared.currentKeyCode(by: .v)
+let keyCode = Sauce.shared.keyCode(by: .v)
 ```
 
-Get ASCII capable input source list
+Get ASCII capable input source list.
 
 ```swift
 let sources = Sauce.shared.ASCIICapableInputSources()
 ```
 
-Get key code corresponding to input source
+Get key code corresponding to input source.
 
 ```swift
 let keyCode = Sauce.shared.keyCode(with: inputSource, key: .v)
 ```
 
-### Notification
+### Character
+Get the character of the current input source.
+
+```swift
+let character = Sauce.shared.character(by: keyCode, modifiers: modifiers)
+```
+
+However, since character strings can only be acquired in an ASCII Capable layout, **we recommend using this.**
+
+```swift
+let character = Sauce.shared.currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
+```
+
+## Notification
 ### `NSNotification.Name.SauceEnabledKeyboardInputSoucesChanged`
 `SauceEnabledKeyboardInputSoucesChanged` is the same as `kTISNotifyEnabledKeyboardInputSourcesChanged` in Carbon.framework  
 
@@ -62,7 +75,7 @@ let keyCode = Sauce.shared.keyCode(with: inputSource, key: .v)
 `SauceSelectedKeyboardInputSourceChanged` is different from `kTISNotifySelectedKeyboardInputSourceChanged` and is notified only when the input source id has changed.  
 Since it is filtered and notified, please do not use it for the same purpose as normal `kTISNotifySelectedKeyboardInputSourceChanged`.
 
-### Contributing
+## Contributing
 1. Fork it ( https://github.com/Clipy/Sauce/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)

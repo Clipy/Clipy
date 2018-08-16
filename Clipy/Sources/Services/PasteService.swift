@@ -141,7 +141,7 @@ extension PasteService {
 extension PasteService {
     func paste() {
         if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
-        let vKeyCode = Sauce.shared.currentKeyCode(by: .v)
+        let vKeyCode = Sauce.shared.keyCode(by: .v)
 
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)

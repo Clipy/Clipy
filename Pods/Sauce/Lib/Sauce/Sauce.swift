@@ -33,8 +33,16 @@ public final class Sauce {
 
 // MARK: - KeyCodes
 public extension Sauce {
-    public func currentKeyCode(by key: Key) -> CGKeyCode {
-        return layout.currentKeyCode(by: key) ?? layout.currentASCIICapableKeyCode(by: key) ?? key.QWERTYKeyCode
+    public func keyCode(by key: Key) -> CGKeyCode {
+        return currentKeyCode(by: key) ?? currentASCIICapableKeyCode(by: key) ?? key.QWERTYKeyCode
+    }
+
+    public func currentKeyCode(by key: Key) -> CGKeyCode? {
+        return layout.currentKeyCode(by: key)
+    }
+
+    public func currentASCIICapableKeyCode(by key: Key) -> CGKeyCode? {
+        return layout.currentASCIICapableKeyCode(by: key)
     }
 
     public func keyCode(with source: InputSource, key: Key) -> CGKeyCode? {
@@ -43,5 +51,24 @@ public extension Sauce {
 
     public func ASCIICapableInputSources() -> [InputSource] {
         return layout.ASCIICapableInputSources
+    }
+}
+
+// MARK: - Characters
+public extension Sauce {
+    public func character(by keyCode: Int, modifiers: Int) -> String? {
+        return currentCharacter(by: keyCode, modifiers: modifiers) ?? currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
+    }
+
+    public func currentCharacter(by keyCode: Int, modifiers: Int) -> String? {
+        return layout.currentCharacter(by: keyCode, modifiers: modifiers)
+    }
+
+    public func currentASCIICapableCharacter(by keyCode: Int, modifiers: Int) -> String? {
+        return layout.currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
+    }
+
+    public func character(with source: InputSource, keyCode: Int, modifiers: Int) -> String? {
+        return layout.character(with: source, keyCode: keyCode, modifiers: modifiers)
     }
 }
