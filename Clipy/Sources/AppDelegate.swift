@@ -214,14 +214,14 @@ extension AppDelegate: NSApplicationDelegate {
 private extension AppDelegate {
     func bind() {
         // Login Item
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem)
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
                 self?.reflectLoginItemState()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
