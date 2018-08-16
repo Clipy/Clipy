@@ -46,7 +46,8 @@ namespace util {
 template<class Engine, size_t state_size = Engine::state_size>
 void seed_prng_nondeterministically(Engine&);
 
-
+template<class Engine>
+std::string generate_random_lower_case_string(Engine& engine, size_t size);
 
 
 // Implementation
@@ -114,6 +115,20 @@ template<class Engine, size_t state_size> void seed_prng_nondeterministically(En
 
     std::seed_seq seed_seq(seed_values.begin(), seed_values.end());
     engine.seed(seed_seq);
+}
+
+template<class Engine>
+std::string generate_random_lower_case_string(Engine& engine, size_t size)
+{
+    std::uniform_int_distribution<short> dist(0, 25);
+    std::string str;
+    str.reserve(size);
+    for (size_t i = 0; i < size; ++i) {
+        short val = dist(engine);
+        char c = 'a' + char(val);
+        str.push_back(c);
+    }
+    return str;
 }
 
 } // namespace util

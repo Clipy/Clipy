@@ -1009,10 +1009,6 @@ inline void SharedGroup::rollback_and_continue_as_read(O* observer)
     if (!hist)
         throw LogicError(LogicError::no_history);
 
-    // Mark all managed space (beyond the attached file) as free.
-    using gf = _impl::GroupFriend;
-    gf::reset_free_space_tracking(m_group); // Throws
-
     BinaryData uncommitted_changes = hist->get_uncommitted_changes();
 
     // FIXME: We are currently creating two transaction log parsers, one here,
@@ -1028,6 +1024,10 @@ inline void SharedGroup::rollback_and_continue_as_read(O* observer)
         parser.parse(reversed_in, *observer); // Throws
         observer->parse_complete();           // Throws
     }
+
+    // Mark all managed space (beyond the attached file) as free.
+    using gf = _impl::GroupFriend;
+    gf::reset_free_space_tracking(m_group); // Throws
 
     ref_type top_ref = m_read_lock.m_top_ref;
     size_t file_size = m_read_lock.m_file_size;

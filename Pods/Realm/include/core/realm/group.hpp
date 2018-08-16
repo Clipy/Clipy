@@ -509,6 +509,13 @@ public:
         return !(*this == g);
     }
 
+    /// Control of what to include when computing memory usage
+    enum SizeAggregateControl {
+        size_of_state = 1, ///< size of tables, indexes, toplevel array
+        size_of_history = 2, ///< size of the in-file history compartment
+        size_of_freelists = 4, ///< size of the freelists
+        size_of_all = 7
+    };
     /// Compute the sum of the sizes in number of bytes of all the array nodes
     /// that currently make up this group. When this group represents a snapshot
     /// in a Realm file (such as during a read transaction via a SharedGroup
@@ -517,7 +524,7 @@ public:
     ///
     /// If this group accessor is the detached state, this function returns
     /// zero.
-    size_t compute_aggregated_byte_size() const noexcept;
+    size_t compute_aggregated_byte_size(SizeAggregateControl ctrl = SizeAggregateControl::size_of_all) const noexcept;
 
     void verify() const;
 #ifdef REALM_DEBUG

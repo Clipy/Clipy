@@ -26,6 +26,7 @@
 
 #include <realm/sync/instruction_applier.hpp>
 #include <realm/sync/object_id.hpp>
+#include <realm/sync/object.hpp>
 
 #include <realm/table_view.hpp>
 
@@ -275,6 +276,9 @@ struct PermissionsCache {
     /// permissions. See `can()`.
     uint_least32_t get_object_privileges(GlobalID);
 
+    /// Get object-level privileges without adding it to the cache.
+    uint_least32_t get_object_privileges_nocache(GlobalID);
+
     //@{
     /// Check permissions for the object, taking all levels of permission into
     /// account.
@@ -304,8 +308,13 @@ struct PermissionsCache {
     /// Invalidate all cached permissions.
     void clear();
 
+    /// Check that all cache permissions correspond to the current permission
+    /// state in the database.
+    void verify();
+
 private:
     const Group& group;
+    TableInfoCache cache;
     std::string user_id;
     bool m_is_admin;
     util::Optional<uint_least32_t> realm_privileges;
@@ -314,6 +323,7 @@ private:
 
     // uint_least32_t get_default_object_privileges(ConstTableRef);
     uint_least32_t get_privileges_for_permissions(ConstLinkViewRef);
+    friend struct InstructionApplierWithPermissionCheck;
 };
 
 inline bool PermissionsCache::is_admin() const noexcept

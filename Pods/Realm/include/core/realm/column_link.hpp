@@ -117,6 +117,8 @@ inline size_t LinkColumn::set_link(size_t row_ndx, size_t target_row_ndx)
 {
     int_fast64_t old_value = LinkColumnBase::get(row_ndx);
     size_t old_target_row_ndx = to_size_t(old_value) - size_t(1);
+    if (old_target_row_ndx == target_row_ndx)
+        return old_target_row_ndx; // Nothing to do
     if (old_value != 0)
         m_backlink_column->remove_one_backlink(old_target_row_ndx, row_ndx); // Throws
 

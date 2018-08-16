@@ -98,8 +98,8 @@ struct Instruction {
     template <class T>
     Instruction(T instr);
 
-    static const size_t max_instruction_size = 63;
-    std::aligned_storage_t<max_instruction_size, 8> m_storage;
+    static const size_t max_instruction_size = 64;
+    std::aligned_storage_t<max_instruction_size, 16> m_storage;
     Type type;
 
     template <class F>

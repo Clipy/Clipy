@@ -3,20 +3,27 @@ import Foundation
 /// A Nimble matcher that succeeds when the actual value is the same instance
 /// as the expected instance.
 public func beIdenticalTo(_ expected: Any?) -> Predicate<Any> {
-    return Predicate.fromDeprecatedClosure { actualExpression, failureMessage in
+    return Predicate.define { actualExpression in
         #if os(Linux)
             let actual = try actualExpression.evaluate() as? AnyObject
         #else
             let actual = try actualExpression.evaluate() as AnyObject?
         #endif
-        failureMessage.actualValue = "\(identityAsString(actual))"
-        failureMessage.postfixMessage = "be identical to \(identityAsString(expected))"
+
+        let bool: Bool
         #if os(Linux)
-            return actual === (expected as? AnyObject) && actual !== nil
+            bool = actual === (expected as? AnyObject) && actual !== nil
         #else
-            return actual === (expected as AnyObject?) && actual !== nil
+            bool = actual === (expected as AnyObject?) && actual !== nil
         #endif
-    }.requireNonNil
+        return PredicateResult(
+            bool: bool,
+            message: .expectedCustomValueTo(
+                "be identical to \(identityAsString(expected))",
+                "\(identityAsString(actual))"
+            )
+        )
+    }
 }
 
 public func === (lhs: Expectation<Any>, rhs: Any?) {

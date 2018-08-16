@@ -227,6 +227,7 @@ enum class Error {
     bad_response_401_unauthorized,
     bad_response_403_forbidden,
     bad_response_404_not_found,
+    bad_response_410_gone,
     bad_response_5xx_server_error,
     bad_response_500_internal_server_error,
     bad_response_502_bad_gateway,

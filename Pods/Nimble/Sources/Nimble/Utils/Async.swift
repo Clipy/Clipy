@@ -263,7 +263,11 @@ internal class AwaitPromiseBuilder<T> {
             self.trigger.timeoutSource.resume()
             while self.promise.asyncResult.isIncomplete() {
                 // Stopping the run loop does not work unless we run only 1 mode
+                #if swift(>=4.2)
+                _ = RunLoop.current.run(mode: .default, before: .distantFuture)
+                #else
                 _ = RunLoop.current.run(mode: .defaultRunLoopMode, before: .distantFuture)
+                #endif
             }
 
             self.trigger.timeoutSource.cancel()

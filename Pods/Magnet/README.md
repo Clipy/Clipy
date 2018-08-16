@@ -17,9 +17,6 @@ Also supports sandbox application.
 ## Usage
 ### CocoaPods
 ```
-platform :osx, '10.9'
-use_frameworks!
-
 pod 'Magnet'
 ```
 
@@ -32,16 +29,26 @@ github "Clipy/Magnet"
 ### Register Normal hotkey
 Add `⌘ + Control + B` hotkey.
 
-```
+```swift
 if let keyCombo = KeyCombo(keyCode: 11, carbonModifiers: 4352) {
    let hotKey = HotKey(identifier: "CommandControlB", keyCombo: keyCombo, target: self, action: #selector())
    hotKey.register() // or HotKeyCenter.shared.register(with: hotKey)
 }
 ```
 
+Or you can use closures.
+```swift
+if let keyCombo = KeyCombo(keyCode: 11, carbonModifiers: 4352) {
+    let hotKey = HotKey(identifier: "CommandControlB", keyCombo: keyCombo) { hotKey in
+        // Called when ⌘ + Control + B is pressed
+    }
+    hotKey.register()
+}        
+```
+
 ### Register Double tap hotkey
 Add `⌘ double tap` hotkey.
-```
+```swift
 if let keyCombo = KeyCombo(doubledCocoaModifiers: .command) {
    let hotKey = HotKey(identifier: "CommandDoubleTap", keyCombo: keyCombo, target: self, action: #selector())
    hotKey.register() // or HotKeyCenter.shared.register(with: hotKey)
@@ -49,7 +56,7 @@ if let keyCombo = KeyCombo(doubledCocoaModifiers: .command) {
 ```
 
 Add `Control double tap` hotkey.
-```
+```swift
 if let keyCombo = KeyCombo(doubledCarbonModifiers: controlKey) {
    let hotKey = HotKey(identifier: "ControlDoubleTap", keyCombo: keyCombo, target: self, action: #selector())
    hotKey.register() // or HotKeyCenter.shared.register(with: hotKey)
@@ -68,19 +75,19 @@ Double tap hotkey only support following modifiers.
  - `NSEventModifierFlags.control` or `controlKey`
 
 ### Unregister hotkeys
-```
+```swift
 HotKeyCenter.shared.unregisterAll()
 ```
 
 or
 
-```
+```swift
 HotKeyCenter.shared.unregister(with: "identifier")
 ```
 
 or
 
-```
+```swift
 let hotKey = HotKey(identifier: "identifier", keyCombo: KeyCombo, target: self, action: #selector())
 hotKey.unregister() // or HotKeyCenter.shared.unregister(with: hotKey)
 ```

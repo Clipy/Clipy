@@ -28,8 +28,6 @@
 #include <ostream>
 #include <sstream>
 
-#include <chrono>
-
 
 namespace realm {
 namespace util {
@@ -55,22 +53,8 @@ std::string format_local_time(std::time_t, const char* format = "%FT%T%z");
 std::string format_utc_time(std::time_t, const char* format = "%FT%T%z");
 /// @}
 
-struct Clock {
-    using time_point = std::chrono::system_clock::time_point;
-    using duration = std::chrono::system_clock::duration;
 
-    virtual ~Clock() {}
-    virtual time_point now() const noexcept = 0;
-};
 
-struct SystemClock : Clock {
-    time_point now() const noexcept final
-    {
-        return std::chrono::system_clock::now();
-    }
-};
-
-const SystemClock& get_system_clock() noexcept;
 
 // Implementation
 

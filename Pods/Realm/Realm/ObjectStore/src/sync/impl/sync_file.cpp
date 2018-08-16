@@ -18,9 +18,8 @@
 
 #include "sync/impl/sync_file.hpp"
 
-#include "util/time.hpp"
-
 #include <realm/util/file.hpp>
+#include <realm/util/time.hpp>
 #include <realm/util/scope_exit.hpp>
 
 #include <iomanip>
@@ -175,7 +174,7 @@ std::string create_timestamped_template(const std::string& prefix, int wildcard_
     wildcard_count = std::min(WILDCARD_MAX, std::max(WILDCARD_MIN, wildcard_count));
     std::time_t time = std::time(nullptr);
     std::stringstream stream;
-    stream << prefix << "-" << util::put_time(time, "%Y%m%d-%H%M%S") << "-" << std::string(wildcard_count, 'X');
+    stream << prefix << "-" << util::format_local_time(time, "%Y%m%d-%H%M%S") << "-" << std::string(wildcard_count, 'X');
     return stream.str();
 }
 
