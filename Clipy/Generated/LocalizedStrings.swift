@@ -33,6 +33,8 @@ internal enum L10n {
   internal static let launchOnSystemStartup = L10n.tr("Localizable", "Launch on system startup")
   /// Menu
   internal static let menu = L10n.tr("Localizable", "Menu")
+  /// Please fill in the contents of the snippet
+  internal static let pleaseFillInTheContentsOfTheSnippet = L10n.tr("Localizable", "Please fill in the contents of the snippet")
   /// Preferences...
   internal static let preferences = L10n.tr("Localizable", "Preferences")
   /// Quit Clipy
