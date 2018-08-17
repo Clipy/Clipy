@@ -34,6 +34,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
             textView.isAutomaticQuoteSubstitutionEnabled = false
             textView.enabledTextCheckingTypes = 0
             textView.isRichText = false
+            textView.placeHolderText = L10n.pleaseFillInTheContentsOfTheSnippet
         }
     }
     @IBOutlet private weak var outlineView: NSOutlineView! {
