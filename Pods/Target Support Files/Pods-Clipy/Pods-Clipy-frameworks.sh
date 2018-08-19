@@ -155,6 +155,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxScreeen/RxScreeen.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Sauce/Sauce.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Screeen/Screeen.framework"
   install_framework "${PODS_ROOT}/Sparkle/Sparkle.framework"
 fi
@@ -171,6 +172,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxScreeen/RxScreeen.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Sauce/Sauce.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Screeen/Screeen.framework"
   install_framework "${PODS_ROOT}/Sparkle/Sparkle.framework"
 fi

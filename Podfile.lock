@@ -27,6 +27,7 @@ PODS:
     - RxSwift (~> 4.0)
     - Screeen (~> 1.2)
   - RxSwift (4.2.0)
+  - Sauce (1.0.0)
   - Screeen (1.2.0)
   - Sparkle (1.20.0)
   - SwiftGen (5.3.0)
@@ -48,6 +49,7 @@ DEPENDENCIES:
   - RxOptional
   - RxScreeen
   - RxSwift
+  - Sauce
   - Sparkle
   - SwiftGen
   - SwiftLint
@@ -70,6 +72,7 @@ SPEC REPOS:
     - RxOptional
     - RxScreeen
     - RxSwift
+    - Sauce
     - Screeen
     - Sparkle
     - SwiftGen
@@ -102,11 +105,12 @@ SPEC CHECKSUMS:
   RxOptional: bd32ff8ca9df4177683d56ffeb618a9d4d5d5cad
   RxScreeen: 56b432893feaab6b50cf807fb6bd1aefd79e7346
   RxSwift: 99e10317ddfcc7fbe01356aafd118fde4a0be104
+  Sauce: 88a62dc6209dd651675e76a43a76f7cc8b02637e
   Screeen: c725fd8035f07dd4d1db9d8e94d3a07534b43801
   Sparkle: 48999e7ee032f05ca05e28451eadf4af8ede6b44
   SwiftGen: 4379bd3640b0a212a0f6ea3c494adba385513d10
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
 
-PODFILE CHECKSUM: 547dc1129b11bab4f939a2a3eb84dae645c6c475
+PODFILE CHECKSUM: c1bcaceb1b337e42453c20b61a0d6aa169091a52
 
 COCOAPODS: 1.5.3
