@@ -31,6 +31,7 @@ PODS:
   - Screeen (1.2.0)
   - Sparkle (1.20.0)
   - SwiftGen (5.3.0)
+  - SwiftHEXColors (1.1.2)
   - SwiftLint (0.27.0)
 
 DEPENDENCIES:
@@ -52,6 +53,7 @@ DEPENDENCIES:
   - Sauce
   - Sparkle
   - SwiftGen
+  - SwiftHEXColors
   - SwiftLint
 
 SPEC REPOS:
@@ -76,6 +78,7 @@ SPEC REPOS:
     - Screeen
     - Sparkle
     - SwiftGen
+    - SwiftHEXColors
     - SwiftLint
 
 EXTERNAL SOURCES:
@@ -109,8 +112,9 @@ SPEC CHECKSUMS:
   Screeen: c725fd8035f07dd4d1db9d8e94d3a07534b43801
   Sparkle: 48999e7ee032f05ca05e28451eadf4af8ede6b44
   SwiftGen: 4379bd3640b0a212a0f6ea3c494adba385513d10
+  SwiftHEXColors: 7f9f7e6bdce888d821e11749279733e5ddff5f51
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
 
-PODFILE CHECKSUM: c1bcaceb1b337e42453c20b61a0d6aa169091a52
+PODFILE CHECKSUM: 79a276d339494c0697d9be86b26c79d561574abb
 
 COCOAPODS: 1.5.3

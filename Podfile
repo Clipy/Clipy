@@ -20,6 +20,7 @@ target 'Clipy' do
   pod 'RxScreeen'
   pod 'AEXML'
   pod 'LetsMove'
+  pod 'SwiftHEXColors'
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftLint'
