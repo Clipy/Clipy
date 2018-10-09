@@ -20,6 +20,7 @@ struct Environment {
     let dataCleanService: DataCleanService
     let pasteService: PasteService
     let excludeAppService: ExcludeAppService
+    let accessibilityService: AccessibilityService
     let menuManager: MenuManager
 
     let defaults: UserDefaults
@@ -30,6 +31,7 @@ struct Environment {
          dataCleanService: DataCleanService = DataCleanService(),
          pasteService: PasteService = PasteService(),
          excludeAppService: ExcludeAppService = ExcludeAppService(applications: []),
+         accessibilityService: AccessibilityService = AccessibilityService(),
          menuManager: MenuManager = MenuManager(),
          defaults: UserDefaults = .standard) {
 
@@ -38,6 +40,7 @@ struct Environment {
         self.dataCleanService = dataCleanService
         self.pasteService = pasteService
         self.excludeAppService = excludeAppService
+        self.accessibilityService = accessibilityService
         self.menuManager = menuManager
         self.defaults = defaults
     }

@@ -41,6 +41,7 @@ struct AppEnvironment {
                      dataCleanService: DataCleanService = current.dataCleanService,
                      pasteService: PasteService = current.pasteService,
                      excludeAppService: ExcludeAppService = current.excludeAppService,
+                     accessibilityService: AccessibilityService = current.accessibilityService,
                      menuManager: MenuManager = current.menuManager,
                      defaults: UserDefaults = current.defaults) {
         push(environment: Environment(clipService: clipService,
@@ -48,6 +49,7 @@ struct AppEnvironment {
                                       dataCleanService: dataCleanService,
                                       pasteService: pasteService,
                                       excludeAppService: excludeAppService,
+                                      accessibilityService: accessibilityService,
                                       menuManager: menuManager,
                                       defaults: defaults))
     }
@@ -57,6 +59,7 @@ struct AppEnvironment {
                                dataCleanService: DataCleanService = current.dataCleanService,
                                pasteService: PasteService = current.pasteService,
                                excludeAppService: ExcludeAppService = current.excludeAppService,
+                               accessibilityService: AccessibilityService = current.accessibilityService,
                                menuManager: MenuManager = current.menuManager,
                                defaults: UserDefaults = current.defaults) {
         replaceCurrent(environment: Environment(clipService: clipService,
@@ -64,6 +67,7 @@ struct AppEnvironment {
                                                 dataCleanService: dataCleanService,
                                                 pasteService: pasteService,
                                                 excludeAppService: excludeAppService,
+                                                accessibilityService: accessibilityService,
                                                 menuManager: menuManager,
                                                 defaults: defaults))
     }
@@ -74,7 +78,14 @@ struct AppEnvironment {
             excludeApplications = applications
         }
         let excludeAppService = ExcludeAppService(applications: excludeApplications)
-        return Environment(excludeAppService: excludeAppService)
+        return Environment(clipService: current.clipService,
+                           hotKeyService: current.hotKeyService,
+                           dataCleanService: current.dataCleanService,
+                           pasteService: current.pasteService,
+                           excludeAppService: excludeAppService,
+                           accessibilityService: current.accessibilityService,
+                           menuManager: current.menuManager,
+                           defaults: current.defaults)
     }
 
  }

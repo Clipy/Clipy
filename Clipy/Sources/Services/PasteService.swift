@@ -140,9 +140,14 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
-        let vKeyCode = Sauce.shared.keyCode(by: .v)
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
+        // Check Accessibility Permission
+        guard AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) else {
+            AppEnvironment.current.accessibilityService.showAccessibilityAuthenticationAlert()
+            return
+        }
 
+        let vKeyCode = Sauce.shared.keyCode(by: .v)
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting

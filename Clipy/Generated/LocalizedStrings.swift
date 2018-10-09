@@ -33,6 +33,10 @@ internal enum L10n {
   internal static let launchOnSystemStartup = L10n.tr("Localizable", "Launch on system startup")
   /// Menu
   internal static let menu = L10n.tr("Localizable", "Menu")
+  /// Open System Preferences
+  internal static let openSystemPreferences = L10n.tr("Localizable", "Open System Preferences")
+  /// Please allow Accessibility.
+  internal static let pleaseAllowAccessibility = L10n.tr("Localizable", "Please allow Accessibility")
   /// Please fill in the contents of the snippet
   internal static let pleaseFillInTheContentsOfTheSnippet = L10n.tr("Localizable", "Please fill in the contents of the snippet")
   /// Preferences...
@@ -43,6 +47,8 @@ internal enum L10n {
   internal static let shortcuts = L10n.tr("Localizable", "Shortcuts")
   /// Snippet
   internal static let snippet = L10n.tr("Localizable", "Snippet")
+  /// To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.
+  internal static let toDoThisActionPleaseAllowAccessibilityInSecurityPrivacyPreferencesLocatedInSystemPreferences = L10n.tr("Localizable", "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences")
   /// Type
   internal static let type = L10n.tr("Localizable", "Type")
   /// Updates

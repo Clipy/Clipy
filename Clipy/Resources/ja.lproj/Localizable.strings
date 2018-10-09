@@ -51,3 +51,9 @@
 "Add" = "追加";
 
 "Please fill in the contents of the snippet" = "スニペットの内容を記入してください";
+
+"Please allow Accessibility" = "アクセシビリティを有効にしてください。";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "この動作を行うためにはシステム環境設定の\"セキュリティとプライバシー\"環境設定で、Clipyへのアクセシビリティのアクセスを許可してください。";
+
+"Open System Preferences" = "\"システム環境設定\"を開く";
