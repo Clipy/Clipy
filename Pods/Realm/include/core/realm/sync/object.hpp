@@ -203,6 +203,12 @@ struct TableInfoCache {
         bool primary_key_nullable = false;
         mutable size_t last_row_index = size_t(-1);
         mutable ObjectID last_object_id;
+
+        void clear_last_object() const
+        {
+            last_row_index = size_t(-1);
+            last_object_id = {};
+        }
     };
 
     mutable std::vector<util::Optional<TableInfo>> m_table_info;

@@ -260,10 +260,12 @@ public:
     // Searching
     size_t find(size_t begin_at_table_row = size_t(0));
     TableView find_all(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1));
-    ConstTableView find_all(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
 
     // Aggregates
     size_t count(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
+
+    TableView find_all(const DescriptorOrdering& descriptor);
+    size_t count(const DescriptorOrdering& descriptor);
 
     int64_t sum_int(size_t column_ndx, size_t* resultcount = nullptr, size_t start = 0, size_t end = size_t(-1),
                     size_t limit = size_t(-1)) const;
@@ -422,6 +424,7 @@ private:
                             size_t start, size_t end, SequentialGetterBase* source_column) const;
 
     void find_all(TableViewBase& tv, size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
+    size_t do_count(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
     void delete_nodes() noexcept;
 
     bool has_conditions() const

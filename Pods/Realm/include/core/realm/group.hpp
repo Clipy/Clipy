@@ -371,12 +371,16 @@ public:
     /// \param encryption_key 32-byte key used to encrypt the database file,
     /// or nullptr to disable encryption.
     ///
+    /// \param version If different from 0, the new file will be a full fledged
+    /// realm file with free list and history info. The version of the commit
+    /// will be set to the value given here.
+    ///
     /// \throw util::File::AccessError If the file could not be
     /// opened. If the reason corresponds to one of the exception
     /// types that are derived from util::File::AccessError, the
     /// derived exception type is thrown. In particular,
     /// util::File::Exists will be thrown if the file exists already.
-    void write(const std::string& file, const char* encryption_key = nullptr) const;
+    void write(const std::string& file, const char* encryption_key = nullptr, uint64_t version = 0) const;
 
     /// Write this database to a memory buffer.
     ///
@@ -686,7 +690,6 @@ private:
 
     void mark_all_table_accessors() noexcept;
 
-    void write(const std::string& file, const char* encryption_key, uint_fast64_t version_number) const;
     void write(util::File& file, const char* encryption_key, uint_fast64_t version_number) const;
     void write(std::ostream&, bool pad, uint_fast64_t version_numer) const;
 

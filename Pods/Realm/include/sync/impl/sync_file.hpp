@@ -63,8 +63,7 @@ public:
     SyncFileManager(std::string base_path) : m_base_path(std::move(base_path)) { }
 
     /// Return the user directory for a given user, creating it if it does not already exist.
-    std::string user_directory(const std::string& local_identity,
-                               util::Optional<SyncUserIdentifier> user_info=none) const;
+    std::string user_directory(const std::string& local_identity) const;
 
     /// Remove the user directory for a given user.
     void remove_user_directory(const std::string& local_identity) const;       // throws
@@ -75,8 +74,7 @@ public:
     bool try_rename_user_directory(const std::string& old_name, const std::string& new_name) const;
 
     /// Return the path for a given Realm, creating the user directory if it does not already exist.
-    std::string path(const std::string&, const std::string&,
-                     util::Optional<SyncUserIdentifier> user_info=none) const;
+    std::string path(const std::string&, const std::string&) const;
 
     /// Remove the Realm at a given path for a given user. Returns `true` if the remove operation fully succeeds.
     bool remove_realm(const std::string& local_identity, const std::string& raw_realm_path) const;
@@ -112,7 +110,6 @@ private:
     static constexpr const char c_recovery_directory[] = "io.realm.object-server-recovered-realms";
     static constexpr const char c_metadata_directory[] = "metadata";
     static constexpr const char c_metadata_realm[] = "sync_metadata.realm";
-    static constexpr const char c_user_info_file[] = "__user_info";
 
     std::string get_special_directory(std::string directory_name) const;
 

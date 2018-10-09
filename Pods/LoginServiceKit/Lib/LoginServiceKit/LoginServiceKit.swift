@@ -49,53 +49,50 @@ import Cocoa
 public final class LoginServiceKit: NSObject {}
 
 public extension LoginServiceKit {
-    public static func isExistLoginItems(at path: String) -> Bool {
-        if path.isEmpty { return false }
-
-        let itemURL = UnsafeMutablePointer<Unmanaged<CFURL>?>.allocate(capacity: 1)
-        let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
-        let url = URL(fileURLWithPath: path)
-
-        let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
-        if let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] {
-            for loginItem in loginItems {
-                if LSSharedFileListItemResolve(loginItem, 0, itemURL, nil) == noErr {
-                    if let memoryURL = itemURL.pointee?.takeRetainedValue() , url == memoryURL as URL {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
+    public static func isExistLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
+        return (loginItem(at: path) != nil)
     }
 
-    public static func addLoginItems(at path: String) {
-        if path.isEmpty { return }
+    @discardableResult
+    public static func addLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
+        guard !isExistLoginItems(at: path) else { return false }
 
         let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
         let url = URL(fileURLWithPath: path)
-
-        let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
-        let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem]
-        LSSharedFileListInsertItemURL(loginItemList, loginItems?.last ?? kLSSharedFileListItemBeforeFirst.takeRetainedValue(), nil, nil, url as CFURL, nil, nil)
+        LSSharedFileListInsertItemURL(loginItemList, kLSSharedFileListItemBeforeFirst.takeRetainedValue(), nil, nil, url as CFURL, nil, nil)
+        return true
     }
 
-    public static func removeLoginItems(at path: String) {
-        if path.isEmpty { return }
+    @discardableResult
+    public static func removeLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
+        guard isExistLoginItems(at: path) else { return false }
 
-        let itemURL = UnsafeMutablePointer<Unmanaged<CFURL>?>.allocate(capacity: 1)
         let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
         let url = URL(fileURLWithPath: path)
-
         let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
-        if let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] {
-            for loginItem in loginItems {
-                if LSSharedFileListItemResolve(loginItem, 0, itemURL, nil) == noErr {
-                    if let memoryURL = itemURL.pointee?.takeRetainedValue() , url == memoryURL as URL {
-                        LSSharedFileListItemRemove(loginItemList, loginItem)
-                    }
-                }
-            }
+        guard let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] else { return false }
+        for loginItem in loginItems {
+            let itemUrl = LSSharedFileListItemCopyResolvedURL(loginItem, 0, nil).takeRetainedValue() as URL
+            guard url.absoluteString == itemUrl.absoluteString else { continue }
+            LSSharedFileListItemRemove(loginItemList, loginItem)
         }
+        return true
+    }
+}
+
+private extension LoginServiceKit {
+    static func loginItem(at path: String) -> LSSharedFileListItem? {
+        guard !path.isEmpty else { return nil }
+
+        let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
+        let url = URL(fileURLWithPath: path)
+        let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
+        guard let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] else { return nil }
+        for loginItem in loginItems {
+            let itemUrl = LSSharedFileListItemCopyResolvedURL(loginItem, 0, nil).takeRetainedValue() as URL
+            guard url.absoluteString == itemUrl.absoluteString else { continue }
+            return loginItem
+        }
+        return nil
     }
 }

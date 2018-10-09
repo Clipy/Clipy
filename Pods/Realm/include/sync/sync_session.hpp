@@ -117,14 +117,19 @@ public:
         Active,
         Dying,
         Inactive,
-
-        // FIXME: This state no longer exists. This should be removed.
-        Error,
     };
-    PublicState state() const;
 
-    // FIXME: The error state no longer exists. This should be removed.
-    bool is_in_error_state() const { return false; }
+    enum class ConnectionState {
+        Disconnected,
+        Connecting,
+        Connected,
+    };
+
+    using SyncSessionStateCallback = void(PublicState old_state, PublicState new_state);
+    using ConnectionStateCallback = void(ConnectionState old_state, ConnectionState new_state);
+
+    PublicState state() const;
+    ConnectionState connection_state() const;
 
     // The on-disk path of the Realm file backing the Realm this `SyncSession` represents.
     std::string const& path() const { return m_realm_path; }
@@ -167,6 +172,14 @@ public:
     // Unregister a previously registered notifier. If the token is invalid,
     // this method does nothing.
     void unregister_progress_notifier(uint64_t);
+
+    // Registers a callback that is invoked when the the underlying sync session changes
+    // its connection state
+    uint64_t register_connection_change_callback(std::function<ConnectionStateCallback>);
+
+    // Unregisters a previously registered callback. If the token is invalid,
+    // this method does nothing
+    void unregister_connection_change_callback(uint64_t);
 
     // If possible, take the session and do anything necessary to make it `Active`.
     // Specifically:
@@ -275,6 +288,26 @@ private:
     friend struct _impl::sync_session_states::Dying;
     friend struct _impl::sync_session_states::Inactive;
 
+    class ConnectionChangeNotifier {
+    public:
+        uint64_t add_callback(std::function<ConnectionStateCallback> callback);
+        void remove_callback(uint64_t token);
+        void invoke_callbacks(ConnectionState old_state, ConnectionState new_state);
+
+    private:
+        struct Callback {
+            std::function<ConnectionStateCallback> fn;
+            uint64_t token;
+        };
+
+        std::mutex m_callback_mutex;
+        std::vector<Callback> m_callbacks;
+
+        size_t m_callback_index = -1;
+        size_t m_callback_count = -1;
+        uint64_t m_next_token = 0;
+    };
+
     friend class realm::SyncManager;
     // Called by SyncManager {
     static std::shared_ptr<SyncSession> create(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
@@ -300,6 +333,8 @@ private:
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
     void nonsync_transact_notify(VersionID::version_type);
 
+    PublicState get_public_state() const;
+    static ConnectionState get_public_connection_state(realm::sync::Session::ConnectionState);
     void advance_state(std::unique_lock<std::mutex>& lock, const State&);
 
     void create_sync_session();
@@ -311,6 +346,11 @@ private:
     mutable std::mutex m_state_mutex;
 
     const State* m_state = nullptr;
+
+    // The underlying state of the connection. Even when sharing connections, the underlying session
+    // will always start out as diconnected and then immediately transition to the correct state when calling
+    // bind().
+    sync::Session::ConnectionState m_connection_state = sync::Session::ConnectionState::disconnected;
     size_t m_death_count = 0;
 
     SyncConfig m_config;
@@ -350,7 +390,9 @@ private:
 
     std::string m_multiplex_identity;
 
-    _impl::SyncProgressNotifier m_notifier;
+    _impl::SyncProgressNotifier m_progress_notifier;
+    ConnectionChangeNotifier m_connection_change_notifier;
+
 
     class ExternalReference;
     std::weak_ptr<ExternalReference> m_external_reference;

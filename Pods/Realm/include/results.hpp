@@ -120,6 +120,9 @@ public:
     Results distinct(DistinctDescriptor&& uniqueness) const;
     Results distinct(std::vector<std::string> const& keypaths) const;
 
+    // Create a new Results with only the first `max_count` entries
+    Results limit(size_t max_count) const;
+
     // Create a new Results by adding sort and distinct combinations
     Results apply_ordering(DescriptorOrdering&& ordering);
 
@@ -184,6 +187,11 @@ public:
         PropertyType property_type;
 
         UnsupportedColumnTypeException(size_t column, const Table* table, const char* operation);
+    };
+
+    // The requested operation is valid, but has not yet been implemented
+    struct UnimplementedOperationException : public std::logic_error {
+        UnimplementedOperationException(const char *message);
     };
 
     // Create an async query from this Results

@@ -45,7 +45,9 @@
 #include <realm/util/assert.hpp>
 #include <realm/util/bind_ptr.hpp>
 #include <realm/util/buffer.hpp>
+#include <realm/util/misc_ext_errors.hpp>
 #include <realm/util/basic_system_errors.hpp>
+#include <realm/util/backtrace.hpp>
 
 // Linux epoll
 //
@@ -828,15 +830,15 @@ public:
     /// read() will not return until the specified buffer is full, or an error
     /// occurs. Reaching the end of input before the buffer is filled, is
     /// considered an error, and will cause the operation to fail with
-    /// `network::end_of_input`.
+    /// MiscExtErrors::end_of_input.
     ///
     /// read_until() will not return until the specified buffer contains the
     /// specified delimiter, or an error occurs. If the buffer is filled before
     /// the delimiter is found, the operation fails with
-    /// `network::delim_not_found`. Otherwise, if the end of input is reached
-    /// before the delimiter is found, the operation fails with
-    /// `network::end_of_input`. If the operation succeeds, the last byte placed
-    /// in the buffer is the delimiter.
+    /// MiscExtErrors::delim_not_found. Otherwise, if the end of input is
+    /// reached before the delimiter is found, the operation fails with
+    /// MiscExtErrors::end_of_input. If the operation succeeds, the last byte
+    /// placed in the buffer is the delimiter.
     ///
     /// The versions that take a ReadAheadBuffer argument will read through that
     /// buffer. This allows for fewer larger reads on the underlying
@@ -895,7 +897,7 @@ public:
     ///
     /// In this context, it counts as an error, if the end of input is reached
     /// before at least one byte becomes available (see
-    /// `network::end_of_input`).
+    /// MiscExtErrors::end_of_input).
     ///
     /// If no error occurs, both versions will return the number of bytes placed
     /// in the specified buffer, which is generally as many as are immediately
@@ -1002,15 +1004,15 @@ public:
     ///
     /// async_read() will continue reading until the specified buffer is full,
     /// or an error occurs. If the end of input is reached before the buffer is
-    /// filled, the operation fails with `network::end_of_input`.
+    /// filled, the operation fails with MiscExtErrors::end_of_input.
     ///
     /// async_read_until() will continue reading until the specified buffer
     /// contains the specified delimiter, or an error occurs. If the buffer is
     /// filled before a delimiter is found, the operation fails with
-    /// `network::delim_not_found`. Otherwise, if the end of input is reached
-    /// before a delimiter is found, the operation fails with
-    /// `network::end_of_input`. Otherwise, if the operation succeeds, the last
-    /// byte placed in the buffer is the delimiter.
+    /// MiscExtErrors::delim_not_found. Otherwise, if the end of input is
+    /// reached before a delimiter is found, the operation fails with
+    /// MiscExtErrors::end_of_input. Otherwise, if the operation succeeds, the
+    /// last byte placed in the buffer is the delimiter.
     ///
     /// The versions that take a ReadAheadBuffer argument will read through that
     /// buffer. This allows for fewer larger reads on the underlying
@@ -1443,15 +1445,9 @@ private:
 };
 
 
-enum errors {
-    /// End of input.
-    end_of_input = 1,
-
-    /// Delimiter not found.
-    delim_not_found,
-
+enum class ResolveErrors {
     /// Host not found (authoritative).
-    host_not_found,
+    host_not_found = 1,
 
     /// Host not found (non-authoritative).
     host_not_found_try_again,
@@ -1466,14 +1462,23 @@ enum errors {
     service_not_found,
 
     /// The socket type is not supported.
-    socket_type_not_supported,
-
-    /// Premature end of input (e.g., end of input before reception of SSL
-    /// shutdown alert).
-    premature_end_of_input
+    socket_type_not_supported
 };
 
-std::error_code make_error_code(errors);
+class ResolveErrorCategory : public std::error_category {
+public:
+    const char* name() const noexcept override final;
+    std::string message(int) const override final;
+};
+
+/// The error category associated with ResolveErrors. The name of this category is
+/// `realm.util.network.resolve`.
+extern ResolveErrorCategory resolve_error_category;
+
+inline std::error_code make_error_code(ResolveErrors err)
+{
+    return std::error_code(int(err), resolve_error_category);
+}
 
 } // namespace network
 } // namespace util
@@ -1481,7 +1486,7 @@ std::error_code make_error_code(errors);
 
 namespace std {
 
-template<> class is_error_code_enum<realm::util::network::errors> {
+template<> class is_error_code_enum<realm::util::network::ResolveErrors> {
 public:
     static const bool value = true;
 };
@@ -2158,7 +2163,7 @@ public:
 //                    read or write readiness.
 //
 // If end-of-input occurs while reading, do_read_some_*() must fail, set `ec` to
-// `network::end_of_input`, and return zero.
+// MiscExtErrors::end_of_input, and return zero.
 //
 // If an error occurs during reading or writing, do_*_some_sync() must set `ec`
 // accordingly (to something other than `std::system_error()`) and return
@@ -3528,7 +3533,7 @@ inline std::error_code Acceptor::accept(Socket& socket, Endpoint* ep, std::error
 {
     REALM_ASSERT(!m_read_oper || !m_read_oper->in_use());
     if (REALM_UNLIKELY(socket.is_open()))
-        throw std::runtime_error("Socket is already open");
+        throw util::runtime_error("Socket is already open");
     m_desc.ensure_blocking_mode(); // Throws
     m_desc.accept(socket.m_desc, m_protocol, ep, ec);
     return ec;
@@ -3548,7 +3553,7 @@ inline Acceptor::Want Acceptor::do_accept_async(Socket& socket, Endpoint* ep,
 template<class H> inline void Acceptor::async_accept(Socket& sock, Endpoint* ep, H handler)
 {
     if (REALM_UNLIKELY(sock.is_open()))
-        throw std::runtime_error("Socket is already open");
+        throw util::runtime_error("Socket is already open");
     LendersAcceptOperPtr op = Service::alloc<AcceptOper<H>>(m_read_oper, *this, sock, ep,
                                                             std::move(handler)); // Throws
     m_desc.initiate_oper(std::move(op)); // Throws
@@ -3598,7 +3603,7 @@ inline void DeadlineTimer::async_wait(std::chrono::duration<R,P> delay, H handle
     // type (std::common_type<>).
     auto max_add = clock::time_point::max() - now;
     if (delay > max_add)
-        throw std::runtime_error("Expiration time overflow");
+        throw util::overflow_error("Expiration time overflow");
     clock::time_point expiration_time = now + delay;
     Service::LendersWaitOperPtr op =
         Service::alloc<WaitOper<H>>(m_wait_oper, *this, expiration_time,

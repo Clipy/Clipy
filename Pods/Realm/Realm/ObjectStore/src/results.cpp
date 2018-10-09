@@ -133,7 +133,7 @@ size_t Results::size()
         case Mode::Query:
             m_query.sync_view_if_needed();
             if (!m_descriptor_ordering.will_apply_distinct())
-                return m_query.count();
+                return m_query.count(m_descriptor_ordering);
             REALM_FALLTHROUGH;
         case Mode::TableView:
             evaluate_query_if_needed();
@@ -259,10 +259,7 @@ void Results::evaluate_query_if_needed(bool wants_notifications)
             return;
         case Mode::Query:
             m_query.sync_view_if_needed();
-            m_table_view = m_query.find_all();
-            if (!m_descriptor_ordering.is_empty()) {
-                m_table_view.apply_descriptor_ordering(m_descriptor_ordering);
-            }
+            m_table_view = m_query.find_all(m_descriptor_ordering);
             m_mode = Mode::TableView;
             REALM_FALLTHROUGH;
         case Mode::TableView:
@@ -610,23 +607,31 @@ Results Results::sort(SortDescriptor&& sort) const
 
 Results Results::filter(Query&& q) const
 {
+    if (m_descriptor_ordering.will_apply_limit())
+        throw UnimplementedOperationException("Filtering a Results with a limit is not yet implemented");
     return Results(m_realm, get_query().and_query(std::move(q)), m_descriptor_ordering);
+}
+
+Results Results::limit(size_t max_count) const
+{
+    auto new_order = m_descriptor_ordering;
+    new_order.append_limit(max_count);
+    return Results(m_realm, get_query(), std::move(new_order));
 }
 
 Results Results::apply_ordering(DescriptorOrdering&& ordering)
 {
     DescriptorOrdering new_order = m_descriptor_ordering;
     for (size_t i = 0; i < ordering.size(); ++i) {
-        const CommonDescriptor* desc = ordering[i];
-        if (const SortDescriptor* sort = dynamic_cast<const SortDescriptor*>(desc)) {
+        auto desc = ordering[i];
+        if (auto sort = dynamic_cast<const SortDescriptor*>(desc))
             new_order.append_sort(std::move(*sort));
-            continue;
-        }
-        if (const DistinctDescriptor* distinct = dynamic_cast<const DistinctDescriptor*>(desc)) {
+        else if (auto distinct = dynamic_cast<const DistinctDescriptor*>(desc))
             new_order.append_distinct(std::move(*distinct));
-            continue;
-        }
-        REALM_COMPILER_HINT_UNREACHABLE();
+        else if (auto limit = dynamic_cast<const LimitDescriptor*>(desc))
+            new_order.append_limit(std::move(*limit));
+        else
+            REALM_COMPILER_HINT_UNREACHABLE();
     }
     return Results(m_realm, get_query(), std::move(new_order));
 }
@@ -807,5 +812,9 @@ Results::UnsupportedColumnTypeException::UnsupportedColumnTypeException(size_t c
 , property_type(ObjectSchema::from_core_type(*table->get_descriptor(), column))
 {
 }
+
+Results::UnimplementedOperationException::UnimplementedOperationException(const char* msg)
+: std::logic_error(msg)
+{ }
 
 } // namespace realm

@@ -43,7 +43,7 @@ public:
 
     /// size() returns the number of bytes in the chunked binary.
     /// FIXME: This operation is O(n).
-    size_t size() const;
+    size_t size() const noexcept;
 
     /// is_null returns true if the chunked binary has zero chunks or if
     /// the first chunk points to the nullptr.

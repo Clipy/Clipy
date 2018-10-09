@@ -2596,7 +2596,7 @@ public:
     Query is_null()
     {
         if (m_link_map.m_link_columns.size() > 1)
-            throw std::runtime_error("Combining link() and is_null() is currently not supported");
+            throw util::runtime_error("Combining link() and is_null() is currently not supported");
         // Todo, it may be useful to support the above, but we would need to figure out an intuitive behaviour
         return make_expression<UnaryLinkCompare<false>>(m_link_map);
     }
@@ -2604,7 +2604,7 @@ public:
     Query is_not_null()
     {
         if (m_link_map.m_link_columns.size() > 1)
-            throw std::runtime_error("Combining link() and is_not_null() is currently not supported");
+            throw util::runtime_error("Combining link() and is_not_null() is currently not supported");
         // Todo, it may be useful to support the above, but we would need to figure out an intuitive behaviour
         return make_expression<UnaryLinkCompare<true>>(m_link_map);
     }

@@ -32,6 +32,19 @@
 namespace realm {
 namespace sync {
 
+struct VersionInfo {
+    /// Realm snapshot version.
+    version_type realm_version = 0;
+
+    /// The synchronization version corresponding to `realm_version`.
+    ///
+    /// In the context of the client-side history type `sync_version.version`
+    /// will currently always be equal to `realm_version` and
+    /// `sync_version.salt` will always be zero.
+    SaltedVersion sync_version = {0, 0};
+};
+
+
 class ClientHistoryBase :
         public InstructionReplication {
 public:
@@ -41,16 +54,21 @@ public:
     /// as the client file identifier and the synchronization progress as they
     /// are stored in that snapshot.
     ///
-    /// Note: The value of `progress.upload.last_integrated_server_version` is
-    /// not important to the caller, as long as the caller is the
-    /// synchronization client (`_impl::ClientImplBase`). The caller merely
-    /// passes the returned value back to find_uploadable_changesets() or
-    /// set_sync_progress(), so if the history implementation does not care
-    /// about the value of `progress.upload.last_integrated_server_version`, it
-    /// is allowed to not persist it. However, the implementation of
-    /// find_uploadable_changesets() must still be prepared for its value to be
-    /// determined by an incoming DOWNLAOD message, rather than being whatever
-    /// was returned by get_status().
+    /// Note: The value of `progress.upload.last_integrated_server_version` may
+    /// currently be wrong when the caller is the synchronization client
+    /// (`_impl::ClientImplBase`), in the sense that the server version number
+    /// may not actually be the version upon which the client version was based.
+    /// On the client, it must therefore only be used in a limited capacity,
+    /// namely to report download progress to the server. The number reflects a
+    /// lower bound on the server version that any changeset produced by the
+    /// client in the future can be based upon. The caller passes the returned
+    /// value back to find_uploadable_changesets() or set_sync_progress(), so if
+    /// the history implementation does not care about the value of
+    /// `progress.upload.last_integrated_server_version`, it is allowed to not
+    /// persist it. However, the implementation of find_uploadable_changesets()
+    /// must still be prepared for its value to be determined by an incoming
+    /// DOWNLOAD message, rather than being whatever was returned by
+    /// get_status().
     ///
     /// The returned current client version is the version produced by the last
     /// changeset in the history. The type of version returned here, is the one
@@ -100,7 +118,7 @@ public:
     /// unreliable when passed to the implementation through functions such as
     /// find_uploadable_changesets(). It may, or may not be the value last
     /// returned for it by get_status().
-    virtual void set_sync_progress(const SyncProgress& progress) = 0;
+    virtual void set_sync_progress(const SyncProgress& progress, VersionInfo&) = 0;
 
 /*
     /// Get the first history entry whose changeset produced a version that
@@ -202,10 +220,8 @@ public:
     ///
     /// If any of the changesets are invalid, this function returns false and
     /// sets `integration_error` to the appropriate value. If they are all
-    /// deemed valid, this function sets `new_client_version` to the produced
-    /// client version. The type of version specified here, is the one that
-    /// identifies an entry in the sync history. Whether this is the same as the
-    /// snapshot number of the Realm file depends on the history implementation.
+    /// deemed valid, this function updates \a version_info to reflect the new
+    /// version produced by the transaction.
     ///
     /// \param progress is the SyncProgress received in the download message.
     /// Progress will be persisted along with the changesets.
@@ -217,9 +233,8 @@ public:
     /// transaction.
     virtual bool integrate_server_changesets(const SyncProgress& progress,
                                              const RemoteChangeset* changesets,
-                                             std::size_t num_changesets,
-                                             IntegrationError& integration_error,
-                                             version_type& new_client_version, util::Logger&,
+                                             std::size_t num_changesets, VersionInfo& new_version,
+                                             IntegrationError& integration_error, util::Logger&,
                                              SyncTransactReporter* transact_reporter = nullptr) = 0;
 
 protected:
