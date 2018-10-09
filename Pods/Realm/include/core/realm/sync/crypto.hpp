@@ -31,13 +31,18 @@ namespace realm {
 namespace sync {
 namespace crypto {
 
-/// sha1() calculates the sha1 hash value of \param in_buffer of size \param
-/// in_buffer_size. The value is placed in \param out_buffer. The value has
-/// size 20, and the caller must ensure that \param out_buffer has size at
-/// least 20.
-/// sha1() throws an exception if the underlying openssl implementation
-/// fails, which should just happen in case of memory allocation failure.
-void sha1(const char* in_buffer, size_t in_buffer_size, char* out_buffer);
+/// The digest functions calculate the message digest of the input in \param
+/// in_buffer of size \param in_buffer_size. The digest is placed in \param
+/// out_buffer. The caller must guarantee that the output buffer is large
+/// enough to contain the digest.
+///
+/// The functions throw if the underlying platform dependent implementations
+/// throw. Typically, exceptions are "out of memory" errors.
+///
+/// sha1() calculates the SHA-1 hash value of output size 20.
+/// sha256() calculates the SHA-256 hash value of output size 32.
+void sha1(const char* in_buffer, size_t in_buffer_size, unsigned char* out_buffer);
+void sha256(const char* in_buffer, size_t in_buffer_size, unsigned char* out_buffer);
 
 } // namespace crypto
 } // namespace sync

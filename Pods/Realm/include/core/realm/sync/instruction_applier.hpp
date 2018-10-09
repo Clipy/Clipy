@@ -97,6 +97,7 @@ inline void InstructionApplier::end_apply() noexcept
     m_log = nullptr;
     m_logger = nullptr;
     m_selected_table = TableRef{};
+    m_selected_array = TableRef{};
     m_selected_link_list = LinkViewRef{};
     m_link_target_table = TableRef{};
 }

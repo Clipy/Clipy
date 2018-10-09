@@ -117,7 +117,7 @@ private:
 
 /// compress_bound() calculates an upper bound on the size of the compressed
 /// data. The caller can use this function to allocate memory buffer calling
-/// compress(). \a uncompressed_buf is the buffer with uncompresed data. The
+/// compress(). \a uncompressed_buf is the buffer with uncompressed data. The
 /// size of the uncompressed data is \a uncompressed_size. \a compression_level
 /// is described under compress(). \a bound is set to the upper bound at
 /// return. The returned error code is of category compression::error_category.

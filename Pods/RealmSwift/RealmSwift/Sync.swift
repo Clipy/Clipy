@@ -177,6 +177,38 @@ public typealias SyncLogLevel = RLMSyncLogLevel
 public typealias Provider = RLMIdentityProvider
 
 /**
+ * How the Realm client should validate the identity of the server for secure connections.
+ *
+ * By default, when connecting to the Realm Object Server over HTTPS, Realm will
+ * validate the server's HTTPS certificate using the system trust store and root
+ * certificates. For additional protection against man-in-the-middle (MITM)
+ * attacks and similar vulnerabilities, you can pin a certificate or public key,
+ * and reject all others, even if they are signed by a trusted CA.
+ */
+public enum ServerValidationPolicy {
+    /// Perform no validation and accept potentially invalid certificates.
+    ///
+    /// -warning: DO NOT USE THIS OPTION IN PRODUCTION.
+    case none
+
+    /// Use the default server trust evaluation based on the system-wide CA
+    /// store. Any certificate signed by a trusted CA will be accepted.
+    case system
+
+    /// Use a specific pinned certificate to validate the server identify.
+    ///
+    /// This will only connect to a server if one of the server certificates
+    /// matches the certificate stored at the given local path and that
+    /// certificate has a valid trust chain.
+    ///
+    /// On macOS, the certificate files may be in any of the formats supported
+    /// by SecItemImport(), including PEM and .cer (see SecExternalFormat for a
+    /// complete list of possible formats). On iOS and other platforms, only
+    /// DER .cer files are supported.
+    case pinCertificate(path: URL)
+}
+
+/**
  A `SyncConfiguration` represents configuration parameters for Realms intended to sync with
  a Realm Object Server.
  */
@@ -199,9 +231,18 @@ public struct SyncConfiguration {
     internal let stopPolicy: RLMSyncStopPolicy
 
     /**
+     How the SSL certificate of the Realm Object Server should be validated.
+     */
+    public let serverValidationPolicy: ServerValidationPolicy
+
+    /**
      Whether the SSL certificate of the Realm Object Server should be validated.
      */
-    public let enableSSLValidation: Bool
+    @available(*, deprecated, message: "Use serverValidationPolicy instead")
+    public var enableSSLValidation: Bool {
+        if case .none = serverValidationPolicy { return true }
+        return false
+    }
 
     /**
      Whether this Realm should be opened in 'partial synchronization' mode.
@@ -238,17 +279,32 @@ public struct SyncConfiguration {
         self.user = config.user
         self.realmURL = config.realmURL
         self.stopPolicy = config.stopPolicy
-        self.enableSSLValidation = config.enableSSLValidation
+        if let certificateURL = config.pinnedCertificateURL {
+            self.serverValidationPolicy = .pinCertificate(path: certificateURL)
+        } else {
+            self.serverValidationPolicy = config.enableSSLValidation ? .system : .none
+        }
         self.fullSynchronization = config.fullSynchronization
         self.urlPrefix = config.urlPrefix
     }
 
     func asConfig() -> RLMSyncConfiguration {
+        var validateSSL = true
+        var certificate: URL?
+        switch serverValidationPolicy {
+        case .none:
+            validateSSL = false
+        case .system:
+            break
+        case .pinCertificate(let path):
+            certificate = path
+        }
         return RLMSyncConfiguration(user: user, realmURL: realmURL,
                                     isPartial: !fullSynchronization,
                                     urlPrefix: urlPrefix,
                                     stopPolicy: stopPolicy,
-                                    enableSSLValidation: enableSSLValidation)
+                                    enableSSLValidation: validateSSL,
+                                    certificatePath: certificate)
     }
 
     /**
@@ -270,7 +326,7 @@ public struct SyncConfiguration {
         self.user = user
         self.realmURL = realmURL
         self.stopPolicy = .afterChangesUploaded
-        self.enableSSLValidation = enableSSLValidation
+        self.serverValidationPolicy = enableSSLValidation ? .system : .none
         self.fullSynchronization = !isPartial
         self.urlPrefix = urlPrefix
     }
@@ -520,6 +576,39 @@ extension SyncUser {
                                           urlPrefix: urlPrefix)
         return ObjectiveCSupport.convert(object: config)
     }
+
+    /**
+     Create a sync configuration instance.
+
+     Additional settings can be optionally specified. Descriptions of these
+     settings follow.
+
+     `serverValidationPolicy` defaults to `.system`. It can be set to
+     `.pinCertificate` to pin a specific SSL certificate, or `.none` for
+     debugging purposes.
+
+     - warning: The URL must be absolute (e.g. `realms://example.com/~/foo`), and cannot end with
+     `.realm`, `.realm.lock` or `.realm.management`.
+
+     - warning: NEVER disable SSL validation for a system running in production.
+     */
+    public func configuration(realmURL: URL? = nil, fullSynchronization: Bool = false,
+                              serverValidationPolicy: ServerValidationPolicy,
+                              urlPrefix: String? = nil) -> Realm.Configuration {
+        let config = self.__configuration(with: realmURL, fullSynchronization: fullSynchronization)
+        let syncConfig = config.syncConfiguration!
+        syncConfig.urlPrefix = urlPrefix
+        switch serverValidationPolicy {
+        case .none:
+            syncConfig.enableSSLValidation = false
+        case .system:
+            break
+        case .pinCertificate(let path):
+            syncConfig.pinnedCertificateURL = path
+        }
+        config.syncConfiguration = syncConfig
+        return ObjectiveCSupport.convert(object: config)
+    }
 }
 
 /**
@@ -539,6 +628,20 @@ public typealias SyncPermission = RLMSyncPermission
 public typealias SyncAccessLevel = RLMSyncAccessLevel
 
 public extension SyncSession {
+    /**
+     The current state of the session represented by a session object.
+
+     - see: `RLMSyncSessionState`
+     */
+    public typealias State = RLMSyncSessionState
+
+    /**
+     The current state of a sync session's connection.
+
+     - see: `RLMSyncConnectionState`
+     */
+    public typealias ConnectionState = RLMSyncConnectionState
+
     /**
      The transfer direction (upload or download) tracked by a given progress notification block.
 
@@ -816,7 +919,13 @@ public class SyncSubscription<Type: RealmCollectionValue> {
 
     /// Observe the subscription for state changes.
     ///
-    /// When the state of the subscription changes, `block` will be invoked and passed the new state.
+    /// When the state of the subscription changes, `block` will be invoked and
+    /// passed the new state.
+    ///
+    /// The token returned from this function does not hold a strong reference to
+    /// this subscription object. This means that you must hold a reference to
+    /// the subscription object itself along with the returned token in order to
+    /// actually receive updates about the state.
     ///
     /// - parameter keyPath: The path to observe. Must be `\.state`.
     /// - parameter options: Options for the observation. Only `NSKeyValueObservingOptions.initial` option is
@@ -846,19 +955,40 @@ public class SyncSubscription<Type: RealmCollectionValue> {
 extension Results {
     /// Subscribe to the query represented by this `Results`
     ///
-    /// The subscription will not have an explicit name.
+    /// Subscribing to a query asks the server to synchronize all objects to the
+    /// client which match the query, along with all objects which are reachable
+    /// from those objects via links. This happens asynchronously, and the local
+    /// client Realm may not immediately have all objects which match the query.
+    /// Observe the `state` property of the returned subscription object to be
+    /// notified of when the subscription has been processed by the server and
+    /// all objects matching the query are available.
     ///
+    /// Creating a new subscription with the same name and query as an existing
+    /// subscription will not create a new subscription, but instead will return
+    /// an object referring to the existing sync subscription. This means that
+    /// performing the same subscription twice followed by removing it once will
+    /// result in no subscription existing.
+    ///
+    /// The number of top-level matches may optionally be limited. This limit
+    /// respects the sort and distinct order of the query being subscribed to,
+    /// if any. Please note that the limit does not count or apply to objects
+    /// which are added indirectly due to being linked to by the objects in the
+    /// subscription. If the limit is larger than the number of objects which
+    /// match the query, all objects will be included. Limiting a subscription
+    /// requires ROS 3.10.1 or newer, and will fail with an invalid predicate
+    /// error with older versions.
+    ///
+    /// - parameter subscriptionName: An optional name for the subscription.
+    /// - parameter limit: The maximum number of objects to include in the subscription.
     /// - returns: The subscription.
-    public func subscribe() -> SyncSubscription<Element> {
+    public func subscribe(named subscriptionName: String? = nil, limit: Int? = nil) -> SyncSubscription<Element> {
+        if let limit = limit {
+            return SyncSubscription(rlmResults.subscribe(withName: subscriptionName, limit: UInt(limit)))
+        }
+        if let name = subscriptionName {
+            return SyncSubscription(rlmResults.subscribe(withName: name))
+        }
         return SyncSubscription(rlmResults.subscribe())
-    }
-
-    /// Subscribe to the query represented by this `Results`
-    ///
-    /// - parameter subscriptionName: The name of the subscription.
-    /// - returns: The subscription.
-    public func subscribe(named subscriptionName: String) -> SyncSubscription<Element> {
-        return SyncSubscription(rlmResults.subscribe(withName: subscriptionName))
     }
 }
 

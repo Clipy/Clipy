@@ -70,11 +70,9 @@ std::vector<std::shared_ptr<SyncSession>> SyncUser::all_sessions()
     }
     for (auto it = m_sessions.begin(); it != m_sessions.end();) {
         if (auto ptr_to_session = it->second.lock()) {
-            if (!ptr_to_session->is_in_error_state()) {
-                sessions.emplace_back(std::move(ptr_to_session));
-                it++;
-                continue;
-            }
+            sessions.emplace_back(std::move(ptr_to_session));
+            it++;
+            continue;
         }
         // This session is bad, destroy it.
         it = m_sessions.erase(it);

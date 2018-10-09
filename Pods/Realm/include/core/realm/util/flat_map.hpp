@@ -27,6 +27,8 @@
 #include <algorithm> // std::lower_bound etc.
 #include <type_traits>
 
+#include <realm/util/backtrace.hpp>
+
 namespace realm {
 namespace util {
 
@@ -53,7 +55,7 @@ struct FlatMap {
     {
         auto it = find(key);
         if (it == end())
-            throw std::out_of_range("no such key");
+            throw util::out_of_range("no such key");
         return it->second;
     }
 

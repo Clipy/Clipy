@@ -27,8 +27,16 @@ namespace realm {
 std::string SyncConfig::partial_sync_identifier(const SyncUser& user)
 {
     std::string raw_identifier = SyncManager::shared().client_uuid() + "/" + user.local_identity();
+
+    // The type of the argument to sha1() changed in sync 3.11.1. Implicitly
+    // convert to either char or unsigned char so that both signatures work.
+    struct cast {
+        uint8_t* value;
+        operator uint8_t*() { return value; }
+        operator char*() { return reinterpret_cast<char*>(value); }
+    };
     uint8_t identifier[20];
-    sync::crypto::sha1(raw_identifier.data(), raw_identifier.size(), (char *)&identifier[0]);
+    sync::crypto::sha1(raw_identifier.data(), raw_identifier.size(), cast{&identifier[0]});
 
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
