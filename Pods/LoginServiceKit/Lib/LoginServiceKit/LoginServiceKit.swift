@@ -57,7 +57,8 @@ public extension LoginServiceKit {
     public static func addLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
         guard !isExistLoginItems(at: path) else { return false }
 
-        let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
+        guard let sharedFileList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil) else { return false }
+        let loginItemList = sharedFileList.takeRetainedValue()
         let url = URL(fileURLWithPath: path)
         LSSharedFileListInsertItemURL(loginItemList, kLSSharedFileListItemBeforeFirst.takeRetainedValue(), nil, nil, url as CFURL, nil, nil)
         return true
@@ -67,12 +68,14 @@ public extension LoginServiceKit {
     public static func removeLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
         guard isExistLoginItems(at: path) else { return false }
 
-        let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
+        guard let sharedFileList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil) else { return false }
+        let loginItemList = sharedFileList.takeRetainedValue()
         let url = URL(fileURLWithPath: path)
         let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
         guard let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] else { return false }
         for loginItem in loginItems {
-            let itemUrl = LSSharedFileListItemCopyResolvedURL(loginItem, 0, nil).takeRetainedValue() as URL
+            guard let resolvedUrl = LSSharedFileListItemCopyResolvedURL(loginItem, 0, nil) else { continue }
+            let itemUrl = resolvedUrl.takeRetainedValue() as URL
             guard url.absoluteString == itemUrl.absoluteString else { continue }
             LSSharedFileListItemRemove(loginItemList, loginItem)
         }
@@ -84,12 +87,14 @@ private extension LoginServiceKit {
     static func loginItem(at path: String) -> LSSharedFileListItem? {
         guard !path.isEmpty else { return nil }
 
-        let loginItemList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil).takeRetainedValue()
+        guard let sharedFileList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil) else { return nil }
+        let loginItemList = sharedFileList.takeRetainedValue()
         let url = URL(fileURLWithPath: path)
         let loginItemsListSnapshot: NSArray = LSSharedFileListCopySnapshot(loginItemList, nil).takeRetainedValue()
         guard let loginItems = loginItemsListSnapshot as? [LSSharedFileListItem] else { return nil }
         for loginItem in loginItems {
-            let itemUrl = LSSharedFileListItemCopyResolvedURL(loginItem, 0, nil).takeRetainedValue() as URL
+            guard let resolvedUrl = LSSharedFileListItemCopyResolvedURL(loginItem, 0, nil) else { continue }
+            let itemUrl = resolvedUrl.takeRetainedValue() as URL
             guard url.absoluteString == itemUrl.absoluteString else { continue }
             return loginItem
         }

@@ -7,7 +7,7 @@ PODS:
   - KeyHolder (2.1.0):
     - Magnet (~> 2.1)
   - LetsMove (1.24)
-  - LoginServiceKit (2.0.1)
+  - LoginServiceKit (2.0.2)
   - Magnet (2.2.0)
   - Nimble (7.1.3)
   - PINCache (2.3)
@@ -87,7 +87,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   LoginServiceKit:
-    :commit: 0cd196e3f88008253d715a28d6a34c884a943df1
+    :commit: 79c9d6d2cc25dc238e6044245bebdc8253a786f2
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
@@ -97,7 +97,7 @@ SPEC CHECKSUMS:
   Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
   KeyHolder: 22fc9d2c939bf5a24078d0bbb2a354d9da1386e3
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
-  LoginServiceKit: 848c11aeb8bffcc9011fdb766e32010e8d1e578d
+  LoginServiceKit: 5b4736234dc4cc96d786d8cd83e43b9ce5e7f1ca
   Magnet: ab06348db5815184ac59b4f64b57001b1e5b793a
   Nimble: 2839b01d1b31f6a6a7777a221f0d91cf52e8e27b
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
