@@ -1,17 +1,17 @@
 PODS:
-  - AEXML (4.3.0)
+  - AEXML (4.3.3)
   - BartyCrouch (3.13.0)
   - Crashlytics (3.10.9):
     - Fabric (~> 1.7.13)
   - Fabric (1.7.13)
-  - KeyHolder (2.1.0):
-    - Magnet (~> 2.1)
+  - KeyHolder (3.0.1):
+    - Magnet (~> 2.3)
   - LetsMove (1.24)
   - LoginServiceKit (2.0.2)
-  - Magnet (2.2.0)
-  - Nimble (7.1.3)
+  - Magnet (2.3.0)
+  - Nimble (7.3.1)
   - PINCache (2.3)
-  - Quick (1.3.1)
+  - Quick (1.3.2)
   - Realm (3.11.0):
     - Realm/Headers (= 3.11.0)
   - Realm/Headers (3.11.0)
@@ -30,7 +30,7 @@ PODS:
   - Sauce (1.0.0)
   - Screeen (1.2.0)
   - Sparkle (1.20.0)
-  - SwiftGen (5.3.0)
+  - SwiftGen (6.0.2)
   - SwiftHEXColors (1.1.2)
   - SwiftLint (0.27.0)
 
@@ -91,17 +91,17 @@ CHECKOUT OPTIONS:
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
-  AEXML: bae92c01e0da64132fd72f748721cda07466032b
+  AEXML: 601f41fcaa7bda7605cad153b0f43db9ec006c0f
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   Crashlytics: 55e24fc23989680285a21cb1146578d9d18e432c
   Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
-  KeyHolder: 22fc9d2c939bf5a24078d0bbb2a354d9da1386e3
+  KeyHolder: 142932db4eac7420b003e2eae94c9a61b8b53cb1
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
   LoginServiceKit: 5b4736234dc4cc96d786d8cd83e43b9ce5e7f1ca
-  Magnet: ab06348db5815184ac59b4f64b57001b1e5b793a
-  Nimble: 2839b01d1b31f6a6a7777a221f0d91cf52e8e27b
+  Magnet: 85344b019d023e26062199aeb5b4ad1f8d41c5df
+  Nimble: 04f732da099ea4d153122aec8c2a88fd0c7219ae
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
-  Quick: d17304d58d0d169dd0bd1c6e5c28e3318de32a1a
+  Quick: 2623cb30d7a7f41ca62f684f679586558f483d46
   Realm: 92f09a102692b96a9a10e9617f214f15c5ab85fc
   RealmSwift: 5f0481cd658bb751c509314b964a35eaa264d2cf
   RxCocoa: 78763c7b07d02455598d9fc3c1ad091a28b73635
@@ -111,10 +111,10 @@ SPEC CHECKSUMS:
   Sauce: 88a62dc6209dd651675e76a43a76f7cc8b02637e
   Screeen: c725fd8035f07dd4d1db9d8e94d3a07534b43801
   Sparkle: 48999e7ee032f05ca05e28451eadf4af8ede6b44
-  SwiftGen: 4379bd3640b0a212a0f6ea3c494adba385513d10
+  SwiftGen: e5b047067aa84082826a0c4f1c4c2ddc95bcf74c
   SwiftHEXColors: 7f9f7e6bdce888d821e11749279733e5ddff5f51
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
 
 PODFILE CHECKSUM: 79a276d339494c0697d9be86b26c79d561574abb
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0.beta.1

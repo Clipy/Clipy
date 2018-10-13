@@ -56,11 +56,10 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
     // MARK: - XMLParserDelegate
     
     func parser(_ parser: XMLParser,
-                      didStartElement elementName: String,
-                      namespaceURI: String?,
-                      qualifiedName qName: String?,
-                      attributes attributeDict: [String : String])
-    {
+                didStartElement elementName: String,
+                namespaceURI: String?,
+                qualifiedName qName: String?,
+                attributes attributeDict: [String : String]) {
         currentValue = String()
         currentElement = currentParent?.addChild(name: elementName, attributes: attributeDict)
         currentParent = currentElement
@@ -72,10 +71,9 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
     }
     
     func parser(_ parser: XMLParser,
-                      didEndElement elementName: String,
-                      namespaceURI: String?,
-                      qualifiedName qName: String?)
-    {
+                didEndElement elementName: String,
+                namespaceURI: String?,
+                qualifiedName qName: String?) {
         if trimWhitespace {
             currentElement?.value = currentElement?.value?.trimmingCharacters(in: .whitespacesAndNewlines)
         }

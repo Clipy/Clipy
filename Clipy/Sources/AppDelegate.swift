@@ -37,13 +37,14 @@ class AppDelegate: NSObject {
     }
 
     // MARK: - Override Methods
+    /*
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
             let realm = try! Realm()
             return !realm.objects(CPYClip.self).isEmpty
         }
         return true
-    }
+    }*/
 
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {

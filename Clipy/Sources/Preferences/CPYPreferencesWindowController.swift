@@ -15,7 +15,7 @@ import Cocoa
 final class CPYPreferencesWindowController: NSWindowController {
 
     // MARK: - Properties
-    static let sharedController = CPYPreferencesWindowController(windowNibName: NSNib.Name(rawValue: "CPYPreferencesWindowController"))
+    static let sharedController = CPYPreferencesWindowController(windowNibName: "CPYPreferencesWindowController")
     @IBOutlet private weak var toolBar: NSView!
     // ImageViews
     @IBOutlet private weak var generalImageView: NSImageView!
@@ -42,13 +42,13 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet private weak var updatesButton: NSButton!
     @IBOutlet private weak var betaButton: NSButton!
     // ViewController
-    fileprivate let viewController = [NSViewController(nibName: NSNib.Name(rawValue: "CPYGeneralPreferenceViewController"), bundle: nil),
-                                  NSViewController(nibName: NSNib.Name(rawValue: "CPYMenuPreferenceViewController"), bundle: nil),
-                                  CPYTypePreferenceViewController(nibName: NSNib.Name(rawValue: "CPYTypePreferenceViewController"), bundle: nil),
-                                  CPYExcludeAppPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYExcludeAppPreferenceViewController"), bundle: nil),
-                                  CPYShortcutsPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYShortcutsPreferenceViewController"), bundle: nil),
-                                  CPYUpdatesPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYUpdatesPreferenceViewController"), bundle: nil),
-                                  CPYBetaPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYBetaPreferenceViewController"), bundle: nil)]
+    fileprivate let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil),
+                                  NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil),
+                                  CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil),
+                                  CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil),
+                                  CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil),
+                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil),
+                                  CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)]
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
@@ -99,13 +99,13 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 // MARK: - Layout
 fileprivate extension CPYPreferencesWindowController {
     private func resetImages() {
-        generalImageView.image = Asset.Preference.prefGeneral.image
-        menuImageView.image = Asset.Preference.prefMenu.image
-        typeImageView.image = Asset.Preference.prefType.image
-        excludeImageView.image = Asset.Preference.prefExcluded.image
-        shortcutsImageView.image = Asset.Preference.prefShortcut.image
-        updatesImageView.image = Asset.Preference.prefUpdate.image
-        betaImageView.image = Asset.Preference.prefBeta.image
+        generalImageView.image = Asset.prefGeneral.image
+        menuImageView.image = Asset.prefMenu.image
+        typeImageView.image = Asset.prefType.image
+        excludeImageView.image = Asset.prefExcluded.image
+        shortcutsImageView.image = Asset.prefShortcut.image
+        updatesImageView.image = Asset.prefUpdate.image
+        betaImageView.image = Asset.prefBeta.image
 
         generalTextField.textColor = ColorName.tabTitle.color
         menuTextField.textColor = ColorName.tabTitle.color
@@ -121,25 +121,25 @@ fileprivate extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalImageView.image = Asset.Preference.prefGeneralOn.image
+            generalImageView.image = Asset.prefGeneralOn.image
             generalTextField.textColor = ColorName.clipy.color
         case 1:
-            menuImageView.image = Asset.Preference.prefMenuOn.image
+            menuImageView.image = Asset.prefMenuOn.image
             menuTextField.textColor = ColorName.clipy.color
         case 2:
-            typeImageView.image = Asset.Preference.prefTypeOn.image
+            typeImageView.image = Asset.prefTypeOn.image
             typeTextField.textColor = ColorName.clipy.color
         case 3:
-            excludeImageView.image = Asset.Preference.prefExcludedOn.image
+            excludeImageView.image = Asset.prefExcludedOn.image
             excludeTextField.textColor = ColorName.clipy.color
         case 4:
-            shortcutsImageView.image = Asset.Preference.prefShortcutOn.image
+            shortcutsImageView.image = Asset.prefShortcutOn.image
             shortcutsTextField.textColor = ColorName.clipy.color
         case 5:
-            updatesImageView.image = Asset.Preference.prefUpdateOn.image
+            updatesImageView.image = Asset.prefUpdateOn.image
             updatesTextField.textColor = ColorName.clipy.color
         case 6:
-            betaImageView.image = Asset.Preference.prefBetaOn.image
+            betaImageView.image = Asset.prefBetaOn.image
             betaTextField.textColor = ColorName.clipy.color
         default: break
         }
