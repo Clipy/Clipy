@@ -1,0 +1,39 @@
+
+/* Class = "NSButtonCell"; title = "Input \"⌘ + V\" after menu item selection"; ObjectID = "0yt-u0-ROt"; */
+"0yt-u0-ROt.title" = "Automatyczne \"⌘ + V\" po wybraniu elementu z menu";
+
+/* Class = "NSTextFieldCell"; title = "Appearance"; ObjectID = "FM4-mw-DCx"; */
+"FM4-mw-DCx.title" = "Wygląd";
+
+/* Class = "NSTextFieldCell"; title = "Status Bar icon style:"; ObjectID = "Faj-kQ-G1v"; */
+"Faj-kQ-G1v.title" = "Styl icony w belce menu (menu bar):";
+
+/* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
+"Lps-06-dPB.title" = "Sortuj historię według:";
+
+/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "Wysyłaj raporty o zawieszeniu się programu i logi błędów (działa od następnego włączenia programu)";
+
+/* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
+"Nab-CO-ytH.title" = "Maksymalna wielkość historii schowka:";
+
+/* Class = "NSTextFieldCell"; title = "Clipboard History"; ObjectID = "OOT-F5-Pal"; */
+"OOT-F5-Pal.title" = "Historia schowka";
+
+/* Class = "NSButtonCell"; title = "Launch on Login"; ObjectID = "Su3-mF-z1T"; */
+"Su3-mF-z1T.title" = "Włączanie przy starcie systemu";
+
+/* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "YmS-J6-ERc"; */
+"YmS-J6-ERc.title" = "Data utworzenia";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "aEh-u0-hQR"; */
+"aEh-u0-hQR.title" = "Żaden";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "eeq-cw-v00"; */
+"eeq-cw-v00.title" = "elementy";
+
+/* Class = "NSMenuItem"; title = "Last Used"; ObjectID = "ju3-6a-6xj"; */
+"ju3-6a-6xj.title" = "Ustatnio użyte";
+
+/* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
+"nDk-8y-89n.title" = "Zachowanie";

@@ -1,0 +1,59 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
+
+"Launch Clipy on system startup?" = "Włączać Clipy przy starcie systemu?";
+
+"You can change this setting in the Preferences if you want" = "To ustawienie może być zmienione później w Preferencjach.";
+
+"Launch on system startup" = "Włączanie przy starcie systemu";
+
+"Don't Launch" = "Nie startuj";
+
+"Clear History" = "Wyczyść historię";
+
+"Are you sure you want to clear your clipboard history?" = "Jesteś pewny, że chcesz wykasować historię schowka?";
+
+"Cancel" = "Anuluj";
+
+"Edit Snippets" = "Edytuj snippety...";
+
+"Preferences" = "Preferencje...";
+
+"Quit Clipy" = "Zamknij Clipy";
+
+"History" = "Historia";
+
+"Snippet" = "Snippet";
+
+"General" = "Ogólne";
+
+"Menu" = "Menu";
+
+"Type" = "Typ";
+
+"Shortcuts" = "Skróty";
+
+"Updates" = "Aktualizacje";
+
+"Delete Item" = "Usuń element";
+
+"Are you sure want to delete this item?" = "Jesteś pewien, że chcesz usunąć ten element?";
+
+"Add" = "Dodaj";
+
+"Please fill in the contents of the snippet" = "Proszę wypełnij zawartość snippetu";
+
+"Please allow Accessibility" = "Proszę zezwól na ustawienia Dostępności.";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "Żeby to zrobić zezwól na Dostępność w ustawieniach Ochrony i prywatności w Preferencjach systemowych.";
+
+"Open System Preferences" = "Otwórz Preferencje systemowe";
