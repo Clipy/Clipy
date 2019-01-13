@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -88,7 +89,7 @@
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uSX-Yy-86r" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="59" y="107" width="237" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Delete history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="sYs-Da-TSj">
+                    <buttonCell key="cell" type="check" title="Delete from history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="sYs-Da-TSj">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -99,12 +100,12 @@
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xih-Sx-WpW">
                     <rect key="frame" x="316" y="102" width="108" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Command" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="I0s-bs-Y8L">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="I0s-bs-Y8L">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="AWw-Hg-ORg">
                             <items>
-                                <menuItem title="Command" state="on" id="HZd-yn-p4o"/>
+                                <menuItem title="Command" id="HZd-yn-p4o"/>
                                 <menuItem title="Shift" id="oNH-8M-ZSE"/>
                                 <menuItem title="Control" id="z3A-El-En9"/>
                                 <menuItem title="Alt" id="M9s-9f-OKA"/>
@@ -119,7 +120,7 @@
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="195-Rx-goW" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
                     <rect key="frame" x="59" y="76" width="237" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Paste and delete history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="M5n-Mr-02l">
+                    <buttonCell key="cell" type="check" title="Paste and delete from history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="M5n-Mr-02l">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -130,12 +131,12 @@
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pwa-Yn-1fY">
                     <rect key="frame" x="316" y="71" width="108" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Command" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="RLH-Us-QOE">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="RLH-Us-QOE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="etc-Mh-b0d">
                             <items>
-                                <menuItem title="Command" state="on" id="yZK-TZ-SNb"/>
+                                <menuItem title="Command" id="yZK-TZ-SNb"/>
                                 <menuItem title="Shift" id="NFq-oQ-VKz"/>
                                 <menuItem title="Control" id="kZF-3Q-Tge"/>
                                 <menuItem title="Alt" id="orJ-AB-Oxl"/>
