@@ -71,7 +71,16 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        // menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+
+        // put menu inside an hidden window to make it follow the system appearance
+        let contentRect = NSRect(x: NSEvent.mouseLocation.x, y: NSEvent.mouseLocation.y, width: 0, height: 0)
+        let tmpWindow = NSWindow(contentRect: contentRect, styleMask: [], backing: .buffered, defer: false)
+        tmpWindow.isReleasedWhenClosed = false
+        tmpWindow.appearance = NSAppearance(named: .vibrantDark)
+        tmpWindow.orderFront(nil)
+        menu?.popUp(positioning: nil, at: NSPoint(x: 0, y: 0), in: tmpWindow.contentView)
+        tmpWindow.close()
     }
 
     func popUpSnippetFolder(_ folder: CPYFolder) {
