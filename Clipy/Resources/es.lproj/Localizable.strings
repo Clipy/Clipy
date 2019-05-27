@@ -1,0 +1,51 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by LucasVieites on 2019/05/27.
+//
+//  Copyright © 2019 Lucas Vieites
+//
+
+"Launch Clipy on system startup?" = "¿Arrancar Clipy al inicio del sistema?";
+
+"You can change this setting in the Preferences if you want." = "Puedes cambiar este ajuste en las Preferencias.";
+
+"Launch on system startup" = "Arrancar al inicio del sistema";
+
+"Don't Launch" = "No arrancar";
+
+"Clear History" = "Limpiar histórico";
+
+"Are you sure you want to clear your clipboard history?" = "¿Estás seguro/a de que quieres limpiar el histórico del portapapeles?";
+
+"Cancel" = "Cancelar";
+
+"Edit Snippets..." = "Editar recortes...";
+
+"Preferences..." = "Preferencias...";
+
+"Quit Clipy" = "Cerrar Clipy";
+
+"History" = "Histórico";
+
+"Snippet" = "Recorte";
+
+"General" = "General";
+
+"Menu" = "Menú";
+
+"Type" = "Tipo";
+
+"Shortcuts" = "Atajos";
+
+"Updates" = "Actualizaciones";
+
+"Delete Item" = "Borrar elemento";
+
+"Are you sure want to delete this item?" = "¿Estás seguro/a de que quieres borrar este elemento?";
+
+"Add" = "Añadir";
