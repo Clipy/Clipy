@@ -43,8 +43,8 @@ public final class InputSource {
 
 // MARK: - Hashable
 extension InputSource: Hashable {
-    public var hashValue: Int {
-        return id.hashValue ^ (modeID?.hashValue ?? 0)
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id.hashValue ^ (modeID?.hashValue ?? 0))
     }
 }
 

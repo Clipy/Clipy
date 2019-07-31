@@ -131,7 +131,7 @@ fileprivate extension HotKeyService {
      *  Migration for changing the storage with v1.1.0
      *  Changed framework, PTHotKey to Magnet
      */
-    fileprivate func migrationKeyCombos() {
+    func migrationKeyCombos() {
         guard let keyCombos = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
 
         // Main menu

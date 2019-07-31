@@ -145,7 +145,7 @@ fileprivate extension CPYPreferencesWindowController {
         }
     }
 
-    fileprivate func switchView(_ index: Int) {
+    func switchView(_ index: Int) {
         let newView = viewController[index].view
         // Remove current views without toolbar
         window?.contentView?.subviews.forEach { view in

@@ -30,7 +30,7 @@ public final class HotKeyCenter {
 
 // MARK: - Register & Unregister
 public extension HotKeyCenter {
-    public func register(with hotKey: HotKey) -> Bool {
+    func register(with hotKey: HotKey) -> Bool {
         guard !hotKeys.keys.contains(hotKey.identifier) else { return false }
         guard !hotKeys.values.contains(hotKey) else { return false }
 
@@ -59,7 +59,7 @@ public extension HotKeyCenter {
         return true
     }
     
-    public func unregister(with hotKey: HotKey) {
+    func unregister(with hotKey: HotKey) {
         guard hotKeys.values.contains(hotKey) else { return }
 
         if !hotKey.keyCombo.doubledModifiers {
@@ -79,12 +79,12 @@ public extension HotKeyCenter {
             .forEach { hotKeyMap.removeValue(forKey: $0) }
     }
 
-    public func unregisterHotKey(with identifier: String) {
+    func unregisterHotKey(with identifier: String) {
         guard let hotKey = hotKeys[identifier] else { return }
         unregister(with: hotKey)
     }
 
-    public func unregisterAll() {
+    func unregisterAll() {
         hotKeys.forEach { unregister(with: $1) }
     }
 }

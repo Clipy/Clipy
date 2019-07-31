@@ -70,8 +70,7 @@ final class ZipSink2_<E1, E2, O: ObserverType> : ZipSink<O> {
         default:
             rxFatalError("Unhandled case (Function)")
         }
-
-        return false
+        
     }
 
     func run() -> Disposable {
@@ -183,7 +182,6 @@ final class ZipSink3_<E1, E2, E3, O: ObserverType> : ZipSink<O> {
             rxFatalError("Unhandled case (Function)")
         }
 
-        return false
     }
 
     func run() -> Disposable {
@@ -303,7 +301,6 @@ final class ZipSink4_<E1, E2, E3, E4, O: ObserverType> : ZipSink<O> {
             rxFatalError("Unhandled case (Function)")
         }
 
-        return false
     }
 
     func run() -> Disposable {
@@ -431,7 +428,6 @@ final class ZipSink5_<E1, E2, E3, E4, E5, O: ObserverType> : ZipSink<O> {
             rxFatalError("Unhandled case (Function)")
         }
 
-        return false
     }
 
     func run() -> Disposable {
@@ -567,7 +563,6 @@ final class ZipSink6_<E1, E2, E3, E4, E5, E6, O: ObserverType> : ZipSink<O> {
             rxFatalError("Unhandled case (Function)")
         }
 
-        return false
     }
 
     func run() -> Disposable {
@@ -711,7 +706,6 @@ final class ZipSink7_<E1, E2, E3, E4, E5, E6, E7, O: ObserverType> : ZipSink<O> 
             rxFatalError("Unhandled case (Function)")
         }
 
-        return false
     }
 
     func run() -> Disposable {
@@ -863,7 +857,6 @@ final class ZipSink8_<E1, E2, E3, E4, E5, E6, E7, E8, O: ObserverType> : ZipSink
             rxFatalError("Unhandled case (Function)")
         }
 
-        return false
     }
 
     func run() -> Disposable {

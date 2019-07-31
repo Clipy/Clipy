@@ -143,8 +143,10 @@ private extension KeyboardLayout {
         let maxChars = 256
         var chars = [UniChar](repeating: 0, count: maxChars)
         var length = 0
-        let error = layoutData.withUnsafeBytes {
-            return CoreServices.UCKeyTranslate($0,
+        let error = layoutData.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> OSStatus in
+            let keyboardPtr = ptr.bindMemory(to: UCKeyboardLayout.self)
+            //var kb = ptr.load(as: UCKeyboardLayout.self)
+            return CoreServices.UCKeyTranslate(keyboardPtr.baseAddress,
                                                UInt16(keyCode),
                                                UInt16(CoreServices.kUCKeyActionDisplay),
                                                UInt32(modifiers),
@@ -155,6 +157,18 @@ private extension KeyboardLayout {
                                                &length,
                                                &chars)
         }
+//        let error = layoutData.withUnsafeBytes { (bytes: UnsafePointer<UCKeyboardLayout>) in
+//            return CoreServices.UCKeyTranslate(bytes,
+//                                               UInt16(keyCode),
+//                                               UInt16(CoreServices.kUCKeyActionDisplay),
+//                                               UInt32(modifiers),
+//                                               UInt32(LMGetKbdType()),
+//                                               OptionBits(CoreServices.kUCKeyTranslateNoDeadKeysBit),
+//                                               &deadKeyState,
+//                                               maxChars,
+//                                               &length,
+//                                               &chars)
+//        }
         guard error == noErr else { return nil }
         return NSString(characters: &chars, length: length) as String
     }

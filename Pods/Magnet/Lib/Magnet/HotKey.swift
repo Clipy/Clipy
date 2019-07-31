@@ -62,7 +62,7 @@ public final class HotKey: Equatable {
 
 // MARK: - Invoke
 public extension HotKey {
-    public func invoke() {
+    func invoke() {
         guard let callback = self.callback else {
             guard let target = self.target as? NSObject, let selector = self.action else { return }
             guard target.responds(to: selector) else { return }
@@ -82,11 +82,11 @@ public extension HotKey {
 // MARK: - Register & UnRegister
 public extension HotKey {
     @discardableResult
-    public func register() -> Bool {
+    func register() -> Bool {
         return HotKeyCenter.shared.register(with: self)
     }
 
-    public func unregister() {
+    func unregister() {
         return HotKeyCenter.shared.unregister(with: self)
     }
 }
