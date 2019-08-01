@@ -1,0 +1,7 @@
+os: osx
+osx_image: xcode10.2
+language: objective-c
+xcode_workspace: Clipy.xcodeworkspace
+xcode_scheme: Clipy
+xcode_destination: platform=macOS
+podfile: Podfile
