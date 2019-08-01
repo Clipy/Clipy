@@ -330,7 +330,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     // MARK: - Drag and Drop
     func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
         let pasteboardItem = NSPasteboardItem()
-        if let folder = item as? CPYFolder, let index = folders.index(of: folder) {
+        if let folder = item as? CPYFolder, let index = folders.firstIndex(of: folder) {
             let draggedData = CPYDraggedData(type: .folder, folderIdentifier: folder.identifier, snippetIdentifier: nil, index: index)
             let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
             pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))

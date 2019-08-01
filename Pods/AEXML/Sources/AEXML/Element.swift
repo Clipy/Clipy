@@ -239,7 +239,7 @@ open class AEXMLElement {
     }
     
     fileprivate func removeChild(_ child: AEXMLElement) {
-        if let childIndex = children.index(where: { $0 === child }) {
+        if let childIndex = children.firstIndex(where: { $0 === child }) {
             children.remove(at: childIndex)
         }
     }
@@ -321,7 +321,7 @@ open class AEXMLElement {
 public extension String {
     
     /// String representation of self with XML special characters escaped.
-    public var xmlEscaped: String {
+    var xmlEscaped: String {
         // we need to make sure "&" is escaped first. Not doing this may break escaping the other characters
         var escaped = replacingOccurrences(of: "&", with: "&amp;", options: .literal)
         

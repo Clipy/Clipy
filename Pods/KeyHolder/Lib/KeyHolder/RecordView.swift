@@ -349,7 +349,7 @@ private extension RecordView {
 
 // MARK: - Recording
 public extension RecordView {
-    public func beginRecording() -> Bool {
+    func beginRecording() -> Bool {
         if !isEnabled { return false }
         if isRecording { return true }
 
@@ -369,7 +369,7 @@ public extension RecordView {
         return true
     }
 
-    public func endRecording() {
+    func endRecording() {
         if !isRecording { return }
 
         inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
@@ -390,7 +390,7 @@ public extension RecordView {
 
 // MARK: - Clear Keys
 public extension RecordView {
-    public func clear() {
+    func clear() {
         keyCombo = nil
         inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
         needsDisplay = true
@@ -398,7 +398,7 @@ public extension RecordView {
         delegate?.recordViewDidClearShortcut(self)
     }
 
-    @objc public func clearAndEndRecording() {
+    @objc func clearAndEndRecording() {
         clear()
         endRecording()
     }

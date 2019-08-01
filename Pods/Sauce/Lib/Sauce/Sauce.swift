@@ -13,8 +13,8 @@
 import Foundation
 
 public extension NSNotification.Name {
-    public static let SauceSelectedKeyboardInputSourceChanged = Notification.Name("SauceSelectedKeyboardInputSourceChanged")
-    public static let SauceEnabledKeyboardInputSoucesChanged = Notification.Name("SauceEnabledKeyboardInputSoucesChanged")
+    static let SauceSelectedKeyboardInputSourceChanged = Notification.Name("SauceSelectedKeyboardInputSourceChanged")
+    static let SauceEnabledKeyboardInputSoucesChanged = Notification.Name("SauceEnabledKeyboardInputSoucesChanged")
 }
 
 public final class Sauce {
@@ -33,42 +33,42 @@ public final class Sauce {
 
 // MARK: - KeyCodes
 public extension Sauce {
-    public func keyCode(by key: Key) -> CGKeyCode {
+    func keyCode(by key: Key) -> CGKeyCode {
         return currentKeyCode(by: key) ?? currentASCIICapableKeyCode(by: key) ?? key.QWERTYKeyCode
     }
 
-    public func currentKeyCode(by key: Key) -> CGKeyCode? {
+    func currentKeyCode(by key: Key) -> CGKeyCode? {
         return layout.currentKeyCode(by: key)
     }
 
-    public func currentASCIICapableKeyCode(by key: Key) -> CGKeyCode? {
+    func currentASCIICapableKeyCode(by key: Key) -> CGKeyCode? {
         return layout.currentASCIICapableKeyCode(by: key)
     }
 
-    public func keyCode(with source: InputSource, key: Key) -> CGKeyCode? {
+    func keyCode(with source: InputSource, key: Key) -> CGKeyCode? {
         return layout.keyCode(with: source, key: key)
     }
 
-    public func ASCIICapableInputSources() -> [InputSource] {
+    func ASCIICapableInputSources() -> [InputSource] {
         return layout.ASCIICapableInputSources
     }
 }
 
 // MARK: - Characters
 public extension Sauce {
-    public func character(by keyCode: Int, modifiers: Int) -> String? {
+    func character(by keyCode: Int, modifiers: Int) -> String? {
         return currentCharacter(by: keyCode, modifiers: modifiers) ?? currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
     }
 
-    public func currentCharacter(by keyCode: Int, modifiers: Int) -> String? {
+    func currentCharacter(by keyCode: Int, modifiers: Int) -> String? {
         return layout.currentCharacter(by: keyCode, modifiers: modifiers)
     }
 
-    public func currentASCIICapableCharacter(by keyCode: Int, modifiers: Int) -> String? {
+    func currentASCIICapableCharacter(by keyCode: Int, modifiers: Int) -> String? {
         return layout.currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
     }
 
-    public func character(with source: InputSource, keyCode: Int, modifiers: Int) -> String? {
+    func character(with source: InputSource, keyCode: Int, modifiers: Int) -> String? {
         return layout.character(with: source, keyCode: keyCode, modifiers: modifiers)
     }
 }
