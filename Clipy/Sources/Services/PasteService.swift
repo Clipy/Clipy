@@ -111,7 +111,7 @@ extension PasteService {
         types.forEach { type in
             let availableType = AvailableType.available(by: type)
             if availableType == nil {
-                return;
+                return
             }
             switch availableType! {
             case .string:
@@ -119,23 +119,22 @@ extension PasteService {
                 pasteboard.setString(pbString, forType: type)
             case .rtfd:
                 guard let rtfData = data.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .deprecatedRTFD)
+                pasteboard.setData(rtfData, forType: type)
             case .rtf:
                 guard let rtfData = data.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .deprecatedRTF)
+                pasteboard.setData(rtfData, forType: type)
             case .pdf:
                 guard let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
-                pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
+                pasteboard.setData(pdfRep.pdfRepresentation, forType: type)
             case .filenames:
                 let fileNames = data.fileNames
-                pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
+                pasteboard.setPropertyList(fileNames, forType: type)
             case .url:
                 let url = data.URLs
-                pasteboard.setPropertyList(url, forType: .deprecatedURL)
+                pasteboard.setPropertyList(url, forType: type)
             case .tiff:
                 guard let image = data.image, let imageData = image.tiffRepresentation else { return }
                 pasteboard.setData(imageData, forType: type)
-            default: break
             }
         }
     }
