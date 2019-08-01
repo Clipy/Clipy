@@ -5,4 +5,4 @@ xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
 podfile: Podfile
-install: true
+install: pod install --deployment
