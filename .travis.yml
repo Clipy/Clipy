@@ -6,3 +6,5 @@ xcode_scheme: Clipy
 xcode_destination: platform=macOS
 before_install:
   - gem install xcpretty bundler cocoapods
+  - bundle install
+  - pod install
