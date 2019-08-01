@@ -235,7 +235,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cocoapods (= 1.6.0.beta.1)
+  cocoapods (= 1.7.5)
   danger
   danger-swiftlint (= 0.16.0)
   fastlane
