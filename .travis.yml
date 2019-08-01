@@ -4,3 +4,5 @@ language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
+before_install:
+  - gem install xcpretty bundler
