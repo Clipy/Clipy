@@ -23,16 +23,11 @@
 #include "property.hpp"
 #include "schema.hpp"
 
-#include "util/format.hpp"
 
 #include <realm/data_type.hpp>
 #include <realm/descriptor.hpp>
 #include <realm/group.hpp>
 #include <realm/table.hpp>
-
-#if REALM_HAVE_SYNC_STABLE_IDS
-#include <realm/sync/object.hpp>
-#endif
 
 using namespace realm;
 

@@ -42,12 +42,23 @@ class NimbleXCTestUnavailableHandler: AssertionHandler {
 
     private(set) var currentTestCase: XCTestCase?
 
+    private var stashed_swift_reportFatalErrorsToDebugger: Bool = false
+
     @objc func testCaseWillStart(_ testCase: XCTestCase) {
+        #if swift(>=3.2)
+        stashed_swift_reportFatalErrorsToDebugger = _swift_reportFatalErrorsToDebugger
+        _swift_reportFatalErrorsToDebugger = false
+        #endif
+
         currentTestCase = testCase
     }
 
     @objc func testCaseDidFinish(_ testCase: XCTestCase) {
         currentTestCase = nil
+
+        #if swift(>=3.2)
+        _swift_reportFatalErrorsToDebugger = stashed_swift_reportFatalErrorsToDebugger
+        #endif
     }
 }
 #endif
@@ -61,7 +72,7 @@ func isXCTestAvailable() -> Bool {
 #endif
 }
 
-private func recordFailure(_ message: String, location: SourceLocation) {
+public func recordFailure(_ message: String, location: SourceLocation) {
 #if SWIFT_PACKAGE
     XCTFail("\(message)", file: location.file, line: location.line)
 #else

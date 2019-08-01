@@ -1,24 +1,29 @@
-# AEXML
-**Simple and lightweight XML parser written in Swift**
-
-[![Language Swift 4.0](https://img.shields.io/badge/Language-Swift%204.0-orange.svg?style=flat)](https://swift.org)
-[![Platforms iOS | watchOS | tvOS | OSX](https://img.shields.io/badge/Platforms-iOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20OS%20X-lightgray.svg?style=flat)](http://www.apple.com)
+[![Swift 4.2](https://img.shields.io/badge/Swift-4.2-orange.svg?style=flat)](https://swift.org)
+[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/Platforms-iOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20macOS-lightgray.svg?style=flat)](http://www.apple.com)
+[![CocoaPods](https://img.shields.io/cocoapods/v/AEXML.svg?style=flat)](https://cocoapods.org/pods/AEXML)
+[![Carthage](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 [![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](https://github.com/tadija/AEXML/blob/master/LICENSE)
 
-[![CocoaPods Version](https://img.shields.io/cocoapods/v/AEXML.svg?style=flat)](https://cocoapods.org/pods/AEXML)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+# AEXML
 
-> This is not a robust full featured XML parser, but rather simple,  
-lightweight and easy to use utility for casual XML handling.
+**Swift minion for simple and lightweight XML parsing**
+
+> I made this for personal use, but feel free to use it or contribute.
+> For more examples check out [Sources](Sources) and [Tests](Tests).
 
 ## Index
+- [Intro](#intro)
 - [Features](#features)
 - [Usage](#usage)
     - [Read XML](#read-xml)
     - [Write XML](#write-xml)
 - [Installation](#installation)
 - [License](#license)
+
+## Intro
+
+This is not a robust full featured XML parser, but rather simple, lightweight and easy to use utility for casual XML handling.
 
 ## Features
 - **Read XML** data
@@ -49,7 +54,7 @@ Let's say this is some XML string you picked up somewhere and made a variable `d
 </animals>
 ```
 
-This is how you can use AEXML for working with this data:  
+This is how you can use **AEXML** for working with this data:  
 (for even more examples, look at the unit tests code included in project)
 
 ```swift

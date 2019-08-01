@@ -99,9 +99,8 @@ inline T no0(T v)
 /// found'. It is similar in function to std::string::npos.
 const size_t npos = size_t(-1);
 
-// Maximum number of bytes that the payload of an array can be
-const size_t max_array_payload         = 0x00ffffffL;
-const size_t max_array_payload_aligned = 0x00fffff8L;
+const size_t max_array_size = 0x00ffffffL;            // Maximum number of elements in an array
+const size_t max_array_payload_aligned = 0x07ffffc0L; // Maximum number of bytes that the payload of an array can be
 
 /// Alias for realm::npos.
 const size_t not_found = npos;
@@ -344,10 +343,15 @@ public:
     bool is_empty() const noexcept;
     Type get_type() const noexcept;
 
+
     static void add_to_column(IntegerColumn* column, int64_t value);
 
     void insert(size_t ndx, int_fast64_t value);
     void add(int_fast64_t value);
+
+    // Used from ArrayBlob
+    size_t blob_size() const noexcept;
+    ref_type blob_replace(size_t begin, size_t end, const char* data, size_t data_size, bool add_zero_term);
 
     /// This function is guaranteed to not throw if the current width is
     /// sufficient for the specified value (e.g. if you have called
@@ -1629,7 +1633,7 @@ inline size_t Array::get_capacity_from_header(const char* header) noexcept
 {
     typedef unsigned char uchar;
     const uchar* h = reinterpret_cast<const uchar*>(header);
-    return (size_t(h[0]) << 16) + (size_t(h[1]) << 8) + h[2];
+    return (size_t(h[0]) << 19) + (size_t(h[1]) << 11) + (h[2] << 3);
 }
 
 
@@ -1726,7 +1730,7 @@ inline void Array::set_header_width(int value, char* header) noexcept
 
 inline void Array::set_header_size(size_t value, char* header) noexcept
 {
-    REALM_ASSERT_3(value, <=, max_array_payload);
+    REALM_ASSERT_3(value, <=, max_array_size);
     typedef unsigned char uchar;
     uchar* h = reinterpret_cast<uchar*>(header);
     h[5] = uchar((value >> 16) & 0x000000FF);
@@ -1737,12 +1741,12 @@ inline void Array::set_header_size(size_t value, char* header) noexcept
 // Note: There is a copy of this function is test_alloc.cpp
 inline void Array::set_header_capacity(size_t value, char* header) noexcept
 {
-    REALM_ASSERT_3(value, <=, max_array_payload);
+    REALM_ASSERT_3(value, <=, (0xffffff << 3));
     typedef unsigned char uchar;
     uchar* h = reinterpret_cast<uchar*>(header);
-    h[0] = uchar((value >> 16) & 0x000000FF);
-    h[1] = uchar((value >> 8) & 0x000000FF);
-    h[2] = uchar(value & 0x000000FF);
+    h[0] = uchar((value >> 19) & 0x000000FF);
+    h[1] = uchar((value >> 11) & 0x000000FF);
+    h[2] = uchar(value >> 3 & 0x000000FF);
 }
 
 

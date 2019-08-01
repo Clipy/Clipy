@@ -20,7 +20,6 @@
 #define REALM_RESULTS_HPP
 
 #include "collection_notifications.hpp"
-#include "descriptor_ordering.hpp"
 #include "impl/collection_notifier.hpp"
 #include "property.hpp"
 
@@ -121,6 +120,12 @@ public:
     Results distinct(DistinctDescriptor&& uniqueness) const;
     Results distinct(std::vector<std::string> const& keypaths) const;
 
+    // Create a new Results with only the first `max_count` entries
+    Results limit(size_t max_count) const;
+
+    // Create a new Results by adding sort and distinct combinations
+    Results apply_ordering(DescriptorOrdering&& ordering);
+
     // Return a snapshot of this Results that never updates to reflect changes in the underlying data.
     Results snapshot() const &;
     Results snapshot() &&;
@@ -184,6 +189,11 @@ public:
         UnsupportedColumnTypeException(size_t column, const Table* table, const char* operation);
     };
 
+    // The requested operation is valid, but has not yet been implemented
+    struct UnimplementedOperationException : public std::logic_error {
+        UnimplementedOperationException(const char *message);
+    };
+
     // Create an async query from this Results
     // The query will be run on a background thread and delivered to the callback,
     // and then rerun after each commit (if needed) and redelivered if it changed
@@ -209,6 +219,11 @@ public:
     template<typename Context, typename T>
     size_t index_of(Context&, T value);
 
+    // Execute the query immediately if needed. When the relevant query is slow, size()
+    // may cost similar time compared with creating the tableview. Use this function to
+    // avoid running the query twice for size() and other accessors.
+    void evaluate_query_if_needed(bool wants_notifications = true);
+
 private:
     enum class UpdatePolicy {
         Auto,  // Update automatically to reflect changes in the underlying data.
@@ -230,13 +245,13 @@ private:
     bool m_has_used_table_view = false;
     bool m_wants_background_updates = true;
 
-    void update_tableview(bool wants_notifications = true);
     bool update_linkview();
 
     void validate_read() const;
     void validate_write() const;
 
-    void prepare_async();
+    using ForCallback = util::TaggedBool<class ForCallback>;
+    void prepare_async(ForCallback);
 
     template<typename T>
     util::Optional<T> try_get(size_t);

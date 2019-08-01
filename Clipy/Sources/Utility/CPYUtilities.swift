@@ -1,9 +1,13 @@
 //
 //  CPYUtilities.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2015/06/21.
-//  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -75,13 +79,7 @@ final class CPYUtilities {
 
     static func applicationSupportFolder() -> String {
         let paths = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-        var basePath: String!
-        if paths.count > 0 {
-            basePath = paths.first
-        } else {
-            basePath = NSTemporaryDirectory()
-        }
-
+        let basePath: String = paths.first ?? NSTemporaryDirectory()
         return (basePath as NSString).appendingPathComponent(Constants.Application.name)
     }
 

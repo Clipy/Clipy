@@ -1,0 +1,36 @@
+
+/* Class = "NSTextFieldCell"; title = "Import"; ObjectID = "Ett-SG-3wO"; */
+"Ett-SG-3wO.title" = "导入";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "J4q-sY-gcS"; */
+"J4q-sY-gcS.title" = "文本";
+
+/* Class = "NSTextFieldCell"; title = "Delete"; ObjectID = "Lxb-5c-zOc"; */
+"Lxb-5c-zOc.title" = "删除";
+
+/* Class = "NSWindow"; title = "Clipy - Snippets Editor"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Clipy - 片断编辑器";
+
+/* Class = "NSTextFieldCell"; title = "Export"; ObjectID = "Uqj-Zh-vde"; */
+"Uqj-Zh-vde.title" = "导出";
+
+/* Class = "NSTextFieldCell"; title = "Enable/Disable"; ObjectID = "WZs-f9-lGW"; */
+"WZs-f9-lGW.title" = "启用/禁用";
+
+/* Class = "NSTextFieldCell"; title = "Add Folder"; ObjectID = "hoO-RC-sTG"; */
+"hoO-RC-sTG.title" = "添加文件夹";
+
+/* Class = "NSTextFieldCell"; title = "Shortcut"; ObjectID = "pfw-sA-4aA"; */
+"pfw-sA-4aA.title" = "快捷键";
+
+/* Class = "NSTextFieldCell"; title = "folder title"; ObjectID = "rI9-rT-YTs"; */
+"rI9-rT-YTs.title" = "文件夹标题";
+
+/* Class = "NSTextFieldCell"; title = "Share snippets"; ObjectID = "wwo-lh-lMK"; */
+"wwo-lh-lMK.title" = "分享片断";
+
+/* Class = "NSTextFieldCell"; title = "Add Snippet"; ObjectID = "xPC-Uv-z03"; */
+"xPC-Uv-z03.title" = "添加片断";
+
+/* Class = "NSTextFieldCell"; title = "Coming Soon"; ObjectID = "yzF-k8-xUT"; */
+"yzF-k8-xUT.title" = "即将推出";

@@ -1,9 +1,13 @@
 //
 //  CPYAppInfo.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/08/08.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/08/08.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -29,7 +33,7 @@ final class CPYAppInfo: NSObject, NSCoding {
         guard let name = aDecoder.decodeObject(forKey: "name") as? String else { return nil }
 
         self.identifier = identifier
-        self.name       = name
+        self.name = name
     }
 
     func encode(with aCoder: NSCoder) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>FILEHEADER</key>
+  <string> 
+//  ___FILENAME___
+//
+//  ___PACKAGENAME___
+//  GitHub: ___REPOSITORYURL___
+//  HP: ___PRODUCTURL___
+// 
+//  Created by ___FULLUSERNAME___ on ___DATE___.
+// 
+//  Copyright © 2015-___YEAR___ ___ORGANIZATIONNAME___.
+//</string>
+  <key>REPOSITORYURL</key>
+  <string>https://github.com/clipy</string>
+  <key>PRODUCTURL</key>
+  <string>https://clipy-app.com</string>
+</dict>
+</plist>

@@ -151,7 +151,10 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
 
 - (NSString *)objectClassName {
     return translateRLMResultsErrors([&] {
-        return RLMStringDataToNSString(_results.get_object_type());
+        if (_info && _results.get_type() == realm::PropertyType::Object) {
+            return _info->rlmObjectSchema.className;
+        }
+        return (NSString *)nil;
     });
 }
 
@@ -256,6 +259,9 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
 }
 
 - (id)valueForKey:(NSString *)key {
+    if (!_info) {
+        return @[];
+    }
     return translateRLMResultsErrors([&] {
         return RLMCollectionValueForKey(_results, key, _realm, *_info);
     });
@@ -361,6 +367,27 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
         }
         return [RLMResults resultsWithObjectInfo:*_info
                                          results:_results.sort(RLMSortDescriptorsToKeypathArray(properties))];
+    });
+}
+
+- (RLMResults *)distinctResultsUsingKeyPaths:(NSArray<NSString *> *)keyPaths {
+    for (NSString *keyPath in keyPaths) {
+        if ([keyPath rangeOfString:@"@"].location != NSNotFound) {
+            @throw RLMException(@"Cannot distinct on keypath '%@': KVC collection operators are not supported.", keyPath);
+        }
+    }
+    
+    return translateRLMResultsErrors([&] {
+        if (_results.get_mode() == Results::Mode::Empty) {
+            return self;
+        }
+        
+        std::vector<std::string> keyPathsVector;
+        for (NSString *keyPath in keyPaths) {
+            keyPathsVector.push_back(keyPath.UTF8String);
+        }
+        
+        return [RLMResults resultsWithObjectInfo:*_info results:_results.distinct(keyPathsVector)];
     });
 }
 
@@ -482,4 +509,8 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
 @end
 
 @implementation RLMLinkingObjects
+- (NSString *)description {
+    return RLMDescriptionWithMaxDepth(@"RLMLinkingObjects", self, RLMDescriptionMaxDepth);
+}
 @end
+

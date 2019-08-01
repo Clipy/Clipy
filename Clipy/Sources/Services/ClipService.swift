@@ -1,9 +1,13 @@
 //
 //  ClipService.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/11/17.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/11/17.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Foundation
@@ -11,12 +15,13 @@ import Cocoa
 import RealmSwift
 import PINCache
 import RxSwift
+import RxCocoa
 import RxOptional
 
 final class ClipService {
 
     // MARK: - Properties
-    fileprivate var cachedChangeCount = Variable<Int>(0)
+    fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
     fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
@@ -30,8 +35,8 @@ final class ClipService {
             .map { _ in NSPasteboard.general.changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
-            .subscribe(onNext: { [weak self] (changeCount, _) in
-                self?.cachedChangeCount.value = changeCount
+            .subscribe(onNext: { [weak self] changeCount, _ in
+                self?.cachedChangeCount.accept(changeCount)
                 self?.create()
             })
             .disposed(by: disposeBag)
@@ -73,7 +78,7 @@ final class ClipService {
     }
 
     func incrementChangeCount() {
-        cachedChangeCount.value += 1
+        cachedChangeCount.accept(cachedChangeCount.value + 1)
     }
 
 }
@@ -163,9 +168,8 @@ extension ClipService {
     }
 
     private func canSave(with type: NSPasteboard.PasteboardType) -> Bool {
-        let dictionary = CPYClipData.availableTypesDictinary
-        guard let value = dictionary[type] else { return false }
-        guard let number = storeTypes[value] else { return false }
+        guard let availableType = AvailableType.available(by: type) else { return false }
+        guard let number = storeTypes[availableType.rawValue] else { return false }
         return number.boolValue
     }
 }

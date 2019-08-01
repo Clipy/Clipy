@@ -1,9 +1,13 @@
 //
 //  CPYShortcutsPreferenceViewController.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/02/26.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/02/26.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -13,10 +17,10 @@ import Magnet
 class CPYShortcutsPreferenceViewController: NSViewController {
 
     // MARK: - Properties
-    @IBOutlet weak var mainShortcutRecordView: RecordView!
-    @IBOutlet weak var historyShortcutRecordView: RecordView!
-    @IBOutlet weak var snippetShortcutRecordView: RecordView!
-    @IBOutlet weak var clearHistoryShortcutRecordView: RecordView!
+    @IBOutlet private weak var mainShortcutRecordView: RecordView!
+    @IBOutlet private weak var historyShortcutRecordView: RecordView!
+    @IBOutlet private weak var snippetShortcutRecordView: RecordView!
+    @IBOutlet private weak var clearHistoryShortcutRecordView: RecordView!
 
     // MARK: - Initialize
     override func loadView() {
@@ -31,8 +35,8 @@ class CPYShortcutsPreferenceViewController: NSViewController {
 }
 
 // MARK: - Shortcut
-fileprivate extension CPYShortcutsPreferenceViewController {
-    fileprivate func prepareHotKeys() {
+private extension CPYShortcutsPreferenceViewController {
+    func prepareHotKeys() {
         mainShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.mainKeyCombo
         historyShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.historyKeyCombo
         snippetShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo

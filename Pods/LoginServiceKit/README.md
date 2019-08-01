@@ -3,19 +3,16 @@
 [![License: MIT](https://img.shields.io/github/license/Clipy/LoginServiceKit.svg)](https://github.com/Clipy/LoginServiceKit/blob/master/LICENSE)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-Easy manage login items in MacOSX
+Easy manage login items in macOS.
 
 ## Requirements
-- macOS 10.9+
-- Xcode 9.0+
-- Swift 4.0+
+- macOS 10.13+
+- Xcode 9.4+
+- Swift 4.1+
 
 ## Usage
 ### CocoaPods
 ```
-platform :osx, '10.9'
-use_frameworks!
-
 pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
 ```
 
@@ -25,17 +22,37 @@ github "Clipy/LoginServiceKit"
 ```
 
 ## Example
-Add login item.
-
+#### Check exist login item
 ```swift
-let appPath = NSBundle.main.bundlePath
-LoginServiceKit.addLoginItems(at: appPath)
+let isExistLoginItem = LoginServiceKit.isExistLoginItems() // default Bundle.main.bundlePath
 ```
 
-Remove login item.
+or
+
 ```swift
-let appPath = NSBundle.mainBundle().bundlePath
-LoginServiceKit.removeLoginItems(at: appPath)
+let isExistLoginItem = LoginServiceKit.isExistLoginItems(at: Bundle.main.bundlePath)
+```
+
+#### Add login item 
+```swift
+LoginServiceKit.addLoginItems() // default Bundle.main.bundlePath
+```
+
+or
+
+```swift
+LoginServiceKit.addLoginItems(at: Bundle.main.bundlePath)
+```
+
+#### Remove login item
+```swift
+LoginServiceKit.removeLoginItems() // default Bundle.main.bundlePath
+```
+
+or 
+
+```swift
+LoginServiceKit.removeLoginItems(at: Bundle.main.bundlePath)
 ```
 
 ### Contributing

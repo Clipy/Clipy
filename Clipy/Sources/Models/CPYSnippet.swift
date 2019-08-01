@@ -1,9 +1,13 @@
 //
 //  CPYSnippet.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2015/06/21.
-//  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -12,12 +16,12 @@ import RealmSwift
 final class CPYSnippet: Object {
 
     // MARK: - Properties
-    @objc dynamic var index         = 0
-    @objc dynamic var enable        = true
-    @objc dynamic var title         = ""
-    @objc dynamic var content       = ""
-    @objc dynamic var identifier    = UUID().uuidString
-    let folders                     = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
+    @objc dynamic var index = 0
+    @objc dynamic var enable = true
+    @objc dynamic var title = ""
+    @objc dynamic var content = ""
+    @objc dynamic var identifier = UUID().uuidString
+    let folders = LinkingObjects(fromType: CPYFolder.self, property: "snippets")
 
     var folder: CPYFolder? {
         return folders.first

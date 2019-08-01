@@ -42,6 +42,7 @@
 #include <realm/link_view_fwd.hpp>
 #include <realm/descriptor_fwd.hpp>
 #include <realm/row.hpp>
+#include <realm/util/serializer.hpp>
 
 namespace realm {
 
@@ -232,11 +233,12 @@ public:
     Query& not_equal(size_t column_ndx, const char* c_str, bool case_sensitive = true);
 
     // Conditions: binary data
-    Query& equal(size_t column_ndx, BinaryData value);
-    Query& not_equal(size_t column_ndx, BinaryData value);
-    Query& begins_with(size_t column_ndx, BinaryData value);
-    Query& ends_with(size_t column_ndx, BinaryData value);
-    Query& contains(size_t column_ndx, BinaryData value);
+    Query& equal(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& not_equal(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& begins_with(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& ends_with(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& contains(size_t column_ndx, BinaryData value, bool case_sensitive = true);
+    Query& like(size_t column_ndx, BinaryData b, bool case_sensitive = true);
 
     // Negation
     Query& Not();
@@ -258,10 +260,12 @@ public:
     // Searching
     size_t find(size_t begin_at_table_row = size_t(0));
     TableView find_all(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1));
-    ConstTableView find_all(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
 
     // Aggregates
     size_t count(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
+
+    TableView find_all(const DescriptorOrdering& descriptor);
+    size_t count(const DescriptorOrdering& descriptor);
 
     int64_t sum_int(size_t column_ndx, size_t* resultcount = nullptr, size_t start = 0, size_t end = size_t(-1),
                     size_t limit = size_t(-1)) const;
@@ -342,6 +346,7 @@ public:
     std::string validate();
 
     std::string get_description() const;
+    std::string get_description(util::serializer::SerialisationState& state) const;
 
 private:
     Query(Table& table, TableViewBase* tv = nullptr);
@@ -419,6 +424,7 @@ private:
                             size_t start, size_t end, SequentialGetterBase* source_column) const;
 
     void find_all(TableViewBase& tv, size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
+    size_t do_count(size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
     void delete_nodes() noexcept;
 
     bool has_conditions() const

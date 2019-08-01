@@ -1,9 +1,13 @@
 //
 //  RecordView.swift
-//  KeyHolder
 //
-//  Created by 古林　俊祐　 on 2016/06/17.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  KeyHolder
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/06/17.
+//
+//  Copyright © 2016-2018 Clipy Project.
 //
 
 import Cocoa
@@ -24,7 +28,7 @@ public protocol RecordViewDelegate: class {
     @IBInspectable open var backgroundColor: NSColor = .white {
         didSet { needsDisplay = true }
     }
-    @IBInspectable open var tintColor: NSColor = .blue {
+    @IBInspectable open var tintColor: NSColor = .controlAccentPolyfill {
         didSet { needsDisplay = true }
     }
     @IBInspectable open var borderColor: NSColor = .white {
@@ -45,14 +49,15 @@ public protocol RecordViewDelegate: class {
     }
 
     open weak var delegate: RecordViewDelegate?
-    open var recording = false
+    open var didChange: ((KeyCombo?) -> Void)?
+    open var isRecording = false
     open var keyCombo: KeyCombo? {
         didSet { needsDisplay = true }
     }
-    open var enabled = true {
+    open var isEnabled = true {
         didSet {
             needsDisplay = true
-            if !enabled { endRecording() }
+            if !isEnabled { endRecording() }
             noteFocusRingMaskChanged()
         }
     }
@@ -86,7 +91,7 @@ public protocol RecordViewDelegate: class {
         return true
     }
     open override var focusRingMaskBounds: NSRect {
-        return (enabled && window?.firstResponder == self) ? bounds : NSRect.zero
+        return (isEnabled && window?.firstResponder == self) ? bounds : NSRect.zero
     }
 
     // MARK: - Initialize
@@ -112,7 +117,7 @@ public protocol RecordViewDelegate: class {
 
     // MARK: - Draw
     open override func drawFocusRingMask() {
-        if enabled && window?.firstResponder == self {
+        if isEnabled && window?.firstResponder == self {
             NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius).fill()
         }
     }
@@ -173,7 +178,7 @@ public protocol RecordViewDelegate: class {
 
     // MARK: - NSResponder
     override open var acceptsFirstResponder: Bool {
-        return enabled
+        return isEnabled
     }
 
     override open var canBecomeKeyView: Bool {
@@ -194,17 +199,21 @@ public protocol RecordViewDelegate: class {
     }
 
     override open func mouseDown(with theEvent: NSEvent) {
-        if !enabled {
+        if !isEnabled {
             super.mouseDown(with: theEvent)
             return
         }
 
         let locationInView = convert(theEvent.locationInWindow, from: nil)
-        if mouse(locationInView, in: bounds) && !recording {
+        if isMousePoint(locationInView, in: bounds) && !isRecording {
             _ = beginRecording()
         } else {
             super.mouseDown(with: theEvent)
         }
+    }
+
+    open override func cancelOperation(_ sender: Any?) {
+        endRecording()
     }
 
     override open func keyDown(with theEvent: NSEvent) {
@@ -212,25 +221,27 @@ public protocol RecordViewDelegate: class {
     }
 
     override open func performKeyEquivalent(with theEvent: NSEvent) -> Bool {
-        if !enabled { return false }
+        if !isEnabled { return false }
         if window?.firstResponder != self { return false }
 
         let keyCodeInt = Int(theEvent.keyCode)
-        if recording && validateModifiers(inputModifiers) {
+        if isRecording && validateModifiers(inputModifiers) {
             let modifiers = KeyTransformer.carbonFlags(from: theEvent.modifierFlags)
             if let keyCombo = KeyCombo(keyCode: keyCodeInt, carbonModifiers: modifiers) {
                 if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
                     self.keyCombo = keyCombo
+                    didChange?(keyCombo)
                     delegate?.recordView(self, didChangeKeyCombo: keyCombo)
                     endRecording()
                     return true
                 }
             }
             return false
-        } else if recording && KeyTransformer.containsFunctionKey(keyCodeInt) {
+        } else if isRecording && KeyTransformer.containsFunctionKey(keyCodeInt) {
             if let keyCombo = KeyCombo(keyCode: keyCodeInt, carbonModifiers: 0) {
                 if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
                     self.keyCombo = keyCombo
+                    didChange?(keyCombo)
                     delegate?.recordView(self, didChangeKeyCombo: keyCombo)
                     endRecording()
                     return true
@@ -244,7 +255,7 @@ public protocol RecordViewDelegate: class {
     }
 
     override open func flagsChanged(with theEvent: NSEvent) {
-        if recording {
+        if isRecording {
             inputModifiers = theEvent.modifierFlags
             needsDisplay = true
 
@@ -253,7 +264,7 @@ public protocol RecordViewDelegate: class {
             let shiftTapped = inputModifiers.contains(.shift)
             let controlTapped = inputModifiers.contains(.control)
             let optionTapped = inputModifiers.contains(.option)
-            let totalHash = commandTapped.hashValue + optionTapped.hashValue + shiftTapped.hashValue + controlTapped.hashValue
+            let totalHash = commandTapped.intValue + optionTapped.intValue + shiftTapped.intValue + controlTapped.intValue
             if totalHash > 1 {
                 multiModifiers = true
                 return
@@ -271,6 +282,7 @@ public protocol RecordViewDelegate: class {
                 if let keyCombo = KeyCombo(doubledCocoaModifiers: doubleTapModifier) {
                     if delegate?.recordView(self, canRecordKeyCombo: keyCombo) ?? true {
                         self.keyCombo = keyCombo
+                        didChange?(keyCombo)
                         delegate?.recordView(self, didChangeKeyCombo: keyCombo)
                         endRecording()
                     }
@@ -307,13 +319,13 @@ public protocol RecordViewDelegate: class {
 
 // MARK: - Text Attributes
 private extension RecordView {
-    func modifierTextAttributes(_ modifiers: NSEvent.ModifierFlags, checkModifier: NSEvent.ModifierFlags) -> [NSAttributedStringKey: Any] {
+    func modifierTextAttributes(_ modifiers: NSEvent.ModifierFlags, checkModifier: NSEvent.ModifierFlags) -> [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.center
-        paragraphStyle.lineBreakMode = NSParagraphStyle.LineBreakMode.byTruncatingTail
-        paragraphStyle.baseWritingDirection = NSWritingDirection.leftToRight
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        paragraphStyle.baseWritingDirection = .leftToRight
         let textColor: NSColor
-        if !enabled {
+        if !isEnabled {
             textColor = .disabledControlTextColor
         } else if modifiers.contains(checkModifier) {
             textColor = tintColor
@@ -325,10 +337,10 @@ private extension RecordView {
                 .paragraphStyle: paragraphStyle]
     }
 
-    func keyCodeTextAttributes() -> [NSAttributedStringKey: Any] {
+    func keyCodeTextAttributes() -> [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSParagraphStyle.LineBreakMode.byTruncatingTail
-        paragraphStyle.baseWritingDirection = NSWritingDirection.leftToRight
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        paragraphStyle.baseWritingDirection = .leftToRight
         return [.font: NSFont.systemFont(ofSize: floor(fontSize)),
                 .foregroundColor: tintColor,
                 .paragraphStyle: paragraphStyle]
@@ -337,9 +349,9 @@ private extension RecordView {
 
 // MARK: - Recording
 public extension RecordView {
-    public func beginRecording() -> Bool {
-        if !enabled { return false }
-        if recording { return true }
+    func beginRecording() -> Bool {
+        if !isEnabled { return false }
+        if isRecording { return true }
 
         needsDisplay = true
 
@@ -349,7 +361,7 @@ public extension RecordView {
         }
 
         willChangeValue(forKey: "recording")
-        recording = true
+        isRecording = true
         didChangeValue(forKey: "recording")
 
         updateTrackingAreas()
@@ -357,15 +369,15 @@ public extension RecordView {
         return true
     }
 
-    public func endRecording() {
-        if !recording { return }
+    func endRecording() {
+        if !isRecording { return }
 
         inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
         doubleTapModifier = NSEvent.ModifierFlags(rawValue: 0)
         multiModifiers = false
 
         willChangeValue(forKey: "recording")
-        recording = false
+        isRecording = false
         didChangeValue(forKey: "recording")
 
         updateTrackingAreas()
@@ -378,14 +390,15 @@ public extension RecordView {
 
 // MARK: - Clear Keys
 public extension RecordView {
-    public func clear() {
+    func clear() {
         keyCombo = nil
         inputModifiers = NSEvent.ModifierFlags(rawValue: 0)
         needsDisplay = true
+        didChange?(nil)
         delegate?.recordViewDidClearShortcut(self)
     }
 
-    @objc public func clearAndEndRecording() {
+    @objc func clearAndEndRecording() {
         clear()
         endRecording()
     }
@@ -397,4 +410,23 @@ private extension RecordView {
         guard let modifiers = modifiers else { return false }
         return KeyTransformer.carbonFlags(from: modifiers) != 0
     }
+}
+
+// MARK: - Bool Extension
+private extension Bool {
+    var intValue: Int {
+        return NSNumber(value: self).intValue
+    }
+}
+
+// MARK: - NSColor Extensio
+// nmacOS 10.14 polyfill
+private extension NSColor {
+    static let controlAccentPolyfill: NSColor = {
+        if #available(macOS 10.14, *) {
+            return NSColor.controlAccentColor
+        } else {
+            return NSColor(red: 0.10, green: 0.47, blue: 0.98, alpha: 1)
+        }
+    }()
 }

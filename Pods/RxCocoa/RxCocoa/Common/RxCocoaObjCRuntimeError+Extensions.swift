@@ -6,10 +6,8 @@
 //  Copyright © 2016 Krunoslav Zaher. All rights reserved.
 //
 
-#if !RX_NO_MODULE
-    #if SWIFT_PACKAGE && !DISABLE_SWIZZLING && !os(Linux)
-        import RxCocoaRuntime
-    #endif
+#if SWIFT_PACKAGE && !DISABLE_SWIZZLING && !os(Linux)
+    import RxCocoaRuntime
 #endif
 
 #if !DISABLE_SWIZZLING && !os(Linux)
@@ -150,6 +148,8 @@
                     return .observingPerformanceSensitiveMessages(target: target)
                 case .observingMessagesWithUnsupportedReturnType:
                     return .observingMessagesWithUnsupportedReturnType(target: target)
+                @unknown default:
+                    return RxCocoaObjCRuntimeError.unknown(target: target)
                 }
             }
             

@@ -21,6 +21,7 @@
 
 #include <cstdint> // unint8_t etc
 #include <vector>
+#include <map>
 #include <string>
 #include <atomic>
 
@@ -216,6 +217,12 @@ public:
     /// attached to a file. Doing so will result in undefined behavior.
     void resize_file(size_t new_file_size);
 
+#ifdef REALM_DEBUG
+    /// Deprecated method, only called from a unit test
+    ///
+    /// WARNING: This method is NOT thread safe on multiple platforms; see
+    /// File::prealloc().
+    ///
     /// Reserve disk space now to avoid allocation errors at a later point in
     /// time, and to minimize on-disk fragmentation. In some cases, less
     /// fragmentation translates into improved performance. On SSD-drives
@@ -227,15 +234,14 @@ public:
     /// allocation is done lazily by default). If the file is already bigger
     /// than the specified size, the size will be unchanged, and on-disk
     /// allocation will occur only for the initial section that corresponds to
-    /// the specified size. On systems that do not support preallocation, this
-    /// function has no effect. To know whether preallocation is supported by
-    /// Realm on your platform, call util::File::is_prealloc_supported().
+    /// the specified size.
     ///
     /// This function will call File::sync() if it changes the size of the file.
     ///
     /// It is an error to call this function on an allocator that is not
     /// attached to a file. Doing so will result in undefined behavior.
     void reserve_disk_space(size_t size_in_bytes);
+#endif
 
     /// Get the size of the attached database file or buffer in number
     /// of bytes. This size is not affected by new allocations. After
@@ -295,9 +301,9 @@ public:
 
 protected:
     MemRef do_alloc(const size_t size) override;
-    MemRef do_realloc(ref_type, const char*, size_t old_size, size_t new_size) override;
+    MemRef do_realloc(ref_type, char*, size_t old_size, size_t new_size) override;
     // FIXME: It would be very nice if we could detect an invalid free operation in debug mode
-    void do_free(ref_type, const char*) noexcept override;
+    void do_free(ref_type, char*) noexcept override;
     char* do_translate(ref_type) const noexcept override;
 
     /// Returns the first section boundary *above* the given position.
@@ -350,10 +356,103 @@ private:
         ref_type ref_end;
         char* addr;
     };
-    struct Chunk {
+    struct Chunk { // describes a freed in-file block
         ref_type ref;
         size_t size;
     };
+
+    // free blocks that are in the slab area are managed using the following structures:
+    // - FreeBlock: Placed at the start of any free space. Holds the 'ref' corresponding to
+    //              the start of the space, and prev/next links used to place it in a size-specific
+    //              freelist.
+    // - BetweenBlocks: Structure sitting between any two free OR allocated spaces.
+    //                  describes the size of the space before and after.
+    // Each slab (area obtained from the underlying system) has a terminating BetweenBlocks
+    // at the beginning and at the end of the Slab.
+    struct FreeBlock {
+    	ref_type ref; // ref for this entry. Saves a reverse translate / representing links as refs
+    	FreeBlock* prev; // circular doubly linked list
+    	FreeBlock* next;
+    	void clear_links() { prev = next = nullptr; }
+    	void unlink();
+    };
+    struct BetweenBlocks { // stores sizes and used/free status of blocks before and after.
+    	int32_t block_before_size; // negated if block is in use,
+    	int32_t block_after_size;  // positive if block is free - and zero at end
+    };
+
+    using FreeListMap = std::map<int, FreeBlock*>;  // log(N) addressing for larger blocks
+    FreeListMap m_block_map;
+
+    // abstract notion of a freelist - used to hide whether a freelist
+    // is residing in the small blocks or the large blocks structures.
+    struct FreeList {
+    	int size = 0; // size of every element in the list, 0 if not found
+    	FreeListMap::iterator it;
+    	bool found_something() { return size != 0; }
+    	bool found_exact(int sz) { return size == sz; }
+    };
+
+    // simple helper functions for accessing/navigating blocks and betweenblocks (TM)
+    BetweenBlocks* bb_before(FreeBlock* entry) const {
+    	return reinterpret_cast<BetweenBlocks*>(entry) - 1;
+    }
+    BetweenBlocks* bb_after(FreeBlock* entry) const {
+    	auto bb = bb_before(entry);
+    	size_t sz = bb->block_after_size;
+    	char* addr = reinterpret_cast<char*>(entry) + sz;
+    	return reinterpret_cast<BetweenBlocks*>(addr);
+    }
+    FreeBlock* block_before(BetweenBlocks* bb) const {
+    	size_t sz = bb->block_before_size;
+    	if (sz <= 0) return nullptr; // only blocks that are not in use
+    	char* addr = reinterpret_cast<char*>(bb) - sz;
+    	return reinterpret_cast<FreeBlock*>(addr);
+    }
+    FreeBlock* block_after(BetweenBlocks* bb) const {
+    	if (bb->block_after_size <= 0)
+    		return nullptr;
+    	return reinterpret_cast<FreeBlock*>(bb + 1);
+    }
+    int size_from_block(FreeBlock* entry) const {
+    	return bb_before(entry)->block_after_size;
+    }
+    void mark_allocated(FreeBlock* entry);
+    // mark the entry freed in bordering BetweenBlocks. Also validate size.
+    void mark_freed(FreeBlock* entry, int size);
+
+    // hook for the memory verifier in Group.
+    template<typename Func>
+    void for_all_free_entries(Func f) const;
+
+    // Main entry points for alloc/free:
+    FreeBlock* allocate_block(int size);
+    void free_block(ref_type ref, FreeBlock* addr);
+
+    // Searching/manipulating freelists
+    FreeList find(int size);
+    FreeList find_larger(FreeList hint, int size);
+    FreeBlock* pop_freelist_entry(FreeList list);
+    void push_freelist_entry(FreeBlock* entry);
+    void remove_freelist_entry(FreeBlock* element);
+    void rebuild_freelists_from_slab();
+    void clear_freelists();
+
+    // grow the slab area to accommodate the requested size.
+    // returns a free block large enough to handle the request.
+    FreeBlock* grow_slab_for(int request_size);
+    // create a single free chunk with "BetweenBlocks" at both ends and a
+    // single free chunk between them. This free chunk will be of size:
+    //   slab_size - 2 * sizeof(BetweenBlocks)
+    FreeBlock* slab_to_entry(Slab slab, ref_type ref_start);
+
+    // breaking/merging of blocks
+    FreeBlock* get_prev_block_if_mergeable(FreeBlock* block);
+    FreeBlock* get_next_block_if_mergeable(FreeBlock* block);
+    // break 'block' to give it 'new_size'. Return remaining block.
+    // If the block is too small to split, return nullptr.
+    FreeBlock* break_block(FreeBlock* block, int new_size);
+    FreeBlock* merge_blocks(FreeBlock* first, FreeBlock* second);
 
     // Values of each used bit in m_flags
     enum {
@@ -422,7 +521,6 @@ private:
     typedef std::vector<Slab> slabs;
     typedef std::vector<Chunk> chunks;
     slabs m_slabs;
-    chunks m_free_space;
     chunks m_free_read_only;
 
     bool m_debug_out = false;
@@ -435,7 +533,7 @@ private:
     mutable size_t version = 1;
 
     /// Throws if free-lists are no longer valid.
-    void consolidate_free_read_only();
+    size_t consolidate_free_read_only();
     /// Throws if free-lists are no longer valid.
     const chunks& get_free_read_only() const;
 
@@ -443,6 +541,7 @@ private:
     /// corrupted, or if the specified encryption key is incorrect. This
     /// function will not detect all forms of corruption, though.
     void validate_buffer(const char* data, size_t len, const std::string& path);
+    void throw_header_exception(std::string msg, const Header& header, const std::string& path);
 
     static bool is_file_on_streaming_form(const Header& header);
     /// Read the top_ref from the given buffer and set m_file_on_streaming_form
@@ -561,6 +660,33 @@ inline bool SlabAlloc::matches_section_boundary(size_t pos) const noexcept
 inline size_t SlabAlloc::get_section_base(size_t index) const noexcept
 {
     return m_section_bases[index];
+}
+
+template<typename Func>
+void SlabAlloc::for_all_free_entries(Func f) const
+{
+	ref_type ref = m_baseline;
+	for (auto& e : m_slabs) {
+		BetweenBlocks* bb = reinterpret_cast<BetweenBlocks*>(e.addr);
+		REALM_ASSERT(bb->block_before_size == 0);
+		while (1) {
+			int size = bb->block_after_size;
+			f(ref, sizeof(BetweenBlocks));
+			ref += sizeof(BetweenBlocks);
+			if (size == 0) {
+				break;
+			}
+			if (size > 0) { // freeblock.
+				f(ref, size);
+				bb = reinterpret_cast<BetweenBlocks*>(reinterpret_cast<char*>(bb) + sizeof(BetweenBlocks) + size);
+				ref += size;
+			}
+			else {
+				bb = reinterpret_cast<BetweenBlocks*>(reinterpret_cast<char*>(bb) + sizeof(BetweenBlocks) - size);
+				ref -= size;
+			}
+		}
+	}
 }
 
 } // namespace realm

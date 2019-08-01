@@ -9,9 +9,7 @@
 #if os(macOS)
 
 import Cocoa
-#if !RX_NO_MODULE
 import RxSwift
-#endif
 
 /// Delegate proxy for `NSTextField`.
 ///
@@ -39,13 +37,21 @@ open class RxTextFieldDelegateProxy
     fileprivate let textSubject = PublishSubject<String?>()
 
     // MARK: Delegate methods
-
+#if swift(>=4.2)
+    open func controlTextDidChange(_ notification: Notification) {
+        let textField: NSTextField = castOrFatalError(notification.object)
+        let nextValue = textField.stringValue
+        self.textSubject.on(.next(nextValue))
+        _forwardToDelegate?.controlTextDidChange?(notification)
+    }
+#else
     open override func controlTextDidChange(_ notification: Notification) {
         let textField: NSTextField = castOrFatalError(notification.object)
         let nextValue = textField.stringValue
         self.textSubject.on(.next(nextValue))
         _forwardToDelegate?.controlTextDidChange?(notification)
     }
+#endif
 
     // MARK: Delegate proxy methods
 

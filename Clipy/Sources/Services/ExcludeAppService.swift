@@ -1,19 +1,24 @@
 //
 //  ExcludeAppService.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2017/02/10.
-//  Copyright © 2017年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2017/02/10.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 final class ExcludeAppService {
 
     // MARK: - Properties
     fileprivate(set) var applications = [CPYAppInfo]()
-    fileprivate var frontApplication = Variable<NSRunningApplication?>(nil)
+    fileprivate var frontApplication = BehaviorRelay<NSRunningApplication?>(value: nil)
     fileprivate var disposeBag = DisposeBag()
 
     // MARK: - Initialize
@@ -84,23 +89,24 @@ extension ExcludeAppService {
         case onePassword = "com.agilebits.onepassword"
 
         // MARK: - Properties
-        private var macApplicationIdentifier: String {
+        private var macApplicationIdentifiers: [String] {
             switch self {
             case .onePassword:
-                return "com.agilebits.onepassword-osx"
+                return ["com.agilebits.onepassword-osx", // for 1Password 6
+                        "com.agilebits.onepassword7"] // for 1Password 7
             }
         }
 
         // MARK: - Excluded
         func isExcluded(applications: [CPYAppInfo]) -> Bool {
-            return !applications.filter { $0.identifier == macApplicationIdentifier }.isEmpty
+            return !applications.filter { macApplicationIdentifiers.contains($0.identifier) }.isEmpty
         }
 
     }
 
     func copiedProcessIsExcludedApplications(pasteboard: NSPasteboard) -> Bool {
         guard let types = pasteboard.types else { return false }
-        guard let application = types.flatMap({ Application(rawValue: $0.rawValue) }).first else { return false }
+        guard let application = types.compactMap({ Application(rawValue: $0.rawValue) }).first else { return false }
         return application.isExcluded(applications: applications)
     }
 }

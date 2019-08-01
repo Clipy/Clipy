@@ -11,16 +11,13 @@ Record shortcuts in macOS, like Alfred App.
 <img src="https://github.com/Clipy/KeyHolder/blob/master/Screenshots/normal_shortcut.png?raw=true" width="300">
 
 ## Requirements
-- macOS 10.9+
-- Xcode 9.0+
-- Swift 4.0+
+- macOS 10.10+
+- Xcode 10.0+
+- Swift 4.2+
 
 ## Usage
 ### CocoaPods
 ```
-platform :osx, '10.9'
-use_frameworks!
-
 pod 'KeyHolder'
 ```
 
@@ -32,7 +29,7 @@ github "Clipy/Magnet"
 
 ## Example
 Set default key combo.
-```
+```swift
 let recordView = RecordView(frame: CGRect.zero)
 recordView.tintColor = NSColor(red: 0.164, green: 0.517, blue: 0.823, alpha: 1)
 let keyCombo = KeyCombo(doubledModifiers: .command)
@@ -40,21 +37,30 @@ recordView.keyCombo = keyCombo
 ```
 
 Some delegate methods
-```
+```swift
 func recordViewShouldBeginRecording(_ recordView: RecordView) -> Bool
 func recordView(_ recordView: RecordView, canRecordShortcut keyCombo: KeyCombo) -> Bool
 func recordViewDidClearShortcut(_ recordView: RecordView)
 func recordViewDidEndRecording(_ recordView: RecordView)
 ```
 
+Or you can use closures.
+```swift
+let recordView = RecordView(frame: CGRect.zero)
+recordView.didChange = { keyCombo in
+    guard let keyCombo = keyCombo else { return } // Clear shortcut
+    // Changed new shortcut
+}
+```
+
 ## Dependencies
 The source code is dependent on hotkey library.
 - [Magnet](https://github.com/Clipy/Magnet)
 
-## Hot to Build
+## How to Build
 1. Move to the project root directory
 2. Install dependency library with `carthage` or `git submodule`
- - `carthage checkout --use-submodules` or `git submodule init && git submodule update`
+3. `carthage checkout --use-submodules` or `git submodule init && git submodule update`
 4. Open `KeyHolder.xcworkspace` on Xcode.
 5. build.
 

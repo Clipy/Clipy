@@ -4,7 +4,7 @@ import Foundation
 
 private func from(objcPredicate: NMBPredicate) -> Predicate<NSObject> {
     return Predicate { actualExpression in
-        let result = objcPredicate.satisfies(({ try! actualExpression.evaluate() }),
+        let result = objcPredicate.satisfies(({ try actualExpression.evaluate() }),
                                              location: actualExpression.location)
         return result.toSwift()
     }
@@ -30,13 +30,13 @@ internal struct ObjCMatcherWrapper: Matcher {
 
 // Equivalent to Expectation, but for Nimble's Objective-C interface
 public class NMBExpectation: NSObject {
-    internal let _actualBlock: () -> NSObject!
+    internal let _actualBlock: () -> NSObject?
     internal var _negative: Bool
     internal let _file: FileString
     internal let _line: UInt
     internal var _timeout: TimeInterval = 1.0
 
-    @objc public init(actualBlock: @escaping () -> NSObject!, negative: Bool, file: FileString, line: UInt) {
+    @objc public init(actualBlock: @escaping () -> NSObject?, negative: Bool, file: FileString, line: UInt) {
         self._actualBlock = actualBlock
         self._negative = negative
         self._file = file

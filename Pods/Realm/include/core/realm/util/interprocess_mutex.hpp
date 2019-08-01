@@ -235,7 +235,7 @@ inline void InterprocessMutex::set_shared_part(SharedPart& shared_part, const st
     std::wstring wname(name.begin(), name.end());
     m_handle = CreateMutexW(0, false, wname.c_str());
     if (!m_handle) {
-        throw std::system_error(std::error_code(::GetLastError(), std::system_category()), "Error opening mutex");
+        throw std::system_error(GetLastError(), std::system_category(), "Error opening mutex");
     }
 #else
     m_shared_part = &shared_part;

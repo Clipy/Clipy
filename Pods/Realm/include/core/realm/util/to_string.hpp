@@ -77,6 +77,12 @@ public:
         , m_string(value)
     {
     }
+    Printable(std::string const& value)
+        : m_type(Type::String)
+        , m_string(value.c_str())
+    {
+    }
+
 
     void print(std::ostream& out, bool quote) const;
     std::string str() const;
@@ -104,6 +110,15 @@ std::string to_string(const T& v)
 {
     return Printable(v).str();
 }
+
+std::string format(const char* fmt, std::initializer_list<Printable>);
+
+template<typename... Args>
+std::string format(const char* fmt, Args&&... args)
+{
+    return format(fmt, {Printable(args)...});
+}
+
 
 } // namespace util
 } // namespace realm

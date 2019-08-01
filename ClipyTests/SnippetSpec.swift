@@ -10,7 +10,7 @@ class SnippetSpec: QuickSpec {
             Realm.Configuration.defaultConfiguration.inMemoryIdentifier = NSUUID().uuidString
         }
 
-        describe("Sync database") { 
+        describe("Sync database") {
 
             it("Merge snippet") {
                 let snippet = CPYSnippet()
@@ -25,25 +25,25 @@ class SnippetSpec: QuickSpec {
                 snippet2.merge()
                 expect(snippet2.realm).to(beNil())
 
-                expect(snippet.index).to(equal(snippet2.index))
-                expect(snippet.title).to(equal(snippet2.title))
-                expect(snippet.content).to(equal(snippet2.content))
+                expect(snippet.index) == snippet2.index
+                expect(snippet.title) == snippet2.title
+                expect(snippet.content) == snippet2.content
             }
 
             it("Remove snippet") {
                 let realm = try! Realm()
-                expect(realm.objects(CPYSnippet.self).count).to(equal(0))
+                expect(realm.objects(CPYSnippet.self).count) == 0
 
                 let snippet = CPYSnippet()
                 realm.transaction { realm.add(snippet) }
 
-                expect(realm.objects(CPYSnippet.self).count).to(equal(1))
+                expect(realm.objects(CPYSnippet.self).count) == 1
 
                 let snippet2 = CPYSnippet()
                 snippet2.identifier = snippet.identifier
                 snippet2.remove()
 
-                expect(realm.objects(CPYSnippet.self).count).to(equal(0))
+                expect(realm.objects(CPYSnippet.self).count) == 0
             }
 
             afterEach {

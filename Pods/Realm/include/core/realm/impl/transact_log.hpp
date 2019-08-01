@@ -43,7 +43,7 @@ enum Instruction {
     instr_InsertGroupLevelTable = 1,
     instr_EraseGroupLevelTable = 2, // Remove columnless table from group
     instr_RenameGroupLevelTable = 3,
-    instr_MoveGroupLevelTable = 4,
+    instr_MoveGroupLevelTable = 4, // UNSUPPORTED/UNUSED. FIXME: remove in next breaking change
     instr_SelectTable = 5,
     instr_Set = 6,
     instr_SetUnique = 7,
@@ -67,7 +67,7 @@ enum Instruction {
     instr_EraseColumn = 24,          // Remove column from selected descriptor
     instr_EraseLinkColumn = 25,      // Remove link-type column from selected descriptor
     instr_RenameColumn = 26,         // Rename column in selected descriptor
-    instr_MoveColumn = 27,           // Move column in selected descriptor
+    instr_MoveColumn = 27,           // Move column in selected descriptor (UNSUPPORTED/UNUSED) FIXME: remove
     instr_AddSearchIndex = 28,       // Add a search index to a column
     instr_RemoveSearchIndex = 29,    // Remove a search index from a column
     instr_SetLinkType = 30,          // Strong/weak
@@ -145,10 +145,6 @@ public:
         return true;
     }
     bool rename_group_level_table(size_t, StringData)
-    {
-        return true;
-    }
-    bool move_group_level_table(size_t, size_t)
     {
         return true;
     }
@@ -272,10 +268,6 @@ public:
     {
         return true;
     }
-    bool move_column(size_t, size_t)
-    {
-        return true;
-    }
     bool add_search_index(size_t)
     {
         return true;
@@ -340,7 +332,6 @@ public:
     bool insert_group_level_table(size_t table_ndx, size_t num_tables, StringData name);
     bool erase_group_level_table(size_t table_ndx, size_t num_tables);
     bool rename_group_level_table(size_t table_ndx, StringData new_name);
-    bool move_group_level_table(size_t from_table_ndx, size_t to_table_ndx);
 
     /// Must have table selected.
     bool insert_empty_rows(size_t row_ndx, size_t num_rows_to_insert, size_t prior_num_rows, bool unordered);
@@ -376,7 +367,6 @@ public:
     bool erase_link_column(size_t col_ndx, size_t link_target_table_ndx, size_t backlink_col_ndx);
     bool erase_column(size_t col_ndx);
     bool rename_column(size_t col_ndx, StringData new_name);
-    bool move_column(size_t col_ndx_1, size_t col_ndx_2);
     bool add_search_index(size_t col_ndx);
     bool remove_search_index(size_t col_ndx);
     bool set_link_type(size_t col_ndx, LinkType);
@@ -483,12 +473,10 @@ public:
     virtual void insert_group_level_table(size_t table_ndx, size_t num_tables, StringData name);
     virtual void erase_group_level_table(size_t table_ndx, size_t num_tables);
     virtual void rename_group_level_table(size_t table_ndx, StringData new_name);
-    virtual void move_group_level_table(size_t from_table_ndx, size_t to_table_ndx);
     virtual void insert_column(const Descriptor&, size_t col_ndx, DataType type, StringData name, LinkTargetInfo& link,
                                bool nullable = false);
     virtual void erase_column(const Descriptor&, size_t col_ndx);
     virtual void rename_column(const Descriptor&, size_t col_ndx, StringData name);
-    virtual void move_column(const Descriptor&, size_t from, size_t to);
 
     virtual void set_int(const Table*, size_t col_ndx, size_t ndx, int_fast64_t value, Instruction variant = instr_Set);
     virtual void add_int(const Table*, size_t col_ndx, size_t ndx, int_fast64_t value);
@@ -1092,19 +1080,6 @@ inline void TransactLogConvenientEncoder::rename_group_level_table(size_t table_
     m_encoder.rename_group_level_table(table_ndx, new_name); // Throws
 }
 
-inline bool TransactLogEncoder::move_group_level_table(size_t from_table_ndx, size_t to_table_ndx)
-{
-    REALM_ASSERT(from_table_ndx != to_table_ndx);
-    append_simple_instr(instr_MoveGroupLevelTable, from_table_ndx, to_table_ndx);
-    return true;
-}
-
-inline void TransactLogConvenientEncoder::move_group_level_table(size_t from_table_ndx, size_t to_table_ndx)
-{
-    unselect_all();
-    m_encoder.move_group_level_table(from_table_ndx, to_table_ndx);
-}
-
 inline bool TransactLogEncoder::insert_column(size_t col_ndx, DataType type, StringData name, bool nullable)
 {
     Instruction instr = (nullable ? instr_InsertNullableColumn : instr_InsertColumn);
@@ -1189,19 +1164,6 @@ inline void TransactLogConvenientEncoder::rename_column(const Descriptor& desc, 
 {
     select_desc(desc);                      // Throws
     m_encoder.rename_column(col_ndx, name); // Throws
-}
-
-
-inline bool TransactLogEncoder::move_column(size_t from, size_t to)
-{
-    append_simple_instr(instr_MoveColumn, from, to); // Throws
-    return true;
-}
-
-inline void TransactLogConvenientEncoder::move_column(const Descriptor& desc, size_t from, size_t to)
-{
-    select_desc(desc); // Throws
-    m_encoder.move_column(from, to);
 }
 
 
@@ -2041,6 +2003,13 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
                 parser_error();
             return;
         }
+        case instr_MoveColumn: {
+            // FIXME: remove this in the next breaking change.
+            // This instruction is no longer supported and not used by either
+            // bindings or sync, so if we see it here, there was a problem parsing.
+            parser_error();
+            return;
+        }
         case instr_AddSearchIndex: {
             size_t col_ndx = read_int<size_t>();    // Throws
             if (!handler.add_search_index(col_ndx)) // Throws
@@ -2116,13 +2085,6 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
                 parser_error();
             return;
         }
-        case instr_MoveColumn: {
-            size_t col_ndx_1 = read_int<size_t>();          // Throws
-            size_t col_ndx_2 = read_int<size_t>();          // Throws
-            if (!handler.move_column(col_ndx_1, col_ndx_2)) // Throws
-                parser_error();
-            return;
-        }
         case instr_SelectDescriptor: {
             int levels = read_int<int>(); // Throws
             if (levels < 0 || levels > m_max_levels)
@@ -2160,10 +2122,10 @@ void TransactLogParser::parse_one(InstructionHandler& handler)
             return;
         }
         case instr_MoveGroupLevelTable: {
-            size_t from_table_ndx = read_int<size_t>();                        // Throws
-            size_t to_table_ndx = read_int<size_t>();                          // Throws
-            if (!handler.move_group_level_table(from_table_ndx, to_table_ndx)) // Throws
-                parser_error();
+            // This instruction is no longer supported and not used by either
+            // bindings or sync, so if we see it here, there was a problem parsing.
+            // FIXME: remove this in the next breaking change.
+            parser_error();
             return;
         }
         case instr_OptimizeTable: {
@@ -2453,14 +2415,6 @@ public:
         return true;
     }
 
-    bool move_group_level_table(size_t from_table_ndx, size_t to_table_ndx)
-    {
-        sync_table();
-        m_encoder.move_group_level_table(to_table_ndx, from_table_ndx);
-        append_instruction();
-        return true;
-    }
-
     bool optimize_table()
     {
         return true; // No-op
@@ -2677,13 +2631,6 @@ public:
     bool rename_column(size_t, StringData)
     {
         return true; // No-op
-    }
-
-    bool move_column(size_t col_ndx_1, size_t col_ndx_2)
-    {
-        m_encoder.move_column(col_ndx_2, col_ndx_1);
-        append_instruction();
-        return true;
     }
 
     bool select_link_list(size_t col_ndx, size_t row_ndx, size_t link_target_group_level_ndx)

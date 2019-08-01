@@ -1,0 +1,59 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
+
+"Launch Clipy on system startup?" = "Clipy beim Starten öffnen?";
+
+"You can change this setting in the Preferences if you want" = "Sie können diese Option in den Einstellungen ändern.";
+
+"Launch on system startup" = "Anwendung automatisch starten";
+
+"Don't Launch" = "Nicht starten";
+
+"Clear History" = "Verlauf löschen";
+
+"Are you sure you want to clear your clipboard history?" = "Möchten sie den Verlauf ihrer Zwischenablage wirklich löschen?";
+
+"Cancel" = "Abbrechen";
+
+"Edit Snippets" = "Snippets bearbeiten...";
+
+"Preferences" = "Einstellungen...";
+
+"Quit Clipy" = "Clipy beenden";
+
+"History" = "Verlauf";
+
+"Snippet" = "Snippet";
+
+"General" = "Allgemein";
+
+"Menu" = "Menü";
+
+"Type" = "Typ";
+
+"Shortcuts" = "Tastenkombinationen";
+
+"Updates" = "Aktualisierungen";
+
+"Delete Item" = "Einträge löschen";
+
+"Are you sure want to delete this item?" = "Möchten sie diesen Eintrag wirklich löschen?";
+
+"Add" = "Hinzufügen";
+
+"Please fill in the contents of the snippet" = "Bitte geben Sie den Inhalt des Snippets ein";
+
+"Please allow Accessibility" = "Please allow Accessibility.";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
+
+"Open System Preferences" = "Open System Preferences";

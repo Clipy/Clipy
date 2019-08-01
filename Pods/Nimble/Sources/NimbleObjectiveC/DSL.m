@@ -1,13 +1,10 @@
 #import <Nimble/DSL.h>
+
+#if __has_include("Nimble-Swift.h")
+#import "Nimble-Swift.h"
+#else
 #import <Nimble/Nimble-Swift.h>
-
-SWIFT_CLASS("_TtC6Nimble7NMBWait")
-@interface NMBWait : NSObject
-
-+ (void)untilTimeout:(NSTimeInterval)timeout file:(NSString *)file line:(NSUInteger)line action:(void (^ _Nonnull)(void (^ _Nonnull)(void)))action;
-+ (void)untilFile:(NSString *)file line:(NSUInteger)line action:(void (^ _Nonnull)(void (^ _Nonnull)(void)))action;
-
-@end
+#endif
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -139,6 +136,10 @@ NIMBLE_EXPORT id<NMBMatcher> NMB_allPass(id expectedValue) {
 
 NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAnyOfWithMatchers(id matchers) {
     return [NMBObjCMatcher satisfyAnyOfMatcher:matchers];
+}
+
+NIMBLE_EXPORT id<NMBMatcher> NMB_satisfyAllOfWithMatchers(id matchers) {
+    return [NMBObjCMatcher satisfyAllOfMatcher:matchers];
 }
 
 NIMBLE_EXPORT NMBObjCRaiseExceptionMatcher *NMB_raiseException() {

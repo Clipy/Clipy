@@ -20,9 +20,10 @@
 #define REALM_TRANSACT_LOG_HANDLER_HPP
 
 #include <cstdint>
-#include <realm/version_id.hpp>
-
+#include <stdexcept>
 #include <memory>
+
+#include <realm/version_id.hpp>
 
 namespace realm {
 class BindingContext;
@@ -31,6 +32,10 @@ class SharedGroup;
 namespace _impl {
 class NotifierPackage;
 struct TransactionChangeInfo;
+
+struct UnsupportedSchemaChange : std::logic_error {
+    UnsupportedSchemaChange();
+};
 
 namespace transaction {
 // Advance the read transaction version, with change notifications sent to delegate

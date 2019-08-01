@@ -42,6 +42,7 @@ namespace std {
 #endif
 
 #include <realm/utilities.hpp>
+#include <realm/util/backtrace.hpp>
 #include <realm/util/features.h>
 #include <realm/util/assert.hpp>
 #include <realm/util/safe_int_ops.hpp>
@@ -269,11 +270,7 @@ public:
     /// a file that is opened in read-only mode, is an error.
     void resize(SizeType);
 
-    /// The same as prealloc_if_supported() but when the operation is
-    /// not supported by the system, this function will still increase
-    /// the file size when the specified region extends beyond the
-    /// current end of the file. This allows you to both extend and
-    /// allocate in one operation.
+    /// Same effect as prealloc_if_supported(original_size, new_size);
     ///
     /// The downside is that this function is not guaranteed to have
     /// atomic behaviour on all systems, that is, two processes, or
@@ -282,7 +279,7 @@ public:
     /// through distinct File instances.
     ///
     /// \sa prealloc_if_supported()
-    void prealloc(SizeType offset, size_t size);
+    void prealloc(size_t new_size);
 
     /// When supported by the system, allocate space on the target
     /// device for the specified region of the file. If the region
@@ -1227,7 +1224,7 @@ inline File::Streambuf::pos_type File::Streambuf::seekpos(pos_type pos, std::ios
     flush();
     SizeType pos2 = 0;
     if (int_cast_with_overflow_detect(std::streamsize(pos), pos2))
-        throw std::runtime_error("Seek position overflow");
+        throw util::overflow_error("Seek position overflow");
     m_file.seek(pos2);
     return pos;
 }
@@ -1270,7 +1267,7 @@ inline File::Exists::Exists(const std::string& msg, const std::string& path)
 inline bool operator==(const File::UniqueID& lhs, const File::UniqueID& rhs)
 {
 #ifdef _WIN32 // Windows version
-    throw std::runtime_error("Not yet supported");
+    throw util::runtime_error("Not yet supported");
 #else // POSIX version
     return lhs.device == rhs.device && lhs.inode == rhs.inode;
 #endif
@@ -1284,7 +1281,7 @@ inline bool operator!=(const File::UniqueID& lhs, const File::UniqueID& rhs)
 inline bool operator<(const File::UniqueID& lhs, const File::UniqueID& rhs)
 {
 #ifdef _WIN32 // Windows version
-    throw std::runtime_error("Not yet supported");
+    throw util::runtime_error("Not yet supported");
 #else // POSIX version
     if (lhs.device < rhs.device)
         return true;

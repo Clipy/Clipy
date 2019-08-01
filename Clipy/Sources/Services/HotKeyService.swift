@@ -1,9 +1,13 @@
 //
 //  HotKeyService.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/11/19.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/11/19.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Foundation
@@ -44,7 +48,7 @@ extension HotKeyService {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
     }
 
-    @objc func popUpClearHisotryAlert() {
+    @objc func popUpClearHistoryAlert() {
         guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
         appDelegate.clearAllHistory()
     }
@@ -89,10 +93,10 @@ extension HotKeyService {
         AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: Constants.HotKey.clearHistoryKeyCombo)
         AppEnvironment.current.defaults.synchronize()
         // Reset hotkey
-        HotKeyCenter.shared.unregisterHotKey(with: "ClearHisotry")
+        HotKeyCenter.shared.unregisterHotKey(with: "ClearHistory")
         // Register new hotkey
         guard let keyCombo = keyCombo else { return }
-        let hotkey = HotKey(identifier: "ClearHisotry", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHisotryAlert))
+        let hotkey = HotKey(identifier: "ClearHistory", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHistoryAlert))
         hotkey.register()
     }
 
@@ -104,8 +108,8 @@ extension HotKeyService {
 }
 
 // MARK: - Register
-fileprivate extension HotKeyService {
-    fileprivate func register(with type: MenuType, keyCombo: KeyCombo?) {
+private extension HotKeyService {
+    func register(with type: MenuType, keyCombo: KeyCombo?) {
         save(with: type, keyCombo: keyCombo)
         // Reset hotkey
         HotKeyCenter.shared.unregisterHotKey(with: type.rawValue)
@@ -115,7 +119,7 @@ fileprivate extension HotKeyService {
         hotKey.register()
     }
 
-    fileprivate func save(with type: MenuType, keyCombo: KeyCombo?) {
+    func save(with type: MenuType, keyCombo: KeyCombo?) {
         AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: type.userDefaultsKey)
         AppEnvironment.current.defaults.synchronize()
     }
@@ -127,7 +131,7 @@ fileprivate extension HotKeyService {
      *  Migration for changing the storage with v1.1.0
      *  Changed framework, PTHotKey to Magnet
      */
-    fileprivate func migrationKeyCombos() {
+    func migrationKeyCombos() {
         guard let keyCombos = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
 
         // Main menu
@@ -157,7 +161,7 @@ fileprivate extension HotKeyService {
     }
 }
 
-// MARK: - Snippet HotKey 
+// MARK: - Snippet HotKey
 extension HotKeyService {
     private var folderKeyCombos: [String: KeyCombo]? {
         get {

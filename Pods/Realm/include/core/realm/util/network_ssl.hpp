@@ -32,6 +32,7 @@
 #include <realm/util/misc_errors.hpp>
 #include <realm/util/network.hpp>
 #include <realm/util/optional.hpp>
+#include <realm/util/logger.hpp>
 
 #if REALM_HAVE_OPENSSL
 #  include <openssl/ssl.h>
@@ -66,13 +67,30 @@ namespace util {
 namespace network {
 namespace ssl {
 
-enum class Error {
+enum class Errors {
     certificate_rejected = 1,
 };
 
-const std::error_category& ssl_error_category();
+class ErrorCategory : public std::error_category {
+public:
+    const char* name() const noexcept override final;
+    std::string message(int) const override final;
+    bool equivalent(const std::error_code&, int) const noexcept override final;
+};
 
-std::error_condition make_error_condition(Error value);
+/// The error category associated with \ref Errors. The name of this category is
+/// `realm.util.network.ssl`.
+extern ErrorCategory error_category;
+
+inline std::error_code make_error_code(Errors err)
+{
+    return std::error_code(int(err), error_category);
+}
+
+inline std::error_condition make_error_condition(Errors err)
+{
+    return std::error_condition(int(err), error_category);
+}
 
 } // namespace ssl
 } // namespace network
@@ -81,26 +99,39 @@ std::error_condition make_error_condition(Error value);
 
 namespace std {
 
-template <>
-struct is_error_condition_enum<realm::util::network::ssl::Error>: public true_type {};
+template<> class is_error_condition_enum<realm::util::network::ssl::Errors> {
+public:
+    static const bool value = true;
+};
 
 } // namespace std
 
 namespace realm {
 namespace util {
 namespace network {
+
+class OpensslErrorCategory : public std::error_category {
+public:
+    const char* name() const noexcept override final;
+    std::string message(int) const override final;
+};
+
+/// The error category associated with error codes produced by the third-party
+/// library, OpenSSL. The name of this category is `openssl`.
+extern OpensslErrorCategory openssl_error_category;
+
+class SecureTransportErrorCategory : public std::error_category {
+public:
+    const char* name() const noexcept override final;
+    std::string message(int) const override final;
+};
+
+/// The error category associated with error codes produced by Apple's
+/// SecureTransport library. The name of this category is `securetransport`.
+extern SecureTransportErrorCategory secure_transport_error_category;
+
+
 namespace ssl {
-
-#if REALM_HAVE_OPENSSL
-
-const std::error_category& openssl_error_category();
-
-#elif REALM_HAVE_SECURE_TRANSPORT
-
-const std::error_category& secure_transport_error_category();
-
-#endif
-
 
 class ProtocolNotSupported;
 
@@ -123,18 +154,16 @@ public:
     /// `SSL_CTX_use_PrivateKey_file()`.
     void use_private_key_file(const std::string& path);
 
-    /// Calling use_default_verify() will make a client use the
-    /// device default certificates for server verification.
-    /// For OpenSSL, use_default_verify() corresponds to
+    /// Calling use_default_verify() will make a client use the device
+    /// default certificates for server verification. For OpenSSL,
+    /// use_default_verify() corresponds to
     /// SSL_CTX_set_default_verify_paths(SSL_CTX*);
     void use_default_verify();
 
-    /// The verify file is a PEM file containing trust
-    /// certificates that the client will use to
-    /// verify the server crtificate. If use_verify_file()
-    /// is not called, the default device trust store will
-    /// be used.
-    /// Corresponds roughly to OpenSSL's
+    /// The verify file is a PEM file containing trust certificates that the
+    /// client will use to verify the server certificate. If use_verify_file()
+    /// is not called, the default device trust store will be used.
+    /// use_verify_file() corresponds roughly to OpenSSL's
     /// SSL_CTX_load_verify_locations().
     void use_verify_file(const std::string& path);
 
@@ -152,8 +181,6 @@ private:
 #elif REALM_HAVE_SECURE_TRANSPORT
 
 #if REALM_HAVE_KEYCHAIN_APIS
-    static util::CFPtr<CFArrayRef> load_pem_file(const std::string& path, SecKeychainRef, std::error_code&);
-
     std::error_code open_temporary_keychain_if_needed();
     std::error_code update_identity_if_needed();
 
@@ -166,8 +193,14 @@ private:
 
     util::CFPtr<CFArrayRef> m_certificate_chain;
 
-    util::CFPtr<CFArrayRef> m_trust_anchors;
+#else
+    using SecKeychainRef = std::nullptr_t;
+
 #endif // REALM_HAVE_KEYCHAIN_APIS
+    static util::CFPtr<CFArrayRef> load_pem_file(const std::string& path, SecKeychainRef, std::error_code&);
+
+    util::CFPtr<CFArrayRef> m_trust_anchors;
+    util::CFPtr<CFDataRef> m_pinned_certificate;
 
 #endif
 
@@ -192,8 +225,15 @@ public:
 
     enum HandshakeType { client, server };
 
+    util::Logger* logger = nullptr;
+
     Stream(Socket&, Context&, HandshakeType);
     ~Stream() noexcept;
+
+    /// \brief set_logger() set a logger for the stream class. If
+    /// set_logger() is not called, no logging will take place by
+    /// the Stream class.
+    void set_logger(util::Logger*);
 
     /// \brief Set the certificate verification mode for this SSL stream.
     ///
@@ -276,7 +316,16 @@ public:
     /// Another possible way of using the callback is to collect all the
     /// certificates until depth = 0, and present the entire chain for
     /// independent verification.
-    void use_verify_callback(std::function<SSLVerifyCallback>* callback);
+    void use_verify_callback(const std::function<SSLVerifyCallback>& callback);
+
+#ifdef REALM_INCLUDE_CERTS
+    /// use_included_certificates() loads a set of certificates that are
+    /// included in the header file src/realm/noinst/root_certs.hpp. By using
+    /// the included certificates, the client can verify a server in the case
+    /// where the relevant certificate cannot be found, or is absent, in the
+    /// system trust store. This function is only implemented for OpenSSL.
+    void use_included_certificates();
+#endif
 
     /// @{
     ///
@@ -385,7 +434,10 @@ private:
 
     // The callback for certificate verification and an
     // opaque argument that will be supplied to the callback.
-    std::function<SSLVerifyCallback>* m_ssl_verify_callback;
+    const std::function<SSLVerifyCallback>* m_ssl_verify_callback = nullptr;
+
+    bool m_valid_certificate_in_chain = false;
+
 
     // See Service::BasicStreamOps for details on these these 6 functions.
     void do_init_read_async(std::error_code&, Want&) noexcept;
@@ -428,7 +480,8 @@ private:
     void ssl_destroy() noexcept;
     void ssl_set_verify_mode(VerifyMode, std::error_code&);
     void ssl_set_check_host(std::string, std::error_code&);
-    void ssl_use_verify_callback(std::function<SSLVerifyCallback>* callback, std::error_code&);
+    void ssl_use_verify_callback(const std::function<SSLVerifyCallback>&, std::error_code&);
+    void ssl_use_included_certificates(std::error_code&);
 
     void ssl_handshake(std::error_code&, Want& want) noexcept;
     bool ssl_shutdown(std::error_code& ec, Want& want) noexcept;
@@ -469,6 +522,10 @@ private:
     // verify_callback_using_delegate() is also used as an argument to OpenSSL's set_verify_function.
     // verify_callback_using_delegate() calls out to the user supplied verify callback.
     static int verify_callback_using_delegate(int preverify_ok, X509_STORE_CTX *ctx) noexcept;
+
+    // verify_callback_using_root_certs is used by OpenSSL to handle certificate verification
+    // using the included root certifictes.
+    static int verify_callback_using_root_certs(int preverify_ok, X509_STORE_CTX *ctx);
 #elif REALM_HAVE_SECURE_TRANSPORT
     util::CFPtr<SSLContextRef> m_ssl;
     VerifyMode m_verify_mode = VerifyMode::none;
@@ -511,7 +568,7 @@ private:
 
 // Implementation
 
-class ProtocolNotSupported: public std::exception {
+class ProtocolNotSupported : public std::exception {
 public:
     const char* what() const noexcept override final;
 };
@@ -554,13 +611,14 @@ inline void Context::use_verify_file(const std::string& path)
 {
     std::error_code ec;
     ssl_use_verify_file(path, ec);
-    if (ec)
+    if (ec) {
         throw std::system_error(ec);
+    }
 }
 
-class Stream::HandshakeOperBase: public Service::IoOper {
+class Stream::HandshakeOperBase : public Service::IoOper {
 public:
-    HandshakeOperBase(std::size_t size, Stream& stream):
+    HandshakeOperBase(std::size_t size, Stream& stream) :
         IoOper{size},
         m_stream{&stream}
     {
@@ -585,6 +643,7 @@ public:
     void recycle() noexcept override final
     {
         bool orphaned = !m_stream;
+        REALM_ASSERT(orphaned);
         // Note: do_recycle() commits suicide.
         do_recycle(orphaned);
     }
@@ -601,9 +660,9 @@ protected:
     std::error_code m_error_code;
 };
 
-template<class H> class Stream::HandshakeOper: public HandshakeOperBase {
+template<class H> class Stream::HandshakeOper : public HandshakeOperBase {
 public:
-    HandshakeOper(std::size_t size, Stream& stream, H handler):
+    HandshakeOper(std::size_t size, Stream& stream, H handler) :
         HandshakeOperBase{size, stream},
         m_handler{std::move(handler)}
     {
@@ -622,9 +681,9 @@ private:
     H m_handler;
 };
 
-class Stream::ShutdownOperBase: public Service::IoOper {
+class Stream::ShutdownOperBase : public Service::IoOper {
 public:
-    ShutdownOperBase(std::size_t size, Stream& stream):
+    ShutdownOperBase(std::size_t size, Stream& stream) :
         IoOper{size},
         m_stream{&stream}
     {
@@ -650,6 +709,7 @@ public:
     void recycle() noexcept override final
     {
         bool orphaned = !m_stream;
+        REALM_ASSERT(orphaned);
         // Note: do_recycle() commits suicide.
         do_recycle(orphaned);
     }
@@ -666,9 +726,9 @@ protected:
     std::error_code m_error_code;
 };
 
-template<class H> class Stream::ShutdownOper: public ShutdownOperBase {
+template<class H> class Stream::ShutdownOper : public ShutdownOperBase {
 public:
-    ShutdownOper(std::size_t size, Stream& stream, H handler):
+    ShutdownOper(std::size_t size, Stream& stream, H handler) :
         ShutdownOperBase{size, stream},
         m_handler{std::move(handler)}
     {
@@ -687,7 +747,7 @@ private:
     H m_handler;
 };
 
-inline Stream::Stream(Socket& socket, Context& context, HandshakeType type):
+inline Stream::Stream(Socket& socket, Context& context, HandshakeType type) :
     m_tcp_socket{socket},
     m_ssl_context{context},
     m_handshake_type{type}
@@ -699,6 +759,11 @@ inline Stream::~Stream() noexcept
 {
     m_tcp_socket.cancel();
     ssl_destroy();
+}
+
+inline void Stream::set_logger(util::Logger* logger)
+{
+    this->logger = logger;
 }
 
 inline void Stream::set_verify_mode(VerifyMode mode)
@@ -733,13 +798,24 @@ inline void Stream::set_server_port(port_type server_port)
     m_server_port = server_port;
 }
 
-inline void Stream::use_verify_callback(std::function<SSLVerifyCallback>* callback)
+inline void Stream::use_verify_callback(const std::function<SSLVerifyCallback>& callback)
 {
     std::error_code ec;
-    ssl_use_verify_callback(callback, ec);
+    ssl_use_verify_callback(callback, ec); // Throws
     if (ec)
         throw std::system_error(ec);
 }
+
+#ifdef REALM_INCLUDE_CERTS
+inline void Stream::use_included_certificates()
+{
+    std::error_code ec;
+    ssl_use_included_certificates(ec); // Throws
+    if (ec)
+        throw std::system_error(ec);
+}
+#endif
+
 inline void Stream::handshake()
 {
     std::error_code ec;
@@ -964,7 +1040,7 @@ inline void Stream::ssl_handshake(std::error_code& ec, Want& want) noexcept
     REALM_ASSERT(n == 0 || n == 1);
     if (want == Want::nothing && n == 0 && !ec) {
         // End of input on TCP socket
-        ec = network::premature_end_of_input;
+        ec = MiscExtErrors::premature_end_of_input;
     }
 }
 
@@ -978,10 +1054,10 @@ inline std::size_t Stream::ssl_read(char* buffer, std::size_t size,
     if (want == Want::nothing && n == 0 && !ec) {
         // End of input on TCP socket
         if (SSL_get_shutdown(m_ssl) & SSL_RECEIVED_SHUTDOWN) {
-            ec = network::end_of_input;
+            ec = MiscExtErrors::end_of_input;
         }
         else {
-            ec = network::premature_end_of_input;
+            ec = MiscExtErrors::premature_end_of_input;
         }
     }
     return n;
@@ -1005,7 +1081,7 @@ inline std::size_t Stream::ssl_write(const char* data, std::size_t size,
     std::size_t n = ssl_perform(std::move(perform), ec, want);
     if (want == Want::nothing && n == 0 && !ec) {
         // End of input on TCP socket
-        ec = network::premature_end_of_input;
+        ec = MiscExtErrors::premature_end_of_input;
     }
     return n;
 }
@@ -1044,7 +1120,7 @@ inline bool Stream::ssl_shutdown(std::error_code& ec, Want& want) noexcept
         // end of input", and 1 means "full success" (peers shutdown alert has
         // now been received).
         if ((SSL_get_shutdown(m_ssl) & SSL_SENT_SHUTDOWN) == 0)
-            ec = network::premature_end_of_input;
+            ec = MiscExtErrors::premature_end_of_input;
     }
     return (n > 0);
 }
@@ -1167,15 +1243,15 @@ std::size_t Stream::ssl_perform(Oper oper, std::error_code& ec, Want& want) noex
                 // that errno should be consulted. However,
                 // errno = 0(Undefined error) in the observed case.
                 // At the moment. we will report
-                // premature_end_of_input.
+                // MiscExtErrors::premature_end_of_input.
                 // If we see this error case occurring in other situations in
                 // the future, we will have to update this case.
-                ec = network::premature_end_of_input;
+                ec = MiscExtErrors::premature_end_of_input;
             }
             want = Want::nothing;
             return 0;
         case SSL_ERROR_SSL:
-            ec = std::error_code(sys_error, openssl_error_category());
+            ec = std::error_code(sys_error, openssl_error_category);
             want = Want::nothing;
             return 0;
         default:
@@ -1268,13 +1344,13 @@ std::size_t Stream::ssl_perform(Oper oper, std::error_code& ec, Want& want) noex
     }
 
     if (result == errSSLClosedGraceful) {
-        ec = network::end_of_input;
+        ec = MiscExtErrors::end_of_input;
         want = Want::nothing;
         return n;
     }
 
     if (result == errSSLClosedAbort || result == errSSLClosedNoNotify) {
-        ec = network::premature_end_of_input;
+        ec = MiscExtErrors::premature_end_of_input;
         want = Want::nothing;
         return n;
     }
@@ -1288,7 +1364,7 @@ std::size_t Stream::ssl_perform(Oper oper, std::error_code& ec, Want& want) noex
         return n;
     }
 
-    ec = std::error_code(result, secure_transport_error_category());
+    ec = std::error_code(result, secure_transport_error_category);
     want = Want::nothing;
     return 0;
 }

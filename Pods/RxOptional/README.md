@@ -1,16 +1,15 @@
 # RxOptional
 
-[![Build Status](https://travis-ci.org/RxSwiftCommunity/RxOptional.svg?branch=master)](https://travis-ci.org/RxSwiftCommunity/RxOptional)
+[![CircleCI](https://img.shields.io/circleci/project/github/RxSwiftCommunity/RxOptional/master.svg)](https://circleci.com/gh/RxSwiftCommunity/RxOptional/tree/master)
 [![Version](https://img.shields.io/cocoapods/v/RxOptional.svg?style=flat)](http://cocoapods.org/pods/RxOptional)
 [![License](https://img.shields.io/cocoapods/l/RxOptional.svg?style=flat)](http://cocoapods.org/pods/RxOptional)
 [![Platform](https://img.shields.io/cocoapods/p/RxOptional.svg?style=flat)](http://cocoapods.org/pods/RxOptional)
-
 
 RxSwift extensions for Swift optionals and "Occupiable" types.
 
 ## Usage
 
-All operators are also available on `Driver`, unless otherwise noted.
+All operators are also available on `Driver` and `Signal`, unless otherwise noted.
 
 ### Optional Operators
 
@@ -23,9 +22,9 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Next(Three)
-Completed
+next(One)
+next(Three)
+completed
 ```
 
 ##### replaceNilWith
@@ -37,10 +36,10 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Next(Two)
-Next(Three)
-Completed
+next(One)
+next(Two)
+next(Three)
+completed
 ```
 
 ##### errorOnNil
@@ -55,8 +54,8 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Error(Found nil while trying to unwrap type <Optional<String>>)
+next(One)
+error(Found nil while trying to unwrap type <Optional<String>>)
 ```
 
 ##### catchOnNil
@@ -70,10 +69,10 @@ Observable<String?>
     .subscribe { print($0) }
 ```
 ```text
-Next(One)
-Next(A String from a new Observable)
-Next(Three)
-Completed
+next(One)
+next(A String from a new Observable)
+next(Three)
+completed
 ```
 
 ##### distinctUntilChanged
@@ -84,11 +83,11 @@ Observable<Int?>
     .subscribe { print($0) }
 ```
 ```text
-Next(Optional(5))
-Next(Optional(6))
-Next(nil)
-Next(Optional(3))
-Completed
+next(Optional(5))
+next(Optional(6))
+next(nil)
+next(Optional(3))
+completed
 ```
 
 ### Occupiable Operators
@@ -112,9 +111,9 @@ Observable<[String]>
     .subscribe { print($0) }
 ```
 ```text
-Next(["Single Element"])
-Next(["Two", "Elements"])
-Completed
+next(["Single Element"])
+next(["Two", "Elements"])
+completed
 ```
 
 ##### errorOnEmpty
@@ -128,8 +127,8 @@ Observable<[String]>
     .subscribe { print($0) }
 ```
 ```text
-Next(["Single Element"])
-Error(Empty occupiable of type <Array<String>>)
+next(["Single Element"])
+error(Empty occupiable of type <Array<String>>)
 ```
 
 ##### catchOnEmpty
@@ -142,10 +141,10 @@ Observable<[String]>
     .subscribe { print($0) }
 ```
 ```text
-Next(["Single Element"])
-Next(["Not Empty"])
-Next(["Two", "Elements"])
-Completed
+next(["Single Element"])
+next(["Not Empty"])
+next(["Two", "Elements"])
+completed
 ```
 
 ## Running Examples.playground

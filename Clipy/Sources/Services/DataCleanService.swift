@@ -1,9 +1,13 @@
 //
 //  DataCleanService.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/11/20.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/11/20.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Foundation
@@ -62,7 +66,7 @@ final class DataCleanService {
 
         let allClipPaths = Array(realm.objects(CPYClip.self)
             .filter { !$0.isInvalidated }
-            .flatMap { $0.dataPath.components(separatedBy: "/").last })
+            .compactMap { $0.dataPath.components(separatedBy: "/").last })
 
         // Delete diff datas
         DispatchQueue.main.async {

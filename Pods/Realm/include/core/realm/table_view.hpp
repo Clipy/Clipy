@@ -300,10 +300,15 @@ public:
     // Each time you call distinct() it will compound on the previous calls
     void distinct(size_t column);
     void distinct(DistinctDescriptor columns);
+    void limit(LimitDescriptor limit);
 
     // Replace the order of sort and distinct operations, bypassing manually
     // calling sort and distinct. This is a convenience method for bindings.
     void apply_descriptor_ordering(DescriptorOrdering new_ordering);
+
+    // Gets a readable and parsable string which completely describes the sort and
+    // distinct operations applied to this view.
+    std::string get_descriptor_ordering_description() const;
 
     // Returns whether the rows are guaranteed to be in table order.
     // This is true only of unsorted TableViews created from either:
@@ -796,6 +801,7 @@ inline TableViewBase::TableViewBase(const TableViewBase& tv)
         m_table->register_view(this); // Throws
     m_row_indexes.init_from_mem(alloc, mem);
     ref_guard.release();
+    RowIndexes::m_limit_count = tv.m_limit_count;
 }
 
 inline TableViewBase::TableViewBase(TableViewBase&& tv) noexcept
@@ -816,6 +822,7 @@ inline TableViewBase::TableViewBase(TableViewBase&& tv) noexcept
     m_last_seen_version(tv.m_last_seen_version)
     , m_num_detached_refs(tv.m_num_detached_refs)
 {
+    RowIndexes::m_limit_count = tv.m_limit_count;
     if (m_table)
         m_table->move_registered_view(&tv, this);
 }
@@ -838,6 +845,7 @@ inline TableViewBase& TableViewBase::operator=(TableViewBase&& tv) noexcept
         m_table->move_registered_view(&tv, this);
 
     m_row_indexes.move_assign(tv.m_row_indexes);
+    m_limit_count = tv.m_limit_count;
     m_query = std::move(tv.m_query);
     m_num_detached_refs = tv.m_num_detached_refs;
     m_last_seen_version = tv.m_last_seen_version;
@@ -872,6 +880,7 @@ inline TableViewBase& TableViewBase::operator=(const TableViewBase& tv)
     m_row_indexes.destroy();
     m_row_indexes.get_root_array()->init_from_mem(mem);
     ref_guard.release();
+    m_limit_count = tv.m_limit_count;
 
     m_query = tv.m_query;
     m_num_detached_refs = tv.m_num_detached_refs;

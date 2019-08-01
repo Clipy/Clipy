@@ -117,7 +117,7 @@ bool ResultsNotifier::need_to_run()
 void ResultsNotifier::calculate_changes()
 {
     size_t table_ndx = m_query->get_table()->get_index_in_group();
-    if (has_run()) {
+    if (has_run() && have_callbacks()) {
         CollectionChangeBuilder* changes = nullptr;
         if (table_ndx == npos)
             changes = &m_changes;
@@ -174,15 +174,7 @@ void ResultsNotifier::run()
 
     m_query->sync_view_if_needed();
     m_tv = m_query->find_all();
-#if REALM_HAVE_COMPOSABLE_DISTINCT
     m_tv.apply_descriptor_ordering(m_descriptor_ordering);
-#else
-    if (m_descriptor_ordering.sort)
-        m_tv.sort(m_descriptor_ordering.sort);
-
-    if (m_descriptor_ordering.distinct)
-        m_tv.distinct(m_descriptor_ordering.distinct);
-#endif
     m_last_seen_version = m_tv.sync_if_needed();
 
     calculate_changes();

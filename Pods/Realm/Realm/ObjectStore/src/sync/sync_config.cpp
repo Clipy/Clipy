@@ -24,14 +24,19 @@
 
 namespace realm {
 
-namespace {
-
-// Construct an identifier for this partially synced Realm by combining client and user identifiers.
-std::string partial_sync_identifier(const SyncUser& user)
+std::string SyncConfig::partial_sync_identifier(const SyncUser& user)
 {
     std::string raw_identifier = SyncManager::shared().client_uuid() + "/" + user.local_identity();
+
+    // The type of the argument to sha1() changed in sync 3.11.1. Implicitly
+    // convert to either char or unsigned char so that both signatures work.
+    struct cast {
+        uint8_t* value;
+        operator uint8_t*() { return value; }
+        operator char*() { return reinterpret_cast<char*>(value); }
+    };
     uint8_t identifier[20];
-    sync::crypto::sha1(raw_identifier.data(), raw_identifier.size(), (char *)&identifier[0]);
+    sync::crypto::sha1(raw_identifier.data(), raw_identifier.size(), cast{&identifier[0]});
 
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
@@ -39,8 +44,6 @@ std::string partial_sync_identifier(const SyncUser& user)
         ss << std::setw(2) << (unsigned)c;
     return ss.str();
 }
-
-} // unnamed namespace
 
 std::string SyncConfig::realm_url() const
 {
@@ -55,9 +58,8 @@ std::string SyncConfig::realm_url() const
         base_url.pop_back();
 
     if (custom_partial_sync_identifier)
-        return base_url + "/__partial/" + *custom_partial_sync_identifier;
-
-    return base_url + "/__partial/" + partial_sync_identifier(*user);
+        return util::format("%1/__partial/%2", base_url, *custom_partial_sync_identifier);
+    return util::format("%1/__partial/%2/%3", base_url, user->identity(), partial_sync_identifier(*user));
 }
 
 } // namespace realm

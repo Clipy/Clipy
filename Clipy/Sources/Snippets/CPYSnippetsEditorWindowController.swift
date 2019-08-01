@@ -1,9 +1,13 @@
 //
 //  CPYSnippetsEditorWindowController.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/05/18.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/05/18.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -15,36 +19,37 @@ import AEXML
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
     // MARK: - Properties
-    static let sharedController = CPYSnippetsEditorWindowController(windowNibName: NSNib.Name(rawValue: "CPYSnippetsEditorWindowController"))
-    @IBOutlet weak var splitView: CPYSplitView!
-    @IBOutlet weak var folderSettingView: NSView!
-    @IBOutlet weak var folderTitleTextField: NSTextField!
-    @IBOutlet weak var folderShortcutRecordView: RecordView! {
+    static let sharedController = CPYSnippetsEditorWindowController(windowNibName: "CPYSnippetsEditorWindowController")
+    @IBOutlet private weak var splitView: CPYSplitView!
+    @IBOutlet private weak var folderSettingView: NSView!
+    @IBOutlet private weak var folderTitleTextField: NSTextField!
+    @IBOutlet private weak var folderShortcutRecordView: RecordView! {
         didSet {
             folderShortcutRecordView.delegate = self
         }
     }
-    @IBOutlet var textView: CPYPlaceHolderTextView! {
+    @IBOutlet private var textView: CPYPlaceHolderTextView! {
         didSet {
             textView.font = NSFont.systemFont(ofSize: 14)
             textView.isAutomaticQuoteSubstitutionEnabled = false
             textView.enabledTextCheckingTypes = 0
             textView.isRichText = false
+            textView.placeHolderText = L10n.pleaseFillInTheContentsOfTheSnippet
         }
     }
-    @IBOutlet weak var outlineView: NSOutlineView! {
+    @IBOutlet private weak var outlineView: NSOutlineView! {
         didSet {
             // Enable Drag and Drop
             outlineView.registerForDraggedTypes([NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)])
         }
     }
 
-    fileprivate var folders = [CPYFolder]()
-    fileprivate var selectedSnippet: CPYSnippet? {
+    private var folders = [CPYFolder]()
+    private var selectedSnippet: CPYSnippet? {
         guard let snippet = outlineView.item(atRow: outlineView.selectedRow) as? CPYSnippet else { return nil }
         return snippet
     }
-    fileprivate var selectedFolder: CPYFolder? {
+    private var selectedFolder: CPYFolder? {
         guard let item = outlineView.item(atRow: outlineView.selectedRow) else { return nil }
         if let folder = outlineView.parent(forItem: item) as? CPYFolder {
             return folder
@@ -84,7 +89,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
 
 // MARK: - IBActions
 extension CPYSnippetsEditorWindowController {
-    @IBAction func addSnippetButtonTapped(_ sender: AnyObject) {
+    @IBAction private func addSnippetButtonTapped(_ sender: AnyObject) {
         guard let folder = selectedFolder else {
             NSSound.beep()
             return
@@ -98,7 +103,7 @@ extension CPYSnippetsEditorWindowController {
         changeItemFocus()
     }
 
-    @IBAction func addFolderButtonTapped(_ sender: AnyObject) {
+    @IBAction private func addFolderButtonTapped(_ sender: AnyObject) {
         let folder = CPYFolder.create()
         folders.append(folder)
         folder.merge()
@@ -107,17 +112,17 @@ extension CPYSnippetsEditorWindowController {
         changeItemFocus()
     }
 
-    @IBAction func deleteButtonTapped(_ sender: AnyObject) {
+    @IBAction private func deleteButtonTapped(_ sender: AnyObject) {
         guard let item = outlineView.item(atRow: outlineView.selectedRow) else {
             NSSound.beep()
             return
         }
 
         let alert = NSAlert()
-        alert.messageText = LocalizedString.deleteItem.value
-        alert.informativeText = LocalizedString.confirmDeleteItem.value
-        alert.addButton(withTitle: LocalizedString.deleteItem.value)
-        alert.addButton(withTitle: LocalizedString.cancel.value)
+        alert.messageText = L10n.deleteItem
+        alert.informativeText = L10n.areYouSureWantToDeleteThisItem
+        alert.addButton(withTitle: L10n.deleteItem)
+        alert.addButton(withTitle: L10n.cancel)
         NSApp.activate(ignoringOtherApps: true)
         let result = alert.runModal()
         if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
@@ -134,7 +139,7 @@ extension CPYSnippetsEditorWindowController {
         changeItemFocus()
     }
 
-    @IBAction func changeStatusButtonTapped(_ sender: AnyObject) {
+    @IBAction private func changeStatusButtonTapped(_ sender: AnyObject) {
         guard let item = outlineView.item(atRow: outlineView.selectedRow) else {
             NSSound.beep()
             return
@@ -150,7 +155,7 @@ extension CPYSnippetsEditorWindowController {
         changeItemFocus()
     }
 
-    @IBAction func importSnippetButtonTapped(_ sender: AnyObject) {
+    @IBAction private func importSnippetButtonTapped(_ sender: AnyObject) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
@@ -204,7 +209,7 @@ extension CPYSnippetsEditorWindowController {
         }
     }
 
-    @IBAction func exportSnippetButtonTapped(_ sender: AnyObject) {
+    @IBAction private func exportSnippetButtonTapped(_ sender: AnyObject) {
         let xmlDocument = AEXMLDocument()
         let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
 
@@ -299,7 +304,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
         if let folder = item as? CPYFolder {
-            return (folder.snippets.count != 0)
+            return !folder.snippets.isEmpty
         }
         return false
     }
@@ -325,7 +330,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     // MARK: - Drag and Drop
     func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
         let pasteboardItem = NSPasteboardItem()
-        if let folder = item as? CPYFolder, let index = folders.index(of: folder) {
+        if let folder = item as? CPYFolder, let index = folders.firstIndex(of: folder) {
             let draggedData = CPYDraggedData(type: .folder, folderIdentifier: folder.identifier, snippetIdentifier: nil, index: index)
             let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
             pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
@@ -341,7 +346,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        let pasteboard = info.draggingPasteboard()
+        let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return NSDragOperation() }
         guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return NSDragOperation() }
 
@@ -356,14 +361,14 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     }
 
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-        let pasteboard = info.draggingPasteboard()
+        let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return false }
         guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return false }
 
         switch draggedData.type {
         case .folder where index != draggedData.index:
             guard index >= 0 else { return false }
-            guard let folder = folders.filter({ $0.identifier == draggedData.folderIdentifier }).first else { return false }
+            guard let folder = folders.first(where: { $0.identifier == draggedData.folderIdentifier }) else { return false }
             folders.insert(folder, at: index)
             let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
             folders.remove(at: removedIndex)
@@ -373,9 +378,9 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
             changeItemFocus()
             return true
         case .snippet:
-            guard let fromFolder = folders.filter({ $0.identifier == draggedData.folderIdentifier }).first else { return false }
+            guard let fromFolder = folders.first(where: { $0.identifier == draggedData.folderIdentifier }) else { return false }
             guard let toFolder = item as? CPYFolder else { return false }
-            guard let snippet = fromFolder.snippets.filter({ $0.identifier == draggedData.snippetIdentifier }).first else { return false }
+            guard let snippet = fromFolder.snippets.first(where: { $0.identifier == draggedData.snippetIdentifier }) else { return false }
 
             if fromFolder.identifier == toFolder.identifier {
                 guard index >= 0 else { return false }

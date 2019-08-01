@@ -1,13 +1,18 @@
 //
 //  PasteService.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/11/23.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/11/23.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Foundation
 import Cocoa
+import Sauce
 
 final class PasteService {
 
@@ -68,7 +73,7 @@ extension PasteService {
         if isPasteAndDeleteHistory {
             AppEnvironment.current.clipService.incrementChangeCount()
         }
-        // Paste hisotry
+        // Paste history
         if isPastePlainText {
             copyToPasteboard(with: data.stringValue)
             paste()
@@ -104,28 +109,32 @@ extension PasteService {
         let types = data.types
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
-            switch type {
-            case .deprecatedString:
+            let availableType = AvailableType.available(by: type)
+            if availableType == nil {
+                return;
+            }
+            switch availableType! {
+            case .string:
                 let pbString = data.stringValue
-                pasteboard.setString(pbString, forType: .deprecatedString)
-            case .deprecatedRTFD:
+                pasteboard.setString(pbString, forType: type)
+            case .rtfd:
                 guard let rtfData = data.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTFD)
-            case .deprecatedRTF:
+            case .rtf:
                 guard let rtfData = data.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTF)
-            case .deprecatedPDF:
+            case .pdf:
                 guard let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
                 pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
-            case .deprecatedFilenames:
+            case .filenames:
                 let fileNames = data.fileNames
                 pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
-            case .deprecatedURL:
+            case .url:
                 let url = data.URLs
                 pasteboard.setPropertyList(url, forType: .deprecatedURL)
-            case .deprecatedTIFF:
+            case .tiff:
                 guard let image = data.image, let imageData = image.tiffRepresentation else { return }
-                pasteboard.setData(imageData, forType: .deprecatedTIFF)
+                pasteboard.setData(imageData, forType: type)
             default: break
             }
         }
@@ -135,17 +144,23 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) { return }
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
+        // Check Accessibility Permission
+        guard AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) else {
+            AppEnvironment.current.accessibilityService.showAccessibilityAuthenticationAlert()
+            return
+        }
 
+        let vKeyCode = Sauce.shared.keyCode(by: .v)
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting
             source?.setLocalEventsFilterDuringSuppressionState([.permitLocalMouseEvents, .permitSystemDefinedEvents], state: .eventSuppressionStateSuppressionInterval)
             // Press Command + V
-            let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: true)
+            let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: vKeyCode, keyDown: true)
             keyVDown?.flags = .maskCommand
             // Release Command + V
-            let keyVUp = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(9), keyDown: false)
+            let keyVUp = CGEvent(keyboardEventSource: source, virtualKey: vKeyCode, keyDown: false)
             keyVUp?.flags = .maskCommand
             // Post Paste Command
             keyVDown?.post(tap: .cgAnnotatedSessionEventTap)

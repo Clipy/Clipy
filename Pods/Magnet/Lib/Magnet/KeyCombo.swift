@@ -9,7 +9,7 @@
 import Cocoa
 import Carbon
 
-public final class KeyCombo: NSObject, NSCopying, NSCoding {
+public final class KeyCombo: NSObject, NSCopying, NSCoding, Codable {
 
     // MARK: - Properties
     public let keyCode: Int

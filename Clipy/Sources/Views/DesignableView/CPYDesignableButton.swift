@@ -1,16 +1,20 @@
 //
 //  CPYDesignableButton.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/02/26.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/02/26.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
 
 class CPYDesignableButton: NSButton {
 
-    @IBInspectable var textColor: NSColor = NSColor.titleColor()
+    @IBInspectable var textColor: NSColor = ColorName.title.color
 
     // MARK: - Initialize
     override init(frame frameRect: NSRect) {

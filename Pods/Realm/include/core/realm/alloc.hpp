@@ -159,10 +159,10 @@ protected:
     /// the old chunk.
     ///
     /// \throw std::bad_alloc If insufficient memory was available.
-    virtual MemRef do_realloc(ref_type, const char* addr, size_t old_size, size_t new_size) = 0;
+    virtual MemRef do_realloc(ref_type, char* addr, size_t old_size, size_t new_size) = 0;
 
     /// Release the specified chunk of memory.
-    virtual void do_free(ref_type, const char* addr) noexcept = 0;
+    virtual void do_free(ref_type, char* addr) noexcept = 0;
 
     /// Map the specified \a ref to the corresponding memory
     /// address. Note that if is_read_only(ref) returns true, then the
@@ -183,6 +183,7 @@ protected:
     // that can make sync_if_needed() re-run queries even though it is not required.
     // It must be atomic because it's shared.
     std::atomic<uint_fast64_t> m_table_versioning_counter;
+    std::atomic<uint_fast64_t> m_latest_observed_counter;
 
     /// Bump the global version counter. This method should be called when
     /// version bumping is initiated. Then following calls to should_propagate_version()
@@ -194,13 +195,24 @@ protected:
     /// to control propagation of version updates on tables within the group.
     bool should_propagate_version(uint_fast64_t& local_version) noexcept;
 
+    /// Note the current global version has been observed.
+    void observe_version() noexcept;
+
     friend class Table;
     friend class Group;
 };
 
 inline void Allocator::bump_global_version() noexcept
 {
-    m_table_versioning_counter += 1;
+    if (m_latest_observed_counter == m_table_versioning_counter)
+        m_table_versioning_counter += 1;
+}
+
+
+inline void Allocator::observe_version() noexcept
+{
+    if (m_latest_observed_counter != m_table_versioning_counter)
+        m_latest_observed_counter.store(m_table_versioning_counter, std::memory_order_relaxed);
 }
 
 
@@ -326,7 +338,7 @@ inline MemRef Allocator::realloc_(ref_type ref, const char* addr, size_t old_siz
     if (ref == m_debug_watch)
         REALM_TERMINATE("Allocator watch: Ref was reallocated");
 #endif
-    return do_realloc(ref, addr, old_size, new_size);
+    return do_realloc(ref, const_cast<char*>(addr), old_size, new_size);
 }
 
 inline void Allocator::free_(ref_type ref, const char* addr) noexcept
@@ -335,7 +347,7 @@ inline void Allocator::free_(ref_type ref, const char* addr) noexcept
     if (ref == m_debug_watch)
         REALM_TERMINATE("Allocator watch: Ref was freed");
 #endif
-    return do_free(ref, addr);
+    return do_free(ref, const_cast<char*>(addr));
 }
 
 inline void Allocator::free_(MemRef mem) noexcept
@@ -358,6 +370,7 @@ inline bool Allocator::is_read_only(ref_type ref) const noexcept
 inline Allocator::Allocator() noexcept
 {
     m_table_versioning_counter = 0;
+    m_latest_observed_counter = 0;
 }
 
 inline Allocator::~Allocator() noexcept

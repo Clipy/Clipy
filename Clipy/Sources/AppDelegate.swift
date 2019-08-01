@@ -1,9 +1,13 @@
 //
 //  AppDelegate.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2015/06/21.
-//  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -16,9 +20,10 @@ import Magnet
 import Screeen
 import RxScreeen
 import RealmSwift
+import LetsMove
 
 @NSApplicationMain
-class AppDelegate: NSObject {
+class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
     let screenshotObserver = ScreenShotObserver()
@@ -31,8 +36,8 @@ class AppDelegate: NSObject {
         Realm.migration()
     }
 
-    // MARK: - Override Methods
-    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+    // MARK: - NSMenuItem Validation
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
             let realm = try! Realm()
             return !realm.objects(CPYClip.self).isEmpty
@@ -43,7 +48,7 @@ class AppDelegate: NSObject {
     // MARK: - Class Methods
     static func storeTypesDictinary() -> [String: NSNumber] {
         var storeTypes = [String: NSNumber]()
-        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
+        AvailableType.allCases.forEach { storeTypes[$0.rawValue] = NSNumber(value: true) }
         return storeTypes
     }
 
@@ -66,10 +71,10 @@ class AppDelegate: NSObject {
         let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = LocalizedString.clearHistory.value
-            alert.informativeText = LocalizedString.confirmClearHistory.value
-            alert.addButton(withTitle: LocalizedString.clearHistory.value)
-            alert.addButton(withTitle: LocalizedString.cancel.value)
+            alert.messageText = L10n.clearHistory
+            alert.informativeText = L10n.areYouSureYouWantToClearYourClipboardHistory
+            alert.addButton(withTitle: L10n.clearHistory)
+            alert.addButton(withTitle: L10n.cancel)
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -125,36 +130,36 @@ class AppDelegate: NSObject {
     }
 
     // MARK: - Login Item Methods
-    fileprivate func promptToAddLoginItems() {
+    private func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = LocalizedString.launchClipy.value
-        alert.informativeText = LocalizedString.launchSettingInfo.value
-        alert.addButton(withTitle: LocalizedString.launchOnStartup.value)
-        alert.addButton(withTitle: LocalizedString.dontLaunch.value)
+        alert.messageText = L10n.launchClipyOnSystemStartup
+        alert.informativeText = L10n.youCanChangeThisSettingInThePreferencesIfYouWant
+        alert.addButton(withTitle: L10n.launchOnSystemStartup)
+        alert.addButton(withTitle: L10n.donTLaunch)
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
         //  Launch on system startup
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
-            toggleLoginItemState()
+            AppEnvironment.current.defaults.synchronize()
+            reflectLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSControl.StateValue.on {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+            AppEnvironment.current.defaults.synchronize()
         }
-        AppEnvironment.current.defaults.synchronize()
     }
 
-    fileprivate func toggleAddingToLoginItems(_ enable: Bool) {
+    private func toggleAddingToLoginItems(_ isEnable: Bool) {
         let appPath = Bundle.main.bundlePath
         LoginServiceKit.removeLoginItems(at: appPath)
-        if enable {
-            LoginServiceKit.addLoginItems(at: appPath)
-        }
+        guard isEnable else { return }
+        LoginServiceKit.addLoginItems(at: appPath)
     }
 
-    fileprivate func toggleLoginItemState() {
+    private func reflectLoginItemState() {
         let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
@@ -170,6 +175,8 @@ extension AppDelegate: NSApplicationDelegate {
         CPYUtilities.registerUserDefaultKeys()
         // SDKs
         CPYUtilities.initSDKs()
+        // Check Accessibility Permission
+        AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
 
         // Show Login Item
         if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
@@ -195,23 +202,26 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.menuManager.setup()
     }
 
-    func applicationWillTerminate(_ aNotification: Notification) {
-        HotKeyCenter.shared.unregisterAll()
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        #if RELEASE
+            PFMoveToApplicationsFolderIfNecessary()
+        #endif
     }
+
 }
 
 // MARK: - Bind
-fileprivate extension AppDelegate {
-    fileprivate func bind() {
+private extension AppDelegate {
+    func bind() {
         // Login Item
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, options: [.new])
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
             .filterNil()
             .subscribe(onNext: { [weak self] _ in
-                self?.toggleLoginItemState()
+                self?.reflectLoginItemState()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot)
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
             .filterNil()
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled

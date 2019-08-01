@@ -63,6 +63,11 @@ inline MemRef BasicArray<T>::create_array(Array::Type type, bool context_flag, s
     REALM_ASSERT(!context_flag);
     MemRef mem = create_array(init_size, allocator);
     if (init_size) {
+        // GCC 7.x emits a false-positive strict aliasing warning for this code. Suppress it, since it
+        // clutters up the build output.  See <https://github.com/realm/realm-core/issues/2665> for details.
+        REALM_DIAG_PUSH();
+        REALM_DIAG(ignored "-Wstrict-aliasing");
+
         BasicArray<T> tmp(allocator);
         tmp.init_from_mem(mem);
         T* p = reinterpret_cast<T*>(tmp.m_data);
@@ -70,6 +75,8 @@ inline MemRef BasicArray<T>::create_array(Array::Type type, bool context_flag, s
         while (p < end) {
             *p++ = value;
         }
+
+        REALM_DIAG_POP();
     }
     return mem;
 }
@@ -409,7 +416,7 @@ inline size_t BasicArray<T>::calc_aligned_byte_size(size_t size)
     size_t max = std::numeric_limits<size_t>::max();
     size_t max_2 = max & ~size_t(7); // Allow for upwards 8-byte alignment
     if (size > (max_2 - header_size) / sizeof(T))
-        throw std::runtime_error("Byte size overflow");
+        throw util::overflow_error("Byte size overflow");
     size_t byte_size = header_size + size * sizeof(T);
     REALM_ASSERT_3(byte_size, >, 0);
     size_t aligned_byte_size = ((byte_size - 1) | 7) + 1; // 8-byte alignment

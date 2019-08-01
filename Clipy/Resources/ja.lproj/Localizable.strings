@@ -1,14 +1,18 @@
-/* 
-  Localizable.strings
-  Clipy
-
-  Created by 古林俊佑 on 2015/06/21.
-  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
-*/
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
 
 "Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?";
 
-"You can change this setting in the Preferences if you want." = "この設定はいつでも変更できます";
+"You can change this setting in the Preferences if you want" = "この設定はいつでも変更できます";
 
 "Launch on system startup" = "起動する";
 
@@ -20,9 +24,9 @@
 
 "Cancel" = "キャンセル";
 
-"Edit Snippets..." = "スニペットを編集...";
+"Edit Snippets" = "スニペットを編集...";
 
-"Preferences..." = "環境設定...";
+"Preferences" = "環境設定...";
 
 "Quit Clipy" = "Clipyを終了";
 
@@ -45,3 +49,11 @@
 "Are you sure want to delete this item?" = "本当に削除してもよろしいですか？";
 
 "Add" = "追加";
+
+"Please fill in the contents of the snippet" = "スニペットの内容を記入してください";
+
+"Please allow Accessibility" = "アクセシビリティを有効にしてください。";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "この動作を行うためにはシステム環境設定の\"セキュリティとプライバシー\"環境設定で、Clipyへのアクセシビリティのアクセスを許可してください。";
+
+"Open System Preferences" = "\"システム環境設定\"を開く";

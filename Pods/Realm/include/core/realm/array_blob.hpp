@@ -64,7 +64,6 @@ public:
     /// initialized to zero.
     static MemRef create_array(size_t init_size, Allocator&);
 
-    size_t blob_size() const noexcept;
 #ifdef REALM_DEBUG
     void verify() const;
     void to_dot(std::ostream&, StringData title = StringData()) const;

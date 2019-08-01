@@ -1,0 +1,15 @@
+strings:
+  inputs: Clipy/Resources/en.lproj/Localizable.strings
+  outputs:
+    templateName: structured-swift4
+    output: Clipy/Generated/LocalizedStrings.swift
+xcassets:
+  inputs: Clipy/Resources/Images.xcassets
+  outputs:
+    templateName: swift4
+    output: Clipy/Generated/AssetsImages.swift
+colors:
+  inputs: Clipy/Resources/colors.txt
+  outputs:
+    templateName: swift4
+    output: Clipy/Generated/Colors.swift

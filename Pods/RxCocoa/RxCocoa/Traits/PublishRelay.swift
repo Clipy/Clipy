@@ -6,9 +6,7 @@
 //  Copyright © 2017 Krunoslav Zaher. All rights reserved.
 //
 
-#if !RX_NO_MODULE
-    import RxSwift
-#endif
+import RxSwift
 
 /// PublishRelay is a wrapper for `PublishSubject`.
 ///
@@ -23,7 +21,7 @@ public final class PublishRelay<Element>: ObservableType {
         _subject.onNext(event)
     }
     
-    /// Initializes variable with initial value.
+    /// Initializes with internal empty subject.
     public init() {
         _subject = PublishSubject()
     }

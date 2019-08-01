@@ -26,7 +26,6 @@
 #include "results.hpp"
 #include "schema.hpp"
 #include "shared_realm.hpp"
-#include "util/format.hpp"
 
 #include <realm/link_view.hpp>
 
@@ -275,30 +274,8 @@ void List::move(size_t source_ndx, size_t dest_ndx)
 
     if (m_link_view)
         m_link_view->move(source_ndx, dest_ndx);
-    else {
-#if (REALM_VERSION_MAJOR >= 4)
-        // Core 4.0 and up has Table::move_row for use on subtables
+    else
         m_table->move_row(source_ndx, dest_ndx);
-#else
-	// Older versions of Core requires emulation using swap_rows().
-
-        // If to and from are next to each other we can just swap instead
-        if (source_ndx == dest_ndx + 1 || dest_ndx == source_ndx + 1) {
-            m_table->swap_rows(source_ndx, dest_ndx);
-            return;
-        }
-
-        // Adjust the row indexes to compensate for the temporary row used
-        if (source_ndx > dest_ndx)
-            ++source_ndx;
-        else
-            ++dest_ndx;
-
-        m_table->insert_empty_row(dest_ndx);
-        m_table->swap_rows(source_ndx, dest_ndx);
-        m_table->remove(source_ndx);
-#endif
-    }
 }
 
 void List::remove(size_t row_ndx)
@@ -439,6 +416,14 @@ bool List::operator==(List const& rgt) const noexcept
 NotificationToken List::add_notification_callback(CollectionChangeCallback cb) &
 {
     verify_attached();
+    // Adding a new callback to a notifier which had all of its callbacks
+    // removed does not properly reinitialize the notifier. Work around this by
+    // recreating it instead.
+    // FIXME: The notifier lifecycle here is dumb (when all callbacks are removed
+    // from a notifier a zombie is left sitting around uselessly) and should be
+    // cleaned up.
+    if (m_notifier && !m_notifier->have_callbacks())
+        m_notifier.reset();
     if (!m_notifier) {
         if (get_type() == PropertyType::Object)
             m_notifier = std::static_pointer_cast<_impl::CollectionNotifier>(std::make_shared<ListNotifier>(m_link_view, m_realm));

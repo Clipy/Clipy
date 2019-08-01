@@ -9,15 +9,37 @@ platform :mac do
   before_all do
   end
 
+  ######################## SETUP LANES ########################
+
+  desc "Setup development"
+  lane :setup do
+  end
+
+  desc "Setup release developer id account settings. (only use admin)"
+  lane :setup_release_id do
+    # Update Project Team
+    update_project_team(
+      path: "Clipy.xcodeproj",
+      teamid: "BBCHAJ584H"
+    )
+    # Update Provisioning Profile
+    update_provisioning_profile_specifier(
+      xcodeproj: "Clipy.xcodeproj",
+      new_specifier: "ClipyDistribution",
+      configuration: "Release",
+      target: "^Clipy$"
+    )
+  end
+
   ####################### PUBLIC LANES ########################
 
   desc "Runs all the tests"
   lane :test do
     slack(message: "Start Testing")
-    scan
+    scan_clipy
     slack(message: "Passed All Tests")
   end
-
+  
   desc "Release"
   lane :release do
     # Check Xcode Version
@@ -36,6 +58,16 @@ platform :mac do
   end
 
   ####################### PRIVATE LANES ########################
+
+  private_lane :scan_clipy do
+    scan(
+      workspace: "Clipy.xcworkspace",
+      scheme: "Clipy",
+      skip_build: true,
+      verbose: true,
+      clean: true
+    )
+  end
 
   ############################ POST ############################
 

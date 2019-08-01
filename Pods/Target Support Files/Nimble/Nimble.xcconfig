@@ -1,13 +1,13 @@
+APPLICATION_EXTENSION_API_ONLY = YES
 CODE_SIGN_IDENTITY =
-CONFIGURATION_BUILD_DIR = $PODS_CONFIGURATION_BUILD_DIR/Nimble
+CONFIGURATION_BUILD_DIR = ${PODS_CONFIGURATION_BUILD_DIR}/Nimble
 ENABLE_BITCODE = NO
 FRAMEWORK_SEARCH_PATHS = $(inherited) "$(PLATFORM_DIR)/Developer/Library/Frameworks"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/BartyCrouch" "${PODS_ROOT}/Headers/Public/Crashlytics" "${PODS_ROOT}/Headers/Public/Fabric" "${PODS_ROOT}/Headers/Public/Sparkle" "${PODS_ROOT}/Headers/Public/SwiftLint"
-OTHER_LDFLAGS = -weak-lswiftXCTest -weak_framework "XCTest"
-OTHER_SWIFT_FLAGS = $(inherited) -suppress-warnings $(inherited) "-D" "COCOAPODS"
-PODS_BUILD_DIR = $BUILD_DIR
-PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
+OTHER_LDFLAGS = $(inherited) -Xlinker -no_application_extension -weak-lswiftXCTest -weak_framework "XCTest"
+OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS $(inherited) -suppress-warnings
+PODS_BUILD_DIR = ${BUILD_DIR}
+PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_ROOT = ${SRCROOT}
 PODS_TARGET_SRCROOT = ${PODS_ROOT}/Nimble
 PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.${PRODUCT_NAME:rfc1034identifier}

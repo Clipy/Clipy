@@ -44,6 +44,10 @@ CollectionNotifier::get_modification_checker(TransactionChangeInfo const& info,
     if (!any_of(begin(m_related_tables), end(m_related_tables), table_modified)) {
         return [](size_t) { return false; };
     }
+    if (m_related_tables.size() == 1) {
+        auto& modifications = info.tables[m_related_tables[0].table_ndx].modifications;
+        return [&](size_t row) { return modifications.contains(row); };
+    }
 
     return DeepChangeChecker(info, root_table, m_related_tables);
 }

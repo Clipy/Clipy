@@ -22,7 +22,6 @@
 #include "collection_notifications.hpp"
 #include "impl/collection_notifier.hpp"
 #include "property.hpp"
-#include "util/compiler.hpp"
 
 #include <realm/link_view_fwd.hpp>
 #include <realm/row.hpp>

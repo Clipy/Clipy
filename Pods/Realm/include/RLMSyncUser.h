@@ -18,6 +18,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "RLMRealmConfiguration.h"
 #import "RLMResults.h"
 #import "RLMSyncCredentials.h"
 #import "RLMSyncPermission.h"
@@ -96,6 +97,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, readonly) NSString *identity;
 
 /**
+ The user's refresh token used to access the Realm Object Server.
+
+ This is required to make HTTP requests to Realm Object Server's REST API
+ for functionality not exposed natively. It should be treated as sensitive data.
+ */
+@property (nullable, nonatomic, readonly) NSString *refreshToken;
+
+/**
  The URL of the authentication server this user will communicate with.
  */
 @property (nullable, nonatomic, readonly) NSURL *authenticationServer;
@@ -144,6 +153,64 @@ NS_ASSUME_NONNULL_BEGIN
                authServerURL:(NSURL *)authServerURL
                 onCompletion:(RLMUserCompletionBlock)completion
 NS_SWIFT_UNAVAILABLE("Use the full version of this API.");
+
+
+/**
+ Returns the default configuration for the user. The default configuration
+ points to the default query-based Realm on the server the user authenticated against.
+ */
+- (RLMRealmConfiguration *)configuration NS_REFINED_FOR_SWIFT;
+
+/**
+ Create a query-based configuration instance for the given url.
+
+ @param url The unresolved absolute URL to the Realm on the Realm Object Server,
+            e.g. "realm://example.org/~/path/to/realm". "Unresolved" means the
+            path should contain the wildcard marker `~`, which will automatically
+            be filled in with the user identity by the Realm Object Server.
+ @return A default configuration object with the sync configuration set to use the given URL.
+ */
+- (RLMRealmConfiguration *)configurationWithURL:(nullable NSURL *)url NS_REFINED_FOR_SWIFT;
+
+/**
+ Create a configuration instance for the given url.
+
+ @param url The unresolved absolute URL to the Realm on the Realm Object Server,
+            e.g. "realm://example.org/~/path/to/realm". "Unresolved" means the
+            path should contain the wildcard marker `~`, which will automatically
+            be filled in with the user identity by the Realm Object Server.
+ @param fullSynchronization If YES, all objects in the server Realm are
+                            automatically synchronized, and the query subscription
+                            methods cannot be used.
+ @return A default configuration object with the sync configuration set to use
+         the given URL and options.
+ */
+- (RLMRealmConfiguration *)configurationWithURL:(nullable NSURL *)url
+                            fullSynchronization:(bool)fullSynchronization NS_REFINED_FOR_SWIFT;
+
+/**
+ Create a configuration instance for the given url.
+
+ @param url The unresolved absolute URL to the Realm on the Realm Object Server,
+            e.g. "realm://example.org/~/path/to/realm". "Unresolved" means the
+            path should contain the wildcard marker `~`, which will automatically
+            be filled in with the user identity by the Realm Object Server.
+ @param fullSynchronization If YES, all objects in the server Realm are
+                            automatically synchronized, and the query subscription
+                            methods cannot be used.
+ @param enableSSLValidation If NO, invalid SSL certificates for the server will
+                            not be rejected. THIS SHOULD NEVER BE USED IN
+                            PRODUCTION AND EXISTS ONLY FOR TESTING PURPOSES.
+ @param urlPrefix A prefix which is prepending to URLs constructed for
+                  the server. This should normally be `nil`, and customized only
+                  to match corresponding settings on the server.
+ @return A default configuration object with the sync configuration set to use
+         the given URL and options.
+ */
+- (RLMRealmConfiguration *)configurationWithURL:(nullable NSURL *)url
+                            fullSynchronization:(bool)fullSynchronization
+                            enableSSLValidation:(bool)enableSSLValidation
+                                      urlPrefix:(nullable NSString *)urlPrefix NS_REFINED_FOR_SWIFT;
 
 /**
  Log a user out, destroying their server state, unregistering them from the SDK,
@@ -218,6 +285,88 @@ NS_SWIFT_UNAVAILABLE("Use the full version of this API.");
                     by `NSURLSession`.
  */
 - (void)changePassword:(NSString *)newPassword forUserID:(NSString *)userID completion:(RLMPasswordChangeStatusBlock)completion;
+
+/**
+ Ask the server to send a password reset email to the given email address.
+
+ If `email` is an email address which is associated with a user account that was
+ registered using the "password" authentication service, the server will send an
+ email to that address with a password reset token. No error is reported if the
+ email address is invalid or not associated with an account.
+
+ @param serverURL  The authentication server URL for the user.
+ @param email      The email address to send the email to.
+ @param completion A block which will be called when the request completes or
+                   fails. The callback will be invoked on a background queue
+                   provided by `NSURLSession`, and not on the calling queue.
+ */
++ (void)requestPasswordResetForAuthServer:(NSURL *)serverURL
+                                userEmail:(NSString *)email
+                               completion:(RLMPasswordChangeStatusBlock)completion;
+
+/**
+ Change a user's password using a one-time password reset token.
+
+ By default, the password reset email sent by ROS will link to a web site where
+ the user can select a new password, and the app will not need to call this
+ method. If you wish to instead handle this within your native app, you must
+ change the `baseURL` in the server configuration for `PasswordAuthProvider` to
+ a scheme registered for your app, extract the token from the URL, and call this
+ method after prompting the user for a new password.
+
+ @warning Changing a user's password using an authentication server that doesn't
+          use HTTPS is a major security flaw, and should only be done while
+          testing.
+
+ @param serverURL   The authentication server URL for the user.
+ @param token       The one-time use token from the URL.
+ @param newPassword The user's new password.
+ @param completion  A block which will be called when the request completes or
+                    fails. The callback will be invoked on a background queue
+                    provided by `NSURLSession`, and not on the calling queue.
+ */
++ (void)completePasswordResetForAuthServer:(NSURL *)serverURL
+                                     token:(NSString *)token
+                                  password:(NSString *)newPassword
+                                completion:(RLMPasswordChangeStatusBlock)completion;
+
+/**
+ Ask the server to send a confirmation email to the given email address.
+
+ If `email` is an email address which is associated with a user account that was
+ registered using the "password" authentication service, the server will send an
+ email to that address with a confirmation token. No error is reported if the
+ email address is invalid or not associated with an account.
+
+ @param serverURL  The authentication server URL for the user.
+ @param email      The email address to send the email to.
+ @param completion A block which will be called when the request completes or
+                   fails. The callback will be invoked on a background queue
+                   provided by `NSURLSession`, and not on the calling queue.
+ */
++ (void)requestEmailConfirmationForAuthServer:(NSURL *)serverURL
+                                    userEmail:(NSString *)email
+                                   completion:(RLMPasswordChangeStatusBlock)completion;
+
+/**
+ Confirm a user's email using a one-time confirmation token.
+
+ By default, the confirmation email sent by ROS will link to a web site with
+ a generic "thank you for confirming your email" message, and the app will not
+ need to call this method. If you wish to instead handle this within your native
+ app, you must change the `baseURL` in the server configuration for
+ `PasswordAuthProvider` to a scheme registered for your app, extract the token
+ from the URL, and call this method.
+
+ @param serverURL   The authentication server URL for the user.
+ @param token       The one-time use token from the URL.
+ @param completion  A block which will be called when the request completes or
+                    fails. The callback will be invoked on a background queue
+                    provided by `NSURLSession`, and not on the calling queue.
+ */
++ (void)confirmEmailForAuthServer:(NSURL *)serverURL
+                            token:(NSString *)token
+                       completion:(RLMPasswordChangeStatusBlock)completion;
 
 #pragma mark - Administrator
 

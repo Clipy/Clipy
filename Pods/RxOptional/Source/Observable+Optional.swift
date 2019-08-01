@@ -11,7 +11,7 @@ public extension ObservableType where E: OptionalType {
      - returns: `Observable` of source `Observable`'s elements, with `nil` elements filtered out.
      */
     
-    public func filterNil() -> Observable<E.Wrapped> {
+    func filterNil() -> Observable<E.Wrapped> {
         return self.flatMap { element -> Observable<E.Wrapped> in
             guard let value = element.value else {
                 return Observable<E.Wrapped>.empty()
@@ -28,7 +28,7 @@ public extension ObservableType where E: OptionalType {
     - returns: `Observable` of source `Observable`'s elements, with `nil` elements filtered out.
     */
 
-    public func filterNilKeepOptional() -> Observable<E> {
+    func filterNilKeepOptional() -> Observable<E> {
         return self.filter { element -> Bool in
             return element.value != nil
         }
@@ -44,7 +44,7 @@ public extension ObservableType where E: OptionalType {
      - returns: original source `Observable` of non-empty elements if it contains no empty elements.
      */
     
-    public func errorOnNil(_ error: Error = RxOptionalError.foundNilWhileUnwrappingOptional(E.self)) -> Observable<E.Wrapped> {
+    func errorOnNil(_ error: Error = RxOptionalError.foundNilWhileUnwrappingOptional(E.self)) -> Observable<E.Wrapped> {
         return self.map { element -> E.Wrapped in
             guard let value = element.value else {
                 throw error
@@ -61,7 +61,7 @@ public extension ObservableType where E: OptionalType {
      - returns: `Observable` of the source `Observable`'s unwrapped elements, with `nil` elements replaced by `valueOnNil`.
      */
     
-    public func replaceNilWith(_ valueOnNil: E.Wrapped) -> Observable<E.Wrapped> {
+    func replaceNilWith(_ valueOnNil: E.Wrapped) -> Observable<E.Wrapped> {
         return self.map { element -> E.Wrapped in
             guard let value = element.value else {
                 return valueOnNil
@@ -78,7 +78,7 @@ public extension ObservableType where E: OptionalType {
      - returns: `Observable` of the source `Observable`'s unwrapped elements, with `nil` elements replaced by the handler's returned non-`nil` elements.
      */
     
-    public func catchOnNil(_ handler: @escaping () throws -> Observable<E.Wrapped>) -> Observable<E.Wrapped> {
+    func catchOnNil(_ handler: @escaping () throws -> Observable<E.Wrapped>) -> Observable<E.Wrapped> {
         return self.flatMap { element -> Observable<E.Wrapped> in
             guard let value = element.value else {
                 return try handler()
@@ -88,6 +88,7 @@ public extension ObservableType where E: OptionalType {
     }
 }
 
+#if !swift(>=3.3) || (swift(>=4.0) && !swift(>=4.1))
 public extension ObservableType where E: OptionalType, E.Wrapped: Equatable {
     /**
      Returns an observable sequence that contains only distinct contiguous elements according to equality operator.
@@ -103,3 +104,4 @@ public extension ObservableType where E: OptionalType, E.Wrapped: Equatable {
         }
     }
 }
+#endif

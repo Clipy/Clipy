@@ -23,15 +23,16 @@ public final class HotKeyCenter {
     // MARK: - Initialize
     init() {
         installEventHandler()
+        observeApplicationTerminate()
     }
 
 }
 
 // MARK: - Register & Unregister
 public extension HotKeyCenter {
-    public func register(with hotKey: HotKey) -> Bool {
-        if HotKeyCenter.shared.hotKey(hotKey.identifier) != nil { return false }
-        if hotKeys.values.contains(hotKey) { unregister(with: hotKey) }
+    func register(with hotKey: HotKey) -> Bool {
+        guard !hotKeys.keys.contains(hotKey.identifier) else { return false }
+        guard !hotKeys.values.contains(hotKey) else { return false }
 
         if !hotKey.keyCombo.doubledModifiers {
             // Normal HotKey
@@ -58,8 +59,8 @@ public extension HotKeyCenter {
         return true
     }
     
-    public func unregister(with hotKey: HotKey) {
-        if !hotKeys.values.contains(hotKey) { return }
+    func unregister(with hotKey: HotKey) {
+        guard hotKeys.values.contains(hotKey) else { return }
 
         if !hotKey.keyCombo.doubledModifiers {
             // Notmal HotKey
@@ -78,20 +79,27 @@ public extension HotKeyCenter {
             .forEach { hotKeyMap.removeValue(forKey: $0) }
     }
 
-    public func unregisterHotKey(with identifier: String) {
+    func unregisterHotKey(with identifier: String) {
         guard let hotKey = hotKeys[identifier] else { return }
         unregister(with: hotKey)
     }
 
-    public func unregisterAll() {
+    func unregisterAll() {
         hotKeys.forEach { unregister(with: $1) }
     }
 }
 
-// MARK: - HotKeys
-public extension HotKeyCenter {
-    public func hotKey(_ identifier: String) -> HotKey? {
-        return hotKeys[identifier]
+// MARK: - Terminate
+extension HotKeyCenter {
+    private func observeApplicationTerminate() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(HotKeyCenter.applicationWillTerminate),
+                                               name: NSApplication.willTerminateNotification,
+                                               object: nil)
+    }
+
+    @objc func applicationWillTerminate() {
+        unregisterAll()
     }
 }
 
@@ -166,15 +174,15 @@ private extension HotKeyCenter {
         let altTapped = flags.contains(.maskAlternate)
 
         // Only one modifier key
-        let totalHash = commandTapped.hashValue + altTapped.hashValue + shiftTapped.hashValue + controlTapped.hashValue
-        if totalHash == 0 { return Unmanaged.passRetained(event) }
+        let totalHash = commandTapped.intValue + altTapped.intValue + shiftTapped.intValue + controlTapped.intValue
+        if totalHash == 0 { return Unmanaged.passUnretained(event) }
         if totalHash > 1 {
             multiModifiers = true
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
         if multiModifiers {
             multiModifiers = false
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
 
         if (tappedModifierKey.contains(.command) && commandTapped) ||
@@ -200,23 +208,16 @@ private extension HotKeyCenter {
         // Clean Flag
         let delay = 0.3 * Double(NSEC_PER_SEC)
         let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
-        DispatchQueue.main.asyncAfter(deadline: time, execute: { [unowned self] in
-            self.tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
+        DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
+            self?.tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
         })
 
-        return Unmanaged.passRetained(event)
+        return Unmanaged.passUnretained(event)
     }
 
     func doubleTapped(with key: Int) {
-        hotKeys.map { $0.1 }
+        hotKeys.values
             .filter { $0.keyCombo.doubledModifiers && $0.keyCombo.modifiers == key }
             .forEach { $0.invoke() }
-    }
-}
-
-// MARK: - CGEventFlags
-private extension CGEventFlags {
-    func contains(_ flags: CGEventFlags) -> Bool {
-        return rawValue & flags.rawValue == flags.rawValue
     }
 }

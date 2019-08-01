@@ -1,9 +1,13 @@
 //
 //  CPYPreferencesWindowController.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2016/02/25.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/02/25.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Cocoa
@@ -11,40 +15,40 @@ import Cocoa
 final class CPYPreferencesWindowController: NSWindowController {
 
     // MARK: - Properties
-    static let sharedController = CPYPreferencesWindowController(windowNibName: NSNib.Name(rawValue: "CPYPreferencesWindowController"))
-    @IBOutlet weak var toolBar: NSView!
+    static let sharedController = CPYPreferencesWindowController(windowNibName: "CPYPreferencesWindowController")
+    @IBOutlet private weak var toolBar: NSView!
     // ImageViews
-    @IBOutlet weak var generalImageView: NSImageView!
-    @IBOutlet weak var menuImageView: NSImageView!
-    @IBOutlet weak var typeImageView: NSImageView!
-    @IBOutlet weak var excludeImageView: NSImageView!
-    @IBOutlet weak var shortcutsImageView: NSImageView!
-    @IBOutlet weak var updatesImageView: NSImageView!
-    @IBOutlet weak var betaImageView: NSImageView!
+    @IBOutlet private weak var generalImageView: NSImageView!
+    @IBOutlet private weak var menuImageView: NSImageView!
+    @IBOutlet private weak var typeImageView: NSImageView!
+    @IBOutlet private weak var excludeImageView: NSImageView!
+    @IBOutlet private weak var shortcutsImageView: NSImageView!
+    @IBOutlet private weak var updatesImageView: NSImageView!
+    @IBOutlet private weak var betaImageView: NSImageView!
     // Labels
-    @IBOutlet weak var generalTextField: NSTextField!
-    @IBOutlet weak var menuTextField: NSTextField!
-    @IBOutlet weak var typeTextField: NSTextField!
-    @IBOutlet weak var excludeTextField: NSTextField!
-    @IBOutlet weak var shortcutsTextField: NSTextField!
-    @IBOutlet weak var updatesTextField: NSTextField!
-    @IBOutlet weak var betaTextField: NSTextField!
+    @IBOutlet private weak var generalTextField: NSTextField!
+    @IBOutlet private weak var menuTextField: NSTextField!
+    @IBOutlet private weak var typeTextField: NSTextField!
+    @IBOutlet private weak var excludeTextField: NSTextField!
+    @IBOutlet private weak var shortcutsTextField: NSTextField!
+    @IBOutlet private weak var updatesTextField: NSTextField!
+    @IBOutlet private weak var betaTextField: NSTextField!
     // Buttons
-    @IBOutlet weak var generalButton: NSButton!
-    @IBOutlet weak var menuButton: NSButton!
-    @IBOutlet weak var typeButton: NSButton!
-    @IBOutlet weak var excludeButton: NSButton!
-    @IBOutlet weak var shortcutsButton: NSButton!
-    @IBOutlet weak var updatesButton: NSButton!
-    @IBOutlet weak var betaButton: NSButton!
+    @IBOutlet private weak var generalButton: NSButton!
+    @IBOutlet private weak var menuButton: NSButton!
+    @IBOutlet private weak var typeButton: NSButton!
+    @IBOutlet private weak var excludeButton: NSButton!
+    @IBOutlet private weak var shortcutsButton: NSButton!
+    @IBOutlet private weak var updatesButton: NSButton!
+    @IBOutlet private weak var betaButton: NSButton!
     // ViewController
-    fileprivate let viewController = [NSViewController(nibName: NSNib.Name(rawValue: "CPYGeneralPreferenceViewController"), bundle: nil),
-                                  NSViewController(nibName: NSNib.Name(rawValue: "CPYMenuPreferenceViewController"), bundle: nil),
-                                  CPYTypePreferenceViewController(nibName: NSNib.Name(rawValue: "CPYTypePreferenceViewController"), bundle: nil),
-                                  CPYExcludeAppPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYExcludeAppPreferenceViewController"), bundle: nil),
-                                  CPYShortcutsPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYShortcutsPreferenceViewController"), bundle: nil),
-                                  CPYUpdatesPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYUpdatesPreferenceViewController"), bundle: nil),
-                                  CPYBetaPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYBetaPreferenceViewController"), bundle: nil)]
+    fileprivate let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil),
+                                  NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil),
+                                  CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil),
+                                  CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil),
+                                  CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil),
+                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil),
+                                  CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)]
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
@@ -72,7 +76,7 @@ final class CPYPreferencesWindowController: NSWindowController {
 
 // MARK: - IBActions
 extension CPYPreferencesWindowController {
-    @IBAction func toolBarItemTapped(_ sender: NSButton) {
+    @IBAction private func toolBarItemTapped(_ sender: NSButton) {
         selectedTab(sender.tag)
         switchView(sender.tag)
     }
@@ -95,21 +99,21 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 // MARK: - Layout
 fileprivate extension CPYPreferencesWindowController {
     private func resetImages() {
-        generalImageView.image      = NSImage(assetIdentifier: .generalOff)
-        menuImageView.image         = NSImage(assetIdentifier: .menuOff)
-        typeImageView.image         = NSImage(assetIdentifier: .typeOff)
-        excludeImageView.image      = NSImage(assetIdentifier: .excludedOff)
-        shortcutsImageView.image    = NSImage(assetIdentifier: .shortcutsOff)
-        updatesImageView.image      = NSImage(assetIdentifier: .updatesOff)
-        betaImageView.image         = NSImage(assetIdentifier: .betaOff)
+        generalImageView.image = Asset.prefGeneral.image
+        menuImageView.image = Asset.prefMenu.image
+        typeImageView.image = Asset.prefType.image
+        excludeImageView.image = Asset.prefExcluded.image
+        shortcutsImageView.image = Asset.prefShortcut.image
+        updatesImageView.image = Asset.prefUpdate.image
+        betaImageView.image = Asset.prefBeta.image
 
-        generalTextField.textColor      = NSColor.tabTitleColor()
-        menuTextField.textColor         = NSColor.tabTitleColor()
-        typeTextField.textColor         = NSColor.tabTitleColor()
-        excludeTextField.textColor      = NSColor.tabTitleColor()
-        shortcutsTextField.textColor    = NSColor.tabTitleColor()
-        updatesTextField.textColor      = NSColor.tabTitleColor()
-        betaTextField.textColor         = NSColor.tabTitleColor()
+        generalTextField.textColor = ColorName.tabTitle.color
+        menuTextField.textColor = ColorName.tabTitle.color
+        typeTextField.textColor = ColorName.tabTitle.color
+        excludeTextField.textColor = ColorName.tabTitle.color
+        shortcutsTextField.textColor = ColorName.tabTitle.color
+        updatesTextField.textColor = ColorName.tabTitle.color
+        betaTextField.textColor = ColorName.tabTitle.color
     }
 
     func selectedTab(_ index: Int) {
@@ -117,31 +121,31 @@ fileprivate extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalImageView.image = NSImage(assetIdentifier: .generalOn)
-            generalTextField.textColor = NSColor.clipyColor()
+            generalImageView.image = Asset.prefGeneralOn.image
+            generalTextField.textColor = ColorName.clipy.color
         case 1:
-            menuImageView.image = NSImage(assetIdentifier: .menuOn)
-            menuTextField.textColor = NSColor.clipyColor()
+            menuImageView.image = Asset.prefMenuOn.image
+            menuTextField.textColor = ColorName.clipy.color
         case 2:
-            typeImageView.image = NSImage(assetIdentifier: .typeOn)
-            typeTextField.textColor = NSColor.clipyColor()
+            typeImageView.image = Asset.prefTypeOn.image
+            typeTextField.textColor = ColorName.clipy.color
         case 3:
-            excludeImageView.image = NSImage(assetIdentifier: .excludedOn)
-            excludeTextField.textColor = NSColor.clipyColor()
+            excludeImageView.image = Asset.prefExcludedOn.image
+            excludeTextField.textColor = ColorName.clipy.color
         case 4:
-            shortcutsImageView.image = NSImage(assetIdentifier: .shortcutsOn)
-            shortcutsTextField.textColor = NSColor.clipyColor()
+            shortcutsImageView.image = Asset.prefShortcutOn.image
+            shortcutsTextField.textColor = ColorName.clipy.color
         case 5:
-            updatesImageView.image = NSImage(assetIdentifier: .updatesOn)
-            updatesTextField.textColor = NSColor.clipyColor()
+            updatesImageView.image = Asset.prefUpdateOn.image
+            updatesTextField.textColor = ColorName.clipy.color
         case 6:
-            betaImageView.image = NSImage(assetIdentifier: .betaOn)
-            betaTextField.textColor = NSColor.clipyColor()
+            betaImageView.image = Asset.prefBetaOn.image
+            betaTextField.textColor = ColorName.clipy.color
         default: break
         }
     }
 
-    fileprivate func switchView(_ index: Int) {
+    func switchView(_ index: Int) {
         let newView = viewController[index].view
         // Remove current views without toolbar
         window?.contentView?.subviews.forEach { view in
@@ -153,7 +157,7 @@ fileprivate extension CPYPreferencesWindowController {
         let frame = window!.frame
         var newFrame = window!.frameRect(forContentRect: newView.frame)
         newFrame.origin = frame.origin
-        newFrame.origin.y +=  frame.height - newFrame.height - toolBar.frame.height
+        newFrame.origin.y += frame.height - newFrame.height - toolBar.frame.height
         newFrame.size.height += toolBar.frame.height
         window?.setFrame(newFrame, display: true)
         window?.contentView?.addSubview(newView)

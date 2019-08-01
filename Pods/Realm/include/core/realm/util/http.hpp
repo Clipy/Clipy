@@ -28,6 +28,7 @@
 
 #include <realm/util/optional.hpp>
 #include <realm/util/network.hpp>
+#include <realm/util/logger.hpp>
 #include <realm/string_data.hpp>
 
 namespace realm {
@@ -38,6 +39,7 @@ enum class HTTPParserError {
     HeaderLineTooLong,
     MalformedResponse,
     MalformedRequest,
+    BadRequest,
 };
 std::error_code make_error_code(HTTPParserError);
 } // namespace util
@@ -116,6 +118,8 @@ enum class HTTPStatus {
     NetworkAuthenticationRequired = 511,
 };
 
+bool valid_http_status_code(unsigned int code);
+
 /// See: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
 enum class HTTPMethod {
     Options,
@@ -183,6 +187,8 @@ std::ostream& operator<<(std::ostream&, HTTPMethod);
 std::ostream& operator<<(std::ostream&, HTTPStatus);
 
 struct HTTPParserBase {
+    util::Logger& logger;
+
     // FIXME: Generally useful?
     struct CallocDeleter {
         void operator()(void* ptr)
@@ -191,7 +197,8 @@ struct HTTPParserBase {
         }
     };
 
-    HTTPParserBase()
+    HTTPParserBase(util::Logger& logger_2):
+        logger {logger_2}
     {
         // Allocating read buffer with calloc to avoid accidentally spilling
         // data from other sessions in case of a buffer overflow exploit.
@@ -231,7 +238,7 @@ struct HTTPParserBase {
     /// value is true, out_status and out_reason have been assigned the
     /// appropriate values found in the response line.
     static bool parse_first_line_of_response(StringData line, HTTPStatus& out_status,
-                                             StringData& out_reason);
+                                             StringData& out_reason, util::Logger& logger);
 
     void set_write_buffer(const HTTPRequest&);
     void set_write_buffer(const HTTPResponse&);
@@ -239,7 +246,9 @@ struct HTTPParserBase {
 
 template<class Socket>
 struct HTTPParser: protected HTTPParserBase {
-    explicit HTTPParser(Socket& socket) : m_socket(socket)
+    explicit HTTPParser(Socket& socket, util::Logger& logger):
+        HTTPParserBase(logger),
+        m_socket(socket)
     {}
 
     void read_first_line()
@@ -277,7 +286,11 @@ struct HTTPParser: protected HTTPParserBase {
                 read_body();
                 return;
             }
-            parse_header_line(n);
+            if (!parse_header_line(n)) {
+                on_complete(HTTPParserError::BadRequest);
+                return;
+            }
+
             // FIXME: Limit the total size of headers. Apache uses 8K.
             read_headers();
         };
@@ -326,7 +339,7 @@ template<class Socket>
 struct HTTPClient: protected HTTPParser<Socket> {
     using Handler = void(HTTPResponse, std::error_code);
 
-    explicit HTTPClient(Socket& socket) : HTTPParser<Socket>(socket) {}
+    explicit HTTPClient(Socket& socket, util::Logger& logger) : HTTPParser<Socket>(socket, logger) {}
 
     /// Serialize and send \a request over the connected socket asynchronously.
     ///
@@ -347,7 +360,7 @@ struct HTTPClient: protected HTTPParser<Socket> {
     void async_request(const HTTPRequest& request, std::function<Handler> handler)
     {
         if (REALM_UNLIKELY(m_handler)) {
-            throw std::runtime_error("Request already in progress.");
+            throw util::runtime_error("Request already in progress.");
         }
         this->set_write_buffer(request);
         m_handler = std::move(handler);
@@ -372,7 +385,7 @@ private:
     {
         HTTPStatus status;
         StringData reason;
-        if (this->parse_first_line_of_response(line, status, reason)) {
+        if (this->parse_first_line_of_response(line, status, reason, this->logger)) {
             m_response.status = status;
             static_cast<void>(reason); // Ignore for now.
             return std::error_code{};
@@ -394,7 +407,8 @@ private:
 
     void on_complete(std::error_code ec) override final
     {
-        auto handler = std::move(m_handler); // Nullifies m_handler
+        auto handler = std::move(m_handler);
+        m_handler = nullptr;
         handler(std::move(m_response), ec);
     }
 };
@@ -404,7 +418,7 @@ struct HTTPServer: protected HTTPParser<Socket> {
     using RequestHandler = void(HTTPRequest, std::error_code);
     using RespondHandler = void(std::error_code);
 
-    explicit HTTPServer(Socket& socket): HTTPParser<Socket>(socket)
+    explicit HTTPServer(Socket& socket, util::Logger& logger): HTTPParser<Socket>(socket, logger)
     {}
 
     /// Receive a request on the underlying socket asynchronously.
@@ -427,7 +441,7 @@ struct HTTPServer: protected HTTPParser<Socket> {
     void async_receive_request(std::function<RequestHandler> handler)
     {
         if (REALM_UNLIKELY(m_request_handler)) {
-            throw std::runtime_error("Response already in progress.");
+            throw util::runtime_error("Response already in progress.");
         }
         m_request_handler = std::move(handler);
         this->read_first_line();
@@ -448,11 +462,11 @@ struct HTTPServer: protected HTTPParser<Socket> {
                              std::function<RespondHandler> handler)
     {
         if (REALM_UNLIKELY(!m_request_handler)) {
-            throw std::runtime_error("No request in progress.");
+            throw util::runtime_error("No request in progress.");
         }
         if (m_respond_handler) {
             // FIXME: Proper exception type.
-            throw std::runtime_error("Already responding to request");
+            throw util::runtime_error("Already responding to request");
         }
         m_respond_handler = std::move(handler);
         this->set_write_buffer(response);

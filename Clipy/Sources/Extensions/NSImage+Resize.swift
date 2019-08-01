@@ -1,9 +1,13 @@
 //
 //  NSImage+Resize.swift
-//  Clipy
 //
-//  Created by 古林俊佑 on 2015/07/26.
-//  Copyright (c) 2015年 Shunsuke Furubayashi. All rights reserved.
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/07/26.
+//
+//  Copyright © 2015-2018 Clipy Project.
 //
 
 import Foundation
@@ -36,7 +40,7 @@ extension NSImage {
         var newWidth: CGFloat
         var newHeight: CGFloat
 
-        if 1 <= aspect {
+        if aspect >= 1 {
             newWidth = targetWidth
             newHeight = newWidth / aspect
 

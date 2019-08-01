@@ -109,7 +109,7 @@ public:
     // administrator status from the client through this or any other API.
     void set_is_admin(bool);
 
-    std::string identity() const noexcept
+    std::string const& identity() const noexcept
     {
         return m_identity;
     }
