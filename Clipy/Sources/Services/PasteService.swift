@@ -109,28 +109,32 @@ extension PasteService {
         let types = data.types
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
-            switch type {
-            case .deprecatedString:
+            let availableType = AvailableType.available(by: type)
+            if availableType == nil {
+                return;
+            }
+            switch availableType! {
+            case .string:
                 let pbString = data.stringValue
-                pasteboard.setString(pbString, forType: .deprecatedString)
-            case .deprecatedRTFD:
+                pasteboard.setString(pbString, forType: type)
+            case .rtfd:
                 guard let rtfData = data.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTFD)
-            case .deprecatedRTF:
+            case .rtf:
                 guard let rtfData = data.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTF)
-            case .deprecatedPDF:
+            case .pdf:
                 guard let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
                 pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
-            case .deprecatedFilenames:
+            case .filenames:
                 let fileNames = data.fileNames
                 pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
-            case .deprecatedURL:
+            case .url:
                 let url = data.URLs
                 pasteboard.setPropertyList(url, forType: .deprecatedURL)
-            case .deprecatedTIFF:
+            case .tiff:
                 guard let image = data.image, let imageData = image.tiffRepresentation else { return }
-                pasteboard.setData(imageData, forType: .deprecatedTIFF)
+                pasteboard.setData(imageData, forType: type)
             default: break
             }
         }
