@@ -44,7 +44,7 @@ extension CPYSnippet {
     func merge() {
         let realm = try! Realm()
         let copySnippet = CPYSnippet(value: self)
-        realm.transaction { realm.add(copySnippet, update: true) }
+        realm.transaction { realm.add(copySnippet, update: .modified) }
     }
 }
 

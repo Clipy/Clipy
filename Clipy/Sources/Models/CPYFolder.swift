@@ -106,7 +106,7 @@ extension CPYFolder {
             }
         } else {
             let copyFolder = CPYFolder(value: self)
-            realm.transaction { realm.add(copyFolder, update: true) }
+            realm.transaction { realm.add(copyFolder, update: .modified) }
         }
     }
 }
