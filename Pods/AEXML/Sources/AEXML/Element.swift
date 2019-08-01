@@ -216,8 +216,7 @@ open class AEXMLElement {
     */
     @discardableResult open func addChild(name: String,
                        value: String? = nil,
-                       attributes: [String : String] = [String : String]()) -> AEXMLElement
-    {
+                       attributes: [String : String] = [String : String]()) -> AEXMLElement {
         let child = AEXMLElement(name: name, value: value, attributes: attributes)
         return addChild(child)
     }

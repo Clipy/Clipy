@@ -1,9 +1,13 @@
 //
 //  Util.swift
-//  KeyHolder
 //
-//  Created by 古林俊佑 on 2016/06/18.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  KeyHolder
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2016/06/18.
+//
+//  Copyright © 2016-2018 Clipy Project.
 //
 
 import Cocoa
@@ -17,6 +21,6 @@ final class Util {
             bundle = Bundle(path: path)
         }
         guard let resourceBundle = bundle else { return nil }
-        return resourceBundle.image(forResource: NSImage.Name(rawValue: name))
+        return resourceBundle.image(forResource: name)
     }
 }

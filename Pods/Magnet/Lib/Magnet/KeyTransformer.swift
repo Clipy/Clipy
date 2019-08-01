@@ -64,7 +64,7 @@ public extension KeyTransformer {
         let optionSelected  = (carbonFlags & optionKey) != 0
         let controlSelected = (carbonFlags & controlKey) != 0
         let shiftSelected   = (carbonFlags & shiftKey) != 0
-        let hash = commandSelected.hashValue + optionSelected.hashValue + controlSelected.hashValue + shiftSelected.hashValue
+        let hash = commandSelected.intValue + optionSelected.intValue + controlSelected.intValue + shiftSelected.intValue
         return hash == 1
     }
 
@@ -73,7 +73,7 @@ public extension KeyTransformer {
         let optionSelected  = cocoaFlags.contains(.option)
         let controlSelected = cocoaFlags.contains(.control)
         let shiftSelected   = cocoaFlags.contains(.shift)
-        let hash = commandSelected.hashValue + optionSelected.hashValue + controlSelected.hashValue + shiftSelected.hashValue
+        let hash = commandSelected.intValue + optionSelected.intValue + controlSelected.intValue + shiftSelected.intValue
         return hash == 1
     }
 }

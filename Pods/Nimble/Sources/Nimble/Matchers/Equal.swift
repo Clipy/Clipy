@@ -213,7 +213,7 @@ public func !=<T, C: Equatable>(lhs: Expectation<[T: C]>, rhs: [T: C]?) {
 extension NMBObjCMatcher {
     @objc public class func equalMatcher(_ expected: NSObject) -> NMBMatcher {
         return NMBPredicate { actualExpression in
-            return try! equal(expected).satisfies(actualExpression).toObjectiveC()
+            return try equal(expected).satisfies(actualExpression).toObjectiveC()
         }
     }
 }
