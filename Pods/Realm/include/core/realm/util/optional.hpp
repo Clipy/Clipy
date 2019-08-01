@@ -135,6 +135,7 @@ private:
     void clear();
 };
 
+
 /// An Optional<void> is functionally equivalent to a bool.
 /// Note: C++17 does not (yet) specify this specialization, but it is convenient
 /// as a "safer bool", especially in the presence of `fmap`.
@@ -718,5 +719,24 @@ struct OptionalStorage<T, false> {
 using util::none;
 
 } // namespace realm
+
+
+// for convienence, inject a default hash implementation into the std namespace
+namespace std
+{
+    template<typename T>
+    struct hash<realm::util::Optional<T>>
+    {
+        std::size_t operator()(realm::util::Optional<T> const& o) const noexcept
+        {
+            if (bool(o) == false) {
+                return 0; // any choice will collide with some std::hash
+            } else {
+                return std::hash<T>{}(*o);
+            }
+        }
+    };
+}
+
 
 #endif // REALM_UTIL_OPTIONAL_HPP

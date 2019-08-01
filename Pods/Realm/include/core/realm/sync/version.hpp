@@ -22,9 +22,9 @@
 
 #include <realm/util/features.h>
 
-#define REALM_SYNC_VER_MAJOR 3
-#define REALM_SYNC_VER_MINOR 12
-#define REALM_SYNC_VER_PATCH 2
+#define REALM_SYNC_VER_MAJOR 4
+#define REALM_SYNC_VER_MINOR 6
+#define REALM_SYNC_VER_PATCH 3
 #define REALM_SYNC_PRODUCT_NAME "realm-sync"
 
 #define REALM_SYNC_VER_STRING REALM_QUOTE(REALM_SYNC_VER_MAJOR) "." \

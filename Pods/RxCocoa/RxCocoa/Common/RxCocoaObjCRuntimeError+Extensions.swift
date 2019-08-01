@@ -149,7 +149,7 @@
                 case .observingMessagesWithUnsupportedReturnType:
                     return .observingMessagesWithUnsupportedReturnType(target: target)
                 @unknown default:
-                    return RxCocoaObjCRuntimeError.unknown(target: target)
+                    fatalError("Unhandled Objective C Runtime Error")
                 }
             }
             

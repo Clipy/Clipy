@@ -28,7 +28,7 @@ public class ConcurrentDispatchQueueScheduler: SchedulerType {
     /// - parameter queue: Target dispatch queue.
     /// - parameter leeway: The amount of time, in nanoseconds, that the system will defer the timer.
     public init(queue: DispatchQueue, leeway: DispatchTimeInterval = DispatchTimeInterval.nanoseconds(0)) {
-        configuration = DispatchQueueConfiguration(queue: queue, leeway: leeway)
+        self.configuration = DispatchQueueConfiguration(queue: queue, leeway: leeway)
     }
     
     /// Convenience init for scheduler that wraps one of the global concurrent dispatch queues.
@@ -65,7 +65,7 @@ public class ConcurrentDispatchQueueScheduler: SchedulerType {
     - parameter action: Action to be executed.
     - returns: The disposable object used to cancel the scheduled action (best effort).
     */
-    public final func scheduleRelative<StateType>(_ state: StateType, dueTime: Foundation.TimeInterval, action: @escaping (StateType) -> Disposable) -> Disposable {
+    public final func scheduleRelative<StateType>(_ state: StateType, dueTime: RxTimeInterval, action: @escaping (StateType) -> Disposable) -> Disposable {
         return self.configuration.scheduleRelative(state, dueTime: dueTime, action: action)
     }
     
@@ -78,7 +78,7 @@ public class ConcurrentDispatchQueueScheduler: SchedulerType {
     - parameter action: Action to be executed.
     - returns: The disposable object used to cancel the scheduled action (best effort).
     */
-    public func schedulePeriodic<StateType>(_ state: StateType, startAfter: TimeInterval, period: TimeInterval, action: @escaping (StateType) -> StateType) -> Disposable {
+    public func schedulePeriodic<StateType>(_ state: StateType, startAfter: RxTimeInterval, period: RxTimeInterval, action: @escaping (StateType) -> StateType) -> Disposable {
         return self.configuration.schedulePeriodic(state, startAfter: startAfter, period: period, action: action)
     }
 }

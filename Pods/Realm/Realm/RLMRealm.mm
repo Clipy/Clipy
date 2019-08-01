@@ -32,8 +32,6 @@
 #import "RLMRealmConfiguration_Private.hpp"
 #import "RLMRealmUtil.hpp"
 #import "RLMSchema_Private.hpp"
-#import "RLMSyncManager_Private.h"
-#import "RLMSyncUtil_Private.hpp"
 #import "RLMThreadSafeReference_Private.hpp"
 #import "RLMUpdateChecker.hpp"
 #import "RLMUtil.hpp"
@@ -42,12 +40,20 @@
 #include "object_store.hpp"
 #include "schema.hpp"
 #include "shared_realm.hpp"
+#include "thread_safe_reference.hpp"
 
 #include <realm/disable_sync_to_disk.hpp>
 #include <realm/util/scope_exit.hpp>
 #include <realm/version.hpp>
 
+#if REALM_ENABLE_SYNC
+#import "RLMSyncManager_Private.h"
+#import "RLMSyncSession_Private.hpp"
+#import "RLMSyncUtil_Private.hpp"
+
+#import "sync/async_open_task.hpp"
 #import "sync/sync_session.hpp"
+#endif
 
 using namespace realm;
 using util::File;
@@ -101,6 +107,13 @@ static void RLMAddSkipBackupAttributeToItemAtPath(std::string const& path) {
     }
 }
 @end
+
+#if !REALM_ENABLE_SYNC
+@interface RLMAsyncOpenTask : NSObject
+@end
+@implementation RLMAsyncOpenTask
+@end
+#endif
 
 static bool shouldForciblyDisableEncryption() {
     static bool disableEncryption = getenv("REALM_DISABLE_ENCRYPTION");
@@ -183,69 +196,123 @@ NSData *RLMRealmValidatedEncryptionKey(NSData *key) {
     return [RLMRealm realmWithConfiguration:configuration error:nil];
 }
 
-+ (void)asyncOpenWithConfiguration:(RLMRealmConfiguration *)configuration
-                     callbackQueue:(dispatch_queue_t)callbackQueue
-                          callback:(RLMAsyncOpenRealmCallback)callback {
-    RLMRealm *strongReferenceToSyncedRealm = nil;
-    if (configuration.config.sync_config) {
-        NSError *error = nil;
-        strongReferenceToSyncedRealm = [RLMRealm uncachedSchemalessRealmWithConfiguration:configuration error:&error];
-        if (error) {
-            dispatch_async(callbackQueue, ^{
-                callback(nil, error);
-            });
-            return;
-        }
+// The server doesn't send us the subscriptions for permission types until the
+// first subscription is created. This is fine for synchronous opens (if we're
+// creating a new Realm we create the permission objects ourselves), but it
+// causes issues for asyncOpen because it means that when our download completes
+// we don't actually have the full Realm state yet.
+static void waitForPartialSyncSubscriptions(Realm::Config const& config) {
+#if REALM_ENABLE_SYNC
+    auto realm = Realm::get_shared_realm(config);
+    auto table = ObjectStore::table_for_object_type(realm->read_group(), "__ResultSets");
+
+    realm->begin_transaction();
+    size_t row = realm::sync::create_object(realm->read_group(), *table);
+
+    // Set expires_at to time 0 so that this object will be cleaned up the first
+    // time the user creates a subscription
+    size_t expires_at_col = table->get_column_index("expires_at");
+    if (expires_at_col == npos) {
+        expires_at_col = table->add_column(type_Timestamp, "expires_at", true);
     }
-    static dispatch_queue_t queue = dispatch_queue_create("io.realm.asyncOpenDispatchQueue", DISPATCH_QUEUE_CONCURRENT);
-    dispatch_async(queue, ^{
+    table->set_timestamp(expires_at_col, row, Timestamp(0, 0));
+    realm->commit_transaction();
+
+    NotificationToken token;
+    Results results(realm, *table);
+    CFRunLoopRef runLoop = CFRunLoopGetCurrent();
+    CFRunLoopPerformBlock(runLoop, kCFRunLoopDefaultMode, [&]() mutable {
+        token = results.add_notification_callback([&](CollectionChangeSet const&, std::exception_ptr) mutable {
+            if (table->size() > 1) {
+                token = {};
+                CFRunLoopStop(runLoop);
+            }
+        });
+    });
+    CFRunLoopRun();
+#else
+    static_cast<void>(config);
+#endif
+}
+
+static dispatch_queue_t s_async_open_queue = dispatch_queue_create("io.realm.asyncOpenDispatchQueue",
+                                                                   DISPATCH_QUEUE_CONCURRENT);
+void RLMSetAsyncOpenQueue(dispatch_queue_t queue) {
+    s_async_open_queue = queue;
+}
+
++ (RLMAsyncOpenTask *)asyncOpenWithConfiguration:(RLMRealmConfiguration *)configuration
+                                   callbackQueue:(dispatch_queue_t)callbackQueue
+                                        callback:(RLMAsyncOpenRealmCallback)callback {
+    auto openCompletion = [=](ThreadSafeReference<Realm> ref, std::exception_ptr err) {
         @autoreleasepool {
-            if (strongReferenceToSyncedRealm) {
-                // Sync behavior: get the raw session, then wait for it to download.
-                if (auto session = sync_session_for_realm(strongReferenceToSyncedRealm)) {
-                    // Wait for the session to download, then open it.
-                    session->wait_for_download_completion([=](std::error_code error_code) {
-                        dispatch_async(callbackQueue, ^{
-                            (void)strongReferenceToSyncedRealm;
-                            NSError *error = nil;
-                            if (error_code == std::error_code{}) {
-                                // Success
-                                @autoreleasepool {
-                                    // Try opening the Realm on the destination queue.
-                                    RLMRealm *localRealm = [RLMRealm realmWithConfiguration:configuration error:&error];
-                                    callback(localRealm, error);
-                                }
-                            } else {
-                                // Failure
-                                callback(nil, make_sync_error(RLMSyncSystemErrorKindSession,
-                                                              @(error_code.message().c_str()),
-                                                              error_code.value(),
-                                                              nil));
-                            }
-                        });
-                    });
-                } else {
-                    dispatch_async(callbackQueue, ^{
-                        callback(nil, make_sync_error(RLMSyncSystemErrorKindSession,
-                                                      @"Cannot asynchronously open synced Realm, because the associated session previously experienced a fatal error",
-                                                      NSNotFound,
-                                                      nil));
-                    });
-                    return;
+            if (err) {
+                try {
+                    std::rethrow_exception(err);
                 }
-            } else {
-                // Default behavior: just dispatch onto the destination queue and open the Realm.
+                catch (...) {
+                    NSError *error;
+                    RLMRealmTranslateException(&error);
+                    dispatch_async(callbackQueue, ^{
+                        callback(nil, error);
+                    });
+                }
+                return;
+            }
+
+            auto complete = ^{
                 dispatch_async(callbackQueue, ^{
                     @autoreleasepool {
-                        NSError *error = nil;
+                        NSError *error;
                         RLMRealm *localRealm = [RLMRealm realmWithConfiguration:configuration error:&error];
                         callback(localRealm, error);
                     }
                 });
-                return;
+            };
+
+            auto realm = Realm::get_shared_realm(std::move(ref));
+            bool needsSubscriptions = realm->is_partial() && ObjectStore::table_for_object_type(realm->read_group(), "__ResultSets")->size() == 0;
+            if (needsSubscriptions) {
+                // We need to dispatch back to the work queue to wait for the
+                // subscriptions as we're currently running on the sync worker
+                // thread and blocking it to wait for subscriptions means no syncing
+                dispatch_async(s_async_open_queue, ^{
+                    @autoreleasepool {
+                        waitForPartialSyncSubscriptions(realm->config());
+                        complete();
+                    }
+                });
+            }
+            else {
+                complete();
+            }
+        }
+    };
+
+    RLMAsyncOpenTask *ret = [RLMAsyncOpenTask new];
+    dispatch_async(s_async_open_queue, ^{
+        @autoreleasepool {
+            Realm::Config& config = configuration.config;
+            if (config.sync_config) {
+#if REALM_ENABLE_SYNC
+                auto task = realm::Realm::get_synchronized_realm(config);
+                ret.task = task;
+                task->start(openCompletion);
+#else
+                @throw RLMException(@"Realm was not built with sync enabled");
+#endif
+            }
+            else {
+                try {
+                    openCompletion(realm::_impl::RealmCoordinator::get_coordinator(config)->get_unbound_realm(), nullptr);
+                }
+                catch (...) {
+                    openCompletion({}, std::current_exception());
+                }
             }
         }
     });
+    return ret;
 }
 
 // ARC tries to eliminate calls to autorelease when the value is then immediately
@@ -389,7 +456,7 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
     configuration = [configuration copy];
     Realm::Config& config = configuration.config;
 
-    RLMRealm *realm = [[RLMRealm alloc] initPrivate];
+    RLMRealm *realm = [[self alloc] initPrivate];
     realm->_dynamic = dynamic;
 
     // protects the realm cache and accessors cache
@@ -460,6 +527,10 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
         if (!readOnly) {
             // initializing the schema started a read transaction, so end it
             [realm invalidate];
+
+            RLMAddSkipBackupAttributeToItemAtPath(config.path + ".management");
+            RLMAddSkipBackupAttributeToItemAtPath(config.path + ".lock");
+            RLMAddSkipBackupAttributeToItemAtPath(config.path + ".note");
         }
     }
 
@@ -470,10 +541,6 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
     if (!readOnly) {
         realm->_realm->m_binding_context = RLMCreateBindingContext(realm);
         realm->_realm->m_binding_context->realm = realm->_realm;
-
-        RLMAddSkipBackupAttributeToItemAtPath(config.path + ".management");
-        RLMAddSkipBackupAttributeToItemAtPath(config.path + ".lock");
-        RLMAddSkipBackupAttributeToItemAtPath(config.path + ".note");
     }
 
     return RLMAutorelease(realm);
@@ -712,7 +779,7 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
 }
 
 - (void)addObject:(__unsafe_unretained RLMObject *const)object {
-    RLMAddObjectToRealm(object, self, false);
+    RLMAddObjectToRealm(object, self, RLMUpdatePolicyError);
 }
 
 - (void)addObjects:(id<NSFastEnumeration>)objects {
@@ -731,7 +798,7 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
         @throw RLMException(@"'%@' does not have a primary key and can not be updated", object.objectSchema.className);
     }
 
-    RLMAddObjectToRealm(object, self, true);
+    RLMAddObjectToRealm(object, self, RLMUpdatePolicyUpdateAll);
 }
 
 - (void)addOrUpdateObjects:(id<NSFastEnumeration>)objects {
@@ -837,7 +904,7 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
 }
 
 - (RLMObject *)createObject:(NSString *)className withValue:(id)value {
-    return (RLMObject *)RLMCreateObjectInRealmWithValue(self, className, value, false);
+    return (RLMObject *)RLMCreateObjectInRealmWithValue(self, className, value, RLMUpdatePolicyError);
 }
 
 - (BOOL)writeCopyToURL:(NSURL *)fileURL encryptionKey:(NSData *)key error:(NSError **)error {
@@ -860,6 +927,7 @@ REALM_NOINLINE static void translateSharedGroupOpenException(RLMRealmConfigurati
     return NO;
 }
 
+#if REALM_ENABLE_SYNC
 using Privilege = realm::ComputedPrivileges;
 static bool hasPrivilege(realm::ComputedPrivileges actual, realm::ComputedPrivileges expected) {
     return (static_cast<int>(actual) & static_cast<int>(expected)) == static_cast<int>(expected);
@@ -903,6 +971,7 @@ static bool hasPrivilege(realm::ComputedPrivileges actual, realm::ComputedPrivil
         .create = hasPrivilege(p, Privilege::Create),
     };
 }
+#endif
 
 - (void)registerEnumerator:(RLMFastEnumerator *)enumerator {
     if (!_collectionEnumerators) {

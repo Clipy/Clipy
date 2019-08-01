@@ -197,7 +197,8 @@ public:
                                              version_type current_local_version,
                                              Changeset* changesets,
                                              std::size_t num_changesets,
-                                             Reporter* = nullptr) = 0;
+                                             Reporter* = nullptr,
+                                             util::Logger* = nullptr) = 0;
 
     virtual ~Transformer() noexcept {}
 };
@@ -244,7 +245,7 @@ public:
 
     /// If the changeset was compacted during download, the size of the original
     /// changeset.
-    size_t original_changeset_size = 0;
+    std::size_t original_changeset_size = 0;
 
     RemoteChangeset() {}
     RemoteChangeset(version_type rv, version_type lv, ChunkedBinaryData d, timestamp_type ot,

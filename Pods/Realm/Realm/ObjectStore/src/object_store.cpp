@@ -57,7 +57,7 @@ const size_t c_zeroRowIndex = 0;
 
 const char c_object_table_prefix[] = "class_";
 
-void create_metadata_tables(Group& group, bool partial_realm) {
+void create_metadata_tables(Group& group) {
     // The tables 'pk' and 'metadata' are treated specially by Sync. The 'pk' table
     // is populated by `sync::create_table` and friends, while the 'metadata' table
     // is simply ignored.
@@ -76,14 +76,6 @@ void create_metadata_tables(Group& group, bool partial_realm) {
         pk_table->insert_column(c_primaryKeyPropertyNameColumnIndex, type_String, c_primaryKeyPropertyNameColumnName);
     }
     pk_table->add_search_index(c_primaryKeyObjectClassColumnIndex);
-
-#if REALM_ENABLE_SYNC
-    // Only add __ResultSets if Realm is a partial Realm
-    if (partial_realm)
-        _impl::initialize_schema(group);
-#else
-    (void)partial_realm;
-#endif
 }
 
 void set_schema_version(Group& group, uint64_t version) {
@@ -258,7 +250,7 @@ void validate_primary_column_uniqueness(Group const& group)
 } // anonymous namespace
 
 void ObjectStore::set_schema_version(Group& group, uint64_t version) {
-    ::create_metadata_tables(group, false);
+    ::create_metadata_tables(group);
     ::set_schema_version(group, version);
 }
 
@@ -719,6 +711,7 @@ static void create_default_permissions(Group& group, std::vector<SchemaChange> c
     static_cast<void>(changes);
     static_cast<void>(sync_user_id);
 #else
+    _impl::initialize_schema(group);
     sync::set_up_basic_permissions(group, true);
 
     // Ensure that this user exists so that local privileges checks work immediately
@@ -786,7 +779,7 @@ void ObjectStore::apply_schema_changes(Group& group, uint64_t schema_version,
                                        util::Optional<std::string> sync_user_id,
                                        std::function<void()> migration_function)
 {
-    create_metadata_tables(group, sync_user_id != util::none);
+    create_metadata_tables(group);
 
     if (mode == SchemaMode::Additive) {
         bool target_schema_is_newer = (schema_version < target_schema_version

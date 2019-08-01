@@ -7,11 +7,6 @@
 
 Mapping various keyboard layout sources and key codes in macOS. (e.g.: QWERTY, Dvorak)
 
-## Requirements
-- macOS 10.9+
-- Xcode 9.0+
-- Swift 4.0+
-
 ## Motivation
 Only the ANSI-standard US keyboard is defined for the key code defined in Carbon.framework. Therefore, we can obtain only the key code of the QWERTY keyboard layout. (e.g.: `kVK_ANSI_V`)  
 In layout other than QWERTY, (e.g. Dvorak) the virtual key code is different.

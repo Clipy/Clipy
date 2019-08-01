@@ -7,17 +7,9 @@
 
 RxScreeen is a RxSwift wrapper for Screeen.
 
-## Requirements
-- macOS 10.10+
-- Xcode 9.0+
-- Swift 4.0+
-
 ## Usage
 ### CocoaPods
 ```
-platform :osx, '10.10'
-use_frameworks!
-
 pod 'RxScreeen'
 ```
 
@@ -29,7 +21,7 @@ github "ReactiveX/RxSwift"
 ```
 
 ## Example
-```
+```swift
 let observer = ScreenShotObserver()
 observer.rx.image
   .subscribe(onNext: { image in
@@ -58,13 +50,12 @@ observer.rx.removedImage
 ```
 
 ## Dependencies
-The source code is dependent on hotkey library.
 - [Screeen](https://github.com/Clipy/Screeen)
 
-## Hot to Build
+## How to Build
 1. Move to the project root directory
 2. Install dependency library with `carthage` or `git submodule`
- - `carthage checkout --use-submodules` or `git submodule init && git submodule update`
+3. `carthage checkout --use-submodules` or `git submodule init && git submodule update`
 4. Open `RxScreeen.xcworkspace` on Xcode.
 5. build.
 

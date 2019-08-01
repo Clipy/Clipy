@@ -1,59 +1,48 @@
-//
-//  Localizable.strings
-//
-//  Clipy
-//  GitHub: https://github.com/clipy
-//  HP: https://clipy-app.com
-//
-//  Created by Econa77 on 2015/06/21.
-//
-//  Copyright © 2015-2018 Clipy Project.
-//
 
-"Launch Clipy on system startup?" = "系统启动时打开 Clipy?";
+"Add" = "添加";
 
-"You can change this setting in the Preferences if you want" = "如有需要可在偏好设置中修改本设置。";
-
-"Launch on system startup" = "系统启动时打开";
-
-"Don't Launch" = "不要打开";
-
-"Clear History" = "清除历史";
+"Are you sure want to delete this item?" = "确定要删除此项？";
 
 "Are you sure you want to clear your clipboard history?" = "确定想要清空剪贴板历史？";
 
 "Cancel" = "取消";
 
+"Clear History" = "清除历史";
+
+"Delete Item" = "删除";
+
+"Don't Launch" = "不要打开";
+
 "Edit Snippets" = "编辑片断...";
+
+"General" = "通用";
+
+"History" = "历史";
+
+"Launch Clipy on system startup?" = "系统启动时打开 Clipy?";
+
+"Launch on system startup" = "系统启动时打开";
+
+"Menu" = "菜单";
+
+"Open System Preferences" = "Open System Preferences";
+
+"Please allow Accessibility" = "Please allow Accessibility.";
+
+"Please fill in the contents of the snippet" = "请填写代码段的内容";
 
 "Preferences" = "偏好设置...";
 
 "Quit Clipy" = "退出 Clipy";
 
-"History" = "历史";
+"Shortcuts" = "快捷键";
 
 "Snippet" = "片断";
 
-"General" = "通用";
-
-"Menu" = "菜单";
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
 
 "Type" = "类型";
 
-"Shortcuts" = "快捷键";
-
 "Updates" = "更新";
 
-"Delete Item" = "删除";
-
-"Are you sure want to delete this item?" = "确定要删除此项？";
-
-"Add" = "添加";
-
-"Please fill in the contents of the snippet" = "请填写代码段的内容";
-
-"Please allow Accessibility" = "Please allow Accessibility.";
-
-"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
-
-"Open System Preferences" = "Open System Preferences";
+"You can change this setting in the Preferences if you want" = "如有需要可在偏好设置中修改本设置。";

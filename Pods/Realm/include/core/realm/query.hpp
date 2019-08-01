@@ -103,6 +103,8 @@ public:
 
     // Find links that point to a specific target row
     Query& links_to(size_t column_ndx, const ConstRow& target_row);
+    // Find links that point to specific target rows
+    Query& links_to(size_t column_ndx, const std::vector<ConstRow>& target_row);
 
     // Conditions: null
     Query& equal(size_t column_ndx, null);

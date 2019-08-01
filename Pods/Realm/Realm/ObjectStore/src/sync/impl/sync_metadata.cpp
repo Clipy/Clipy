@@ -87,6 +87,7 @@ SyncMetadataManager::SyncMetadataManager(std::string path,
     constexpr uint64_t SCHEMA_VERSION = 2;
 
     Realm::Config config;
+    config.automatic_change_notifications = false;
     config.path = path;
     config.schema = make_schema();
     config.schema_version = SCHEMA_VERSION;
@@ -188,8 +189,7 @@ SyncUserMetadataResults SyncMetadataManager::all_users_marked_for_removal() cons
 
 SyncUserMetadataResults SyncMetadataManager::get_users(bool marked) const
 {
-    SharedRealm realm = Realm::get_shared_realm(m_metadata_config);
-
+    auto realm = get_realm();
     TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_userMetadata);
     Query query = table->where().equal(m_user_schema.idx_marked_for_removal, marked);
 
@@ -199,34 +199,17 @@ SyncUserMetadataResults SyncMetadataManager::get_users(bool marked) const
 
 SyncFileActionMetadataResults SyncMetadataManager::all_pending_actions() const
 {
-    SharedRealm realm = Realm::get_shared_realm(m_metadata_config);
+    auto realm = get_realm();
     TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_fileActionMetadata);
     Results results(realm, table->where());
     return SyncFileActionMetadataResults(std::move(results), std::move(realm), m_file_action_schema);
-}
-
-bool SyncMetadataManager::delete_metadata_action(const std::string& original_name) const
-{
-    auto shared_realm = Realm::get_shared_realm(m_metadata_config);
-
-    // Retrieve the row for this object.
-    TableRef table = ObjectStore::table_for_object_type(shared_realm->read_group(), c_sync_fileActionMetadata);
-    shared_realm->begin_transaction();
-    size_t row_idx = table->find_first_string(m_file_action_schema.idx_original_name, original_name);
-    if (row_idx == not_found) {
-        shared_realm->cancel_transaction();
-        return false;
-    }
-    table->move_last_over(row_idx);
-    shared_realm->commit_transaction();
-    return true;
 }
 
 util::Optional<SyncUserMetadata> SyncMetadataManager::get_or_make_user_metadata(const std::string& identity,
                                                                                 const std::string& url,
                                                                                 bool make_if_absent) const
 {
-    auto realm = Realm::get_shared_realm(m_metadata_config);
+    auto realm = get_realm();
     auto& schema = m_user_schema;
 
     // Retrieve or create the row for this object.
@@ -286,44 +269,54 @@ util::Optional<SyncUserMetadata> SyncMetadataManager::get_or_make_user_metadata(
     return SyncUserMetadata(schema, std::move(realm), std::move(*row));
 }
 
-SyncFileActionMetadata SyncMetadataManager::make_file_action_metadata(const std::string &original_name,
-                                                                      const std::string &url,
-                                                                      const std::string &local_uuid,
-                                                                      SyncFileActionMetadata::Action action,
-                                                                      util::Optional<std::string> new_name) const
+void SyncMetadataManager::make_file_action_metadata(StringData original_name,
+                                                    StringData url,
+                                                    StringData local_uuid,
+                                                    SyncFileActionMetadata::Action action,
+                                                    StringData new_name) const
 {
-    size_t raw_action = static_cast<size_t>(action);
-
-    // Open the Realm.
-    auto realm = Realm::get_shared_realm(m_metadata_config);
-    auto& schema = m_file_action_schema;
+    // This function can't use get_shared_realm() because it's called on a
+    // background thread and that's currently not supported by the libuv
+    // implementation of EventLoopSignal
+    std::unique_ptr<Replication> history;
+    std::unique_ptr<SharedGroup> shared_group;
+    std::unique_ptr<Group> read_only_group;
+    Realm::open_with_config(m_metadata_config, history, shared_group, read_only_group, nullptr);
 
     // Retrieve or create the row for this object.
-    TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_fileActionMetadata);
-    realm->begin_transaction();
+    WriteTransaction wt(*shared_group);
+    TableRef table = ObjectStore::table_for_object_type(wt.get_group(), c_sync_fileActionMetadata);
+
+    auto& schema = m_file_action_schema;
     size_t row_idx = table->find_first_string(schema.idx_original_name, original_name);
     if (row_idx == not_found) {
         row_idx = table->add_empty_row();
         table->set_string(schema.idx_original_name, row_idx, original_name);
     }
     table->set_string(schema.idx_new_name, row_idx, new_name);
-    table->set_int(schema.idx_action, row_idx, raw_action);
+    table->set_int(schema.idx_action, row_idx, static_cast<int64_t>(action));
     table->set_string(schema.idx_url, row_idx, url);
     table->set_string(schema.idx_user_identity, row_idx, local_uuid);
-    realm->commit_transaction();
-    return SyncFileActionMetadata(schema, std::move(realm), table->get(row_idx));
+    wt.commit();
 }
 
-util::Optional<SyncFileActionMetadata> SyncMetadataManager::get_file_action_metadata(const std::string& original_name) const
+util::Optional<SyncFileActionMetadata> SyncMetadataManager::get_file_action_metadata(StringData original_name) const
 {
-    auto realm = Realm::get_shared_realm(m_metadata_config);
-    auto schema = m_file_action_schema;
+    auto realm = get_realm();
+    auto& schema = m_file_action_schema;
     TableRef table = ObjectStore::table_for_object_type(realm->read_group(), c_sync_fileActionMetadata);
     size_t row_idx = table->find_first_string(schema.idx_original_name, original_name);
     if (row_idx == not_found)
         return none;
 
     return SyncFileActionMetadata(std::move(schema), std::move(realm), table->get(row_idx));
+}
+
+std::shared_ptr<Realm> SyncMetadataManager::get_realm() const
+{
+    auto realm = Realm::get_shared_realm(m_metadata_config);
+    realm->refresh();
+    return realm;
 }
 
 // MARK: - Sync user metadata

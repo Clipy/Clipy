@@ -62,7 +62,24 @@ struct Property {
     using IsPrimary = util::TaggedBool<class IsPrimaryTag>;
     using IsIndexed = util::TaggedBool<class IsIndexedTag>;
 
+    // The internal column name used in the Realm file.
     std::string name;
+
+    // The public name used by the binding to represent the internal column name in the Realm file. Bindings can use
+    // this to expose a different name in the binding API, e.g. to map between different naming conventions.
+    //
+    // Public names are only ever user defined, they are not persisted on disk, so reading the schema from the file
+    // will leave this field empty. If `public_name` is empty, the internal and public name are considered to be the same.
+    //
+    // ObjectStore will ensure that no conflicts occur between persisted properties and the public name, so
+    // the public name is just as unique an identifier as the internal name in the file.
+    //
+    // In order to respect public names bindings should use `ObjectSchema::property_for_public_name()` in the schema
+    // and `Object::value_for_property()` in the Object accessor for reading fields defined by the public name.
+    //
+    // For queries, bindings should provide an appropriate `KeyPathMapping` definition. Bindings are responsible
+    // for creating this.
+    std::string public_name;
     PropertyType type = PropertyType::Int;
     std::string object_type;
     std::string link_origin_property_name;
@@ -73,10 +90,10 @@ struct Property {
 
     Property() = default;
 
-    Property(std::string name, PropertyType type, IsPrimary primary = false, IsIndexed indexed = false);
+    Property(std::string name, PropertyType type, IsPrimary primary = false, IsIndexed indexed = false, std::string public_name = "");
 
     Property(std::string name, PropertyType type, std::string object_type,
-             std::string link_origin_property_name = "");
+             std::string link_origin_property_name = "", std::string public_name = "");
 
     Property(Property const&) = default;
     Property(Property&&) = default;
@@ -196,8 +213,10 @@ static const char *string_for_property_type(PropertyType type)
 }
 
 inline Property::Property(std::string name, PropertyType type,
-                          IsPrimary primary, IsIndexed indexed)
+                          IsPrimary primary, IsIndexed indexed,
+                          std::string public_name)
 : name(std::move(name))
+, public_name(std::move(public_name))
 , type(type)
 , is_primary(primary)
 , is_indexed(indexed)
@@ -206,8 +225,10 @@ inline Property::Property(std::string name, PropertyType type,
 
 inline Property::Property(std::string name, PropertyType type,
                           std::string object_type,
-                          std::string link_origin_property_name)
+                          std::string link_origin_property_name,
+                          std::string public_name)
 : name(std::move(name))
+, public_name(std::move(public_name))
 , type(type)
 , object_type(std::move(object_type))
 , link_origin_property_name(std::move(link_origin_property_name))

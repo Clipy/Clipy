@@ -1,19 +1,19 @@
 import Foundation
 import RxSwift
 
-public extension ObservableType where E: Occupiable {
+public extension ObservableType where Element: Occupiable {
     /**
      Filter out empty occupiable elements.
 
      - returns: `Observable` of source `Observable`'s occupiable elements, with empty occupiable elements filtered out.
      */
     
-    func filterEmpty() -> Observable<E> {
-        return self.flatMap { element -> Observable<E> in
+    func filterEmpty() -> Observable<Element> {
+        return self.flatMap { element -> Observable<Element> in
             guard element.isNotEmpty else {
-                return Observable<E>.empty()
+                return Observable<Element>.empty()
             }
-            return Observable<E>.just(element)
+            return Observable<Element>.just(element)
         }
     }
 
@@ -25,12 +25,12 @@ public extension ObservableType where E: Occupiable {
      - returns: `Observable` of the source `Observable`'s occupiable elements, with empty occupiable elements replaced by the handler's returned non-empty occupiable elements.
      */
     
-    func catchOnEmpty(_ handler: @escaping () throws -> Observable<E>) -> Observable<E> {
-        return self.flatMap { element -> Observable<E> in
+    func catchOnEmpty(_ handler: @escaping () throws -> Observable<Element>) -> Observable<Element> {
+        return self.flatMap { element -> Observable<Element> in
             guard element.isNotEmpty else {
                 return try handler()
             }
-            return Observable<E>.just(element)
+            return Observable<Element>.just(element)
         }
     }
 
@@ -44,7 +44,7 @@ public extension ObservableType where E: Occupiable {
      - returns: original source `Observable` of non-empty occupiable elements if it contains no empty occupiable elements.
      */
     
-    func errorOnEmpty(_ error: Error = RxOptionalError.emptyOccupiable(E.self)) -> Observable<E> {
+    func errorOnEmpty(_ error: Error = RxOptionalError.emptyOccupiable(Element.self)) -> Observable<Element> {
         return self.map { element in
             guard element.isNotEmpty else {
                 throw error

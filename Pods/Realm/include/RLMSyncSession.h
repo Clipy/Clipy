@@ -57,7 +57,7 @@ typedef NS_ENUM(NSUInteger, RLMSyncConnectionState) {
  Progress notification blocks can be registered on sessions if your app wishes to be informed
  how many bytes have been uploaded or downloaded, for example to show progress indicator UIs.
  */
-typedef NS_ENUM(NSUInteger, RLMSyncProgressDirection) {
+typedef RLM_CLOSED_ENUM(NSUInteger, RLMSyncProgressDirection) {
     /// For monitoring upload progress.
     RLMSyncProgressDirectionUpload,
     /// For monitoring download progress.
@@ -231,6 +231,48 @@ NS_REFINED_FOR_SWIFT;
 /// :nodoc:
 + (instancetype)new __attribute__((unavailable("This type cannot be created directly")));
 
+@end
+
+/**
+ A task object which can be used to observe or cancel an async open.
+
+ When a synchronized Realm is opened asynchronously, the latest state of the
+ Realm is downloaded from the server before the completion callback is invoked.
+ This task object can be used to observe the state of the download or to cancel
+ it. This should be used instead of trying to observe the download via the sync
+ session as the sync session itself is created asynchronously, and may not exist
+ yet when -[RLMRealm asyncOpenWithConfiguration:completion:] returns.
+ */
+@interface RLMAsyncOpenTask : NSObject
+/**
+ Register a progress notification block.
+
+ Each registered progress notification block is called whenever the sync
+ subsystem has new progress data to report until the task is either cancelled
+ or the completion callback is called. Progress notifications are delivered on
+ the main queue.
+ */
+- (void)addProgressNotificationBlock:(RLMProgressNotificationBlock)block;
+
+/**
+ Register a progress notification block which is called on the given queue.
+
+ Each registered progress notification block is called whenever the sync
+ subsystem has new progress data to report until the task is either cancelled
+ or the completion callback is called. Progress notifications are delivered on
+ the supplied queue.
+ */
+- (void)addProgressNotificationOnQueue:(dispatch_queue_t)queue
+                                 block:(RLMProgressNotificationBlock)block;
+
+/**
+ Cancel the asynchronous open.
+
+ Any download in progress will be cancelled, and the completion block for this
+ async open will never be called. If multiple async opens on the same Realm are
+ happening concurrently, all other opens will fail with the error "operation cancelled".
+ */
+- (void)cancel;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -33,6 +33,17 @@ final class KeyboardLayout {
         self.distributedNotificationCenter = distributedNotificationCenter
         self.notificationCenter = notificationCenter
         self.currentInputSource = InputSource(source: TISCopyCurrentKeyboardInputSource().takeUnretainedValue())
+        /**
+         *  Known issue1:
+         *  When using TISCopyCurrentASCIICapableKeyboardLayoutInputSource, you can obtain InputSource which always has keyboard layout.
+         *  However, if Dvorak layout and Japanese(en) layout are set, Dvorak layout will always be returned,
+         *  and incorrect values will be returned when using Japanese(en) keyboard as input source.
+         *
+         *  Known issue2:
+         *  When setting only Dvorak layout and Japanese layout,
+         *  Dvorak layout is always set to currentASCIICapableInputSouce,
+         *  so currentASCIICapableKeyCode and currentASCIICapableCharacter always returns to Dvorak layout.
+         **/
         self.currentASCIICapableInputSouce = InputSource(source: TISCopyCurrentASCIICapableKeyboardInputSource().takeUnretainedValue())
         fetchASCIICapableInputSources()
         observeNotifications()
@@ -84,11 +95,13 @@ extension KeyboardLayout {
         distributedNotificationCenter.addObserver(self,
                                                   selector: #selector(selectedKeyboardInputSourceChanged),
                                                   name: NSNotification.Name(kTISNotifySelectedKeyboardInputSourceChanged as String),
-                                                  object: nil)
+                                                  object: nil,
+                                                  suspensionBehavior: .deliverImmediately)
         distributedNotificationCenter.addObserver(self,
                                                   selector: #selector(enabledKeyboardInputSourcesChanged),
                                                   name: Notification.Name(kTISNotifyEnabledKeyboardInputSourcesChanged as String),
-                                                  object: nil)
+                                                  object: nil,
+                                                  suspensionBehavior: .deliverImmediately)
     }
 
     @objc func selectedKeyboardInputSourceChanged() {
@@ -117,7 +130,13 @@ private extension KeyboardLayout {
 
     func mappingKeyCodes(with source: InputSource) {
         var keyCodes = [Key: CGKeyCode]()
-        // Scan key codes
+        /**
+         *  Scan key codes
+         *
+         *  Known issue:
+         *  For lauout like Japanese(en), kTISPropertyUnicodeKeyLayoutData returns NULL even if it is ASCIICapableInputSource
+         *  Therefore, mapping is not performed when only Japanese is used as a keyboard
+         **/
         guard let layoutData = TISGetInputSourceProperty(source.source, kTISPropertyUnicodeKeyLayoutData) else { return }
         let data = Unmanaged<CFData>.fromOpaque(layoutData).takeUnretainedValue() as Data
 
@@ -143,10 +162,9 @@ private extension KeyboardLayout {
         let maxChars = 256
         var chars = [UniChar](repeating: 0, count: maxChars)
         var length = 0
-        let error = layoutData.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> OSStatus in
-            let keyboardPtr = ptr.bindMemory(to: UCKeyboardLayout.self)
-            //var kb = ptr.load(as: UCKeyboardLayout.self)
-            return CoreServices.UCKeyTranslate(keyboardPtr.baseAddress,
+        let error = layoutData.withUnsafeBytes { pointer -> OSStatus in
+            guard let keyboardLayoutPointer = pointer.bindMemory(to: UCKeyboardLayout.self).baseAddress else { return errSecAllocate }
+            return CoreServices.UCKeyTranslate(keyboardLayoutPointer,
                                                UInt16(keyCode),
                                                UInt16(CoreServices.kUCKeyActionDisplay),
                                                UInt32(modifiers),
@@ -157,18 +175,6 @@ private extension KeyboardLayout {
                                                &length,
                                                &chars)
         }
-//        let error = layoutData.withUnsafeBytes { (bytes: UnsafePointer<UCKeyboardLayout>) in
-//            return CoreServices.UCKeyTranslate(bytes,
-//                                               UInt16(keyCode),
-//                                               UInt16(CoreServices.kUCKeyActionDisplay),
-//                                               UInt32(modifiers),
-//                                               UInt32(LMGetKbdType()),
-//                                               OptionBits(CoreServices.kUCKeyTranslateNoDeadKeysBit),
-//                                               &deadKeyState,
-//                                               maxChars,
-//                                               &length,
-//                                               &chars)
-//        }
         guard error == noErr else { return nil }
         return NSString(characters: &chars, length: length) as String
     }

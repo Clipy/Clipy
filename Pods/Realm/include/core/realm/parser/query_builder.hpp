@@ -47,10 +47,13 @@ namespace parser {
 namespace query_builder {
 class Arguments;
 
-void apply_predicate(Query& query, const parser::Predicate& predicate, Arguments& arguments, parser::KeyPathMapping = parser::KeyPathMapping());
+void apply_predicate(Query& query, const parser::Predicate& predicate, Arguments& arguments,
+                     parser::KeyPathMapping mapping = parser::KeyPathMapping());
 
-void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state, Arguments& arguments);
-void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state);
+void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state,
+                    Arguments& arguments, parser::KeyPathMapping mapping = parser::KeyPathMapping());
+void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state,
+                    parser::KeyPathMapping mapping = parser::KeyPathMapping());
 
 
 struct AnyContext

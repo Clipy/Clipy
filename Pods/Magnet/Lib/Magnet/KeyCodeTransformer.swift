@@ -16,11 +16,11 @@ open class KeyCodeTransformer {
 
 // MARK: - Transform
 public extension KeyCodeTransformer {
-    func transformValue(_ keyCode: Int, carbonModifiers: Int) -> String {
+    public func transformValue(_ keyCode: Int, carbonModifiers: Int) -> String {
         return transformValue(keyCode, modifiers: carbonModifiers)
     }
 
-    func transformValue(_ keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String {
+    public func transformValue(_ keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String {
         return transformValue(keyCode, modifiers: KeyTransformer.carbonFlags(from: cocoaModifiers))
     }
 

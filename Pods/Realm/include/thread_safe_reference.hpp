@@ -19,7 +19,6 @@
 #ifndef REALM_THREAD_SAFE_REFERENCE_HPP
 #define REALM_THREAD_SAFE_REFERENCE_HPP
 
-
 #include <realm/group_shared.hpp>
 
 namespace realm {
@@ -32,6 +31,7 @@ class Results;
 class TableView;
 template<typename T> class BasicRow;
 typedef BasicRow<Table> Row;
+namespace _impl { class RealmCoordinator; }
 
 // Opaque type representing an object for handover
 class ThreadSafeReferenceBase {
@@ -107,6 +107,24 @@ class ThreadSafeReference<Results>: public ThreadSafeReferenceBase {
 
     // Precondition: Realm and handover are on same version.
     Results import_into_realm(std::shared_ptr<Realm> realm) &&;
+};
+
+template<>
+class ThreadSafeReference<Realm> {
+    friend class Realm;
+    friend class _impl::RealmCoordinator;
+
+    std::shared_ptr<Realm> m_realm;
+
+    ThreadSafeReference(std::shared_ptr<Realm>);
+    std::shared_ptr<Realm> resolve() &&;
+public:
+
+    ThreadSafeReference() = default;
+    ThreadSafeReference(ThreadSafeReference const&) = delete;
+    ThreadSafeReference(ThreadSafeReference &&) = default;
+    ThreadSafeReference& operator=(ThreadSafeReference const&) = delete;
+    ThreadSafeReference& operator=(ThreadSafeReference&&) = default;
 };
 }
 

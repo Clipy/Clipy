@@ -37,58 +37,40 @@ class History {
 public:
     using version_type = VersionID::version_type;
 
-    /// May be called during a read transaction to gain early access to the
-    /// history as it appears in a new snapshot that succeeds the one bound in
-    /// the current read transaction.
-    ///
-    /// May also be called at other times as long as the caller owns a read lock
-    /// (SharedGroup::grab_read_lock()) on the Realm for the specified file size
-    /// and top ref, and the allocator is in a 'free space clean' state
-    /// (SlabAlloc::is_free_space_clean()).
-    ///
-    /// This function may cause a remapping of the Realm file
-    /// (SlabAlloc::remap()) if it needs to make the new snapshot fully visible
-    /// in memory.
-    ///
-    /// Note that this method of gaining early access to the history in a new
-    /// snaphot only gives read access. It does not allow for modifications of
-    /// the history or any other part of the new snapshot. For modifications to
-    /// be allowed, `Group::m_top` (the parent of the history) would first have
-    /// to be updated to reflect the new snapshot, but at that time we are no
-    /// longer in an 'early access' situation.
-    ///
-    /// This is not a problem from the point of view of this history interface,
-    /// as it only contains methods for reading from the history, but some
-    /// implementations will want to also provide for ways to modify the
-    /// history, but in those cases, modifications must occur only after the
-    /// Group accessor has been fully updated to reflect the new snapshot.
-    virtual void update_early_from_top_ref(version_type new_version, size_t new_file_size, ref_type new_top_ref) = 0;
+    virtual ~History() noexcept {}
 
-    virtual void update_from_parent(version_type current_version) = 0;
+    /// May be called during any transaction
+    ///
+    /// It is a precondition for calls to this function that the reader view is
+    /// updated - that is, the mapping is updated to provide full visibility to
+    /// the file.
+    ///
+    virtual void update_from_ref_and_version(ref_type ref, version_type version) = 0;
+    virtual void update_from_parent(version_type version) = 0;
 
     /// Get all changesets between the specified versions. References to those
-    /// changesets will be made availble in successive entries of `buffer`. The
-    /// number of retreived changesets is exactly `end_version -
+    /// changesets will be made available in successive entries of `buffer`. The
+    /// number of retrieved changesets is exactly `end_version -
     /// begin_version`. If this number is greater than zero, the changeset made
-    /// avaialable in `buffer[0]` is the one that brought the database from
+    /// available in `buffer[0]` is the one that brought the database from
     /// `begin_version` to `begin_version + 1`.
     ///
     /// It is an error to specify a version (for \a begin_version or \a
     /// end_version) that is outside the range [V,W] where V is the version that
     /// immediately precedes the first changeset available in the history as the
     /// history appears in the **latest** available snapshot, and W is the
-    /// versionm that immediately succeeds the last changeset available in the
+    /// version that immediately succeeds the last changeset available in the
     /// history as the history appears in the snapshot bound to the **current**
     /// transaction. This restriction is necessary to allow for different kinds
     /// of implementations of the history (separate standalone history or
     /// history as part of versioned Realm state).
     ///
-    /// The calee retains ownership of the memory referenced by those entries,
+    /// The callee retains ownership of the memory referenced by those entries,
     /// i.e., the memory referenced by `buffer[i].changeset` is **not** handed
     /// over to the caller.
     ///
     /// This function may be called only during a transaction (prior to
-    /// initiation of commit operation), and only after a successfull invocation
+    /// initiation of commit operation), and only after a successful invocation
     /// of update_early_from_top_ref(). In that case, the caller may assume that
     /// the memory references stay valid for the remainder of the transaction
     /// (up until initiation of the commit operation).
@@ -102,7 +84,7 @@ public:
     /// the transaction is finalized (Replication::finalize_commit()) or aborted
     /// (Replication::abort_transact()), but after the initiation of the commit
     /// operation (Replication::prepare_commit()). This allows history
-    /// implementations to add new history entries before triming off old ones,
+    /// implementations to add new history entries before trimming off old ones,
     /// and this, in turn, guarantees that the history never becomes empty,
     /// except in the initial empty Realm state.
     ///
@@ -120,7 +102,7 @@ public:
     /// get_changesets().
     ///
     /// The caller is allowed to pass a version that is less than the version
-    /// passed in a preceeding invocation.
+    /// passed in a preceding invocation.
     ///
     /// This function should be called as late as possible, to maximize the
     /// trimming opportunity, but at a time where the write transaction is still
@@ -128,11 +110,11 @@ public:
     /// of histories are stored inside the Realm file.
     virtual void set_oldest_bound_version(version_type version) = 0;
 
-    /// Get the list of uncommited changes accumulated so far in the current
+    /// Get the list of uncommitted changes accumulated so far in the current
     /// write transaction.
     ///
     /// The callee retains ownership of the referenced memory. The ownership is
-    /// not handed over the the caller.
+    /// not handed over to the caller.
     ///
     /// This function may be called only during a write transaction (prior to
     /// initiation of commit operation). In that case, the caller may assume that the
@@ -142,9 +124,21 @@ public:
 
     virtual void verify() const = 0;
 
-    virtual ~History() noexcept
+    void set_updated(bool updated)
     {
+        m_updated = updated;
     }
+
+    void ensure_updated(version_type version) const
+    {
+        if (!m_updated) {
+            const_cast<History*>(this)->update_from_parent(version);
+            m_updated = true;
+        }
+    }
+
+private:
+    mutable bool m_updated = false;
 };
 
 } // namespace _impl

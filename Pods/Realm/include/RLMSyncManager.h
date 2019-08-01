@@ -23,7 +23,7 @@
 @class RLMSyncSession;
 
 /// An enum representing different levels of sync-related logging that can be configured.
-typedef NS_ENUM(NSUInteger, RLMSyncLogLevel) {
+typedef RLM_CLOSED_ENUM(NSUInteger, RLMSyncLogLevel) {
     /// Nothing will ever be logged.
     RLMSyncLogLevelOff,
     /// Only fatal errors will be logged.
@@ -76,10 +76,20 @@ typedef void(^RLMSyncErrorReportingBlock)(NSError *, RLMSyncSession * _Nullable)
 @property (nullable, nonatomic, copy) RLMSyncErrorReportingBlock errorHandler;
 
 /**
- A reverse-DNS string uniquely identifying this application. In most cases this is automatically set by the SDK, and
- does not have to be explicitly configured.
+ A reverse-DNS string uniquely identifying this application. In most cases this
+ is automatically set by the SDK, and does not have to be explicitly configured.
  */
 @property (nonatomic, copy) NSString *appID;
+
+/**
+ A string identifying this application which is included in the User-Agent
+ header of sync connections. By default, this will be the application's bundle
+ identifier.
+
+ This property must be set prior to opening a synchronized Realm for the first
+ time. Any modifications made after opening a Realm will be ignored.
+ */
+@property (nonatomic, copy) NSString *userAgent;
 
 /**
  The logging threshold which newly opened synced Realms will use. Defaults to
@@ -100,6 +110,9 @@ typedef void(^RLMSyncErrorReportingBlock)(NSError *, RLMSyncSession * _Nullable)
 
 /**
  Extra HTTP headers to append to every request to a Realm Object Server.
+
+ Modifying this property while sync sessions are active will result in all
+ sessions disconnecting and reconnecting using the new headers.
  */
 @property (nullable, nonatomic, copy) NSDictionary<NSString *, NSString *> *customRequestHeaders;
 

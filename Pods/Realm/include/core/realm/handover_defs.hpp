@@ -57,15 +57,24 @@ struct QueryHandoverPatch {
     QueryNodeHandoverPatches m_node_data;
 };
 
-enum class DescriptorType {
-    Sort,
-    Distinct,
-    Limit
+enum class DescriptorType { Sort, Distinct, Limit, Include };
+
+struct DescriptorLinkPath {
+    DescriptorLinkPath(size_t column_index, size_t table_index, bool column_is_backlink)
+        : col_ndx(column_index)
+        , table_ndx(table_index)
+        , is_backlink(column_is_backlink)
+    {
+    }
+
+    size_t col_ndx;
+    size_t table_ndx;
+    bool is_backlink = false;
 };
 
 struct DescriptorExport {
     DescriptorType type;
-    std::vector<std::vector<size_t>> columns;
+    std::vector<std::vector<DescriptorLinkPath>> columns;
     std::vector<bool> ordering;
     size_t limit;
 };

@@ -45,7 +45,7 @@ completed
 ##### errorOnNil
 Unavailable on `Driver`, because `Driver`s cannot error out.
 
-By default errors with `RxOptionalError.FoundNilWhileUnwrappingOptional`.
+By default errors with `RxOptionalError.foundNilWhileUnwrappingOptional`.
 ```swift
 Observable<String?>
     .of("One", nil, "Three")
@@ -119,7 +119,7 @@ completed
 ##### errorOnEmpty
 Unavailable on `Driver`, because `Driver`s cannot error out.
 
-By default errors with `RxOptionalError.EmptyOccupiable`.
+By default errors with `RxOptionalError.emptyOccupiable`.
 ```swift
 Observable<[String]>
     .of(["Single Element"], [], ["Two", "Elements"])

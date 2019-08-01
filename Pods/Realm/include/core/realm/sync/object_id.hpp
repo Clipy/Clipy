@@ -30,6 +30,9 @@
 #include <realm/util/optional.hpp>
 #include <realm/string_data.hpp>
 #include <realm/data_type.hpp>
+#include <realm/util/metered/map.hpp>
+#include <realm/util/metered/set.hpp>
+#include <realm/util/metered/string.hpp>
 
 // Only set this to one when testing the code paths that exercise object ID
 // hash collisions. It artificially limits the "optimistic" local ID to use
@@ -43,9 +46,9 @@ class Group;
 
 namespace sync {
 
-/// ObjectIDs are globally unique, and up to 128 bits wide. They are represented
-/// as two 64-bit integers, each of which may frequently be small, for best
-/// on-wire compressibility.
+/// ObjectIDs are globally unique for a given class (table), and up to 128 bits
+/// wide. They are represented as two 64-bit integers, each of which may
+/// frequently be small, for best on-wire compressibility.
 struct ObjectID {
     constexpr ObjectID(uint64_t hi, uint64_t lo);
     static ObjectID from_string(StringData);
@@ -136,9 +139,10 @@ public:
     void insert(StringData table, ObjectID object_id);
     void erase(StringData table, ObjectID object_id);
     bool contains(StringData table, ObjectID object_id) const noexcept;
+    bool empty() const noexcept;
 
     // A map from table name to a set of object ids.
-    std::map<std::string, std::set<ObjectID>, std::less<>> m_objects;
+    util::metered::map<std::string, util::metered::set<ObjectID>> m_objects;
 };
 
 // FieldSet is a set of fields in tables. A field is defined by a
@@ -150,13 +154,13 @@ public:
     void erase(StringData table, StringData column, ObjectID object_id);
     bool contains(StringData table, ObjectID object_id) const noexcept;
     bool contains(StringData table, StringData column, ObjectID object_id) const noexcept;
+    bool empty() const noexcept;
 
     // A map from table name to a map from column name to a set of
     // object ids.
-    std::map<
+    util::metered::map<
         std::string,
-        std::map<std::string, std::set<ObjectID>, std::less<>>,
-        std::less<>
+        util::metered::map<std::string, util::metered::set<ObjectID>>
     >  m_fields;
 };
 
@@ -197,7 +201,7 @@ constexpr bool ObjectID::operator!=(const ObjectID& other) const
 
 inline bool GlobalID::operator==(const GlobalID& other) const
 {
-    return table_name == other.table_name && object_id == other.object_id;
+    return object_id == other.object_id && table_name == other.table_name;
 }
 
 inline bool GlobalID::operator!=(const GlobalID& other) const
@@ -266,6 +270,16 @@ ObjectIDProvider::local_to_global_object_id_squeezed(LocalObjectID squeezed)
     uint64_t lo = (u & 0xff) | ((u & 0xffffff0000) >> 8);
     uint64_t hi = ((u & 0xff00) >> 8) | ((u & 0xffffff0000000000) >> 32);
     return ObjectID{hi, lo};
+}
+
+inline bool ObjectIDSet::empty() const noexcept
+{
+    return m_objects.empty();
+}
+
+inline bool FieldSet::empty() const noexcept
+{
+    return m_fields.empty();
 }
 
 } // namespace sync

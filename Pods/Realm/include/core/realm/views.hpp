@@ -21,10 +21,10 @@
 
 #include <realm/column.hpp>
 #include <realm/handover_defs.hpp>
-
 #include <realm/util/optional.hpp>
 
 #include <vector>
+#include <unordered_set>
 
 namespace realm {
 
@@ -37,7 +37,7 @@ public:
     BaseDescriptor() = default;
     virtual ~BaseDescriptor() = default;
     virtual bool is_valid() const noexcept = 0;
-    virtual std::string get_description(TableRef attached_table) const = 0;
+    virtual std::string get_description(ConstTableRef attached_table) const = 0;
     virtual std::unique_ptr<BaseDescriptor> clone() const = 0;
     virtual DescriptorExport export_for_handover() const = 0;
     virtual DescriptorType get_type() const = 0;
@@ -45,6 +45,24 @@ public:
 
 // Forward declaration needed for deleted ColumnsDescriptor constructor
 class SortDescriptor;
+
+struct LinkPathPart {
+    LinkPathPart(size_t col_ndx)
+        : column_ndx(col_ndx)
+    {
+    }
+
+    LinkPathPart(size_t col_ndx, ConstTableRef source)
+        : column_ndx(col_ndx)
+        , from(source)
+    {
+    }
+
+    size_t column_ndx;
+    // "from" is omitted for forward links, if it is valid then
+    // this path describes a backlink originating from the column from[column_ndx]
+    ConstTableRef from;
+};
 
 // ColumnsDescriptor encapsulates a reference to a set of columns (possibly over
 // links), which is used to indicate the criteria columns for sort and distinct.
@@ -77,16 +95,46 @@ public:
         return DescriptorType::Distinct;
     }
 
+    struct IndexPair {
+        size_t index_in_column;
+        size_t index_in_view;
+    };
     class Sorter;
-    virtual Sorter sorter(IntegerColumn const& row_indexes) const;
+    virtual Sorter sorter(std::vector<IndexPair> const& rows) const;
 
     // handover support
     DescriptorExport export_for_handover() const override;
 
-    std::string get_description(TableRef attached_table) const override;
+    std::string get_description(ConstTableRef attached_table) const override;
 
 protected:
+    std::string description_for_prefix(std::string prefix, ConstTableRef attached_table) const;
+
     std::vector<std::vector<const ColumnBase*>> m_columns;
+};
+
+class IncludeDescriptor : public ColumnsDescriptor {
+public:
+    IncludeDescriptor() = default;
+    // This constructor may throw an InvalidPathError exception if the path is not valid.
+    // A valid path consists of any number of connected link/list/backlink paths and always ends with a backlink
+    // column.
+    IncludeDescriptor(const Table& table, const std::vector<std::vector<LinkPathPart>>& column_indices);
+    ~IncludeDescriptor() = default;
+    std::string get_description(ConstTableRef attached_table) const override;
+    std::unique_ptr<BaseDescriptor> clone() const override;
+    DescriptorExport export_for_handover() const override;
+    DescriptorType get_type() const override
+    {
+        return DescriptorType::Include;
+    }
+    void append(const IncludeDescriptor& other);
+    void
+    report_included_backlinks(const Table* origin, size_t row_ndx,
+                              std::function<void(const Table*, const std::unordered_set<size_t>&)> reporter) const;
+
+private:
+    std::vector<std::vector<ConstTableRef>> m_backlink_sources; // stores a detached TableRef for non-backlink columns
 };
 
 class SortDescriptor : public ColumnsDescriptor {
@@ -107,11 +155,11 @@ public:
 
     void merge_with(SortDescriptor&& other);
 
-    Sorter sorter(IntegerColumn const& row_indexes) const override;
+    Sorter sorter(std::vector<IndexPair> const& rows) const override;
 
     // handover support
     DescriptorExport export_for_handover() const override;
-    std::string get_description(TableRef attached_table) const override;
+    std::string get_description(ConstTableRef attached_table) const override;
 
 private:
     std::vector<bool> m_ascending;
@@ -122,7 +170,7 @@ public:
     LimitDescriptor(size_t limit);
     virtual ~LimitDescriptor() = default;
     bool is_valid() const noexcept override { return true; }
-    std::string get_description(TableRef attached_table) const override;
+    std::string get_description(ConstTableRef attached_table) const override;
     std::unique_ptr<BaseDescriptor> clone() const override;
     DescriptorExport export_for_handover() const override;
     size_t get_limit() const noexcept { return m_limit; }
@@ -150,9 +198,18 @@ public:
     void append_sort(SortDescriptor sort);
     void append_distinct(DistinctDescriptor distinct);
     void append_limit(LimitDescriptor limit);
+    void append_include(IncludeDescriptor include);
+
+    /// Remove all LIMIT statements from this descriptor ordering, returning the
+    /// minimum LIMIT value that existed. If there was no LIMIT statement,
+    /// returns `none`.
+    util::Optional<size_t> remove_all_limits();
+
     bool descriptor_is_sort(size_t index) const;
     bool descriptor_is_distinct(size_t index) const;
     bool descriptor_is_limit(size_t index) const;
+    bool descriptor_is_include(size_t index) const;
+
     DescriptorType get_type(size_t index) const;
     bool is_empty() const { return m_descriptors.empty(); }
     size_t size() const { return m_descriptors.size(); }
@@ -160,9 +217,11 @@ public:
     bool will_apply_sort() const;
     bool will_apply_distinct() const;
     bool will_apply_limit() const;
+    bool will_apply_include() const;
     realm::util::Optional<size_t> get_min_limit() const;
     bool will_limit_to_zero() const;
-    std::string get_description(TableRef target_table) const;
+    IncludeDescriptor compile_included_backlinks() const;
+    std::string get_description(ConstTableRef target_table) const;
 
     // handover support
     using HandoverPatch = std::unique_ptr<DescriptorOrderingHandoverPatch>;

@@ -44,7 +44,8 @@ public final class InputSource {
 // MARK: - Hashable
 extension InputSource: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id.hashValue ^ (modeID?.hashValue ?? 0))
+        hasher.combine(id)
+        hasher.combine(modeID)
     }
 }
 

@@ -39,7 +39,7 @@ namespace _impl {
 // a Realm instance is released from within a function holding the cache lock.
 class WeakRealmNotifier {
 public:
-    WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool cache);
+    WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool cache, bool bind_to_context);
     ~WeakRealmNotifier();
 
     // Get a strong reference to the cached realm
@@ -58,6 +58,8 @@ public:
     bool is_for_realm(Realm* realm) const { return realm == m_realm_key; }
 
     void notify();
+
+    void bind_to_execution_context(AnyExecutionContextID context);
 
 private:
     std::weak_ptr<Realm> m_realm;

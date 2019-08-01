@@ -5,11 +5,6 @@
 
 Easy manage login items in macOS.
 
-## Requirements
-- macOS 10.13+
-- Xcode 9.4+
-- Swift 4.1+
-
 ## Usage
 ### CocoaPods
 ```

@@ -109,6 +109,14 @@ public:
     /// runtime_error::what() returns the msg provided in the constructor.
 };
 
+// thrown when a user constructed link path is not a valid input
+class InvalidPathError : public std::runtime_error {
+public:
+    InvalidPathError(const std::string& msg);
+    /// runtime_error::what() returns the msg provided in the constructor.
+};
+
+
 /// The \c LogicError exception class is intended to be thrown only when
 /// applications (or bindings) violate rules that are stated (or ought to have
 /// been stated) in the documentation of the public API, and only in cases
@@ -300,6 +308,11 @@ inline OutOfDiskSpace::OutOfDiskSpace(const std::string& msg)
 
 inline SerialisationError::SerialisationError(const std::string& msg)
     : ExceptionWithBacktrace<std::runtime_error>(msg)
+{
+}
+
+inline InvalidPathError::InvalidPathError(const std::string& msg)
+    : runtime_error(msg)
 {
 }
 

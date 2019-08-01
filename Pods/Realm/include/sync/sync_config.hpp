@@ -137,6 +137,10 @@ struct SyncConfig {
 
     util::Optional<std::string> url_prefix = none;
 
+    // The name of the directory which Realms should be backed up to following
+    // a client reset
+    util::Optional<std::string> recovery_directory = none;
+
     // The URL that will be used when connecting to the object server.
     // This will differ from `reference_realm_url` when partial sync is being used.
     std::string realm_url() const;

@@ -227,6 +227,11 @@ public:
     // object store team before using it.
     void override_server(std::string address, int port);
 
+    // Update the sync configuration used for this session. The new configuration must have the
+    // same user and reference realm url as the old configuration. The session will immediately
+    // disconnect (if it was active), and then attempt to connect using the new configuration.
+    void update_configuration(SyncConfig new_config);
+
     // An object representing the user who owns the Realm this `SyncSession` represents.
     std::shared_ptr<SyncUser> user() const
     {
@@ -310,24 +315,25 @@ private:
 
     friend class realm::SyncManager;
     // Called by SyncManager {
-    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
+    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client,std::string realm_path,
+                                               SyncConfig config, bool force_client_reset)
     {
         struct MakeSharedEnabler : public SyncSession {
-            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
-            : SyncSession(client, std::move(realm_path), std::move(config))
+            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config, bool force_client_reset)
+            : SyncSession(client, std::move(realm_path), std::move(config), force_client_reset)
             {}
         };
-        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config));
+        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config), force_client_reset);
     }
     // }
 
-    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
+    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig, bool force_client_reset);
 
     void handle_error(SyncError);
     void cancel_pending_waits(std::unique_lock<std::mutex>&);
     enum class ShouldBackup { yes, no };
     void update_error_and_mark_file_for_deletion(SyncError&, ShouldBackup);
-    static std::string get_recovery_file_path();
+    std::string get_recovery_file_path();
     void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
@@ -354,6 +360,7 @@ private:
     size_t m_death_count = 0;
 
     SyncConfig m_config;
+    bool m_force_client_reset;
 
     std::string m_realm_path;
     _impl::SyncClient& m_client;
