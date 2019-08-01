@@ -49,3 +49,6 @@ Carthage/Builda
 fastlane/report.xml
 fastlane/test_output/
 fastlane/screenshots
+
+.idea
+*.iml
