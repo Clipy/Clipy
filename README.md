@@ -21,7 +21,7 @@ __Distribution Site__ : <https://clipy-app.com>
 ### Development Environment
 * macOS 10.13 High Sierra
 * Xcode 10.0
-* Swift 4.2
+* Swift 5.0
 
 ### How to Build
 0. Move to the project root directory
