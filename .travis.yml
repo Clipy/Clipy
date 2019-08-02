@@ -21,11 +21,7 @@ jobs:
   include:
     - stage: test
       name: "Units Tests"
-      script: fastlane mac test
       if: branch IS PRESENT
-
-
-
 
     - stage: deploy
       name: "Deploy to Github"
