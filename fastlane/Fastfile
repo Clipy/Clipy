@@ -33,9 +33,9 @@ platform :mac do
 
   desc "Runs all the tests"
   lane :test do
-    slack(message: "Start Testing")
+    # slack(message: "Start Testing")
     scan
-    slack(message: "Passed All Tests")
+    # slack(message: "Passed All Tests")
   end
   
   desc "Release"
@@ -43,7 +43,7 @@ platform :mac do
     # Check Xcode Version
     xcversion(version: ">= 10.3")
     # Check Git Status is Clean
-    ensure_git_status_clean
+    #ensure_git_status_clean(show_diff: true, show_uncommitted_changes: true)
     # Build Clipy.app
     gym(
       xcargs: "CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM=''",
@@ -64,10 +64,10 @@ platform :mac do
 
   error do |lane, exception|
     if lane == :scan
-      slack(
-        message: "Failed Tests: " + ENV['FL_REPORT_PATH'],
-        success: false
-      )
+      #slack(
+      #  message: "Failed Tests: " + ENV['FL_REPORT_PATH'],
+      #  success: false
+      #)
     end
   end
 end
