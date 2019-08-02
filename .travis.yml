@@ -6,8 +6,10 @@ xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
 cache:
-- bundler: true
-- cocoapods: true
+  bundler: true
+  cocoapods: true
+  directories:
+    - "${HOME}/.cocoapods/repos/"
 
 before_install:
 - gem install xcpretty bundler 'cocoapods:1.7.5'
@@ -27,4 +29,3 @@ deploy:
   on:
     repo: ian4hu/Clipy
     branch: develop
-    tags: true
