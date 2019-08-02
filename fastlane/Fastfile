@@ -11,6 +11,7 @@ platform :mac do
 
   desc "Setup development"
   lane :setup do
+    sh("rm", "-rf", "Clipy.app", "Clipy.app.zip")
   end
 
   desc "Setup release developer id account settings. (only use admin)"
@@ -40,6 +41,7 @@ platform :mac do
   
   desc "Release"
   lane :release do
+    setup
     # Check Xcode Version
     xcversion(version: ">= 10.3")
     # Check Git Status is Clean
@@ -54,6 +56,7 @@ platform :mac do
       }
     )
     zip(path: "./Clipy.app", output_path: "./Clipy.app.zip")
+    clean_build_artifacts
   end
 
   ####################### PRIVATE LANES ########################
