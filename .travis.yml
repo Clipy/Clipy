@@ -10,3 +10,12 @@ before_install:
 install:
   - bundle install --jobs=3 --retry=3 --deployment
   - pod install --repo-update --deployment
+script:
+  - fastlane mac release
+deploy:
+  provider: releases
+  api_key: "${GITHUB_OAUTH_TOKEN}"
+  file: "Clipy.app"
+  skip_cleanup: true
+  on:
+    tags: true
