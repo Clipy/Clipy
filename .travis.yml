@@ -7,7 +7,7 @@ xcode_scheme: Clipy
 xcode_destination: platform=macOS
 cache:
   bundler: true
-  cocoapods: true
+#  cocoapods: true
   directories:
     - "${HOME}/.cocoapods/repos/"
 
