@@ -11,7 +11,7 @@ platform :mac do
 
   desc "Setup development"
   lane :setup do
-    sh("rm", "-rf", "Clipy.app", "Clipy.app.zip")
+    sh "cd .. && rm -rf Clipy.app Clipy.*.zip"
   end
 
   desc "Setup release developer id account settings. (only use admin)"

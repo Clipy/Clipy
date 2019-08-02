@@ -30,4 +30,3 @@ deploy:
   on:
     repo: ian4hu/Clipy
     branch: develop
-before_deploy:
