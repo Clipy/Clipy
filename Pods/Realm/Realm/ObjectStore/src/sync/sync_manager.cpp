@@ -513,3 +513,9 @@ std::string SyncManager::client_uuid() const
     REALM_ASSERT(m_client_uuid);
     return *m_client_uuid;
 }
+
+std::string SyncManager::client_uuid() const
+{
+    REALM_ASSERT(m_metadata_manager);
+    return m_metadata_manager->client_uuid();
+}

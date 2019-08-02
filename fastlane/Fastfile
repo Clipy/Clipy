@@ -1,3 +1,5 @@
+fastlane_version "2.71.0"
+
 default_platform :mac
 
 platform :mac do
@@ -40,8 +42,19 @@ platform :mac do
   
   desc "Release"
   lane :release do
-    # TODO: Use :codesigning_identity options (Developer ID Application: Shunsuke Furubayashi (BBCHAJ584H))
-    # TODO: Use :export_method options (developer-id)
+    # Check Xcode Version
+    xcversion(version: "9.2")
+    # Check Git Status is Clean
+    ensure_git_status_clean
+    # Build Clipy.app
+    gym(
+      xcargs: "CODE_SIGN_IDENTITY='Developer ID Application: Shunsuke Furubayashi (BBCHAJ584H)' DEVELOPMENT_TEAM='BBCHAJ584H'",
+      export_options: {
+        provisioningProfiles: {
+          "com.clipy-app.Clipy" => "ClipyDistribution2"
+        }
+      }
+    )
   end
 
   ####################### PRIVATE LANES ########################

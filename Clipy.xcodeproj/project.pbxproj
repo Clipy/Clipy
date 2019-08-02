@@ -866,6 +866,7 @@
 				FA1DB4D31DDCB479007F95C8 /* CPYClip.swift in Sources */,
 				FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */,
 				C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */,
+				FA1DB4E61DDCB49C007F95C8 /* LocalizedString.swift in Sources */,
 				FA1DB4A31DDCB433007F95C8 /* Constants.swift in Sources */,
 				FA1DB4D61DDCB479007F95C8 /* CPYFolder.swift in Sources */,
 				CAFD12B01F207DBC00DF1CEB /* Observable+Void.swift in Sources */,
