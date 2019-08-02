@@ -9,4 +9,4 @@ before_install:
   - gem install xcpretty bundler 'cocoapods:1.7.5'
 install:
   - bundle install --jobs=3 --retry=3 --deployment
-  - pod install --repo-update
+  - pod install --repo-update --deployment

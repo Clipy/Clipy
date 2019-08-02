@@ -36,3 +36,12 @@ target 'Clipy' do
   end
 
 end
+
+
+# Workaround for signing
+# https://github.com/CocoaPods/CocoaPods/pull/6964#issuecomment-327851704
+post_install do |installer|
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings[‘PROVISIONING_PROFILE_SPECIFIER’] = ''
+  end
+end

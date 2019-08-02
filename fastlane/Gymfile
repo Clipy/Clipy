@@ -1,0 +1,7 @@
+workspace "Clipy.xcworkspace"
+scheme "Clipy"
+output_directory "./"
+output_name "Clipy"
+clean true
+configuration "Release"
+export_method "developer-id"
