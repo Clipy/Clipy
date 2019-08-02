@@ -29,26 +29,26 @@ class HotKeyServiceSpec: QuickSpec {
 
                 let defaults = UserDefaults.standard
 
-                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beFalse())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)) == false
                 service.setupDefaultHotKeys()
-                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beTrue())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)) == true
 
                 expect(service.mainKeyCombo).toNot(beNil())
                 expect(service.mainKeyCombo?.keyCode) == 9
                 expect(service.mainKeyCombo?.modifiers) == 768
-                expect(service.mainKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.mainKeyCombo?.doubledModifiers) == false
                 expect(service.mainKeyCombo?.characters) == "V"
 
                 expect(service.historyKeyCombo).toNot(beNil())
                 expect(service.historyKeyCombo?.keyCode) == 9
                 expect(service.historyKeyCombo?.modifiers) == 4352
-                expect(service.historyKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.historyKeyCombo?.doubledModifiers) == false
                 expect(service.historyKeyCombo?.characters) == "V"
 
                 expect(service.snippetKeyCombo).toNot(beNil())
                 expect(service.snippetKeyCombo?.keyCode) == 11
                 expect(service.snippetKeyCombo?.modifiers) == 768
-                expect(service.snippetKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.snippetKeyCombo?.doubledModifiers) == false
                 expect(service.snippetKeyCombo?.characters) == "B"
             }
 
@@ -65,26 +65,26 @@ class HotKeyServiceSpec: QuickSpec {
                 defaults.register(defaults: [Constants.UserDefaults.hotKeys: defaultKeyCombos])
                 defaults.synchronize()
 
-                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beFalse())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)) == false
                 service.setupDefaultHotKeys()
-                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)).to(beTrue())
+                expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo)) == true
 
                 expect(service.mainKeyCombo).toNot(beNil())
                 expect(service.mainKeyCombo?.keyCode) == 0
                 expect(service.mainKeyCombo?.modifiers) == 4352
-                expect(service.mainKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.mainKeyCombo?.doubledModifiers) == false
                 expect(service.mainKeyCombo?.characters) == "A"
 
                 expect(service.historyKeyCombo).toNot(beNil())
                 expect(service.historyKeyCombo?.keyCode) == 9
                 expect(service.historyKeyCombo?.modifiers) == 768
-                expect(service.historyKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.historyKeyCombo?.doubledModifiers) == false
                 expect(service.historyKeyCombo?.characters) == "V"
 
                 expect(service.snippetKeyCombo).toNot(beNil())
                 expect(service.snippetKeyCombo?.keyCode) == 11
                 expect(service.snippetKeyCombo?.modifiers) == 4352
-                expect(service.snippetKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.snippetKeyCombo?.doubledModifiers) == false
                 expect(service.snippetKeyCombo?.characters) == "B"
             }
 
@@ -141,19 +141,19 @@ class HotKeyServiceSpec: QuickSpec {
                 expect(savedMainKeyCombo).toNot(beNil())
                 expect(savedMainKeyCombo?.keyCode) == 9
                 expect(savedMainKeyCombo?.modifiers) == 768
-                expect(savedMainKeyCombo?.doubledModifiers).to(beFalse())
+                expect(savedMainKeyCombo?.doubledModifiers) == false
                 expect(savedMainKeyCombo?.characters) == "V"
 
                 expect(savedHistoryKeyCombo).toNot(beNil())
                 expect(savedHistoryKeyCombo?.keyCode) == 0
                 expect(savedHistoryKeyCombo?.modifiers) == cmdKey
-                expect(savedHistoryKeyCombo?.doubledModifiers).to(beTrue())
+                expect(savedHistoryKeyCombo?.doubledModifiers) == true
                 expect(savedHistoryKeyCombo?.characters) == ""
 
                 expect(savedSnippetKeyCombo).toNot(beNil())
                 expect(savedSnippetKeyCombo?.keyCode) == 0
                 expect(savedSnippetKeyCombo?.modifiers) == shiftKey
-                expect(savedSnippetKeyCombo?.doubledModifiers).to(beFalse())
+                expect(savedSnippetKeyCombo?.doubledModifiers) == false
                 expect(savedSnippetKeyCombo?.characters) == "A"
 
                 service.change(with: .main, keyCombo: nil)
@@ -181,19 +181,19 @@ class HotKeyServiceSpec: QuickSpec {
                 expect(service.mainKeyCombo).toNot(beNil())
                 expect(service.mainKeyCombo?.keyCode) == 9
                 expect(service.mainKeyCombo?.modifiers) == 768
-                expect(service.mainKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.mainKeyCombo?.doubledModifiers) == false
                 expect(service.mainKeyCombo?.characters) == "V"
 
                 expect(service.historyKeyCombo).toNot(beNil())
                 expect(service.historyKeyCombo?.keyCode) == 0
                 expect(service.historyKeyCombo?.modifiers) == cmdKey
-                expect(service.historyKeyCombo?.doubledModifiers).to(beTrue())
+                expect(service.historyKeyCombo?.doubledModifiers) == true
                 expect(service.historyKeyCombo?.characters) == ""
 
                 expect(service.snippetKeyCombo).toNot(beNil())
                 expect(service.snippetKeyCombo?.keyCode) == 0
                 expect(service.snippetKeyCombo?.modifiers) == shiftKey
-                expect(service.snippetKeyCombo?.doubledModifiers).to(beFalse())
+                expect(service.snippetKeyCombo?.doubledModifiers) == false
                 expect(service.snippetKeyCombo?.characters) == "A"
             }
 
