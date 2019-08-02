@@ -1,5 +1,6 @@
 platform :osx, '10.10'
 use_frameworks!
+inhibit_all_warnings!
 
 source 'https://github.com/CocoaPods/Specs.git'
 
@@ -35,6 +36,7 @@ target 'Clipy' do
   end
 
 end
+
 
 # Workaround for signing
 # https://github.com/CocoaPods/CocoaPods/pull/6964#issuecomment-327851704

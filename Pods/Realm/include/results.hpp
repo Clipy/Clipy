@@ -21,7 +21,11 @@
 
 #include "collection_notifications.hpp"
 #include "impl/collection_notifier.hpp"
+#include "list.hpp"
+#include "object.hpp"
+#include "object_schema.hpp"
 #include "property.hpp"
+#include "shared_realm.hpp"
 
 #include <realm/table_view.hpp>
 #include <realm/util/optional.hpp>
@@ -189,6 +193,13 @@ public:
         UnsupportedColumnTypeException(size_t column, const Table* table, const char* operation);
     };
 
+    // The property request does not exist in the schema
+    struct InvalidPropertyException : public std::logic_error {
+        InvalidPropertyException(const std::string& object_type, const std::string& property_name);
+        const std::string object_type;
+        const std::string property_name;
+	};
+
     // The requested operation is valid, but has not yet been implemented
     struct UnimplementedOperationException : public std::logic_error {
         UnimplementedOperationException(const char *message);
@@ -218,6 +229,12 @@ public:
 
     template<typename Context, typename T>
     size_t index_of(Context&, T value);
+
+    // Batch updates all items in this collection with the provided value
+    // Must be called inside a transaction
+    // Throws an exception if the value does not match the type for given prop_name
+    template<typename ValueType, typename ContextType>
+    void set_property_value(ContextType& ctx, StringData prop_name, ValueType value);
 
     // Execute the query immediately if needed. When the relevant query is slow, size()
     // may cost similar time compared with creating the tableview. Use this function to
@@ -313,6 +330,32 @@ size_t Results::index_of(Context& ctx, T value)
 {
     return dispatch([&](auto t) { return this->index_of(ctx.template unbox<std::decay_t<decltype(*t)>>(value)); });
 }
+
+template <typename ValueType, typename ContextType>
+void Results::set_property_value(ContextType& ctx, StringData prop_name, ValueType value)
+{
+    // Check invariants for calling this method
+    validate_write();
+    const ObjectSchema& object_schema = get_object_schema();
+    const Property* prop = object_schema.property_for_name(prop_name);
+    if (!prop) {
+        throw InvalidPropertyException(object_schema.name, prop_name);
+    }
+    if (prop->is_primary && !m_realm->is_in_migration()) {
+        throw ModifyPrimaryKeyException(m_object_schema->name, prop->name);
+    }
+
+    // Update all objects in this ResultSets. Use snapshot to avoid correctness problems if the
+    // object is removed from the TableView after the property update as well as avoiding to
+    // re-evaluating the query too many times.
+    auto snapshot = this->snapshot();
+    size_t size = snapshot.size();
+    for (size_t i = 0; i < size; ++i) {
+        Object obj(m_realm, *m_object_schema, snapshot.get(i));
+        obj.set_property_value_impl(ctx, *prop, value, true, false, false);
+    }
+}
+
 } // namespace realm
 
 #endif // REALM_RESULTS_HPP

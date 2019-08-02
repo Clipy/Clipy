@@ -17,8 +17,10 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "impl/external_commit_helper.hpp"
-
 #include "impl/realm_coordinator.hpp"
+#include "util/fifo.hpp"
+
+#include <realm/group_shared_options.hpp>
 
 #include <asl.h>
 #include <assert.h>
@@ -53,6 +55,7 @@ void notify_fd(int fd, int read_fd)
         read(read_fd, buff, sizeof buff);
     }
 }
+
 } // anonymous namespace
 
 void ExternalCommitHelper::FdHolder::close()
@@ -95,27 +98,38 @@ ExternalCommitHelper::ExternalCommitHelper(RealmCoordinator& parent)
     }
 
 #if !TARGET_OS_TV
-    auto path = parent.get_path() + ".note";
 
-    // Create and open the named pipe
-    int ret = mkfifo(path.c_str(), 0600);
-    if (ret == -1) {
-        int err = errno;
-        if (err == ENOTSUP) {
-            // Filesystem doesn't support named pipes, so try putting it in tmp instead
-            // Hash collisions are okay here because they just result in doing
-            // extra work, as opposed to correctness problems
-            std::ostringstream ss;
-            ss << getenv("TMPDIR");
-            ss << "realm_" << std::hash<std::string>()(path) << ".note";
-            path = ss.str();
-            ret = mkfifo(path.c_str(), 0600);
-            err = errno;
-        }
-        // the fifo already existing isn't an error
-        if (ret == -1 && err != EEXIST) {
-            throw std::system_error(err, std::system_category());
-        }
+
+    // Object Store needs to create a named pipe in order to coordinate notifications.
+    // This can be a problem on some file systems (e.g. FAT32) or due to security policies in SELinux. Most commonly
+    // it is a problem when saving Realms on external storage: https://stackoverflow.com/questions/2740321/how-to-create-named-pipe-mkfifo-in-android
+    //
+    // For this reason we attempt to create this file in a temporary location known to be safe to write these files.
+    //
+    // In order of priority we attempt to write the file in the following locations:
+    //  1) Next to the Realm file itself
+    //  2) A location defined by `Realm::Config::fifo_files_fallback_path`
+    //  3) A location defined by `SharedGroupOptions::set_sys_tmp_dir()`
+    //
+    // Core has a similar policy for its named pipes.
+    //
+    // Also see https://github.com/realm/realm-java/issues/3140
+    // Note that hash collisions are okay here because they just result in doing extra work instead of resulting
+    // in correctness problems.
+
+    std::string path;
+    std::string temp_dir = util::normalize_dir(parent.get_config().fifo_files_fallback_path);
+    std::string sys_temp_dir = util::normalize_dir(SharedGroupOptions::get_sys_tmp_dir());
+
+    path = parent.get_path() + ".note";
+    bool fifo_created = util::try_create_fifo(path);
+    if (!fifo_created && !temp_dir.empty()) {
+        path = util::format("%1realm_%2.note", temp_dir, std::hash<std::string>()(parent.get_path()));
+        fifo_created = util::try_create_fifo(path);
+    }
+    if (!fifo_created && !sys_temp_dir.empty()) {
+        path = util::format("%1realm_%2.note", sys_temp_dir, std::hash<std::string>()(parent.get_path()));
+        util::create_fifo(path);
     }
 
     m_notify_fd = open(path.c_str(), O_RDWR);
@@ -125,7 +139,7 @@ ExternalCommitHelper::ExternalCommitHelper(RealmCoordinator& parent)
 
     // Make writing to the pipe return -1 when the pipe's buffer is full
     // rather than blocking until there's space available
-    ret = fcntl(m_notify_fd, F_SETFL, O_NONBLOCK);
+    int ret = fcntl(m_notify_fd, F_SETFL, O_NONBLOCK);
     if (ret == -1) {
         throw std::system_error(errno, std::system_category());
     }
@@ -154,7 +168,7 @@ ExternalCommitHelper::ExternalCommitHelper(RealmCoordinator& parent)
     m_shutdown_read_fd = shutdown_pipe[0];
     m_shutdown_write_fd = shutdown_pipe[1];
 
-    m_thread = std::async(std::launch::async, [=] {
+    m_thread = std::thread([=] {
         try {
             listen();
         }
@@ -177,12 +191,12 @@ ExternalCommitHelper::ExternalCommitHelper(RealmCoordinator& parent)
 ExternalCommitHelper::~ExternalCommitHelper()
 {
     notify_fd(m_shutdown_write_fd, m_shutdown_read_fd);
-    m_thread.wait(); // Wait for the thread to exit
+    m_thread.join(); // Wait for the thread to exit
 }
 
 void ExternalCommitHelper::listen()
 {
-    pthread_setname_np("RLMRealm notification listener");
+    pthread_setname_np("Realm notification listener");
 
     // Set up the kqueue
     // EVFILT_READ indicates that we care about data being available to read
@@ -200,11 +214,11 @@ void ExternalCommitHelper::listen()
         // Wait for data to become on either fd
         // Return code is number of bytes available or -1 on error
         ret = kevent(m_kq, nullptr, 0, &event, 1, nullptr);
-        assert(ret >= 0);
-        if (ret == 0) {
+        if (ret == 0 || (ret < 0 && errno == EINTR)) {
             // Spurious wakeup; just wait again
             continue;
         }
+        assert(ret > 0);
 
         // Check which file descriptor had activity: if it's the shutdown
         // pipe, then someone called -stop; otherwise it's the named pipe

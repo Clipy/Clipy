@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include <string>
 #include <streambuf>
+#include <iostream>
 
 #ifndef _WIN32
 #include <dirent.h> // POSIX.1-2001
@@ -300,7 +301,7 @@ public:
     ///
     /// \sa prealloc()
     /// \sa is_prealloc_supported()
-    void prealloc_if_supported(SizeType offset, size_t size);
+    bool prealloc_if_supported(SizeType offset, size_t size);
 
     /// See prealloc_if_supported().
     static bool is_prealloc_supported();
@@ -544,13 +545,18 @@ public:
 #else
         // NDK r10e has a bug in sys/stat.h dev_t ino_t are 4 bytes,
         // but stat.st_dev and st_ino are 8 bytes. So we just use uint64 instead.
-        uint_fast64_t device;
+        dev_t device;
         uint_fast64_t inode;
 #endif
     };
     // Return the unique id for the current opened file descriptor.
     // Same UniqueID means they are the same file.
     UniqueID get_unique_id() const;
+    // Return the file descriptor for the file
+    FileDesc get_descriptor() const;
+    // Return the path of the open file, or an empty string if
+    // this file has never been opened.
+    std::string get_path() const;
     // Return false if the file doesn't exist. Otherwise uid will be set.
     static bool get_unique_id(const std::string& path, UniqueID& uid);
 
@@ -580,6 +586,7 @@ private:
     int m_fd;
 #endif
     std::unique_ptr<const char[]> m_encryption_key = nullptr;
+    std::string m_path;
 
     bool lock(bool exclusive, bool non_blocking);
     void open_internal(const std::string& path, AccessMode, CreateMode, int flags, bool* success);
@@ -853,7 +860,7 @@ private:
 /// Only output is supported at this point.
 class File::Streambuf : public std::streambuf {
 public:
-    explicit Streambuf(File*);
+    explicit Streambuf(File*, size_t = 4096);
     ~Streambuf() noexcept;
 
     // Disable copying
@@ -861,8 +868,6 @@ public:
     Streambuf& operator=(const Streambuf&) = delete;
 
 private:
-    static const size_t buffer_size = 4096;
-
     File& m_file;
     std::unique_ptr<char[]> const m_buffer;
 
@@ -871,7 +876,6 @@ private:
     pos_type seekpos(pos_type, std::ios_base::openmode) override;
     void flush();
 };
-
 
 /// Used for any I/O related exception. Note the derived exception
 /// types that are used for various specific types of errors.
@@ -883,8 +887,17 @@ public:
     /// no associated file system path, or if the file system path is unknown.
     std::string get_path() const;
 
+    const char* what() const noexcept
+    {
+        m_buffer = std::runtime_error::what();
+        if (m_path.size() > 0)
+            m_buffer += (std::string(" Path: ") + m_path);
+        return m_buffer.c_str();
+    }
+
 private:
     std::string m_path;
+    mutable std::string m_buffer;
 };
 
 
@@ -1184,7 +1197,7 @@ inline T* File::Map<T>::release() noexcept
 }
 
 
-inline File::Streambuf::Streambuf(File* f)
+inline File::Streambuf::Streambuf(File* f, size_t buffer_size)
     : m_file(*f)
     , m_buffer(new char[buffer_size])
 {

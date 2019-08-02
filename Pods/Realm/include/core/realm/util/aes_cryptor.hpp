@@ -33,8 +33,8 @@
 #include <bcrypt.h>
 #pragma comment(lib, "bcrypt.lib")
 #else
-#include <openssl/aes.h>
 #include <openssl/sha.h>
+#include <openssl/evp.h>
 #endif
 
 namespace realm {
@@ -62,8 +62,8 @@ private:
         mode_Encrypt = 0,
         mode_Decrypt = 1
 #else
-        mode_Encrypt = AES_ENCRYPT,
-        mode_Decrypt = AES_DECRYPT
+        mode_Encrypt = 1,
+        mode_Decrypt = 0
 #endif
     };
 
@@ -73,8 +73,8 @@ private:
 #elif defined(_WIN32)
     BCRYPT_KEY_HANDLE m_aes_key_handle;
 #else
-    AES_KEY m_ectx;
-    AES_KEY m_dctx;
+    uint8_t m_aesKey[32];
+    EVP_CIPHER_CTX* m_ctx;
 #endif
 
     uint8_t m_hmacKey[32];
@@ -86,12 +86,24 @@ private:
     bool check_hmac(const void* data, size_t len, const uint8_t* hmac) const;
     void crypt(EncryptionMode mode, off_t pos, char* dst, const char* src, const char* stored_iv) noexcept;
     iv_table& get_iv_table(FileDesc fd, off_t data_pos) noexcept;
+    void handle_error();
+};
+
+struct ReaderInfo {
+    const void* reader_ID;
+    uint64_t version;
 };
 
 struct SharedFileInfo {
     FileDesc fd;
     AESCryptor cryptor;
     std::vector<EncryptedFileMapping*> mappings;
+    uint64_t last_scanned_version = 0;
+    uint64_t current_version = 0;
+    size_t num_decrypted_pages = 0;
+    size_t num_reclaimed_pages = 0;
+    size_t progress_index = 0;
+    std::vector<ReaderInfo> readers;
 
     SharedFileInfo(const uint8_t* key, FileDesc file_descriptor);
 };

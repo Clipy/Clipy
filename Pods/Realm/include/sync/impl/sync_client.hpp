@@ -39,8 +39,8 @@ namespace _impl {
 using ReconnectMode = sync::Client::ReconnectMode;
 
 struct SyncClient {
-    SyncClient(std::unique_ptr<util::Logger> logger, ReconnectMode reconnect_mode, bool multiplex_sessions)
-        : m_client(make_client(*logger, reconnect_mode, multiplex_sessions)) // Throws
+    SyncClient(std::unique_ptr<util::Logger> logger, ReconnectMode reconnect_mode, bool multiplex_sessions, const std::string& user_agent_application_info)
+        : m_client(make_client(*logger, reconnect_mode, multiplex_sessions, user_agent_application_info)) // Throws
         , m_logger(std::move(logger))
         , m_thread([this] {
             if (g_binding_callback_thread_observer) {
@@ -96,12 +96,13 @@ struct SyncClient {
     }
 
 private:
-    static sync::Client make_client(util::Logger& logger, ReconnectMode reconnect_mode, bool multiplex_sessions)
+    static sync::Client make_client(util::Logger& logger, ReconnectMode reconnect_mode, bool multiplex_sessions, const std::string& user_agent_application_info)
     {
         sync::Client::Config config;
         config.logger = &logger;
         config.reconnect_mode = std::move(reconnect_mode);
         config.one_connection_per_session = !multiplex_sessions;
+        config.user_agent_application_info = user_agent_application_info;
         return sync::Client(std::move(config)); // Throws
     }
 

@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <ostream>
+#include <chrono>
 #include <realm/util/assert.hpp>
 #include <realm/null.hpp>
 
@@ -76,6 +77,14 @@ public:
         : m_is_null(true)
     {
     }
+    template <typename C = std::chrono::system_clock, typename D = typename C::duration>
+    Timestamp(std::chrono::time_point<C, D> tp)
+        : m_is_null(false)
+    {
+        int64_t native_nano = std::chrono::duration_cast<std::chrono::nanoseconds>(tp.time_since_epoch()).count();
+        m_seconds = native_nano / nanoseconds_per_second;
+        m_nanoseconds = static_cast<int32_t>(native_nano % nanoseconds_per_second);
+    }
     Timestamp()
         : Timestamp(null{})
     {
@@ -96,6 +105,17 @@ public:
     {
         REALM_ASSERT(!m_is_null);
         return m_nanoseconds;
+    }
+
+    template <typename C = std::chrono::system_clock, typename D = typename C::duration>
+    std::chrono::time_point<C, D> get_time_point()
+    {
+        REALM_ASSERT(!m_is_null);
+
+        int64_t native_nano = m_seconds * nanoseconds_per_second + m_nanoseconds;
+        auto duration = std::chrono::duration_cast<D>(std::chrono::duration<int64_t, std::nano>{native_nano});
+
+        return std::chrono::time_point<C, D>(duration);
     }
 
     // Note that only == and != operators work if one of the Timestamps are null! Else use realm::Greater,

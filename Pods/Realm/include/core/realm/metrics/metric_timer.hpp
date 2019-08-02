@@ -25,8 +25,6 @@
 #include <memory>
 #include <ostream>
 
-#if REALM_METRICS
-
 namespace realm {
 namespace metrics {
 
@@ -97,7 +95,5 @@ inline std::ostream& operator<<(std::ostream& out, const MetricTimer& timer)
 
 } // namespace metrics
 } // namespace realm
-
-#endif // REALM_METRICS
 
 #endif // REALM_METRIC_TIMER_HPP

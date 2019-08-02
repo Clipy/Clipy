@@ -13,10 +13,22 @@ extension ObservableType {
 
      - seealso: [single operator on reactivex.io](http://reactivex.io/documentation/operators/first.html)
 
-     - returns: An observable sequence that emits a single element or throws an exception if more (or none) of them are emitted.
+     - returns: An observable sequence that emits a single element when the source Observable has completed, or throws an exception if more (or none) of them are emitted.
      */
-    public func asSingle() -> Single<E> {
+    public func asSingle() -> Single<Element> {
         return PrimitiveSequence(raw: AsSingle(source: self.asObservable()))
+    }
+    
+    /**
+     The `first` operator emits only the very first item emitted by this Observable,
+     or nil if this Observable completes without emitting anything.
+     
+     - seealso: [single operator on reactivex.io](http://reactivex.io/documentation/operators/first.html)
+     
+     - returns: An observable sequence that emits a single element or nil if the source observable sequence completes without emitting any items.
+     */
+    public func first() -> Single<Element?> {
+        return PrimitiveSequence(raw: First(source: self.asObservable()))
     }
 
     /**
@@ -25,14 +37,14 @@ extension ObservableType {
 
      - seealso: [single operator on reactivex.io](http://reactivex.io/documentation/operators/first.html)
 
-     - returns: An observable sequence that emits a single element, completes or throws an exception if more of them are emitted.
+     - returns: An observable sequence that emits a single element, completes when the source Observable has completed, or throws an exception if more of them are emitted.
      */
-    public func asMaybe() -> Maybe<E> {
+    public func asMaybe() -> Maybe<Element> {
         return PrimitiveSequence(raw: AsMaybe(source: self.asObservable()))
     }
 }
 
-extension ObservableType where E == Never {
+extension ObservableType where Element == Never {
     /**
      - returns: An observable sequence that completes.
      */

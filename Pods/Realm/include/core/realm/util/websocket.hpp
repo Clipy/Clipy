@@ -25,6 +25,7 @@
 #include <system_error>
 #include <map>
 
+#include <realm/util/string_view.hpp>
 #include <realm/util/logger.hpp>
 #include <realm/util/http.hpp>
 
@@ -40,6 +41,8 @@ using ReadCompletionHandler =
 
 class Config {
 public:
+    virtual ~Config() {}
+
     /// The Socket uses the caller supplied logger for logging.
     virtual util::Logger& websocket_get_logger() noexcept = 0;
 
@@ -72,16 +75,20 @@ public:
     /// websocket_read_error_handler() and websocket_write_error_handler() are called when an
     /// error occurs on the underlying stream given by the async_read and async_write functions above.
     /// The error_code is passed through.
+    ///
     /// websocket_handshake_error_handler() will be called when there is an error in the handshake
     /// such as "404 Not found".
+    ///
     /// websocket_protocol_error_handler() is called when there is an protocol error in the incoming
     /// websocket messages.
+    ///
     /// After calling any of these error callbacks, the Socket will move into the stopped state, and
     /// no more messages should be sent, or will be received.
     /// It is safe to destroy the WebSocket object in these handlers.
     virtual void websocket_read_error_handler(std::error_code) = 0;
     virtual void websocket_write_error_handler(std::error_code) = 0;
-    virtual void websocket_handshake_error_handler(std::error_code, const HTTPHeaders&) = 0;
+    virtual void websocket_handshake_error_handler(std::error_code, const HTTPHeaders*,
+                                                   const util::StringView* body) = 0;
     virtual void websocket_protocol_error_handler(std::error_code) = 0;
     //@}
 

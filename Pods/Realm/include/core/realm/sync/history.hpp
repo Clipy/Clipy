@@ -18,16 +18,31 @@
  *
  **************************************************************************/
 
+#include <cstdint>
 #include <memory>
+#include <chrono>
 #include <string>
 
+#include <realm/util/string_view.hpp>
 #include <realm/impl/cont_transact_hist.hpp>
 #include <realm/sync/instruction_replication.hpp>
 #include <realm/sync/protocol.hpp>
 #include <realm/sync/transform.hpp>
+#include <realm/sync/object_id.hpp>
+#include <realm/sync/instructions.hpp>
 
 #ifndef REALM_SYNC_HISTORY_HPP
 #define REALM_SYNC_HISTORY_HPP
+
+
+namespace realm {
+namespace _impl {
+
+struct ObjectIDHistoryState;
+
+} // namespace _impl
+} // namespace realm
+
 
 namespace realm {
 namespace sync {
@@ -42,6 +57,16 @@ struct VersionInfo {
     /// will currently always be equal to `realm_version` and
     /// `sync_version.salt` will always be zero.
     SaltedVersion sync_version = {0, 0};
+};
+
+
+struct SerialTransactSubstitutions {
+    struct Class {
+        InternString name;
+        std::size_t substitutions_end;
+    };
+    std::vector<Class> classes;
+    std::vector<std::pair<ObjectID, ObjectID>> substitutions;
 };
 
 
@@ -77,12 +102,12 @@ public:
     /// implementation.
     ///
     /// The returned client file identifier is the one that was last stored by
-    /// set_client_file_ident(). If no identifier has been stored yet, the
-    /// `ident` field of \a client_file_ident is set to zero.
+    /// set_client_file_ident(), or `SaltedFileIdent{0, 0}` if
+    /// set_client_file_ident() has never been called.
     ///
     /// The returned SyncProgress is the one that was last stored by
-    /// set_sync_progress(), or {} if set_sync_progress() has never been called
-    /// for the associated Realm file.
+    /// set_sync_progress(), or `SyncProgress{}` if set_sync_progress() has
+    /// never been called.
     virtual void get_status(version_type& current_client_version,
                             SaltedFileIdent& client_file_ident,
                             SyncProgress& progress) const = 0;
@@ -100,11 +125,17 @@ public:
     /// identical identifiers for two client files if they are associated with
     /// different server Realms.
     ///
+    /// \param fix_up_object_ids The object ids that depend on client file ident
+    /// will be fixed in both state and history if this parameter is true. If
+    /// it is known that there are no objects to fix, it can be set to false to
+    /// achieve higher performance.
+    ///
     /// The client is required to obtain the file identifier before engaging in
     /// synchronization proper, and it must store the identifier and use it to
     /// reestablish the connection between the client file and the server file
     /// when engaging in future synchronization sessions.
-    virtual void set_client_file_ident(SaltedFileIdent client_file_ident) = 0;
+    virtual void set_client_file_ident(SaltedFileIdent client_file_ident,
+                                       bool fix_up_object_ids) = 0;
 
     /// Stores the SyncProgress progress in the associated Realm file in a way
     /// that makes it available via get_status() during future synchronization
@@ -119,32 +150,6 @@ public:
     /// find_uploadable_changesets(). It may, or may not be the value last
     /// returned for it by get_status().
     virtual void set_sync_progress(const SyncProgress& progress, VersionInfo&) = 0;
-
-/*
-    /// Get the first history entry whose changeset produced a version that
-    /// succeeds `begin_version` and, and does not succeed `end_version`, whose
-    /// changeset was not produced by integration of a changeset received from
-    /// the server, and whose changeset was not empty.
-    ///
-    /// \param begin_version, end_version The range of versions to consider. If
-    /// `begin_version` is equal to `end_version`, this is the empty range. If
-    /// `begin_version` is zero, it means that everything preceding
-    /// `end_version` is to be considered, which is again the empty range if
-    /// `end_version` is also zero. Zero is a special value in that no changeset
-    /// produces that version. It is an error if `end_version` precedes
-    /// `begin_version`, or if `end_version` is zero and `begin_version` is not.
-    ///
-    /// \param buffer Owner of memory referenced by entry.changeset upon return.
-    ///
-    /// \return The version produced by the changeset of the located history
-    /// entry, or zero if no history entry exists matching the specified
-    /// criteria.
-    virtual version_type find_history_entry_for_upload(version_type begin_version,
-                                                       version_type end_version,
-                                                       HistoryEntry& entry,
-                                                       std::unique_ptr<char[]>& buffer) const = 0;
-*/
-
 
     struct UploadChangeset {
         timestamp_type origin_timestamp;
@@ -235,10 +240,13 @@ public:
                                              const RemoteChangeset* changesets,
                                              std::size_t num_changesets, VersionInfo& new_version,
                                              IntegrationError& integration_error, util::Logger&,
-                                             SyncTransactReporter* transact_reporter = nullptr) = 0;
+                                             SyncTransactReporter* transact_reporter = nullptr,
+                                             const SerialTransactSubstitutions* = nullptr) = 0;
 
 protected:
     ClientHistoryBase(const std::string& realm_path);
+
+    static timestamp_type generate_changeset_timestamp() noexcept;
 };
 
 
@@ -308,6 +316,79 @@ public:
     virtual void get_cooked_changeset(std::int_fast64_t index,
                                       util::AppendBuffer<char>&) const = 0;
 
+    /// set_initial_state_realm_history_numbers() sets the history numbers for
+    /// a new state Realm. The function is used when the server creates a new
+    /// State Realm.
+    ///
+    /// The history object must be in a write transaction before the function
+    /// call.
+    virtual void set_initial_state_realm_history_numbers(version_type local_version,
+                                                         sync::SaltedVersion server_version) = 0;
+
+    /// set_initial_collision_tables() copies the collision tables from
+    /// 'src_object_id_history_state' into the object id history state of this history.
+    /// The current object_id_history_state must be empty. This function is used when
+    /// the server creates a state Realm.
+    ///
+    /// The history object must be in a write transaction before the function
+    /// call.
+    virtual void set_initial_collision_tables(version_type local_version,
+                                              const _impl::ObjectIDHistoryState& src_object_id_history_state) = 0;
+
+    // virtual void set_client_file_ident_in_wt() sets the client file ident.
+    // The history must be in a write transaction with version 'current_version'.
+    virtual void set_client_file_ident_in_wt(version_type current_version,
+                                             SaltedFileIdent client_file_ident) = 0;
+
+    /// set_client_file_ident_and_downloaded_bytes() sets the salted client
+    /// file ident and downloaded_bytes. The function is used when a state
+    /// Realm has been downloaded from the server. The function creates a write
+    /// transaction.
+    virtual void set_client_file_ident_and_downloaded_bytes(SaltedFileIdent client_file_ident,
+                                                            uint_fast64_t downloaded_bytes) = 0;
+
+    /// set_client_reset_adjustments() is used by client reset to adjust the
+    /// content of the history compartment. The shared group associated with
+    /// this history object must be in a write transaction when this function
+    /// is called.
+    virtual void set_client_reset_adjustments(version_type current_version,
+                                              SaltedFileIdent client_file_ident,
+                                              sync::SaltedVersion server_version,
+                                              uint_fast64_t downloaded_bytes,
+                                              BinaryData uploadable_changeset) = 0;
+
+    struct LocalChangeset {
+        version_type version;
+        ChunkedBinaryData changeset;
+    };
+
+    // get_next_local_changeset returns the first changeset with version
+    // greater than or equal to 'begin_version'. 'begin_version' must be at
+    // least 1.
+    //
+    // The history must be in a transaction when this function is called.
+    // The return value is none if there are no such local changesets.
+    virtual Optional<LocalChangeset> get_next_local_changeset(version_type current_version,
+                                                              version_type begin_version) const = 0;
+
+    /// Return an upload cursor as it would be when the uploading process
+    /// reaches the snapshot to which the current transaction is bound.
+    ///
+    /// **CAUTION:** Must be called only while a transaction (read or write) is
+    /// in progress via the SharedGroup object associated with this history
+    /// object.
+    virtual UploadCursor get_upload_anchor_of_current_transact() const = 0;
+
+    /// Return the synchronization changeset of the current transaction as it
+    /// would be if that transaction was committed at this time.
+    ///
+    /// The returned memory reference may be invalidated by subsequent
+    /// operations on the Realm state.
+    ///
+    /// **CAUTION:** Must be called only while a write transaction is in
+    /// progress via the SharedGroup object associated with this history object.
+    virtual util::StringView get_sync_changeset_of_current_transact() const noexcept = 0;
+
 protected:
     ClientHistory(const std::string& realm_path);
 };
@@ -322,6 +403,8 @@ protected:
 /// changesets to be identical copies of the raw changesets.
 class ClientHistory::ChangesetCooker {
 public:
+    virtual ~ChangesetCooker() {}
+
     /// \brief An opportunity to produce a cooked changeset.
     ///
     /// When the implementation chooses to produce a cooked changeset, it must
@@ -383,12 +466,39 @@ std::unique_ptr<ClientHistory> make_client_history(const std::string& realm_path
 
 // Implementation
 
-inline ClientHistoryBase::ClientHistoryBase(const std::string& realm_path):
+inline ClientHistoryBase::ClientHistoryBase(const std::string& realm_path) :
     InstructionReplication{realm_path} // Throws
 {
 }
 
-inline ClientHistory::ClientHistory(const std::string& realm_path):
+inline auto ClientHistoryBase::generate_changeset_timestamp() noexcept -> timestamp_type
+{
+    namespace chrono = std::chrono;
+    // Unfortunately, C++11 does not specify what the epoch is for
+    // `chrono::system_clock` (or for any other clock). It is believed, however,
+    // that there is a de-facto standard, that the Epoch for
+    // `chrono::system_clock` is the Unix epoch, i.e., 1970-01-01T00:00:00Z. See
+    // http://stackoverflow.com/a/29800557/1698548. Additionally, it is assumed
+    // that leap seconds are not included in the value returned by
+    // time_since_epoch(), i.e., that it conforms to POSIX time. This is known
+    // to be true on Linux.
+    //
+    // FIXME: Investigate under which conditions OS X agrees with POSIX about
+    // not including leap seconds in the value returned by time_since_epoch().
+    //
+    // FIXME: Investigate whether Microsoft Windows agrees with POSIX about
+    // about not including leap seconds in the value returned by
+    // time_since_epoch().
+    auto time_since_epoch = chrono::system_clock::now().time_since_epoch();
+    std::uint_fast64_t millis_since_epoch =
+        chrono::duration_cast<chrono::milliseconds>(time_since_epoch).count();
+    // `offset_in_millis` is the number of milliseconds between
+    // 1970-01-01T00:00:00Z and 2015-01-01T00:00:00Z not counting leap seconds.
+    std::uint_fast64_t offset_in_millis = 1420070400000ULL;
+    return timestamp_type(millis_since_epoch - offset_in_millis);
+}
+
+inline ClientHistory::ClientHistory(const std::string& realm_path) :
     ClientHistoryBase{realm_path} // Throws
 {
 }

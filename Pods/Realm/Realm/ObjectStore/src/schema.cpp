@@ -80,6 +80,7 @@ void Schema::validate() const
 {
     std::vector<ObjectSchemaValidationException> exceptions;
 
+    // As the types are added sorted by name, we can detect duplicates by just looking at the following element.
     auto find_next_duplicate = [&](const_iterator start) {
         return std::adjacent_find(start, cend(), [](ObjectSchema const& lft, ObjectSchema const& rgt) {
             return lft.name == rgt.name;

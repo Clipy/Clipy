@@ -36,7 +36,10 @@ enum class MiscExtErrors {
     premature_end_of_input,
 
     /// Delimiter not found.
-    delim_not_found
+    delim_not_found,
+
+    /// Operation not supported
+    operation_not_supported,
 };
 
 class MiscExtErrorCategory : public std::error_category {

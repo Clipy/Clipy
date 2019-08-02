@@ -30,12 +30,12 @@ namespace realm {
 namespace util {
 
 
-// FIXME: Check whether this class provides anything that a C++03
-// std::string does not already provide. In particular, can a C++03
-// std::string be used as a contiguous mutable buffer?
-class StringBuffer {
+// FIXME: In C++17, this can be replaced with std::string (since
+// std::string::data() can return a mutable pointer in C++17).
+template <class Allocator = DefaultAllocator>
+class BasicStringBuffer {
 public:
-    StringBuffer() noexcept;
+    BasicStringBuffer() noexcept;
 
     std::string str() const;
 
@@ -87,64 +87,76 @@ public:
     void clear() noexcept;
 
 private:
-    util::Buffer<char> m_buffer;
+    util::Buffer<char, Allocator> m_buffer;
     size_t m_size; // Excluding the terminating zero
     void reallocate(size_t min_capacity);
 };
 
+using StringBuffer = BasicStringBuffer<DefaultAllocator>;
+
 
 // Implementation:
 
-inline StringBuffer::StringBuffer() noexcept
+template <class A>
+BasicStringBuffer<A>::BasicStringBuffer() noexcept
     : m_size(0)
 {
 }
 
-inline std::string StringBuffer::str() const
+template <class A>
+std::string BasicStringBuffer<A>::str() const
 {
     return std::string(m_buffer.data(), m_size);
 }
 
-inline size_t StringBuffer::size() const noexcept
+template <class A>
+size_t BasicStringBuffer<A>::size() const noexcept
 {
     return m_size;
 }
 
-inline char* StringBuffer::data() noexcept
+template <class A>
+char* BasicStringBuffer<A>::data() noexcept
 {
     return m_buffer.data();
 }
 
-inline const char* StringBuffer::data() const noexcept
+template <class A>
+const char* BasicStringBuffer<A>::data() const noexcept
 {
     return m_buffer.data();
 }
 
-inline const char* StringBuffer::c_str() const noexcept
+template <class A>
+const char* BasicStringBuffer<A>::c_str() const noexcept
 {
     static const char zero = 0;
     const char* d = data();
     return d ? d : &zero;
 }
 
-inline void StringBuffer::append(const std::string& s)
+template <class A>
+void BasicStringBuffer<A>::append(const std::string& s)
 {
     return append(s.data(), s.size());
 }
 
-inline void StringBuffer::append_c_str(const char* c_string)
+template <class A>
+void BasicStringBuffer<A>::append_c_str(const char* c_string)
 {
     append(c_string, std::strlen(c_string));
 }
 
-inline void StringBuffer::reserve(size_t min_capacity)
+template <class A>
+void BasicStringBuffer<A>::reserve(size_t min_capacity)
 {
     size_t capacity = m_buffer.size();
     if (capacity == 0 || capacity - 1 < min_capacity)
         reallocate(min_capacity);
 }
 
-inline void StringBuffer::resize(size_t new_size)
+template <class A>
+void BasicStringBuffer<A>::resize(size_t new_size)
 {
     reserve(new_size);
     // Note that even reserve(0) will attempt to allocate a
@@ -154,7 +166,8 @@ inline void StringBuffer::resize(size_t new_size)
     m_buffer[new_size] = 0;
 }
 
-inline void StringBuffer::clear() noexcept
+template <class A>
+void BasicStringBuffer<A>::clear() noexcept
 {
     if (m_buffer.size() == 0)
         return;
@@ -162,6 +175,33 @@ inline void StringBuffer::clear() noexcept
     m_buffer[0] = 0;
 }
 
+template <class A>
+void BasicStringBuffer<A>::append(const char* append_data, size_t append_data_size)
+{
+    size_t new_size = m_size;
+    if (int_add_with_overflow_detect(new_size, append_data_size))
+        throw util::BufferSizeOverflow();
+    reserve(new_size); // Throws
+    realm::safe_copy_n(append_data, append_data_size, m_buffer.data() + m_size);
+    m_size = new_size;
+    m_buffer[new_size] = 0; // Add zero termination
+}
+
+
+template <class A>
+void BasicStringBuffer<A>::reallocate(size_t min_capacity)
+{
+    size_t min_capacity_2 = min_capacity;
+    // Make space for zero termination
+    if (int_add_with_overflow_detect(min_capacity_2, 1))
+        throw util::BufferSizeOverflow();
+    size_t new_capacity = m_buffer.size();
+    if (int_multiply_with_overflow_detect(new_capacity, 2))
+        new_capacity = std::numeric_limits<size_t>::max(); // LCOV_EXCL_LINE
+    if (new_capacity < min_capacity_2)
+        new_capacity = min_capacity_2;
+    m_buffer.resize(new_capacity, 0, m_size, 0); // Throws
+}
 
 } // namespace util
 } // namespace realm

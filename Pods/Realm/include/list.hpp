@@ -26,6 +26,7 @@
 #include <realm/link_view_fwd.hpp>
 #include <realm/row.hpp>
 #include <realm/table_ref.hpp>
+#include <realm/util/any.hpp>
 
 #include <functional>
 #include <memory>
@@ -132,7 +133,7 @@ public:
 
     // Replace the values in this list with the values from an enumerable object
     template<typename T, typename Context>
-    void assign(Context&, T&& value, bool update=false);
+    void assign(Context&, T&& value, bool update=false, bool update_only_diff = false);
 
     // The List object has been invalidated (due to the Realm being invalidated,
     // or the containing object being deleted)
@@ -162,6 +163,9 @@ private:
 
     template<typename Fn>
     auto dispatch(Fn&&) const;
+
+    template<typename T, typename Context>
+    void set_if_different(Context&, size_t row_ndx, T&& value, bool update=false);
 
     size_t to_table_ndx(size_t row) const noexcept;
 
@@ -204,19 +208,77 @@ void List::set(Context& ctx, size_t row_ndx, T&& value, bool update)
     dispatch([&](auto t) { this->set(row_ndx, ctx.template unbox<std::decay_t<decltype(*t)>>(value, true, update)); });
 }
 
+namespace _impl {
+template <class T>
+inline size_t help_get_current_row(const T&)
+{
+    return size_t(-1);
+}
+
+template <>
+inline size_t help_get_current_row(const RowExpr& v)
+{
+    return v.get_index();
+}
+
+template <class T>
+inline bool help_compare_values(const T& v1, const T& v2)
+{
+    return v1 != v2;
+}
+template <>
+inline bool help_compare_values(const RowExpr& v1, const RowExpr& v2)
+{
+    return v1.get_table() != v2.get_table() || v1.get_index() != v2.get_index();
+}
+}
+
 template<typename T, typename Context>
-void List::assign(Context& ctx, T&& values, bool update)
+void List::set_if_different(Context& ctx, size_t row_ndx, T&& value, bool update)
+{
+    dispatch([&](auto t) {
+        using U = std::decay_t<decltype(*t)>;
+        auto old_value =  this->get<U>(row_ndx);
+        auto new_value = ctx.template unbox<U>(value, true, update, true, _impl::help_get_current_row(old_value));
+        if (_impl::help_compare_values(old_value, new_value))
+            this->set(row_ndx, new_value);
+    });
+}
+
+
+template<typename T, typename Context>
+void List::assign(Context& ctx, T&& values, bool update, bool update_only_diff)
 {
     if (ctx.is_same_list(*this, values))
         return;
 
-    remove_all();
-    if (ctx.is_null(values))
+    if (ctx.is_null(values)) {
+        remove_all();
         return;
+    }
 
-    ctx.enumerate_list(values, [&](auto&& element) {
-        this->add(ctx, element, update);
-    });
+    if (update_only_diff) {
+        size_t sz = size();
+        size_t index = 0;
+        ctx.enumerate_list(values, [&](auto&& element) {
+            if (index < sz) {
+                this->set_if_different(ctx, index, element, update);
+            }
+            else {
+                this->add(ctx, element, update);
+            }
+            index++;
+        });
+        while (index < sz) {
+            remove(--sz);
+        }
+    }
+    else {
+        remove_all();
+        ctx.enumerate_list(values, [&](auto&& element) {
+            this->add(ctx, element, update);
+        });
+    }
 }
 } // namespace realm
 

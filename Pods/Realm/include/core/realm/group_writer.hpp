@@ -27,6 +27,7 @@
 #include <realm/alloc.hpp>
 #include <realm/impl/array_writer.hpp>
 #include <realm/array_integer.hpp>
+#include <realm/group_shared_options.hpp>
 
 
 namespace realm {
@@ -51,7 +52,8 @@ public:
     // (Group::m_is_shared), the constructor also adds version tracking
     // information to the group, if it is not already present (6th and 7th entry
     // in Group::m_top).
-    GroupWriter(Group&);
+    using Durability = SharedGroupOptions::Durability;
+    GroupWriter(Group&, Durability dura = Durability::Full);
     ~GroupWriter();
 
     void set_versions(uint64_t current, uint64_t read_lock) noexcept;
@@ -69,16 +71,22 @@ public:
 
     size_t get_file_size() const noexcept;
 
-    /// Write the specified chunk into free space.
-    void write(const char* data, size_t size);
-
     ref_type write_array(const char*, size_t, uint32_t) override;
 
 #ifdef REALM_DEBUG
     void dump();
 #endif
 
-    size_t get_free_space();
+    size_t get_free_space_size() const
+    {
+        return m_free_space_size;
+    }
+
+    size_t get_locked_space_size() const
+    {
+        return m_locked_space_size;
+    }
+
 private:
     class MapWindow;
     Group& m_group;
@@ -86,9 +94,12 @@ private:
     ArrayInteger m_free_positions; // 4th slot in Group::m_top
     ArrayInteger m_free_lengths;   // 5th slot in Group::m_top
     ArrayInteger m_free_versions;  // 6th slot in Group::m_top
-    uint64_t m_current_version;
+    uint64_t m_current_version = 0;
     uint64_t m_readlock_version;
     size_t m_window_alignment;
+    size_t m_free_space_size = 0;
+    size_t m_locked_space_size = 0;
+    Durability m_durability;
 
     struct FreeSpaceEntry {
         FreeSpaceEntry(size_t r, size_t s, uint64_t v)
@@ -101,14 +112,19 @@ private:
         size_t size;
         uint64_t released_at_version;
     };
-    std::vector<FreeSpaceEntry> m_free_in_file;
+    class FreeList : public std::vector<FreeSpaceEntry> {
+    public:
+        FreeList() = default;
+        // Merge adjacent chunks
+        void merge_adjacent_entries_in_freelist();
+        // Copy free space entries to structure where entries are sorted by size
+        void move_free_in_file_to_size_map(std::multimap<size_t, size_t>& size_map);
+    };
+    //  m_free_in_file;
     std::vector<FreeSpaceEntry> m_not_free_in_file;
     std::multimap<size_t, size_t> m_size_map;
     using FreeListElement = std::multimap<size_t, size_t>::iterator;
 
-    void sort_freelist();
-    // Merge adjacent chunks
-    void merge_adjacent_entries_in_freelist();
     void read_in_freelist();
     size_t recreate_freelist(size_t reserve_pos);
     // Currently cached memory mappings. We keep as many as 16 1MB windows
@@ -127,9 +143,6 @@ private:
 
     // Sync all cached memory mappings
     void sync_all_mappings();
-
-    // Copy free space entries to structure where entries are sorted by size
-    void move_free_in_file_to_size_map();
 
     /// Allocate a chunk of free space of the specified size. The
     /// specified size must be 8-byte aligned. Extend the file if

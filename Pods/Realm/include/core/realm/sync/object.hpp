@@ -34,13 +34,15 @@
 namespace realm {
 
 class Group;
+class ReadTransaction;
+class WriteTransaction;
 
 namespace sync {
 
 class SyncHistory;
 
 static const char object_id_column_name[] = "!OID";
-static const char array_value_column_name[] = "!ARRAY_VALUE"; // FIXME call Jorgen
+static const char array_value_column_name[] = "!ARRAY_VALUE";
 
 struct TableInfoCache;
 
@@ -104,17 +106,17 @@ TableRef create_table_with_primary_key(Group&, StringData name, DataType pk_type
 ///
 /// It is an error to erase tables via the Group API, because it does not
 /// correctly update metadata tables (such as the `pk` table).
-void erase_table(Group&, StringData name);
-void erase_table(Group&, TableRef);
+void erase_table(Group& g, TableInfoCache& table_info_cache, StringData name);
+void erase_table(Group& g, TableInfoCache& table_info_cache, TableRef);
 //@}
 
 /// Create an array column with the specified element type.
 ///
 /// The result will be a column of type type_Table with one subcolumn named
-/// "!ARRAY_VALUE" of the specified element type.
+/// "!ARRAY_VALUE" of the specified element type and nullability.
 ///
 /// Return the column index of the inserted array column.
-size_t add_array_column(Table&, DataType element_type, StringData column_name);
+size_t add_array_column(Table&, DataType element_type, StringData column_name, bool is_nullable = false);
 
 
 //@{
@@ -187,6 +189,9 @@ size_t create_object_with_primary_key(const TableInfoCache&, Table&, StringData 
 struct TableInfoCache {
     const Group& m_group;
 
+    explicit TableInfoCache(const ReadTransaction&);
+    explicit TableInfoCache(const WriteTransaction&);
+
     // Implicit conversion deliberately allowed for the purpose of calling the above
     // functions without constructing a cache manually.
     TableInfoCache(const Group&);
@@ -197,7 +202,7 @@ struct TableInfoCache {
 
         StringData name;
         const VTable* vtable;
-        size_t object_id_index;
+        size_t object_id_index = size_t(-1);
         size_t primary_key_index;
         DataType primary_key_type = DataType(-1);
         bool primary_key_nullable = false;
@@ -216,6 +221,7 @@ struct TableInfoCache {
     const TableInfo& get_table_info(const Table&) const;
     const TableInfo& get_table_info(size_t table_index) const;
     void clear();
+    void clear_last_object(const Table&);
     void verify();
 };
 

@@ -1,59 +1,48 @@
-//
-//  Localizable.strings
-//
-//  Clipy
-//  GitHub: https://github.com/clipy
-//  HP: https://clipy-app.com
-//
-//  Created by Econa77 on 2015/06/21.
-//
-//  Copyright © 2015-2018 Clipy Project.
-//
 
-"Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?";
+"Add" = "追加";
 
-"You can change this setting in the Preferences if you want" = "この設定はいつでも変更できます";
-
-"Launch on system startup" = "起動する";
-
-"Don't Launch" = "起動しない";
-
-"Clear History" = "履歴をクリア";
+"Are you sure want to delete this item?" = "本当に削除してもよろしいですか？";
 
 "Are you sure you want to clear your clipboard history?" = "本当にクリップボード履歴をクリアしますか？";
 
 "Cancel" = "キャンセル";
 
+"Clear History" = "履歴をクリア";
+
+"Delete Item" = "スニペットを削除";
+
+"Don't Launch" = "起動しない";
+
 "Edit Snippets" = "スニペットを編集...";
+
+"General" = "一般";
+
+"History" = "履歴";
+
+"Launch Clipy on system startup?" = "システム起動時にClipyを起動しますか?";
+
+"Launch on system startup" = "起動する";
+
+"Menu" = "メニュー";
+
+"Open System Preferences" = "\"システム環境設定\"を開く";
+
+"Please allow Accessibility" = "アクセシビリティを有効にしてください。";
+
+"Please fill in the contents of the snippet" = "スニペットの内容を記入してください";
 
 "Preferences" = "環境設定...";
 
 "Quit Clipy" = "Clipyを終了";
 
-"History" = "履歴";
+"Shortcuts" = "ショートカット";
 
 "Snippet" = "スニペット";
 
-"General" = "一般";
-
-"Menu" = "メニュー";
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "この動作を行うためにはシステム環境設定の\"セキュリティとプライバシー\"環境設定で、Clipyへのアクセシビリティのアクセスを許可してください。";
 
 "Type" = "対応形式";
 
-"Shortcuts" = "ショートカット";
-
 "Updates" = "アップデート";
 
-"Delete Item" = "スニペットを削除";
-
-"Are you sure want to delete this item?" = "本当に削除してもよろしいですか？";
-
-"Add" = "追加";
-
-"Please fill in the contents of the snippet" = "スニペットの内容を記入してください";
-
-"Please allow Accessibility" = "アクセシビリティを有効にしてください。";
-
-"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "この動作を行うためにはシステム環境設定の\"セキュリティとプライバシー\"環境設定で、Clipyへのアクセシビリティのアクセスを許可してください。";
-
-"Open System Preferences" = "\"システム環境設定\"を開く";
+"You can change this setting in the Preferences if you want" = "この設定はいつでも変更できます";

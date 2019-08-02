@@ -6,7 +6,6 @@
 
 // Realm-specific configuration
 #define REALM_MAX_BPNODE_SIZE 1000
-/* #undef REALM_MAX_BPNODE_SIZE_DEBUG */
 #define REALM_ENABLE_ASSERTIONS 0
 #define REALM_ENABLE_ALLOC_SET_ZERO 0
 #define REALM_ENABLE_ENCRYPTION 1

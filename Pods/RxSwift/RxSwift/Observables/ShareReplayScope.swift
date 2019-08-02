@@ -139,7 +139,7 @@ extension ObservableType {
      - returns: An observable sequence that contains the elements of a sequence produced by multicasting the source sequence.
      */
     public func share(replay: Int = 0, scope: SubjectLifetimeScope = .whileConnected)
-        -> Observable<E> {
+        -> Observable<Element> {
         switch scope {
         case .forever:
             switch replay {
@@ -159,7 +159,6 @@ extension ObservableType {
 fileprivate final class ShareReplay1WhileConnectedConnection<Element>
     : ObserverType
     , SynchronizedUnsubscribeType {
-    typealias E = Element
     typealias Observers = AnyObserver<Element>.s
     typealias DisposeKey = Observers.KeyType
 
@@ -173,66 +172,66 @@ fileprivate final class ShareReplay1WhileConnectedConnection<Element>
     fileprivate var _element: Element?
 
     init(parent: Parent, lock: RecursiveLock) {
-        _parent = parent
-        _lock = lock
+        self._parent = parent
+        self._lock = lock
 
         #if TRACE_RESOURCES
             _ = Resources.incrementTotal()
         #endif
     }
 
-    final func on(_ event: Event<E>) {
-        _lock.lock()
-        let observers = _synchronized_on(event)
-        _lock.unlock()
+    final func on(_ event: Event<Element>) {
+        self._lock.lock()
+        let observers = self._synchronized_on(event)
+        self._lock.unlock()
         dispatch(observers, event)
     }
 
-    final private func _synchronized_on(_ event: Event<E>) -> Observers {
-        if _disposed {
+    final private func _synchronized_on(_ event: Event<Element>) -> Observers {
+        if self._disposed {
             return Observers()
         }
 
         switch event {
         case .next(let element):
-            _element = element
-            return _observers
+            self._element = element
+            return self._observers
         case .error, .completed:
-            let observers = _observers
+            let observers = self._observers
             self._synchronized_dispose()
             return observers
         }
     }
 
     final func connect() {
-        _subscription.setDisposable(_parent._source.subscribe(self))
+        self._subscription.setDisposable(self._parent._source.subscribe(self))
     }
 
-    final func _synchronized_subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == Element {
-        _lock.lock(); defer { _lock.unlock() }
-        if let element = _element {
+    final func _synchronized_subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
+        self._lock.lock(); defer { self._lock.unlock() }
+        if let element = self._element {
             observer.on(.next(element))
         }
 
-        let disposeKey = _observers.insert(observer.on)
+        let disposeKey = self._observers.insert(observer.on)
 
         return SubscriptionDisposable(owner: self, key: disposeKey)
     }
 
     final private func _synchronized_dispose() {
-        _disposed = true
-        if _parent._connection === self {
-            _parent._connection = nil
+        self._disposed = true
+        if self._parent._connection === self {
+            self._parent._connection = nil
         }
-        _observers = Observers()
+        self._observers = Observers()
     }
 
     final func synchronizedUnsubscribe(_ disposeKey: DisposeKey) {
-        _lock.lock()
-        let shouldDisconnect = _synchronized_unsubscribe(disposeKey)
-        _lock.unlock()
+        self._lock.lock()
+        let shouldDisconnect = self._synchronized_unsubscribe(disposeKey)
+        self._lock.unlock()
         if shouldDisconnect {
-            _subscription.dispose()
+            self._subscription.dispose()
         }
     }
 
@@ -243,8 +242,8 @@ fileprivate final class ShareReplay1WhileConnectedConnection<Element>
             return false
         }
 
-        if _observers.count == 0 {
-            _synchronized_dispose()
+        if self._observers.count == 0 {
+            self._synchronized_dispose()
             return true
         }
 
@@ -259,7 +258,7 @@ fileprivate final class ShareReplay1WhileConnectedConnection<Element>
 }
 
 // optimized version of share replay for most common case
-final fileprivate class ShareReplay1WhileConnected<Element>
+final private class ShareReplay1WhileConnected<Element>
     : Observable<Element> {
 
     fileprivate typealias Connection = ShareReplay1WhileConnectedConnection<Element>
@@ -274,15 +273,15 @@ final fileprivate class ShareReplay1WhileConnected<Element>
         self._source = source
     }
 
-    override func subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == E {
-        _lock.lock()
+    override func subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
+        self._lock.lock()
 
-        let connection = _synchronized_subscribe(observer)
+        let connection = self._synchronized_subscribe(observer)
         let count = connection._observers.count
 
         let disposable = connection._synchronized_subscribe(observer)
 
-        _lock.unlock()
+        self._lock.unlock()
         
         if count == 0 {
             connection.connect()
@@ -292,17 +291,17 @@ final fileprivate class ShareReplay1WhileConnected<Element>
     }
 
     @inline(__always)
-    private func _synchronized_subscribe<O : ObserverType>(_ observer: O) -> Connection where O.E == E {
+    private func _synchronized_subscribe<Observer: ObserverType>(_ observer: Observer) -> Connection where Observer.Element == Element {
         let connection: Connection
 
-        if let existingConnection = _connection {
+        if let existingConnection = self._connection {
             connection = existingConnection
         }
         else {
             connection = ShareReplay1WhileConnectedConnection<Element>(
                 parent: self,
-                lock: _lock)
-            _connection = connection
+                lock: self._lock)
+            self._connection = connection
         }
 
         return connection
@@ -312,7 +311,6 @@ final fileprivate class ShareReplay1WhileConnected<Element>
 fileprivate final class ShareWhileConnectedConnection<Element>
     : ObserverType
     , SynchronizedUnsubscribeType {
-    typealias E = Element
     typealias Observers = AnyObserver<Element>.s
     typealias DisposeKey = Observers.KeyType
 
@@ -325,62 +323,62 @@ fileprivate final class ShareWhileConnectedConnection<Element>
     fileprivate var _observers = Observers()
 
     init(parent: Parent, lock: RecursiveLock) {
-        _parent = parent
-        _lock = lock
+        self._parent = parent
+        self._lock = lock
 
         #if TRACE_RESOURCES
             _ = Resources.incrementTotal()
         #endif
     }
 
-    final func on(_ event: Event<E>) {
-        _lock.lock()
-        let observers = _synchronized_on(event)
-        _lock.unlock()
+    final func on(_ event: Event<Element>) {
+        self._lock.lock()
+        let observers = self._synchronized_on(event)
+        self._lock.unlock()
         dispatch(observers, event)
     }
 
-    final private func _synchronized_on(_ event: Event<E>) -> Observers {
-        if _disposed {
+    final private func _synchronized_on(_ event: Event<Element>) -> Observers {
+        if self._disposed {
             return Observers()
         }
 
         switch event {
         case .next:
-            return _observers
+            return self._observers
         case .error, .completed:
-            let observers = _observers
+            let observers = self._observers
             self._synchronized_dispose()
             return observers
         }
     }
 
     final func connect() {
-        _subscription.setDisposable(_parent._source.subscribe(self))
+        self._subscription.setDisposable(self._parent._source.subscribe(self))
     }
 
-    final func _synchronized_subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == Element {
-        _lock.lock(); defer { _lock.unlock() }
+    final func _synchronized_subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
+        self._lock.lock(); defer { self._lock.unlock() }
 
-        let disposeKey = _observers.insert(observer.on)
+        let disposeKey = self._observers.insert(observer.on)
 
         return SubscriptionDisposable(owner: self, key: disposeKey)
     }
 
     final private func _synchronized_dispose() {
-        _disposed = true
-        if _parent._connection === self {
-            _parent._connection = nil
+        self._disposed = true
+        if self._parent._connection === self {
+            self._parent._connection = nil
         }
-        _observers = Observers()
+        self._observers = Observers()
     }
 
     final func synchronizedUnsubscribe(_ disposeKey: DisposeKey) {
-        _lock.lock()
-        let shouldDisconnect = _synchronized_unsubscribe(disposeKey)
-        _lock.unlock()
+        self._lock.lock()
+        let shouldDisconnect = self._synchronized_unsubscribe(disposeKey)
+        self._lock.unlock()
         if shouldDisconnect {
-            _subscription.dispose()
+            self._subscription.dispose()
         }
     }
 
@@ -391,8 +389,8 @@ fileprivate final class ShareWhileConnectedConnection<Element>
             return false
         }
 
-        if _observers.count == 0 {
-            _synchronized_dispose()
+        if self._observers.count == 0 {
+            self._synchronized_dispose()
             return true
         }
 
@@ -407,7 +405,7 @@ fileprivate final class ShareWhileConnectedConnection<Element>
 }
 
 // optimized version of share replay for most common case
-final fileprivate class ShareWhileConnected<Element>
+final private class ShareWhileConnected<Element>
     : Observable<Element> {
 
     fileprivate typealias Connection = ShareWhileConnectedConnection<Element>
@@ -422,15 +420,15 @@ final fileprivate class ShareWhileConnected<Element>
         self._source = source
     }
 
-    override func subscribe<O : ObserverType>(_ observer: O) -> Disposable where O.E == E {
-        _lock.lock()
+    override func subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
+        self._lock.lock()
 
-        let connection = _synchronized_subscribe(observer)
+        let connection = self._synchronized_subscribe(observer)
         let count = connection._observers.count
 
         let disposable = connection._synchronized_subscribe(observer)
 
-        _lock.unlock()
+        self._lock.unlock()
 
         if count == 0 {
             connection.connect()
@@ -440,17 +438,17 @@ final fileprivate class ShareWhileConnected<Element>
     }
 
     @inline(__always)
-    private func _synchronized_subscribe<O : ObserverType>(_ observer: O) -> Connection where O.E == E {
+    private func _synchronized_subscribe<Observer: ObserverType>(_ observer: Observer) -> Connection where Observer.Element == Element {
         let connection: Connection
 
-        if let existingConnection = _connection {
+        if let existingConnection = self._connection {
             connection = existingConnection
         }
         else {
             connection = ShareWhileConnectedConnection<Element>(
                 parent: self,
-                lock: _lock)
-            _connection = connection
+                lock: self._lock)
+            self._connection = connection
         }
         
         return connection

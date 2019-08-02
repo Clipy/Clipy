@@ -61,6 +61,10 @@ public:
     bool has_mapping(ConstTableRef table, std::string name);
     KeyPathElement process_next_path(ConstTableRef table, KeyPath& path, size_t& index);
     void set_allow_backlinks(bool allow);
+    bool backlinks_allowed() const
+    {
+        return m_allow_backlinks;
+    }
     void set_backlink_class_prefix(std::string prefix);
     static Table* table_getter(TableRef table, const std::vector<KeyPathElement>& links);
 protected:

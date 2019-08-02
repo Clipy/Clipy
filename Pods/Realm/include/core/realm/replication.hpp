@@ -59,7 +59,35 @@ public:
     class Interrupted; // Exception
     class SimpleIndexTranslator;
 
-    virtual std::string get_database_path() = 0;
+    enum class TransactionType { trans_Read, trans_Write };
+
+    /// CAUTION: These values are stored in Realm files, so value reassignment
+    /// is not allowed.
+    enum HistoryType {
+        /// No history available. No support for either continuous transactions
+        /// or inter-client synchronization.
+        hist_None = 0,
+
+        /// Out-of-Realm history supporting continuous transactions.
+        ///
+        /// NOTE: This history type is no longer in use. The value needs to stay
+        /// reserved in case someone tries to open an old Realm file.
+        hist_OutOfRealm = 1,
+
+        /// In-Realm history supporting continuous transactions
+        /// (make_in_realm_history()).
+        hist_InRealm = 2,
+
+        /// In-Realm history supporting continuous transactions and client-side
+        /// synchronization protocol (realm::sync::ClientHistory).
+        hist_SyncClient = 3,
+
+        /// In-Realm history supporting continuous transactions and server-side
+        /// synchronization protocol (realm::_impl::ServerHistory).
+        hist_SyncServer = 4
+    };
+
+    virtual std::string get_database_path() const = 0;
 
     /// Called during construction of the associated SharedGroup object.
     ///
@@ -173,7 +201,7 @@ public:
     /// \throw Interrupted Thrown by initiate_transact() and prepare_commit() if
     /// a blocking operation was interrupted.
 
-    void initiate_transact(version_type current_version, bool history_updated);
+    void initiate_transact(TransactionType transaction_type, version_type current_version, bool history_updated);
     version_type prepare_commit(version_type current_version);
     void finalize_commit() noexcept;
     void abort_transact() noexcept;
@@ -216,32 +244,6 @@ public:
     /// \throw BadTransactLog If the changeset could not be successfully parsed,
     /// or ended prematurely.
     static void apply_changeset(InputStream& changeset, Group& group, util::Logger* logger = nullptr);
-
-    /// CAUTION: These values are stored in Realm files, so value reassignment
-    /// is not allowed.
-    enum HistoryType {
-        /// No history available. No support for either continuous transactions
-        /// or inter-client synchronization.
-        hist_None = 0,
-
-        /// Out-of-Realm history supporting continuous transactions.
-        ///
-        /// NOTE: This history type is no longer in use. The value needs to stay
-        /// reserved in case someone tries to open an old Realm file.
-        hist_OutOfRealm = 1,
-
-        /// In-Realm history supporting continuous transactions
-        /// (make_in_realm_history()).
-        hist_InRealm = 2,
-
-        /// In-Realm history supporting continuous transactions and client-side
-        /// synchronization protocol (realm::sync::ClientHistory).
-        hist_SyncClient = 3,
-
-        /// In-Realm history supporting continuous transactions and server-side
-        /// synchronization protocol (realm::_impl::ServerHistory).
-        hist_SyncServer = 4
-    };
 
     /// Returns the type of history maintained by this Replication
     /// implementation, or \ref hist_None if no history is maintained by it.
@@ -363,7 +365,7 @@ protected:
     /// changeset during the next invocation of do_initiate_transact() if
     /// `current_version` indicates that the previous transaction failed.
 
-    virtual void do_initiate_transact(version_type current_version, bool history_updated) = 0;
+    virtual void do_initiate_transact(TransactionType, version_type current_version) = 0;
     virtual version_type do_prepare_commit(version_type orig_version) = 0;
     virtual void do_finalize_commit() noexcept = 0;
     virtual void do_abort_transact() noexcept = 0;
@@ -394,6 +396,7 @@ public:
     {
     }
 
+    std::string get_database_path() const override;
 protected:
     typedef Replication::version_type version_type;
 
@@ -404,13 +407,10 @@ protected:
 
     static void apply_changeset(const char* data, size_t size, SharedGroup& target, util::Logger* logger = nullptr);
 
-    bool is_history_updated() const noexcept;
-
     BinaryData get_uncommitted_changes() const noexcept;
 
-    std::string get_database_path() override;
     void initialize(SharedGroup&) override;
-    void do_initiate_transact(version_type, bool) override;
+    void do_initiate_transact(TransactionType, version_type) override;
     version_type do_prepare_commit(version_type orig_version) override;
     void do_finalize_commit() noexcept override;
     void do_abort_transact() noexcept override;
@@ -422,7 +422,6 @@ protected:
 private:
     const std::string m_database_file;
     util::Buffer<char> m_transact_log_buffer;
-    bool m_history_updated;
     void internal_transact_log_reserve(size_t, char** new_begin, char** new_end);
 
     size_t transact_log_size();
@@ -436,9 +435,13 @@ inline Replication::Replication()
 {
 }
 
-inline void Replication::initiate_transact(version_type current_version, bool history_updated)
+inline void Replication::initiate_transact(TransactionType transaction_type, version_type current_version,
+                                           bool history_updated)
 {
-    do_initiate_transact(current_version, history_updated);
+    if (auto hist = get_history()) {
+        hist->set_updated(history_updated);
+    }
+    do_initiate_transact(transaction_type, current_version);
     reset_selection_caches();
 }
 
@@ -475,11 +478,6 @@ inline bool Replication::is_sync_agent() const noexcept
 inline TrivialReplication::TrivialReplication(const std::string& database_file)
     : m_database_file(database_file)
 {
-}
-
-inline bool TrivialReplication::is_history_updated() const noexcept
-{
-    return m_history_updated;
 }
 
 inline BinaryData TrivialReplication::get_uncommitted_changes() const noexcept

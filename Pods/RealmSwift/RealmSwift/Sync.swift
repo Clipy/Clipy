@@ -188,7 +188,7 @@ public typealias Provider = RLMIdentityProvider
 public enum ServerValidationPolicy {
     /// Perform no validation and accept potentially invalid certificates.
     ///
-    /// -warning: DO NOT USE THIS OPTION IN PRODUCTION.
+    /// - warning: DO NOT USE THIS OPTION IN PRODUCTION.
     case none
 
     /// Use the default server trust evaluation based on the system-wide CA
@@ -237,6 +237,8 @@ public struct SyncConfiguration {
 
     /**
      Whether the SSL certificate of the Realm Object Server should be validated.
+ 
+     - warning: This has been deprecated. Use serverValidationPolicy instead.
      */
     @available(*, deprecated, message: "Use serverValidationPolicy instead")
     public var enableSSLValidation: Bool {
@@ -249,7 +251,7 @@ public struct SyncConfiguration {
      Partial synchronization mode means that no objects are synchronized from the remote Realm
      except those matching queries that the user explicitly specifies.
 
-     -warning: Partial synchronization is a tech preview. Its APIs are subject to change.
+     - warning: This has been deprecated - use fullSyncronization instead.
      */
     @available(*, deprecated, message: "Use fullSynchronization instead")
     public var isPartial: Bool {
@@ -316,11 +318,13 @@ public struct SyncConfiguration {
      `enableSSLValidation` is true by default. It can be disabled for debugging
      purposes.
 
+     - warning: This has ben deprecated. Use SyncUser.configuration() instead.
+ 
      - warning: The URL must be absolute (e.g. `realms://example.com/~/foo`), and cannot end with
                 `.realm`, `.realm.lock` or `.realm.management`.
 
      - warning: NEVER disable SSL validation for a system running in production.
-     */
+    */
     @available(*, deprecated, message: "Use SyncUser.configuration() instead")
     public init(user: SyncUser, realmURL: URL, enableSSLValidation: Bool = true, isPartial: Bool = false, urlPrefix: String? = nil) {
         self.user = user
@@ -334,10 +338,12 @@ public struct SyncConfiguration {
     /**
      Return a Realm configuration for syncing with the default Realm of the currently logged-in sync user.
 
-     Partial synchronization is enabled in the returned configuration.
+     Query based synchronization is enabled in the returned configuration.
 
      - requires: There be exactly one logged-in `SyncUser`
-     */
+
+     - warning: This has ben deprecated. Use SyncUser.configuration() instead.
+    */
     @available(*, deprecated, message: "Use SyncUser.configuration() instead")
     public static func automatic() -> Realm.Configuration {
         return ObjectiveCSupport.convert(object: RLMSyncConfiguration.automaticConfiguration())
@@ -724,7 +730,7 @@ public extension SyncSession {
             return transferredBytes >= transferrableBytes
         }
 
-        fileprivate init(transferred: UInt, transferrable: UInt) {
+        internal init(transferred: UInt, transferrable: UInt) {
             transferredBytes = Int(transferred)
             transferrableBytes = Int(transferrable)
         }
@@ -760,8 +766,8 @@ public extension SyncSession {
      - see: `ProgressDirection`, `Progress`, `ProgressNotificationToken`
      */
     func addProgressNotification(for direction: ProgressDirection,
-                                        mode: ProgressMode,
-                                        block: @escaping (Progress) -> Void) -> ProgressNotificationToken? {
+                                 mode: ProgressMode,
+                                 block: @escaping (Progress) -> Void) -> ProgressNotificationToken? {
         return __addProgressNotification(for: (direction == .upload ? .upload : .download),
                                          mode: (mode == .reportIndefinitely
                                             ? .reportIndefinitely
@@ -779,7 +785,7 @@ extension Realm {
      The results will be returned asynchronously in the callback.
      Use `Results.observe(_:)` to be notified to changes to the set of synchronized objects.
 
-     -warning: Partial synchronization is a tech preview. Its APIs are subject to change.
+     - warning: Partial synchronization is a tech preview. Its APIs are subject to change.
      */
     @available(*, deprecated, message: "Use Results.subscribe()")
     public func subscribe<T: Object>(to objects: T.Type, where: String,
@@ -844,10 +850,6 @@ extension Results where Element == SyncPermission {
 
 // MARK: - Partial sync subscriptions
 
-// Partial sync subscriptions are only available in Swift 3.2 and newer.
-#if swift(>=3.2)
-
-
 /// The possible states of a sync subscription.
 public enum SyncSubscriptionState: Equatable {
     /// The subscription is being created, but has not yet been written to the synced Realm.
@@ -878,8 +880,6 @@ public enum SyncSubscriptionState: Equatable {
             self = .invalidated
         case .error:
             self = .error(rlmSubscription.error!)
-        @unknown default:
-            fatalError("unknown state: \(rlmSubscription.state)")
         }
     }
 
@@ -904,7 +904,7 @@ public enum SyncSubscriptionState: Equatable {
 /// Changes to the state of the subscription can be observed using `SyncSubscription.observe(_:options:_:)`.
 ///
 /// Subscriptions are created using `Results.subscribe()` or `Results.subscribe(named:)`.
-public class SyncSubscription<Type: RealmCollectionValue> {
+public final class SyncSubscription<T: RealmCollectionValue>: RealmCollectionValue {
     private let rlmSubscription: RLMSyncSubscription
 
     /// The name of the subscription.
@@ -915,8 +915,72 @@ public class SyncSubscription<Type: RealmCollectionValue> {
     /// The state of the subscription.
     public var state: SyncSubscriptionState { return SyncSubscriptionState(rlmSubscription) }
 
+    /**
+     The raw query which this subscription is running on the server.
+
+     This string is a serialized representation of the Results which the
+     subscription was created from. This representation does *not* use NSPredicate
+     syntax, and is not guaranteed to remain consistent between versions of Realm.
+     Any use of this other than manual inspection when debugging is likely to be
+     incorrect.
+
+     This is `nil` while the subscription is in the Creating state.
+     */
+    public var query: String? { return rlmSubscription.query }
+
+    /**
+     When this subscription was first created.
+
+     This value will be `nil` for subscriptions created with older versions of
+     Realm which did not store the creation date. Newly created subscriptions
+     should always have a non-nil creation date.
+     */
+    public var createdAt: Date? { return rlmSubscription.createdAt }
+
+    /**
+     When this subscription was last updated.
+
+     This value will be `nil` for subscriptions created with older versions of
+     Realm which did not store the update date. Newly created subscriptions
+     should always have a non-nil update date.
+
+     The update date is the time when the subscription was last updated by a call
+     to `Results.subscribe()`, and not when the set of objects which match the
+     subscription last changed.
+     */
+    public var updatedAt: Date? { return rlmSubscription.updatedAt }
+
+    /**
+     When this subscription will be automatically removed.
+
+     If the `timeToLive` parameter is set when creating a sync subscription, the
+     subscription will be automatically removed the first time that any subscription
+     is created, modified, or deleted after that time has elapsed.
+
+     This property will be `nil` if the `timeToLive` option was not enabled.
+     */
+    public var expiresAt: Date? { return rlmSubscription.expiresAt }
+
+    /**
+     How long this subscription will persist after last being updated.
+
+     If the `timeToLive` parameter is set when creating a sync subscription, the
+     subscription will be automatically removed the first time that any subscription
+     is created, modified, or deleted after that time has elapsed.
+
+     This property will be nil if the `timeToLive` option was not enabled.
+     */
+    public var timeToLive: TimeInterval? {
+        let ttl = rlmSubscription.timeToLive
+        return ttl.isNaN ? nil : ttl
+    }
+
     internal init(_ rlmSubscription: RLMSyncSubscription) {
         self.rlmSubscription = rlmSubscription
+    }
+
+    public static func == (lhs: SyncSubscription, rhs: SyncSubscription) -> Bool {
+        return lhs.rlmSubscription == rhs.rlmSubscription
     }
 
     /// Observe the subscription for state changes.
@@ -954,7 +1018,19 @@ public class SyncSubscription<Type: RealmCollectionValue> {
     }
 }
 
+// :nodoc:
+extension SyncSubscription: CustomObjectiveCBridgeable {
+    static func bridging(objCValue: Any) -> SyncSubscription {
+        return ObjectiveCSupport.convert(object: RLMCastToSyncSubscription(objCValue)) as! SyncSubscription<T>
+    }
+    var objCValue: Any {
+        return 0
+    }
+}
+
 extension Results {
+    // MARK: Sync
+
     /// Subscribe to the query represented by this `Results`
     ///
     /// Subscribing to a query asks the server to synchronize all objects to the
@@ -965,32 +1041,89 @@ extension Results {
     /// notified of when the subscription has been processed by the server and
     /// all objects matching the query are available.
     ///
+    /// ---
+    ///
     /// Creating a new subscription with the same name and query as an existing
     /// subscription will not create a new subscription, but instead will return
     /// an object referring to the existing sync subscription. This means that
     /// performing the same subscription twice followed by removing it once will
     /// result in no subscription existing.
     ///
-    /// The number of top-level matches may optionally be limited. This limit
-    /// respects the sort and distinct order of the query being subscribed to,
-    /// if any. Please note that the limit does not count or apply to objects
-    /// which are added indirectly due to being linked to by the objects in the
-    /// subscription. If the limit is larger than the number of objects which
-    /// match the query, all objects will be included. Limiting a subscription
-    /// requires ROS 3.10.1 or newer, and will fail with an invalid predicate
-    /// error with older versions.
+    /// By default trying to create a subscription with a name as an existing
+    /// subscription with a different query or options will fail. If `update` is
+    /// `true`, instead the existing subscription will be changed to use the
+    /// query and options from the new subscription. This only works if the new
+    /// subscription is for the same type of objects as the existing
+    /// subscription, and trying to overwrite a subscription with a subscription
+    /// of a different type of objects will still fail.
+    ///
+    /// ---
+    ///
+    /// The number of top-level objects which are included in the subscription
+    /// can optionally be limited by setting the `limit` paramter. If more
+    /// top-level objects than the limit match the query, only the first
+    /// `limit` objects will be included. This respects the sort and distinct
+    /// order of the query being subscribed to for the determination of what the
+    /// "first" objects are.
+    ///
+    /// The limit does not count or apply to objects which are added indirectly
+    /// due to being linked to by the objects in the subscription or due to
+    /// being listed in `includeLinkingObjects`. If the limit is larger than the
+    /// number of objects which match the query, all objects will be
+    /// included.
+    ///
+    /// ---
+    ///
+    /// By default subscriptions are persistent, and last until they are
+    /// explicitly removed by calling `unsubscribe()`. Subscriptions can instead
+    /// be made temporary by setting the time to live to how long the
+    /// subscription should remain. After that time has elapsed the subscription
+    /// will be automatically removed.
+    ///
+    /// ---
+    ///
+    /// Outgoing links (i.e. `List` and `Object` properties) are automatically
+    /// included in sync subscriptions. That is, if you subscribe to a query
+    /// which matches one object, every object which is reachable via links
+    /// from that object are also included in the subscription. By default,
+    /// `LinkingObjects` properties do not work this way and instead, they only
+    /// report objects which happen to be included in a subscription. Specific
+    /// `LinkingObjects` properties can be explicitly included in the
+    /// subscription by naming them in the `includingLinkingObjects` array. Any
+    /// keypath which ends in a `LinkingObjects` property can be included in
+    /// this array, including ones involving intermediate links.
+    ///
+    /// ---
+    ///
+    /// Creating a subscription is an asynchronous operation and the newly
+    /// created subscription will not be reported by Realm.subscriptions() until
+    /// it has transitioned from the `.creating` state to `.pending`,
+    /// `.created` or `.error`.
     ///
     /// - parameter subscriptionName: An optional name for the subscription.
-    /// - parameter limit: The maximum number of objects to include in the subscription.
+    /// - parameter limit: The maximum number of top-level objects to include
+    /// in the subscription.
+    /// - parameter update: Whether an existing subscription with the same name
+    /// should be updated or if it should be an error.
+    /// - parameter timeToLive: How long in seconds this subscription should
+    /// remain active.
+    /// - parameter includingLinkingObjects: Which `LinkingObjects` properties
+    /// should pull in the contained objects.
     /// - returns: The subscription.
-    public func subscribe(named subscriptionName: String? = nil, limit: Int? = nil) -> SyncSubscription<Element> {
+    public func subscribe(named subscriptionName: String? = nil, limit: Int? = nil,
+                          update: Bool = false, timeToLive: TimeInterval? = nil,
+                          includingLinkingObjects: [String] = []) -> SyncSubscription<Element> {
+        let options = RLMSyncSubscriptionOptions()
+        options.name = subscriptionName
+        options.overwriteExisting = update
         if let limit = limit {
-            return SyncSubscription(rlmResults.subscribe(withName: subscriptionName, limit: UInt(limit)))
+            options.limit = UInt(limit)
         }
-        if let name = subscriptionName {
-            return SyncSubscription(rlmResults.subscribe(withName: name))
+        if let timeToLive = timeToLive {
+            options.timeToLive = timeToLive
         }
-        return SyncSubscription(rlmResults.subscribe())
+        options.includeLinkingObjectProperties = includingLinkingObjects
+        return SyncSubscription(rlmResults.subscribe(with: options))
     }
 }
 
@@ -1006,7 +1139,6 @@ internal class KeyValueObservationNotificationToken: NotificationToken {
         self.observation = nil
     }
 }
-#endif // Swift >= 3.2
 
 // MARK: - Migration assistance
 
@@ -1383,6 +1515,8 @@ public struct ObjectPrivileges: OptionSet, CustomDebugStringConvertible {
 }
 
 extension Realm {
+    // MARK: Sync - Permissions
+
     /**
     Returns the computed privileges which the current user has for this Realm.
 
@@ -1395,7 +1529,8 @@ extension Realm {
     operation is permitted but the server will still reject it if permission is
     revoked before the changes have been integrated on the server.
 
-    Non-synchronized Realms always have permission to perform all operations.
+    Non-synchronized and fully-synchronized Realms always have permission to
+    perform all operations.
 
      - returns: The privileges which the current user has for the current Realm.
      */
@@ -1415,7 +1550,8 @@ extension Realm {
     operation is permitted but the server will still reject it if permission is
     revoked before the changes have been integrated on the server.
 
-    Non-synchronized Realms always have permission to perform all operations.
+    Non-synchronized and fully-synchronized Realms always have permission to
+    perform all operations.
 
     The object must be a valid object managed by this Realm. Passing in an
     invalidated object, an unmanaged object, or an object managed by a
@@ -1440,7 +1576,8 @@ extension Realm {
     operation is permitted but the server will still reject it if permission is
     revoked before the changes have been integrated on the server.
 
-    Non-synchronized Realms always have permission to perform all operations.
+    Non-synchronized and fully-synchronized Realms always have permission to
+    perform all operations.
 
      - parameter cls: An Object subclass to get the privileges for.
      - returns: The privileges which the current user has for the given class.
@@ -1461,7 +1598,8 @@ extension Realm {
     operation is permitted but the server will still reject it if permission is
     revoked before the changes have been integrated on the server.
 
-    Non-synchronized Realms always have permission to perform all operations.
+    Non-synchronized and fully-synchronized Realms always have permission to
+    perform all operations.
 
      - parameter className: The name of an Object subclass to get the privileges for.
      - returns: The privileges which the current user has for the named class.
@@ -1475,7 +1613,7 @@ extension Realm {
 
      - parameter cls: An Object subclass to get the permissions for.
      - returns: The class-wide permissions for the given class.
-     - requires: This must only be called on a partially-synced Realm.
+     - requires: This must only be called on a Realm using query-based sync.
     */
     public func permissions<T: Object>(forType cls: T.Type) -> List<Permission> {
         return permissions(forClassNamed: cls._realmObjectName() ?? cls.className())
@@ -1487,7 +1625,7 @@ extension Realm {
      - parameter cls: The name of an Object subclass to get the permissions for.
      - returns: The class-wide permissions for the named class.
      - requires: className must name a class in this Realm's schema.
-     - requires: This must only be called on a partially-synced Realm.
+     - requires: This must only be called on a Realm using query-based sync.
     */
     public func permissions(forClassNamed className: String) -> List<Permission> {
         let classPermission = object(ofType: ClassPermission.self, forPrimaryKey: className)!
@@ -1497,10 +1635,43 @@ extension Realm {
     /**
     Returns the Realm-wide permissions.
 
-     - requires: This must only be called on a partially-synced Realm.
+     - requires: This must only be called on a Realm using query-based sync.
     */
     public var permissions: List<Permission> {
         return object(ofType: RealmPermission.self, forPrimaryKey: 0)!.permissions
+    }
+
+    // MARK: Sync - Subscriptions
+
+    /**
+    Returns this list of the query-based sync subscriptions made for this Realm.
+
+    This list includes all subscriptions which are currently in the states
+    `.pending`, `.created`, and `.error`. Newly created subscriptions which are
+    still in the `.creating` state are not included, and calling this
+    immediately after calling `Results.subscribe()` will typically not include
+    that subscription. Similarly, because unsubscription happens asynchronously,
+    this may continue to include subscriptions after
+    `SyncSubscription.unsubscribe()` is called on them.
+
+     - requires: This must only be called on a Realm using query-based sync.
+    */
+    public func subscriptions() -> Results<SyncSubscription<Object>> {
+        return Results(rlmRealm.subscriptions() as! RLMResults<AnyObject>)
+    }
+
+    /**
+    Returns the named query-based sync subscription, if it exists.
+
+    Subscriptions are created asynchronously, so calling this immediately after
+    calling Results.subscribe(named:)` will typically return `nil`. Only
+    subscriptions which are currently in the states `.pending`, `.created`,
+    and `.error` can be retrieved with this method.
+
+     - requires: This must only be called on a Realm using query-based sync.
+    */
+    public func subscription(named: String) -> SyncSubscription<Object>? {
+        return rlmRealm.subscription(withName: named).map(SyncSubscription.init)
     }
 }
 
@@ -1520,7 +1691,7 @@ extension List where Element == Permission {
     */
     public func findOrCreate(forRoleNamed roleName: String) -> Permission {
         precondition(realm != nil, "Cannot be called on an unmanaged object")
-        return RLMPermissionForRole(_rlmArray, realm!.create(PermissionRole.self, value: [roleName], update: true)) as! Permission
+        return RLMPermissionForRole(_rlmArray, realm!.create(PermissionRole.self, value: [roleName], update: .modified)) as! Permission
     }
 
     /**

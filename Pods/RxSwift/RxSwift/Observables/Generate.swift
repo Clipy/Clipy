@@ -19,26 +19,26 @@ extension ObservableType {
      - parameter scheduler: Scheduler on which to run the generator loop.
      - returns: The generated sequence.
      */
-    public static func generate(initialState: E, condition: @escaping (E) throws -> Bool, scheduler: ImmediateSchedulerType = CurrentThreadScheduler.instance, iterate: @escaping (E) throws -> E) -> Observable<E> {
+    public static func generate(initialState: Element, condition: @escaping (Element) throws -> Bool, scheduler: ImmediateSchedulerType = CurrentThreadScheduler.instance, iterate: @escaping (Element) throws -> Element) -> Observable<Element> {
         return Generate(initialState: initialState, condition: condition, iterate: iterate, resultSelector: { $0 }, scheduler: scheduler)
     }
 }
 
-final fileprivate class GenerateSink<S, O: ObserverType> : Sink<O> {
-    typealias Parent = Generate<S, O.E>
+final private class GenerateSink<Sequence, Observer: ObserverType>: Sink<Observer> {
+    typealias Parent = Generate<Sequence, Observer.Element>
     
     private let _parent: Parent
     
-    private var _state: S
+    private var _state: Sequence
     
-    init(parent: Parent, observer: O, cancel: Cancelable) {
-        _parent = parent
-        _state = parent._initialState
+    init(parent: Parent, observer: Observer, cancel: Cancelable) {
+        self._parent = parent
+        self._state = parent._initialState
         super.init(observer: observer, cancel: cancel)
     }
     
     func run() -> Disposable {
-        return _parent._scheduler.scheduleRecursive(true) { (isFirst, recurse) -> Void in
+        return self._parent._scheduler.scheduleRecursive(true) { isFirst, recurse -> Void in
             do {
                 if !isFirst {
                     self._state = try self._parent._iterate(self._state)
@@ -63,23 +63,23 @@ final fileprivate class GenerateSink<S, O: ObserverType> : Sink<O> {
     }
 }
 
-final fileprivate class Generate<S, E> : Producer<E> {
-    fileprivate let _initialState: S
-    fileprivate let _condition: (S) throws -> Bool
-    fileprivate let _iterate: (S) throws -> S
-    fileprivate let _resultSelector: (S) throws -> E
+final private class Generate<Sequence, Element>: Producer<Element> {
+    fileprivate let _initialState: Sequence
+    fileprivate let _condition: (Sequence) throws -> Bool
+    fileprivate let _iterate: (Sequence) throws -> Sequence
+    fileprivate let _resultSelector: (Sequence) throws -> Element
     fileprivate let _scheduler: ImmediateSchedulerType
     
-    init(initialState: S, condition: @escaping (S) throws -> Bool, iterate: @escaping (S) throws -> S, resultSelector: @escaping (S) throws -> E, scheduler: ImmediateSchedulerType) {
-        _initialState = initialState
-        _condition = condition
-        _iterate = iterate
-        _resultSelector = resultSelector
-        _scheduler = scheduler
+    init(initialState: Sequence, condition: @escaping (Sequence) throws -> Bool, iterate: @escaping (Sequence) throws -> Sequence, resultSelector: @escaping (Sequence) throws -> Element, scheduler: ImmediateSchedulerType) {
+        self._initialState = initialState
+        self._condition = condition
+        self._iterate = iterate
+        self._resultSelector = resultSelector
+        self._scheduler = scheduler
         super.init()
     }
     
-    override func run<O : ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == E {
+    override func run<Observer: ObserverType>(_ observer: Observer, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where Observer.Element == Element {
         let sink = GenerateSink(parent: self, observer: observer, cancel: cancel)
         let subscription = sink.run()
         return (sink: sink, subscription: subscription)

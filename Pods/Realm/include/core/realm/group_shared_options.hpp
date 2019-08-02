@@ -31,20 +31,22 @@ struct SharedGroupOptions {
     enum class Durability : uint16_t {
         Full,
         MemOnly,
-        Async ///< Not yet supported on windows.
+        Async, ///< Not yet supported on windows.
+        Unsafe  // If you use this, you loose ACID property
     };
 
     explicit SharedGroupOptions(Durability level = Durability::Full, const char* key = nullptr,
                                 bool allow_upgrade = true,
                                 std::function<void(int, int)> file_upgrade_callback = std::function<void(int, int)>(),
-                                std::string temp_directory = sys_tmp_dir,
-                                bool track_metrics = false)
+                                std::string temp_directory = sys_tmp_dir, bool track_metrics = false,
+                                size_t metrics_history_size = 10000)
         : durability(level)
         , encryption_key(key)
         , allow_file_format_upgrade(allow_upgrade)
         , upgrade_callback(file_upgrade_callback)
         , temp_dir(temp_directory)
         , enable_metrics(track_metrics)
+        , metrics_buffer_size(metrics_history_size)
 
     {
     }
@@ -56,6 +58,7 @@ struct SharedGroupOptions {
         , upgrade_callback(std::function<void(int, int)>())
         , temp_dir(sys_tmp_dir)
         , enable_metrics(false)
+        , metrics_buffer_size(10000)
     {
     }
 
@@ -94,6 +97,10 @@ struct SharedGroupOptions {
     /// Controls the feature of collecting various metrics to the SharedGroup.
     /// A prerequisite is compiling with REALM_METRICS=ON.
     bool enable_metrics;
+
+    /// The maximum number of entries stored by the metrics (if enabled). If this number
+    /// is exceeded without being consumed, only the most recent entries will be stored.
+    size_t metrics_buffer_size;
 
     /// sys_tmp_dir will be used if the temp_dir is empty when creating SharedGroupOptions.
     /// It must be writable and allowed to create pipe/fifo file on it.

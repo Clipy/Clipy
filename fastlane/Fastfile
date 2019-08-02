@@ -1,5 +1,3 @@
-fastlane_version "2.71.0"
-
 default_platform :mac
 
 platform :mac do
@@ -36,19 +34,19 @@ platform :mac do
   desc "Runs all the tests"
   lane :test do
     slack(message: "Start Testing")
-    scan_clipy
+    scan
     slack(message: "Passed All Tests")
   end
   
   desc "Release"
   lane :release do
     # Check Xcode Version
-    xcversion(version: "9.2")
+    xcversion(version: ">= 10.3")
     # Check Git Status is Clean
     ensure_git_status_clean
     # Build Clipy.app
     gym(
-      xcargs: "CODE_SIGN_IDENTITY='Developer ID Application: Shunsuke Furubayashi (BBCHAJ584H)' DEVELOPMENT_TEAM='BBCHAJ584H'",
+      xcargs: "CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM=''",
       export_options: {
         provisioningProfiles: {
           "com.clipy-app.Clipy" => "ClipyDistribution2"
@@ -59,23 +57,13 @@ platform :mac do
 
   ####################### PRIVATE LANES ########################
 
-  private_lane :scan_clipy do
-    scan(
-      workspace: "Clipy.xcworkspace",
-      scheme: "Clipy",
-      skip_build: true,
-      verbose: true,
-      clean: true
-    )
-  end
-
   ############################ POST ############################
 
   after_all do |lane|
   end
 
   error do |lane, exception|
-    if lane == :scan_clipy
+    if lane == :scan
       slack(
         message: "Failed Tests: " + ENV['FL_REPORT_PATH'],
         success: false

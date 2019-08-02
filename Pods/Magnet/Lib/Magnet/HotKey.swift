@@ -9,7 +9,7 @@
 import Cocoa
 import Carbon
 
-public final class HotKey: Equatable {
+public final class HotKey: NSObject {
 
     // MARK: - Properties
     public let identifier: String
@@ -47,6 +47,7 @@ public final class HotKey: Equatable {
         self.target         = target
         self.action         = action
         self.actionQueue    = actionQueue
+        super.init()
     }
 
     public init(identifier: String, keyCombo: KeyCombo, actionQueue: ActionQueue = .main, handler: @escaping ((HotKey) -> Void)) {
@@ -56,13 +57,14 @@ public final class HotKey: Equatable {
         self.target         = nil
         self.action         = nil
         self.actionQueue    = actionQueue
+        super.init()
     }
-    
+
 }
 
 // MARK: - Invoke
 public extension HotKey {
-    func invoke() {
+    public func invoke() {
         guard let callback = self.callback else {
             guard let target = self.target as? NSObject, let selector = self.action else { return }
             guard target.responds(to: selector) else { return }
@@ -82,19 +84,23 @@ public extension HotKey {
 // MARK: - Register & UnRegister
 public extension HotKey {
     @discardableResult
-    func register() -> Bool {
+    public func register() -> Bool {
         return HotKeyCenter.shared.register(with: self)
     }
 
-    func unregister() {
+    public func unregister() {
         return HotKeyCenter.shared.unregister(with: self)
     }
 }
 
-// MARK: - Equatable
-public func == (lhs: HotKey, rhs: HotKey) -> Bool {
-    return lhs.identifier == rhs.identifier &&
-            lhs.keyCombo == rhs.keyCombo &&
-            lhs.hotKeyId == rhs.hotKeyId &&
-            lhs.hotKeyRef == rhs.hotKeyRef
+// MARK: - override isEqual
+public extension HotKey {
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let hotKey = object as? HotKey else { return false }
+
+        return self.identifier == hotKey.identifier &&
+               self.keyCombo == hotKey.keyCombo &&
+               self.hotKeyId == hotKey.hotKeyId &&
+               self.hotKeyRef == hotKey.hotKeyRef
+    }
 }

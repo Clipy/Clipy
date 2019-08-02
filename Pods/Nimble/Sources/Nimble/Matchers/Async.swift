@@ -23,14 +23,18 @@ private func async<T>(style: ExpectationStyle, predicate: Predicate<T>, timeout:
         }
         switch result {
         case .completed: return lastPredicateResult!
-        case .timedOut: return PredicateResult(status: .fail, message: lastPredicateResult!.message)
+        case .timedOut:
+            let message = lastPredicateResult?.message ?? .fail("timed out before returning a value")
+            return PredicateResult(status: .fail, message: message)
         case let .errorThrown(error):
             return PredicateResult(status: .fail, message: .fail("unexpected error thrown: <\(error)>"))
         case let .raisedException(exception):
             return PredicateResult(status: .fail, message: .fail("unexpected exception raised: \(exception)"))
         case .blockedRunLoop:
             // swiftlint:disable:next line_length
-            return PredicateResult(status: .fail, message: lastPredicateResult!.message.appended(message: " (timed out, but main thread was unresponsive)."))
+            let message = lastPredicateResult?.message.appended(message: " (timed out, but main run loop was unresponsive).") ??
+                .fail("main run loop was unresponsive")
+            return PredicateResult(status: .fail, message: message)
         case .incomplete:
             internalError("Reached .incomplete state for \(fnName)(...).")
         }
@@ -38,8 +42,10 @@ private func async<T>(style: ExpectationStyle, predicate: Predicate<T>, timeout:
 }
 
 private let toEventuallyRequiresClosureError = FailureMessage(
-    // swiftlint:disable:next line_length
-    stringValue: "expect(...).toEventually(...) requires an explicit closure (eg - expect { ... }.toEventually(...) )\nSwift 1.2 @autoclosure behavior has changed in an incompatible way for Nimble to function"
+    stringValue: """
+        expect(...).toEventually(...) requires an explicit closure (eg - expect { ... }.toEventually(...) )
+        Swift 1.2 @autoclosure behavior has changed in an incompatible way for Nimble to function
+        """
 )
 
 extension Expectation {

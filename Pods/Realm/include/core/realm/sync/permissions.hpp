@@ -1,4 +1,3 @@
-
 /*************************************************************************
  *
  * REALM CONFIDENTIAL
@@ -27,6 +26,9 @@
 #include <realm/sync/instruction_applier.hpp>
 #include <realm/sync/object_id.hpp>
 #include <realm/sync/object.hpp>
+#include <realm/util/metered/map.hpp>
+#include <realm/util/metered/set.hpp>
+#include <realm/util/metered/string.hpp>
 
 #include <realm/table_view.hpp>
 
@@ -78,12 +80,13 @@ void create_permissions_schema(Group&);
 
 /// Set up the basic "everyone" role and default permissions. The default is to
 /// set up some very permissive defaults, where "everyone" can do everything.
-void set_up_basic_permissions(Group&, bool permissive = true);
-
-void set_up_basic_permissions_for_class(Group&, StringData class_name, bool permissive = true);
+void set_up_basic_permissions(Group& group, TableInfoCache& table_info_cache, bool permissive = true);
+// Convenience function that creates a new TableInfoCache.
+void set_up_basic_permissions(Group& group, bool permissive = true);
 
 /// Set up some basic permissions for the class. The default is to set up some
 /// very permissive default, where "everyone" can do everything in the class.
+void set_up_basic_permissions_for_class(Group&, StringData class_name, bool permissive = true);
 // void set_up_basic_default_permissions_for_class(Group&, TableRef klass, bool permissive = true);
 
 /// Return the index of the ACL in the class, if one exists. If no ACL column is
@@ -97,6 +100,32 @@ bool permissions_schema_exist(const Group&);
 
 bool user_exist(const Group&, StringData user_id);
 //@}
+
+
+/// Perform a query as user \a user_id, returning only the results that the
+/// user has access to read. If the user is an admin, there is no need to call
+/// this function, since admins can always read everything.
+///
+/// If the target table of the query does not have object-level permissions,
+/// the query results will be returned without any additional filtering.
+///
+/// If the target table of the query has object-level permissions, but the
+/// permissions schema of this Realm is invalid, an exception of type
+/// `InvalidPermissionsSchema` is thrown.
+///
+/// LIMIT and DISTINCT will be applied *after* permission filters.
+///
+/// The resulting TableView can be used like any other query result.
+///
+/// Note: Class-level and Realm-level permissions are not taken into account in
+/// the resulting TableView, since there is no way to represent this in the
+/// query engine.
+ConstTableView query_with_permissions(Query query, StringData user_id,
+                                      const DescriptorOrdering* ordering = nullptr);
+
+struct InvalidPermissionsSchema : util::runtime_error {
+    using util::runtime_error::runtime_error;
+};
 
 //@{
 /// Convenience function to modify permission data.
@@ -227,7 +256,8 @@ struct PermissionsCache {
     /// Each element is the index of a row in the `class___Roles` table.
     using RoleList = std::vector<std::size_t>;
 
-    PermissionsCache(const Group& g, StringData user_identity, bool is_admin = false);
+    PermissionsCache(const Group& g, TableInfoCache& table_info_cache,
+                     StringData user_identity, bool is_admin = false);
 
     bool is_admin() const noexcept;
 
@@ -319,11 +349,11 @@ struct PermissionsCache {
 
 private:
     const Group& group;
-    TableInfoCache cache;
+    TableInfoCache& m_table_info_cache;
     std::string user_id;
     bool m_is_admin;
     util::Optional<uint_least32_t> realm_privileges;
-    std::map<GlobalID, uint_least32_t> object_privileges;
+    util::metered::map<GlobalID, uint_least32_t> object_privileges;
     ObjectIDSet created_objects;
 
     // uint_least32_t get_default_object_privileges(ConstTableRef);
@@ -340,8 +370,8 @@ inline bool PermissionsCache::is_admin() const noexcept
 /// sent to the client because the client tried to perform changes to a database
 /// that it wasn't allowed to make.
 struct PermissionCorrections {
-    using TableColumnSet = std::map<std::string, std::set<std::string, std::less<>>, std::less<>>;
-    using TableSet = std::set<std::string, std::less<>>;
+    using TableColumnSet = util::metered::map<std::string, util::metered::set<std::string>>;
+    using TableSet = util::metered::set<std::string>;
 
     // Objects that a client tried to delete without being allowed.
     ObjectIDSet recreate_objects;
@@ -367,6 +397,8 @@ struct PermissionCorrections {
 
     // Tables that were illegally removed by the client.
     TableSet recreate_tables;
+
+    bool empty() const noexcept;
 };
 
 // Function for printing out a permission correction object. Useful for debugging purposes.
@@ -395,6 +427,17 @@ private:
     struct Impl;
     std::unique_ptr<Impl> m_impl;
 };
+
+
+// Implementation:
+
+inline bool PermissionCorrections::empty() const noexcept
+{
+    return recreate_objects.empty() && erase_objects.empty()
+        && reset_fields.empty() && erase_columns.empty()
+        && recreate_columns.empty() && erase_tables.empty()
+        && recreate_tables.empty();
+}
 
 } // namespace sync
 } // namespace realm

@@ -16,7 +16,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#include <future>
+#include <thread>
 
 namespace realm {
 class Realm;
@@ -59,7 +59,7 @@ private:
     RealmCoordinator& m_parent;
 
     // The listener thread
-    std::future<void> m_thread;
+    std::thread m_thread;
 
     // Pipe which is waited on for changes and written to when there is a new
     // commit to notify others of. When using a named pipe m_notify_fd is

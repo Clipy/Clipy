@@ -80,6 +80,7 @@ struct SerialisationState
     std::string describe_column(ConstTableRef table, size_t col_ndx);
     std::string describe_columns(const LinkMap& link_map, size_t target_col_ndx);
     std::string get_column_name(ConstTableRef table, size_t col_ndx);
+    std::string get_backlink_column_name(ConstTableRef from, size_t col_ndx);
     std::string get_variable_name(ConstTableRef table);
     std::vector<std::string> subquery_prefix_list;
 };

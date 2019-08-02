@@ -10,26 +10,23 @@
 ///
 /// It represents a push style sequence.
 public class Observable<Element> : ObservableType {
-    /// Type of elements in sequence.
-    public typealias E = Element
-    
     init() {
 #if TRACE_RESOURCES
-        let _ = Resources.incrementTotal()
+        _ = Resources.incrementTotal()
 #endif
     }
     
-    public func subscribe<O: ObserverType>(_ observer: O) -> Disposable where O.E == E {
+    public func subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
         rxAbstractMethod()
     }
     
-    public func asObservable() -> Observable<E> {
+    public func asObservable() -> Observable<Element> {
         return self
     }
     
     deinit {
 #if TRACE_RESOURCES
-        let _ = Resources.decrementTotal()
+        _ = Resources.decrementTotal()
 #endif
     }
 
@@ -37,7 +34,7 @@ public class Observable<Element> : ObservableType {
     // Swift compiler reports "Not supported yet" when trying to override protocol extensions, so ¯\_(ツ)_/¯
 
     /// Optimizations for map operator
-    internal func composeMap<R>(_ transform: @escaping (Element) throws -> R) -> Observable<R> {
+    internal func composeMap<Result>(_ transform: @escaping (Element) throws -> Result) -> Observable<Result> {
         return _map(source: self, transform: transform)
     }
 }

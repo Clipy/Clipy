@@ -1362,8 +1362,9 @@ private:
 /// operation is guaranteed to never throw.
 ///
 /// The function is guaranteed to not be called after the Trigger object is
-/// destroyed. It is safe, though, to destroy the Trigger object during the
-/// execution of the function.
+/// destroyed.
+///
+/// It is safe to destroy the Trigger object during execution of the function.
 ///
 /// Note that even though the trigger() function is thread-safe, the Trigger
 /// object, as a whole, is not. In particular, construction and destruction must

@@ -49,6 +49,10 @@ ReadOnlyPropertyException::ReadOnlyPropertyException(const std::string& object_t
 : std::logic_error(util::format("Cannot modify read-only property '%1.%2'", object_type, property_name))
 , object_type(object_type), property_name(property_name) {}
 
+ModifyPrimaryKeyException::ModifyPrimaryKeyException(const std::string& object_type, const std::string& property_name)
+        : std::logic_error(util::format("Cannot modify primary key after creation: '%1.%2'", object_type, property_name))
+        , object_type(object_type), property_name(property_name) {}
+
 Object::Object(SharedRealm r, ObjectSchema const& s, RowExpr const& o)
 : m_realm(std::move(r)), m_object_schema(&s), m_row(o) { }
 

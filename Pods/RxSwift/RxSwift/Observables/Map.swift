@@ -17,22 +17,22 @@ extension ObservableType {
      - returns: An observable sequence whose elements are the result of invoking the transform function on each element of source.
 
      */
-    public func map<R>(_ transform: @escaping (E) throws -> R)
-        -> Observable<R> {
+    public func map<Result>(_ transform: @escaping (Element) throws -> Result)
+        -> Observable<Result> {
         return self.asObservable().composeMap(transform)
     }
 }
 
-final fileprivate class MapSink<SourceType, O : ObserverType> : Sink<O>, ObserverType {
+final private class MapSink<SourceType, Observer: ObserverType>: Sink<Observer>, ObserverType {
     typealias Transform = (SourceType) throws -> ResultType
 
-    typealias ResultType = O.E
+    typealias ResultType = Observer.Element 
     typealias Element = SourceType
 
     private let _transform: Transform
-    
-    init(transform: @escaping Transform, observer: O, cancel: Cancelable) {
-        _transform = transform
+
+    init(transform: @escaping Transform, observer: Observer, cancel: Cancelable) {
+        self._transform = transform
         super.init(observer: observer, cancel: cancel)
     }
 
@@ -40,37 +40,37 @@ final fileprivate class MapSink<SourceType, O : ObserverType> : Sink<O>, Observe
         switch event {
         case .next(let element):
             do {
-                let mappedElement = try _transform(element)
-                forwardOn(.next(mappedElement))
+                let mappedElement = try self._transform(element)
+                self.forwardOn(.next(mappedElement))
             }
             catch let e {
-                forwardOn(.error(e))
-                dispose()
+                self.forwardOn(.error(e))
+                self.dispose()
             }
         case .error(let error):
-            forwardOn(.error(error))
-            dispose()
+            self.forwardOn(.error(error))
+            self.dispose()
         case .completed:
-            forwardOn(.completed)
-            dispose()
+            self.forwardOn(.completed)
+            self.dispose()
         }
     }
 }
 
 #if TRACE_RESOURCES
-    fileprivate var _numberOfMapOperators: AtomicInt = 0
+    fileprivate let _numberOfMapOperators = AtomicInt(0)
     extension Resources {
         public static var numberOfMapOperators: Int32 {
-            return _numberOfMapOperators.valueSnapshot()
+            return load(_numberOfMapOperators)
         }
     }
 #endif
 
-internal func _map<Element, R>(source: Observable<Element>, transform: @escaping (Element) throws -> R) -> Observable<R> {
+internal func _map<Element, Result>(source: Observable<Element>, transform: @escaping (Element) throws -> Result) -> Observable<Result> {
     return Map(source: source, transform: transform)
 }
 
-final fileprivate class Map<SourceType, ResultType>: Producer<ResultType> {
+final private class Map<SourceType, ResultType>: Producer<ResultType> {
     typealias Transform = (SourceType) throws -> ResultType
 
     private let _source: Observable<SourceType>
@@ -78,31 +78,31 @@ final fileprivate class Map<SourceType, ResultType>: Producer<ResultType> {
     private let _transform: Transform
 
     init(source: Observable<SourceType>, transform: @escaping Transform) {
-        _source = source
-        _transform = transform
+        self._source = source
+        self._transform = transform
 
 #if TRACE_RESOURCES
-        let _ = AtomicIncrement(&_numberOfMapOperators)
+        _ = increment(_numberOfMapOperators)
 #endif
     }
 
-    override func composeMap<R>(_ selector: @escaping (ResultType) throws -> R) -> Observable<R> {
-        let originalSelector = _transform
-        return Map<SourceType, R>(source: _source, transform: { (s: SourceType) throws -> R in
+    override func composeMap<Result>(_ selector: @escaping (ResultType) throws -> Result) -> Observable<Result> {
+        let originalSelector = self._transform
+        return Map<SourceType, Result>(source: self._source, transform: { (s: SourceType) throws -> Result in
             let r: ResultType = try originalSelector(s)
             return try selector(r)
         })
     }
-    
-    override func run<O: ObserverType>(_ observer: O, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where O.E == ResultType {
-        let sink = MapSink(transform: _transform, observer: observer, cancel: cancel)
-        let subscription = _source.subscribe(sink)
+
+    override func run<Observer: ObserverType>(_ observer: Observer, cancel: Cancelable) -> (sink: Disposable, subscription: Disposable) where Observer.Element == ResultType {
+        let sink = MapSink(transform: self._transform, observer: observer, cancel: cancel)
+        let subscription = self._source.subscribe(sink)
         return (sink: sink, subscription: subscription)
     }
 
     #if TRACE_RESOURCES
     deinit {
-        let _ = AtomicDecrement(&_numberOfMapOperators)
+        _ = decrement(_numberOfMapOperators)
     }
     #endif
 }

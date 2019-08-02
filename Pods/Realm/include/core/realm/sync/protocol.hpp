@@ -121,10 +121,58 @@ namespace sync {
 //
 //  25 Include "last server version" in the UPLOAD message for history trimming
 //     on the server.
-
+//
+//  26 Four new protocol error codes, 217, 218, 219, and 220.
+//
+//     The downloadable_bytes field in the DOWNLOAD message denotes the byte
+//     size of the changesets following those in the DOWNLOAD
+//     message. Previously, downloadable_bytes denoted the total byte size of
+//     the entire history.
+//
+//     Introduction of protocol version flexibility on client side (strictly
+//     speaking, this is a change that transcends the sync protocol).
+//
+//  27 STATE_REQUEST, STATE, CLIENT_VERSION_REQUEST and CLIENT_VERSION messages
+//     introduced. These messages are used for client reset and async open.
+//
+//  28 Introduction of TRANSACT message (serialized transactions). New session
+//     level error code 221 "Serialized transaction before upload completion".
+//
+//     Also added new parameters `<min file format version>`, `<max file format
+//     version>`, `<min history schema version>`, and `<max history schema
+//     version>` to STATE_REQUEST message.
+//
 constexpr int get_current_protocol_version() noexcept
 {
-    return 25;
+    return 28;
+}
+
+
+/// Supported protocol envelopes:
+///
+///                                                             Alternative (*)
+///      Name     Envelope          URL scheme   Default port   default port
+///     ------------------------------------------------------------------------
+///      realm    WebSocket         realm:       7800           80
+///      realms   WebSocket + SSL   realms:      7801           443
+///      ws       WebSocket         ws:          80
+///      wss      WebSocket + SSL   wss:         443
+///
+///       *) When Client::Config::enable_default_port_hack is true
+///
+enum class ProtocolEnvelope { realm, realms, ws, wss };
+
+inline bool is_ssl(ProtocolEnvelope protocol) noexcept
+{
+    switch (protocol) {
+        case ProtocolEnvelope::realm:
+        case ProtocolEnvelope::ws:
+            break;
+        case ProtocolEnvelope::realms:
+        case ProtocolEnvelope::wss:
+            return true;
+    }
+    return false;
 }
 
 
@@ -198,10 +246,27 @@ struct UploadCursor {
 /// A client's record of the current point of progress of the synchronization
 /// process. The client must store this persistently in the local Realm file.
 struct SyncProgress {
-    SaltedVersion     latest_server_version{0, 0};
-    DownloadCursor    download{0, 0};
-    UploadCursor      upload{0, 0};
+    SaltedVersion     latest_server_version = {0, 0};
+    DownloadCursor    download = {0, 0};
+    UploadCursor      upload = {0, 0};
     std::int_fast64_t downloadable_bytes = 0;
+};
+
+
+/// An indication of the final status of an attempt at performing a serialized
+/// transaction.
+enum class SerialTransactStatus {
+    /// The transaction was accepted and successful.
+    accepted = 1,
+
+    /// The transaction was rejected because the servers history contained
+    /// causally unrelated changes. I.e., the requesting client lost a race to
+    /// be served first. The client should try again.
+    rejected = 2,
+
+    /// The server did not support serialized transactions at all, or did not
+    /// support it on the targeted Realm in particular.
+    not_supported = 3,
 };
 
 
@@ -221,7 +286,7 @@ enum class ProtocolError {
     unknown_message              = 102, // Unknown type of input message
     bad_syntax                   = 103, // Bad syntax in input message head
     limits_exceeded              = 104, // Limits exceeded in input message
-    wrong_protocol_version       = 105, // Wrong protocol version (CLIENT)
+    wrong_protocol_version       = 105, // Wrong protocol version (CLIENT) (obsolete)
     bad_session_ident            = 106, // Bad session identifier in input message
     reuse_of_session_ident       = 107, // Overlapping reuse of session identifier (BIND)
     bound_in_other_session       = 108, // Client file bound in other session (IDENT)
@@ -238,18 +303,23 @@ enum class ProtocolError {
     bad_authentication           = 203, // Bad user authentication (BIND, REFRESH)
     illegal_realm_path           = 204, // Illegal Realm path (BIND)
     no_such_realm                = 205, // No such Realm (BIND)
-    permission_denied            = 206, // Permission denied (BIND, REFRESH)
+    permission_denied            = 206, // Permission denied (STATE_REQUEST, BIND, REFRESH)
     bad_server_file_ident        = 207, // Bad server file identifier (IDENT) (obsolete!)
     bad_client_file_ident        = 208, // Bad client file identifier (IDENT)
-    bad_server_version           = 209, // Bad server version (IDENT, UPLOAD)
+    bad_server_version           = 209, // Bad server version (IDENT, UPLOAD, TRANSACT)
     bad_client_version           = 210, // Bad client version (IDENT, UPLOAD)
     diverging_histories          = 211, // Diverging histories (IDENT)
     bad_changeset                = 212, // Bad changeset (UPLOAD)
     superseded                   = 213, // Superseded by new session for same client-side file (deprecated)
     disabled_session             = 213, // Alias for `superseded` (deprecated)
-    partial_sync_disabled        = 214, // Partial sync disabled (BIND)
+    partial_sync_disabled        = 214, // Partial sync disabled (BIND, STATE_REQUEST)
     unsupported_session_feature  = 215, // Unsupported session-level feature
     bad_origin_file_ident        = 216, // Bad origin file identifier (UPLOAD)
+    bad_client_file              = 217, // Synchronization no longer possible for client-side file
+    server_file_deleted          = 218, // Server file was deleted while session was bound to it
+    client_file_blacklisted      = 219, // Client file has been blacklisted (IDENT)
+    user_blacklisted             = 220, // User has been blacklisted (BIND)
+    transact_before_upload       = 221, // Serialized transaction before upload completion
 };
 
 inline constexpr bool is_session_level_error(ProtocolError error)

@@ -1,19 +1,19 @@
 import Foundation
 import RxCocoa
 
-public extension SharedSequenceConvertibleType where E: Occupiable {
+public extension SharedSequenceConvertibleType where Element: Occupiable {
     /**
      Filters out empty elements.
 
      - returns: `Driver` of source `Driver`'s elements, with empty elements filtered out.
      */
     
-    func filterEmpty() -> SharedSequence<SharingStrategy,E> {
-        return flatMap { element -> SharedSequence<SharingStrategy,E> in
+    func filterEmpty() -> SharedSequence<SharingStrategy, Element> {
+        return flatMap { element -> SharedSequence<SharingStrategy, Element> in
             guard element.isNotEmpty else {
-                return SharedSequence<SharingStrategy,E>.empty()
+                return SharedSequence<SharingStrategy, Element>.empty()
             }
-            return SharedSequence<SharingStrategy,E>.just(element)
+            return SharedSequence<SharingStrategy, Element>.just(element)
         }
     }
 
@@ -25,12 +25,12 @@ public extension SharedSequenceConvertibleType where E: Occupiable {
      - returns: `Driver` of the source `Driver`'s elements, with empty elements replaced by the handler's returned non-empty elements.
      */
     
-    func catchOnEmpty(_ handler: @escaping () -> SharedSequence<SharingStrategy,E>) -> SharedSequence<SharingStrategy,E> {
-        return flatMap { element -> SharedSequence<SharingStrategy,E> in
+    func catchOnEmpty(_ handler: @escaping () -> SharedSequence<SharingStrategy, Element>) -> SharedSequence<SharingStrategy, Element> {
+        return flatMap { element -> SharedSequence<SharingStrategy, Element> in
             guard element.isNotEmpty else {
                 return handler()
             }
-            return SharedSequence<SharingStrategy,E>.just(element)
+            return SharedSequence<SharingStrategy, Element>.just(element)
         }
     }
 }

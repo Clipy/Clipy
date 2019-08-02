@@ -93,7 +93,8 @@ ObjectSchema::ObjectSchema(Group const& group, StringData name, size_t index) : 
     set_primary_key_property();
 }
 
-Property *ObjectSchema::property_for_name(StringData name) {
+Property *ObjectSchema::property_for_name(StringData name)
+{
     for (auto& prop : persisted_properties) {
         if (StringData(prop.name) == name) {
             return &prop;
@@ -107,11 +108,36 @@ Property *ObjectSchema::property_for_name(StringData name) {
     return nullptr;
 }
 
-const Property *ObjectSchema::property_for_name(StringData name) const {
+Property *ObjectSchema::property_for_public_name(StringData public_name)
+{
+    // If no `public_name` is defined, the internal `name` is also considered the public name.
+    for (auto& prop : persisted_properties) {
+        if (prop.public_name == public_name || (prop.public_name.empty() && prop.name == public_name))
+            return &prop;
+    }
+
+    // Computed properties are not persisted, so creating a public name for such properties
+    // are a bit pointless since the internal name is already the "public name", but since
+    // this distinction isn't visible in the Property struct we allow it anyway.
+    for (auto& prop : computed_properties) {
+        if ((prop.public_name.empty() ? StringData(prop.name) :  StringData(prop.public_name)) == public_name)
+            return &prop;
+    }
+    return nullptr;
+}
+
+const Property *ObjectSchema::property_for_public_name(StringData public_name) const
+{
+    return const_cast<ObjectSchema *>(this)->property_for_public_name(public_name);
+}
+
+const Property *ObjectSchema::property_for_name(StringData name) const
+{
     return const_cast<ObjectSchema *>(this)->property_for_name(name);
 }
 
-bool ObjectSchema::property_is_computed(Property const& property) const {
+bool ObjectSchema::property_is_computed(Property const& property) const
+{
     auto end = computed_properties.end();
     return std::find(computed_properties.begin(), end, property) != end;
 }
@@ -214,6 +240,62 @@ static void validate_property(Schema const& schema,
 
 void ObjectSchema::validate(Schema const& schema, std::vector<ObjectSchemaValidationException>& exceptions) const
 {
+    std::vector<StringData> public_property_names;
+    std::vector<StringData> internal_property_names;
+    internal_property_names.reserve(persisted_properties.size() + computed_properties.size());
+    auto gather_names = [&](auto const &properties) {
+        for (auto const &prop : properties) {
+            internal_property_names.push_back(prop.name);
+            if (!prop.public_name.empty())
+                public_property_names.push_back(prop.public_name);
+        }
+    };
+    gather_names(persisted_properties);
+    gather_names(computed_properties);
+    std::sort(public_property_names.begin(), public_property_names.end());
+    std::sort(internal_property_names.begin(), internal_property_names.end());
+
+    // Check that property names and aliases are unique
+    auto for_each_duplicate = [](auto &&container, auto &&fn) {
+        auto end = container.end();
+        for (auto it = std::adjacent_find(container.begin(), end); it != end; it = std::adjacent_find(it + 2, end))
+            fn(*it);
+    };
+    for_each_duplicate(public_property_names, [&](auto public_property_name) {
+        exceptions.emplace_back("Alias '%1' appears more than once in the schema for type '%2'.",
+                                public_property_name, name);
+    });
+    for_each_duplicate(internal_property_names, [&](auto internal_name) {
+        exceptions.emplace_back("Property '%1' appears more than once in the schema for type '%2'.",
+                                internal_name, name);
+    });
+
+    // Check that no aliases conflict with property names
+    struct ErrorWriter {
+        ObjectSchema const &os;
+        std::vector<ObjectSchemaValidationException> &exceptions;
+
+        struct Proxy {
+            ObjectSchema const &os;
+            std::vector<ObjectSchemaValidationException> &exceptions;
+
+            Proxy &operator=(StringData name) {
+                exceptions.emplace_back(
+                        "Property '%1.%2' has an alias '%3' that conflicts with a property of the same name.",
+                        os.name, os.property_for_public_name(name)->name, name);
+                return *this;
+            }
+        };
+
+        Proxy operator*() { return Proxy{os, exceptions}; }
+        ErrorWriter &operator=(const ErrorWriter &) { return *this; }
+        ErrorWriter &operator++() { return *this; }
+        ErrorWriter &operator++(int) { return *this; }
+    } writer{*this, exceptions};
+    std::set_intersection(public_property_names.begin(), public_property_names.end(),
+                          internal_property_names.begin(), internal_property_names.end(), writer);
+
+    // Validate all properties
     const Property *primary = nullptr;
     for (auto const& prop : persisted_properties) {
         validate_property(schema, name, prop, &primary, exceptions);

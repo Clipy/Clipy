@@ -21,6 +21,7 @@
 #ifndef REALM_UTIL_BUFFER_STREAM_HPP
 #define REALM_UTIL_BUFFER_STREAM_HPP
 
+#include <cstddef>
 #include <sstream>
 
 namespace realm {
@@ -36,16 +37,18 @@ public:
     /// beginning of the output buffer without reallocating buffer memory.
     void reset() noexcept;
 
+    //@{
     /// Get a pointer to the beginning of the output buffer
     /// (std::basic_streambuf::pbase()). Note that this will change as the
     /// buffer is reallocated.
     char_type* data() noexcept;
     const char_type* data() const noexcept;
+    //@}
 
     /// Get the number of bytes written to the output buffer since the creation
     /// of the stream buffer, or since the last invocation of reset()
     /// (std::basic_streambuf::pptr() - std::basic_streambuf::pbase()).
-    std::streamsize size() const noexcept;
+    std::size_t size() const noexcept;
 };
 
 
@@ -59,12 +62,14 @@ public:
     /// Calls BasicResettableExpandableOutputStreambuf::reset().
     void reset() noexcept;
 
+    //@{
     /// Calls BasicResettableExpandableOutputStreambuf::data().
     char_type* data() noexcept;
     const char_type* data() const noexcept;
+    //@}
 
     /// Calls BasicResettableExpandableOutputStreambuf::size().
-    std::streamsize size() const noexcept;
+    std::size_t size() const noexcept;
 
 private:
     BasicResettableExpandableOutputStreambuf<C,T,A> m_streambuf;
@@ -101,10 +106,10 @@ BasicResettableExpandableOutputStreambuf<C,T,A>::data() const noexcept
 }
 
 template<class C, class T, class A>
-inline std::streamsize BasicResettableExpandableOutputStreambuf<C,T,A>::size() const noexcept
+inline std::size_t BasicResettableExpandableOutputStreambuf<C,T,A>::size() const noexcept
 {
-    std::streamsize s = std::streamsize(this->pptr() - this->pbase());
-    return s;
+    std::size_t size = std::size_t(this->pptr() - this->pbase());
+    return size;
 }
 
 template<class C, class T, class A>
@@ -135,7 +140,7 @@ BasicResettableExpandableBufferOutputStream<C,T,A>::data() const noexcept
 }
 
 template<class C, class T, class A>
-inline std::streamsize BasicResettableExpandableBufferOutputStream<C,T,A>::size() const noexcept
+inline std::size_t BasicResettableExpandableBufferOutputStream<C,T,A>::size() const noexcept
 {
     return m_streambuf.size();
 }
