@@ -43,7 +43,7 @@ platform :mac do
     # Check Xcode Version
     xcversion(version: ">= 10.3")
     # Check Git Status is Clean
-    #ensure_git_status_clean(show_diff: true, show_uncommitted_changes: true)
+    # ensure_git_status_clean(show_diff: true, show_uncommitted_changes: true)
     # Build Clipy.app
     gym(
       xcargs: "CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM=''",
