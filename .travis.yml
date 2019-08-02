@@ -5,6 +5,10 @@ language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
+cache:
+- bundler: true
+- cocoapods: true
+
 before_install:
 - gem install xcpretty bundler 'cocoapods:1.7.5'
 - pod repo update
