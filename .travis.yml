@@ -6,6 +6,7 @@ xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
 before_install:
-  - gem install xcpretty bundler cocoapods
+  - gem install xcpretty bundler 'cocoapods:1.7.5'
+install:
   - bundle install
   - pod install --repo-update
