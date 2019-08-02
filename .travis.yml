@@ -18,8 +18,8 @@ install:
 - bundle install --jobs=3 --retry=3 --deployment
 - pod install --deployment
 script:
-- fastlane mac test
-- fastlane mac release
+- [ "x${TRAVIS_TAG}" = "x" ] && fastlane mac test
+- [ "x${TRAVIS_TAG}" = "x" ] \|| fastlane mac release
 deploy:
   provider: releases
   api_key:
@@ -29,4 +29,4 @@ deploy:
   skip_cleanup: true
   on:
     repo: ian4hu/Clipy
-    branch: develop
+    tags: true
