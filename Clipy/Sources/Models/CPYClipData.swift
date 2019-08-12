@@ -135,38 +135,33 @@ final class CPYClipData: NSObject {
 // MARK: - Values
 private extension CPYClipData {
     func readString(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        guard let type = types.first(where: { $0.isString }) else {
-            return
-        }
-        stringValue = pasteboard.string(forType: type) ?? ""
+        stringValue = types.filter({ $0.isString })
+            .compactMap({ pasteboard.string(forType: $0) })
+            .first(where: { $0.isNotEmpty }) ?? ""
     }
 
     func readRTDData(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        guard let type = types.first(where: { $0.isRTF || $0.isRTFD }) else {
-            return
-        }
-        RTFData = pasteboard.data(forType: type)
+        RTFData = types.filter({ $0.isRTF || $0.isRTFD })
+            .compactMap({ pasteboard.data(forType: $0) })
+            .first
     }
 
     func readPDF(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        guard let type = types.first(where: { $0.isPDF }) else {
-            return
-        }
-        PDF = pasteboard.data(forType: type)
+        PDF = types.filter({ $0.isPDF })
+            .compactMap({ pasteboard.data(forType: $0) })
+            .first
     }
 
     func readFilenems(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        guard let type = types.first(where: { $0.isFilenames }) else {
-            return
-        }
-        fileNames = (pasteboard.propertyList(forType: type) as? [String]) ?? []
+        fileNames = types.filter({ $0.isFilenames })
+            .compactMap({ (pasteboard.propertyList(forType: $0) as? [String]) })
+            .first(where: { $0.isNotEmpty }) ?? []
     }
 
     func readURLs(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        guard let type = types.first(where: { $0.isURL }) else {
-            return
-        }
-        URLs = (pasteboard.propertyList(forType: type) as? [String]) ?? []
+        URLs = types.filter({ $0.isURL })
+            .compactMap({ (pasteboard.propertyList(forType: $0) as? [String]) })
+            .first(where: { $0.isNotEmpty }) ?? []
     }
 
     func readImage(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {

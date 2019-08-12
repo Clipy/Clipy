@@ -131,30 +131,34 @@ extension ClipService {
         // Saved time and path
         let unixTime = Int(Date().timeIntervalSince1970)
         let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
-        // Create Realm object
-        let clip = CPYClip()
-        clip.dataPath = savedPath
-        clip.title = data.stringValue[0...10000]
-        clip.dataHash = "\(savedHash)"
-        clip.updateTime = unixTime
-        clip.primaryType = data.primaryType?.rawValue ?? ""
 
+        // Create Realm object
         DispatchQueue.main.async {
+            var thumbnailPath: String?
+            var isColorCode = false
             // Save thumbnail image
             if let thumbnailImage = data.thumbnailImage {
                 PINCache.shared().setObject(thumbnailImage, forKey: "\(unixTime)")
-                clip.thumbnailPath = "\(unixTime)"
+                thumbnailPath = "\(unixTime)"
             }
             if let colorCodeImage = data.colorCodeImage {
                 PINCache.shared().setObject(colorCodeImage, forKey: "\(unixTime)")
-                clip.thumbnailPath = "\(unixTime)"
-                clip.isColorCode = true
+                thumbnailPath = "\(unixTime)"
+                isColorCode = true
             }
             // Save Realm and .data file
             let dispatchRealm = try! Realm()
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 if NSKeyedArchiver.archiveRootObject(data, toFile: savedPath) {
                     dispatchRealm.transaction {
+                        let clip = CPYClip()
+                        clip.dataPath = savedPath
+                        clip.title = data.stringValue[0...10000]
+                        clip.dataHash = "\(savedHash)"
+                        clip.updateTime = unixTime
+                        clip.primaryType = data.primaryType?.rawValue ?? ""
+                        clip.thumbnailPath = thumbnailPath ?? ""
+                        clip.isColorCode = isColorCode
                         dispatchRealm.add(clip, update: .modified)
                     }
                 }
