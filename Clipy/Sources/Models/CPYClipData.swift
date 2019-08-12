@@ -57,7 +57,7 @@ final class CPYClipData: NSObject {
         return types.first
     }
     var isOnlyStringType: Bool {
-        return types == [.deprecatedString]
+        return types.allSatisfy { $0.isString }
     }
     var thumbnailImage: NSImage? {
         let defaults = UserDefaults.standard
@@ -98,7 +98,7 @@ final class CPYClipData: NSObject {
     }
 
     init(image: NSImage) {
-        self.types = [.deprecatedTIFF]
+        self.types = AvailableType.tiff.targetPbTypes
         self.image = image
     }
 
@@ -135,60 +135,44 @@ final class CPYClipData: NSObject {
 // MARK: - Values
 private extension CPYClipData {
     func readString(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        if types.contains(.string) {
-            stringValue = pasteboard.string(forType: .string) ?? ""
-        } else if types.contains(.deprecatedString) && stringValue.isEmpty {
-            stringValue = pasteboard.string(forType: .deprecatedString) ?? ""
+        guard let type = types.first(where: { $0.isString }) else {
+            return
         }
+        stringValue = pasteboard.string(forType: type) ?? ""
     }
 
     func readRTDData(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        if types.contains(.rtfd) {
-            RTFData = pasteboard.data(forType: .rtfd)
-        } else if types.contains(.deprecatedRTFD) && RTFData == nil {
-            RTFData = pasteboard.data(forType: .deprecatedRTFD)
-        } else if types.contains(.rtf) && RTFData == nil {
-            RTFData = pasteboard.data(forType: .rtf)
-        } else if types.contains(.deprecatedRTF) && RTFData == nil {
-            RTFData = pasteboard.data(forType: .deprecatedRTF)
+        guard let type = types.first(where: { $0.isRTF || $0.isRTFD }) else {
+            return
         }
+        RTFData = pasteboard.data(forType: type)
     }
 
     func readPDF(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        if types.contains(.pdf) {
-            PDF = pasteboard.data(forType: .pdf)
-        } else if types.contains(.deprecatedPDF) && PDF == nil {
-            PDF = pasteboard.data(forType: .deprecatedPDF)
+        guard let type = types.first(where: { $0.isPDF }) else {
+            return
         }
+        PDF = pasteboard.data(forType: type)
     }
 
     func readFilenems(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        if #available(OSX 10.13, *) {
-            if types.contains(.fileURL) {
-                fileNames = (pasteboard.propertyList(forType: .fileURL) as? [String]) ?? []
-            } else if types.contains(.deprecatedFilenames) && fileNames.isEmpty {
-                fileNames = (pasteboard.propertyList(forType: .deprecatedFilenames) as? [String]) ?? []
-            }
-        } else {
-            fileNames = (pasteboard.propertyList(forType: .deprecatedFilenames) as? [String]) ?? []
+        guard let type = types.first(where: { $0.isFilenames }) else {
+            return
         }
+        fileNames = (pasteboard.propertyList(forType: type) as? [String]) ?? []
     }
 
     func readURLs(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        if #available(OSX 10.13, *) {
-            if types.contains(.URL) {
-                URLs = (pasteboard.propertyList(forType: .URL) as? [String]) ?? []
-            } else if types.contains(.deprecatedURL) && URLs.isEmpty {
-                URLs = (pasteboard.propertyList(forType: .deprecatedURL) as? [String]) ?? []
-            }
-        } else {
-            URLs = (pasteboard.propertyList(forType: .deprecatedURL) as? [String]) ?? []
+        guard let type = types.first(where: { $0.isURL }) else {
+            return
         }
+        URLs = (pasteboard.propertyList(forType: type) as? [String]) ?? []
     }
 
     func readImage(with pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        if types.contains(.tiff) || types.contains(.deprecatedTIFF) {
-            image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage
+        guard types.contains(where: { $0.isTIFF }) else {
+            return
         }
+        image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage
     }
 }
