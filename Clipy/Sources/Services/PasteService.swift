@@ -91,8 +91,8 @@ extension PasteService {
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
-        pasteboard.declareTypes([.deprecatedString], owner: nil)
-        pasteboard.setString(string, forType: .deprecatedString)
+        pasteboard.declareTypes(AvailableType.string.targetPbTypes, owner: nil)
+        pasteboard.setString(string, forType: AvailableType.string.primaryPbType)
     }
 
     func copyToPasteboard(with clip: CPYClip) {
