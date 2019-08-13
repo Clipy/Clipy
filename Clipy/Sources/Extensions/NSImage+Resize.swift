@@ -17,21 +17,13 @@ extension NSImage {
     func resizeImage(_ width: CGFloat, _ height: CGFloat) -> NSImage? {
 
         let representations = self.representations
-        var bitmapRep: NSBitmapImageRep?
-
-        for rep in representations {
-            if let rep = rep as? NSBitmapImageRep {
-                bitmapRep = rep
-                break
-            }
-        }
-
-        if bitmapRep == nil {
+        guard let imageRep = representations.first else {
             return nil
         }
 
-        let origWidth = CGFloat(bitmapRep!.pixelsWide)
-        let origHeight = CGFloat(bitmapRep!.pixelsHigh)
+        let size = imageRep.size
+        let origWidth = CGFloat(size.width)
+        let origHeight = CGFloat(size.height)
 
         let aspect = CGFloat(origWidth) / CGFloat(origHeight)
 
