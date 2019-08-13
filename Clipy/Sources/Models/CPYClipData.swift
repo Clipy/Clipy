@@ -49,7 +49,7 @@ final class CPYClipData: NSObject {
             hash ^= stringValue.hash
         }
         if let data = RTFData {
-            hash ^= data.count
+            hash ^= data.hashValue
         }
         return hash
     }
@@ -64,19 +64,17 @@ final class CPYClipData: NSObject {
         let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
         let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
 
-        if let image = image, fileNames.isEmpty {
-            // Image only data
-            return image.resizeImage(CGFloat(width), CGFloat(height))
-        } else if let fileName = fileNames.first, let path = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
-            /**
-             *  In the case of the local file correct data is not included in the image variable
-             *  Judge the image from the path and create a thumbnail
-             */
-            switch url.pathExtension.lowercased() {
-            case "jpg", "jpeg", "png", "bmp", "tiff":
-                return NSImage(contentsOfFile: fileName)?.resizeImage(CGFloat(width), CGFloat(height))
-            default: break
+        if let fileName = fileNames.first, let path = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
+            let ext = url.pathExtension.lowercased() as CFString
+            if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil),
+                UTTypeConformsTo(uti.takeRetainedValue(), kUTTypeImage) {
+                return NSImage(contentsOfFile: path)?.resizeImage(CGFloat(width), CGFloat(height))
             }
+        }
+
+        if let image = image {
+            // Has Image
+            return image.resizeImage(CGFloat(width), CGFloat(height))
         }
         return nil
     }
@@ -120,7 +118,8 @@ final class CPYClipData: NSObject {
     }
 
     @objc required init(coder aDecoder: NSCoder) {
-        types = (aDecoder.decodeObject(forKey: kTypesKey) as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
+        types = (aDecoder.decodeObject(forKey: kTypesKey) as? [String])?
+            .compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
         fileNames = aDecoder.decodeObject(forKey: kFileNamesKey) as? [String] ?? [String]()
         URLs = aDecoder.decodeObject(forKey: kURLsKey) as? [String] ?? [String]()
         stringValue = aDecoder.decodeObject(forKey: kStringValueKey) as? String ?? ""
