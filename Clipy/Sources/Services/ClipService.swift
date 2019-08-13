@@ -159,6 +159,12 @@ extension ClipService {
                         clip.primaryType = data.primaryType?.rawValue ?? ""
                         clip.thumbnailPath = thumbnailPath ?? ""
                         clip.isColorCode = isColorCode
+                        if clip.title.isEmpty, let filename = data.fileNames.first(where: { $0.isNotEmpty }) {
+                            clip.title = filename
+                        }
+                        if clip.title.isEmpty, let url = data.URLs.first(where: { $0.isNotEmpty }) {
+                            clip.title = url
+                        }
                         dispatchRealm.add(clip, update: .modified)
                     }
                 }

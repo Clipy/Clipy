@@ -96,6 +96,7 @@ final class CPYClipData: NSObject {
     }
 
     init(image: NSImage) {
+        super.init()
         self.types = AvailableType.tiff.targetPbTypes
         self.image = image
     }

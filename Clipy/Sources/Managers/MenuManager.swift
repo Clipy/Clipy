@@ -29,6 +29,7 @@ final class MenuManager: NSObject {
     // Icon Cache
     fileprivate let folderIcon = Asset.iconFolder.image
     fileprivate let snippetIcon = Asset.iconText.image
+    fileprivate let textIcon = Asset.iconText.image
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let notificationCenter = NotificationCenter.default
@@ -336,7 +337,9 @@ private extension MenuManager {
         } else if primaryPboardType.isFilenames && title.isEmpty {
             menuItem.title = menuItemTitle("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
-
+        if isShowImage {
+            menuItem.image = textIcon
+        }
         if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
             PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
