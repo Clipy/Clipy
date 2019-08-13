@@ -57,30 +57,19 @@ final class PasteService {
 extension PasteService {
     func paste(with clip: CPYClip) {
         guard !clip.isInvalidated else { return }
-        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
 
-        // Handling modifier actions
-        let isPastePlainText = self.isPastePlainText
+        // Handling modifier actions (capture it)
         let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
         let isDeleteHistory = self.isDeleteHistory
-        guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
-            copyToPasteboard(with: clip)
-            paste()
-            return
-        }
-
+        let isPastePlainText = self.isPastePlainText
+        
         // Increment change count for don't copy paste item
         if isPasteAndDeleteHistory {
             AppEnvironment.current.clipService.incrementChangeCount()
         }
         // Paste history
-        if isPastePlainText {
-            copyToPasteboard(with: data.stringValue)
-            paste()
-        } else if isPasteAndDeleteHistory {
-            copyToPasteboard(with: clip)
-            paste()
-        }
+        copyToPasteboard(with: clip, isPastePlainText)
+        paste()
         // Delete clip
         if isDeleteHistory || isPasteAndDeleteHistory {
             AppEnvironment.current.clipService.delete(with: clip)
@@ -95,7 +84,7 @@ extension PasteService {
         pasteboard.setString(string, forType: AvailableType.string.primaryPbType)
     }
 
-    func copyToPasteboard(with clip: CPYClip) {
+    func copyToPasteboard(with clip: CPYClip, _ isPastePlainText: Bool = false) {
         lock.lock(); defer { lock.unlock() }
 
         guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
