@@ -63,10 +63,10 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.collectionBehavior = NSWindow.CollectionBehavior.canJoinAllSpaces
-        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
-        if #available(OSX 10.10, *) {
-            self.window?.titlebarAppearsTransparent = true
-        }
+        //self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
+        //if #available(OSX 10.10, *) {
+        //    self.window?.titlebarAppearsTransparent = true
+        //}
         // HACK: Copy as an object that does not put under Realm management.
         // https://github.com/realm/realm-cocoa/issues/1734
         let realm = try! Realm()
