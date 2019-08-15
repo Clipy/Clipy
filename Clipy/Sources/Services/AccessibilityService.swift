@@ -19,10 +19,6 @@ final class AccessibilityService {}
 extension AccessibilityService {
     @discardableResult
     func isAccessibilityEnabled(isPrompt: Bool) -> Bool {
-        /// Accessibility permission is required for paste command from macOS 10.14 Mojave.
-        /// For macOS 10.14 and later only, check accessibility permission at startup and paste
-        guard #available(macOS 10.14, *) else { return true }
-
         let checkOptionPromptKey = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
         let opts = [checkOptionPromptKey: isPrompt] as CFDictionary
         return AXIsProcessTrustedWithOptions(opts)

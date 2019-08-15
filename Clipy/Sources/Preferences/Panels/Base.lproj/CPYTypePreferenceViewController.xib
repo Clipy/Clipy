@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
-        <capability name="box content view" minToolsVersion="7.0"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,7 +24,7 @@
                         <rect key="frame" x="2" y="2" width="325" height="158"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hjR-M0-hZo" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hjR-M0-hZo">
                                 <rect key="frame" x="14" y="132" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Plain Text" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="9wr-mR-kmC">
@@ -35,7 +35,7 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.String" id="f5i-QI-5o3"/>
                                 </connections>
                             </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xza-Mm-bci" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xza-Mm-bci">
                                 <rect key="frame" x="14" y="112" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Rich Text Format (RTF)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="xyj-FL-88b">
@@ -46,7 +46,7 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.RTF" id="WhO-jO-eDv"/>
                                 </connections>
                             </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMv-K0-koZ" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMv-K0-koZ">
                                 <rect key="frame" x="14" y="92" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Rich Text Format Directory (RTFD)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Nvy-pc-6hl">
@@ -57,7 +57,7 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.RTFD" id="u86-Vg-Rmf"/>
                                 </connections>
                             </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oOc-3g-cCd" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oOc-3g-cCd">
                                 <rect key="frame" x="14" y="72" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="PDF" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="27s-8p-tdh">
@@ -68,7 +68,7 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.PDF" id="8uM-EG-QXe"/>
                                 </connections>
                             </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ItL-b5-KT6" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ItL-b5-KT6">
                                 <rect key="frame" x="14" y="52" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Filenames" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="iO6-7x-OcH">
@@ -79,7 +79,7 @@
                                     <binding destination="-2" name="value" keyPath="storeTypes.Filenames" id="J1C-Pq-hAJ"/>
                                 </connections>
                             </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AzQ-w6-3Sl" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AzQ-w6-3Sl">
                                 <rect key="frame" x="14" y="32" width="238" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="URL" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="oXv-rM-kj5">

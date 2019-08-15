@@ -175,6 +175,7 @@ extension AppDelegate: NSApplicationDelegate {
         CPYUtilities.registerUserDefaultKeys()
         // SDKs
         CPYUtilities.initSDKs()
+        #if RELEASE
         // Check Accessibility Permission
         AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
 
@@ -188,7 +189,7 @@ extension AppDelegate: NSApplicationDelegate {
         updater?.feedURL = Constants.Application.appcastURL
         updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
         updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
-
+        #endif
         // Binding Events
         bind()
 

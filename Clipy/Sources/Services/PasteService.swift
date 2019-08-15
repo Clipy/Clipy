@@ -62,11 +62,11 @@ extension PasteService {
         let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
         let isDeleteHistory = self.isDeleteHistory
         let isPastePlainText = self.isPastePlainText
-        
+
         let shouldPaste = isPastePlainText || isPasteAndDeleteHistory
         let shouldDelete = isDeleteHistory || isPasteAndDeleteHistory
         let shouldPlainText = isPastePlainText
-        
+
         // Increment change count for don't copy paste item
         if shouldPaste && shouldDelete {
             AppEnvironment.current.clipService.incrementChangeCount()
