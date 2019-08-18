@@ -72,7 +72,8 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+
+        menu?.popUp()
     }
 
     func popUpSnippetFolder(_ folder: CPYFolder) {
@@ -91,7 +92,8 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
-        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+
+        folderMenu.popUp()
     }
 }
 
@@ -449,5 +451,15 @@ private extension MenuManager {
 private extension MenuManager {
     func firstIndexOfMenuItems() -> NSInteger {
         return AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero) ? 0 : 1
+    }
+}
+
+private extension NSMenu {
+
+    func popUp() {
+        let location = NSEvent.mouseLocation
+        let isDarkMode = NSAppearance.current.name.rawValue.lowercased().contains("dark")
+        let appearance = NSAppearance(named: isDarkMode ? .vibrantDark : .vibrantLight)
+        popUpPositioningItem(nil, atLocation: location, in: nil, appearance: appearance)
     }
 }

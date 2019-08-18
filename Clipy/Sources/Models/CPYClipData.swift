@@ -16,13 +16,15 @@ import SwiftHEXColors
 final class CPYClipData: NSObject {
 
     // MARK: - Properties
-    fileprivate let kTypesKey       = "types"
-    fileprivate let kStringValueKey = "stringValue"
-    fileprivate let kRTFDataKey     = "RTFData"
-    fileprivate let kPDFKey         = "PDF"
-    fileprivate let kFileNamesKey   = "filenames"
-    fileprivate let kURLsKey        = "URL"
-    fileprivate let kImageKey       = "image"
+    fileprivate static let kTypesKey       = "types"
+    fileprivate static let kStringValueKey = "stringValue"
+    fileprivate static let kRTFDataKey     = "RTFData"
+    fileprivate static let kPDFKey         = "PDF"
+    fileprivate static let kFileNamesKey   = "filenames"
+    fileprivate static let kURLsKey        = "URL"
+    fileprivate static let kImageKey       = "image"
+    fileprivate static let kHash           = "hash"
+    fileprivate var lazyHash: Int?
 
     var types          = [NSPasteboard.PasteboardType]()
     var fileNames      = [String]()
@@ -33,24 +35,38 @@ final class CPYClipData: NSObject {
     var image: NSImage?
 
     override var hash: Int {
-        var hash = types.map { $0.rawValue }.joined().hash
-        if let image = self.image, let imageData = image.tiffRepresentation {
-            hash ^= imageData.count
-        } else if let image = self.image {
-            hash ^= image.hash
+        if lazyHash != nil {
+            return lazyHash!
         }
-        if !fileNames.isEmpty {
-            fileNames.forEach { hash ^= $0.hash }
-        } else if !self.URLs.isEmpty {
-            URLs.forEach { hash ^= $0.hash }
-        } else if let pdf = PDF {
-            hash ^= pdf.count
-        } else if !stringValue.isEmpty {
-            hash ^= stringValue.hash
+        var hash = types.map { $0.rawValue }.joined().hashValue
+        // plain data
+        if stringValue.isNotEmpty {
+            hash ^= stringValue.hashValue
         }
-        if let data = RTFData {
-            hash ^= data.hashValue
+        if URLs.isNotEmpty {
+            URLs.forEach { hash ^= $0.hashValue }
         }
+        if fileNames.isNotEmpty {
+            fileNames.forEach { hash ^= $0.hashValue }
+        }
+        // unstructured data
+        let type = primaryType ?? AvailableType.string.primaryPbType
+        // try hash image that cover some pdf
+        if let imageHash = image?.tiffRepresentation {
+            hash ^= imageHash.hashValue
+        } else if let imageRep = image?.representations.first {
+            hash ^= imageRep.hashValue
+        } else if (type.isRTF || type.isRTFD) && RTFData != nil {
+            // RTF data should be parsed the get the hash
+            if let attr = NSAttributedString(rtfd: RTFData!, documentAttributes: nil) ?? NSAttributedString(rtf: RTFData!, documentAttributes: nil) {
+                hash ^= attr.archive().hashValue
+            } else {
+                hash ^= RTFData!.hashValue
+            }
+        } else if type.isPDF && PDF != nil {
+            hash ^= PDF!.count
+        }
+        lazyHash = hash
         return hash
     }
     var primaryType: NSPasteboard.PasteboardType? {
@@ -64,19 +80,23 @@ final class CPYClipData: NSObject {
         let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
         let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
 
-        if let fileName = fileNames.first, let path = fileName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
+        if fileNames.count == 1, let path = fileNames[0].addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: path) {
+            // file itself is a image
             let ext = url.pathExtension.lowercased() as CFString
             if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil),
                 UTTypeConformsTo(uti.takeRetainedValue(), kUTTypeImage) {
                 return NSImage(contentsOfFile: path)?.resizeImage(CGFloat(width), CGFloat(height))
             }
         }
-
-        if let image = image {
-            // Has Image
-            return image.resizeImage(CGFloat(width), CGFloat(height))
+        if fileNames.count > 1 {
+            // get file icon
+            if let img = NSWorkspace.shared.icon(forFiles: fileNames)?
+                    .resizeImage(CGFloat(width), CGFloat(height)) {
+                return img
+            }
         }
-        return nil
+
+        return image?.resizeImage(CGFloat(width), CGFloat(height))
     }
     var colorCodeImage: NSImage? {
         guard let color = NSColor(hexString: stringValue) else { return nil }
@@ -109,24 +129,26 @@ final class CPYClipData: NSObject {
 
     // MARK: - NSCoding
     @objc func encodeWithCoder(_ aCoder: NSCoder) {
-        aCoder.encode(types.map { $0.rawValue }, forKey: kTypesKey)
-        aCoder.encode(stringValue, forKey: kStringValueKey)
-        aCoder.encode(RTFData, forKey: kRTFDataKey)
-        aCoder.encode(PDF, forKey: kPDFKey)
-        aCoder.encode(fileNames, forKey: kFileNamesKey)
-        aCoder.encode(URLs, forKey: kURLsKey)
-        aCoder.encode(image, forKey: kImageKey)
+        aCoder.encode(types.map { $0.rawValue }, forKey: CPYClipData.kTypesKey)
+        aCoder.encode(stringValue, forKey: CPYClipData.kStringValueKey)
+        aCoder.encode(RTFData, forKey: CPYClipData.kRTFDataKey)
+        aCoder.encode(PDF, forKey: CPYClipData.kPDFKey)
+        aCoder.encode(fileNames, forKey: CPYClipData.kFileNamesKey)
+        aCoder.encode(URLs, forKey: CPYClipData.kURLsKey)
+        aCoder.encode(image, forKey: CPYClipData.kImageKey)
+        aCoder.encode(hash, forKey: CPYClipData.kHash)
     }
 
     @objc required init(coder aDecoder: NSCoder) {
-        types = (aDecoder.decodeObject(forKey: kTypesKey) as? [String])?
+        types = (aDecoder.decodeObject(forKey: CPYClipData.kTypesKey) as? [String])?
             .compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
-        fileNames = aDecoder.decodeObject(forKey: kFileNamesKey) as? [String] ?? [String]()
-        URLs = aDecoder.decodeObject(forKey: kURLsKey) as? [String] ?? [String]()
-        stringValue = aDecoder.decodeObject(forKey: kStringValueKey) as? String ?? ""
-        RTFData = aDecoder.decodeObject(forKey: kRTFDataKey) as? Data
-        PDF = aDecoder.decodeObject(forKey: kPDFKey) as? Data
-        image = aDecoder.decodeObject(forKey: kImageKey) as? NSImage
+        fileNames = aDecoder.decodeObject(forKey: CPYClipData.kFileNamesKey) as? [String] ?? [String]()
+        URLs = aDecoder.decodeObject(forKey: CPYClipData.kURLsKey) as? [String] ?? [String]()
+        stringValue = aDecoder.decodeObject(forKey: CPYClipData.kStringValueKey) as? String ?? ""
+        RTFData = aDecoder.decodeObject(forKey: CPYClipData.kRTFDataKey) as? Data
+        PDF = aDecoder.decodeObject(forKey: CPYClipData.kPDFKey) as? Data
+        image = aDecoder.decodeObject(forKey: CPYClipData.kImageKey) as? NSImage
+        lazyHash = aDecoder.decodeObject(forKey: CPYClipData.kHash) as? Int
         super.init()
     }
 

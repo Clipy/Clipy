@@ -54,7 +54,7 @@ final class CPYPreferencesWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.collectionBehavior = .canJoinAllSpaces
-        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
+        // self.window?.backgroundColor = NSColor.windowBackgroundColor.withAlphaComponent(0.9)
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
@@ -107,40 +107,41 @@ fileprivate extension CPYPreferencesWindowController {
         updatesImageView.image = Asset.prefUpdate.image
         betaImageView.image = Asset.prefBeta.image
 
-        generalTextField.textColor = ColorName.tabTitle.color
-        menuTextField.textColor = ColorName.tabTitle.color
-        typeTextField.textColor = ColorName.tabTitle.color
-        excludeTextField.textColor = ColorName.tabTitle.color
-        shortcutsTextField.textColor = ColorName.tabTitle.color
-        updatesTextField.textColor = ColorName.tabTitle.color
-        betaTextField.textColor = ColorName.tabTitle.color
+        let unselectedColor = NSColor.controlTextColor
+        generalTextField.textColor = unselectedColor
+        menuTextField.textColor = unselectedColor
+        typeTextField.textColor = unselectedColor
+        excludeTextField.textColor = unselectedColor
+        shortcutsTextField.textColor = unselectedColor
+        updatesTextField.textColor = unselectedColor
+        betaTextField.textColor = unselectedColor
     }
 
     func selectedTab(_ index: Int) {
         resetImages()
-
+        let selectedColor = NSColor.linkColor
         switch index {
         case 0:
             generalImageView.image = Asset.prefGeneralOn.image
-            generalTextField.textColor = ColorName.clipy.color
+            generalTextField.textColor = selectedColor
         case 1:
             menuImageView.image = Asset.prefMenuOn.image
-            menuTextField.textColor = ColorName.clipy.color
+            menuTextField.textColor = selectedColor
         case 2:
             typeImageView.image = Asset.prefTypeOn.image
-            typeTextField.textColor = ColorName.clipy.color
+            typeTextField.textColor = selectedColor
         case 3:
             excludeImageView.image = Asset.prefExcludedOn.image
-            excludeTextField.textColor = ColorName.clipy.color
+            excludeTextField.textColor = selectedColor
         case 4:
             shortcutsImageView.image = Asset.prefShortcutOn.image
-            shortcutsTextField.textColor = ColorName.clipy.color
+            shortcutsTextField.textColor = selectedColor
         case 5:
             updatesImageView.image = Asset.prefUpdateOn.image
-            updatesTextField.textColor = ColorName.clipy.color
+            updatesTextField.textColor = selectedColor
         case 6:
             betaImageView.image = Asset.prefBetaOn.image
-            betaTextField.textColor = ColorName.clipy.color
+            betaTextField.textColor = selectedColor
         default: break
         }
     }

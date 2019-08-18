@@ -140,8 +140,7 @@ extension ClipService {
             if let thumbnailImage = data.thumbnailImage {
                 PINCache.shared().setObject(thumbnailImage, forKey: "\(unixTime)")
                 thumbnailPath = "\(unixTime)"
-            }
-            if let colorCodeImage = data.colorCodeImage {
+            } else if let colorCodeImage = data.colorCodeImage {
                 PINCache.shared().setObject(colorCodeImage, forKey: "\(unixTime)")
                 thumbnailPath = "\(unixTime)"
                 isColorCode = true
