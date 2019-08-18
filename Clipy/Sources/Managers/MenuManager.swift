@@ -455,12 +455,11 @@ private extension MenuManager {
 }
 
 private extension NSMenu {
+
     func popUp() {
-        let rect = NSRect(x: NSEvent.mouseLocation.x, y: NSEvent.mouseLocation.y, width: 0, height: 0)
-        let win = NSWindow(contentRect: rect, styleMask: [], backing: .buffered, defer: false)
-        win.isReleasedWhenClosed = false
-        win.orderFront(nil)
-        popUp(positioning: nil, at: NSPoint(x: 0, y: 0), in: win.contentView)
-        win.close()
+        let location = NSEvent.mouseLocation
+        let isDarkMode = NSAppearance.current.name.rawValue.lowercased().contains("dark")
+        let appearance = NSAppearance(named: isDarkMode ? .vibrantDark : .vibrantLight)
+        popUpPositioningItem(nil, atLocation: location, in: nil, appearance: appearance)
     }
 }

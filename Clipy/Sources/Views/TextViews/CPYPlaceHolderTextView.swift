@@ -15,11 +15,6 @@ import Cocoa
 class CPYPlaceHolderTextView: NSTextView {
 
     // MARK: - Properties
-    @IBInspectable var placeHolderColor: NSColor = .disabledControlTextColor {
-        didSet {
-            needsDisplay = true
-        }
-    }
     @IBInspectable var placeHolderText: String = "" {
         didSet {
             needsDisplay = true
@@ -40,7 +35,7 @@ class CPYPlaceHolderTextView: NSTextView {
         paragraphStyle.lineBreakMode = .byTruncatingTail
         paragraphStyle.baseWritingDirection = .leftToRight
         let attributes: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 14),
-                                                        .foregroundColor: placeHolderColor,
+                                                        .foregroundColor: NSColor.placeholderTextColor,
                                                         .paragraphStyle: paragraphStyle]
         text.draw(at: NSPoint(x: 5, y: 5), withAttributes: attributes)
     }

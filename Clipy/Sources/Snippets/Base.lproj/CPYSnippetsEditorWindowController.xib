@@ -276,7 +276,7 @@
                             <constraint firstAttribute="bottom" secondItem="Pj1-QF-bGu" secondAttribute="bottom" id="zvT-ex-jJ9"/>
                         </constraints>
                     </customView>
-                    <splitView arrangesAllSubviews="NO" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BiM-Ll-CfO" customClass="CPYSplitView" customModule="Clipy" customModuleProvider="target">
+                    <splitView arrangesAllSubviews="NO" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BiM-Ll-CfO">
                         <rect key="frame" x="0.0" y="0.0" width="800" height="544"/>
                         <subviews>
                             <customView focusRingType="none" id="gSL-Od-RtU">
@@ -493,11 +493,6 @@
                             <real value="250"/>
                             <real value="250"/>
                         </holdingPriorities>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="color" keyPath="separatorColor">
-                                <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="delegate" destination="-2" id="dm5-eZ-bg7"/>
                         </connections>
