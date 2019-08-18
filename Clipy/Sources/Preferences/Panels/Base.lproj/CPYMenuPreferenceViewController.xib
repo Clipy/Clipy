@@ -34,6 +34,8 @@
                             <real key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.maxLengthOfToolTipKey" id="gea-Vm-HOS"/>
@@ -67,7 +69,7 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MBz-Qc-kZ7" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MBz-Qc-kZ7">
                     <rect key="frame" x="60" y="113" width="402" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show tool tip on a menu item" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="h4n-Nv-zj1">
@@ -86,6 +88,8 @@
                             <real key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInsideFolderKey" id="Lge-bq-vWe"/>
@@ -109,6 +113,8 @@
                             <integer key="minimum" value="0"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInlineKey" id="VPQ-ET-cAh"/>
@@ -179,6 +185,8 @@
                             <decimal key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefMaxMenuItemTitleLengthKey" id="I5e-3b-oza"/>
@@ -225,7 +233,7 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CPm-I8-QB8" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CPm-I8-QB8">
                     <rect key="frame" x="60" y="39" width="343" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show Image" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Drj-kg-Km5">
@@ -236,7 +244,7 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.showImageInTheMenu" id="RRj-Ss-acq"/>
                     </connections>
                 </button>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bgn-nu-3fP" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bgn-nu-3fP">
                     <rect key="frame" x="59" y="63" width="370" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show color code preview" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hgW-RK-5oy">
@@ -273,6 +281,8 @@
                             <integer key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showImageInTheMenu" id="i0t-9f-Xbc"/>
@@ -288,6 +298,8 @@
                             <integer key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showImageInTheMenu" id="gLy-Aj-mHO"/>
