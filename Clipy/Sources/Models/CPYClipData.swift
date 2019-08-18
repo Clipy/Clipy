@@ -59,7 +59,7 @@ final class CPYClipData: NSObject {
         } else if (type.isRTF || type.isRTFD) && RTFData != nil {
             // RTF data should be parsed the get the hash
             if let attr = NSAttributedString(rtfd: RTFData!, documentAttributes: nil) ?? NSAttributedString(rtf: RTFData!, documentAttributes: nil) {
-                hash ^= attr.archive().hashValue
+                hash ^= "\(attr)".removePtr().hashValue
             } else {
                 hash ^= RTFData!.hashValue
             }
@@ -191,5 +191,14 @@ private extension CPYClipData {
             return
         }
         image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage
+    }
+}
+
+private extension String {
+
+    static let ptrRegex = try! NSRegularExpression(pattern: "0x[a-f0-9]+", options: [.caseInsensitive])
+
+    func removePtr() -> String {
+        return String.ptrRegex.stringByReplacingMatches(in: self, options: [], range: NSRange(location: 0, length: self.count), withTemplate: "")
     }
 }
