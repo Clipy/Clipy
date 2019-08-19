@@ -63,7 +63,7 @@ extension PasteService {
         let isDeleteHistory = self.isDeleteHistory
         let isPastePlainText = self.isPastePlainText
 
-        let shouldPaste = isPastePlainText || isPasteAndDeleteHistory
+        let shouldPaste = !isDeleteHistory // not delete onlykCPYPrefInputPasteCommandKey
         let shouldDelete = isDeleteHistory || isPasteAndDeleteHistory
         let shouldPlainText = isPastePlainText
 
