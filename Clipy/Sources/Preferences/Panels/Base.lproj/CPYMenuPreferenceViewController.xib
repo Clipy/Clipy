@@ -17,59 +17,55 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="401"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="PFI-zO-zS6">
+                <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="PFI-zO-zS6">
                     <rect key="frame" x="381" y="87" width="73" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="chars" id="nzx-q5-ifH">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yfx-j7-A5k">
+                <textField verticalHuggingPriority="750" ambiguous="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yfx-j7-A5k">
                     <rect key="frame" x="332" y="87" width="44" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="CTR-fo-7Ve">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="oWH-p0-ib9">
                             <real key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.maxLengthOfToolTipKey" id="gea-Vm-HOS"/>
                         <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showToolTipOnMenuItem" id="tC1-6q-BC3"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="246" translatesAutoresizingMaskIntoConstraints="NO" id="2T3-BG-g7l">
-                    <rect key="frame" x="77" y="89" width="250" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                <textField verticalHuggingPriority="750" ambiguous="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="246" translatesAutoresizingMaskIntoConstraints="NO" id="2T3-BG-g7l">
+                    <rect key="frame" x="77" y="89" width="175" height="18"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Max length of tool tip string:" id="QFO-xC-Z3p">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="IZt-J4-aJO">
+                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="IZt-J4-aJO">
                     <rect key="frame" x="381" y="343" width="65" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="items" id="Ovp-if-Azp">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="im9-jV-Yhc">
+                <textField verticalHuggingPriority="750" ambiguous="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="im9-jV-Yhc">
                     <rect key="frame" x="381" y="317" width="65" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="chars" id="67F-2m-Txz">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MBz-Qc-kZ7" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MBz-Qc-kZ7">
                     <rect key="frame" x="60" y="113" width="402" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show tool tip on a menu item" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="h4n-Nv-zj1">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -86,38 +82,39 @@
                             <real key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInsideFolderKey" id="Lge-bq-vWe"/>
                         <outlet property="nextKeyView" destination="bGf-i1-1r5" id="s9c-hO-b64"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="ivJ-Zt-uak">
+                <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="ivJ-Zt-uak">
                     <rect key="frame" x="59" y="345" width="268" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Number of items place inside a folder:" id="FP7-VI-YVJ">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e4N-65-2Xu">
+                <textField verticalHuggingPriority="750" ambiguous="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e4N-65-2Xu">
                     <rect key="frame" x="332" y="369" width="44" height="22"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="eai-R9-2UU">
                         <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="pqJ-iz-6Ix">
                             <integer key="minimum" value="0"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefNumberOfItemsPlaceInlineKey" id="VPQ-ET-cAh"/>
                         <outlet property="nextKeyView" destination="Rsu-Zk-X7V" id="yKb-UP-bKV"/>
                     </connections>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aFo-lc-t0V">
+                <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aFo-lc-t0V">
                     <rect key="frame" x="60" y="179" width="402" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Add key equivalents to numeric keys" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hE2-DL-MKl">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -159,9 +156,8 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefCopySameHistroy" id="FnM-O4-Gux"/>
                     </connections>
                 </button>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f8D-H1-7Jd">
+                <button ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f8D-H1-7Jd">
                     <rect key="frame" x="73" y="225" width="389" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Menu items' title starts with 0" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="seq-HO-d27">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -179,6 +175,8 @@
                             <decimal key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefMaxMenuItemTitleLengthKey" id="I5e-3b-oza"/>
@@ -193,9 +191,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2KT-cs-obj">
+                <button ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2KT-cs-obj">
                     <rect key="frame" x="73" y="135" width="389" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show alert panel before clear history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="U2I-bu-kTR">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -205,9 +202,8 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefShowAlertBeforeClearHistoryKey" id="8Qb-te-GAX"/>
                     </connections>
                 </button>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YdM-Mx-09r">
+                <button ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YdM-Mx-09r">
                     <rect key="frame" x="60" y="157" width="407" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Add a menu item to clear clipboard history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="p80-3o-bgA">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -216,16 +212,18 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefAddClearHistoryMenuItemKey" id="91A-bL-l4H"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="yYi-yV-tx0">
+                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="35" translatesAutoresizingMaskIntoConstraints="NO" id="yYi-yV-tx0">
                     <rect key="frame" x="381" y="369" width="65" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="61" id="hsg-ki-0wZ"/>
+                    </constraints>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="items" id="4dH-7h-Ssv">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CPm-I8-QB8" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CPm-I8-QB8">
                     <rect key="frame" x="60" y="39" width="343" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show Image" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Drj-kg-Km5">
@@ -236,9 +234,8 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.showImageInTheMenu" id="RRj-Ss-acq"/>
                     </connections>
                 </button>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bgn-nu-3fP" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                <button ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bgn-nu-3fP">
                     <rect key="frame" x="59" y="63" width="370" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Show color code preview" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hgW-RK-5oy">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -273,6 +270,8 @@
                             <integer key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showImageInTheMenu" id="i0t-9f-Xbc"/>
@@ -288,6 +287,8 @@
                             <integer key="minimum" value="1"/>
                         </numberFormatter>
                         <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
                         <binding destination="vgf-2t-abs" name="enabled" keyPath="values.showImageInTheMenu" id="gLy-Aj-mHO"/>
@@ -313,9 +314,8 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZiB-2W-je4">
+                <button ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZiB-2W-je4">
                     <rect key="frame" x="73" y="269" width="394" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Move instead of copying (removes the older one from the list)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="lsx-Y0-zFR">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -325,9 +325,8 @@
                         <binding destination="vgf-2t-abs" name="value" keyPath="values.kCPYPrefOverwriteSameHistroy" id="Eod-Mq-mMy"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="lIt-bQ-WCb">
+                <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="lIt-bQ-WCb">
                     <rect key="frame" x="59" y="371" width="268" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Number of items place inline:" id="wef-NB-6p6">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

@@ -44,11 +44,7 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <textField horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KFD-K3-E8i">
-                        <rect key="frame" x="170" y="159" width="140" height="17"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="17" id="jFw-zK-V8j"/>
-                            <constraint firstAttribute="width" constant="136" id="nOG-Ch-nWk"/>
-                        </constraints>
+                        <rect key="frame" x="172" y="159" width="136" height="17"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="No Pane is Selected." usesSingleLineMode="YES" id="Vy6-Ui-lLf">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -366,16 +362,11 @@
                                     <constraint firstItem="KnF-V7-1F2" firstAttribute="top" secondItem="LzX-pA-tjM" secondAttribute="top" constant="8" id="q7l-tP-IgV"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="RKs-Gr-vpv" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="RKs-Gr-vpv">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="1"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="oUc-OU-CpE"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
-                                        <color key="value" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </customView>
                         </subviews>
                         <constraints>

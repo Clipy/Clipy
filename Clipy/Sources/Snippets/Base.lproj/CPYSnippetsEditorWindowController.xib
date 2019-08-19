@@ -235,17 +235,11 @@
                                     <constraint firstItem="wP4-W7-bDr" firstAttribute="leading" secondItem="bOl-V3-RiP" secondAttribute="leading" constant="3" id="zwK-i0-zED"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Pj1-QF-bGu" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Pj1-QF-bGu">
                                 <rect key="frame" x="0.0" y="0.0" width="800" height="1"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="1" id="l8q-V9-ML6"/>
                                     <constraint firstAttribute="height" constant="1" id="mmC-6S-EmQ"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
-                                        <color key="value" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </customView>
                         </subviews>
                         <constraints>
@@ -429,16 +423,11 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSp-7i-idd" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSp-7i-idd">
                                                         <rect key="frame" x="0.0" y="170" width="250" height="1"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
-                                                                <color key="value" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
                                                     </customView>
-                                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wKH-Tu-3bF" customClass="CPYDesignableView" customModule="Clipy" customModuleProvider="target">
+                                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wKH-Tu-3bF">
                                                         <rect key="frame" x="0.0" y="0.0" width="250" height="34"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <subviews>
@@ -452,17 +441,6 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                         </subviews>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                                <color key="value" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                <real key="value" value="17"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                                                <real key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
                                                     </customView>
                                                 </subviews>
                                                 <constraints>
