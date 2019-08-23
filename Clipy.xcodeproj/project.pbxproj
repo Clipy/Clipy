@@ -134,6 +134,16 @@
 		54ADE1032008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5B257DE32309115D00E340DE /* Clipy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clipy-Bridging-Header.h"; sourceTree = "<group>"; };
 		5B5B564823015F2700F1BAAF /* PasteboardTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardTypeSpec.swift; sourceTree = "<group>"; };
+		5BA49A862310180E0002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A872310181B0002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYExcludeAppPreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A88231018250002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A892310182D0002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A8A231018320002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYShortcutsPreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A8B2310183D0002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A8C231018430002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
+		5BA49A8D2310184C0002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
+		5BA49A8E231018590002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5BA49A8F231018D30002EDBA /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846004961FD5511800BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
 		846004971FD5511900BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
@@ -931,7 +941,7 @@
 				31ACA9F91EC5B85C00BD34C0 /* it */,
 				8460049F1FD5511A00BA733E /* de */,
 				54ADE1032008F64100239852 /* zh-Hans */,
-				D6B1E79D218DF2B300CDBC2C /* pl */,
+				5BA49A8E231018590002EDBA /* pl */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -944,7 +954,7 @@
 				31ACA9F01EC5B85B00BD34C0 /* it */,
 				846004961FD5511800BA733E /* de */,
 				54ADE0FA2008F63F00239852 /* zh-Hans */,
-				D6B1E794218DF2B200CDBC2C /* pl */,
+				5BA49A8D2310184C0002EDBA /* pl */,
 			);
 			name = CPYPreferencesWindowController.xib;
 			sourceTree = "<group>";
@@ -957,7 +967,7 @@
 				31ACA9F11EC5B85B00BD34C0 /* it */,
 				846004971FD5511900BA733E /* de */,
 				54ADE0FB2008F64000239852 /* zh-Hans */,
-				D6B1E795218DF2B200CDBC2C /* pl */,
+				5BA49A862310180E0002EDBA /* pl */,
 			);
 			name = CPYBetaPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -970,7 +980,7 @@
 				31ACA9F21EC5B85B00BD34C0 /* it */,
 				846004981FD5511900BA733E /* de */,
 				54ADE0FC2008F64000239852 /* zh-Hans */,
-				D6B1E796218DF2B200CDBC2C /* pl */,
+				5BA49A872310181B0002EDBA /* pl */,
 			);
 			name = CPYExcludeAppPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -983,7 +993,7 @@
 				31ACA9F31EC5B85B00BD34C0 /* it */,
 				846004991FD5511900BA733E /* de */,
 				54ADE0FD2008F64000239852 /* zh-Hans */,
-				D6B1E797218DF2B200CDBC2C /* pl */,
+				5BA49A88231018250002EDBA /* pl */,
 			);
 			name = CPYGeneralPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -996,7 +1006,7 @@
 				31ACA9F41EC5B85B00BD34C0 /* it */,
 				8460049A1FD5511900BA733E /* de */,
 				54ADE0FE2008F64000239852 /* zh-Hans */,
-				D6B1E798218DF2B300CDBC2C /* pl */,
+				5BA49A892310182D0002EDBA /* pl */,
 			);
 			name = CPYMenuPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1009,7 +1019,7 @@
 				31ACA9F51EC5B85B00BD34C0 /* it */,
 				8460049B1FD5511900BA733E /* de */,
 				54ADE0FF2008F64000239852 /* zh-Hans */,
-				D6B1E799218DF2B300CDBC2C /* pl */,
+				5BA49A8A231018320002EDBA /* pl */,
 			);
 			name = CPYShortcutsPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1022,7 +1032,7 @@
 				31ACA9F61EC5B85C00BD34C0 /* it */,
 				8460049C1FD5511900BA733E /* de */,
 				54ADE1002008F64000239852 /* zh-Hans */,
-				D6B1E79A218DF2B300CDBC2C /* pl */,
+				5BA49A8B2310183D0002EDBA /* pl */,
 			);
 			name = CPYTypePreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1035,7 +1045,7 @@
 				31ACA9F71EC5B85C00BD34C0 /* it */,
 				8460049D1FD5511A00BA733E /* de */,
 				54ADE1012008F64100239852 /* zh-Hans */,
-				D6B1E79B218DF2B300CDBC2C /* pl */,
+				5BA49A8C231018430002EDBA /* pl */,
 			);
 			name = CPYUpdatesPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1048,7 +1058,7 @@
 				31ACA9F81EC5B85C00BD34C0 /* it */,
 				8460049E1FD5511A00BA733E /* de */,
 				54ADE1022008F64100239852 /* zh-Hans */,
-				D6B1E79C218DF2B300CDBC2C /* pl */,
+				5BA49A8F231018D30002EDBA /* pl */,
 			);
 			name = CPYSnippetsEditorWindowController.xib;
 			sourceTree = "<group>";
