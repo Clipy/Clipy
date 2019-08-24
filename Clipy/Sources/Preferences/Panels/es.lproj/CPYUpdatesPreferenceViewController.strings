@@ -1,0 +1,21 @@
+
+/* Class = "NSButtonCell"; title = "Check Now"; ObjectID = "DDI-ts-HPE"; */
+"DDI-ts-HPE.title" = "Comprobar ahora";
+
+/* Class = "NSMenuItem"; title = "Daily"; ObjectID = "HwP-AM-nID"; */
+"HwP-AM-nID.title" = "Cada día";
+
+/* Class = "NSButtonCell"; title = "Automatically check for updates:"; ObjectID = "Kdw-AL-Nnj"; */
+"Kdw-AL-Nnj.title" = "Comprobar automáticamente si hay actualizaciones:";
+
+/* Class = "NSMenuItem"; title = "Weekly"; ObjectID = "NBD-wq-yMq"; */
+"NBD-wq-yMq.title" = "Cada semana";
+
+/* Class = "NSTextFieldCell"; title = "v1.0.0"; ObjectID = "hhl-AS-dQ0"; */
+"hhl-AS-dQ0.title" = "v1.0.0";
+
+/* Class = "NSTextFieldCell"; title = "date"; ObjectID = "nG5-PB-zcE"; */
+"nG5-PB-zcE.title" = "fecha";
+
+/* Class = "NSMenuItem"; title = "Monthly"; ObjectID = "o5Q-Ao-iQN"; */
+"o5Q-Ao-iQN.title" = "Cada mes";
