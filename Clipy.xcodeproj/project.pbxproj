@@ -122,6 +122,15 @@
 		31ACA9F71EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		31ACA9F81EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		31ACA9F91EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3CF0ACD1231172BF0097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
+		3CF0ACD2231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD3231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYExcludeAppPreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD4231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYGeneralPreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD5231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYMenuPreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD6231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYShortcutsPreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD7231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD8231172C00097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
+		3CF0ACD9231172C70097CB68 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		54ADE0FA2008F63F00239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYPreferencesWindowController.strings"; sourceTree = "<group>"; };
 		54ADE0FB2008F64000239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYBetaPreferenceViewController.strings"; sourceTree = "<group>"; };
 		54ADE0FC2008F64000239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYExcludeAppPreferenceViewController.strings"; sourceTree = "<group>"; };
@@ -646,6 +655,7 @@
 				de,
 				"zh-Hans",
 				pl,
+				es,
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
@@ -955,6 +965,7 @@
 				846004961FD5511800BA733E /* de */,
 				54ADE0FA2008F63F00239852 /* zh-Hans */,
 				5BA49A8D2310184C0002EDBA /* pl */,
+				3CF0ACD1231172BF0097CB68 /* es */,
 			);
 			name = CPYPreferencesWindowController.xib;
 			sourceTree = "<group>";
@@ -968,6 +979,7 @@
 				846004971FD5511900BA733E /* de */,
 				54ADE0FB2008F64000239852 /* zh-Hans */,
 				5BA49A862310180E0002EDBA /* pl */,
+				3CF0ACD2231172C00097CB68 /* es */,
 			);
 			name = CPYBetaPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -981,6 +993,7 @@
 				846004981FD5511900BA733E /* de */,
 				54ADE0FC2008F64000239852 /* zh-Hans */,
 				5BA49A872310181B0002EDBA /* pl */,
+				3CF0ACD3231172C00097CB68 /* es */,
 			);
 			name = CPYExcludeAppPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -994,6 +1007,7 @@
 				846004991FD5511900BA733E /* de */,
 				54ADE0FD2008F64000239852 /* zh-Hans */,
 				5BA49A88231018250002EDBA /* pl */,
+				3CF0ACD4231172C00097CB68 /* es */,
 			);
 			name = CPYGeneralPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1007,6 +1021,7 @@
 				8460049A1FD5511900BA733E /* de */,
 				54ADE0FE2008F64000239852 /* zh-Hans */,
 				5BA49A892310182D0002EDBA /* pl */,
+				3CF0ACD5231172C00097CB68 /* es */,
 			);
 			name = CPYMenuPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1020,6 +1035,7 @@
 				8460049B1FD5511900BA733E /* de */,
 				54ADE0FF2008F64000239852 /* zh-Hans */,
 				5BA49A8A231018320002EDBA /* pl */,
+				3CF0ACD6231172C00097CB68 /* es */,
 			);
 			name = CPYShortcutsPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1033,6 +1049,7 @@
 				8460049C1FD5511900BA733E /* de */,
 				54ADE1002008F64000239852 /* zh-Hans */,
 				5BA49A8B2310183D0002EDBA /* pl */,
+				3CF0ACD7231172C00097CB68 /* es */,
 			);
 			name = CPYTypePreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1046,6 +1063,7 @@
 				8460049D1FD5511A00BA733E /* de */,
 				54ADE1012008F64100239852 /* zh-Hans */,
 				5BA49A8C231018430002EDBA /* pl */,
+				3CF0ACD8231172C00097CB68 /* es */,
 			);
 			name = CPYUpdatesPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -1059,6 +1077,7 @@
 				8460049E1FD5511A00BA733E /* de */,
 				54ADE1022008F64100239852 /* zh-Hans */,
 				5BA49A8F231018D30002EDBA /* pl */,
+				3CF0ACD9231172C70097CB68 /* es */,
 			);
 			name = CPYSnippetsEditorWindowController.xib;
 			sourceTree = "<group>";
