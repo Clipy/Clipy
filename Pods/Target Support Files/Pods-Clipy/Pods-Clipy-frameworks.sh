@@ -162,6 +162,7 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AEXML/AEXML.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/KeyHolder/KeyHolder.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LetsMove/LetsMove.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LoginServiceKit/LoginServiceKit.framework"
@@ -182,6 +183,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AEXML/AEXML.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/KeyHolder/KeyHolder.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LetsMove/LetsMove.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LoginServiceKit/LoginServiceKit.framework"

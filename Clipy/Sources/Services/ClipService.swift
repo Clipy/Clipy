@@ -54,6 +54,7 @@ final class ClipService {
     func clearAll() {
         let realm = try! Realm()
         let clips = realm.objects(CPYClip.self)
+            .filter(CPYClip.predicateNotPinned)
 
         // Delete saved images
         clips
@@ -81,6 +82,38 @@ final class ClipService {
         cachedChangeCount.accept(cachedChangeCount.value + 1)
     }
 
+    func pin(with clip: CPYClip) {
+        lock.lock()
+        defer {
+            lock.unlock()
+        }
+        let realm = try! Realm()
+        let pinIndex = clip.isPinned ? 0 : getNextPinIndex()
+        realm.transaction {
+            clip.pinIndex = pinIndex
+            realm.add(clip, update: .modified)
+        }
+    }
+
+    func getAllHistoryClip() -> Results<CPYClip> {
+        let ascending = !AppEnvironment.current.reorderClipsAfterPasting
+        let hidePinnedHistory = AppEnvironment.current.hidePinnedHistory
+        let realm = try! Realm()
+        return realm.objects(CPYClip.self)
+            .filter(hidePinnedHistory ? CPYClip.predicateNotPinned : CPYClip.predicateAny)
+            .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
+    }
+
+    func getAllPinnedClip() -> Results<CPYClip> {
+        let realm = try! Realm()
+        return realm.objects(CPYClip.self)
+            .filter(CPYClip.predicatePinned)
+            .sorted(byKeyPath: #keyPath(CPYClip.pinIndex), ascending: true)
+    }
+
+    func getNextPinIndex() -> Int {
+        return Int(NSDate().timeIntervalSince1970 * 1000)
+    }
 }
 
 // MARK: - Create Clip
@@ -117,10 +150,12 @@ extension ClipService {
         let realm = try! Realm()
         // Copy already copied history
         let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
-        if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
+        let oldClip = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)")
+        if oldClip != nil, !isCopySameHistory { return }
         // Don't save invalidated clip
-        if let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), clip.isInvalidated { return }
-
+        if let clip = oldClip, clip.isInvalidated {
+            return
+        }
         // Don't save empty string history
         if data.isOnlyStringType && data.stringValue.isEmpty { return }
 
@@ -130,10 +165,18 @@ extension ClipService {
 
         // Saved time and path
         let unixTime = Int(Date().timeIntervalSince1970)
+        if let clip = oldClip, isOverwriteHistory {
+            realm.transaction {
+                clip.updateTime = unixTime
+                realm.add(clip, update: .modified)
+            }
+            return
+        }
+
         let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
 
         // Create Realm object
-        DispatchQueue.main.async {
+        DispatchQueue.main.sync {
             var thumbnailPath: String?
             var isColorCode = false
             // Save thumbnail image

@@ -46,3 +46,62 @@ struct Environment {
     }
 
 }
+
+// MARK: Beta
+extension Environment {
+
+    var pinHistoryEnabled: Bool {
+        return defaults.bool(forKey: Constants.Beta.pinHistory)
+    }
+
+    var pinHistoryModifier: Int {
+        return defaults.integer(forKey: Constants.Beta.pinHistoryModifier)
+    }
+
+    var deleteHistoryEnabled: Bool {
+        return defaults.bool(forKey: Constants.Beta.deleteHistory)
+    }
+
+    var deleteHistoryModifier: Int {
+        return defaults.integer(forKey: Constants.Beta.deleteHistoryModifier)
+    }
+
+    var pasteAndDeleteHistoryEnabled: Bool {
+        return defaults.bool(forKey: Constants.Beta.pasteAndDeleteHistory)
+    }
+
+    var pasteAndDeleteHistoryModifier: Int {
+        return defaults.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
+    }
+
+    var pastePlainTextEnabled: Bool {
+        return defaults.bool(forKey: Constants.Beta.pastePlainText)
+    }
+
+    var pastePlainTextModifier: Int {
+        return defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
+    }
+
+    var hidePinnedHistory: Bool {
+        return pinHistoryEnabled && defaults.bool(forKey: Constants.Beta.hidePinnedHistory)
+    }
+}
+
+// MARK: Menu
+extension Environment {
+    var maxHistorySize: Int {
+        return defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+    }
+
+    var maxLengthOfToolTip: Int {
+        return defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
+    }
+
+    var reorderClipsAfterPasting: Bool {
+        return defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+    }
+
+    var showIconInTheMenu: Bool {
+        return defaults.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
+    }
+}

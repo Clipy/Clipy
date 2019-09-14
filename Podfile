@@ -22,6 +22,7 @@ target 'Clipy' do
   pod 'AEXML'
   pod 'LetsMove'
   pod 'SwiftHEXColors'
+  pod 'CryptoSwift'
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftLint'

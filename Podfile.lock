@@ -3,6 +3,7 @@ PODS:
   - BartyCrouch (4.0.2)
   - Crashlytics (3.13.4):
     - Fabric (~> 1.10.2)
+  - CryptoSwift (1.0.0)
   - Fabric (1.10.2)
   - KeyHolder (3.0.1):
     - Magnet (~> 2.3)
@@ -41,6 +42,7 @@ DEPENDENCIES:
   - AEXML
   - BartyCrouch
   - Crashlytics
+  - CryptoSwift
   - Fabric
   - KeyHolder
   - LetsMove
@@ -64,6 +66,7 @@ SPEC REPOS:
     - AEXML
     - BartyCrouch
     - Crashlytics
+    - CryptoSwift
     - Fabric
     - KeyHolder
     - LetsMove
@@ -98,6 +101,7 @@ SPEC CHECKSUMS:
   AEXML: 16fb739dfb3809e91ebf9e9dc391482c3a6aaebf
   BartyCrouch: 3f3501276901326bf4150341ad801467da972e43
   Crashlytics: 2dfd686bcb918dc10ee0e76f7f853fe42c7bd552
+  CryptoSwift: d81eeaa59dc5a8d03720fe919a6fd07b51f7439f
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   KeyHolder: 142932db4eac7420b003e2eae94c9a61b8b53cb1
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
@@ -120,6 +124,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 15ab5242cc2efeab548c4c74793b173b78dbae1c
   SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
 
-PODFILE CHECKSUM: 3c0eca9dc9559de51bef5d7544bdd9dc5564d9e6
+PODFILE CHECKSUM: c3d1e5ef2781566fe074d9f11eda66091226d0b6
 
 COCOAPODS: 1.7.5

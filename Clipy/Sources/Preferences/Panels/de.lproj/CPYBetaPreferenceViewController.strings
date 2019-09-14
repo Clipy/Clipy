@@ -55,3 +55,21 @@
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "z3A-El-En9"; */
 "z3A-El-En9.title" = "Control";
+
+/* Class = "NSMenuItem"; title = "Alt"; ObjectID = "970-YL-XoV"; */
+"970-YL-XoV.title" = "Alt";
+
+/* Class = "NSMenuItem"; title = "Shift"; ObjectID = "IpX-wJ-YEO"; */
+"IpX-wJ-YEO.title" = "Shift";
+
+/* Class = "NSButtonCell"; title = "Pin History"; ObjectID = "QpH-S1-GSe"; */
+"QpH-S1-GSe.title" = "Pin History";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "hlL-5R-0wL"; */
+"hlL-5R-0wL.title" = "Control";
+
+/* Class = "NSMenuItem"; title = "Command"; ObjectID = "snd-hK-KP9"; */
+"snd-hK-KP9.title" = "Command";
+
+/* Class = "NSButtonCell"; title = "Hide pinned item from history"; ObjectID = "qEV-6j-C6H"; */
+"qEV-6j-C6H.title" = "Hide pinned item from history";

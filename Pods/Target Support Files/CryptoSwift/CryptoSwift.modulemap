@@ -1,0 +1,6 @@
+framework module CryptoSwift {
+  umbrella header "CryptoSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}

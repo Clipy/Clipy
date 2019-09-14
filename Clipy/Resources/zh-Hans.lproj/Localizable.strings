@@ -25,9 +25,9 @@
 
 "Menu" = "菜单";
 
-"Open System Preferences" = "Open System Preferences";
+"Open System Preferences" = "打开“系统偏好设置”";
 
-"Please allow Accessibility" = "Please allow Accessibility.";
+"Please allow Accessibility" = "请启用“辅助功能”";
 
 "Please fill in the contents of the snippet" = "请填写代码段的内容";
 
@@ -39,10 +39,18 @@
 
 "Snippet" = "片断";
 
-"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "需要在“系统偏好设置>安全性与隐私>隐私”中开启允许使用“辅助功能”才能完成粘贴";
 
 "Type" = "类型";
 
 "Updates" = "更新";
 
 "You can change this setting in the Preferences if you want" = "如有需要可在偏好设置中修改本设置。";
+
+"Pinned" = "钉住的";
+
+"(Image)" = "(图片)";
+
+"(PDF)" = "(PDF)";
+
+"(Filenames)" = "(文件)";
