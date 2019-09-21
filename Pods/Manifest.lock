@@ -24,6 +24,9 @@ PODS:
   - RxOptional (4.0.0):
     - RxCocoa (~> 5)
     - RxSwift (~> 5)
+  - RxRealm (1.0.0):
+    - RealmSwift (~> 3.14)
+    - RxSwift (~> 5.0)
   - RxRelay (5.0.0):
     - RxSwift (~> 5)
   - RxScreeen (1.4.0):
@@ -53,6 +56,7 @@ DEPENDENCIES:
   - RealmSwift
   - RxCocoa
   - RxOptional
+  - RxRealm
   - RxScreeen
   - RxSwift
   - Sauce
@@ -78,6 +82,7 @@ SPEC REPOS:
     - RealmSwift
     - RxCocoa
     - RxOptional
+    - RxRealm
     - RxRelay
     - RxScreeen
     - RxSwift
@@ -114,6 +119,7 @@ SPEC CHECKSUMS:
   RealmSwift: b7fdc2d18616621c31df5c7a398a45a2163f8eb0
   RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
   RxOptional: 9904e2219d59260c3c171273d475b2126de187e8
+  RxRealm: 1e81dcfca1fb50c3e9b3e1f8102bc875c5156a2e
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxScreeen: 5ba3d4047d7837d5478711c4f1cda5303a306120
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
@@ -124,6 +130,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 15ab5242cc2efeab548c4c74793b173b78dbae1c
   SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
 
-PODFILE CHECKSUM: c3d1e5ef2781566fe074d9f11eda66091226d0b6
+PODFILE CHECKSUM: 18268c2a133fb552dbe167f739ee481d11c79ab4
 
 COCOAPODS: 1.7.5
