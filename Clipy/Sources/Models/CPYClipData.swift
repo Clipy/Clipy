@@ -41,38 +41,38 @@ final class CPYClipData: NSObject {
         }
         var digest = SHA2(variant: .sha256)
 
-        types.forEach { try! digest.update(withBytes: $0.rawValue.bytes) }
+        types.forEach { _ = try! digest.update(withBytes: $0.rawValue.bytes) }
         // plain data
         if stringValue.isNotEmpty {
-            try! digest.update(withBytes: stringValue.bytes)
+            _ = try! digest.update(withBytes: stringValue.bytes)
         }
         if URLs.isNotEmpty {
-            URLs.forEach { try! digest.update(withBytes: $0.bytes) }
+            URLs.forEach { _ = try! digest.update(withBytes: $0.bytes) }
         }
         if fileNames.isNotEmpty {
-            fileNames.forEach { try! digest.update(withBytes: $0.bytes) }
+            fileNames.forEach { _ = try! digest.update(withBytes: $0.bytes) }
         }
         // unstructured data
         let type = primaryType ?? AvailableType.string.primaryPbType
         // try hash image that cover some pdf
         if let imageHash = image?.tiffRepresentation {
             //hash ^= imageHash.hashValue
-            try! digest.update(withBytes: imageHash.bytes)
+            _ = try! digest.update(withBytes: imageHash.bytes)
         } else if let imageRep = image?.representations.first {
             //hash ^= imageRep.hashValue
-            try! digest.update(withBytes: imageRep.archive().bytes)
+            _ = try! digest.update(withBytes: imageRep.archive().bytes)
         } else if (type.isRTF || type.isRTFD) && RTFData != nil {
             // RTF data should be parsed the get the hash
             if let attr = NSAttributedString(rtfd: RTFData!, documentAttributes: nil) ?? NSAttributedString(rtf: RTFData!, documentAttributes: nil) {
                 //hash ^= "\(attr)".removePtr().hashValue
-                try! digest.update(withBytes: "\(attr)".removePtr().bytes)
+                _ = try! digest.update(withBytes: "\(attr)".removePtr().bytes)
             } else {
                 //hash ^= RTFData!.hashValue
-                try! digest.update(withBytes: RTFData!.bytes)
+                _ = try! digest.update(withBytes: RTFData!.bytes)
             }
         } else if type.isPDF && PDF != nil {
             //hash ^= PDF!.count
-            try! digest.update(withBytes: PDF!.bytes)
+            _ = try! digest.update(withBytes: PDF!.bytes)
         }
         let crc32value = try! digest.finish().crc32()
         lazyHash = Int(crc32value)
