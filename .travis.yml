@@ -23,6 +23,7 @@ jobs:
     - stage: test
       name: "Units Tests"
       if: branch IS PRESENT
+      script: fastlane mac test
 
     - stage: deploy
       name: "Deploy to Github"
