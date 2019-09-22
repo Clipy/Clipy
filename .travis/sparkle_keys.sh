@@ -5,6 +5,7 @@ security default-keychain -s $MATCH_KEYCHAIN_NAME
 security unlock-keychain -p $MATCH_PASSWORD $MATCH_KEYCHAIN_NAME
 security set-keychain-settings -t 3600 -u $MATCH_KEYCHAIN_NAME
 
+# import ed25519 keys
 security add-generic-password -a 'ed25519' \
     -s 'https://sparkle-project.org' \
     -D 'private key' \

@@ -12,6 +12,6 @@
 </description>
 <pubDate>__TIME__</pubDate>
 <sparkle:minimumSystemVersion>10.10</sparkle:minimumSystemVersion>
-<enclosure url="https://github.com/ian4hu/Clipy/releases/latest/download/Clipy.app.zip" sparkle:version="__VERSION__" sparkle:shortVersionString="__VERSION__" sparkle:edSignature="__SIGNATURE__" length="__LENGTH__" type="application/octet-stream"/>
+<enclosure url="https://github.com/ian4hu/Clipy/releases/__VERSION__/download/Clipy.app.zip" sparkle:version="__VERSION__" sparkle:shortVersionString="__VERSION__" sparkle:edSignature="__SIGNATURE__" length="__LENGTH__" type="application/octet-stream"/>
 </item>
 </channel></rss>
