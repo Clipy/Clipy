@@ -53,9 +53,9 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUFeedURL</key>
-	<string>https://clipy-app.com/appcast.xml</string>
-	<key>SUPublicDSAKeyFile</key>
-	<string>dsa_pub.pem</string>
+	<string>https://github.com/ian4hu/Clipy/releases/latest/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>IvYPALRoOHcGaeupsftYqa0rRlC0ReTIyA5q8W1/ebc=</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 </dict>

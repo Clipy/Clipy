@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="yes"?><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+<channel>
+<title>Clipy</title>
+<item>
+<title>1.2.9.beta0</title>
+<description><![CDATA[
+    <h2>New Features</h2>
+    <ul>
+    <li>Initial support for pinned history</li>
+    </ul>
+]]>
+</description>
+<pubDate>周日, 22 9月 2019 11:27:58 +0800</pubDate>
+<sparkle:minimumSystemVersion>10.10</sparkle:minimumSystemVersion>
+<enclosure url="https://github.com/ian4hu/Clipy/releases/latest/Clipy.app.zip" sparkle:version="1.2.9.beta0" sparkle:shortVersionString="1.2.9.beta0" sparkle:edSignature="Ivj/NY0K/XS5CX3fnIEDCxDvDUWmCD0/OZieUBohVz2oQIWaBJ50toIS3N1FuaDWXsUcCBiS+g3ub8aJDAKdAg==" length="22901818" type="application/octet-stream"/>
+</item>
+</channel></rss>
