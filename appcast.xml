@@ -12,6 +12,6 @@
 </description>
 <pubDate>周日, 22 9月 2019 11:27:58 +0800</pubDate>
 <sparkle:minimumSystemVersion>10.10</sparkle:minimumSystemVersion>
-<enclosure url="https://github.com/ian4hu/Clipy/releases/latest/Clipy.app.zip" sparkle:version="1.2.9.beta0" sparkle:shortVersionString="1.2.9.beta0" sparkle:edSignature="Ivj/NY0K/XS5CX3fnIEDCxDvDUWmCD0/OZieUBohVz2oQIWaBJ50toIS3N1FuaDWXsUcCBiS+g3ub8aJDAKdAg==" length="22901818" type="application/octet-stream"/>
+<enclosure url="https://github.com/ian4hu/Clipy/releases/latest/download/Clipy.app.zip" sparkle:version="1.2.9.beta0" sparkle:shortVersionString="1.2.9.beta0" sparkle:edSignature="Ivj/NY0K/XS5CX3fnIEDCxDvDUWmCD0/OZieUBohVz2oQIWaBJ50toIS3N1FuaDWXsUcCBiS+g3ub8aJDAKdAg==" length="22901818" type="application/octet-stream"/>
 </item>
 </channel></rss>

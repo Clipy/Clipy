@@ -20,7 +20,7 @@ struct Constants {
         #else
             static let name = "Clipy"
         #endif
-        static let appcastURL = URL(string: "https://github.com/ian4hu/Clipy/releases/latest/appcast.xml")!
+        static let appcastURL = URL(string: "https://github.com/ian4hu/Clipy/releases/latest/download/appcast.xml")!
     }
 
     struct Menu {
