@@ -12,10 +12,10 @@ xcode_destination: platform=macOS
 #    - "${HOME}/.cocoapods/repos/"
 
 before_install:
-  - gem install -V -N xcpretty bundler 'cocoapods:1.7.5'
+  - gem install -N xcpretty bundler 'cocoapods:1.7.5'
 #  - pod repo update
 install:
-  - bundle install -V --jobs=3 --retry=3 --deployment
+  - bundle install --jobs=3 --retry=3 --deployment
 #  - pod install --deployment
 
 jobs:
