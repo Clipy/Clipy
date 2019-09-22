@@ -29,6 +29,8 @@ jobs:
       name: "Deploy to Github"
       script: fastlane mac release
       if: tag IS PRESENT
+      before_deploy:
+        - bash .travis/sparkle_keys.sh
       deploy:
         provider: releases
         api_key:
