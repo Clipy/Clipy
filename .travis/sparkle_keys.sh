@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# set -x
+set -x
 security create-keychain -p $MATCH_PASSWORD $MATCH_KEYCHAIN_NAME
 security default-keychain -s $MATCH_KEYCHAIN_NAME
 security unlock-keychain -p $MATCH_PASSWORD $MATCH_KEYCHAIN_NAME
