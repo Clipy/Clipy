@@ -37,6 +37,13 @@ final class PasteService {
         return isPressedModifier(modifierSetting)
     }
 
+    fileprivate var isPinHistory: Bool {
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pinHistory) else { return false }
+
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pinHistoryModifier)
+        return isPressedModifier(modifierSetting)
+    }
+
     // MARK: - Modifiers
     private func isPressedModifier(_ flag: Int) -> Bool {
         let flags = NSEvent.modifierFlags
@@ -66,10 +73,14 @@ extension PasteService {
         let shouldPaste = !isDeleteHistory // not delete onlykCPYPrefInputPasteCommandKey
         let shouldDelete = isDeleteHistory || isPasteAndDeleteHistory
         let shouldPlainText = isPastePlainText
+        let shouldPin = self.isPinHistory
 
         // Increment change count for don't copy paste item
         if shouldPaste && shouldDelete {
             AppEnvironment.current.clipService.incrementChangeCount()
+        }
+        if shouldPin {
+            AppEnvironment.current.clipService.pin(with: clip)
         }
         if shouldPaste {
             // Paste history

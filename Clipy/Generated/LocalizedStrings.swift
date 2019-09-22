@@ -11,6 +11,12 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name
 internal enum L10n {
+  /// (Filenames)
+  internal static let filenames = L10n.tr("Localizable", "(Filenames)")
+  /// (Image)
+  internal static let image = L10n.tr("Localizable", "(Image)")
+  /// (PDF)
+  internal static let pdf = L10n.tr("Localizable", "(PDF)")
   /// Add
   internal static let add = L10n.tr("Localizable", "Add")
   /// Are you sure want to delete this item?
@@ -39,6 +45,8 @@ internal enum L10n {
   internal static let menu = L10n.tr("Localizable", "Menu")
   /// Open System Preferences
   internal static let openSystemPreferences = L10n.tr("Localizable", "Open System Preferences")
+  /// Pinned
+  internal static let pinned = L10n.tr("Localizable", "Pinned")
   /// Please allow Accessibility.
   internal static let pleaseAllowAccessibility = L10n.tr("Localizable", "Please allow Accessibility")
   /// Please fill in the contents of the snippet

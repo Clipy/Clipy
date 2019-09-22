@@ -17,6 +17,8 @@ extension Realm {
     func transaction(_ block: (() throws -> Void)) {
         do {
             try write(block)
-        } catch {}
+        } catch let err as NSError {
+            print(err)
+        }
     }
 }
