@@ -14,8 +14,13 @@ security add-generic-password -a 'ed25519' \
 
 # gen signature
 sign_out=$(Pods/Sparkle/bin/sign_update Clipy.app.zip)
-# replace signature
-sed -e 's@sparkle:edSignature=\"[^\"]*\"\ length\=\"[0-9]*\"@'"$sign_out"'@g' -i appcast.xml
-# replace version
-sed -e 's@sparkle:version=\"[^\"]*\"@sparkle:version="'"$TRAVIS_TAG"'"@g' \
-    -e 's@sparkle:shortVersionString==\"[^\"]*\"@sparkle:shortVersionString="'"$TRAVIS_TAG"'"@g' -i appcast.xml
+signature=$(echo $sign_out | sed -e 's@sparkle:edSignature="@@g' -e 's@" length=.*@@g')
+length=$(echo $sign_out | sed -e 's@.*length="@@g' -e 's@"$@@g')
+date=$(date)
+
+cat appcast_tpl.xml | sed \
+    -e 's@__VERSION__@'"$TRAVIS_TAG"'@g' \
+    -e 's@__SIGNATURE__@'"$signature"'@g' \
+    -e 's@__LENGTH__@'"$length"'@g' \
+    -e 's@__TIME__@'"$date"'@g' \
+    > appcast.xml
