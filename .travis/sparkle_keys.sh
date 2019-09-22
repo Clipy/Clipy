@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+# set -x
 security create-keychain -p $MATCH_PASSWORD $MATCH_KEYCHAIN_NAME
 security default-keychain -s $MATCH_KEYCHAIN_NAME
 security unlock-keychain -p $MATCH_PASSWORD $MATCH_KEYCHAIN_NAME
@@ -12,7 +12,7 @@ security add-generic-password -a 'ed25519' \
     -l 'Private key for signing Sparkle updates' \
     -j "$SPARKLE_ED25519_KEY_COMMENT" \
     -w "$SPARKLE_ED25519_KEY" \
-    -T "$PWD/Pods/Sparkle/bin/sign_update"
+    -A
 
 # gen signature
 sign_out=$(Pods/Sparkle/bin/sign_update Clipy.app.zip)
