@@ -35,7 +35,9 @@ jobs:
         provider: releases
         api_key:
           secure: mM7L9bTcyEtSZSB1VPaQftxbkFWmqK8CHA4515b/xyiNN5yVNjqZYd/ZJvKYdqXCh+JHAXFyyaCE0cgUAHS7EobxW8/TWY9mD66H/QPYwlJEGPHlQwR+C1qDA9C7hsmkyNcjunimhhokHkAaDQend1m2Uh83jg4e6Kk5ZW+80MrsnvEY8gYGbm8ZVR/E8UukPvsVZWy7PvK3MO0772hXeYAlYbi6EFOhBh2qzK1T3/oEw8pqgxl0pkeNIJCyonm/jsClyaGucpGRJZSFXPesFbTF2OKMLOip2ZS/UHzZe8Yh4oycaj9m+YaUDrRqSBlRcjyKKLDVjFT06hJ50BFeAH22IDwT9YmjucF47KVEiTpyRGk6MDDOPckYigXh84RqhKZJVu0ElYoDdWwl9CncD5qKzM0r8KqQX3CKOkQcbIhJGH2KKTPHiiDRRHJDNEWKLLxtzjSrialUpbGy32VxIbBMzd74WVG2+5ARAoQuxu+Y3dh7X2eGP2gc//woSEbmJWrq3hQjNcswZtZeFyskEIbfKmVXjr9jotmJ8JcVX9ZIrN/dwG2LJu0ZIffwRigujCTM5D0ImbF2q5WPmjF/8xo28tfBfR5n7qNioKiO9GiBc+Bm3sStnXI6xVc41Vv6+PLwO1L+r0Skizj6D0SadIu3UBITvsX2OLRs+xAns7E=
-        file: Clipy.app.zip
+        file:
+          - Clipy.app.zip
+          - appcast.xml
         overwrite: true
         skip_cleanup: true
         on:
