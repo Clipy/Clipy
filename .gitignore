@@ -70,3 +70,4 @@ DerivedData/
 *.app.*
 
 .DS_Store
+appcast.xml

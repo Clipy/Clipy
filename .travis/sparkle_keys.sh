@@ -31,11 +31,18 @@ set -x
 #    > appcast.xml
 
 # gen signature
+rm -rf ~/Library/Caches/Sparkle*
+rm -rf .tmp/*
 mkdir -p .tmp
 cp Clipy.app.zip .tmp/
+#cp appcast_tpl.xml .tmp/appcast.xml
 Pods/Sparkle/bin/generate_appcast -s "$SPARKLE_ED25519_KEY" .tmp/
 
-# edit description
+# edit release note
+cat .tmp/appcast.xml | \
+    sed -E 's@^( .*)(<pubDate>)@\1<sparkle:releaseNotesLink>https://github.com/ian4hu/Clipy/releases/latest</sparkle:releaseNotesLink>\
+\1\2@g' \
+    > appcast.xml
 
-cp .tmp/appcast.xml ./
-rm -rf .tmp
+#cp .tmp/appcast.xml ./
+#rm -rf .tmp

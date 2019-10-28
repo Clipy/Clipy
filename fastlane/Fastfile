@@ -55,7 +55,7 @@ platform :mac do
         }
       }
     )
-    zip(path: "./Clipy.app", output_path: "./Clipy.app.zip")
+    zip(path: "./Clipy.app", output_path: "./Clipy.app.zip", symlinks: true)
   end
 
   ####################### PRIVATE LANES ########################
