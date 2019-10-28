@@ -41,8 +41,8 @@ namespace sync {
 
 class SyncHistory;
 
-static const char object_id_column_name[] = "!OID";
-static const char array_value_column_name[] = "!ARRAY_VALUE";
+extern const char object_id_column_name[]; // "!OID"
+extern const char array_value_column_name[]; // "!ARRAY_VALUE"
 
 struct TableInfoCache;
 

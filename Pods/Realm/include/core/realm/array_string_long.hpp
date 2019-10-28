@@ -57,6 +57,7 @@ public:
     size_t size() const noexcept;
 
     StringData get(size_t ndx) const noexcept;
+    StringData get_string(size_t ndx) const noexcept { return get(ndx); }
 
 
     void add(StringData value);

@@ -41,27 +41,27 @@ struct VersionID {
         index = initial_index;
     }
 
-    bool operator==(const VersionID& other)
+    bool operator==(const VersionID& other) const
     {
         return version == other.version;
     }
-    bool operator!=(const VersionID& other)
+    bool operator!=(const VersionID& other) const
     {
         return version != other.version;
     }
-    bool operator<(const VersionID& other)
+    bool operator<(const VersionID& other) const
     {
         return version < other.version;
     }
-    bool operator<=(const VersionID& other)
+    bool operator<=(const VersionID& other) const
     {
         return version <= other.version;
     }
-    bool operator>(const VersionID& other)
+    bool operator>(const VersionID& other) const
     {
         return version > other.version;
     }
-    bool operator>=(const VersionID& other)
+    bool operator>=(const VersionID& other) const
     {
         return version >= other.version;
     }

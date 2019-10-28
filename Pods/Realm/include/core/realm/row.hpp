@@ -236,7 +236,7 @@ class Group;
 class RowBase {
 protected:
     TableRef m_table; // nullptr if detached.
-    size_t m_row_ndx; // Undefined if detached.
+    size_t m_row_ndx = -1; // Undefined if detached.
 
     void attach(Table*, size_t row_ndx) noexcept;
     void reattach(Table*, size_t row_ndx) noexcept;

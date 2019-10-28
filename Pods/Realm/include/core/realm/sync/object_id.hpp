@@ -52,6 +52,7 @@ namespace sync {
 struct ObjectID {
     constexpr ObjectID(uint64_t hi, uint64_t lo);
     static ObjectID from_string(StringData);
+    static bool from_string(StringData, ObjectID&) noexcept;
 
     // FIXME: Remove "empty" ObjectIDs, wrap in Optional instead.
     constexpr ObjectID(realm::util::None = realm::util::none);
@@ -66,6 +67,8 @@ struct ObjectID {
     constexpr bool operator<(const ObjectID& other) const;
     constexpr bool operator==(const ObjectID& other) const;
     constexpr bool operator!=(const ObjectID& other) const;
+
+    explicit constexpr operator bool() const noexcept;
 
 private:
     uint64_t m_lo;
@@ -173,14 +176,16 @@ struct GlobalID {
     bool operator<(const GlobalID& other) const;
 };
 
-/// Implementation:
 
 
-constexpr ObjectID::ObjectID(uint64_t hi, uint64_t lo): m_lo(lo), m_hi(hi)
+
+/// Implementation
+
+constexpr ObjectID::ObjectID(uint64_t hi, uint64_t lo) : m_lo(lo), m_hi(hi)
 {
 }
 
-constexpr ObjectID::ObjectID(realm::util::None): m_lo(-1), m_hi(-1)
+constexpr ObjectID::ObjectID(realm::util::None) : m_lo(-1), m_hi(-1)
 {
 }
 
@@ -197,6 +202,11 @@ constexpr bool ObjectID::operator==(const ObjectID& other) const
 constexpr bool ObjectID::operator!=(const ObjectID& other) const
 {
     return !(*this == other);
+}
+
+constexpr ObjectID::operator bool() const noexcept
+{
+    return (*this != ObjectID{});
 }
 
 inline bool GlobalID::operator==(const GlobalID& other) const
@@ -218,6 +228,7 @@ inline bool GlobalID::operator<(const GlobalID& other) const
 
 
 std::ostream& operator<<(std::ostream&, const realm::sync::ObjectID&);
+std::istream& operator>>(std::istream&, realm::sync::ObjectID&);
 
 inline ObjectIDProvider::LocalObjectID
 ObjectIDProvider::get_optimistic_local_id_hashed(ObjectID global_id)

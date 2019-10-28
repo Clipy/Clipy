@@ -112,7 +112,18 @@ struct SyncError {
     }
 };
 
+enum class ClientResyncMode : unsigned char {
+    // Enable automatic client resync with local transaction recovery
+    Recover = 0,
+    // Enable automatic client resync without local transaction recovery
+    DiscardLocal = 1,
+    // Fire a client reset error
+    Manual = 2,
+};
+
 struct SyncConfig {
+    using ProxyConfig = sync::Session::Config::ProxyConfig;
+
     std::shared_ptr<SyncUser> user;
     // The URL of the Realm, or of the reference Realm if partial sync is being used.
     // The URL that will be used when connecting to the object server is that returned by `realm_url()`,
@@ -120,26 +131,30 @@ struct SyncConfig {
     // Set this field, but read from `realm_url()`.
     std::string reference_realm_url;
     SyncSessionStopPolicy stop_policy = SyncSessionStopPolicy::AfterChangesUploaded;
-    std::function<SyncBindSessionHandler> bind_session_handler = nullptr;
-    std::function<SyncSessionErrorHandler> error_handler = nullptr;
-    std::shared_ptr<ChangesetTransformer> transformer = nullptr;
-    util::Optional<std::array<char, 64>> realm_encryption_key = none;
+    std::function<SyncBindSessionHandler> bind_session_handler;
+    std::function<SyncSessionErrorHandler> error_handler;
+    std::shared_ptr<ChangesetTransformer> transformer;
+    util::Optional<std::array<char, 64>> realm_encryption_key;
     bool client_validate_ssl = true;
-    util::Optional<std::string> ssl_trust_certificate_path = none;
-    std::function<sync::Session::SSLVerifyCallback> ssl_verify_callback = nullptr;
+    util::Optional<std::string> ssl_trust_certificate_path;
+    std::function<sync::Session::SSLVerifyCallback> ssl_verify_callback;
+    util::Optional<ProxyConfig> proxy_config;
     bool is_partial = false;
-    util::Optional<std::string> custom_partial_sync_identifier = none;
+    util::Optional<std::string> custom_partial_sync_identifier;
 
     bool validate_sync_history = true;
 
-    util::Optional<std::string> authorization_header_name = none;
+    util::Optional<std::string> authorization_header_name;
     std::map<std::string, std::string> custom_http_headers;
 
+    // Set the URL path prefix sync will use when opening a websocket for this session. Default is `/realm-sync`.
+    // Useful when the sync worker sits behind a firewall or load-balancer that rewrites incoming requests.
     util::Optional<std::string> url_prefix = none;
 
     // The name of the directory which Realms should be backed up to following
     // a client reset
-    util::Optional<std::string> recovery_directory = none;
+    util::Optional<std::string> recovery_directory;
+    ClientResyncMode client_resync_mode = ClientResyncMode::Recover;
 
     // The URL that will be used when connecting to the object server.
     // This will differ from `reference_realm_url` when partial sync is being used.

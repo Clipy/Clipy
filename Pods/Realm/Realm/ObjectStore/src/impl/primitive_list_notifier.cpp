@@ -40,16 +40,17 @@ void PrimitiveListNotifier::release_data() noexcept
 
 void PrimitiveListNotifier::do_attach_to(SharedGroup& sg)
 {
-    REALM_ASSERT(m_table_handover);
     REALM_ASSERT(!m_table);
-    m_table = sg.import_table_from_handover(std::move(m_table_handover));
+    if (m_table_handover)
+        m_table = sg.import_table_from_handover(std::move(m_table_handover));
 }
 
 void PrimitiveListNotifier::do_detach_from(SharedGroup& sg)
 {
     REALM_ASSERT(!m_table_handover);
     if (m_table) {
-        m_table_handover = sg.export_table_for_handover(m_table);
+        if (m_table->is_attached())
+            m_table_handover = sg.export_table_for_handover(m_table);
         m_table = {};
     }
 }

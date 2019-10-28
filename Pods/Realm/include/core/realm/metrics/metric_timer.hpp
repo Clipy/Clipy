@@ -28,16 +28,17 @@
 namespace realm {
 namespace metrics {
 
+using nanosecond_storage_t = int64_t;
 
 class MetricTimerResult
 {
 public:
     MetricTimerResult();
     ~MetricTimerResult();
-    double get_elapsed_seconds() const;
-    void report_seconds(double time);
+    nanosecond_storage_t get_elapsed_nanoseconds() const;
+    void report_nanoseconds(nanosecond_storage_t time);
 protected:
-    double m_elapsed_seconds;
+    nanosecond_storage_t m_elapsed_nanoseconds;
 };
 
 
@@ -48,16 +49,16 @@ public:
 
     void reset();
 
-    /// Returns elapsed time in seconds since last call to reset().
-    double get_elapsed_time() const;
+    /// Returns elapsed time in nanoseconds since last call to reset().
+    nanosecond_storage_t get_elapsed_nanoseconds() const;
     /// Same as get_elapsed_time().
-    operator double() const;
+    operator nanosecond_storage_t() const;
 
     /// Format the elapsed time on the form 0h00m, 00m00s, 00.00s, or
     /// 000.0ms depending on magnitude.
-    static void format(double seconds, std::ostream&);
+    static void format(nanosecond_storage_t nanoseconds, std::ostream&);
 
-    static std::string format(double seconds);
+    static std::string format(nanosecond_storage_t nanoseconds);
 
 private:
     using clock_type = std::chrono::high_resolution_clock;
@@ -67,7 +68,7 @@ private:
     std::shared_ptr<MetricTimerResult> m_dest;
 
     time_point get_timer_ticks() const;
-    double calc_elapsed_seconds(time_point begin, time_point end) const;
+    nanosecond_storage_t calc_elapsed_nanoseconds(time_point begin, time_point end) const;
 };
 
 
@@ -76,14 +77,14 @@ inline void MetricTimer::reset()
     m_start = get_timer_ticks();
 }
 
-inline double MetricTimer::get_elapsed_time() const
+inline nanosecond_storage_t MetricTimer::get_elapsed_nanoseconds() const
 {
-    return calc_elapsed_seconds(m_start, get_timer_ticks());
+    return calc_elapsed_nanoseconds(m_start, get_timer_ticks());
 }
 
-inline MetricTimer::operator double() const
+inline MetricTimer::operator nanosecond_storage_t() const
 {
-    return get_elapsed_time();
+    return get_elapsed_nanoseconds();
 }
 
 inline std::ostream& operator<<(std::ostream& out, const MetricTimer& timer)

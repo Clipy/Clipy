@@ -54,6 +54,7 @@ public:
     bool is_null(size_t ndx) const;
     void set_null(size_t ndx);
     StringData get(size_t ndx) const noexcept;
+    StringData get_string(size_t ndx) const noexcept { return get(ndx); }
     void add();
     void add(StringData value);
     void set(size_t ndx, StringData value);

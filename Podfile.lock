@@ -1,45 +1,45 @@
 PODS:
-  - AEXML (4.4.0)
+  - AEXML (4.5.0)
   - BartyCrouch (4.0.2)
-  - Crashlytics (3.13.4):
+  - Crashlytics (3.14.0):
     - Fabric (~> 1.10.2)
-  - CryptoSwift (1.0.0)
+  - CryptoSwift (1.1.3)
   - Fabric (1.10.2)
   - KeyHolder (3.0.1):
     - Magnet (~> 2.3)
   - LetsMove (1.24)
   - LoginServiceKit (2.1.0)
   - Magnet (2.3.1)
-  - Nimble (8.0.2)
+  - Nimble (8.0.4)
   - PINCache (2.3)
-  - Quick (2.1.0)
-  - Realm (3.17.3):
-    - Realm/Headers (= 3.17.3)
-  - Realm/Headers (3.17.3)
-  - RealmSwift (3.17.3):
-    - Realm (= 3.17.3)
-  - RxCocoa (5.0.0):
+  - Quick (2.2.0)
+  - Realm (3.20.0):
+    - Realm/Headers (= 3.20.0)
+  - Realm/Headers (3.20.0)
+  - RealmSwift (3.20.0):
+    - Realm (= 3.20.0)
+  - RxCocoa (5.0.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
-  - RxOptional (4.0.0):
+  - RxOptional (4.1.0):
     - RxCocoa (~> 5)
     - RxSwift (~> 5)
   - RxRealm (1.0.0):
     - RealmSwift (~> 3.14)
     - RxSwift (~> 5.0)
-  - RxRelay (5.0.0):
+  - RxRelay (5.0.1):
     - RxSwift (~> 5)
   - RxScreeen (1.4.0):
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
     - Screeen (~> 1.3)
-  - RxSwift (5.0.0)
+  - RxSwift (5.0.1)
   - Sauce (1.1.0)
   - Screeen (1.3.0)
-  - Sparkle (1.21.3)
+  - Sparkle (1.22.0)
   - SwiftGen (6.1.0)
-  - SwiftHEXColors (1.3.0)
-  - SwiftLint (0.34.0)
+  - SwiftHEXColors (1.3.1)
+  - SwiftLint (0.36.0)
 
 DEPENDENCIES:
   - AEXML
@@ -99,36 +99,36 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   LoginServiceKit:
-    :commit: 9cb52af1a1386ebbb34ed35bf92036f30de7023e
+    :commit: 01b162248760b5fed4c7bffebee37eb92351b41b
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
-  AEXML: 16fb739dfb3809e91ebf9e9dc391482c3a6aaebf
+  AEXML: 0e8f1d874fa033ca6b3909452a8bc362faad46e6
   BartyCrouch: 3f3501276901326bf4150341ad801467da972e43
-  Crashlytics: 2dfd686bcb918dc10ee0e76f7f853fe42c7bd552
-  CryptoSwift: d81eeaa59dc5a8d03720fe919a6fd07b51f7439f
+  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
+  CryptoSwift: 6b6e488df0598b3e9fa49254ed1a65e8c1b1e10b
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   KeyHolder: 142932db4eac7420b003e2eae94c9a61b8b53cb1
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
-  LoginServiceKit: 0f2a392ee764e01a870c701fe1350823009c239b
+  LoginServiceKit: 9a8b258c3111fa0d9585615052f778b08be92302
   Magnet: f8dac2ffc845ffe68b2dd21c68a801f866f4a098
-  Nimble: 622629381bda1dd5678162f21f1368cec7cbba60
+  Nimble: 18d5360282923225d62b09d781f63abc1a0111fc
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
-  Quick: 4be43f6634acfa727dd106bdf3929ce125ffa79d
-  Realm: 5a1d9d47bfc101dd597668b1a8af4288a2557f6d
-  RealmSwift: b7fdc2d18616621c31df5c7a398a45a2163f8eb0
-  RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
-  RxOptional: 9904e2219d59260c3c171273d475b2126de187e8
+  Quick: 7fb19e13be07b5dfb3b90d4f9824c855a11af40e
+  Realm: 8b2ca5bc6479a91f379b6b42b5922e396cd5ba5a
+  RealmSwift: 1949ef26a279e1845bd51d591b9103adfcd121df
+  RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
+  RxOptional: b1fcd60856807a564c0215c2184b8d33e7826dc2
   RxRealm: 1e81dcfca1fb50c3e9b3e1f8102bc875c5156a2e
-  RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
+  RxRelay: 89d54507f4fd4d969e6ec1d4bd7f3673640b4640
   RxScreeen: 5ba3d4047d7837d5478711c4f1cda5303a306120
-  RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
+  RxSwift: e2dc62b366a3adf6a0be44ba9f405efd4c94e0c4
   Sauce: e8408fee7ea38d678312027549bb4ce64b6f5351
   Screeen: caafccf0bdcc5d4ff175d04ceebfab432a62276a
-  Sparkle: 3f75576db8b0265adef36c43249d747f22d0b708
+  Sparkle: 593ac2e677c07bcb6c3b22d621240e7cbedaab57
   SwiftGen: f872ca75cbd17bf7103c17f13dcfa0d9a15667b0
-  SwiftHEXColors: 15ab5242cc2efeab548c4c74793b173b78dbae1c
-  SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
+  SwiftHEXColors: 7cc78ce189ddaff81f2ec1259b6b1dffdcda7643
+  SwiftLint: fc9859e4e1752340664851f667bb1898b9c90114
 
 PODFILE CHECKSUM: 18268c2a133fb552dbe167f739ee481d11c79ab4
 

@@ -25,6 +25,7 @@ namespace realm {
 
 class StringData;
 class BinaryData;
+class Timestamp;
 
 typedef int64_t Int;
 typedef bool Bool;
@@ -32,6 +33,7 @@ typedef float Float;
 typedef double Double;
 typedef realm::StringData String;
 typedef realm::BinaryData Binary;
+typedef realm::Timestamp Timestamp;
 
 
 // Note: Value assignments must be kept in sync with <realm/column_type.h>

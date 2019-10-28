@@ -879,7 +879,7 @@ private:
 
 /// Used for any I/O related exception. Note the derived exception
 /// types that are used for various specific types of errors.
-class File::AccessError : public std::runtime_error {
+class File::AccessError : public ExceptionWithBacktrace<std::runtime_error> {
 public:
     AccessError(const std::string& msg, const std::string& path);
 
@@ -887,7 +887,7 @@ public:
     /// no associated file system path, or if the file system path is unknown.
     std::string get_path() const;
 
-    const char* what() const noexcept
+    const char* message() const noexcept
     {
         m_buffer = std::runtime_error::what();
         if (m_path.size() > 0)
@@ -1252,7 +1252,7 @@ inline void File::Streambuf::flush()
 }
 
 inline File::AccessError::AccessError(const std::string& msg, const std::string& path)
-    : std::runtime_error(msg)
+    : ExceptionWithBacktrace<std::runtime_error>(msg)
     , m_path(path)
 {
 }

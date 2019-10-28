@@ -2219,17 +2219,38 @@ bool Array::find_optimized(int64_t value, size_t start, size_t end, size_t basei
         end = nullable_array ? size() - 1 : size();
 
     if (nullable_array) {
-        // We were called by find() of a nullable array. So skip first entry, take nulls in count, etc, etc. Fixme:
-        // Huge speed optimizations are possible here! This is a very simple generic method.
-        for (; start2 < end; start2++) {
-            int64_t v = get<bitwidth>(start2 + 1);
-            if (c(v, value, v == get(0), find_null)) {
-                util::Optional<int64_t> v2(v == get(0) ? util::none : util::make_optional(v));
-                if (!find_action<action, Callback>(start2 + baseindex, v2, state, callback))
-                    return false; // tell caller to stop aggregating/search
+        if (std::is_same<cond, Equal>::value) {
+            // In case of Equal it is safe to use the optimized logic. We just have to fetch the null value
+            // if this is what we are looking for. And we have to adjust the indexes to compensate for the
+            // null value at position 0.
+            if (find_null) {
+                value = get(0);
             }
+            else {
+                // If the value to search for is equal to the null value, the value cannot be in the array
+                if (value == get(0)) {
+                    return true;
+                }
+            }
+            start2++;
+            end++;
+            baseindex--;
         }
-        return true; // tell caller to continue aggregating/search (on next array leafs)
+        else {
+            // We were called by find() of a nullable array. So skip first entry, take nulls in count, etc, etc. Fixme:
+            // Huge speed optimizations are possible here! This is a very simple generic method.
+            auto null_value = get(0);
+            for (; start2 < end; start2++) {
+                int64_t v = get<bitwidth>(start2 + 1);
+                bool value_is_null = (v == null_value);
+                if (c(v, value, value_is_null, find_null)) {
+                    util::Optional<int64_t> v2(value_is_null ? util::none : util::make_optional(v));
+                    if (!find_action<action, Callback>(start2 + baseindex, v2, state, callback))
+                        return false; // tell caller to stop aggregating/search
+                }
+            }
+            return true; // tell caller to continue aggregating/search (on next array leafs)
+        }
     }
 
 
@@ -2687,7 +2708,7 @@ inline bool Array::compare_equality(int64_t value, size_t start, size_t end, siz
                 if (a >= 64 / no0(width))
                     break;
 
-                if (!find_action<action, Callback>(a + start + baseindex, get<width>(start + t), state, callback))
+                if (!find_action<action, Callback>(a + start + baseindex, get<width>(start + a), state, callback))
                     return false;
                 v2 >>= (t + 1) * width;
                 a += 1;

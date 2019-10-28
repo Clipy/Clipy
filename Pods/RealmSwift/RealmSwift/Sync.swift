@@ -418,6 +418,7 @@ public struct SyncCredentials {
     }
 
     /// Initialize new credentials using a nickname.
+    @available(*, deprecated, message: "Use usernamePassword instead.")
     public static func nickname(_ nickname: String, isAdmin: Bool = false) -> SyncCredentials {
         return SyncCredentials(RLMSyncCredentials(nickname: nickname, isAdmin: isAdmin))
     }
@@ -425,6 +426,11 @@ public struct SyncCredentials {
     /// Initialize new credentials anonymously
     public static func anonymous() -> SyncCredentials {
         return SyncCredentials(RLMSyncCredentials.anonymous())
+    }
+
+    /// Initialize new credentials using an externally-issued refresh token
+    public static func customRefreshToken(_ token: String, identity: String, isAdmin: Bool = false) -> SyncCredentials {
+        return SyncCredentials(RLMSyncCredentials(customRefreshToken: token, identity: identity, isAdmin: isAdmin))
     }
 }
 

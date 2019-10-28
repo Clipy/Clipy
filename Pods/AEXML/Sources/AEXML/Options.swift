@@ -5,6 +5,10 @@
  */
 
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
+
 
 /// Options used in `AEXMLDocument`
 public struct AEXMLOptions {

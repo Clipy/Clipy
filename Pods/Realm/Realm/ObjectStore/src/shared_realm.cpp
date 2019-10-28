@@ -21,7 +21,6 @@
 #include "impl/collection_notifier.hpp"
 #include "impl/realm_coordinator.hpp"
 #include "impl/transact_log_handler.hpp"
-#include "util/fifo.hpp"
 
 #include "audit.hpp"
 #include "binding_context.hpp"
@@ -35,6 +34,8 @@
 
 #include <realm/history.hpp>
 #include <realm/util/scope_exit.hpp>
+#include <realm/util/fifo_helper.hpp>
+
 
 #if REALM_ENABLE_SYNC
 #include "sync/impl/sync_file.hpp"

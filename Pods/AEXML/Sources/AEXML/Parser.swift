@@ -5,6 +5,9 @@
  */
 
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
 
 /// Simple wrapper around `Foundation.XMLParser`.
 internal class AEXMLParser: NSObject, XMLParserDelegate {
@@ -19,10 +22,9 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
     var currentValue = String()
     
     var parseError: Error?
-    
-    private lazy var trimWhitespace: Bool = {
-        let trim = self.document.options.parserSettings.shouldTrimWhitespace
-        return trim
+
+    private lazy var parserSettings: AEXMLOptions.ParserSettings = {
+        return document.options.parserSettings
     }()
     
     // MARK: - Lifecycle
@@ -40,10 +42,10 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
     func parse() throws {
         let parser = XMLParser(data: data)
         parser.delegate = self
-        
-        parser.shouldProcessNamespaces = document.options.parserSettings.shouldProcessNamespaces
-        parser.shouldReportNamespacePrefixes = document.options.parserSettings.shouldReportNamespacePrefixes
-        parser.shouldResolveExternalEntities = document.options.parserSettings.shouldResolveExternalEntities
+
+        parser.shouldProcessNamespaces = parserSettings.shouldProcessNamespaces
+        parser.shouldReportNamespacePrefixes = parserSettings.shouldReportNamespacePrefixes
+        parser.shouldResolveExternalEntities = parserSettings.shouldResolveExternalEntities
         
         let success = parser.parse()
         
@@ -74,8 +76,9 @@ internal class AEXMLParser: NSObject, XMLParserDelegate {
                 didEndElement elementName: String,
                 namespaceURI: String?,
                 qualifiedName qName: String?) {
-        if trimWhitespace {
-            currentElement?.value = currentElement?.value?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if parserSettings.shouldTrimWhitespace {
+            currentElement?.value = currentElement?.value?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
         }
         currentParent = currentParent?.parent
         currentElement = nil

@@ -1,9 +1,11 @@
 //
 //  LoginServiceKit.swift
-//  LoginServiceKit
 //
-//  Created by ShunsukeFurubayashi on 2016/04/05.
-//  Copyright © 2016 Shunsuke Furubayashi. All rights reserved.
+//  LoginServiceKit
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Copyright © 2015-2019 Clipy Project.
 //
 
 //

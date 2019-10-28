@@ -17,5 +17,7 @@
   "platforms": {
     "osx": "10.10"
   },
-  "source_files": "Lib/**/*.swift"
+  "swift_versions": "5.0",
+  "source_files": "Lib/LoginServiceKit/*.swift",
+  "swift_version": "5.0"
 }

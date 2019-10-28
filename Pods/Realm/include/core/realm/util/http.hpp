@@ -176,6 +176,7 @@ struct HTTPRequest {
 
 struct HTTPResponse {
     HTTPStatus status = HTTPStatus::Unknown;
+    std::string reason;
     HTTPHeaders headers;
 
     // A body is only read from the response stream if the server sent the
@@ -399,7 +400,7 @@ private:
         StringData reason;
         if (this->parse_first_line_of_response(line, status, reason, this->logger)) {
             m_response.status = status;
-            static_cast<void>(reason); // Ignore for now.
+            m_response.reason = reason;
             return std::error_code{};
         }
         return HTTPParserError::MalformedResponse;

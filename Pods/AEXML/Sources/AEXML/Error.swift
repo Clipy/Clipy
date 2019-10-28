@@ -5,6 +5,9 @@
  */
 
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
 
 /// A type representing error value that can be thrown or inside `error` property of `AEXMLElement`.
 public enum AEXMLError: Error {

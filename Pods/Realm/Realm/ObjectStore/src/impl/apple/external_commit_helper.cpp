@@ -18,9 +18,9 @@
 
 #include "impl/external_commit_helper.hpp"
 #include "impl/realm_coordinator.hpp"
-#include "util/fifo.hpp"
 
 #include <realm/group_shared_options.hpp>
+#include <realm/util/fifo_helper.hpp>
 
 #include <asl.h>
 #include <assert.h>
@@ -122,14 +122,14 @@ ExternalCommitHelper::ExternalCommitHelper(RealmCoordinator& parent)
     std::string sys_temp_dir = util::normalize_dir(SharedGroupOptions::get_sys_tmp_dir());
 
     path = parent.get_path() + ".note";
-    bool fifo_created = util::try_create_fifo(path);
+    bool fifo_created = realm::util::try_create_fifo(path);
     if (!fifo_created && !temp_dir.empty()) {
         path = util::format("%1realm_%2.note", temp_dir, std::hash<std::string>()(parent.get_path()));
-        fifo_created = util::try_create_fifo(path);
+        fifo_created = realm::util::try_create_fifo(path);
     }
     if (!fifo_created && !sys_temp_dir.empty()) {
         path = util::format("%1realm_%2.note", sys_temp_dir, std::hash<std::string>()(parent.get_path()));
-        util::create_fifo(path);
+        realm::util::create_fifo(path);
     }
 
     m_notify_fd = open(path.c_str(), O_RDWR);

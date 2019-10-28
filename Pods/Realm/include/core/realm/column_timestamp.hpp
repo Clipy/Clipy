@@ -83,6 +83,9 @@ public:
     void to_dot(std::ostream&, StringData title = StringData()) const override;
     void do_dump_node_structure(std::ostream&, int level) const override;
     void leaf_to_dot(MemRef, ArrayParent*, size_t ndx_in_parent, std::ostream&) const override;
+    void get_seconds_leaf(size_t ndx, size_t& ndx_in_leaf,
+                          BpTree<util::Optional<int64_t>>::LeafInfo& inout_leaf) const noexcept;
+    void get_nanoseconds_leaf(size_t ndx, size_t& ndx_in_leaf, BpTree<int64_t>::LeafInfo& inout_leaf) const noexcept;
 
     void add(const Timestamp& ts = Timestamp{});
     Timestamp get(size_t row_ndx) const noexcept;
