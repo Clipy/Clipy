@@ -5,8 +5,8 @@ language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
-#cache:
-##  bundler: true
+cache:
+  bundler: true
 ##  cocoapods: true
 #  directories:
 #    - "${HOME}/.cocoapods/repos/"
