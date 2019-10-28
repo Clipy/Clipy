@@ -30,6 +30,7 @@ jobs:
       script: fastlane mac release
       if: tag IS PRESENT
       before_deploy:
+        - bash .travis/prepare_delta.sh
         - bash .travis/sparkle_keys.sh
       deploy:
         provider: releases

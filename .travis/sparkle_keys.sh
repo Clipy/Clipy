@@ -35,6 +35,7 @@ rm -rf ~/Library/Caches/Sparkle*
 rm -rf .tmp/*
 mkdir -p .tmp
 cp Clipy.app.zip .tmp/
+[[ -d .delta ]] && cp .delta/*.zip .tmp/
 #cp appcast_tpl.xml .tmp/appcast.xml
 Pods/Sparkle/bin/generate_appcast -s "$SPARKLE_ED25519_KEY" .tmp/
 
