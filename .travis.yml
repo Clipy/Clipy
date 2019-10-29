@@ -1,6 +1,7 @@
 os: osx
 osx_image:
 - xcode11
+- xcode11.2
 language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
@@ -43,3 +44,4 @@ jobs:
         on:
           repo: ian4hu/Clipy
           tags: true
+          osx_image: xcode11.2
