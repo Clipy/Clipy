@@ -1,7 +1,5 @@
 os: osx
-osx_image:
-- xcode11
-- xcode11.2
+osx_image: xcode11
 language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
