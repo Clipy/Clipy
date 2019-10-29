@@ -1,7 +1,4 @@
 os: osx
-osx_image:
-- xcode11
-- xcode11.2
 language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
@@ -25,10 +22,14 @@ jobs:
       name: "Units Tests"
       if: branch IS PRESENT
       script: fastlane mac test
+      osx_image:
+        - xcode11
+        - xcode11.2
 
     - stage: deploy
       name: "Deploy to Github"
       script: fastlane mac release
+      osx_image: xcode11
       if: tag IS PRESENT
       before_deploy:
         - bash .travis/prepare_delta.sh
@@ -47,4 +48,3 @@ jobs:
         on:
           repo: ian4hu/Clipy
           tags: true
-          osx_image: xcode11.2
