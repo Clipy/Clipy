@@ -21,7 +21,7 @@ install:
 
 jobs:
   include:
-    - stage: "Test"
+    - stage: test
       name: "Units Tests"
       if: branch IS PRESENT
       script: fastlane mac test
