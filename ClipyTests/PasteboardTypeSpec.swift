@@ -22,12 +22,12 @@ class PasteboardTypeSpec: QuickSpec {
             describe("AvailableType." + type.rawValue) {
                 type.targetPbTypes.forEach { pbType in
                     it(pbType.rawValue) {
-                        expect(pbType.isString) == type.isString
-                        expect(pbType.isRTF) == type.isRTF
-                        expect(pbType.isRTFD) == type.isRTFD
-                        expect(pbType.isPDF) == type.isPDF
-                        expect(pbType.isFilenames) == type.isFilenames
-                        expect(pbType.isURL) == type.isURL
+                        expect(pbType.isString) === type.isString
+                        expect(pbType.isRTF) === type.isRTF
+                        expect(pbType.isRTFD) === type.isRTFD
+                        expect(pbType.isPDF) === type.isPDF
+                        expect(pbType.isFilenames) === type.isFilenames
+                        expect(pbType.isURL) === type.isURL
                     }
                 }
             }

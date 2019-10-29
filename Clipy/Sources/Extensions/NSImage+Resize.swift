@@ -16,8 +16,8 @@ import Cocoa
 extension NSImage {
     func resizeImage(_ width: CGFloat, _ height: CGFloat) -> NSImage? {
 
-        let representations = self.representations
-        guard let imageRep = representations.first else {
+        let representations: [NSImageRep] = self.representations
+        guard let imageRep: NSImageRep = representations.first else {
             return nil
         }
 
@@ -57,7 +57,7 @@ extension NSImage {
             newHeight = origHeight
         }
 
-        let newImageRep = self.bestRepresentation(for: NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
+        let newImageRep: NSImageRep? = self.bestRepresentation(for: NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
         if newImageRep == nil {
             return nil
         }
