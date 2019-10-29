@@ -242,11 +242,11 @@ class HotKeyServiceSpec: QuickSpec {
                 service.changeClearHistoryKeyCombo(keyCombo)
 
                 expect(service.clearHistoryKeyCombo).toNot(beNil())
-                expect(service.clearHistoryKeyCombo) === keyCombo
+                expect(service.clearHistoryKeyCombo) == keyCombo
 
                 let savedData = UserDefaults.standard.object(forKey: Constants.HotKey.clearHistoryKeyCombo) as? Data
                 let savedKeyCombo = NSKeyedUnarchiver.unarchiveObject(with: savedData!) as? KeyCombo
-                expect(savedKeyCombo) === keyCombo
+                expect(savedKeyCombo) == keyCombo
 
                 service.changeClearHistoryKeyCombo(nil)
                 expect(service.clearHistoryKeyCombo).to(beNil())
@@ -276,13 +276,13 @@ class HotKeyServiceSpec: QuickSpec {
                 service.registerSnippetHotKey(with: identifier, keyCombo: keyCombo)
 
                 expect(service.snippetKeyCombo(forIdentifier: identifier)).toNot(beNil())
-                expect(service.snippetKeyCombo(forIdentifier: identifier)) === keyCombo
+                expect(service.snippetKeyCombo(forIdentifier: identifier)) == keyCombo
 
                 let changeKeyCombo = KeyCombo(doubledCarbonModifiers: shiftKey)!
                 service.registerSnippetHotKey(with: identifier, keyCombo: changeKeyCombo)
 
                 expect(service.snippetKeyCombo(forIdentifier: identifier)) != keyCombo
-                expect(service.snippetKeyCombo(forIdentifier: identifier)) === changeKeyCombo
+                expect(service.snippetKeyCombo(forIdentifier: identifier)) == changeKeyCombo
 
                 service.unregisterSnippetHotKey(with: identifier)
                 expect(service.snippetKeyCombo(forIdentifier: identifier)).to(beNil())
