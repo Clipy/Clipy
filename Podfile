@@ -1,4 +1,4 @@
-platform :osx, '10.10'
+platform :osx, '10.11'
 use_frameworks!
 inhibit_all_warnings!
 
@@ -7,23 +7,23 @@ source 'https://github.com/CocoaPods/Specs.git'
 target 'Clipy' do
 
   # Application
-  pod 'PINCache'
-  pod 'Sauce'
+#  pod 'PINCache'
+#  pod 'Sauce'
   pod 'Sparkle'
-  pod 'RealmSwift'
+#  pod 'RealmSwift'
   pod 'Fabric'
   pod 'Crashlytics'
-  pod 'RxCocoa'
-  pod 'RxSwift'
-  pod 'RxOptional'
-  pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
-  pod 'KeyHolder'
-  pod 'RxScreeen'
-  pod 'AEXML'
-  pod 'LetsMove'
-  pod 'SwiftHEXColors'
-  pod 'CryptoSwift'
-  pod "RxRealm"
+#  pod 'RxCocoa'
+#  pod 'RxSwift'
+#  pod 'RxOptional'
+#  pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
+#  pod 'KeyHolder'
+#  pod 'RxScreeen'
+#  pod 'AEXML'
+#  pod 'LetsMove'
+#  pod 'SwiftHEXColors'
+#  pod 'CryptoSwift'
+#  pod "RxRealm"
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftLint'
@@ -32,8 +32,8 @@ target 'Clipy' do
   target 'ClipyTests' do
     inherit! :search_paths
 
-    pod 'Quick'
-    pod 'Nimble'
+#    pod 'Quick'
+#    pod 'Nimble'
 
   end
 

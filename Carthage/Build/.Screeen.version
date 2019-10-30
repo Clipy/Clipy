@@ -1,0 +1,10 @@
+{
+  "commitish" : "v1.3.0",
+  "Mac" : [
+    {
+      "name" : "Screeen",
+      "hash" : "4f8573695be6d0bdc9074f77d509600b039f4e024895a738f073a33f16ccc1bb",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

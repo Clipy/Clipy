@@ -1,0 +1,15 @@
+{
+  "commitish" : "1.3.1",
+  "Mac" : [
+    {
+      "name" : "SwiftHEXColors",
+      "hash" : "b9158d30232aaa04397fbef5030385579fc1162435b4e29f252430772359e504",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    },
+    {
+      "name" : "SwiftHEXColors",
+      "hash" : "b9158d30232aaa04397fbef5030385579fc1162435b4e29f252430772359e504",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

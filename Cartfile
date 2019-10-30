@@ -1,0 +1,16 @@
+# carthage update --platform macOS  --cache-builds
+
+github "Clipy/KeyHolder"
+github "Clipy/LoginServiceKit"
+github "Clipy/RxScreeen"
+github "Clipy/Sauce"
+github "Quick/Nimble"
+github "Quick/Quick"
+github "RxSwiftCommunity/RxOptional"
+github "RxSwiftCommunity/RxRealm"
+github "RxSwiftCommunity/RxSwiftExt"
+github "krzyzanowskim/CryptoSwift"
+github "pinterest/PINCache"
+github "potionfactory/LetsMove"
+github "tadija/AEXML"
+github "thii/SwiftHEXColors"

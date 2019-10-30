@@ -1,0 +1,10 @@
+{
+  "commitish" : "v3.0.1",
+  "Mac" : [
+    {
+      "name" : "KeyHolder",
+      "hash" : "1ee67e8244f8cbcaca6921eaf84d0c9b349392279d3d3c1256ea1ea418e37f66",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

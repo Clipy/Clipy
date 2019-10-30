@@ -1,0 +1,4 @@
+framework module RealmSwift {
+  header "RealmSwift-Swift.h"
+  requires objc
+}

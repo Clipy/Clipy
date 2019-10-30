@@ -1,0 +1,11 @@
+framework module Sauce {
+  umbrella header "Sauce.h"
+
+  export *
+  module * { export * }
+}
+
+module Sauce.Swift {
+    header "Sauce-Swift.h"
+    requires objc
+}

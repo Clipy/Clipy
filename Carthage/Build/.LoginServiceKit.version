@@ -1,0 +1,10 @@
+{
+  "commitish" : "v2.1.0",
+  "Mac" : [
+    {
+      "name" : "LoginServiceKit",
+      "hash" : "574e7ad86d6d33e474652c9a27ba47d7a80780155753a8573fc833724723ec72",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

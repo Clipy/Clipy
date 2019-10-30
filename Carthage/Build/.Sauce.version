@@ -1,0 +1,10 @@
+{
+  "commitish" : "v1.1.0",
+  "Mac" : [
+    {
+      "name" : "Sauce",
+      "hash" : "e497ebe506cfb948c5493b9aa0469d95dbea8954c5c3d174ac5b971e5c7cd568",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

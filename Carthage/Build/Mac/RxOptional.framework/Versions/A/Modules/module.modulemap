@@ -1,0 +1,11 @@
+framework module RxOptional {
+  umbrella header "RxOptional.h"
+
+  export *
+  module * { export * }
+}
+
+module RxOptional.Swift {
+    header "RxOptional-Swift.h"
+    requires objc
+}

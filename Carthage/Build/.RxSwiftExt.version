@@ -1,0 +1,27 @@
+{
+  "Mac" : [
+    {
+      "name" : "RxSwiftExt",
+      "hash" : "cbca7363b743b1bd12a0329265675007df18dfc9812a1830e2b7961c417fe1cb",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ],
+  "watchOS" : [
+
+  ],
+  "tvOS" : [
+    {
+      "name" : "RxSwiftExt",
+      "hash" : "26e73a5f0a0a9aef95193d35de5dc0b50f8b55ffd0b93f352cd493992aa99679",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ],
+  "commitish" : "5.1.1",
+  "iOS" : [
+    {
+      "name" : "RxSwiftExt",
+      "hash" : "96502ea3ee609bb01ca7a3cbe21f707306370ebc54e4f65b8e3e766c126c9dfd",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

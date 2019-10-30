@@ -1,0 +1,10 @@
+{
+  "commitish" : "v2.3.1",
+  "Mac" : [
+    {
+      "name" : "Magnet",
+      "hash" : "014323a162feb6b7861bea9f0785aadd6f23013ec680e514b9477f25f77bbc97",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+framework module Nimble {
+  umbrella header "Nimble.h"
+
+  export *
+  module * { export * }
+}
+
+module Nimble.Swift {
+    header "Nimble-Swift.h"
+    requires objc
+}

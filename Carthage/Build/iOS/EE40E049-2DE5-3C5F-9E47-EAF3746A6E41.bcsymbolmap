@@ -1,0 +1,1702 @@
+BCSymbolMap Version: 1.0
+-[PINCache init]
+-[PINCache initWithName:]
+-[PINCache initWithName:rootPath:]
+-[PINCache description]
++[PINCache sharedCache]
+__23+[PINCache sharedCache]_block_invoke
+__copy_helper_block_
+__destroy_helper_block_
+-[PINCache containsObjectForKey:block:]
+__39-[PINCache containsObjectForKey:block:]_block_invoke
+__copy_helper_block_.37
+__destroy_helper_block_.38
+-[PINCache objectForKey:block:]
+__31-[PINCache objectForKey:block:]_block_invoke
+__31-[PINCache objectForKey:block:]_block_invoke_2
+__31-[PINCache objectForKey:block:]_block_invoke_3
+__31-[PINCache objectForKey:block:]_block_invoke_4
+__copy_helper_block_.44
+__destroy_helper_block_.45
+__31-[PINCache objectForKey:block:]_block_invoke.47
+__31-[PINCache objectForKey:block:]_block_invoke_2.50
+__copy_helper_block_.51
+__destroy_helper_block_.52
+__copy_helper_block_.54
+__destroy_helper_block_.55
+__copy_helper_block_.59
+__destroy_helper_block_.60
+__copy_helper_block_.63
+__destroy_helper_block_.64
+-[PINCache setObject:forKey:block:]
+__35-[PINCache setObject:forKey:block:]_block_invoke
+__copy_helper_block_.66
+__destroy_helper_block_.67
+__35-[PINCache setObject:forKey:block:]_block_invoke.69
+__copy_helper_block_.70
+__destroy_helper_block_.71
+__35-[PINCache setObject:forKey:block:]_block_invoke.73
+__copy_helper_block_.74
+__destroy_helper_block_.75
+-[PINCache removeObjectForKey:block:]
+__37-[PINCache removeObjectForKey:block:]_block_invoke
+__copy_helper_block_.77
+__destroy_helper_block_.78
+__37-[PINCache removeObjectForKey:block:]_block_invoke.80
+__copy_helper_block_.81
+__destroy_helper_block_.82
+__37-[PINCache removeObjectForKey:block:]_block_invoke.86
+__copy_helper_block_.87
+__destroy_helper_block_.88
+-[PINCache removeAllObjects:]
+__29-[PINCache removeAllObjects:]_block_invoke
+__copy_helper_block_.90
+__destroy_helper_block_.91
+__29-[PINCache removeAllObjects:]_block_invoke.94
+__copy_helper_block_.95
+__destroy_helper_block_.96
+__29-[PINCache removeAllObjects:]_block_invoke.101
+__copy_helper_block_.102
+__destroy_helper_block_.103
+-[PINCache trimToDate:block:]
+__29-[PINCache trimToDate:block:]_block_invoke
+__copy_helper_block_.105
+__destroy_helper_block_.106
+__29-[PINCache trimToDate:block:]_block_invoke.108
+__copy_helper_block_.109
+__destroy_helper_block_.110
+__29-[PINCache trimToDate:block:]_block_invoke.114
+__copy_helper_block_.115
+__destroy_helper_block_.116
+-[PINCache diskByteCount]
+__25-[PINCache diskByteCount]_block_invoke
+__copy_helper_block_.120
+__destroy_helper_block_.121
+-[PINCache containsObjectForKey:]
+-[PINCache objectForKey:]
+__Block_byref_object_copy_
+__Block_byref_object_dispose_
+-[PINCache setObject:forKey:]
+-[PINCache objectForKeyedSubscript:]
+-[PINCache setObject:forKeyedSubscript:]
+-[PINCache removeObjectForKey:]
+-[PINCache trimToDate:]
+-[PINCache removeAllObjects]
+-[PINCache name]
+-[PINCache concurrentQueue]
+-[PINCache setConcurrentQueue:]
+-[PINCache diskCache]
+-[PINCache memoryCache]
+-[PINCache .cxx_destruct]
+.str
+_unnamed_cfstring_
+.str.1
+_unnamed_cfstring_.2
+OBJC_CLASSLIST_REFERENCES_$_
+.str.3
+_unnamed_cfstring_.4
+.str.5
+_unnamed_cfstring_.6
+OBJC_METH_VAR_NAME_
+OBJC_SELECTOR_REFERENCES_
+OBJC_METH_VAR_NAME_.7
+OBJC_SELECTOR_REFERENCES_.8
+OBJC_METH_VAR_NAME_.9
+OBJC_SELECTOR_REFERENCES_.10
+OBJC_CLASSLIST_SUP_REFS_$_
+OBJC_METH_VAR_NAME_.11
+OBJC_SELECTOR_REFERENCES_.12
+OBJC_METH_VAR_NAME_.13
+OBJC_SELECTOR_REFERENCES_.14
+OBJC_IVAR_$_PINCache._name
+OBJC_CLASSLIST_REFERENCES_$_.15
+OBJC_METH_VAR_NAME_.16
+OBJC_SELECTOR_REFERENCES_.17
+.str.18
+_unnamed_cfstring_.19
+OBJC_METH_VAR_NAME_.20
+OBJC_SELECTOR_REFERENCES_.21
+.str.22
+_unnamed_cfstring_.23
+OBJC_METH_VAR_NAME_.24
+OBJC_SELECTOR_REFERENCES_.25
+OBJC_METH_VAR_NAME_.26
+OBJC_SELECTOR_REFERENCES_.27
+OBJC_IVAR_$_PINCache._concurrentQueue
+OBJC_CLASSLIST_REFERENCES_$_.28
+OBJC_IVAR_$_PINCache._diskCache
+OBJC_CLASSLIST_REFERENCES_$_.29
+OBJC_IVAR_$_PINCache._memoryCache
+.str.30
+_unnamed_cfstring_.31
+sharedCache.cache
+sharedCache.predicate
+OBJC_METH_VAR_NAME_.32
+OBJC_SELECTOR_REFERENCES_.33
+.str.34
+OBJC_CLASS_NAME_
+__block_descriptor_tmp
+OBJC_METH_VAR_NAME_.35
+OBJC_SELECTOR_REFERENCES_.36
+__block_descriptor_tmp.39
+.str.40
+__block_descriptor_tmp.41
+__block_literal_global
+OBJC_METH_VAR_NAME_.42
+OBJC_SELECTOR_REFERENCES_.43
+__block_descriptor_tmp.46
+OBJC_METH_VAR_NAME_.48
+OBJC_SELECTOR_REFERENCES_.49
+__block_descriptor_tmp.53
+__block_descriptor_tmp.56
+OBJC_METH_VAR_NAME_.57
+OBJC_SELECTOR_REFERENCES_.58
+.str.61
+__block_descriptor_tmp.62
+__block_descriptor_tmp.65
+__block_descriptor_tmp.68
+__block_descriptor_tmp.72
+__block_descriptor_tmp.76
+__block_descriptor_tmp.79
+__block_descriptor_tmp.83
+OBJC_METH_VAR_NAME_.84
+OBJC_SELECTOR_REFERENCES_.85
+__block_descriptor_tmp.89
+.str.92
+__block_descriptor_tmp.93
+.str.97
+__block_descriptor_tmp.98
+OBJC_METH_VAR_NAME_.99
+OBJC_SELECTOR_REFERENCES_.100
+__block_descriptor_tmp.104
+__block_descriptor_tmp.107
+__block_descriptor_tmp.111
+OBJC_METH_VAR_NAME_.112
+OBJC_SELECTOR_REFERENCES_.113
+__block_descriptor_tmp.117
+OBJC_METH_VAR_NAME_.118
+OBJC_SELECTOR_REFERENCES_.119
+__block_descriptor_tmp.122
+OBJC_METH_VAR_NAME_.123
+OBJC_SELECTOR_REFERENCES_.124
+OBJC_METH_VAR_NAME_.125
+OBJC_SELECTOR_REFERENCES_.126
+OBJC_METH_VAR_NAME_.127
+OBJC_SELECTOR_REFERENCES_.128
+OBJC_METH_VAR_NAME_.129
+OBJC_SELECTOR_REFERENCES_.130
+OBJC_METH_VAR_NAME_.131
+OBJC_SELECTOR_REFERENCES_.132
+OBJC_METH_VAR_NAME_.133
+OBJC_SELECTOR_REFERENCES_.134
+OBJC_CLASS_NAME_.135
+OBJC_METH_VAR_NAME_.136
+OBJC_METH_VAR_TYPE_
+l_OBJC_$_CLASS_METHODS_PINCache
+OBJC_METH_VAR_NAME_.137
+OBJC_METH_VAR_TYPE_.138
+OBJC_METH_VAR_TYPE_.139
+OBJC_METH_VAR_NAME_.140
+OBJC_METH_VAR_TYPE_.141
+OBJC_METH_VAR_TYPE_.142
+OBJC_CLASS_NAME_.143
+OBJC_METH_VAR_NAME_.144
+OBJC_METH_VAR_TYPE_.145
+OBJC_METH_VAR_NAME_.146
+OBJC_METH_VAR_TYPE_.147
+OBJC_METH_VAR_NAME_.148
+OBJC_METH_VAR_NAME_.149
+OBJC_METH_VAR_TYPE_.150
+OBJC_METH_VAR_NAME_.151
+OBJC_METH_VAR_TYPE_.152
+OBJC_METH_VAR_NAME_.153
+OBJC_METH_VAR_TYPE_.154
+OBJC_METH_VAR_NAME_.155
+OBJC_METH_VAR_TYPE_.156
+OBJC_METH_VAR_NAME_.157
+OBJC_METH_VAR_TYPE_.158
+OBJC_METH_VAR_NAME_.159
+OBJC_METH_VAR_NAME_.160
+OBJC_METH_VAR_TYPE_.161
+OBJC_METH_VAR_NAME_.162
+OBJC_METH_VAR_TYPE_.163
+OBJC_METH_VAR_NAME_.164
+OBJC_METH_VAR_NAME_.165
+OBJC_METH_VAR_TYPE_.166
+OBJC_METH_VAR_NAME_.167
+OBJC_METH_VAR_NAME_.168
+OBJC_METH_VAR_TYPE_.169
+OBJC_METH_VAR_NAME_.170
+OBJC_METH_VAR_TYPE_.171
+OBJC_METH_VAR_NAME_.172
+OBJC_METH_VAR_NAME_.173
+OBJC_METH_VAR_NAME_.174
+OBJC_METH_VAR_TYPE_.175
+OBJC_METH_VAR_NAME_.176
+OBJC_CLASS_NAME_.177
+l_OBJC_$_PROTOCOL_INSTANCE_METHODS_NSObject
+l_OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_NSObject
+OBJC_PROP_NAME_ATTR_
+OBJC_PROP_NAME_ATTR_.178
+OBJC_PROP_NAME_ATTR_.179
+OBJC_PROP_NAME_ATTR_.180
+OBJC_PROP_NAME_ATTR_.181
+OBJC_PROP_NAME_ATTR_.182
+OBJC_PROP_NAME_ATTR_.183
+l_OBJC_$_PROP_LIST_NSObject
+l_OBJC_$_PROTOCOL_METHOD_TYPES_NSObject
+l_OBJC_PROTOCOL_$_NSObject
+l_OBJC_LABEL_PROTOCOL_$_NSObject
+l_OBJC_$_PROTOCOL_REFS_PINCacheObjectSubscripting
+l_OBJC_$_PROTOCOL_INSTANCE_METHODS_PINCacheObjectSubscripting
+l_OBJC_$_PROTOCOL_METHOD_TYPES_PINCacheObjectSubscripting
+l_OBJC_PROTOCOL_$_PINCacheObjectSubscripting
+l_OBJC_LABEL_PROTOCOL_$_PINCacheObjectSubscripting
+l_OBJC_CLASS_PROTOCOLS_$_PINCache
+l_OBJC_METACLASS_RO_$_PINCache
+OBJC_CLASS_NAME_.184
+OBJC_METH_VAR_TYPE_.185
+OBJC_METH_VAR_NAME_.186
+OBJC_METH_VAR_TYPE_.187
+OBJC_METH_VAR_TYPE_.188
+OBJC_METH_VAR_TYPE_.189
+OBJC_METH_VAR_NAME_.190
+OBJC_METH_VAR_TYPE_.191
+OBJC_METH_VAR_TYPE_.192
+OBJC_METH_VAR_NAME_.193
+OBJC_METH_VAR_NAME_.194
+OBJC_METH_VAR_NAME_.195
+OBJC_METH_VAR_NAME_.196
+OBJC_METH_VAR_NAME_.197
+OBJC_METH_VAR_NAME_.198
+l_OBJC_$_INSTANCE_METHODS_PINCache
+OBJC_METH_VAR_NAME_.199
+OBJC_METH_VAR_TYPE_.200
+OBJC_METH_VAR_NAME_.201
+OBJC_METH_VAR_TYPE_.202
+OBJC_METH_VAR_NAME_.203
+OBJC_METH_VAR_TYPE_.204
+OBJC_METH_VAR_NAME_.205
+OBJC_METH_VAR_TYPE_.206
+l_OBJC_$_INSTANCE_VARIABLES_PINCache
+OBJC_PROP_NAME_ATTR_.207
+OBJC_PROP_NAME_ATTR_.208
+OBJC_PROP_NAME_ATTR_.209
+OBJC_PROP_NAME_ATTR_.210
+OBJC_PROP_NAME_ATTR_.211
+OBJC_PROP_NAME_ATTR_.212
+OBJC_PROP_NAME_ATTR_.213
+OBJC_PROP_NAME_ATTR_.214
+OBJC_PROP_NAME_ATTR_.215
+l_OBJC_$_PROP_LIST_PINCache
+l_OBJC_CLASS_RO_$_PINCache
+OBJC_LABEL_CLASS_$
+Apple LLVM version 7.3.0 (clang-703.0.31)
+_dispatch_once
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/include/dispatch/once.h
+/Users/garrett/code/PINCache/tests
+-[PINCache .cxx_destruct]
+/Users/garrett/code/PINCache/PINCache/PINCache.m
+-[PINCache memoryCache]
+/Users/garrett/code/PINCache/PINCache/PINCache.h
+-[PINCache diskCache]
+-[PINCache setConcurrentQueue:]
+-[PINCache concurrentQueue]
+-[PINCache name]
+-[PINCache removeAllObjects]
+-[PINCache trimToDate:]
+-[PINCache removeObjectForKey:]
+-[PINCache setObject:forKeyedSubscript:]
+-[PINCache objectForKeyedSubscript:]
+-[PINCache setObject:forKey:]
+-[PINCache objectForKey:]
+-[PINCache containsObjectForKey:]
+-[PINCache diskByteCount]
+-[PINCache trimToDate:block:]
+-[PINCache removeAllObjects:]
+-[PINCache removeObjectForKey:block:]
+-[PINCache setObject:forKey:block:]
+-[PINCache objectForKey:block:]
+-[PINCache containsObjectForKey:block:]
++[PINCache sharedCache]
+-[PINCache description]
+-[PINCache initWithName:rootPath:]
+-[PINCache initWithName:]
+-[PINCache init]
+-[PINDiskCache dealloc]
+-[PINDiskCache init]
+-[PINDiskCache initWithName:]
+-[PINDiskCache initWithName:rootPath:]
+__38-[PINDiskCache initWithName:rootPath:]_block_invoke
+-[PINDiskCache description]
++[PINDiskCache sharedCache]
+__27+[PINDiskCache sharedCache]_block_invoke
+__copy_helper_block_.50
+__destroy_helper_block_.51
+-[PINDiskCache encodedFileURLForKey:]
+-[PINDiskCache keyForEncodedFileURL:]
+-[PINDiskCache encodedString:]
+-[PINDiskCache decodedString:]
++[PINDiskCache sharedTrashQueue]
+__32+[PINDiskCache sharedTrashQueue]_block_invoke
++[PINDiskCache sharedTrashURL]
+__30+[PINDiskCache sharedTrashURL]_block_invoke
++[PINDiskCache moveItemAtURLToTrash:]
++[PINDiskCache emptyTrash]
+__26+[PINDiskCache emptyTrash]_block_invoke
+__copy_helper_block_.126
+__destroy_helper_block_.127
+-[PINDiskCache createCacheDirectory]
+-[PINDiskCache initializeDiskProperties]
+-[PINDiskCache setFileModificationDate:forURL:]
+-[PINDiskCache removeFileAndExecuteBlocksForKey:]
+-[PINDiskCache trimDiskToSize:]
+-[PINDiskCache trimDiskToSizeByDate:]
+-[PINDiskCache trimDiskToDate:]
+-[PINDiskCache trimToAgeLimitRecursively]
+__41-[PINDiskCache trimToAgeLimitRecursively]_block_invoke
+__copy_helper_block_.170
+__destroy_helper_block_.171
+-[PINDiskCache lockFileAccessWhileExecutingBlock:]
+__50-[PINDiskCache lockFileAccessWhileExecutingBlock:]_block_invoke
+__copy_helper_block_.173
+__destroy_helper_block_.174
+-[PINDiskCache containsObjectForKey:block:]
+__43-[PINDiskCache containsObjectForKey:block:]_block_invoke
+__copy_helper_block_.178
+__destroy_helper_block_.179
+-[PINDiskCache objectForKey:block:]
+__35-[PINDiskCache objectForKey:block:]_block_invoke
+__copy_helper_block_.183
+__destroy_helper_block_.184
+-[PINDiskCache fileURLForKey:block:]
+__36-[PINDiskCache fileURLForKey:block:]_block_invoke
+__copy_helper_block_.188
+__destroy_helper_block_.189
+-[PINDiskCache setObject:forKey:block:]
+__39-[PINDiskCache setObject:forKey:block:]_block_invoke
+__copy_helper_block_.193
+__destroy_helper_block_.194
+-[PINDiskCache removeObjectForKey:block:]
+__41-[PINDiskCache removeObjectForKey:block:]_block_invoke
+__copy_helper_block_.198
+__destroy_helper_block_.199
+-[PINDiskCache trimToSize:block:]
+__33-[PINDiskCache trimToSize:block:]_block_invoke
+__copy_helper_block_.203
+__destroy_helper_block_.204
+-[PINDiskCache trimToDate:block:]
+__33-[PINDiskCache trimToDate:block:]_block_invoke
+__copy_helper_block_.208
+__destroy_helper_block_.209
+-[PINDiskCache trimToSizeByDate:block:]
+__39-[PINDiskCache trimToSizeByDate:block:]_block_invoke
+__copy_helper_block_.213
+__destroy_helper_block_.214
+-[PINDiskCache removeAllObjects:]
+__33-[PINDiskCache removeAllObjects:]_block_invoke
+__copy_helper_block_.218
+__destroy_helper_block_.219
+-[PINDiskCache enumerateObjectsWithBlock:completionBlock:]
+__58-[PINDiskCache enumerateObjectsWithBlock:completionBlock:]_block_invoke
+__copy_helper_block_.223
+__destroy_helper_block_.224
+-[PINDiskCache synchronouslyLockFileAccessWhileExecutingBlock:]
+-[PINDiskCache containsObjectForKey:]
+-[PINDiskCache objectForKey:]
+-[PINDiskCache objectForKeyedSubscript:]
+-[PINDiskCache objectForKey:fileURL:]
+-[PINDiskCache fileURLForKey:]
+-[PINDiskCache fileURLForKey:updateFileModificationDate:]
+-[PINDiskCache setObject:forKey:]
+-[PINDiskCache setObject:forKeyedSubscript:]
+-[PINDiskCache setObject:forKey:fileURL:]
+-[PINDiskCache removeObjectForKey:]
+-[PINDiskCache removeObjectForKey:fileURL:]
+-[PINDiskCache trimToSize:]
+-[PINDiskCache trimToDate:]
+-[PINDiskCache trimToSizeByDate:]
+-[PINDiskCache removeAllObjects]
+-[PINDiskCache enumerateObjectsWithBlock:]
+-[PINDiskCache willAddObjectBlock]
+-[PINDiskCache setWillAddObjectBlock:]
+__38-[PINDiskCache setWillAddObjectBlock:]_block_invoke
+__copy_helper_block_.256
+__destroy_helper_block_.257
+-[PINDiskCache willRemoveObjectBlock]
+-[PINDiskCache setWillRemoveObjectBlock:]
+__41-[PINDiskCache setWillRemoveObjectBlock:]_block_invoke
+__copy_helper_block_.259
+__destroy_helper_block_.260
+-[PINDiskCache willRemoveAllObjectsBlock]
+-[PINDiskCache setWillRemoveAllObjectsBlock:]
+__45-[PINDiskCache setWillRemoveAllObjectsBlock:]_block_invoke
+__copy_helper_block_.262
+__destroy_helper_block_.263
+-[PINDiskCache didAddObjectBlock]
+-[PINDiskCache setDidAddObjectBlock:]
+__37-[PINDiskCache setDidAddObjectBlock:]_block_invoke
+__copy_helper_block_.265
+__destroy_helper_block_.266
+-[PINDiskCache didRemoveObjectBlock]
+-[PINDiskCache setDidRemoveObjectBlock:]
+__40-[PINDiskCache setDidRemoveObjectBlock:]_block_invoke
+__copy_helper_block_.268
+__destroy_helper_block_.269
+-[PINDiskCache didRemoveAllObjectsBlock]
+-[PINDiskCache setDidRemoveAllObjectsBlock:]
+__44-[PINDiskCache setDidRemoveAllObjectsBlock:]_block_invoke
+__copy_helper_block_.271
+__destroy_helper_block_.272
+-[PINDiskCache byteLimit]
+-[PINDiskCache setByteLimit:]
+__29-[PINDiskCache setByteLimit:]_block_invoke
+__copy_helper_block_.274
+__destroy_helper_block_.275
+-[PINDiskCache ageLimit]
+-[PINDiskCache setAgeLimit:]
+__28-[PINDiskCache setAgeLimit:]_block_invoke
+__copy_helper_block_.277
+__destroy_helper_block_.278
+-[PINDiskCache isTTLCache]
+-[PINDiskCache setTtlCache:]
+__28-[PINDiskCache setTtlCache:]_block_invoke
+__copy_helper_block_.280
+__destroy_helper_block_.281
+-[PINDiskCache writingProtectionOption]
+-[PINDiskCache setWritingProtectionOption:]
+__43-[PINDiskCache setWritingProtectionOption:]_block_invoke
+__copy_helper_block_.283
+__destroy_helper_block_.284
+-[PINDiskCache lock]
+-[PINDiskCache unlock]
+-[PINDiskCache name]
+-[PINDiskCache cacheURL]
+-[PINDiskCache setCacheURL:]
+-[PINDiskCache byteCount]
+-[PINDiskCache setByteCount:]
+-[PINDiskCache asyncQueue]
+-[PINDiskCache setAsyncQueue:]
+-[PINDiskCache dates]
+-[PINDiskCache setDates:]
+-[PINDiskCache sizes]
+-[PINDiskCache setSizes:]
+-[PINDiskCache .cxx_destruct]
++[PINBackgroundTask isAppExtension]
+__35+[PINBackgroundTask isAppExtension]_block_invoke
+-[PINBackgroundTask init]
++[PINBackgroundTask start]
+__26+[PINBackgroundTask start]_block_invoke
+__copy_helper_block_.477
+__destroy_helper_block_.478
+-[PINBackgroundTask end]
+-[PINBackgroundTask taskID]
+-[PINBackgroundTask setTaskID:]
+OBJC_IVAR_$_PINDiskCache._instanceLock
+OBJC_METH_VAR_NAME_.15
+OBJC_SELECTOR_REFERENCES_.16
+OBJC_IVAR_$_PINDiskCache._name
+OBJC_CLASSLIST_REFERENCES_$_.17
+OBJC_METH_VAR_NAME_.22
+OBJC_SELECTOR_REFERENCES_.23
+OBJC_IVAR_$_PINDiskCache._asyncQueue
+OBJC_IVAR_$_PINDiskCache._willAddObjectBlock
+OBJC_IVAR_$_PINDiskCache._willRemoveObjectBlock
+OBJC_IVAR_$_PINDiskCache._willRemoveAllObjectsBlock
+OBJC_IVAR_$_PINDiskCache._didAddObjectBlock
+OBJC_IVAR_$_PINDiskCache._didRemoveObjectBlock
+OBJC_IVAR_$_PINDiskCache._didRemoveAllObjectsBlock
+OBJC_IVAR_$_PINDiskCache._byteCount
+OBJC_IVAR_$_PINDiskCache._byteLimit
+OBJC_IVAR_$_PINDiskCache._ageLimit
+OBJC_IVAR_$_PINDiskCache._writingProtectionOption
+OBJC_CLASSLIST_REFERENCES_$_.24
+OBJC_METH_VAR_NAME_.25
+OBJC_SELECTOR_REFERENCES_.26
+OBJC_IVAR_$_PINDiskCache._dates
+OBJC_IVAR_$_PINDiskCache._sizes
+.str.27
+_unnamed_cfstring_.28
+OBJC_METH_VAR_NAME_.29
+OBJC_SELECTOR_REFERENCES_.30
+OBJC_CLASSLIST_REFERENCES_$_.31
+OBJC_CLASSLIST_REFERENCES_$_.32
+OBJC_METH_VAR_NAME_.33
+OBJC_SELECTOR_REFERENCES_.34
+OBJC_IVAR_$_PINDiskCache._cacheURL
+OBJC_METH_VAR_NAME_.37
+OBJC_SELECTOR_REFERENCES_.38
+OBJC_METH_VAR_NAME_.39
+OBJC_SELECTOR_REFERENCES_.40
+OBJC_METH_VAR_NAME_.41
+OBJC_SELECTOR_REFERENCES_.42
+OBJC_METH_VAR_NAME_.43
+OBJC_SELECTOR_REFERENCES_.44
+.str.45
+.str.46
+_unnamed_cfstring_.47
+__block_descriptor_tmp.52
+OBJC_METH_VAR_NAME_.53
+OBJC_SELECTOR_REFERENCES_.54
+OBJC_METH_VAR_NAME_.55
+OBJC_SELECTOR_REFERENCES_.56
+OBJC_METH_VAR_NAME_.59
+OBJC_SELECTOR_REFERENCES_.60
+OBJC_METH_VAR_NAME_.61
+OBJC_SELECTOR_REFERENCES_.62
+.str.63
+_unnamed_cfstring_.64
+OBJC_METH_VAR_NAME_.65
+OBJC_SELECTOR_REFERENCES_.66
+OBJC_METH_VAR_NAME_.67
+OBJC_SELECTOR_REFERENCES_.68
+OBJC_CLASSLIST_REFERENCES_$_.69
+.str.70
+_unnamed_cfstring_.71
+OBJC_METH_VAR_NAME_.72
+OBJC_SELECTOR_REFERENCES_.73
+OBJC_METH_VAR_NAME_.74
+OBJC_SELECTOR_REFERENCES_.75
+OBJC_METH_VAR_NAME_.76
+OBJC_SELECTOR_REFERENCES_.77
+sharedTrashQueue.trashQueue
+sharedTrashQueue.predicate
+.str.78
+_unnamed_cfstring_.79
+__block_descriptor_tmp.80
+sharedTrashURL.sharedTrashURL
+sharedTrashURL.predicate
+OBJC_METH_VAR_NAME_.81
+OBJC_SELECTOR_REFERENCES_.82
+OBJC_METH_VAR_NAME_.83
+OBJC_SELECTOR_REFERENCES_.84
+OBJC_CLASSLIST_REFERENCES_$_.85
+OBJC_METH_VAR_NAME_.86
+OBJC_SELECTOR_REFERENCES_.87
+OBJC_METH_VAR_NAME_.88
+OBJC_SELECTOR_REFERENCES_.89
+OBJC_METH_VAR_NAME_.90
+OBJC_SELECTOR_REFERENCES_.91
+OBJC_METH_VAR_NAME_.92
+OBJC_SELECTOR_REFERENCES_.93
+.str.94
+_unnamed_cfstring_.95
+.str.96
+OBJC_METH_VAR_NAME_.97
+OBJC_SELECTOR_REFERENCES_.98
+__block_descriptor_tmp.101
+__block_literal_global.102
+OBJC_CLASSLIST_REFERENCES_$_.103
+OBJC_METH_VAR_NAME_.104
+OBJC_SELECTOR_REFERENCES_.105
+OBJC_METH_VAR_NAME_.106
+OBJC_SELECTOR_REFERENCES_.107
+OBJC_CLASSLIST_REFERENCES_$_.108
+OBJC_METH_VAR_NAME_.109
+OBJC_SELECTOR_REFERENCES_.110
+OBJC_METH_VAR_NAME_.111
+OBJC_SELECTOR_REFERENCES_.112
+OBJC_METH_VAR_NAME_.113
+OBJC_SELECTOR_REFERENCES_.114
+OBJC_CLASSLIST_REFERENCES_$_.115
+OBJC_METH_VAR_NAME_.116
+OBJC_SELECTOR_REFERENCES_.117
+OBJC_METH_VAR_NAME_.120
+OBJC_SELECTOR_REFERENCES_.121
+OBJC_METH_VAR_NAME_.122
+OBJC_SELECTOR_REFERENCES_.123
+OBJC_METH_VAR_NAME_.124
+OBJC_SELECTOR_REFERENCES_.125
+OBJC_CLASS_NAME_.128
+__block_descriptor_tmp.129
+OBJC_METH_VAR_NAME_.130
+OBJC_SELECTOR_REFERENCES_.131
+OBJC_METH_VAR_NAME_.132
+OBJC_SELECTOR_REFERENCES_.133
+OBJC_METH_VAR_NAME_.134
+OBJC_SELECTOR_REFERENCES_.135
+OBJC_SELECTOR_REFERENCES_.137
+OBJC_METH_VAR_NAME_.138
+OBJC_SELECTOR_REFERENCES_.139
+OBJC_SELECTOR_REFERENCES_.141
+OBJC_CLASSLIST_REFERENCES_$_.142
+OBJC_METH_VAR_NAME_.143
+OBJC_SELECTOR_REFERENCES_.144
+OBJC_METH_VAR_NAME_.145
+OBJC_SELECTOR_REFERENCES_.146
+OBJC_METH_VAR_NAME_.147
+OBJC_SELECTOR_REFERENCES_.148
+OBJC_SELECTOR_REFERENCES_.150
+OBJC_SELECTOR_REFERENCES_.152
+OBJC_SELECTOR_REFERENCES_.154
+OBJC_SELECTOR_REFERENCES_.156
+OBJC_SELECTOR_REFERENCES_.158
+OBJC_SELECTOR_REFERENCES_.160
+OBJC_METH_VAR_NAME_.161
+OBJC_SELECTOR_REFERENCES_.162
+OBJC_CLASSLIST_REFERENCES_$_.163
+OBJC_SELECTOR_REFERENCES_.165
+OBJC_METH_VAR_NAME_.166
+OBJC_SELECTOR_REFERENCES_.167
+OBJC_SELECTOR_REFERENCES_.169
+__block_descriptor_tmp.172
+__block_descriptor_tmp.175
+OBJC_SELECTOR_REFERENCES_.177
+__block_descriptor_tmp.180
+OBJC_METH_VAR_NAME_.181
+OBJC_SELECTOR_REFERENCES_.182
+__block_descriptor_tmp.185
+OBJC_SELECTOR_REFERENCES_.187
+__block_descriptor_tmp.190
+OBJC_METH_VAR_NAME_.191
+OBJC_SELECTOR_REFERENCES_.192
+__block_descriptor_tmp.195
+OBJC_SELECTOR_REFERENCES_.197
+__block_descriptor_tmp.200
+OBJC_SELECTOR_REFERENCES_.202
+__block_descriptor_tmp.205
+OBJC_METH_VAR_NAME_.206
+OBJC_SELECTOR_REFERENCES_.207
+__block_descriptor_tmp.210
+OBJC_METH_VAR_NAME_.211
+OBJC_SELECTOR_REFERENCES_.212
+__block_descriptor_tmp.215
+OBJC_METH_VAR_NAME_.216
+OBJC_SELECTOR_REFERENCES_.217
+__block_descriptor_tmp.220
+OBJC_METH_VAR_NAME_.221
+OBJC_SELECTOR_REFERENCES_.222
+__block_descriptor_tmp.225
+OBJC_METH_VAR_NAME_.226
+OBJC_SELECTOR_REFERENCES_.227
+OBJC_IVAR_$_PINDiskCache._ttlCache
+OBJC_METH_VAR_NAME_.228
+OBJC_SELECTOR_REFERENCES_.229
+OBJC_CLASSLIST_REFERENCES_$_.230
+OBJC_METH_VAR_NAME_.231
+OBJC_SELECTOR_REFERENCES_.232
+OBJC_METH_VAR_NAME_.233
+OBJC_SELECTOR_REFERENCES_.234
+OBJC_METH_VAR_NAME_.235
+OBJC_SELECTOR_REFERENCES_.236
+OBJC_METH_VAR_NAME_.237
+OBJC_SELECTOR_REFERENCES_.238
+OBJC_CLASSLIST_REFERENCES_$_.239
+OBJC_METH_VAR_NAME_.240
+OBJC_SELECTOR_REFERENCES_.241
+OBJC_METH_VAR_NAME_.242
+OBJC_SELECTOR_REFERENCES_.243
+OBJC_METH_VAR_NAME_.244
+OBJC_SELECTOR_REFERENCES_.245
+OBJC_METH_VAR_NAME_.246
+OBJC_SELECTOR_REFERENCES_.247
+OBJC_METH_VAR_NAME_.248
+OBJC_SELECTOR_REFERENCES_.249
+OBJC_METH_VAR_NAME_.250
+OBJC_SELECTOR_REFERENCES_.251
+OBJC_METH_VAR_NAME_.252
+OBJC_SELECTOR_REFERENCES_.253
+OBJC_METH_VAR_NAME_.254
+OBJC_SELECTOR_REFERENCES_.255
+__block_descriptor_tmp.258
+__block_descriptor_tmp.261
+__block_descriptor_tmp.264
+__block_descriptor_tmp.267
+__block_descriptor_tmp.270
+__block_descriptor_tmp.273
+__block_descriptor_tmp.276
+__block_descriptor_tmp.279
+__block_descriptor_tmp.282
+__block_descriptor_tmp.285
+OBJC_CLASS_NAME_.286
+OBJC_METH_VAR_NAME_.287
+OBJC_METH_VAR_TYPE_.288
+OBJC_METH_VAR_TYPE_.289
+l_OBJC_$_CLASS_METHODS_PINDiskCache
+OBJC_METH_VAR_NAME_.290
+OBJC_METH_VAR_TYPE_.291
+OBJC_METH_VAR_TYPE_.292
+OBJC_METH_VAR_NAME_.293
+OBJC_METH_VAR_TYPE_.294
+OBJC_METH_VAR_TYPE_.295
+OBJC_CLASS_NAME_.296
+OBJC_METH_VAR_NAME_.297
+OBJC_METH_VAR_NAME_.298
+OBJC_METH_VAR_TYPE_.299
+OBJC_METH_VAR_NAME_.300
+OBJC_METH_VAR_NAME_.301
+OBJC_METH_VAR_TYPE_.302
+OBJC_METH_VAR_NAME_.303
+OBJC_METH_VAR_TYPE_.304
+OBJC_METH_VAR_NAME_.305
+OBJC_METH_VAR_TYPE_.306
+OBJC_METH_VAR_NAME_.307
+OBJC_METH_VAR_TYPE_.308
+OBJC_METH_VAR_NAME_.309
+OBJC_METH_VAR_TYPE_.310
+OBJC_METH_VAR_NAME_.311
+OBJC_METH_VAR_NAME_.312
+OBJC_METH_VAR_TYPE_.313
+OBJC_METH_VAR_TYPE_.314
+OBJC_METH_VAR_NAME_.315
+OBJC_METH_VAR_NAME_.316
+OBJC_METH_VAR_TYPE_.317
+OBJC_METH_VAR_NAME_.318
+OBJC_METH_VAR_NAME_.319
+OBJC_METH_VAR_TYPE_.320
+OBJC_METH_VAR_NAME_.321
+OBJC_METH_VAR_TYPE_.322
+OBJC_METH_VAR_NAME_.323
+OBJC_METH_VAR_NAME_.324
+OBJC_METH_VAR_NAME_.325
+OBJC_METH_VAR_TYPE_.326
+OBJC_METH_VAR_NAME_.327
+OBJC_CLASS_NAME_.328
+OBJC_PROP_NAME_ATTR_.329
+OBJC_PROP_NAME_ATTR_.330
+OBJC_PROP_NAME_ATTR_.331
+OBJC_PROP_NAME_ATTR_.332
+OBJC_PROP_NAME_ATTR_.333
+OBJC_PROP_NAME_ATTR_.334
+l_OBJC_CLASS_PROTOCOLS_$_PINDiskCache
+l_OBJC_METACLASS_RO_$_PINDiskCache
+OBJC_CLASS_NAME_.335
+OBJC_METH_VAR_TYPE_.336
+OBJC_METH_VAR_TYPE_.337
+OBJC_METH_VAR_TYPE_.338
+OBJC_METH_VAR_TYPE_.339
+OBJC_METH_VAR_NAME_.340
+OBJC_METH_VAR_TYPE_.341
+OBJC_METH_VAR_NAME_.342
+OBJC_METH_VAR_TYPE_.343
+OBJC_METH_VAR_NAME_.344
+OBJC_METH_VAR_NAME_.345
+OBJC_METH_VAR_NAME_.346
+OBJC_METH_VAR_TYPE_.347
+OBJC_METH_VAR_NAME_.348
+OBJC_METH_VAR_NAME_.349
+OBJC_METH_VAR_TYPE_.350
+OBJC_METH_VAR_NAME_.351
+OBJC_METH_VAR_NAME_.352
+OBJC_METH_VAR_NAME_.353
+OBJC_METH_VAR_TYPE_.354
+OBJC_METH_VAR_NAME_.355
+OBJC_METH_VAR_TYPE_.356
+OBJC_METH_VAR_TYPE_.357
+OBJC_METH_VAR_TYPE_.358
+OBJC_METH_VAR_TYPE_.359
+OBJC_METH_VAR_NAME_.360
+OBJC_METH_VAR_TYPE_.361
+OBJC_METH_VAR_NAME_.362
+OBJC_METH_VAR_NAME_.363
+OBJC_METH_VAR_NAME_.364
+OBJC_METH_VAR_NAME_.365
+OBJC_METH_VAR_NAME_.366
+OBJC_METH_VAR_NAME_.367
+OBJC_METH_VAR_NAME_.368
+OBJC_METH_VAR_NAME_.369
+OBJC_METH_VAR_NAME_.370
+OBJC_METH_VAR_NAME_.371
+OBJC_METH_VAR_NAME_.372
+OBJC_METH_VAR_NAME_.373
+OBJC_METH_VAR_NAME_.374
+OBJC_METH_VAR_NAME_.375
+OBJC_METH_VAR_TYPE_.376
+OBJC_METH_VAR_NAME_.377
+OBJC_METH_VAR_TYPE_.378
+OBJC_METH_VAR_NAME_.379
+OBJC_METH_VAR_NAME_.380
+OBJC_METH_VAR_TYPE_.381
+OBJC_METH_VAR_NAME_.382
+OBJC_METH_VAR_NAME_.383
+OBJC_METH_VAR_NAME_.384
+OBJC_METH_VAR_NAME_.385
+OBJC_METH_VAR_NAME_.386
+OBJC_METH_VAR_NAME_.387
+OBJC_METH_VAR_NAME_.388
+OBJC_METH_VAR_NAME_.389
+OBJC_METH_VAR_NAME_.390
+OBJC_METH_VAR_NAME_.391
+OBJC_METH_VAR_NAME_.392
+OBJC_METH_VAR_NAME_.393
+l_OBJC_$_INSTANCE_METHODS_PINDiskCache
+OBJC_METH_VAR_NAME_.394
+OBJC_METH_VAR_TYPE_.395
+OBJC_METH_VAR_NAME_.396
+OBJC_METH_VAR_TYPE_.397
+OBJC_METH_VAR_NAME_.398
+OBJC_METH_VAR_TYPE_.399
+OBJC_METH_VAR_NAME_.400
+OBJC_METH_VAR_NAME_.401
+OBJC_METH_VAR_NAME_.402
+OBJC_METH_VAR_NAME_.403
+OBJC_METH_VAR_NAME_.404
+OBJC_METH_VAR_NAME_.405
+OBJC_METH_VAR_TYPE_.406
+OBJC_METH_VAR_NAME_.407
+OBJC_METH_VAR_NAME_.408
+OBJC_METH_VAR_TYPE_.409
+OBJC_METH_VAR_NAME_.410
+OBJC_METH_VAR_TYPE_.411
+OBJC_METH_VAR_NAME_.412
+OBJC_METH_VAR_NAME_.413
+OBJC_METH_VAR_TYPE_.414
+OBJC_METH_VAR_NAME_.415
+OBJC_METH_VAR_TYPE_.416
+OBJC_METH_VAR_NAME_.417
+OBJC_METH_VAR_NAME_.418
+OBJC_METH_VAR_TYPE_.419
+l_OBJC_$_INSTANCE_VARIABLES_PINDiskCache
+OBJC_PROP_NAME_ATTR_.420
+OBJC_PROP_NAME_ATTR_.421
+OBJC_PROP_NAME_ATTR_.422
+OBJC_PROP_NAME_ATTR_.423
+OBJC_PROP_NAME_ATTR_.424
+OBJC_PROP_NAME_ATTR_.425
+OBJC_PROP_NAME_ATTR_.426
+OBJC_PROP_NAME_ATTR_.427
+OBJC_PROP_NAME_ATTR_.428
+OBJC_PROP_NAME_ATTR_.429
+OBJC_PROP_NAME_ATTR_.430
+OBJC_PROP_NAME_ATTR_.431
+OBJC_PROP_NAME_ATTR_.432
+OBJC_PROP_NAME_ATTR_.433
+OBJC_PROP_NAME_ATTR_.434
+OBJC_PROP_NAME_ATTR_.435
+OBJC_PROP_NAME_ATTR_.436
+OBJC_PROP_NAME_ATTR_.437
+OBJC_PROP_NAME_ATTR_.438
+OBJC_PROP_NAME_ATTR_.439
+OBJC_PROP_NAME_ATTR_.440
+OBJC_PROP_NAME_ATTR_.441
+OBJC_PROP_NAME_ATTR_.442
+OBJC_PROP_NAME_ATTR_.443
+OBJC_PROP_NAME_ATTR_.444
+OBJC_PROP_NAME_ATTR_.445
+OBJC_PROP_NAME_ATTR_.446
+OBJC_PROP_NAME_ATTR_.447
+OBJC_PROP_NAME_ATTR_.448
+OBJC_PROP_NAME_ATTR_.449
+OBJC_PROP_NAME_ATTR_.450
+OBJC_PROP_NAME_ATTR_.451
+l_OBJC_$_PROP_LIST_PINDiskCache
+l_OBJC_CLASS_RO_$_PINDiskCache
+isAppExtension.isExtension
+isAppExtension.onceToken
+OBJC_CLASSLIST_REFERENCES_$_.452
+OBJC_METH_VAR_NAME_.453
+OBJC_SELECTOR_REFERENCES_.454
+OBJC_METH_VAR_NAME_.455
+OBJC_SELECTOR_REFERENCES_.456
+.str.457
+_unnamed_cfstring_.458
+OBJC_SELECTOR_REFERENCES_.459
+OBJC_SELECTOR_REFERENCES_.460
+OBJC_SELECTOR_REFERENCES_.461
+__block_descriptor_tmp.462
+__block_literal_global.463
+OBJC_CLASSLIST_SUP_REFS_$_.464
+OBJC_IVAR_$_PINBackgroundTask._taskID
+OBJC_METH_VAR_NAME_.465
+OBJC_SELECTOR_REFERENCES_.466
+OBJC_CLASSLIST_REFERENCES_$_.467
+OBJC_METH_VAR_NAME_.468
+OBJC_SELECTOR_REFERENCES_.469
+OBJC_SELECTOR_REFERENCES_.470
+OBJC_METH_VAR_NAME_.471
+OBJC_SELECTOR_REFERENCES_.472
+OBJC_METH_VAR_NAME_.473
+OBJC_SELECTOR_REFERENCES_.474
+OBJC_METH_VAR_NAME_.475
+OBJC_SELECTOR_REFERENCES_.476
+__block_descriptor_tmp.479
+OBJC_METH_VAR_NAME_.480
+OBJC_SELECTOR_REFERENCES_.481
+OBJC_CLASS_NAME_.482
+l_OBJC_$_CLASS_METHODS_PINBackgroundTask
+l_OBJC_METACLASS_RO_$_PINBackgroundTask
+l_OBJC_$_INSTANCE_METHODS_PINBackgroundTask
+OBJC_METH_VAR_NAME_.483
+l_OBJC_$_INSTANCE_VARIABLES_PINBackgroundTask
+OBJC_PROP_NAME_ATTR_.484
+OBJC_PROP_NAME_ATTR_.485
+l_OBJC_$_PROP_LIST_PINBackgroundTask
+l_OBJC_CLASS_RO_$_PINBackgroundTask
+-[PINBackgroundTask setTaskID:]
+/Users/garrett/code/PINCache/PINCache/PINDiskCache.m
+-[PINBackgroundTask taskID]
+-[PINBackgroundTask end]
++[PINBackgroundTask start]
+-[PINBackgroundTask init]
++[PINBackgroundTask isAppExtension]
+-[PINDiskCache .cxx_destruct]
+-[PINDiskCache setSizes:]
+-[PINDiskCache sizes]
+-[PINDiskCache setDates:]
+-[PINDiskCache dates]
+-[PINDiskCache setAsyncQueue:]
+-[PINDiskCache asyncQueue]
+-[PINDiskCache setByteCount:]
+-[PINDiskCache byteCount]
+/Users/garrett/code/PINCache/PINCache/PINDiskCache.h
+-[PINDiskCache setCacheURL:]
+-[PINDiskCache cacheURL]
+-[PINDiskCache name]
+-[PINDiskCache unlock]
+-[PINDiskCache lock]
+-[PINDiskCache setWritingProtectionOption:]
+-[PINDiskCache writingProtectionOption]
+-[PINDiskCache setTtlCache:]
+-[PINDiskCache isTTLCache]
+-[PINDiskCache setAgeLimit:]
+-[PINDiskCache ageLimit]
+-[PINDiskCache setByteLimit:]
+-[PINDiskCache byteLimit]
+-[PINDiskCache setDidRemoveAllObjectsBlock:]
+-[PINDiskCache didRemoveAllObjectsBlock]
+-[PINDiskCache setDidRemoveObjectBlock:]
+-[PINDiskCache didRemoveObjectBlock]
+-[PINDiskCache setDidAddObjectBlock:]
+-[PINDiskCache didAddObjectBlock]
+-[PINDiskCache setWillRemoveAllObjectsBlock:]
+-[PINDiskCache willRemoveAllObjectsBlock]
+-[PINDiskCache setWillRemoveObjectBlock:]
+-[PINDiskCache willRemoveObjectBlock]
+-[PINDiskCache setWillAddObjectBlock:]
+-[PINDiskCache willAddObjectBlock]
+-[PINDiskCache enumerateObjectsWithBlock:]
+-[PINDiskCache removeAllObjects]
+-[PINDiskCache trimToSizeByDate:]
+-[PINDiskCache trimToDate:]
+-[PINDiskCache trimToSize:]
+-[PINDiskCache removeObjectForKey:fileURL:]
+-[PINDiskCache removeObjectForKey:]
+-[PINDiskCache setObject:forKey:fileURL:]
+-[PINDiskCache setObject:forKeyedSubscript:]
+-[PINDiskCache setObject:forKey:]
+-[PINDiskCache fileURLForKey:updateFileModificationDate:]
+-[PINDiskCache fileURLForKey:]
+-[PINDiskCache objectForKey:fileURL:]
+-[PINDiskCache objectForKeyedSubscript:]
+-[PINDiskCache objectForKey:]
+-[PINDiskCache containsObjectForKey:]
+-[PINDiskCache synchronouslyLockFileAccessWhileExecutingBlock:]
+-[PINDiskCache enumerateObjectsWithBlock:completionBlock:]
+-[PINDiskCache removeAllObjects:]
+-[PINDiskCache trimToSizeByDate:block:]
+-[PINDiskCache trimToDate:block:]
+-[PINDiskCache trimToSize:block:]
+-[PINDiskCache removeObjectForKey:block:]
+-[PINDiskCache setObject:forKey:block:]
+-[PINDiskCache fileURLForKey:block:]
+-[PINDiskCache objectForKey:block:]
+-[PINDiskCache containsObjectForKey:block:]
+-[PINDiskCache lockFileAccessWhileExecutingBlock:]
+-[PINDiskCache trimToAgeLimitRecursively]
+-[PINDiskCache trimDiskToDate:]
+-[PINDiskCache trimDiskToSizeByDate:]
+-[PINDiskCache trimDiskToSize:]
+-[PINDiskCache removeFileAndExecuteBlocksForKey:]
+-[PINDiskCache setFileModificationDate:forURL:]
+-[PINDiskCache initializeDiskProperties]
+-[PINDiskCache createCacheDirectory]
++[PINDiskCache emptyTrash]
++[PINDiskCache moveItemAtURLToTrash:]
++[PINDiskCache sharedTrashURL]
++[PINDiskCache sharedTrashQueue]
+-[PINDiskCache decodedString:]
+-[PINDiskCache encodedString:]
+-[PINDiskCache keyForEncodedFileURL:]
+-[PINDiskCache encodedFileURLForKey:]
++[PINDiskCache sharedCache]
+-[PINDiskCache description]
+-[PINDiskCache initWithName:rootPath:]
+-[PINDiskCache initWithName:]
+-[PINDiskCache init]
+-[PINDiskCache dealloc]
+-[PINMemoryCache dealloc]
+-[PINMemoryCache init]
++[PINMemoryCache sharedCache]
+__29+[PINMemoryCache sharedCache]_block_invoke
+-[PINMemoryCache didReceiveMemoryWarningNotification:]
+__54-[PINMemoryCache didReceiveMemoryWarningNotification:]_block_invoke
+__copy_helper_block_.32
+__destroy_helper_block_.33
+-[PINMemoryCache didReceiveEnterBackgroundNotification:]
+__56-[PINMemoryCache didReceiveEnterBackgroundNotification:]_block_invoke
+-[PINMemoryCache removeObjectAndExecuteBlocksForKey:]
+-[PINMemoryCache trimMemoryToDate:]
+-[PINMemoryCache trimToCostLimit:]
+-[PINMemoryCache trimToCostLimitByDate:]
+-[PINMemoryCache trimToAgeLimitRecursively]
+__43-[PINMemoryCache trimToAgeLimitRecursively]_block_invoke
+__copy_helper_block_.65
+__destroy_helper_block_.66
+-[PINMemoryCache containsObjectForKey:block:]
+__45-[PINMemoryCache containsObjectForKey:block:]_block_invoke
+-[PINMemoryCache objectForKey:block:]
+__37-[PINMemoryCache objectForKey:block:]_block_invoke
+__copy_helper_block_.75
+__destroy_helper_block_.76
+-[PINMemoryCache setObject:forKey:block:]
+-[PINMemoryCache setObject:forKey:withCost:block:]
+__50-[PINMemoryCache setObject:forKey:withCost:block:]_block_invoke
+__copy_helper_block_.82
+__destroy_helper_block_.83
+-[PINMemoryCache removeObjectForKey:block:]
+__43-[PINMemoryCache removeObjectForKey:block:]_block_invoke
+__copy_helper_block_.85
+__destroy_helper_block_.86
+-[PINMemoryCache trimToDate:block:]
+__35-[PINMemoryCache trimToDate:block:]_block_invoke
+-[PINMemoryCache trimToCost:block:]
+__35-[PINMemoryCache trimToCost:block:]_block_invoke
+-[PINMemoryCache trimToCostByDate:block:]
+__41-[PINMemoryCache trimToCostByDate:block:]_block_invoke
+__copy_helper_block_.100
+__destroy_helper_block_.101
+-[PINMemoryCache removeAllObjects:]
+__35-[PINMemoryCache removeAllObjects:]_block_invoke
+-[PINMemoryCache enumerateObjectsWithBlock:completionBlock:]
+__60-[PINMemoryCache enumerateObjectsWithBlock:completionBlock:]_block_invoke
+__copy_helper_block_.110
+__destroy_helper_block_.111
+-[PINMemoryCache containsObjectForKey:]
+-[PINMemoryCache objectForKey:]
+-[PINMemoryCache objectForKeyedSubscript:]
+-[PINMemoryCache setObject:forKey:]
+-[PINMemoryCache setObject:forKeyedSubscript:]
+-[PINMemoryCache setObject:forKey:withCost:]
+-[PINMemoryCache removeObjectForKey:]
+-[PINMemoryCache trimToDate:]
+-[PINMemoryCache trimToCost:]
+-[PINMemoryCache trimToCostByDate:]
+-[PINMemoryCache removeAllObjects]
+-[PINMemoryCache enumerateObjectsWithBlock:]
+-[PINMemoryCache willAddObjectBlock]
+-[PINMemoryCache setWillAddObjectBlock:]
+-[PINMemoryCache willRemoveObjectBlock]
+-[PINMemoryCache setWillRemoveObjectBlock:]
+-[PINMemoryCache willRemoveAllObjectsBlock]
+-[PINMemoryCache setWillRemoveAllObjectsBlock:]
+-[PINMemoryCache didAddObjectBlock]
+-[PINMemoryCache setDidAddObjectBlock:]
+-[PINMemoryCache didRemoveObjectBlock]
+-[PINMemoryCache setDidRemoveObjectBlock:]
+-[PINMemoryCache didRemoveAllObjectsBlock]
+-[PINMemoryCache setDidRemoveAllObjectsBlock:]
+-[PINMemoryCache didReceiveMemoryWarningBlock]
+-[PINMemoryCache setDidReceiveMemoryWarningBlock:]
+-[PINMemoryCache didEnterBackgroundBlock]
+-[PINMemoryCache setDidEnterBackgroundBlock:]
+-[PINMemoryCache ageLimit]
+-[PINMemoryCache setAgeLimit:]
+-[PINMemoryCache costLimit]
+-[PINMemoryCache setCostLimit:]
+-[PINMemoryCache totalCost]
+-[PINMemoryCache isTTLCache]
+-[PINMemoryCache setTtlCache:]
+-[PINMemoryCache lock]
+-[PINMemoryCache unlock]
+-[PINMemoryCache concurrentQueue]
+-[PINMemoryCache setConcurrentQueue:]
+-[PINMemoryCache removeAllObjectsOnMemoryWarning]
+-[PINMemoryCache setRemoveAllObjectsOnMemoryWarning:]
+-[PINMemoryCache removeAllObjectsOnEnteringBackground]
+-[PINMemoryCache setRemoveAllObjectsOnEnteringBackground:]
+-[PINMemoryCache lockSemaphore]
+-[PINMemoryCache setLockSemaphore:]
+-[PINMemoryCache dictionary]
+-[PINMemoryCache setDictionary:]
+-[PINMemoryCache dates]
+-[PINMemoryCache setDates:]
+-[PINMemoryCache costs]
+-[PINMemoryCache setCosts:]
+-[PINMemoryCache .cxx_destruct]
+OBJC_METH_VAR_NAME_.1
+OBJC_SELECTOR_REFERENCES_.2
+OBJC_METH_VAR_NAME_.3
+OBJC_SELECTOR_REFERENCES_.4
+OBJC_METH_VAR_NAME_.5
+OBJC_SELECTOR_REFERENCES_.6
+OBJC_IVAR_$_PINMemoryCache._lockSemaphore
+OBJC_CLASSLIST_REFERENCES_$_.7
+OBJC_METH_VAR_NAME_.8
+OBJC_SELECTOR_REFERENCES_.9
+.str.10
+_unnamed_cfstring_.11
+OBJC_METH_VAR_NAME_.12
+OBJC_SELECTOR_REFERENCES_.13
+OBJC_METH_VAR_NAME_.14
+OBJC_SELECTOR_REFERENCES_.15
+OBJC_IVAR_$_PINMemoryCache._concurrentQueue
+OBJC_CLASSLIST_REFERENCES_$_.16
+OBJC_IVAR_$_PINMemoryCache._dictionary
+OBJC_IVAR_$_PINMemoryCache._dates
+OBJC_IVAR_$_PINMemoryCache._costs
+OBJC_IVAR_$_PINMemoryCache._willAddObjectBlock
+OBJC_IVAR_$_PINMemoryCache._willRemoveObjectBlock
+OBJC_IVAR_$_PINMemoryCache._willRemoveAllObjectsBlock
+OBJC_IVAR_$_PINMemoryCache._didAddObjectBlock
+OBJC_IVAR_$_PINMemoryCache._didRemoveObjectBlock
+OBJC_IVAR_$_PINMemoryCache._didRemoveAllObjectsBlock
+OBJC_IVAR_$_PINMemoryCache._didReceiveMemoryWarningBlock
+OBJC_IVAR_$_PINMemoryCache._didEnterBackgroundBlock
+OBJC_IVAR_$_PINMemoryCache._ageLimit
+OBJC_IVAR_$_PINMemoryCache._costLimit
+OBJC_IVAR_$_PINMemoryCache._totalCost
+OBJC_IVAR_$_PINMemoryCache._removeAllObjectsOnMemoryWarning
+OBJC_IVAR_$_PINMemoryCache._removeAllObjectsOnEnteringBackground
+OBJC_METH_VAR_NAME_.17
+OBJC_SELECTOR_REFERENCES_.18
+OBJC_METH_VAR_NAME_.19
+OBJC_SELECTOR_REFERENCES_.20
+OBJC_METH_VAR_NAME_.21
+OBJC_SELECTOR_REFERENCES_.22
+.str.23
+OBJC_METH_VAR_NAME_.28
+OBJC_SELECTOR_REFERENCES_.29
+OBJC_METH_VAR_NAME_.30
+OBJC_SELECTOR_REFERENCES_.31
+__block_descriptor_tmp.34
+OBJC_METH_VAR_NAME_.40
+OBJC_SELECTOR_REFERENCES_.41
+OBJC_METH_VAR_NAME_.44
+OBJC_SELECTOR_REFERENCES_.45
+OBJC_METH_VAR_NAME_.46
+OBJC_SELECTOR_REFERENCES_.47
+OBJC_METH_VAR_NAME_.50
+OBJC_SELECTOR_REFERENCES_.51
+OBJC_METH_VAR_NAME_.52
+OBJC_SELECTOR_REFERENCES_.53
+OBJC_METH_VAR_NAME_.54
+OBJC_SELECTOR_REFERENCES_.55
+OBJC_METH_VAR_NAME_.56
+OBJC_SELECTOR_REFERENCES_.57
+OBJC_CLASSLIST_REFERENCES_$_.58
+OBJC_METH_VAR_NAME_.63
+OBJC_SELECTOR_REFERENCES_.64
+__block_descriptor_tmp.67
+OBJC_METH_VAR_NAME_.68
+OBJC_SELECTOR_REFERENCES_.69
+OBJC_METH_VAR_NAME_.73
+OBJC_SELECTOR_REFERENCES_.74
+__block_descriptor_tmp.77
+OBJC_METH_VAR_NAME_.78
+OBJC_SELECTOR_REFERENCES_.79
+OBJC_METH_VAR_NAME_.80
+OBJC_SELECTOR_REFERENCES_.81
+__block_descriptor_tmp.84
+__block_descriptor_tmp.87
+__block_descriptor_tmp.92
+OBJC_METH_VAR_NAME_.93
+OBJC_SELECTOR_REFERENCES_.94
+__block_descriptor_tmp.97
+OBJC_METH_VAR_NAME_.98
+OBJC_SELECTOR_REFERENCES_.99
+__block_descriptor_tmp.102
+OBJC_METH_VAR_NAME_.103
+OBJC_SELECTOR_REFERENCES_.104
+OBJC_METH_VAR_NAME_.108
+OBJC_SELECTOR_REFERENCES_.109
+__block_descriptor_tmp.112
+OBJC_IVAR_$_PINMemoryCache._ttlCache
+OBJC_METH_VAR_NAME_.115
+OBJC_SELECTOR_REFERENCES_.116
+OBJC_METH_VAR_NAME_.117
+OBJC_SELECTOR_REFERENCES_.118
+OBJC_CLASSLIST_REFERENCES_$_.119
+OBJC_METH_VAR_NAME_.126
+OBJC_SELECTOR_REFERENCES_.127
+OBJC_METH_VAR_NAME_.128
+OBJC_SELECTOR_REFERENCES_.129
+OBJC_CLASS_NAME_.130
+l_OBJC_$_CLASS_METHODS_PINMemoryCache
+OBJC_METH_VAR_TYPE_.132
+OBJC_METH_VAR_TYPE_.133
+OBJC_METH_VAR_TYPE_.134
+OBJC_METH_VAR_TYPE_.135
+OBJC_CLASS_NAME_.136
+OBJC_METH_VAR_NAME_.139
+OBJC_METH_VAR_TYPE_.140
+OBJC_METH_VAR_NAME_.141
+OBJC_METH_VAR_NAME_.142
+OBJC_METH_VAR_TYPE_.143
+OBJC_METH_VAR_TYPE_.149
+OBJC_METH_VAR_NAME_.150
+OBJC_METH_VAR_TYPE_.151
+OBJC_METH_VAR_NAME_.152
+OBJC_METH_VAR_NAME_.158
+OBJC_METH_VAR_TYPE_.159
+OBJC_METH_VAR_TYPE_.162
+OBJC_METH_VAR_NAME_.163
+OBJC_METH_VAR_TYPE_.164
+OBJC_METH_VAR_TYPE_.168
+OBJC_METH_VAR_NAME_.169
+OBJC_CLASS_NAME_.170
+OBJC_PROP_NAME_ATTR_.171
+OBJC_PROP_NAME_ATTR_.172
+OBJC_PROP_NAME_ATTR_.173
+OBJC_PROP_NAME_ATTR_.174
+OBJC_PROP_NAME_ATTR_.175
+OBJC_PROP_NAME_ATTR_.176
+l_OBJC_CLASS_PROTOCOLS_$_PINMemoryCache
+l_OBJC_METACLASS_RO_$_PINMemoryCache
+OBJC_METH_VAR_TYPE_.178
+OBJC_METH_VAR_TYPE_.179
+OBJC_METH_VAR_TYPE_.180
+OBJC_METH_VAR_TYPE_.182
+OBJC_METH_VAR_NAME_.183
+OBJC_METH_VAR_NAME_.184
+OBJC_METH_VAR_TYPE_.186
+OBJC_METH_VAR_NAME_.187
+OBJC_METH_VAR_NAME_.188
+OBJC_METH_VAR_NAME_.189
+OBJC_METH_VAR_TYPE_.190
+OBJC_METH_VAR_TYPE_.194
+OBJC_METH_VAR_TYPE_.195
+OBJC_METH_VAR_TYPE_.197
+OBJC_METH_VAR_NAME_.200
+OBJC_METH_VAR_NAME_.202
+OBJC_METH_VAR_NAME_.204
+OBJC_METH_VAR_NAME_.207
+OBJC_METH_VAR_NAME_.208
+OBJC_METH_VAR_NAME_.209
+OBJC_METH_VAR_NAME_.210
+OBJC_METH_VAR_NAME_.212
+OBJC_METH_VAR_NAME_.213
+OBJC_METH_VAR_TYPE_.214
+OBJC_METH_VAR_NAME_.215
+OBJC_METH_VAR_TYPE_.216
+OBJC_METH_VAR_NAME_.217
+OBJC_METH_VAR_NAME_.218
+OBJC_METH_VAR_NAME_.219
+OBJC_METH_VAR_NAME_.220
+OBJC_METH_VAR_TYPE_.222
+OBJC_METH_VAR_NAME_.223
+OBJC_METH_VAR_NAME_.224
+OBJC_METH_VAR_NAME_.225
+OBJC_METH_VAR_NAME_.227
+OBJC_METH_VAR_NAME_.229
+OBJC_METH_VAR_NAME_.230
+OBJC_METH_VAR_NAME_.232
+OBJC_METH_VAR_NAME_.234
+l_OBJC_$_INSTANCE_METHODS_PINMemoryCache
+OBJC_METH_VAR_NAME_.236
+OBJC_METH_VAR_TYPE_.237
+OBJC_METH_VAR_NAME_.238
+OBJC_METH_VAR_NAME_.239
+OBJC_METH_VAR_TYPE_.241
+OBJC_METH_VAR_NAME_.243
+OBJC_METH_VAR_TYPE_.244
+OBJC_METH_VAR_NAME_.245
+OBJC_METH_VAR_NAME_.247
+OBJC_METH_VAR_NAME_.249
+OBJC_METH_VAR_NAME_.251
+OBJC_METH_VAR_TYPE_.253
+OBJC_METH_VAR_TYPE_.255
+OBJC_METH_VAR_NAME_.256
+OBJC_METH_VAR_TYPE_.257
+OBJC_METH_VAR_NAME_.258
+OBJC_METH_VAR_NAME_.259
+OBJC_METH_VAR_NAME_.260
+OBJC_METH_VAR_TYPE_.261
+l_OBJC_$_INSTANCE_VARIABLES_PINMemoryCache
+OBJC_PROP_NAME_ATTR_.262
+OBJC_PROP_NAME_ATTR_.263
+OBJC_PROP_NAME_ATTR_.264
+OBJC_PROP_NAME_ATTR_.265
+OBJC_PROP_NAME_ATTR_.266
+OBJC_PROP_NAME_ATTR_.267
+OBJC_PROP_NAME_ATTR_.268
+OBJC_PROP_NAME_ATTR_.269
+OBJC_PROP_NAME_ATTR_.270
+OBJC_PROP_NAME_ATTR_.271
+OBJC_PROP_NAME_ATTR_.272
+OBJC_PROP_NAME_ATTR_.273
+OBJC_PROP_NAME_ATTR_.274
+OBJC_PROP_NAME_ATTR_.275
+OBJC_PROP_NAME_ATTR_.276
+OBJC_PROP_NAME_ATTR_.277
+OBJC_PROP_NAME_ATTR_.278
+OBJC_PROP_NAME_ATTR_.279
+OBJC_PROP_NAME_ATTR_.280
+OBJC_PROP_NAME_ATTR_.281
+OBJC_PROP_NAME_ATTR_.282
+OBJC_PROP_NAME_ATTR_.283
+OBJC_PROP_NAME_ATTR_.284
+OBJC_PROP_NAME_ATTR_.285
+OBJC_PROP_NAME_ATTR_.286
+OBJC_PROP_NAME_ATTR_.287
+OBJC_PROP_NAME_ATTR_.288
+OBJC_PROP_NAME_ATTR_.289
+OBJC_PROP_NAME_ATTR_.290
+OBJC_PROP_NAME_ATTR_.291
+OBJC_PROP_NAME_ATTR_.292
+OBJC_PROP_NAME_ATTR_.293
+OBJC_PROP_NAME_ATTR_.294
+OBJC_PROP_NAME_ATTR_.295
+OBJC_PROP_NAME_ATTR_.296
+OBJC_PROP_NAME_ATTR_.297
+OBJC_PROP_NAME_ATTR_.298
+OBJC_PROP_NAME_ATTR_.299
+l_OBJC_$_PROP_LIST_PINMemoryCache
+l_OBJC_CLASS_RO_$_PINMemoryCache
+-[PINMemoryCache .cxx_destruct]
+/Users/garrett/code/PINCache/PINCache/PINMemoryCache.m
+-[PINMemoryCache setCosts:]
+-[PINMemoryCache costs]
+-[PINMemoryCache setDates:]
+-[PINMemoryCache dates]
+-[PINMemoryCache setDictionary:]
+-[PINMemoryCache dictionary]
+-[PINMemoryCache setLockSemaphore:]
+-[PINMemoryCache lockSemaphore]
+-[PINMemoryCache setRemoveAllObjectsOnEnteringBackground:]
+/Users/garrett/code/PINCache/PINCache/PINMemoryCache.h
+-[PINMemoryCache removeAllObjectsOnEnteringBackground]
+-[PINMemoryCache setRemoveAllObjectsOnMemoryWarning:]
+-[PINMemoryCache removeAllObjectsOnMemoryWarning]
+-[PINMemoryCache setConcurrentQueue:]
+-[PINMemoryCache concurrentQueue]
+-[PINMemoryCache unlock]
+-[PINMemoryCache lock]
+-[PINMemoryCache setTtlCache:]
+-[PINMemoryCache isTTLCache]
+-[PINMemoryCache totalCost]
+-[PINMemoryCache setCostLimit:]
+-[PINMemoryCache costLimit]
+-[PINMemoryCache setAgeLimit:]
+-[PINMemoryCache ageLimit]
+-[PINMemoryCache setDidEnterBackgroundBlock:]
+-[PINMemoryCache didEnterBackgroundBlock]
+-[PINMemoryCache setDidReceiveMemoryWarningBlock:]
+-[PINMemoryCache didReceiveMemoryWarningBlock]
+-[PINMemoryCache setDidRemoveAllObjectsBlock:]
+-[PINMemoryCache didRemoveAllObjectsBlock]
+-[PINMemoryCache setDidRemoveObjectBlock:]
+-[PINMemoryCache didRemoveObjectBlock]
+-[PINMemoryCache setDidAddObjectBlock:]
+-[PINMemoryCache didAddObjectBlock]
+-[PINMemoryCache setWillRemoveAllObjectsBlock:]
+-[PINMemoryCache willRemoveAllObjectsBlock]
+-[PINMemoryCache setWillRemoveObjectBlock:]
+-[PINMemoryCache willRemoveObjectBlock]
+-[PINMemoryCache setWillAddObjectBlock:]
+-[PINMemoryCache willAddObjectBlock]
+-[PINMemoryCache enumerateObjectsWithBlock:]
+-[PINMemoryCache removeAllObjects]
+-[PINMemoryCache trimToCostByDate:]
+-[PINMemoryCache trimToCost:]
+-[PINMemoryCache trimToDate:]
+-[PINMemoryCache removeObjectForKey:]
+-[PINMemoryCache setObject:forKey:withCost:]
+-[PINMemoryCache setObject:forKeyedSubscript:]
+-[PINMemoryCache setObject:forKey:]
+-[PINMemoryCache objectForKeyedSubscript:]
+-[PINMemoryCache objectForKey:]
+-[PINMemoryCache containsObjectForKey:]
+-[PINMemoryCache enumerateObjectsWithBlock:completionBlock:]
+-[PINMemoryCache removeAllObjects:]
+-[PINMemoryCache trimToCostByDate:block:]
+-[PINMemoryCache trimToCost:block:]
+-[PINMemoryCache trimToDate:block:]
+-[PINMemoryCache removeObjectForKey:block:]
+-[PINMemoryCache setObject:forKey:withCost:block:]
+-[PINMemoryCache setObject:forKey:block:]
+-[PINMemoryCache objectForKey:block:]
+-[PINMemoryCache containsObjectForKey:block:]
+-[PINMemoryCache trimToAgeLimitRecursively]
+-[PINMemoryCache trimToCostLimitByDate:]
+-[PINMemoryCache trimToCostLimit:]
+-[PINMemoryCache trimMemoryToDate:]
+-[PINMemoryCache removeObjectAndExecuteBlocksForKey:]
+-[PINMemoryCache didReceiveEnterBackgroundNotification:]
+-[PINMemoryCache didReceiveMemoryWarningNotification:]
++[PINMemoryCache sharedCache]
+-[PINMemoryCache init]
+-[PINMemoryCache dealloc]
+/Users/garrett/Library/Developer/Xcode/DerivedData/PINCache-bdvuplmldlcckffmsgeedivcmatf/Build/Intermediates/PINCache.build/Release-iphoneos/iOS.build/DerivedSources/PINCache_vers.c
+_ZL15__ARCLite__loadv
+_ZL30add_image_hook_autoreleasepoolPK11mach_headerl
+_ZL34__arclite_objc_autoreleasePoolPushv
+_ZL33__arclite_objc_autoreleasePoolPopPv
+_ZL19patch_lazy_pointersPK11mach_headerP7patch_tm
+_ZL42__arclite_NSArray_objectAtIndexedSubscriptP7NSArrayP13objc_selectorj
+_ZL53__arclite_NSMutableArray_setObject_atIndexedSubscriptP14NSMutableArrayP13objc_selectorP11objc_objectj
+_ZL46__arclite_NSDictionary_objectForKeyedSubscriptP12NSDictionaryP13objc_selectorP11objc_object
+_ZL47__arclite_NSOrderedSet_objectAtIndexedSubscriptP12NSOrderedSetP13objc_selectorj
+_ZL58__arclite_NSMutableOrderedSet_setObject_atIndexedSubscriptP19NSMutableOrderedSetP13objc_selectorP11objc_objectj
+_ZL58__arclite_NSMutableDictionary__setObject_forKeyedSubscriptP19NSMutableDictionaryP13objc_selectorP11objc_objectS4_
+_ZL18add_image_hook_ARCPK11mach_headerl
+_ZL36__arclite_object_setInstanceVariableP11objc_objectPKcPv
+_ZL24__arclite_object_setIvarP11objc_objectP9objc_ivarS0_
+_ZL21__arclite_object_copyP11objc_objectm
+_ZL21__arclite_objc_retainP11objc_object
+_ZL26__arclite_objc_retainBlockP11objc_object
+_ZL22__arclite_objc_releaseP11objc_object
+_ZL26__arclite_objc_autoreleaseP11objc_object
+_ZL32__arclite_objc_retainAutoreleaseP11objc_object
+_ZL37__arclite_objc_autoreleaseReturnValueP11objc_object
+_ZL43__arclite_objc_retainAutoreleaseReturnValueP11objc_object
+_ZL44__arclite_objc_retainAutoreleasedReturnValueP11objc_object
+_ZL26__arclite_objc_storeStrongPP11objc_objectS0_
+_ZL22add_image_hook_swiftV1PK11mach_headerl
+_ZL42__arclite_NSUndoManagerProxy_isKindOfClassP11objc_objectP13objc_selectorP10objc_class
+_ZL13replaceMethodP10objc_classP13objc_selectorPFP11objc_objectS4_S2_zEPS6_
+_ZL30__arclite_NSManagedObject_initP11objc_objectP13objc_selector
+_ZL41__arclite_NSManagedObject_allocWithEntityP11objc_objectP13objc_selectorS0_
+_ZL36__arclite_NSManagedObject_allocBatchP11objc_objectP13objc_selectorPS0_S0_j
+_ZL37__arclite_NSKKMS_fastIndexForKnownKeyP11objc_objectP13objc_selectorS0_
+_ZL28__arclite_NSKKMS_indexForKeyP11objc_objectP13objc_selectorS0_
+_ZL29__arclite_NSKKsD_objectForKeyP11objc_objectP13objc_selectorS0_
+_ZL35__arclite_NSKKsD_removeObjectForKeyP11objc_objectP13objc_selectorS0_
+_ZL33__arclite_NSKKsD_setObject_forKeyP11objc_objectP13objc_selectorS0_S0_
+_ZL41__arclite_NSKKsD_addEntriesFromDictionaryP11objc_objectP13objc_selectorP12NSDictionary
+_ZL28__arclite_objc_readClassPairP10objc_classPK15objc_image_info
+_ZL32__arclite_objc_allocateClassPairP10objc_classPKcm
+_ZL32__arclite_object_getIndexedIvarsP11objc_object
+_ZL23__arclite_objc_getClassPKc
+_ZL27__arclite_objc_getMetaClassPKc
+_ZL31__arclite_objc_getRequiredClassPKc
+_ZL26__arclite_objc_lookUpClassPKc
+_ZL26__arclite_objc_getProtocolPKc
+_ZL23__arclite_class_getNameP10objc_class
+_ZL26__arclite_protocol_getNameP8Protocol
+_ZL37__arclite_objc_copyClassNamesForImagePKcPj
+_ZL17transcribeMethodsP10objc_classP15glue_class_ro_t
+_ZL19transcribeProtocolsP10objc_classP15glue_class_ro_t
+_ZL20transcribePropertiesP10objc_classP15glue_class_ro_t
+_ZL14initialize_impP11objc_objectP13objc_selector
+_ZL18allocateMaybeSwiftP18glue_swift_class_tm
+_ZL22copySwiftV1MangledNamePKcb
+_ZL13demangledNamePKcb
+_ZL16scanMangledFieldRPKcS0_S1_Ri
+_ZL30arclite_uninitialized_functionv
+_ZL12cxxConstructP11objc_object
+_ZL20fixStringForCoreDataP11objc_object
+OBJC_METACLASS_$___ARCLite__
+_ZL24OBJC_CLASS_$___ARCLite__
+_ZL31OBJC_METACLASS_RO_$___ARCLite__
+_non_lazy_classes
+_ZL27OBJC_CLASS_RO_$___ARCLite__
+_ZL11_class_name
+_ZL32OBJC_$_CLASS_METHODS___ARCLite__
+_ZL17_load_method_name
+_ZL17_load_method_type
+_ZL23NSAutoreleasePool_class
+_ZZL30add_image_hook_autoreleasepoolPK11mach_headerlE7patches
+_ZGVZL30add_image_hook_autoreleasepoolPK11mach_headerlE7patches
+.str.2
+.str.6
+.str.7
+.str.13
+.str.16
+.str.17
+OBJC_METH_VAR_NAME_.18
+OBJC_SELECTOR_REFERENCES_.19
+OBJC_METH_VAR_TYPE_.20
+l_OBJC_$_PROTOCOL_INSTANCE_METHODS___ARCLiteIndexedSubscripting__
+l_OBJC_$_PROTOCOL_METHOD_TYPES___ARCLiteIndexedSubscripting__
+l_OBJC_PROTOCOL_$___ARCLiteIndexedSubscripting__
+l_OBJC_LABEL_PROTOCOL_$___ARCLiteIndexedSubscripting__
+l_OBJC_PROTOCOL_REFERENCE_$___ARCLiteIndexedSubscripting__
+OBJC_METH_VAR_NAME_.23
+OBJC_SELECTOR_REFERENCES_.24
+OBJC_METH_VAR_NAME_.27
+OBJC_SELECTOR_REFERENCES_.28
+OBJC_METH_VAR_TYPE_.29
+OBJC_METH_VAR_TYPE_.31
+OBJC_CLASS_NAME_.32
+l_OBJC_$_PROTOCOL_INSTANCE_METHODS___ARCLiteKeyedSubscripting__
+l_OBJC_$_PROTOCOL_METHOD_TYPES___ARCLiteKeyedSubscripting__
+l_OBJC_PROTOCOL_$___ARCLiteKeyedSubscripting__
+l_OBJC_LABEL_PROTOCOL_$___ARCLiteKeyedSubscripting__
+l_OBJC_PROTOCOL_REFERENCE_$___ARCLiteKeyedSubscripting__
+.str.35
+_ZZL18add_image_hook_ARCPK11mach_headerlE7patches
+_ZGVZL18add_image_hook_ARCPK11mach_headerlE7patches
+.str.41
+.str.42
+.str.43
+.str.44
+.str.47
+.str.48
+.str.49
+.str.50
+.str.51
+.str.52
+.str.59
+.str.60
+_ZL30NSUndoManagerProxy_targetClass
+.str.64
+_ZL29original_NSManagedObject_init
+_ZL40original_NSManagedObject_allocWithEntity
+OBJC_METH_VAR_NAME_.69
+OBJC_SELECTOR_REFERENCES_.70
+_ZL35original_NSManagedObject_allocBatch
+_ZL25NSMutableDictionary_class
+.str.71
+_ZL22NSConstantString_class
+.str.72
+_ZL14NSString_class
+.str.73
+_ZL36original_NSKKMS_fastIndexForKnownKey
+_ZL27original_NSKKMS_indexForKey
+_ZL28original_NSKKsD_objectForKey
+_ZL34original_NSKKsD_removeObjectForKey
+_ZL32original_NSKKsD_setObject_forKey
+OBJC_METH_VAR_NAME_.79
+OBJC_SELECTOR_REFERENCES_.80
+_ZL40original_NSKKsD_addEntriesFromDictionary
+_ZZL22add_image_hook_swiftV1PK11mach_headerlE7patches
+_ZGVZL22add_image_hook_swiftV1PK11mach_headerlE7patches
+.str.81
+.str.82
+_ZL31original_objc_allocateClassPair
+.str.83
+_ZL31original_object_getIndexedIvars
+.str.84
+_ZL22original_objc_getClass
+.str.85
+_ZL26original_objc_getMetaClass
+.str.86
+_ZL30original_objc_getRequiredClass
+.str.87
+_ZL25original_objc_lookUpClass
+.str.88
+_ZL25original_objc_getProtocol
+.str.89
+_ZL22original_class_getName
+.str.90
+_ZL25original_protocol_getName
+.str.91
+_ZL36original_objc_copyClassNamesForImage
+OBJC_METH_VAR_NAME_.94
+OBJC_SELECTOR_REFERENCES_.95
+.str.98
+.str.99
+.str.100
+.str.101
+.str.102
+.str.103
+_ZL12demangleLock
+_ZL9Demangled
+.str.104
+.str.105
+OBJC_METH_VAR_NAME_.110
+OBJC_SELECTOR_REFERENCES_.111
+OBJC_METH_VAR_NAME_.114
+OBJC_SELECTOR_REFERENCES_.115
+Apple LLVM version 7.3.0 (clang-703.0.21)
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c++ -arch armv7 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=c++11 -Wno-trigraphs -fno-exceptions -fno-rtti -mpascal-strings -Os -Wno-missing-field-initializers -Wmissing-prototypes -Wno-implicit-atomic-properties -Wno-arc-repeated-use-of-weak -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wno-undeclared-selector -Wno-deprecated-implementations -Wno-c++11-extensions -D NDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.Internal.sdk -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Winvalid-offsetof -miphoneos-version-min=4.3 -g -fno-threadsafe-statics -Wno-sign-conversion -fembed-bitcode -iquote /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/arclite_iphoneos-generated-files.hmap -I /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/arclite_iphoneos-own-target-headers.hmap -I /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/arclite_iphoneos-all-target-headers.hmap -iquote /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/arclite_iphoneos-project-headers.hmap -I /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/Symbols/BuiltProducts/include -I /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/DerivedSources/armv7 -I /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/DerivedSources -F/Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/Symbols/BuiltProducts -F/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.Internal.sdk/System/Library/PrivateFrameworks -Wall -Wextra -Wno-gcc-compat -fgnu-inline-asm -MMD -MT dependencies -MF /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/Objects-normal/armv7/arclite.d --serialize-diagnostics /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/Objects-normal/armv7/arclite.dia -c /Library/Caches/com.apple.xbs/Sources/arclite_iOS/arclite-65/source/arclite.mm -o /Library/Caches/com.apple.xbs/Binaries/arclite_iOS/arclite_iOS-65~248/TempContent/Objects/arclite.build/arclite_iOS.build/Objects-normal/armv7/arclite.o -mlinker-version=264.3 -march=armv7a
+__arclite_NSKKsD_addEntriesFromDictionary
+/Library/Caches/com.apple.xbs/Sources/arclite_iOS/arclite-65/source/arclite.mm
+/Library/Caches/com.apple.xbs/Sources/arclite_iOS/arclite-65
+__arclite_NSKKsD_setObject_forKey
+__arclite_NSKKsD_removeObjectForKey
+__arclite_NSKKsD_objectForKey
+__arclite_NSKKMS_indexForKey
+fixStringForCoreData
+__arclite_NSKKMS_fastIndexForKnownKey
+__arclite_NSManagedObject_allocBatch
+__arclite_NSManagedObject_allocWithEntity
+cxxConstruct
+__arclite_NSManagedObject_init
+arclite_uninitialized_function
+replaceMethod
+__arclite_NSUndoManagerProxy_isKindOfClass
+patch_t<const char **(const char *, unsigned int *)>
+__arclite_objc_copyClassNamesForImage
+patch_t<const char *(Protocol *)>
+__arclite_protocol_getName
+patch_t<const char *(Class)>
+__isctype
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.Internal.sdk/usr/include/ctype.h
+isdigit
+scanMangledField
+copySwiftV1DemangledName
+demangledName
+__arclite_class_getName
+patch_t<Protocol *(const char *)>
+__arclite_objc_getProtocol
+__arclite_objc_lookUpClass
+__arclite_objc_getRequiredClass
+__arclite_objc_getMetaClass
+patch_t<Class (const char *)>
+copySwiftV1MangledName
+__arclite_objc_getClass
+patch_t<void *(id)>
+word_align
+__arclite_object_getIndexedIvars
+patch_t<Class (Class, const char *, unsigned long)>
+allocateMaybeSwift
+isSwift
+metaclass
+__arclite_objc_allocateClassPair
+patch_t<Class (Class, const objc_image_info *)>
+initialize_imp
+property_list_nth
+transcribeProperties
+transcribeProtocols
+method_list_nth
+transcribeMethods
+alignment
+max
+ivar_list_nth
+transcribeIvars
+fastFlags
+ro
+__arclite_objc_readClassPair
+add_image_hook_swiftV1
+install_swiftV1
+patch_t<void (id *, id)>
+__arclite_objc_storeStrong
+__arclite_objc_retainAutoreleasedReturnValue
+__arclite_objc_retainAutoreleaseReturnValue
+__arclite_objc_autoreleaseReturnValue
+__arclite_objc_retainAutorelease
+__arclite_objc_autorelease
+patch_t<void (id)>
+__arclite_objc_release
+__arclite_objc_retainBlock
+patch_t<id (id)>
+__arclite_objc_retain
+patch_t<id (id, unsigned long)>
+fixupCopiedReferences
+classOrSuperClassesUseARR
+__arclite_object_copy
+patch_t<void (id, objc_ivar *, id)>
+isScannedOffset
+alignedInstanceStart
+_class_getInstanceStart
+data
+__arclite_class_usesAutomaticRetainRelease
+_ivar_getClass
+__arclite_object_setIvar
+patch_t<objc_ivar *(id, const char *, void *)>
+__arclite_object_setInstanceVariable
+add_image_hook_ARC
+install_ARC
+objc_collectingEnabled
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.Internal.sdk/usr/include/objc/objc-auto.h
+__arclite_NSMutableDictionary__setObject_forKeyedSubscript
+addOrReplaceMethod
+install_dict_nil_value
+__arclite_NSMutableOrderedSet_setObject_atIndexedSubscript
+__arclite_NSOrderedSet_objectAtIndexedSubscript
+keyedGetter
+__arclite_NSDictionary_objectForKeyedSubscript
+__arclite_NSMutableArray_setObject_atIndexedSubscript
+indexedGetter
+__arclite_NSArray_objectAtIndexedSubscript
+addMethod
+install_subscripting
+patch_lazy_pointers
+patch_t<void (void *)>
+__arclite_objc_autoreleasePoolPop
+patch_t<void *()>
+__arclite_objc_autoreleasePoolPush
+add_image_hook_autoreleasepool
+install_autoreleasepool
+__ARCLite__load

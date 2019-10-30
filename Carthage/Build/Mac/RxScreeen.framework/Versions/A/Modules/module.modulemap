@@ -1,0 +1,11 @@
+framework module RxScreeen {
+  umbrella header "RxScreeen.h"
+
+  export *
+  module * { export * }
+}
+
+module RxScreeen.Swift {
+    header "RxScreeen-Swift.h"
+    requires objc
+}

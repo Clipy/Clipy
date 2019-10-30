@@ -1,0 +1,11 @@
+framework module KeyHolder {
+  umbrella header "KeyHolder.h"
+
+  export *
+  module * { export * }
+}
+
+module KeyHolder.Swift {
+    header "KeyHolder-Swift.h"
+    requires objc
+}

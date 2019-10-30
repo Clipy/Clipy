@@ -71,3 +71,4 @@ DerivedData/
 
 .DS_Store
 appcast.xml
+Carthage/Checkouts

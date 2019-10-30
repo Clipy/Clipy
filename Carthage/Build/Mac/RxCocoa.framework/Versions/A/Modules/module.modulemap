@@ -1,0 +1,11 @@
+framework module RxCocoa {
+  umbrella header "RxCocoa.h"
+
+  export *
+  module * { export * }
+}
+
+module RxCocoa.Swift {
+    header "RxCocoa-Swift.h"
+    requires objc
+}

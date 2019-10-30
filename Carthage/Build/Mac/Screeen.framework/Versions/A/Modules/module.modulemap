@@ -1,0 +1,11 @@
+framework module Screeen {
+  umbrella header "Screeen.h"
+
+  export *
+  module * { export * }
+}
+
+module Screeen.Swift {
+    header "Screeen-Swift.h"
+    requires objc
+}

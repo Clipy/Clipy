@@ -1,0 +1,10 @@
+{
+  "commitish" : "v1.4.0",
+  "Mac" : [
+    {
+      "name" : "RxScreeen",
+      "hash" : "79bb924365f7510f19ed743097d329353ac90d18602c64441b141916a4ba6b23",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

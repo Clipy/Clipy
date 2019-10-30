@@ -1,0 +1,11 @@
+framework module AEXML {
+  umbrella header "AEXML.h"
+
+  export *
+  module * { export * }
+}
+
+module AEXML.Swift {
+    header "AEXML-Swift.h"
+    requires objc
+}

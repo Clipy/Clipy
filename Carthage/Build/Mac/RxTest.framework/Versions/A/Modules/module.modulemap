@@ -1,0 +1,4 @@
+framework module RxTest {
+  header "RxTest-Swift.h"
+  requires objc
+}

@@ -1,0 +1,4 @@
+framework module RxRelay {
+  header "RxRelay-Swift.h"
+  requires objc
+}

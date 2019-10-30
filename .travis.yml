@@ -4,6 +4,8 @@ language: objective-c
 xcode_workspace: Clipy.xcworkspace
 xcode_scheme: Clipy
 xcode_destination: platform=macOS
+git:
+  depth: 5
 cache:
   bundler: true
 ##  cocoapods: true

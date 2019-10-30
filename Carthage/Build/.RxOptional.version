@@ -1,0 +1,10 @@
+{
+  "commitish" : "4.1.0",
+  "Mac" : [
+    {
+      "name" : "RxOptional",
+      "hash" : "676856e2fc631939428e1482316791252975e15634f9192404bcd3ff4c1a376d",
+      "swiftToolchainVersion" : "5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)"
+    }
+  ]
+}

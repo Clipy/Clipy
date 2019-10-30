@@ -1,0 +1,9 @@
+{
+  "commitish" : "v1.24",
+  "Mac" : [
+    {
+      "name" : "LetsMove",
+      "hash" : "28365cf6f4b63735f9eed4602a57ed6da5c3b289b57ae5eca37efc4ba2436309"
+    }
+  ]
+}
