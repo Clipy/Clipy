@@ -72,3 +72,6 @@ DerivedData/
 .DS_Store
 appcast.xml
 Carthage/Checkouts
+/fastlane/xcov_report/
+/.tmp/
+/.delta/
