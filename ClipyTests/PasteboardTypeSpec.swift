@@ -17,21 +17,27 @@ import Nimble
 
 class PasteboardTypeSpec: QuickSpec {
     override func spec() {
-        // swiftlint:disable quick_discouraged_call
+
         AvailableType.allCases.forEach { type in
             describe("AvailableType." + type.rawValue) {
-                type.targetPbTypes.forEach { pbType in
-                    it(pbType.rawValue) {
+                it("flags") {
+                    type.targetPbTypes.forEach { pbType in
                         expect(pbType.isString) === type.isString
                         expect(pbType.isRTF) === type.isRTF
                         expect(pbType.isRTFD) === type.isRTFD
                         expect(pbType.isPDF) === type.isPDF
                         expect(pbType.isFilenames) === type.isFilenames
                         expect(pbType.isURL) === type.isURL
+                        expect(pbType.isTIFF) === type.isTIFF
+                        // available
+                        expect(AvailableType.available(by: pbType)?.rawValue) === type.rawValue
                     }
+                }
+
+                it("primaryType") {
+                    expect(AvailableType.available(by: type.primaryPbType)?.rawValue) === type.rawValue
                 }
             }
         }
-        // swiftlint:enable quick_discouraged_call
     }
 }

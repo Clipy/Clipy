@@ -3,3 +3,4 @@ scheme "Clipy"
 skip_build true
 # verbose true
 clean true
+code_coverage true

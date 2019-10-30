@@ -36,6 +36,7 @@ platform :mac do
   lane :test do
     # slack(message: "Start Testing")
     scan
+    #lcov(project_name: "Clipy", scheme: "Clipy")
     # slack(message: "Passed All Tests")
   end
   
