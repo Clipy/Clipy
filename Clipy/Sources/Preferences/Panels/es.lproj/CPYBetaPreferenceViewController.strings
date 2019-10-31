@@ -8,8 +8,8 @@
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "HZd-yn-p4o"; */
 "HZd-yn-p4o.title" = "Comando";
 
-/* Class = "NSButtonCell"; title = "Paste and delete history"; ObjectID = "M5n-Mr-02l"; */
-"M5n-Mr-02l.title" = "Pegar y borrar del histórico";
+/* Class = "NSButtonCell"; title = "Paste and delete from history"; ObjectID = "M5n-Mr-02l"; */
+"M5n-Mr-02l.title" = "Pegar y eliminar del historial";
 
 /* Class = "NSMenuItem"; title = "Alt"; ObjectID = "M9s-9f-OKA"; */
 "M9s-9f-OKA.title" = "Alt";
@@ -44,8 +44,8 @@
 /* Class = "NSMenuItem"; title = "Shift"; ObjectID = "riQ-CH-Kcr"; */
 "riQ-CH-Kcr.title" = "Mayús";
 
-/* Class = "NSButtonCell"; title = "Delete history"; ObjectID = "sYs-Da-TSj"; */
-"sYs-Da-TSj.title" = "Limpiar histórico";
+/* Class = "NSButtonCell"; title = "Delete from history"; ObjectID = "sYs-Da-TSj"; */
+"sYs-Da-TSj.title" = "Eliminar del historial";
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "vtQ-7v-nLJ"; */
 "vtQ-7v-nLJ.title" = "Control";
@@ -71,5 +71,5 @@
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "snd-hK-KP9"; */
 "snd-hK-KP9.title" = "Command";
 
-/* Class = "NSButtonCell"; title = "Hide pinned item from history"; ObjectID = "qEV-6j-C6H"; */
-"qEV-6j-C6H.title" = "Hide pinned item from history";
+/* Class = "NSButtonCell"; title = "Hide pinned items from history"; ObjectID = "qEV-6j-C6H"; */
+"qEV-6j-C6H.title" = "Hide pinned items from history";
