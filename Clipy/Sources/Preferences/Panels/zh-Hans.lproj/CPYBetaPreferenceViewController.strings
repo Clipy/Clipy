@@ -8,8 +8,8 @@
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "HZd-yn-p4o"; */
 "HZd-yn-p4o.title" = "Command";
 
-/* Class = "NSButtonCell"; title = "Paste and delete history"; ObjectID = "M5n-Mr-02l"; */
-"M5n-Mr-02l.title" = "粘贴并删除历史";
+/* Class = "NSButtonCell"; title = "Paste and delete from history"; ObjectID = "M5n-Mr-02l"; */
+"M5n-Mr-02l.title" = "粘贴并从历史删除";
 
 /* Class = "NSMenuItem"; title = "Alt"; ObjectID = "M9s-9f-OKA"; */
 "M9s-9f-OKA.title" = "Alt";
@@ -44,8 +44,8 @@
 /* Class = "NSMenuItem"; title = "Shift"; ObjectID = "riQ-CH-Kcr"; */
 "riQ-CH-Kcr.title" = "Shift";
 
-/* Class = "NSButtonCell"; title = "Delete history"; ObjectID = "sYs-Da-TSj"; */
-"sYs-Da-TSj.title" = "删除历史";
+/* Class = "NSButtonCell"; title = "Delete from history"; ObjectID = "sYs-Da-TSj"; */
+"sYs-Da-TSj.title" = "从历史删除";
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "vtQ-7v-nLJ"; */
 "vtQ-7v-nLJ.title" = "Control";
@@ -71,5 +71,5 @@
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "snd-hK-KP9"; */
 "snd-hK-KP9.title" = "Command";
 
-/* Class = "NSButtonCell"; title = "Hide pinned item from history"; ObjectID = "qEV-6j-C6H"; */
+/* Class = "NSButtonCell"; title = "Hide pinned items from history"; ObjectID = "qEV-6j-C6H"; */
 "qEV-6j-C6H.title" = "在历史中排除固定的条目";

@@ -32,7 +32,7 @@
                     <rect key="frame" x="59" y="237" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Action" id="6RM-Ow-USQ">
-                        <font key="font" size="13" name=".HiraKakuInterface-W6"/>
+                        <font key="font" metaFont="system"/>
                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
@@ -52,7 +52,7 @@
                     <rect key="frame" x="59" y="52" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Screenshot" id="0f7-ic-bHq">
-                        <font key="font" size="13" name=".HiraKakuInterface-W6"/>
+                        <font key="font" metaFont="system"/>
                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
@@ -61,7 +61,7 @@
                     <rect key="frame" x="20" y="260" width="440" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Beta settings might be moved to a different pane in future versions." id="c4z-RD-3UN">
-                        <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                        <font key="font" metaFont="system"/>
                         <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
@@ -70,7 +70,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="DPj-O5-TCm">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="system"/>
                         <menu key="menu" id="gVh-sZ-Kiw">
                             <items>
                                 <menuItem title="Command" id="gRa-Te-dcH"/>
@@ -101,7 +101,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="I0s-bs-Y8L">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="system"/>
                         <menu key="menu" id="AWw-Hg-ORg">
                             <items>
                                 <menuItem title="Command" id="HZd-yn-p4o"/>
@@ -132,7 +132,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="RLH-Us-QOE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="system"/>
                         <menu key="menu" id="etc-Mh-b0d">
                             <items>
                                 <menuItem title="Command" id="yZK-TZ-SNb"/>
@@ -163,7 +163,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="8OP-dg-yTR">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="system"/>
                         <menu key="menu" id="jNq-qz-RAR">
                             <items>
                                 <menuItem title="Command" id="snd-hK-KP9"/>
@@ -181,7 +181,7 @@
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rm4-rP-dbZ">
                     <rect key="frame" x="59" y="93" width="237" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Hide pinned item from history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="qEV-6j-C6H">
+                    <buttonCell key="cell" type="check" title="Hide pinned items from history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="qEV-6j-C6H">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
