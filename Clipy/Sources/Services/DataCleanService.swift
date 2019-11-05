@@ -35,7 +35,7 @@ final class DataCleanService {
     // MARK: - Delete Data
     func cleanDatas() {
         let realm = try! Realm()
-        let flowHistories = overflowingClips(with: realm)
+        let flowHistories = overflowingClips()
         flowHistories
             .filter { !$0.isInvalidated && !$0.thumbnailPath.isEmpty }
             .map { $0.thumbnailPath }
@@ -44,23 +44,8 @@ final class DataCleanService {
         cleanFiles(with: realm)
     }
 
-    private func overflowingClips(with realm: Realm) -> Results<CPYClip> {
-        let clips = realm.objects(CPYClip.self)
-            .filter(CPYClip.predicateNotPinned)
-            .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: false)
-
-        let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
-
-        if clips.count <= maxHistorySize { return realm.objects(CPYClip.self).filter("FALSEPREDICATE") }
-        // Delete first clip
-        let lastClip = clips[maxHistorySize - 1]
-        if lastClip.isInvalidated { return realm.objects(CPYClip.self).filter("FALSEPREDICATE") }
-
-        // Deletion target
-        let updateTime = lastClip.updateTime
-        let targetClips = realm.objects(CPYClip.self).filter("updateTime < %d", updateTime)
-
-        return targetClips
+    private func overflowingClips() -> Results<CPYClip> {
+        return AppEnvironment.current.clipService.overflowingClips()
     }
 
     private func cleanFiles(with realm: Realm) {
