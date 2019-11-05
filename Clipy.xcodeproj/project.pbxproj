@@ -63,7 +63,6 @@
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
 		FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897B20EC22E200A3FEFC /* AssetsImages.swift */; };
 		FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */; };
-		FA10898320EC2AFB00A3FEFC /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10898220EC2AFB00A3FEFC /* Colors.swift */; };
 		FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */; };
 		FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */; };
 		FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */; };
@@ -273,8 +272,6 @@
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
 		FA10897B20EC22E200A3FEFC /* AssetsImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsImages.swift; sourceTree = "<group>"; };
 		FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
-		FA10898020EC297000A3FEFC /* colors.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = colors.txt; sourceTree = "<group>"; };
-		FA10898220EC2AFB00A3FEFC /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExcludeAppService.swift; sourceTree = "<group>"; };
 		FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FA1DB4931DDCB22C007F95C8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -456,7 +453,6 @@
 			children = (
 				FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */,
 				FA1DB48F1DDCA5D9007F95C8 /* Images.xcassets */,
-				FA10898020EC297000A3FEFC /* colors.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -464,6 +460,7 @@
 		FA0D5CE61DDCC5D000AC9052 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */,
 				FA0D5CE71DDCC61600AC9052 /* ClipService.swift */,
 				FAE911B81DE045E2008A4BEC /* HotKeyService.swift */,
 				FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */,
@@ -479,7 +476,6 @@
 			children = (
 				FA10897B20EC22E200A3FEFC /* AssetsImages.swift */,
 				FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */,
-				FA10898220EC2AFB00A3FEFC /* Colors.swift */,
 			);
 			path = Generated;
 			sourceTree = "<group>";
@@ -503,10 +499,10 @@
 				FA1DB4D81DDCB49C007F95C8 /* Utility */,
 				FA1DB4DB1DDCB49C007F95C8 /* Views */,
 				FA1DB4CB1DDCB479007F95C8 /* Models */,
-				FA1DB4BE1DDCB460007F95C8 /* Managers */,
 				FA1DB4A71DDCB452007F95C8 /* Extensions */,
 				FA1DB4A01DDCB433007F95C8 /* AppDelegate.swift */,
 				FA1DB4A11DDCB433007F95C8 /* Constants.swift */,
+				5B257DE32309115D00E340DE /* Clipy-Bridging-Header.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -548,15 +544,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		FA1DB4BE1DDCB460007F95C8 /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */,
-				5B257DE32309115D00E340DE /* Clipy-Bridging-Header.h */,
-			);
-			path = Managers;
-			sourceTree = "<group>";
-		};
 		FA1DB4CB1DDCB479007F95C8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -582,26 +569,10 @@
 		FA1DB4DB1DDCB49C007F95C8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				FA1DB4DC1DDCB49C007F95C8 /* DesignableView */,
-				FA1DB4DF1DDCB49C007F95C8 /* SplitViews */,
 				FA1DB4E11DDCB49C007F95C8 /* TableViewCell */,
 				FA1DB4E31DDCB49C007F95C8 /* TextViews */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		FA1DB4DC1DDCB49C007F95C8 /* DesignableView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DesignableView;
-			sourceTree = "<group>";
-		};
-		FA1DB4DF1DDCB49C007F95C8 /* SplitViews */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SplitViews;
 			sourceTree = "<group>";
 		};
 		FA1DB4E11DDCB49C007F95C8 /* TableViewCell */ = {
@@ -1008,7 +979,6 @@
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,
 				FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */,
 				FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */,
-				FA10898320EC2AFB00A3FEFC /* Colors.swift in Sources */,
 				FA1DB4D21DDCB479007F95C8 /* CPYAppInfo.swift in Sources */,
 				FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */,
 				FA1DB4D71DDCB479007F95C8 /* CPYSnippet.swift in Sources */,
@@ -1316,7 +1286,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Clipy/Sources/Managers/Clipy-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Clipy/Sources/Clipy-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1343,7 +1313,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Clipy/Sources/Managers/Clipy-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Clipy/Sources/Clipy-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

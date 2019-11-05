@@ -1,5 +1,5 @@
 //
-//  MenuManager.swift
+//  MenuService.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
@@ -18,7 +18,7 @@ import RxSwift
 import RxOptional
 import RxRealm
 
-final class MenuManager: NSObject {
+final class MenuService: NSObject {
 
     // MARK: - Properties
     // Menus
@@ -59,7 +59,7 @@ final class MenuManager: NSObject {
 }
 
 // MARK: - Popup Menu
-extension MenuManager {
+extension MenuService {
     func popUpMenu(_ type: MenuType) {
         let menu: NSMenu?
         switch type {
@@ -96,7 +96,7 @@ extension MenuManager {
 }
 
 // MARK: - Binding
-private extension MenuManager {
+private extension MenuService {
     func bind() {
         // Realm Notification
         // Menu icon
@@ -162,7 +162,7 @@ private extension MenuManager {
 }
 
 // MARK: - Menus
-private extension MenuManager {
+private extension MenuService {
      func createClipMenu() {
         clipMenu = NSMenu(title: Constants.Application.name)
         historyMenu = NSMenu(title: Constants.Menu.history)
@@ -246,7 +246,7 @@ private extension MenuManager {
 }
 
 // MARK: - Clips
-private extension MenuManager {
+private extension MenuService {
     func addHistoryItems(_ menu: NSMenu) {
         let placeInLine = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
         let placeInsideFolder = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
@@ -380,7 +380,7 @@ private extension MenuManager {
 }
 
 // MARK: - Snippets
-private extension MenuManager {
+private extension MenuService {
     func addSnippetItems(_ menu: NSMenu, separateMenu: Bool) {
         let folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         guard !folderResults.isEmpty else { return }
@@ -435,7 +435,7 @@ private extension MenuManager {
 }
 
 // MARK: - Status Item
-private extension MenuManager {
+private extension MenuService {
     func changeStatusItem(_ type: StatusType) {
         removeStatusItem()
         if type == .none { return }
@@ -466,7 +466,7 @@ private extension MenuManager {
 }
 
 // MARK: - Settings
-private extension MenuManager {
+private extension MenuService {
     func firstIndexOfMenuItems() -> NSInteger {
         return AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero) ? 0 : 1
     }

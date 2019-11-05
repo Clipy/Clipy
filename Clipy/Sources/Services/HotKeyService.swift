@@ -37,15 +37,15 @@ final class HotKeyService: NSObject {
 // MARK: - Actions
 extension HotKeyService {
     @objc func popupMainMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.main)
+        AppEnvironment.current.menuService.popUpMenu(.main)
     }
 
     @objc func popupHistoryMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.history)
+        AppEnvironment.current.menuService.popUpMenu(.history)
     }
 
     @objc func popUpSnippetMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.snippet)
+        AppEnvironment.current.menuService.popUpMenu(.snippet)
     }
 
     @objc func popUpClearHistoryAlert() {
@@ -213,7 +213,7 @@ extension HotKeyService {
         }
         if !folder.enable { return }
 
-        AppEnvironment.current.menuManager.popUpSnippetFolder(folder)
+        AppEnvironment.current.menuService.popUpSnippetFolder(folder)
     }
 
     fileprivate func setupSnippetHotKeys() {

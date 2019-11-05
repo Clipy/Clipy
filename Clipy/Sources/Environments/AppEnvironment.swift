@@ -42,7 +42,7 @@ struct AppEnvironment {
                      pasteService: PasteService = current.pasteService,
                      excludeAppService: ExcludeAppService = current.excludeAppService,
                      accessibilityService: AccessibilityService = current.accessibilityService,
-                     menuManager: MenuManager = current.menuManager,
+                     menuService: MenuService = current.menuService,
                      defaults: UserDefaults = current.defaults) {
         push(environment: Environment(clipService: clipService,
                                       hotKeyService: hotKeyService,
@@ -50,7 +50,7 @@ struct AppEnvironment {
                                       pasteService: pasteService,
                                       excludeAppService: excludeAppService,
                                       accessibilityService: accessibilityService,
-                                      menuManager: menuManager,
+                                      menuService: menuService,
                                       defaults: defaults))
     }
 
@@ -60,7 +60,7 @@ struct AppEnvironment {
                                pasteService: PasteService = current.pasteService,
                                excludeAppService: ExcludeAppService = current.excludeAppService,
                                accessibilityService: AccessibilityService = current.accessibilityService,
-                               menuManager: MenuManager = current.menuManager,
+                               menuService: MenuService = current.menuService,
                                defaults: UserDefaults = current.defaults) {
         replaceCurrent(environment: Environment(clipService: clipService,
                                                 hotKeyService: hotKeyService,
@@ -68,7 +68,7 @@ struct AppEnvironment {
                                                 pasteService: pasteService,
                                                 excludeAppService: excludeAppService,
                                                 accessibilityService: accessibilityService,
-                                                menuManager: menuManager,
+                                                menuService: menuService,
                                                 defaults: defaults))
     }
 
@@ -84,7 +84,7 @@ struct AppEnvironment {
                            pasteService: current.pasteService,
                            excludeAppService: excludeAppService,
                            accessibilityService: current.accessibilityService,
-                           menuManager: current.menuManager,
+                           menuService: current.menuService,
                            defaults: current.defaults)
     }
 

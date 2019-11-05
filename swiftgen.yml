@@ -8,8 +8,8 @@ xcassets:
   outputs:
     templateName: swift4
     output: Clipy/Generated/AssetsImages.swift
-colors:
-  inputs: Clipy/Resources/colors.txt
-  outputs:
-    templateName: swift4
-    output: Clipy/Generated/Colors.swift
+#colors:
+#  inputs: Clipy/Resources/colors.txt
+#  outputs:
+#    templateName: swift4
+#    output: Clipy/Generated/Colors.swift

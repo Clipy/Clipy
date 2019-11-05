@@ -1,3 +1,0 @@
-clipy       : #2A84D2
-title       : #444444
-tabTitle    : #999999
