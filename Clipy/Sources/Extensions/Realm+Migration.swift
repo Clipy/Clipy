@@ -15,7 +15,7 @@ import RealmSwift
 
 extension Realm {
     static func migration() {
-        let config = Realm.Configuration(schemaVersion: 8, migrationBlock: { migration, oldSchemaVersion in
+        let config = Realm.Configuration(schemaVersion: 9, migrationBlock: { migration, oldSchemaVersion in
             if oldSchemaVersion <= 2 {
                 // Add identifier in CPYSnippet
                 migration.enumerateObjects(ofType: CPYSnippet.className()) { _, newObject in
@@ -59,6 +59,11 @@ extension Realm {
             if oldSchemaVersion <= 7 {
                 migration.enumerateObjects(ofType: CPYClip.className(), { _, newObject in
                     newObject!["pinIndex"] = 0
+                })
+            }
+            if oldSchemaVersion <= 8 && oldSchemaVersion >= 5 {
+                migration.enumerateObjects(ofType: CPYClip.className(), { oldObject, newObject in
+                    newObject!["createTime"] = oldObject!["updateTime"]
                 })
             }
         })

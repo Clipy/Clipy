@@ -25,6 +25,7 @@ final class CPYClip: Object {
     @objc dynamic var isColorCode = false
     // Pinned index
     @objc dynamic var pinIndex = 0
+    @objc dynamic var createTime = 0
 
     // MARK: Primary Key
     override static func primaryKey() -> String? {

@@ -95,13 +95,18 @@ final class ClipService {
         }
     }
 
-    func getAllHistoryClip() -> Results<CPYClip> {
-        let ascending = !AppEnvironment.current.reorderClipsAfterPasting
+    func getAllHistoryClip() -> [CPYClip] {
+        let sortByUpdateTime = AppEnvironment.current.reorderClipsAfterPasting
         let hidePinnedHistory = AppEnvironment.current.hidePinnedHistory
+        let maxHistory = AppEnvironment.current.maxHistorySize
+        let filter = hidePinnedHistory ? CPYClip.predicateNotPinned : CPYClip.predicateAny
+        let sortKeyPath = sortByUpdateTime ? #keyPath(CPYClip.updateTime) : #keyPath(CPYClip.createTime)
         let realm = try! Realm()
-        return realm.objects(CPYClip.self)
-            .filter(hidePinnedHistory ? CPYClip.predicateNotPinned : CPYClip.predicateAny)
-            .sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
+        let clips = realm.objects(CPYClip.self).filter(filter).sorted(byKeyPath: sortKeyPath, ascending: false).prefix(maxHistory)
+        if !sortByUpdateTime {
+            return clips.reversed()
+        }
+        return Array(clips)
     }
 
     func getAllPinnedClip() -> Results<CPYClip> {
@@ -113,6 +118,26 @@ final class ClipService {
 
     func getNextPinIndex() -> Int {
         return Int(NSDate().timeIntervalSince1970 * 1000)
+    }
+
+    func clip(forPrimaryKey primaryKey: String) -> CPYClip? {
+        let realm = try! Realm()
+        return realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey)
+    }
+
+    func overflowingClips() -> Results<CPYClip> {
+        let sortByUpdateTime = AppEnvironment.current.reorderClipsAfterPasting
+        let hidePinnedHistory = AppEnvironment.current.hidePinnedHistory
+        let maxHistory = AppEnvironment.current.maxHistorySize
+        let filter = hidePinnedHistory ? CPYClip.predicateNotPinned : CPYClip.predicateAny
+        let sortKeyPath = sortByUpdateTime ? #keyPath(CPYClip.updateTime) : #keyPath(CPYClip.createTime)
+        let realm = try! Realm()
+        guard let lastClip = realm.objects(CPYClip.self).filter(filter).sorted(byKeyPath: sortKeyPath, ascending: false)
+            .prefix(maxHistory).last, !lastClip.isInvalidated else {
+                return realm.objects(CPYClip.self).filter("FALSEPREDICATE")
+        }
+        let time = sortByUpdateTime ? lastClip.updateTime : lastClip.createTime
+        return realm.objects(CPYClip.self).filter(sortKeyPath + " < %d", time)
     }
 }
 
@@ -198,6 +223,7 @@ extension ClipService {
                         clip.title = data.stringValue[0...10000]
                         clip.dataHash = "\(savedHash)"
                         clip.updateTime = unixTime
+                        clip.createTime = unixTime
                         clip.primaryType = data.primaryType?.rawValue ?? ""
                         clip.thumbnailPath = thumbnailPath ?? ""
                         clip.isColorCode = isColorCode
