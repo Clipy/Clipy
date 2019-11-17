@@ -1,4 +1,6 @@
 # Change Log
+## NEXT RELEASE
+- #37 Clear History" disabled in 1.2.9 beta 12
 
 ## 1.2.9.beta12
 - Wording issue in Beta preferences pane #34 *@tessus*

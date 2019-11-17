@@ -39,7 +39,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            return AppEnvironment.current.clipService.getAllHistoryClip().isEmpty
+            return !AppEnvironment.current.clipService.getAllHistoryClip().isEmpty
         }
         return true
     }

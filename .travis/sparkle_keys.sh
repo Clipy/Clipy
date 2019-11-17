@@ -41,9 +41,7 @@ Pods/Sparkle/bin/generate_appcast -s "$SPARKLE_ED25519_KEY" .tmp/
 
 # edit release note
 cat .tmp/appcast.xml | \
-    sed -E "s@^( .*)(<pubDate>)@\1<sparkle:releaseNotesLink>https://github.com/ian4hu/Clipy/blob/${TRAVIS_TAG}/CHANGELOG
-    .md</sparkle:releaseNotesLink>\
-\1\2@g" \
+    .travis/release-notes.rb\
     > appcast.xml
 
 #cp .tmp/appcast.xml ./
