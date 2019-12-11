@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build
-      run: swift build -v
+      run: xcode-select -v
     - name: Run tests
-      run: swift test -v
+      run: xcodebuild -workspace Clipy.xcworkspace -scheme Clipy -destination 'platform=macOS' clean test
