@@ -12,7 +12,7 @@
 "iO6-7x-OcH.title" = "Nombres de archivo";
 
 /* Class = "NSBox"; title = "Select clipboard types to store:"; ObjectID = "lSu-gq-grM"; */
-"lSu-gq-grM.title" = "Seleccionar tipos de portapapeles para guardar:";
+"lSu-gq-grM.title" = "Seleccionar tipos de portapapeles a guardar:";
 
 /* Class = "NSButtonCell"; title = "TIFF Image"; ObjectID = "lZ0-qQ-qWk"; */
 "lZ0-qQ-qWk.title" = "Imagen TIFF";
