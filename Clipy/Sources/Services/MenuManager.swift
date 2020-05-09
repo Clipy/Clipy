@@ -28,10 +28,10 @@ final class MenuService: NSObject {
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
-    fileprivate let folderIcon = Asset.iconFolder.image.iconize(true)
+    fileprivate let folderIcon = NSImage(named: NSImage.folderName)!.iconize(false)
     fileprivate let snippetIcon = Asset.iconSnippet.image.iconize(true)
     fileprivate let textIcon = Asset.iconText.image.iconize(true)
-    fileprivate let pinIcon = Asset.iconPin.image.iconize(true)
+    fileprivate let pinIcon = NSImage(named: NSImage.lockLockedTemplateName)!.iconize(true)
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let notificationCenter = NotificationCenter.default
@@ -483,8 +483,8 @@ private extension NSMenu {
 }
 
 private extension NSImage {
-    func iconize(_ template: Bool = false) -> NSImage {
-        let image = self.resizeImage(15, 15)
+    func iconize(_ template: Bool = false, _ size: CGFloat = 18) -> NSImage {
+        let image = self.resizeImage(size, size)
         image?.isTemplate = template
         return image!
     }
