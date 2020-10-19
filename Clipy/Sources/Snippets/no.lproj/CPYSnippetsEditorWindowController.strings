@@ -1,0 +1,36 @@
+
+/* Class = "NSTextFieldCell"; title = "Import"; ObjectID = "Ett-SG-3wO"; */
+"Ett-SG-3wO.title" = "Importer";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "J4q-sY-gcS"; */
+"J4q-sY-gcS.title" = "Tekst";
+
+/* Class = "NSTextFieldCell"; title = "Delete"; ObjectID = "Lxb-5c-zOc"; */
+"Lxb-5c-zOc.title" = "Slett";
+
+/* Class = "NSWindow"; title = "Clipy - Snippets Editor"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Clipy - Snutter Redigeringsprogram";
+
+/* Class = "NSTextFieldCell"; title = "Export"; ObjectID = "Uqj-Zh-vde"; */
+"Uqj-Zh-vde.title" = "Eksporter";
+
+/* Class = "NSTextFieldCell"; title = "Enable/Disable"; ObjectID = "WZs-f9-lGW"; */
+"WZs-f9-lGW.title" = "Av/På";
+
+/* Class = "NSTextFieldCell"; title = "Add Folder"; ObjectID = "hoO-RC-sTG"; */
+"hoO-RC-sTG.title" = "Ny Mappe";
+
+/* Class = "NSTextFieldCell"; title = "Shortcut"; ObjectID = "pfw-sA-4aA"; */
+"pfw-sA-4aA.title" = "Snarvei";
+
+/* Class = "NSTextFieldCell"; title = "folder title"; ObjectID = "rI9-rT-YTs"; */
+"rI9-rT-YTs.title" = "Mappenavn";
+
+/* Class = "NSTextFieldCell"; title = "Share snippets"; ObjectID = "wwo-lh-lMK"; */
+"wwo-lh-lMK.title" = "Del snutter";
+
+/* Class = "NSTextFieldCell"; title = "Add Snippet"; ObjectID = "xPC-Uv-z03"; */
+"xPC-Uv-z03.title" = "Ny Snutt";
+
+/* Class = "NSTextFieldCell"; title = "Coming Soon"; ObjectID = "yzF-k8-xUT"; */
+"yzF-k8-xUT.title" = "Kommer Snart";

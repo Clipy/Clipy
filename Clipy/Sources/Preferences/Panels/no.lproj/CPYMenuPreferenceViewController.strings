@@ -1,0 +1,69 @@
+
+/* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "2Ra-jY-ADW"; */
+"2Ra-jY-ADW.title" = "piksel";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "4dH-7h-Ssv"; */
+"4dH-7h-Ssv.title" = "element";
+
+/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "67F-2m-Txz"; */
+"67F-2m-Txz.title" = "tegn";
+
+/* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "90g-HQ-9Ua"; */
+"90g-HQ-9Ua.title" = "piksel";
+
+/* Class = "NSButtonCell"; title = "Show Image"; ObjectID = "Drj-kg-Km5"; */
+"Drj-kg-Km5.title" = "Vis Bilde";
+
+/* Class = "NSTextFieldCell"; title = "Number of items place inside a folder:"; ObjectID = "FP7-VI-YVJ"; */
+"FP7-VI-YVJ.title" = "Antall elementer i en mappe:";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "Ovp-if-Azp"; */
+"Ovp-if-Azp.title" = "elementer";
+
+/* Class = "NSTextFieldCell"; title = "Max length of tool tip string:"; ObjectID = "QFO-xC-Z3p"; */
+"QFO-xC-Z3p.title" = "Maks lengde på tekst for verktøytips:";
+
+/* Class = "NSButtonCell"; title = "Show alert panel before clear history"; ObjectID = "U2I-bu-kTR"; */
+"U2I-bu-kTR.title" = "Vis varslingspanel før sletting av historikk";
+
+/* Class = "NSTextFieldCell"; title = "Height:"; ObjectID = "WKb-6V-Q9w"; */
+"WKb-6V-Q9w.title" = "Høyde:";
+
+/* Class = "NSButtonCell"; title = "Place already copied history at the top"; ObjectID = "a32-zW-R74"; */
+"a32-zW-R74.title" = "Plasser allerede kopiert historikk øverst";
+
+/* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
+"h4n-Nv-zj1.title" = "Vis verktøystips over et menyelement";
+
+/* Class = "NSTextFieldCell"; title = "Number of characters in the menu:"; ObjectID = "hBb-sd-DcP"; */
+"hBb-sd-DcP.title" = "Antall tegn i menyen:";
+
+/* Class = "NSButtonCell"; title = "Add key equivalents to numeric keys"; ObjectID = "hE2-DL-MKl"; */
+"hE2-DL-MKl.title" = "Legg til alternative taster til numeriske taster";
+
+/* Class = "NSButtonCell"; title = "Show color code preview"; ObjectID = "hgW-RK-5oy"; */
+"hgW-RK-5oy.title" = "Vis forhåndsvisning fargekode";
+
+/* Class = "NSButtonCell"; title = "Move instead of copying (removes the older one from the list)"; ObjectID = "lsx-Y0-zFR"; */
+"lsx-Y0-zFR.title" = "Flytt i stedet for kopier (fjerner den forrige fra listen)";
+
+/* Class = "NSButtonCell"; title = "Mark menu items with numbers"; ObjectID = "nMF-6D-hXu"; */
+"nMF-6D-hXu.title" = "Marker menyelementer med nummer";
+
+/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "nzx-q5-ifH"; */
+"nzx-q5-ifH.title" = "tegn";
+
+/* Class = "NSButtonCell"; title = "Add a menu item to clear clipboard history"; ObjectID = "p80-3o-bgA"; */
+"p80-3o-bgA.title" = "Legg til menyelement for å slette historikk utklippstavle";
+
+/* Class = "NSTextFieldCell"; title = "Width:"; ObjectID = "saf-vP-Qwl"; */
+"saf-vP-Qwl.title" = "Bredde:";
+
+/* Class = "NSButtonCell"; title = "Menu items' title starts with 0"; ObjectID = "seq-HO-d27"; */
+"seq-HO-d27.title" = "Menyelementer's tittel starter med 0'";
+
+/* Class = "NSTextFieldCell"; title = "Number of items place inline:"; ObjectID = "wef-NB-6p6"; */
+"wef-NB-6p6.title" = "Antall elementer linjebundet :";
+
+/* Class = "NSButtonCell"; title = "Display icons in menu items"; ObjectID = "yrU-qO-OwD"; */
+"yrU-qO-OwD.title" = "Vis ikoner i meny elementer";

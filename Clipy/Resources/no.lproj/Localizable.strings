@@ -1,0 +1,59 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
+
+"Launch Clipy on system startup?" = "Åpne Clipy ved oppstart";
+
+"You can change this setting in the Preferences if you want" = "Du kan forandre disse valgene i Innstillinger";
+
+"Launch on system startup" = "Åpne ved oppstart";
+
+"Don't Launch" = "Ikke Åpne";
+
+"Clear History" = "Slett Historikk";
+
+"Are you sure you want to clear your clipboard history?" = "Er du sikker på at du vil slette historikken til utklippstavlen?";
+
+"Cancel" = "Avbryt";
+
+"Edit Snippets" = "Rediger Snutter...";
+
+"Preferences" = "Innstillinger...";
+
+"Quit Clipy" = "Avslutt Clipy";
+
+"History" = "Historikk";
+
+"Snippet" = "Snutt";
+
+"General" = "Generelt";
+
+"Menu" = "Meny";
+
+"Type" = "Type";
+
+"Shortcuts" = "Snarveier";
+
+"Updates" = "Oppdateringer";
+
+"Delete Item" = "Slett Element";
+
+"Are you sure want to delete this item?" = "Er du sikker du vil slette dette elementet?";
+
+"Add" = "Ny";
+
+"Please fill in the contents of the snippet" = "Vennligst legg til innholdet for snutten";
+
+"Please allow Accessibility" = "Vennligst tillat Tilgjengelighet.";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "For å gjøre dette, vennligst tillat Tilgjengelighet i Sikkerhet & Personvern valg, under Systemvalg.";
+
+"Open System Preferences" = "Åpne Systemvalg";

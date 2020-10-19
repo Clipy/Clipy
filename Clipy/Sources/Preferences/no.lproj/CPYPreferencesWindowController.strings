@@ -1,0 +1,27 @@
+
+/* Class = "NSWindow"; title = "Clipy - Setting"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Clipy - Innstillinger";
+
+/* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
+"Fxs-BH-hPx.title" = "Beta";
+
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "N5e-ba-0Q0"; */
+"N5e-ba-0Q0.title" = "Oppdateringer";
+
+/* Class = "NSTextFieldCell"; title = "No Pane is Selected."; ObjectID = "Vy6-Ui-lLf"; */
+"Vy6-Ui-lLf.title" = "Ingen Rute er Valgt.";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "avh-w8-RcC"; */
+"avh-w8-RcC.title" = "Type";
+
+/* Class = "NSTextFieldCell"; title = "Exclude"; ObjectID = "odU-xs-hZL"; */
+"odU-xs-hZL.title" = "Utelukk";
+
+/* Class = "NSTextFieldCell"; title = "General"; ObjectID = "qS1-uo-9im"; */
+"qS1-uo-9im.title" = "Generelt";
+
+/* Class = "NSTextFieldCell"; title = "Shortcuts"; ObjectID = "qx8-Vm-eow"; */
+"qx8-Vm-eow.title" = "Snarveier";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "vEM-JU-92T"; */
+"vEM-JU-92T.title" = "Meny";

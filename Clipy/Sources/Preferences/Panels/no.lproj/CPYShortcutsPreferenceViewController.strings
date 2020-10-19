@@ -1,0 +1,18 @@
+
+/* Class = "NSTextFieldCell"; title = "Main:"; ObjectID = "5sL-G8-1io"; */
+"5sL-G8-1io.title" = "Hovedmeny:";
+
+/* Class = "NSTextFieldCell"; title = "History:"; ObjectID = "Abl-cO-JwU"; */
+"Abl-cO-JwU.title" = "Historikk:";
+
+/* Class = "NSTextFieldCell"; title = "History"; ObjectID = "Txl-Qh-RzP"; */
+"Txl-Qh-RzP.title" = "Historikk";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "X5L-5V-1eH"; */
+"X5L-5V-1eH.title" = "Meny";
+
+/* Class = "NSTextFieldCell"; title = "Clear History:"; ObjectID = "f3b-Ht-X5w"; */
+"f3b-Ht-X5w.title" = "Slett Historikk:";
+
+/* Class = "NSTextFieldCell"; title = "Snippets:"; ObjectID = "fXr-ry-5ds"; */
+"fXr-ry-5ds.title" = "Snutter:";
