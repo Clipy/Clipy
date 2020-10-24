@@ -19,8 +19,8 @@ __Distribution Site__ : <https://clipy-app.com>
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
 ### Development Environment
-* macOS 10.13 High Sierra
-* Xcode 9.3
+* macOS 10.15 Catalina
+* Xcode 11.5
 * Swift 4.1
 
 ### How to Build
