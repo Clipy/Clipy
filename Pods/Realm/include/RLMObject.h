@@ -117,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see `[RLMRealm addObject:]`
  */
-- (instancetype)initWithValue:(id)value NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithValue:(id)value;
 
 
 /**
@@ -194,10 +194,13 @@ NS_ASSUME_NONNULL_BEGIN
  argument's type is the same as the receiver, and the objects have identical values for
  their managed properties, this method does nothing.
 
- If the object is being updated, all properties defined in its schema will be set by copying from
+ If the object is being updated, each property defined in its schema will be set by copying from
  `value` using key-value coding. If the `value` argument does not respond to `valueForKey:` for a
  given property name (or getter name, if defined), that value will remain untouched.
  Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+ Each property is set even if the existing value is the same as the new value being set, and
+ notifications will report them all being changed. See `createOrUpdateModifiedInDefaultRealmWithValue:`
+ for a version of this function which only sets the values which have changed.
 
  If the `value` argument is an array, all properties must be present, valid and in the same
  order as the properties defined in the model.
@@ -207,6 +210,50 @@ NS_ASSUME_NONNULL_BEGIN
  @see   `defaultPropertyValues`, `primaryKey`
  */
 + (instancetype)createOrUpdateInDefaultRealmWithValue:(id)value;
+
+/**
+ Creates or updates a Realm object within the default Realm.
+
+ This method may only be called on Realm object types with a primary key defined. If there is already
+ an object with the same primary key value in the default Realm, its values are updated and the object
+ is returned. Otherwise, this method creates and populates a new instance of the object in the default Realm.
+
+ If nested objects are included in the argument, `createOrUpdateModifiedInDefaultRealmWithValue:` will be
+ recursively called on them if they have primary keys, `createInDefaultRealmWithValue:` if they do not.
+
+ The `value` argument is used to populate the object. It can be a Realm object, a key-value coding
+ compliant object, an array or dictionary returned from the methods in `NSJSONSerialization`, or an
+ array containing one element for each managed property.
+
+ If the object is being created, an exception will be thrown if any required properties
+ are not present and those properties were not defined with default values.
+
+ If the `value` argument is a Realm object already managed by the default Realm, the
+ argument's type is the same as the receiver, and the objects have identical values for
+ their managed properties, this method does nothing.
+
+ If the object is being updated, each property defined in its schema will be set by copying from
+ `value` using key-value coding. If the `value` argument does not respond to `valueForKey:` for a
+ given property name (or getter name, if defined), that value will remain untouched.
+ Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+ Unlike `createOrUpdateInDefaultRealmWithValue:`, only properties which have changed in value are
+ set, and any change notifications produced by this call will report only which properies have
+ actually changed.
+
+ Checking which properties have changed imposes a small amount of overhead, and so this method
+ may be slower when all or nearly all of the properties being set have changed. If most or all
+ of the properties being set have not changed, this method will be much faster than unconditionally
+ setting all of them, and will also reduce how much data has to be written to the Realm, saving
+ both i/o time and disk space.
+
+ If the `value` argument is an array, all properties must be present, valid and in the same
+ order as the properties defined in the model.
+
+ @param value    The value used to populate the object.
+
+ @see   `defaultPropertyValues`, `primaryKey`
+ */
++ (instancetype)createOrUpdateModifiedInDefaultRealmWithValue:(id)value;
 
 /**
  Creates or updates an Realm object within a specified Realm.
@@ -229,10 +276,13 @@ NS_ASSUME_NONNULL_BEGIN
  argument's type is the same as the receiver, and the objects have identical values for
  their managed properties, this method does nothing.
 
- If the object is being updated, all properties defined in its schema will be set by copying from
+ If the object is being updated, each property defined in its schema will be set by copying from
  `value` using key-value coding. If the `value` argument does not respond to `valueForKey:` for a
  given property name (or getter name, if defined), that value will remain untouched.
  Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+ Each property is set even if the existing value is the same as the new value being set, and
+ notifications will report them all being changed. See `createOrUpdateModifiedInRealm:withValue:`
+ for a version of this function which only sets the values which have changed.
 
  If the `value` argument is an array, all properties must be present, valid and in the same
  order as the properties defined in the model.
@@ -243,6 +293,51 @@ NS_ASSUME_NONNULL_BEGIN
  @see   `defaultPropertyValues`, `primaryKey`
  */
 + (instancetype)createOrUpdateInRealm:(RLMRealm *)realm withValue:(id)value;
+
+/**
+ Creates or updates an Realm object within a specified Realm.
+
+ This method may only be called on Realm object types with a primary key defined. If there is already
+ an object with the same primary key value in the given Realm, its values are updated and the object
+ is returned. Otherwise this method creates and populates a new instance of this object in the given Realm.
+
+ If nested objects are included in the argument, `createOrUpdateInRealm:withValue:` will be
+ recursively called on them if they have primary keys, `createInRealm:withValue:` if they do not.
+
+ The `value` argument is used to populate the object. It can be a Realm object, a key-value coding
+ compliant object, an array or dictionary returned from the methods in `NSJSONSerialization`, or an
+ array containing one element for each managed property.
+
+ If the object is being created, an exception will be thrown if any required properties
+ are not present and those properties were not defined with default values.
+
+ If the `value` argument is a Realm object already managed by the given Realm, the
+ argument's type is the same as the receiver, and the objects have identical values for
+ their managed properties, this method does nothing.
+
+ If the object is being updated, each property defined in its schema will be set by copying from
+ `value` using key-value coding. If the `value` argument does not respond to `valueForKey:` for a
+ given property name (or getter name, if defined), that value will remain untouched.
+ Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+ Unlike `createOrUpdateInRealm:withValue:`, only properties which have changed in value are
+ set, and any change notifications produced by this call will report only which properies have
+ actually changed.
+
+ Checking which properties have changed imposes a small amount of overhead, and so this method
+ may be slower when all or nearly all of the properties being set have changed. If most or all
+ of the properties being set have not changed, this method will be much faster than unconditionally
+ setting all of them, and will also reduce how much data has to be written to the Realm, saving
+ both i/o time and disk space.
+
+ If the `value` argument is an array, all properties must be present, valid and in the same
+ order as the properties defined in the model.
+
+ @param realm    The Realm which should own the object.
+ @param value    The value used to populate the object.
+
+ @see   `defaultPropertyValues`, `primaryKey`
+ */
++ (instancetype)createOrUpdateModifiedInRealm:(RLMRealm *)realm withValue:(id)value;
 
 #pragma mark - Properties
 
@@ -263,6 +358,13 @@ NS_ASSUME_NONNULL_BEGIN
  if `invalidate` is called on that Realm.
  */
 @property (nonatomic, readonly, getter = isInvalidated) BOOL invalidated;
+
+/**
+ Indicates if this object is frozen.
+
+ @see `-[RLMObject freeze]`
+ */
+@property (nonatomic, readonly, getter = isFrozen) BOOL frozen;
 
 
 #pragma mark - Customizing your Objects
@@ -453,7 +555,7 @@ typedef void (^RLMObjectChangeBlock)(BOOL deleted,
  deletes the object or modifies any of the managed properties of the object,
  including self-assignments that set a property to its existing value.
 
- For write transactions performed on different threads or in differen
+ For write transactions performed on different threads or in different
  processes, the block will be called when the managing Realm is
  (auto)refreshed to a version including the changes, while for local write
  transactions it will be called at some point in the future after the write
@@ -483,20 +585,75 @@ typedef void (^RLMObjectChangeBlock)(BOOL deleted,
  */
 - (RLMNotificationToken *)addNotificationBlock:(RLMObjectChangeBlock)block;
 
+/**
+ Registers a block to be called each time the object changes.
+
+ The block will be asynchronously called after each write transaction which
+ deletes the object or modifies any of the managed properties of the object,
+ including self-assignments that set a property to its existing value.
+
+ For write transactions performed on different threads or in different
+ processes, the block will be called when the managing Realm is
+ (auto)refreshed to a version including the changes, while for local write
+ transactions it will be called at some point in the future after the write
+ transaction is committed.
+
+ Notifications are delivered on the given queue. If the queue is blocked and
+ notifications can't be delivered instantly, multiple notifications may be
+ coalesced into a single notification.
+
+ Unlike with `RLMArray` and `RLMResults`, there is no "initial" callback made
+ after you add a new notification block.
+
+ Only objects which are managed by a Realm can be observed in this way. You
+ must retain the returned token for as long as you want updates to be sent to
+ the block. To stop receiving updates, call `-invalidate` on the token.
+
+ It is safe to capture a strong reference to the observed object within the
+ callback block. There is no retain cycle due to that the callback is retained
+ by the returned token and not by the object itself.
+
+ @warning This method cannot be called during a write transaction, when the
+          containing Realm is read-only, or on an unmanaged object.
+ @warning The queue must be a serial queue.
+
+ @param block The block to be called whenever a change occurs.
+ @param queue The serial queue to deliver notifications to.
+ @return A token which must be held for as long as you want updates to be delivered.
+ */
+- (RLMNotificationToken *)addNotificationBlock:(RLMObjectChangeBlock)block queue:(dispatch_queue_t)queue;
+
 #pragma mark - Other Instance Methods
 
 /**
  Returns YES if another Realm object instance points to the same object as the receiver in the Realm managing
  the receiver.
 
- For object types with a primary, key, `isEqual:` is overridden to use the same logic as this
- method (along with a corresponding implementation for `hash`).
+ For frozen objects and object types with a primary key, `isEqual:` is
+ overridden to use the same logic as this method (along with a corresponding
+ implementation for `hash`). Non-frozen objects without primary keys use
+ pointer identity for `isEqual:` and `hash`.
 
  @param object  The object to compare the receiver to.
 
  @return    Whether the object represents the same object as the receiver.
  */
 - (BOOL)isEqualToObject:(RLMObject *)object;
+
+/**
+ Returns a frozen (immutable) snapshot of this object.
+
+ The frozen copy is an immutable object which contains the same data as this
+ object currently contains, but will not update when writes are made to the
+ containing Realm. Unlike live objects, frozen objects can be accessed from any
+ thread.
+
+ - warning: Holding onto a frozen object for an extended period while performing write
+ transaction on the Realm may result in the Realm file growing to large sizes. See
+ `Realm.Configuration.maximumNumberOfActiveVersions` for more information.
+ - warning: This method can only be called on a managed object.
+ */
+- (instancetype)freeze NS_RETURNS_RETAINED;
 
 #pragma mark - Dynamic Accessors
 

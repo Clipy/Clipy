@@ -25,8 +25,6 @@
 #include <realm/metrics/metric_timer.hpp>
 #include <realm/util/features.h>
 
-#if REALM_METRICS
-
 namespace realm {
 namespace metrics {
 
@@ -34,23 +32,21 @@ class Metrics;
 
 class TransactionInfo {
 public:
-    enum TransactionType {
-        read_transaction,
-        write_transaction
-    };
+    enum TransactionType { read_transaction, write_transaction };
     TransactionInfo(TransactionType type);
     TransactionInfo(const TransactionInfo&) = default;
     ~TransactionInfo() noexcept;
 
     TransactionType get_transaction_type() const;
     // the transaction time is a total amount which includes fsync_time + write_time + user_time
-    double get_transaction_time() const;
-    double get_fsync_time() const;
-    double get_write_time() const;
+    nanosecond_storage_t get_transaction_time_nanoseconds() const;
+    nanosecond_storage_t get_fsync_time_nanoseconds() const;
+    nanosecond_storage_t get_write_time_nanoseconds() const;
     size_t get_disk_size() const;
     size_t get_free_space() const;
     size_t get_total_objects() const;
     size_t get_num_available_versions() const;
+    size_t get_num_decrypted_pages() const;
 
 private:
     MetricTimerResult m_transaction_time;
@@ -63,15 +59,15 @@ private:
     size_t m_total_objects;
     TransactionType m_type;
     size_t m_num_versions;
+    size_t m_num_decrypted_pages;
 
     friend class Metrics;
-    void update_stats(size_t disk_size, size_t free_space, size_t total_objects, size_t available_versions);
+    void update_stats(size_t disk_size, size_t free_space, size_t total_objects, size_t available_versions,
+                      size_t num_decrypted_pages);
     void finish_timer();
 };
 
 } // namespace metrics
 } // namespace realm
-
-#endif // REALM_METRICS
 
 #endif // REALM_TRANSACTION_INFO_HPP

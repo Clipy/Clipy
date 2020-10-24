@@ -68,8 +68,8 @@
 		FA6167921D3ABEB10049FA14 /* FolderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167911D3ABEB10049FA14 /* FolderSpec.swift */; };
 		FA6167941D3ACCB90049FA14 /* DraggedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */; };
 		FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */; };
-		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
-		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -620,10 +620,12 @@
 						CreatedOnToolsVersion = 6.3.2;
 						DevelopmentTeam = BBCHAJ584H;
 						LastSwiftMigration = 0910;
+						ProvisioningStyle = Manual;
 					};
 					FAC43DD71B35D8B100C06102 = {
 						CreatedOnToolsVersion = 6.3.2;
 						LastSwiftMigration = 0910;
+						ProvisioningStyle = Manual;
 						TestTargetID = FAC43DC51B35D8B100C06102;
 					};
 				};
@@ -633,6 +635,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				ja,
@@ -657,7 +660,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA1DB5131DDCB4C0007F95C8 /* CPYPreferencesWindowController.xib in Resources */,
-				FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB51E1DDCB4C0007F95C8 /* CPYTypePreferenceViewController.xib in Resources */,
 				FA1DB4901DDCA5D9007F95C8 /* Images.xcassets in Resources */,
 				FA1DB51D1DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.xib in Resources */,
@@ -666,7 +669,7 @@
 				FA1DB51B1DDCB4C0007F95C8 /* CPYGeneralPreferenceViewController.xib in Resources */,
 				FA1DB51A1DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
 				FA1DB5191DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.xib in Resources */,
-				FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */,
 				FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */,
 				FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */,
@@ -690,7 +693,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AEXML/AEXML.framework",
 				"${BUILT_PRODUCTS_DIR}/KeyHolder/KeyHolder.framework",
 				"${BUILT_PRODUCTS_DIR}/LetsMove/LetsMove.framework",
@@ -706,7 +709,6 @@
 				"${BUILT_PRODUCTS_DIR}/Sauce/Sauce.framework",
 				"${BUILT_PRODUCTS_DIR}/Screeen/Screeen.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
-				"${PODS_ROOT}/Sparkle/Sparkle.framework.dSYM",
 				"${BUILT_PRODUCTS_DIR}/SwiftHEXColors/SwiftHEXColors.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -726,12 +728,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sauce.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Screeen.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
-				"${DWARF_DSYM_FOLDER_PATH}/Sparkle.framework.dSYM",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftHEXColors.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		321A1AC02A519AFA3A4D43D2 /* [CP] Embed Pods Frameworks */ = {
@@ -740,7 +741,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
 				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
 			);
@@ -751,7 +752,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7BFBD366B210014B03083E71 /* [CP] Check Pods Manifest.lock */ = {
@@ -1162,7 +1163,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1188,7 +1190,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (

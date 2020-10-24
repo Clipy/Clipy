@@ -47,10 +47,13 @@ namespace parser {
 namespace query_builder {
 class Arguments;
 
-void apply_predicate(Query& query, const parser::Predicate& predicate, Arguments& arguments, parser::KeyPathMapping = parser::KeyPathMapping());
+void apply_predicate(Query& query, const parser::Predicate& predicate, Arguments& arguments,
+                     parser::KeyPathMapping mapping = parser::KeyPathMapping());
 
-void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state, Arguments& arguments);
-void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state);
+void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state,
+                    Arguments& arguments, parser::KeyPathMapping mapping = parser::KeyPathMapping());
+void apply_ordering(DescriptorOrdering& ordering, ConstTableRef target, const parser::DescriptorOrderingState& state,
+                    parser::KeyPathMapping mapping = parser::KeyPathMapping());
 
 
 struct AnyContext
@@ -79,7 +82,7 @@ public:
     virtual StringData string_for_argument(size_t argument_index) = 0;
     virtual BinaryData binary_for_argument(size_t argument_index) = 0;
     virtual Timestamp timestamp_for_argument(size_t argument_index) = 0;
-    virtual size_t object_index_for_argument(size_t argument_index) = 0;
+    virtual ObjKey object_index_for_argument(size_t argument_index) = 0;
     virtual bool is_argument_null(size_t argument_index) = 0;
     // dynamic conversion space with lifetime tied to this
     // it is used for storing literal binary/string data
@@ -102,7 +105,10 @@ public:
     StringData string_for_argument(size_t i) override { return get<StringData>(i); }
     BinaryData binary_for_argument(size_t i) override { return get<BinaryData>(i); }
     Timestamp timestamp_for_argument(size_t i) override { return get<Timestamp>(i); }
-    size_t object_index_for_argument(size_t i) override { return get<RowExpr>(i).get_index(); }
+    ObjKey object_index_for_argument(size_t i) override
+    {
+        return get<ObjKey>(i);
+    }
     bool is_argument_null(size_t i) override { return m_ctx.is_null(at(i)); }
 
 private:
@@ -115,8 +121,10 @@ private:
         if (index >= m_count) {
             std::string error_message;
             if (m_count) {
-                error_message = util::format("Request for argument at index %1 but only %2 argument%3 provided", index, m_count, m_count == 1 ? " is" : "s are");
-            } else {
+                error_message = util::format("Request for argument at index %1 but only %2 argument%3 provided",
+                                             index, m_count, m_count == 1 ? " is" : "s are");
+            }
+            else {
                 error_message = util::format("Request for argument at index %1 but no arguments are provided", index);
             }
             throw std::out_of_range(error_message);
@@ -133,20 +141,50 @@ private:
 
 class NoArgsError : public std::runtime_error {
 public:
-    NoArgsError() : std::runtime_error("Attempt to retreive an argument when no arguments were given") {}
+    NoArgsError()
+        : std::runtime_error("Attempt to retreive an argument when no arguments were given")
+    {
+    }
 };
 
 class NoArguments : public Arguments {
 public:
-    bool bool_for_argument(size_t) { throw NoArgsError(); }
-    long long long_for_argument(size_t) { throw NoArgsError(); }
-    float float_for_argument(size_t) { throw NoArgsError(); }
-    double double_for_argument(size_t) { throw NoArgsError(); }
-    StringData string_for_argument(size_t) { throw NoArgsError(); }
-    BinaryData binary_for_argument(size_t) { throw NoArgsError(); }
-    Timestamp timestamp_for_argument(size_t) { throw NoArgsError(); }
-    size_t object_index_for_argument(size_t) { throw NoArgsError(); }
-    bool is_argument_null(size_t) { throw NoArgsError(); }
+    bool bool_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    long long long_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    float float_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    double double_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    StringData string_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    BinaryData binary_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    Timestamp timestamp_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    ObjKey object_index_for_argument(size_t)
+    {
+        throw NoArgsError();
+    }
+    bool is_argument_null(size_t)
+    {
+        throw NoArgsError();
+    }
 };
 
 } // namespace query_builder

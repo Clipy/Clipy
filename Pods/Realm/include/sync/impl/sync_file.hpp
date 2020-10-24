@@ -97,13 +97,13 @@ public:
         return m_base_path;
     }
 
-    std::string recovery_directory_path() const
+    std::string recovery_directory_path(util::Optional<std::string> const& directory=none) const
     {
-        return get_special_directory(c_recovery_directory);
+        return get_special_directory(directory.value_or(c_recovery_directory));
     }
 
 private:
-    std::string m_base_path;
+    const std::string m_base_path;
 
     static constexpr const char c_sync_directory[] = "realm-object-server";
     static constexpr const char c_utility_directory[] = "io.realm.object-server-utility";

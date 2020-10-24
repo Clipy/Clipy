@@ -54,44 +54,42 @@ static const int RLMEnumerationBufferSize = 16;
 
 - (instancetype)initWithList:(realm::List&)list
                   collection:(id)collection
-                       realm:(RLMRealm *)realm
                    classInfo:(RLMClassInfo&)info
 {
     self = [super init];
     if (self) {
-        if (realm.inWriteTransaction) {
+        _info = &info;
+        _realm = _info->realm;
+        if (_realm.inWriteTransaction) {
             _snapshot = list.snapshot();
         }
         else {
             _snapshot = list.as_results();
             _collection = collection;
-            [realm registerEnumerator:self];
+            [_realm registerEnumerator:self];
         }
         _results = &_snapshot;
-        _realm = realm;
-        _info = &info;
     }
     return self;
 }
 
 - (instancetype)initWithResults:(realm::Results&)results
                      collection:(id)collection
-                          realm:(RLMRealm *)realm
                       classInfo:(RLMClassInfo&)info
 {
     self = [super init];
     if (self) {
-        if (realm.inWriteTransaction) {
+        _info = &info;
+        _realm = _info->realm;
+        if (_realm.inWriteTransaction) {
             _snapshot = results.snapshot();
             _results = &_snapshot;
         }
         else {
             _results = &results;
             _collection = collection;
-            [realm registerEnumerator:self];
+            [_realm registerEnumerator:self];
         }
-        _realm = realm;
-        _info = &info;
     }
     return self;
 }
@@ -124,7 +122,7 @@ static const int RLMEnumerationBufferSize = 16;
     NSUInteger batchCount = 0, count = state->extra[1];
 
     @autoreleasepool {
-        RLMAccessorContext ctx(_realm, *_info);
+        RLMAccessorContext ctx(*_info);
         for (NSUInteger index = state->state; index < count && batchCount < len; ++index) {
             _strongBuffer[batchCount] = _results->get(ctx, index);
             batchCount++;
@@ -168,8 +166,7 @@ NSUInteger RLMFastEnumerate(NSFastEnumerationState *state, NSUInteger len, id<RL
 }
 
 template<typename Collection>
-NSArray *RLMCollectionValueForKey(Collection& collection, NSString *key,
-                                  RLMRealm *realm, RLMClassInfo& info) {
+NSArray *RLMCollectionValueForKey(Collection& collection, NSString *key, RLMClassInfo& info) {
     size_t count = collection.size();
     if (count == 0) {
         return @[];
@@ -177,7 +174,7 @@ NSArray *RLMCollectionValueForKey(Collection& collection, NSString *key,
 
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
     if ([key isEqualToString:@"self"]) {
-        RLMAccessorContext context(realm, info);
+        RLMAccessorContext context(info);
         for (size_t i = 0; i < count; ++i) {
             [array addObject:collection.get(context, i) ?: NSNull.null];
         }
@@ -185,14 +182,14 @@ NSArray *RLMCollectionValueForKey(Collection& collection, NSString *key,
     }
 
     if (collection.get_type() != realm::PropertyType::Object) {
-        RLMAccessorContext context(realm, info);
+        RLMAccessorContext context(info);
         for (size_t i = 0; i < count; ++i) {
             [array addObject:[collection.get(context, i) valueForKey:key] ?: NSNull.null];
         }
         return array;
     }
 
-    RLMObject *accessor = RLMCreateManagedAccessor(info.rlmObjectSchema.accessorClass, realm, &info);
+    RLMObject *accessor = RLMCreateManagedAccessor(info.rlmObjectSchema.accessorClass, &info);
 
     // List properties need to be handled specially since we need to create a
     // new List each time
@@ -203,13 +200,13 @@ NSArray *RLMCollectionValueForKey(Collection& collection, NSString *key,
             // so that we can make instances of the List without creating a new
             // object accessor each time
             Class cls = [object_getIvar(accessor, prop.swiftIvar) class];
-            RLMAccessorContext context(realm, info);
+            RLMAccessorContext context(info);
             for (size_t i = 0; i < count; ++i) {
                 RLMListBase *list = [[cls alloc] init];
-                list._rlmArray = [[RLMManagedArray alloc] initWithList:realm::List(realm->_realm, *info.table(),
-                                                                                   info.tableColumn(prop),
-                                                                                   collection.get(i).get_index())
-                                                                 realm:realm parentInfo:&info
+                list._rlmArray = [[RLMManagedArray alloc] initWithList:realm::List(info.realm->_realm,
+                                                                                   collection.get(i),
+                                                                                   info.tableColumn(prop))
+                                                            parentInfo:&info
                                                               property:prop];
                 [array addObject:list];
             }
@@ -225,8 +222,8 @@ NSArray *RLMCollectionValueForKey(Collection& collection, NSString *key,
     return array;
 }
 
-template NSArray *RLMCollectionValueForKey(realm::Results&, NSString *, RLMRealm *, RLMClassInfo&);
-template NSArray *RLMCollectionValueForKey(realm::List&, NSString *, RLMRealm *, RLMClassInfo&);
+template NSArray *RLMCollectionValueForKey(realm::Results&, NSString *, RLMClassInfo&);
+template NSArray *RLMCollectionValueForKey(realm::List&, NSString *, RLMClassInfo&);
 
 void RLMCollectionSetValueForKey(id<RLMFastEnumerable> collection, NSString *key, id value) {
     realm::TableView tv = [collection tableView];
@@ -234,9 +231,8 @@ void RLMCollectionSetValueForKey(id<RLMFastEnumerable> collection, NSString *key
         return;
     }
 
-    RLMRealm *realm = collection.realm;
     RLMClassInfo *info = collection.objectInfo;
-    RLMObject *accessor = RLMCreateManagedAccessor(info->rlmObjectSchema.accessorClass, realm, info);
+    RLMObject *accessor = RLMCreateManagedAccessor(info->rlmObjectSchema.accessorClass, info);
     for (size_t i = 0; i < tv.size(); i++) {
         accessor->_row = tv[i];
         RLMInitializeSwiftAccessorGenerics(accessor);
@@ -298,33 +294,6 @@ std::vector<std::pair<std::string, bool>> RLMSortDescriptorsToKeypathArray(NSArr
     return keypaths;
 }
 
-@implementation RLMCancellationToken {
-    realm::NotificationToken _token;
-    __unsafe_unretained RLMRealm *_realm;
-}
-- (instancetype)initWithToken:(realm::NotificationToken)token realm:(RLMRealm *)realm {
-    self = [super init];
-    if (self) {
-        _token = std::move(token);
-        _realm = realm;
-    }
-    return self;
-}
-
-- (RLMRealm *)realm {
-    return _realm;
-}
-
-- (void)suppressNextNotification {
-    _token.suppress_next();
-}
-
-- (void)invalidate {
-    _token = {};
-}
-
-@end
-
 @implementation RLMCollectionChange {
     realm::CollectionChangeSet _indices;
 }
@@ -373,23 +342,26 @@ static NSArray *toIndexPathArray(realm::IndexSet const& set, NSUInteger section)
 
 - (NSArray<NSIndexPath *> *)insertionsInSection:(NSUInteger)section {
     return toIndexPathArray(_indices.insertions, section);
-
 }
 
 - (NSArray<NSIndexPath *> *)modificationsInSection:(NSUInteger)section {
     return toIndexPathArray(_indices.modifications, section);
-
 }
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<RLMCollectionChange: %p> insertions: %@, deletions: %@, modifications: %@",
+            (__bridge void *)self, self.insertions, self.deletions, self.modifications];
+}
+
 @end
 
-template<typename Collection>
-RLMNotificationToken *RLMAddNotificationBlock(id objcCollection,
-                                              Collection& collection,
-                                              void (^block)(id, RLMCollectionChange *, NSError *),
-                                              bool suppressInitialChange) {
-    auto skip = suppressInitialChange ? std::make_shared<bool>(true) : nullptr;
-    auto cb = [=, &collection](realm::CollectionChangeSet const& changes,
-                               std::exception_ptr err) {
+namespace {
+struct CollectionCallbackWrapper {
+    void (^block)(id, RLMCollectionChange *, NSError *);
+    id collection;
+    bool ignoreChangesInInitialNotification;
+
+    void operator()(realm::CollectionChangeSet const& changes, std::exception_ptr err) {
         if (err) {
             try {
                 rethrow_exception(err);
@@ -402,22 +374,87 @@ RLMNotificationToken *RLMAddNotificationBlock(id objcCollection,
             }
         }
 
-        if (skip && *skip) {
-            *skip = false;
-            block(objcCollection, nil, nil);
+        if (ignoreChangesInInitialNotification) {
+            ignoreChangesInInitialNotification = false;
+            block(collection, nil, nil);
         }
         else if (changes.empty()) {
-            block(objcCollection, nil, nil);
+            block(collection, nil, nil);
         }
         else {
-            block(objcCollection, [[RLMCollectionChange alloc] initWithChanges:changes], nil);
+            block(collection, [[RLMCollectionChange alloc] initWithChanges:changes], nil);
         }
-    };
+    }
+};
+} // anonymous namespace
 
-    return [[RLMCancellationToken alloc] initWithToken:collection.add_notification_callback(cb)
-                                                 realm:(RLMRealm *)[objcCollection realm]];
+@interface RLMCancellationToken : RLMNotificationToken
+@end
+
+@implementation RLMCancellationToken {
+@public
+    __unsafe_unretained RLMRealm *_realm;
+    realm::NotificationToken _token;
+    std::mutex _mutex;
 }
 
+- (RLMRealm *)realm {
+    std::lock_guard<std::mutex> lock(_mutex);
+    return _realm;
+}
+
+- (void)suppressNextNotification {
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (_realm) {
+        _token.suppress_next();
+    }
+}
+
+- (void)invalidate {
+    std::lock_guard<std::mutex> lock(_mutex);
+    _token = {};
+    _realm = nil;
+}
+
+template<typename RLMCollection>
+RLMNotificationToken *RLMAddNotificationBlock(RLMCollection *collection,
+                                              void (^block)(id, RLMCollectionChange *, NSError *),
+                                              dispatch_queue_t queue) {
+    RLMRealm *realm = collection.realm;
+    if (!realm) {
+        @throw RLMException(@"Linking objects notifications are only supported on managed objects.");
+    }
+    bool skipFirst = std::is_same_v<RLMCollection, RLMResults>;
+    auto token = [[RLMCancellationToken alloc] init];
+
+    if (!queue) {
+        [realm verifyNotificationsAreSupported:true];
+        token->_realm = realm;
+        token->_token = RLMGetBackingCollection(collection).add_notification_callback(CollectionCallbackWrapper{block, collection, skipFirst});
+        return token;
+    }
+
+    RLMThreadSafeReference *tsr = [RLMThreadSafeReference referenceWithThreadConfined:collection];
+    token->_realm = realm;
+    RLMRealmConfiguration *config = realm.configuration;
+    dispatch_async(queue, ^{
+        std::lock_guard<std::mutex> lock(token->_mutex);
+        if (!token->_realm) {
+            return;
+        }
+        NSError *error;
+        RLMRealm *realm = token->_realm = [RLMRealm realmWithConfiguration:config queue:queue error:&error];
+        if (!realm) {
+            block(nil, nil, error);
+            return;
+        }
+        RLMCollection *collection = [realm resolveThreadSafeReference:tsr];
+        token->_token = RLMGetBackingCollection(collection).add_notification_callback(CollectionCallbackWrapper{block, collection, skipFirst});
+    });
+    return token;
+}
+@end
+
 // Explicitly instantiate the templated function for the two types we'll use it on
-template RLMNotificationToken *RLMAddNotificationBlock<realm::List>(id, realm::List&, void (^)(id, RLMCollectionChange *, NSError *), bool);
-template RLMNotificationToken *RLMAddNotificationBlock<realm::Results>(id, realm::Results&, void (^)(id, RLMCollectionChange *, NSError *), bool);
+template RLMNotificationToken *RLMAddNotificationBlock<>(RLMManagedArray *, void (^)(id, RLMCollectionChange *, NSError *), dispatch_queue_t);
+template RLMNotificationToken *RLMAddNotificationBlock<>(RLMResults *, void (^)(id, RLMCollectionChange *, NSError *), dispatch_queue_t);

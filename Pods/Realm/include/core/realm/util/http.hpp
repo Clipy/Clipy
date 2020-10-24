@@ -21,6 +21,8 @@
 #ifndef REALM_UTIL_HTTP_HPP
 #define REALM_UTIL_HTTP_HPP
 
+#include <cstdint>
+#include <type_traits>
 #include <map>
 #include <system_error>
 #include <iosfwd>
@@ -29,6 +31,7 @@
 #include <realm/util/optional.hpp>
 #include <realm/util/network.hpp>
 #include <realm/util/logger.hpp>
+#include <realm/util/string_view.hpp>
 #include <realm/string_data.hpp>
 
 namespace realm {
@@ -46,8 +49,7 @@ std::error_code make_error_code(HTTPParserError);
 } // namespace realm
 
 namespace std {
-    template<>
-    struct is_error_code_enum<realm::util::HTTPParserError>: std::true_type {};
+template<> struct is_error_code_enum<realm::util::HTTPParserError> : std::true_type {};
 }
 
 namespace realm {
@@ -139,8 +141,15 @@ struct HTTPAuthorization {
 
 HTTPAuthorization parse_authorization(const std::string&);
 
-struct CaseInsensitiveCompare {
-    bool operator()(const std::string& a, const std::string& b) const
+class HeterogeneousCaseInsensitiveCompare {
+public:
+    using is_transparent = std::true_type;
+    template<class A, class B> bool operator()(const A& a, const B& b) const noexcept
+    {
+        return comp(StringView(a), StringView(b));
+    }
+private:
+    bool comp(StringView a, StringView b) const noexcept
     {
         auto cmp = [](char lhs, char rhs) {
             return std::tolower(lhs, std::locale::classic()) <
@@ -151,7 +160,7 @@ struct CaseInsensitiveCompare {
 };
 
 /// Case-insensitive map suitable for storing HTTP headers.
-using HTTPHeaders = std::map<std::string, std::string, CaseInsensitiveCompare>;
+using HTTPHeaders = std::map<std::string, std::string, HeterogeneousCaseInsensitiveCompare>;
 
 struct HTTPRequest {
     HTTPMethod method = HTTPMethod::Get;
@@ -167,6 +176,7 @@ struct HTTPRequest {
 
 struct HTTPResponse {
     HTTPStatus status = HTTPStatus::Unknown;
+    std::string reason;
     HTTPHeaders headers;
 
     // A body is only read from the response stream if the server sent the
@@ -185,6 +195,7 @@ std::ostream& operator<<(std::ostream&, const HTTPResponse&);
 std::ostream& operator<<(std::ostream&, HTTPMethod);
 /// Serialize HTTP status to output stream, include reason string ("200 OK" etc.)
 std::ostream& operator<<(std::ostream&, HTTPStatus);
+
 
 struct HTTPParserBase {
     util::Logger& logger;
@@ -243,6 +254,7 @@ struct HTTPParserBase {
     void set_write_buffer(const HTTPRequest&);
     void set_write_buffer(const HTTPResponse&);
 };
+
 
 template<class Socket>
 struct HTTPParser: protected HTTPParserBase {
@@ -335,6 +347,7 @@ struct HTTPParser: protected HTTPParserBase {
     Socket& m_socket;
 };
 
+
 template<class Socket>
 struct HTTPClient: protected HTTPParser<Socket> {
     using Handler = void(HTTPResponse, std::error_code);
@@ -387,7 +400,7 @@ private:
         StringData reason;
         if (this->parse_first_line_of_response(line, status, reason, this->logger)) {
             m_response.status = status;
-            static_cast<void>(reason); // Ignore for now.
+            m_response.reason = reason;
             return std::error_code{};
         }
         return HTTPParserError::MalformedResponse;
@@ -412,6 +425,7 @@ private:
         handler(std::move(m_response), ec);
     }
 };
+
 
 template<class Socket>
 struct HTTPServer: protected HTTPParser<Socket> {
@@ -517,9 +531,11 @@ private:
     }
 };
 
+
+std::string make_http_host(bool is_ssl, StringView address, std::uint_fast16_t port);
+
 } // namespace util
 } // namespace realm
 
 
 #endif // REALM_UTIL_HTTP_HPP
-

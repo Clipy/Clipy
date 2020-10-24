@@ -19,11 +19,12 @@
 #ifndef REALM_REALM_HPP
 #define REALM_REALM_HPP
 
-#include "execution_context_id.hpp"
 #include "schema.hpp"
 
 #include <realm/util/optional.hpp>
 #include <realm/binary_data.hpp>
+#include <realm/db.hpp>
+#include <realm/version_id.hpp>
 
 #if REALM_ENABLE_SYNC
 #include <realm/sync/client.hpp>
@@ -32,23 +33,25 @@
 #include <memory>
 
 namespace realm {
+class AsyncOpenTask;
+class AuditInterface;
 class BindingContext;
+class DB;
 class Group;
+class Obj;
 class Realm;
 class Replication;
-class SharedGroup;
 class StringData;
 class Table;
+class ThreadSafeReference;
+class Transaction;
 struct SyncConfig;
-class ThreadSafeReferenceBase;
-template <typename T> class ThreadSafeReference;
-struct VersionID;
-template<typename Table> class BasicRow;
-typedef BasicRow<Table> Row;
-template<typename> class BasicRowExpr;
-using RowExpr = BasicRowExpr<Table>;
 typedef std::shared_ptr<Realm> SharedRealm;
 typedef std::weak_ptr<Realm> WeakRealm;
+
+namespace util {
+class Scheduler;
+}
 
 namespace _impl {
     class AnyHandover;
@@ -59,6 +62,7 @@ namespace _impl {
 }
 namespace sync {
     struct PermissionsCache;
+    struct TableInfoCache;
 }
 
 // How to handle update_schema() being called on a file which has
@@ -187,6 +191,11 @@ public:
         // User-supplied encryption key. Must be either empty or 64 bytes.
         std::vector<char> encryption_key;
 
+        // Core and Object Store will in some cases need to create named pipes alongside the Realm file.
+        // But on some filesystems this can be a problem (e.g. external storage on Android that uses FAT32).
+        // In order to work around this, a separate path can be specified for these files.
+        std::string fifo_files_fallback_path;
+
         bool in_memory = false;
         SchemaMode schema_mode = SchemaMode::Automatic;
 
@@ -223,7 +232,8 @@ public:
         // that Realm instance for other requests for a cached Realm. Useful
         // for dynamic Realms and for tests that need multiple instances on
         // one thread
-        bool cache = true;
+        bool cache = false;
+
         // Throw an exception rather than automatically upgrading the file
         // format. Used by the browser to warn the user that it'll modify
         // the file.
@@ -234,22 +244,43 @@ public:
         // speeds up tests that don't need notifications.
         bool automatic_change_notifications = true;
 
-        // The identifier of the abstract execution context in which this Realm will be used.
-        // If unset, the current thread's identifier will be used to identify the execution context.
-        util::Optional<AbstractExecutionContextID> execution_context;
+        // The Scheduler which this Realm should be bound to. If not supplied,
+        // a default one for the current thread will be used.
+        std::shared_ptr<util::Scheduler> scheduler;
 
         /// A data structure storing data used to configure the Realm for sync support.
         std::shared_ptr<SyncConfig> sync_config;
 
-        // FIXME: Realm Java manages sync at the Java level, so it needs to create Realms using the sync history
-        //        format.
+        // Open the Realm using the sync history mode even if a sync
+        // configuration is not supplied.
         bool force_sync_history = false;
+
+        // A factory function which produces an audit implementation.
+        std::function<std::shared_ptr<AuditInterface>()> audit_factory;
+
+        // Maximum number of active versions in the Realm file allowed before an exception
+        // is thrown.
+        uint_fast64_t max_number_of_active_versions = std::numeric_limits<uint_fast64_t>::max();
     };
 
-    // Get a cached Realm or create a new one if no cached copies exists
-    // Caching is done by path - mismatches for in_memory, schema mode or
-    // encryption key will raise an exception.
+    // Returns a thread-confined live Realm for the given configuration
     static SharedRealm get_shared_realm(Config config);
+
+    // Get a Realm for the given scheduler (or current thread if `none`)
+    // from the thread safe reference.
+    static SharedRealm get_shared_realm(ThreadSafeReference, std::shared_ptr<util::Scheduler> = nullptr);
+
+#if REALM_ENABLE_SYNC
+    // Open a synchronized Realm and make sure it is fully up to date before
+    // returning it.
+    //
+    // It is possible to both cancel the download and listen to download progress
+    // using the `AsyncOpenTask` returned. Note that the download doesn't actually
+    // start until you call `AsyncOpenTask::start(callback)`
+    static std::shared_ptr<AsyncOpenTask> get_synchronized_realm(Config config);
+#endif
+    // Returns a frozen Realm for the given Realm. This Realm can be accessed from any thread.
+    static SharedRealm get_frozen_realm(Config config, VersionID version);
 
     // Updates a Realm to a given schema, using the Realm's pre-set schema mode.
     void update_schema(Schema schema, uint64_t version=0,
@@ -278,12 +309,36 @@ public:
     void commit_transaction();
     void cancel_transaction();
     bool is_in_transaction() const noexcept;
-    bool is_in_read_transaction() const { return !!m_group; }
+
+    // Returns a frozen copy for the current version of this Realm
+    SharedRealm freeze();
+
+    // Returns `true` if the Realm is frozen, `false` otherwise.
+    bool is_frozen() const;
+
+    // Returns true if the Realm is either in a read or frozen transaction
+    bool is_in_read_transaction() const { return m_group != nullptr; }
+    uint64_t last_seen_transaction_version() { return m_schema_transaction_version; }
+
+    // Returns the number of versions in the Realm file.
+    uint_fast64_t get_number_of_versions() const;
+
+    VersionID read_transaction_version() const;
+    Group& read_group();
+    // Get the version of the current read or frozen transaction, or `none` if the Realm
+    // is not in a read transaction
+    util::Optional<VersionID> current_transaction_version() const;
+
+    TransactionRef duplicate() const;
+
+    void enable_wait_for_change();
+    bool wait_for_change();
+    void wait_for_change_release();
 
     bool is_in_migration() const noexcept { return m_in_migration; }
 
     bool refresh();
-    void set_auto_refresh(bool auto_refresh) { m_auto_refresh = auto_refresh; }
+    void set_auto_refresh(bool auto_refresh);
     bool auto_refresh() const { return m_auto_refresh; }
     void notify();
 
@@ -298,13 +353,14 @@ public:
     void verify_thread() const;
     void verify_in_write() const;
     void verify_open() const;
+    bool verify_notifications_available(bool throw_on_error = true) const;
 
     bool can_deliver_notifications() const noexcept;
+    std::shared_ptr<util::Scheduler> scheduler() const noexcept { return m_scheduler; }
 
-    // Close this Realm and remove it from the cache. Continuing to use a
-    // Realm after closing it will throw ClosedRealmException
+    // Close this Realm. Continuing to use a Realm after closing it will throw ClosedRealmException
     void close();
-    bool is_closed() const { return !m_read_only_group && !m_shared_group; }
+    bool is_closed() const { return !m_group && !m_coordinator; }
 
     // returns the file format version upgraded from if an upgrade took place
     util::Optional<int> file_format_upgraded_from_version() const;
@@ -315,25 +371,21 @@ public:
     Realm& operator=(Realm&&) = delete;
     ~Realm();
 
-    // Construct a thread safe reference, pinning the version in the process.
-    template <typename T>
-    ThreadSafeReference<T> obtain_thread_safe_reference(T const& value);
-
-    // Advances the read transaction to the latest version, resolving the thread safe reference and unpinning the
-    // version in the process.
-    template <typename T>
-    T resolve_thread_safe_reference(ThreadSafeReference<T> reference);
-
     ComputedPrivileges get_privileges();
     ComputedPrivileges get_privileges(StringData object_type);
-    ComputedPrivileges get_privileges(RowExpr row);
+    ComputedPrivileges get_privileges(ConstObj const& obj);
 
-    static SharedRealm make_shared_realm(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator = nullptr) {
-        struct make_shared_enabler : public Realm {
-            make_shared_enabler(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator)
-            : Realm(std::move(config), std::move(coordinator)) { }
-        };
-        return std::make_shared<make_shared_enabler>(std::move(config), std::move(coordinator));
+    AuditInterface* audit_context() const noexcept;
+
+    template<typename... Args>
+    auto import_copy_of(Args&&... args)
+    {
+        return transaction().import_copy_of(std::forward<Args>(args)...);
+    }
+
+    static SharedRealm make_shared_realm(Config config, util::Optional<VersionID> version, std::shared_ptr<_impl::RealmCoordinator> coordinator)
+    {
+        return std::make_shared<Realm>(std::move(config), std::move(version), std::move(coordinator), MakeSharedTag{});
     }
 
     // Expose some internal functionality to other parts of the ObjectStore
@@ -342,41 +394,35 @@ public:
         friend class _impl::CollectionNotifier;
         friend class _impl::PartialSyncHelper;
         friend class _impl::RealmCoordinator;
-        friend class ThreadSafeReferenceBase;
         friend class GlobalNotifier;
         friend class TestHelper;
+        friend class ThreadSafeReference;
 
-        // ResultsNotifier and ListNotifier need access to the SharedGroup
-        // to be able to call the handover functions, which are not very wrappable
-        static const std::unique_ptr<SharedGroup>& get_shared_group(Realm& realm) { return realm.m_shared_group; }
+        static Transaction& get_transaction(Realm& realm) { return realm.transaction(); }
+        static std::shared_ptr<Transaction> get_transaction_ref(Realm& realm) { return realm.transaction_ref(); }
 
         // CollectionNotifier needs to be able to access the owning
         // coordinator to wake up the worker thread when a callback is
         // added, and coordinators need to be able to get themselves from a Realm
         static _impl::RealmCoordinator& get_coordinator(Realm& realm) { return *realm.m_coordinator; }
 
+        static std::shared_ptr<DB>& get_db(Realm& realm);
         static void begin_read(Realm&, VersionID);
     };
 
-    static void open_with_config(const Config& config,
-                                 std::unique_ptr<Replication>& history,
-                                 std::unique_ptr<SharedGroup>& shared_group,
-                                 std::unique_ptr<Group>& read_only_group,
-                                 Realm* realm);
-
 private:
-    // `enable_shared_from_this` is unsafe with public constructors; use `make_shared_realm` instead
-    Realm(Config config, std::shared_ptr<_impl::RealmCoordinator> coordinator);
+    struct MakeSharedTag {};
+
+    std::shared_ptr<_impl::RealmCoordinator> m_coordinator;
+    std::unique_ptr<sync::TableInfoCache> m_table_info_cache;
+    std::unique_ptr<sync::PermissionsCache> m_permissions_cache;
 
     Config m_config;
-    AnyExecutionContextID m_execution_context;
+    util::Optional<VersionID> m_frozen_version;
+    std::shared_ptr<util::Scheduler> m_scheduler;
     bool m_auto_refresh = true;
 
-    std::unique_ptr<Replication> m_history;
-    std::unique_ptr<SharedGroup> m_shared_group;
-    std::unique_ptr<Group> m_read_only_group;
-
-    Group *m_group = nullptr;
+    std::shared_ptr<Group> m_group;
 
     uint64_t m_schema_version;
     Schema m_schema;
@@ -386,12 +432,6 @@ private:
     // FIXME: this should be a Dynamic schema mode instead, but only once
     // that's actually fully working
     bool m_dynamic_schema = true;
-
-    std::shared_ptr<_impl::RealmCoordinator> m_coordinator;
-    std::unique_ptr<sync::PermissionsCache> m_permissions_cache;
-
-    // File format versions populated when a file format upgrade takes place during realm opening
-    int upgrade_initial_version = 0, upgrade_final_version = 0;
 
     // True while sending the notifications caused by advancing the read
     // transaction version, to avoid recursive notifications where possible
@@ -403,6 +443,7 @@ private:
     bool m_in_migration = false;
 
     void begin_read(VersionID);
+    bool do_refresh();
 
     void set_schema(Schema const& reference, Schema schema);
     bool reset_file(Schema& schema, std::vector<SchemaChange>& changes_required);
@@ -421,17 +462,15 @@ private:
     bool init_permission_cache();
     void invalidate_permission_cache();
 
+    Transaction& transaction();
+    Transaction& transaction() const;
+    std::shared_ptr<Transaction> transaction_ref();
+
 public:
     std::unique_ptr<BindingContext> m_binding_context;
 
-    // FIXME private
-    Group& read_group();
-
-    std::size_t compute_size();
-    
-    Replication *history() { return m_history.get(); }
-
-    friend class _impl::RealmFriend;
+    // `enable_shared_from_this` is unsafe with public constructors; use `make_shared_realm` instead
+    Realm(Config config, util::Optional<VersionID> version, std::shared_ptr<_impl::RealmCoordinator> coordinator, MakeSharedTag);
 };
 
 class RealmFileException : public std::runtime_error {
@@ -454,9 +493,6 @@ public:
         IncompatibleLockFile,
         /** Thrown if the file needs to be upgraded to a new format, but upgrades have been explicitly disabled. */
         FormatUpgradeRequired,
-        /** Thrown if the local copy of a synced Realm file was created using an incompatible version of Realm.
-         The specified path is where the local file was moved for recovery. */
-        IncompatibleSyncedRealm,
     };
     RealmFileException(Kind kind, std::string path, std::string message, std::string underlying)
     : std::runtime_error(std::move(message)), m_kind(kind), m_path(std::move(path)), m_underlying(std::move(underlying)) {}
@@ -504,14 +540,6 @@ class InvalidEncryptionKeyException : public std::logic_error {
 public:
     InvalidEncryptionKeyException() : std::logic_error("Encryption key must be 64 bytes.") {}
 };
-
-// FIXME Those are exposed for Java async queries, mainly because of handover related methods.
-class _impl::RealmFriend {
-public:
-    static SharedGroup& get_shared_group(Realm& realm);
-    static Group& read_group_to(Realm& realm, VersionID version);
-};
-
 } // namespace realm
 
 #endif /* defined(REALM_REALM_HPP) */

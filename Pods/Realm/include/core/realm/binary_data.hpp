@@ -225,7 +225,12 @@ inline bool BinaryData::contains(BinaryData d) const noexcept
 template <class C, class T>
 inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& out, const BinaryData& d)
 {
-    out << "BinaryData(" << static_cast<const void*>(d.m_data) << ", " << d.m_size << ")";
+    if (d.is_null()) {
+        out << "null";
+    }
+    else {
+        out << "BinaryData(" << static_cast<const void*>(d.m_data) << ", " << d.m_size << ")";
+    }
     return out;
 }
 

@@ -26,11 +26,28 @@ namespace realm {
 /// A BasicArray can currently only be used for simple unstructured
 /// types like float, double.
 template <class T>
-class BasicArray : public Array {
+class BasicArray : public Array, public ArrayPayload {
 public:
+    using value_type = T;
+
     explicit BasicArray(Allocator&) noexcept;
     ~BasicArray() noexcept override
     {
+    }
+
+    static T default_value(bool)
+    {
+        return T(0.0);
+    }
+
+    void init_from_ref(ref_type ref) noexcept override
+    {
+        Array::init_from_ref(ref);
+    }
+
+    void set_parent(ArrayParent* parent, size_t ndx_in_parent) noexcept override
+    {
+        Array::set_parent(parent, ndx_in_parent);
     }
 
     // Disable copying, this is not allowed.
@@ -38,13 +55,25 @@ public:
     BasicArray(const BasicArray&) = delete;
 
     T get(size_t ndx) const noexcept;
-    bool is_null(size_t ndx) const noexcept;
+    bool is_null(size_t ndx) const noexcept
+    {
+        // FIXME: This assumes BasicArray will only ever be instantiated for float-like T.
+        static_assert(realm::is_any<T, float, double>::value, "T can only be float or double");
+        auto x = BasicArray<T>::get(ndx);
+        return null::is_null_float(x);
+    }
     void add(T value);
     void set(size_t ndx, T value);
-    void set_null(size_t ndx);
     void insert(size_t ndx, T value);
     void erase(size_t ndx);
     void truncate(size_t size);
+    void move(BasicArray& dst, size_t ndx)
+    {
+        for (size_t i = ndx; i < m_size; i++) {
+            dst.add(get(i));
+        }
+        truncate(ndx);
+    }
     void clear();
 
     size_t find_first(T value, size_t begin = 0, size_t end = npos) const;
@@ -63,8 +92,6 @@ public:
     /// slower.
     static T get(const char* header, size_t ndx) noexcept;
 
-    ref_type bptree_leaf_insert(size_t ndx, T, TreeInsertBase& state);
-
     size_t lower_bound(T value) const noexcept;
     size_t upper_bound(T value) const noexcept;
 
@@ -82,11 +109,6 @@ public:
     /// Note that the caller assumes ownership of the allocated
     /// underlying node. It is not owned by the accessor.
     void create(Array::Type = type_Normal, bool context_flag = false);
-
-    /// Construct a copy of the specified slice of this basic array
-    /// using the specified target allocator.
-    MemRef slice(size_t offset, size_t size, Allocator& target_alloc) const;
-    MemRef slice_and_clone_children(size_t offset, size_t size, Allocator& target_alloc) const;
 
 #ifdef REALM_DEBUG
     void to_dot(std::ostream&, StringData title = StringData()) const;
@@ -108,10 +130,83 @@ private:
     static size_t calc_aligned_byte_size(size_t size);
 };
 
+template <class T>
+class BasicArrayNull : public BasicArray<T> {
+public:
+    using BasicArray<T>::BasicArray;
+
+    static T default_value(bool nullable)
+    {
+        return nullable ? null::get_null_float<T>() : T(0.0);
+    }
+    void set(size_t ndx, util::Optional<T> value)
+    {
+        if (value) {
+            BasicArray<T>::set(ndx, *value);
+        }
+        else {
+            BasicArray<T>::set(ndx, null::get_null_float<T>());
+        }
+    }
+    void add(util::Optional<T> value)
+    {
+        if (value) {
+            BasicArray<T>::add(*value);
+        }
+        else {
+            BasicArray<T>::add(null::get_null_float<T>());
+        }
+    }
+    void insert(size_t ndx, util::Optional<T> value)
+    {
+        if (value) {
+            BasicArray<T>::insert(ndx, *value);
+        }
+        else {
+            BasicArray<T>::insert(ndx, null::get_null_float<T>());
+        }
+    }
+
+    void set_null(size_t ndx)
+    {
+        // FIXME: This assumes BasicArray will only ever be instantiated for float-like T.
+        set(ndx, null::get_null_float<T>());
+    }
+
+    util::Optional<T> get(size_t ndx) const noexcept
+    {
+        T val = BasicArray<T>::get(ndx);
+        return null::is_null_float(val) ? util::none : util::make_optional(val);
+    }
+    size_t find_first(util::Optional<T> value, size_t begin = 0, size_t end = npos) const
+    {
+        if (value) {
+            return BasicArray<T>::find_first(*value, begin, end);
+        }
+        else {
+            return find_first_null(begin, end);
+        }
+    }
+    void find_all(IntegerColumn* result, util::Optional<T> value, size_t add_offset = 0, size_t begin = 0,
+                  size_t end = npos) const
+    {
+        if (value) {
+            return BasicArray<T>::find_all(result, *value, add_offset, begin, end);
+        }
+        else {
+            return find_all_null(result, add_offset, begin, end);
+        }
+    }
+    size_t find_first_null(size_t begin = 0, size_t end = npos) const;
+    void find_all_null(IntegerColumn* result, size_t add_offset = 0, size_t begin = 0, size_t end = npos) const;
+};
+
 
 // Class typedefs for BasicArray's: ArrayFloat and ArrayDouble
 typedef BasicArray<float> ArrayFloat;
 typedef BasicArray<double> ArrayDouble;
+typedef BasicArrayNull<float> ArrayFloatNull;
+typedef BasicArrayNull<double> ArrayDoubleNull;
 
 } // namespace realm
 

@@ -22,6 +22,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <realm/string_data.hpp>
 
 namespace realm {
 
@@ -54,8 +55,7 @@ struct Predicate
         False
     } type = Type::And;
 
-    enum class Operator
-    {
+    enum class Operator {
         None,
         Equal,
         NotEqual,
@@ -76,8 +76,7 @@ struct Predicate
         CaseInsensitive,
     };
 
-    enum class ComparisonType
-    {
+    enum class ComparisonType {
         Unspecified,
         Any,
         All,
@@ -110,27 +109,29 @@ struct DescriptorOrderingState
     struct PropertyState
     {
         std::string key_path;
+        std::string table_name;
         bool ascending;
     };
     struct SingleOrderingState
     {
         std::vector<PropertyState> properties;
         size_t limit;
-        enum class DescriptorType { Sort, Distinct, Limit } type;
+        enum class DescriptorType { Sort, Distinct, Limit, Include } type;
     };
     std::vector<SingleOrderingState> orderings;
 };
 
 struct ParserResult
 {
-    ParserResult(Predicate p, DescriptorOrderingState o)
-    : predicate(p)
-    , ordering(o) {}
     Predicate predicate;
     DescriptorOrderingState ordering;
 };
 
-ParserResult parse(const std::string &query);
+ParserResult parse(const char* query); // assumes c-style null termination
+ParserResult parse(const std::string& query);
+ParserResult parse(const realm::StringData& query);
+
+DescriptorOrderingState parse_include_path(const realm::StringData& path);
 
 // run the analysis tool to check for cycles in the grammar
 // returns the number of problems found and prints some info to std::cout

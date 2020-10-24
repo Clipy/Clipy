@@ -23,9 +23,7 @@
 #include "property.hpp"
 #include "schema.hpp"
 
-
 #include <realm/data_type.hpp>
-#include <realm/descriptor.hpp>
 #include <realm/group.hpp>
 #include <realm/table.hpp>
 
@@ -53,47 +51,76 @@ ObjectSchema::ObjectSchema(std::string name, std::initializer_list<Property> per
     }
 }
 
-PropertyType ObjectSchema::from_core_type(Descriptor const& table, size_t col)
+PropertyType ObjectSchema::from_core_type(Table const& table, ColKey col)
 {
-    auto optional = table.is_nullable(col) ? PropertyType::Nullable : PropertyType::Required;
+    auto flags = PropertyType::Required;
+    auto attr = table.get_column_attr(col);
+    if (attr.test(col_attr_Nullable))
+        flags |= PropertyType::Nullable;
+    if (attr.test(col_attr_List))
+        flags |= PropertyType::Array;
     switch (table.get_column_type(col)) {
-        case type_Int:       return PropertyType::Int | optional;
-        case type_Float:     return PropertyType::Float | optional;
-        case type_Double:    return PropertyType::Double | optional;
-        case type_Bool:      return PropertyType::Bool | optional;
-        case type_String:    return PropertyType::String | optional;
-        case type_Binary:    return PropertyType::Data | optional;
-        case type_Timestamp: return PropertyType::Date | optional;
-        case type_Mixed:     return PropertyType::Any | optional;
+        case type_Int:       return PropertyType::Int | flags;
+        case type_Float:     return PropertyType::Float | flags;
+        case type_Double:    return PropertyType::Double | flags;
+        case type_Bool:      return PropertyType::Bool | flags;
+        case type_String:    return PropertyType::String | flags;
+        case type_Binary:    return PropertyType::Data | flags;
+        case type_Timestamp: return PropertyType::Date | flags;
+        case type_OldMixed:  return PropertyType::Any | flags;
         case type_Link:      return PropertyType::Object | PropertyType::Nullable;
         case type_LinkList:  return PropertyType::Object | PropertyType::Array;
-        case type_Table:     return from_core_type(*table.get_subdescriptor(col), 0) | PropertyType::Array;
         default: REALM_UNREACHABLE();
     }
 }
 
-ObjectSchema::ObjectSchema(Group const& group, StringData name, size_t index) : name(name) {
+ObjectSchema::ObjectSchema(Group const& group, StringData name, TableKey key)
+: name(name)
+{
     ConstTableRef table;
-    if (index < group.size()) {
-        table = group.get_table(index);
+    if (key) {
+        table = group.get_table(key);
     }
     else {
         table = ObjectStore::table_for_object_type(group, name);
     }
+    table_key = table->get_key();
 
     size_t count = table->get_column_count();
+    ColKey pk_col = table->get_primary_key_column();
     persisted_properties.reserve(count);
-    for (size_t col = 0; col < count; col++) {
-        if (auto property = ObjectStore::property_for_column_index(table, col)) {
-            persisted_properties.push_back(std::move(property.value()));
+
+    for (auto col_key : table->get_column_keys()) {
+        StringData column_name = table->get_column_name(col_key);
+
+#if REALM_ENABLE_SYNC
+        // The object ID column is an implementation detail, and is omitted from the schema.
+        // FIXME: this can go away once sync adopts stable ids?
+        if (column_name.begins_with("!"))
+            continue;
+#endif
+
+        Property property;
+        property.name = column_name;
+        property.type = ObjectSchema::from_core_type(*table, col_key);
+        property.is_indexed = table->has_search_index(col_key) || pk_col == col_key;
+        property.column_key = col_key;
+
+        if (property.type == PropertyType::Object) {
+            // set link type for objects and arrays
+            ConstTableRef linkTable = table->get_link_target(col_key);
+            property.object_type = ObjectStore::object_type_for_table_name(linkTable->get_name().data());
         }
+        persisted_properties.push_back(std::move(property));
     }
 
-    primary_key = realm::ObjectStore::get_primary_key_for_object(group, name);
+    if (pk_col)
+        primary_key = table->get_column_name(pk_col);
     set_primary_key_property();
 }
 
-Property *ObjectSchema::property_for_name(StringData name) {
+Property *ObjectSchema::property_for_name(StringData name) noexcept
+{
     for (auto& prop : persisted_properties) {
         if (StringData(prop.name) == name) {
             return &prop;
@@ -107,16 +134,41 @@ Property *ObjectSchema::property_for_name(StringData name) {
     return nullptr;
 }
 
-const Property *ObjectSchema::property_for_name(StringData name) const {
+Property *ObjectSchema::property_for_public_name(StringData public_name) noexcept
+{
+    // If no `public_name` is defined, the internal `name` is also considered the public name.
+    for (auto& prop : persisted_properties) {
+        if (prop.public_name == public_name || (prop.public_name.empty() && prop.name == public_name))
+            return &prop;
+    }
+
+    // Computed properties are not persisted, so creating a public name for such properties
+    // are a bit pointless since the internal name is already the "public name", but since
+    // this distinction isn't visible in the Property struct we allow it anyway.
+    for (auto& prop : computed_properties) {
+        if (StringData(prop.public_name.empty() ? prop.name : prop.public_name) == public_name)
+            return &prop;
+    }
+    return nullptr;
+}
+
+const Property *ObjectSchema::property_for_public_name(StringData public_name) const noexcept
+{
+    return const_cast<ObjectSchema *>(this)->property_for_public_name(public_name);
+}
+
+const Property *ObjectSchema::property_for_name(StringData name) const noexcept
+{
     return const_cast<ObjectSchema *>(this)->property_for_name(name);
 }
 
-bool ObjectSchema::property_is_computed(Property const& property) const {
+bool ObjectSchema::property_is_computed(Property const& property) const noexcept
+{
     auto end = computed_properties.end();
     return std::find(computed_properties.begin(), end, property) != end;
 }
 
-void ObjectSchema::set_primary_key_property()
+void ObjectSchema::set_primary_key_property() noexcept
 {
     if (primary_key.length()) {
         if (auto primary_key_prop = primary_key_property()) {
@@ -214,6 +266,62 @@ static void validate_property(Schema const& schema,
 
 void ObjectSchema::validate(Schema const& schema, std::vector<ObjectSchemaValidationException>& exceptions) const
 {
+    std::vector<StringData> public_property_names;
+    std::vector<StringData> internal_property_names;
+    internal_property_names.reserve(persisted_properties.size() + computed_properties.size());
+    auto gather_names = [&](auto const &properties) {
+        for (auto const &prop : properties) {
+            internal_property_names.push_back(prop.name);
+            if (!prop.public_name.empty())
+                public_property_names.push_back(prop.public_name);
+        }
+    };
+    gather_names(persisted_properties);
+    gather_names(computed_properties);
+    std::sort(public_property_names.begin(), public_property_names.end());
+    std::sort(internal_property_names.begin(), internal_property_names.end());
+
+    // Check that property names and aliases are unique
+    auto for_each_duplicate = [](auto &&container, auto &&fn) {
+        auto end = container.end();
+        for (auto it = std::adjacent_find(container.begin(), end); it != end; it = std::adjacent_find(it + 2, end))
+            fn(*it);
+    };
+    for_each_duplicate(public_property_names, [&](auto public_property_name) {
+        exceptions.emplace_back("Alias '%1' appears more than once in the schema for type '%2'.",
+                                public_property_name, name);
+    });
+    for_each_duplicate(internal_property_names, [&](auto internal_name) {
+        exceptions.emplace_back("Property '%1' appears more than once in the schema for type '%2'.",
+                                internal_name, name);
+    });
+
+    // Check that no aliases conflict with property names
+    struct ErrorWriter {
+        ObjectSchema const &os;
+        std::vector<ObjectSchemaValidationException> &exceptions;
+
+        struct Proxy {
+            ObjectSchema const &os;
+            std::vector<ObjectSchemaValidationException> &exceptions;
+
+            Proxy &operator=(StringData name) {
+                exceptions.emplace_back(
+                        "Property '%1.%2' has an alias '%3' that conflicts with a property of the same name.",
+                        os.name, os.property_for_public_name(name)->name, name);
+                return *this;
+            }
+        };
+
+        Proxy operator*() { return Proxy{os, exceptions}; }
+        ErrorWriter &operator=(const ErrorWriter &) { return *this; }
+        ErrorWriter &operator++() { return *this; }
+        ErrorWriter &operator++(int) { return *this; }
+    } writer{*this, exceptions};
+    std::set_intersection(public_property_names.begin(), public_property_names.end(),
+                          internal_property_names.begin(), internal_property_names.end(), writer);
+
+    // Validate all properties
     const Property *primary = nullptr;
     for (auto const& prop : persisted_properties) {
         validate_property(schema, name, prop, &primary, exceptions);
@@ -228,7 +336,7 @@ void ObjectSchema::validate(Schema const& schema, std::vector<ObjectSchemaValida
 }
 
 namespace realm {
-bool operator==(ObjectSchema const& a, ObjectSchema const& b)
+bool operator==(ObjectSchema const& a, ObjectSchema const& b) noexcept
 {
     return std::tie(a.name, a.primary_key, a.persisted_properties, a.computed_properties)
         == std::tie(b.name, b.primary_key, b.persisted_properties, b.computed_properties);

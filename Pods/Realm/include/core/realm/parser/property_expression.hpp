@@ -31,18 +31,18 @@ struct PropertyExpression
     Query &query;
     std::vector<KeyPathElement> link_chain;
     DataType get_dest_type() const;
-    size_t get_dest_ndx() const;
+    ColKey get_dest_col_key() const;
     ConstTableRef get_dest_table() const;
     bool dest_type_is_backlink() const;
 
-    PropertyExpression(Query &q, const std::string &key_path_string, parser::KeyPathMapping& mapping);
+    PropertyExpression(Query& q, const std::string& key_path_string, parser::KeyPathMapping& mapping);
 
-    Table* table_getter() const;
+    LinkChain link_chain_getter() const;
 
     template <typename RetType>
     auto value_of_type_for_query() const
     {
-        return this->table_getter()->template column<RetType>(get_dest_ndx());
+        return this->link_chain_getter().template column<RetType>(get_dest_col_key());
     }
 };
 
@@ -58,10 +58,10 @@ inline bool PropertyExpression::dest_type_is_backlink() const
     return link_chain.back().is_backlink;
 }
 
-inline size_t PropertyExpression::get_dest_ndx() const
+inline ColKey PropertyExpression::get_dest_col_key() const
 {
     REALM_ASSERT_DEBUG(link_chain.size() > 0);
-    return link_chain.back().col_ndx;
+    return link_chain.back().col_key;
 }
 
 inline ConstTableRef PropertyExpression::get_dest_table() const

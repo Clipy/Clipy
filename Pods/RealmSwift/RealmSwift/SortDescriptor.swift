@@ -87,24 +87,6 @@ extension SortDescriptor: ExpressibleByStringLiteral {
     public typealias ExtendedGraphemeClusterLiteralType = StringLiteralType
 
     /**
-     Creates a `SortDescriptor` out of a Unicode scalar literal.
-
-     - parameter unicodeScalarLiteral: Property name literal.
-    */
-    public init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
-        self.init(keyPath: value)
-    }
-
-    /**
-     Creates a `SortDescriptor` out of a character literal.
-
-     - parameter extendedGraphemeClusterLiteral: Property name literal.
-     */
-    public init(extendedGraphemeClusterLiteral value: ExtendedGraphemeClusterLiteralType) {
-        self.init(keyPath: value)
-    }
-
-    /**
      Creates a `SortDescriptor` out of a string literal.
 
      - parameter stringLiteral: Property name literal.
@@ -112,14 +94,4 @@ extension SortDescriptor: ExpressibleByStringLiteral {
     public init(stringLiteral value: StringLiteralType) {
         self.init(keyPath: value)
     }
-}
-
-// MARK: Unavailable
-
-extension SortDescriptor {
-    @available(*, unavailable, renamed: "init(keyPath:ascending:)")
-    public init(property: String, ascending: Bool = true) { fatalError() }
-
-    @available(*, unavailable, renamed: "keyPath")
-    public var property: String { fatalError() }
 }

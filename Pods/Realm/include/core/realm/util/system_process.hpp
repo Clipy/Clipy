@@ -55,6 +55,12 @@ struct ExitInfo {
     /// ::posix_spawn()).
     int status = 0;
 
+    /// In some cases, ChildHandle::join() will set `signal_name` when it sets
+    /// `killed_by_signal` to a non-zero value. In those cases, `signal_name` is
+    /// set to point to a null-terminated string specifying the name of the
+    /// signal that killed the child process.
+    const char* signal_name = nullptr;
+
     /// Returns true if, and only if both `killed_by_signal` and `status` are
     /// zero.
     explicit operator bool() const noexcept;

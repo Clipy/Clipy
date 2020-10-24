@@ -16,7 +16,7 @@ public func beAnInstanceOf<T>(_ expectedType: T.Type) -> Predicate<Any> {
 
         return PredicateResult(
             status: PredicateStatus(bool: type(of: validInstance) == expectedType),
-            message: .expectedCustomValueTo(errorMessage, actualString)
+            message: .expectedCustomValueTo(errorMessage, actual: actualString)
         )
     }
 }
@@ -33,23 +33,23 @@ public func beAnInstanceOf(_ expectedClass: AnyClass) -> Predicate<NSObject> {
         } else {
             actualString = "<nil>"
         }
-        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+        #if canImport(Darwin)
             let matches = instance != nil && instance!.isMember(of: expectedClass)
         #else
             let matches = instance != nil && type(of: instance!) == expectedClass
         #endif
         return PredicateResult(
             status: PredicateStatus(bool: matches),
-            message: .expectedCustomValueTo(errorMessage, actualString)
+            message: .expectedCustomValueTo(errorMessage, actual: actualString)
         )
     }
 }
 
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
-extension NMBObjCMatcher {
-    @objc public class func beAnInstanceOfMatcher(_ expected: AnyClass) -> NMBMatcher {
+#if canImport(Darwin)
+extension NMBPredicate {
+    @objc public class func beAnInstanceOfMatcher(_ expected: AnyClass) -> NMBPredicate {
         return NMBPredicate { actualExpression in
-            return try! beAnInstanceOf(expected).satisfies(actualExpression).toObjectiveC()
+            return try beAnInstanceOf(expected).satisfies(actualExpression).toObjectiveC()
         }
     }
 }

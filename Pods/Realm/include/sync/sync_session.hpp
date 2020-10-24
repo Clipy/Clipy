@@ -136,17 +136,12 @@ public:
 
     // Register a callback that will be called when all pending uploads have completed.
     // The callback is run asynchronously, and upon whatever thread the underlying sync client
-    // chooses to run it on. The method returns immediately with true if the callback was
-    // successfully registered, false otherwise. If the method returns false the callback will
-    // never be run.
-    // This method will return true if the completion handler was registered, either immediately
-    // or placed in a queue. If it returns true the completion handler will always be called
-    // at least once, except in the case where a logged-out session is never logged back in.
-    bool wait_for_upload_completion(std::function<void(std::error_code)> callback);
+    // chooses to run it on.
+    void wait_for_upload_completion(std::function<void(std::error_code)> callback);
 
     // Register a callback that will be called when all pending downloads have been completed.
     // Works the same way as `wait_for_upload_completion()`.
-    bool wait_for_download_completion(std::function<void(std::error_code)> callback);
+    void wait_for_download_completion(std::function<void(std::error_code)> callback);
 
     using NotifierType = _impl::SyncProgressNotifier::NotifierType;
     // Register a notifier that updates the app regarding progress.
@@ -213,6 +208,13 @@ public:
     // not make the session reconnect.
     void set_multiplex_identifier(std::string multiplex_identity);
 
+    // See SyncConfig::url_prefix
+    //
+    // This method allows to override this value after the session is created but before it is bound
+    // because of Realm Cloud's token refresh service returning the sync worker ingress path with the token response.
+    // Prefer using the SyncConfig field in all other cases.
+    void set_url_prefix(std::string url_prefix);
+
     // Inform the sync session that it should close.
     void close();
 
@@ -226,6 +228,11 @@ public:
     // NOTE: This is intended for use only in very specific circumstances. Please check with the
     // object store team before using it.
     void override_server(std::string address, int port);
+
+    // Update the sync configuration used for this session. The new configuration must have the
+    // same user and reference realm url as the old configuration. The session will immediately
+    // disconnect (if it was active), and then attempt to connect using the new configuration.
+    void update_configuration(SyncConfig new_config);
 
     // An object representing the user who owns the Realm this `SyncSession` represents.
     std::shared_ptr<SyncUser> user() const
@@ -277,6 +284,10 @@ public:
         {
             session.handle_error(std::move(error));
         }
+        static void nonsync_transact_notify(SyncSession& session, VersionID::version_type version)
+        {
+            session.nonsync_transact_notify(version);
+        }
     };
 
 private:
@@ -310,24 +321,25 @@ private:
 
     friend class realm::SyncManager;
     // Called by SyncManager {
-    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
+    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client, std::string realm_path,
+                                               SyncConfig config, bool force_client_resync)
     {
         struct MakeSharedEnabler : public SyncSession {
-            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
-            : SyncSession(client, std::move(realm_path), std::move(config))
+            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config, bool force_client_resync)
+            : SyncSession(client, std::move(realm_path), std::move(config), force_client_resync)
             {}
         };
-        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config));
+        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config), force_client_resync);
     }
     // }
 
-    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
+    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig, bool force_client_resync);
 
     void handle_error(SyncError);
-    void cancel_pending_waits(std::unique_lock<std::mutex>&);
+    void cancel_pending_waits(std::unique_lock<std::mutex>&, std::error_code);
     enum class ShouldBackup { yes, no };
     void update_error_and_mark_file_for_deletion(SyncError&, ShouldBackup);
-    static std::string get_recovery_file_path();
+    std::string get_recovery_file_path();
     void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
@@ -341,6 +353,8 @@ private:
     void unregister(std::unique_lock<std::mutex>& lock);
     void did_drop_external_reference();
 
+    void add_completion_callback(_impl::SyncProgressNotifier::NotifierType direction);
+
     std::function<SyncSessionTransactCallback> m_sync_transact_callback;
 
     mutable std::mutex m_state_mutex;
@@ -350,20 +364,20 @@ private:
     // The underlying state of the connection. Even when sharing connections, the underlying session
     // will always start out as diconnected and then immediately transition to the correct state when calling
     // bind().
-    sync::Session::ConnectionState m_connection_state = sync::Session::ConnectionState::disconnected;
+    ConnectionState m_connection_state = ConnectionState::Disconnected;
     size_t m_death_count = 0;
 
     SyncConfig m_config;
+    bool m_force_client_resync;
 
     std::string m_realm_path;
     _impl::SyncClient& m_client;
 
-    // For storing wait-for-completion requests if the session isn't yet ready to handle them.
-    struct CompletionWaitPackage {
-        void(sync::Session::*waiter)(std::function<void(std::error_code)>);
-        std::function<void(std::error_code)> callback;
-    };
-    std::vector<CompletionWaitPackage> m_completion_wait_packages;
+    std::vector<std::function<void(std::error_code)>> m_download_completion_callbacks;
+    std::vector<std::function<void(std::error_code)>> m_upload_completion_callbacks;
+    // How many times a client resync has occurred. Used to discard session
+    // completion notifications from before the most recent client resync.
+    int m_client_resync_counter = 0;
 
     struct ServerOverride {
         std::string address;

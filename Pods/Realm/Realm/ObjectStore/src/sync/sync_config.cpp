@@ -20,7 +20,7 @@
 
 #include "sync/sync_manager.hpp"
 
-#include <realm/sync/crypto.hpp>
+#include <realm/util/sha_crypto.hpp>
 
 namespace realm {
 
@@ -36,7 +36,7 @@ std::string SyncConfig::partial_sync_identifier(const SyncUser& user)
         operator char*() { return reinterpret_cast<char*>(value); }
     };
     uint8_t identifier[20];
-    sync::crypto::sha1(raw_identifier.data(), raw_identifier.size(), cast{&identifier[0]});
+    realm::util::sha1(raw_identifier.data(), raw_identifier.size(), cast{&identifier[0]});
 
     std::stringstream ss;
     ss << std::hex << std::setfill('0');

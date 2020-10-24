@@ -27,11 +27,11 @@ namespace realm {
 namespace util {
 
 
-/// base64_encode() encodes the bnary data in \param in_buffer of size \param in_buffer_size.
-/// The encoded data is placed in \param out_buffer. The size of \param \out_buffer is passed in
-/// \param out_buffer_size. The output buffer \param out_buffer must be
+/// base64_encode() encodes the bnary data in \param in_buffer of size \param in_buffer_size .
+/// The encoded data is placed in \param out_buffer . The size of \param \out_buffer is passed in
+/// \param out_buffer_size . The output buffer out_buffer must be
 /// large enough to hold the base64 encoded data. The size can be obtained from the function
-/// base64_encoded_size. \param out_buffer_size is only used to assert that the output buffer is
+/// base64_encoded_size. out_buffer_size is only used to assert that the output buffer is
 /// large enough.
 size_t base64_encode(const char *in_buffer, size_t in_buffer_size, char* out_buffer, size_t out_buffer_size) noexcept;
 

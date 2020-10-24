@@ -62,7 +62,6 @@ CFPtr<CFMutableDictionaryRef> build_search_dictionary(CFStringRef account, CFStr
 
     CFDictionaryAddValue(d.get(), kSecClass, kSecClassGenericPassword);
     CFDictionaryAddValue(d.get(), kSecReturnData, kCFBooleanTrue);
-    CFDictionaryAddValue(d.get(), kSecAttrAccessible, kSecAttrAccessibleAlways);
     CFDictionaryAddValue(d.get(), kSecAttrAccount, account);
     CFDictionaryAddValue(d.get(), kSecAttrService, service);
 #if !TARGET_IPHONE_SIMULATOR
@@ -97,6 +96,7 @@ util::Optional<std::vector<char>> get_key(CFStringRef account, CFStringRef servi
 void set_key(const std::vector<char>& key, CFStringRef account, CFStringRef service)
 {
     auto search_dictionary = build_search_dictionary(account, service, none);
+    CFDictionaryAddValue(search_dictionary.get(), kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock);
     auto key_data = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8 *>(key.data()), key_size));
     if (!key_data)
         throw std::bad_alloc();

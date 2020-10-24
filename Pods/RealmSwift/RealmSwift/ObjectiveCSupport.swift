@@ -28,7 +28,7 @@ import Realm
 
  :nodoc:
  **/
-public final class ObjectiveCSupport {
+public struct ObjectiveCSupport {
 
     /// Convert a `Results` to a `RLMResults`.
     public static func convert<T>(object: Results<T>) -> RLMResults<AnyObject> {
@@ -47,7 +47,7 @@ public final class ObjectiveCSupport {
 
     /// Convert a `RLMArray` to a `List`.
     public static func convert(object: RLMArray<AnyObject>) -> List<Object> {
-        return List(rlmArray: object)
+        return List(objc: object)
     }
 
     /// Convert a `LinkingObjects` to a `RLMResults`.
@@ -130,16 +130,6 @@ public final class ObjectiveCSupport {
         return SortDescriptor(keyPath: object.keyPath, ascending: object.ascending)
     }
 
-    /// Convert a `SyncCredentials` to a `RLMSyncCredentials`.
-    public static func convert(object: SyncCredentials) -> RLMSyncCredentials {
-        return RLMSyncCredentials(object)
-    }
-
-    /// Convert a `RLMSyncCredentials` to a `SyncCredentials`.
-    public static func convert(object: RLMSyncCredentials) -> SyncCredentials {
-        return SyncCredentials(object)
-    }
-
     /// Convert a `RLMShouldCompactOnLaunchBlock` to a Realm Swift compact block.
     public static func convert(object: @escaping RLMShouldCompactOnLaunchBlock) -> (Int, Int) -> Bool {
         return { totalBytes, usedBytes in
@@ -152,15 +142,5 @@ public final class ObjectiveCSupport {
         return { totalBytes, usedBytes in
             return object(Int(totalBytes), Int(usedBytes))
         }
-    }
-
-    /// Convert a `SyncConfiguration` to a `RLMSyncConfiguration`.
-    public static func convert(object: SyncConfiguration) -> RLMSyncConfiguration {
-        return object.asConfig()
-    }
-
-    /// Convert a `RLMSyncConfiguration` to a `SyncConfiguration`.
-    public static func convert(object: RLMSyncConfiguration) -> SyncConfiguration {
-        return SyncConfiguration(config: object)
     }
 }

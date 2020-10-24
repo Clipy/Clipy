@@ -22,73 +22,11 @@
 #include <memory>
 #include <vector>
 
+#include <realm/keys.hpp>
+
 namespace realm {
 
-enum class ConstSourcePayload { Copy, Stay };
-enum class MutableSourcePayload { Move };
-
-struct RowBaseHandoverPatch;
-struct TableViewHandoverPatch;
-
-struct TableHandoverPatch {
-    bool m_is_sub_table;
-    size_t m_table_num;
-    size_t m_col_ndx;
-    size_t m_row_ndx;
-};
-
-struct LinkViewHandoverPatch {
-    std::unique_ptr<TableHandoverPatch> m_table;
-    size_t m_col_num;
-    size_t m_row_ndx;
-};
-
-// Base class for handover patches for query nodes. Subclasses are declared in query_engine.hpp.
-struct QueryNodeHandoverPatch {
-    virtual ~QueryNodeHandoverPatch() = default;
-};
-
-using QueryNodeHandoverPatches = std::vector<std::unique_ptr<QueryNodeHandoverPatch>>;
-
-struct QueryHandoverPatch {
-    std::unique_ptr<TableHandoverPatch> m_table;
-    std::unique_ptr<TableViewHandoverPatch> table_view_data;
-    std::unique_ptr<LinkViewHandoverPatch> link_view_data;
-    QueryNodeHandoverPatches m_node_data;
-};
-
-enum class DescriptorType {
-    Sort,
-    Distinct,
-    Limit
-};
-
-struct DescriptorExport {
-    DescriptorType type;
-    std::vector<std::vector<size_t>> columns;
-    std::vector<bool> ordering;
-    size_t limit;
-};
-
-struct DescriptorOrderingHandoverPatch {
-    std::vector<DescriptorExport> descriptors;
-};
-
-struct TableViewHandoverPatch {
-    std::unique_ptr<TableHandoverPatch> m_table;
-    std::unique_ptr<RowBaseHandoverPatch> linked_row;
-    size_t linked_col;
-    bool was_in_sync;
-    QueryHandoverPatch query_patch;
-    std::unique_ptr<LinkViewHandoverPatch> linkview_patch;
-    std::unique_ptr<DescriptorOrderingHandoverPatch> descriptors_patch;
-};
-
-
-struct RowBaseHandoverPatch {
-    std::unique_ptr<TableHandoverPatch> m_table;
-    size_t row_ndx;
-};
+enum class PayloadPolicy { Copy, Stay, Move };
 
 
 } // end namespace Realm

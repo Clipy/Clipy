@@ -49,7 +49,7 @@ class Logger;
 
 /// Replication is enabled by passing an instance of an implementation of this
 /// class to the SharedGroup constructor.
-class Replication : public _impl::TransactLogConvenientEncoder, protected _impl::TransactLogStream {
+class Replication : public _impl::TransactLogConvenientEncoder {
 public:
     // Be sure to keep this type aligned with what is actually used in
     // SharedGroup.
@@ -59,12 +59,13 @@ public:
     class Interrupted; // Exception
     class SimpleIndexTranslator;
 
-    virtual std::string get_database_path() = 0;
+    virtual std::string get_database_path() const = 0;
 
     /// Called during construction of the associated SharedGroup object.
     ///
     /// \param shared_group The assocoated SharedGroup object.
-    virtual void initialize(SharedGroup& shared_group) = 0;
+    virtual void initialize(DB& shared_group) = 0;
+
 
     /// Called by the associated SharedGroup object when a session is
     /// initiated. A *session* is a sequence of of temporally overlapping
@@ -167,19 +168,31 @@ public:
     /// _impl::History::update_early_from_top_ref() was called during the
     /// transition from a read transaction to the current write transaction.
     ///
-    /// \return prepare_commit() returns the version of the new snapshot
-    /// produced by the transaction.
-    ///
     /// \throw Interrupted Thrown by initiate_transact() and prepare_commit() if
     /// a blocking operation was interrupted.
 
-    void initiate_transact(version_type current_version, bool history_updated);
+    void initiate_transact(Group& group, version_type current_version, bool history_updated);
+    /// \param current_version The version of the snapshot that the current
+    /// transaction is based on.
+    /// \return prepare_commit() returns the version of the new snapshot
+    /// produced by the transaction.
     version_type prepare_commit(version_type current_version);
     void finalize_commit() noexcept;
     void abort_transact() noexcept;
 
     //@}
 
+    /// Get the list of uncommitted changes accumulated so far in the current
+    /// write transaction.
+    ///
+    /// The callee retains ownership of the referenced memory. The ownership is
+    /// not handed over to the caller.
+    ///
+    /// This function may be called only during a write transaction (prior to
+    /// initiation of commit operation). In that case, the caller may assume that the
+    /// returned memory reference stays valid for the remainder of the transaction (up
+    /// until initiation of the commit operation).
+    virtual BinaryData get_uncommitted_changes() const noexcept = 0;
 
     /// Interrupt any blocking call to a function in this class. This function
     /// may be called asyncronously from any thread, but it may not be called
@@ -202,20 +215,6 @@ public:
     /// interrupted transaction. It is not an error to call this function in a
     /// situation where no interruption has occured.
     void clear_interrupt() noexcept;
-
-    /// Apply a changeset to the specified group.
-    ///
-    /// \param changeset The changes to be applied.
-    ///
-    /// \param group The destination group to apply the changeset to.
-    ///
-    /// \param logger If specified, and the library was compiled in debug mode,
-    /// then a line describing each individual operation is writted to the
-    /// specified logger.
-    ///
-    /// \throw BadTransactLog If the changeset could not be successfully parsed,
-    /// or ended prematurely.
-    static void apply_changeset(InputStream& changeset, Group& group, util::Logger* logger = nullptr);
 
     /// CAUTION: These values are stored in Realm files, so value reassignment
     /// is not allowed.
@@ -326,13 +325,22 @@ public:
     /// get_history_schema_version().
     virtual void upgrade_history_schema(int stored_schema_version) = 0;
 
+    /// Returns an object that gives access to the history of changesets
+    /// used by writers. All writers can share the same object as all write
+    /// transactions are serialized.
+    ///
+    /// This function must return null when, and only when get_history_type()
+    /// returns \ref hist_None.
+    virtual _impl::History* _get_history_write() = 0;
+
     /// Returns an object that gives access to the history of changesets in a
-    /// way that allows for continuous transactions to work
+    /// way that allows for continuous transactions to work. All readers must
+    /// get their own exclusive object as readers are not blocking each other.
     /// (Group::advance_transact() in particular).
     ///
     /// This function must return null when, and only when get_history_type()
     /// returns \ref hist_None.
-    virtual _impl::History* get_history() = 0;
+    virtual std::unique_ptr<_impl::History> _create_history_read() = 0;
 
     /// Returns false by default, but must return true if, and only if this
     /// history object represents a session participant that is a sync
@@ -340,13 +348,19 @@ public:
     /// constraint.
     virtual bool is_sync_agent() const noexcept;
 
-    virtual ~Replication() noexcept
-    {
-    }
+    template <class T>
+    void set(const Table*, ColKey col_key, ObjKey key, T value, _impl::Instruction variant);
+
+    ~Replication() override;
 
 protected:
-    Replication();
+    DB* m_db = nullptr;
+    Replication(_impl::TransactLogStream& stream);
 
+    void register_db(DB* owner)
+    {
+        m_db = owner;
+    }
 
     //@{
 
@@ -363,7 +377,7 @@ protected:
     /// changeset during the next invocation of do_initiate_transact() if
     /// `current_version` indicates that the previous transaction failed.
 
-    virtual void do_initiate_transact(version_type current_version, bool history_updated) = 0;
+    virtual void do_initiate_transact(Group& group, version_type current_version, bool history_updated) = 0;
     virtual version_type do_prepare_commit(version_type orig_version) = 0;
     virtual void do_finalize_commit() noexcept = 0;
     virtual void do_abort_transact() noexcept = 0;
@@ -376,8 +390,8 @@ protected:
     virtual void do_clear_interrupt() noexcept = 0;
 
     friend class _impl::TransactReverser;
+    friend class DB;
 };
-
 
 class Replication::Interrupted : public std::exception {
 public:
@@ -394,6 +408,8 @@ public:
     {
     }
 
+    std::string get_database_path() const override;
+
 protected:
     typedef Replication::version_type version_type;
 
@@ -402,28 +418,19 @@ protected:
     virtual version_type prepare_changeset(const char* data, size_t size, version_type orig_version) = 0;
     virtual void finalize_changeset() noexcept = 0;
 
-    static void apply_changeset(const char* data, size_t size, SharedGroup& target, util::Logger* logger = nullptr);
+    BinaryData get_uncommitted_changes() const noexcept override;
 
-    bool is_history_updated() const noexcept;
-
-    BinaryData get_uncommitted_changes() const noexcept;
-
-    std::string get_database_path() override;
-    void initialize(SharedGroup&) override;
-    void do_initiate_transact(version_type, bool) override;
+    void initialize(DB&) override;
+    void do_initiate_transact(Group& group, version_type, bool) override;
     version_type do_prepare_commit(version_type orig_version) override;
     void do_finalize_commit() noexcept override;
     void do_abort_transact() noexcept override;
     void do_interrupt() noexcept override;
     void do_clear_interrupt() noexcept override;
-    void transact_log_reserve(size_t n, char** new_begin, char** new_end) override;
-    void transact_log_append(const char* data, size_t size, char** new_begin, char** new_end) override;
 
 private:
     const std::string m_database_file;
-    util::Buffer<char> m_transact_log_buffer;
-    bool m_history_updated;
-    void internal_transact_log_reserve(size_t, char** new_begin, char** new_end);
+    _impl::TransactLogBufferStream m_stream;
 
     size_t transact_log_size();
 };
@@ -431,14 +438,17 @@ private:
 
 // Implementation:
 
-inline Replication::Replication()
-    : _impl::TransactLogConvenientEncoder(static_cast<_impl::TransactLogStream&>(*this))
+inline Replication::Replication(_impl::TransactLogStream& stream)
+    : _impl::TransactLogConvenientEncoder(stream)
 {
 }
 
-inline void Replication::initiate_transact(version_type current_version, bool history_updated)
+inline void Replication::initiate_transact(Group& group, version_type current_version, bool history_updated)
 {
-    do_initiate_transact(current_version, history_updated);
+    if (auto hist = _get_history_write()) {
+        hist->set_group(&group, history_updated);
+    }
+    do_initiate_transact(group, current_version, history_updated);
     reset_selection_caches();
 }
 
@@ -472,41 +482,81 @@ inline bool Replication::is_sync_agent() const noexcept
     return false;
 }
 
-inline TrivialReplication::TrivialReplication(const std::string& database_file)
-    : m_database_file(database_file)
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, StringData value,
+                             _impl::Instruction variant)
 {
+    set_string(table, col_key, key, value, variant);
 }
 
-inline bool TrivialReplication::is_history_updated() const noexcept
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, BinaryData value,
+                             _impl::Instruction variant)
 {
-    return m_history_updated;
+    set_binary(table, col_key, key, value, variant);
+}
+
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, Timestamp value,
+                             _impl::Instruction variant)
+{
+    if (value.is_null()) {
+        set_null(table, col_key, key, variant);
+    }
+    else {
+        set_timestamp(table, col_key, key, value, variant);
+    }
+}
+
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, bool value, _impl::Instruction variant)
+{
+    set_bool(table, col_key, key, value, variant);
+}
+
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, float value, _impl::Instruction variant)
+{
+    set_float(table, col_key, key, value, variant);
+}
+
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, double value, _impl::Instruction variant)
+{
+    set_double(table, col_key, key, value, variant);
+}
+
+template <>
+inline void Replication::set(const Table* table, ColKey col_key, ObjKey key, ObjKey target_key,
+                             _impl::Instruction variant)
+{
+    if (target_key) {
+        set_link(table, col_key, key, target_key, variant);
+    }
+    else {
+        nullify_link(table, col_key, key);
+    }
+}
+
+template <>
+void Replication::set(const Table* table, ColKey col_key, ObjKey key, Mixed value, _impl::Instruction variant);
+
+inline TrivialReplication::TrivialReplication(const std::string& database_file)
+    : Replication(m_stream)
+    , m_database_file(database_file)
+{
 }
 
 inline BinaryData TrivialReplication::get_uncommitted_changes() const noexcept
 {
-    const char* data = m_transact_log_buffer.data();
+    const char* data = m_stream.get_data();
     size_t size = write_position() - data;
     return BinaryData(data, size);
 }
 
 inline size_t TrivialReplication::transact_log_size()
 {
-    return write_position() - m_transact_log_buffer.data();
-}
-
-inline void TrivialReplication::transact_log_reserve(size_t n, char** new_begin, char** new_end)
-{
-    internal_transact_log_reserve(n, new_begin, new_end);
-}
-
-inline void TrivialReplication::internal_transact_log_reserve(size_t n, char** new_begin, char** new_end)
-{
-    char* data = m_transact_log_buffer.data();
-    size_t size = write_position() - data;
-    m_transact_log_buffer.reserve_extra(size, n);
-    data = m_transact_log_buffer.data(); // May have changed
-    *new_begin = data + size;
-    *new_end = data + m_transact_log_buffer.size();
+    return write_position() - m_stream.get_data();
 }
 
 } // namespace realm

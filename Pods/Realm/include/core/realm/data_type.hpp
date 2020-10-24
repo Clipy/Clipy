@@ -25,6 +25,7 @@ namespace realm {
 
 class StringData;
 class BinaryData;
+class Timestamp;
 
 typedef int64_t Int;
 typedef bool Bool;
@@ -32,6 +33,7 @@ typedef float Float;
 typedef double Double;
 typedef realm::StringData String;
 typedef realm::BinaryData Binary;
+typedef realm::Timestamp Timestamp;
 
 
 // Note: Value assignments must be kept in sync with <realm/column_type.h>
@@ -48,8 +50,8 @@ enum DataType {
     type_Binary = 4,
     type_OldDateTime = 7,
     type_Timestamp = 8,
-    type_Table = 5,
-    type_Mixed = 6,
+    type_OldTable = 5,
+    type_OldMixed = 6,
     type_Link = 12,
     type_LinkList = 13
 };
@@ -59,6 +61,8 @@ enum LinkType {
     link_Strong,
     link_Weak,
 };
+
+const char* get_data_type_name(DataType type) noexcept;
 
 } // namespace realm
 

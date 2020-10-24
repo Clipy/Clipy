@@ -27,7 +27,9 @@
 #define NOMINMAX
 #endif
 
+#ifndef REALM_NO_CONFIG
 #include <realm/util/config.h>
+#endif
 
 /* The maximum number of elements in a B+-tree node. Applies to inner nodes and
  * to leaves. The minimum allowable value is 2.
@@ -71,6 +73,8 @@
 
 #if REALM_HAS_CPP_ATTRIBUTE(clang::fallthrough)
 #define REALM_FALLTHROUGH [[clang::fallthrough]]
+#elif REALM_HAS_CPP_ATTRIBUTE(gnu::fallthrough)
+#define REALM_FALLTHROUGH [[gnu::fallthrough]]
 #elif REALM_HAS_CPP_ATTRIBUTE(fallthrough)
 #define REALM_FALLTHROUGH [[fallthrough]]
 #else
@@ -188,6 +192,16 @@
 #endif
 
 
+// FIXME: Change this to use [[nodiscard]] in C++17.
+#if defined(__GNUC__) || defined(__HP_aCC)
+#define REALM_NODISCARD __attribute__((warn_unused_result))
+#elif defined(_MSC_VER)
+#define REALM_NODISCARD _Check_return_
+#else
+#define REALM_NODISCARD
+#endif
+
+
 /* Thread specific data (only for POD types) */
 #if defined __clang__
 #define REALM_THREAD_LOCAL __thread
@@ -196,21 +210,21 @@
 #endif
 
 
-#if defined ANDROID
+#if defined ANDROID || defined __ANDROID_API__
 #define REALM_ANDROID 1
 #else
 #define REALM_ANDROID 0
 #endif
 
 #if defined _WIN32
-#  include <winapifamily.h>
-#  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
-#    define REALM_WINDOWS 1
-#    define REALM_UWP 0
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-#    define REALM_WINDOWS 0
-#    define REALM_UWP 1
-#  endif
+#include <winapifamily.h>
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
+#define REALM_WINDOWS 1
+#define REALM_UWP 0
+#elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#define REALM_WINDOWS 0
+#define REALM_UWP 1
+#endif
 #else
 #define REALM_WINDOWS 0
 #define REALM_UWP 0
@@ -223,11 +237,13 @@
 /* Apple OSX and iOS (Darwin). */
 #include <Availability.h>
 #include <TargetConditionals.h>
-#if TARGET_OS_IPHONE == 1
+#if TARGET_OS_IPHONE == 1 && TARGET_OS_IOS == 1
 /* Device (iPhone or iPad) or simulator. */
 #define REALM_IOS 1
+#define REALM_IOS_DEVICE !TARGET_OS_SIMULATOR
 #else
 #define REALM_IOS 0
+#define REALM_IOS_DEVICE 0
 #endif
 #if TARGET_OS_WATCH == 1
 /* Device (Apple Watch) or simulator. */
@@ -244,31 +260,9 @@
 #else
 #define REALM_PLATFORM_APPLE 0
 #define REALM_IOS 0
+#define REALM_IOS_DEVICE 0
 #define REALM_WATCHOS 0
 #define REALM_TVOS 0
-#endif
-
-// asl_log is deprecated in favor of os_log as of the following versions:
-// macos(10.12), ios(10.0), watchos(3.0), tvos(10.0)
-// versions are defined in /usr/include/Availability.h
-// __MAC_10_12   101200
-// __IPHONE_10_0 100000
-// __WATCHOS_3_0  30000
-// __TVOS_10_0   100000
-#if REALM_PLATFORM_APPLE \
-    && ( \
-        (REALM_IOS && defined(__IPHONE_OS_VERSION_MIN_REQUIRED) \
-         && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) \
-     || (REALM_TVOS && defined(__TV_OS_VERSION_MIN_REQUIRED) \
-         &&  __TV_OS_VERSION_MIN_REQUIRED >= 100000) \
-     || (REALM_WATCHOS && defined(__WATCH_OS_VERSION_MIN_REQUIRED) \
-         && __WATCH_OS_VERSION_MIN_REQUIRED >= 30000) \
-     || (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) \
-         && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) \
-       )
-#define REALM_APPLE_OS_LOG 1
-#else
-#define REALM_APPLE_OS_LOG 0
 #endif
 
 #if REALM_ANDROID || REALM_IOS || REALM_WATCHOS || REALM_TVOS || REALM_UWP
@@ -283,7 +277,7 @@
 #endif
 
 #if !REALM_IOS && !REALM_WATCHOS && !REALM_TVOS && !defined(_WIN32) && !REALM_ANDROID
-#define REALM_ASYNC_DAEMON
+// #define REALM_ASYNC_DAEMON FIXME Async commits not supported
 #endif
 
 // We're in i686 mode
@@ -299,6 +293,32 @@
 #define REALM_ARCHITECTURE_X86_64 1
 #else
 #define REALM_ARCHITECTURE_X86_64 0
+#endif
+
+// Address Sanitizer
+#if defined(__has_feature) // Clang
+#  if __has_feature(address_sanitizer)
+#    define REALM_SANITIZE_ADDRESS 1
+#  else
+#    define REALM_SANITIZE_ADDRESS 0
+#  endif
+#elif defined(__SANITIZE_ADDRESS__) && __SANITIZE_ADDRESS__ // GCC
+#  define REALM_SANITIZE_ADDRESS 1
+#else
+#  define REALM_SANITIZE_ADDRESS 0
+#endif
+
+// Thread Sanitizer
+#if defined(__has_feature) // Clang
+#  if __has_feature(thread_sanitizer)
+#    define REALM_SANITIZE_THREAD 1
+#  else
+#    define REALM_SANITIZE_THREAD 0
+#  endif
+#elif defined(__SANITIZE_THREAD__) && __SANITIZE_THREAD__ // GCC
+#  define REALM_SANITIZE_THREAD 1
+#else
+#  define REALM_SANITIZE_THREAD 0
 #endif
 
 #endif /* REALM_UTIL_FEATURES_H */

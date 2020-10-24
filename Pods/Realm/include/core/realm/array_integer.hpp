@@ -25,13 +25,27 @@
 
 namespace realm {
 
-class ArrayInteger : public Array {
+class ArrayInteger : public Array, public ArrayPayload {
 public:
-    typedef int64_t value_type;
+    using value_type = int64_t;
 
     explicit ArrayInteger(Allocator&) noexcept;
     ~ArrayInteger() noexcept override
     {
+    }
+
+    static value_type default_value(bool)
+    {
+        return 0;
+    }
+
+    void init_from_ref(ref_type ref) noexcept override
+    {
+        Array::init_from_ref(ref);
+    }
+    void set_parent(ArrayParent* parent, size_t ndx_in_parent) noexcept override
+    {
+        Array::set_parent(parent, ndx_in_parent);
     }
 
     // Disable copying, this is not allowed.
@@ -47,6 +61,15 @@ public:
     uint64_t get_uint(size_t ndx) const noexcept;
     static int64_t get(const char* header, size_t ndx) noexcept;
     bool compare(const ArrayInteger& a) const noexcept;
+    void move(ArrayInteger& dst, size_t ndx)
+    {
+        Array::move(dst, ndx);
+    }
+
+    bool is_null(size_t) const
+    {
+        return false;
+    }
 
     /// Add \a diff to the element at the specified index.
     void adjust(size_t ndx, int_fast64_t diff);
@@ -68,27 +91,70 @@ public:
     size_t lower_bound(int64_t value) const noexcept;
     size_t upper_bound(int64_t value) const noexcept;
 
-    std::vector<int64_t> to_vector() const;
-
 private:
     template <size_t w>
     bool minmax(size_t from, size_t to, uint64_t maxdiff, int64_t* min, int64_t* max) const;
 };
 
-class ArrayIntNull : public Array {
+class ArrayRef : public ArrayInteger {
+public:
+    using value_type = ref_type;
+
+    explicit ArrayRef(Allocator& allocator) noexcept
+        : ArrayInteger(allocator)
+    {
+    }
+
+    void create(size_t sz = 0)
+    {
+        Array::create(type_HasRefs, false, sz, 0);
+    }
+
+    void add(ref_type value)
+    {
+        Array::add(from_ref(value));
+    }
+
+    void set(size_t ndx, ref_type value)
+    {
+        Array::set(ndx, from_ref(value));
+    }
+
+    void insert(size_t ndx, ref_type value)
+    {
+        Array::insert(ndx, from_ref(value));
+    }
+
+    ref_type get(size_t ndx) const noexcept
+    {
+        return to_ref(Array::get(ndx));
+    }
+    void verify() const;
+};
+
+class ArrayIntNull : public Array, public ArrayPayload {
 public:
     using value_type = util::Optional<int64_t>;
 
     explicit ArrayIntNull(Allocator&) noexcept;
     ~ArrayIntNull() noexcept override;
 
+    static value_type default_value(bool nullable)
+    {
+        return nullable ? util::none : util::Optional<int64_t>(0);
+    }
+
     /// Construct an array of the specified type and size, and return just the
     /// reference to the underlying memory. All elements will be initialized to
     /// the specified value.
-    static MemRef create_array(Type, bool context_flag, size_t size, value_type value, Allocator&);
+    static MemRef create_array(Type, bool context_flag, size_t size, Allocator&);
     void create(Type = type_Normal, bool context_flag = false);
 
-    void init_from_ref(ref_type) noexcept;
+    void init_from_ref(ref_type) noexcept override;
+    void set_parent(ArrayParent* parent, size_t ndx_in_parent) noexcept override
+    {
+        Array::set_parent(parent, ndx_in_parent);
+    }
     void init_from_mem(MemRef) noexcept;
     void init_from_parent() noexcept;
 
@@ -97,11 +163,11 @@ public:
 
     void insert(size_t ndx, value_type value);
     void add(value_type value);
-    void set(size_t ndx, value_type value) noexcept;
+    void set(size_t ndx, value_type value);
     value_type get(size_t ndx) const noexcept;
     static value_type get(const char* header, size_t ndx) noexcept;
     void get_chunk(size_t ndx, value_type res[8]) const noexcept;
-    void set_null(size_t ndx) noexcept;
+    void set_null(size_t ndx);
     bool is_null(size_t ndx) const noexcept;
     int64_t null_value() const noexcept;
 
@@ -110,12 +176,11 @@ public:
     value_type back() const noexcept;
     void erase(size_t ndx);
     void erase(size_t begin, size_t end);
-    void truncate(size_t size);
+    void move(ArrayIntNull& dst, size_t ndx);
     void clear();
     void set_all_to_zero();
 
     void move(size_t begin, size_t end, size_t dest_begin);
-    void move_backward(size_t begin, size_t end, size_t dest_end);
 
     size_t lower_bound(int64_t value) const noexcept;
     size_t upper_bound(int64_t value) const noexcept;
@@ -162,16 +227,6 @@ public:
 
 
     size_t find_first(value_type value, size_t begin = 0, size_t end = npos) const;
-
-
-    // Overwrite Array::bptree_leaf_insert to correctly split nodes.
-    ref_type bptree_leaf_insert(size_t ndx, value_type value, TreeInsertBase& state);
-
-    MemRef slice(size_t offset, size_t slice_size, Allocator& target_alloc) const;
-
-    /// Construct a deep copy of the specified slice of this array using the
-    /// specified target allocator. Subarrays will be cloned.
-    MemRef slice_and_clone_children(size_t offset, size_t slice_size, Allocator& target_alloc) const;
 
 protected:
     void avoid_null_collision(int64_t value);
@@ -286,7 +341,7 @@ inline ArrayIntNull::~ArrayIntNull() noexcept
 
 inline void ArrayIntNull::create(Type type, bool context_flag)
 {
-    MemRef r = create_array(type, context_flag, 0, util::none, m_alloc);
+    MemRef r = create_array(type, context_flag, 0, m_alloc);
     init_from_mem(r);
 }
 
@@ -323,7 +378,7 @@ inline void ArrayIntNull::add(value_type value)
     }
 }
 
-inline void ArrayIntNull::set(size_t ndx, value_type value) noexcept
+inline void ArrayIntNull::set(size_t ndx, value_type value)
 {
     if (value) {
         avoid_null_collision(*value);
@@ -334,7 +389,7 @@ inline void ArrayIntNull::set(size_t ndx, value_type value) noexcept
     }
 }
 
-inline void ArrayIntNull::set_null(size_t ndx) noexcept
+inline void ArrayIntNull::set_null(size_t ndx)
 {
     Array::set(ndx + 1, null_value());
 }
@@ -395,14 +450,10 @@ inline void ArrayIntNull::erase(size_t begin, size_t end)
     Array::erase(begin + 1, end + 1);
 }
 
-inline void ArrayIntNull::truncate(size_t to_size)
-{
-    Array::truncate(to_size + 1);
-}
-
 inline void ArrayIntNull::clear()
 {
-    truncate(0);
+    Array::truncate(0);
+    Array::add(0);
 }
 
 inline void ArrayIntNull::set_all_to_zero()
@@ -416,11 +467,6 @@ inline void ArrayIntNull::set_all_to_zero()
 inline void ArrayIntNull::move(size_t begin, size_t end, size_t dest_begin)
 {
     Array::move(begin + 1, end + 1, dest_begin + 1);
-}
-
-inline void ArrayIntNull::move_backward(size_t begin, size_t end, size_t dest_end)
-{
-    Array::move_backward(begin + 1, end + 1, dest_end + 1);
 }
 
 inline size_t ArrayIntNull::lower_bound(int64_t value) const noexcept
@@ -601,8 +647,7 @@ bool ArrayIntNull::find_action_pattern(size_t index, uint64_t pattern, QueryStat
 template <class cond>
 size_t ArrayIntNull::find_first(value_type value, size_t start, size_t end) const
 {
-    QueryState<int64_t> state;
-    state.init(act_ReturnFirst, nullptr, 1);
+    QueryState<int64_t> state(act_ReturnFirst, 1);
     if (value) {
         Array::find<cond, act_ReturnFirst>(*value, start, end, 0, &state, Array::CallbackDummy(),
                                            true /*treat as nullable array*/,

@@ -1,5 +1,3 @@
-import Foundation
-
 /// A Nimble matcher that succeeds when the actual value is Void.
 public func beVoid() -> Predicate<()> {
     return Predicate.simpleNilable("be void") { actualExpression in
@@ -8,10 +6,12 @@ public func beVoid() -> Predicate<()> {
     }
 }
 
-public func == (lhs: Expectation<()>, rhs: ()) {
-    lhs.to(beVoid())
-}
+extension Expectation where T == () {
+    public static func == (lhs: Expectation<()>, rhs: ()) {
+        lhs.to(beVoid())
+    }
 
-public func != (lhs: Expectation<()>, rhs: ()) {
-    lhs.toNot(beVoid())
+    public static func != (lhs: Expectation<()>, rhs: ()) {
+        lhs.toNot(beVoid())
+    }
 }

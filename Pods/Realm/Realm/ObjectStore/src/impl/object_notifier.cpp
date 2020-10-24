@@ -23,75 +23,42 @@
 using namespace realm;
 using namespace realm::_impl;
 
-ObjectNotifier::ObjectNotifier(Row const& row, std::shared_ptr<Realm> realm)
+ObjectNotifier::ObjectNotifier(std::shared_ptr<Realm> realm, TableKey table, ObjKey obj)
 : CollectionNotifier(std::move(realm))
+, m_table(table)
+, m_obj(obj)
 {
-    REALM_ASSERT(row.get_table());
-    set_table(*row.get_table());
-
-    m_handover = source_shared_group().export_for_handover(row);
-}
-
-void ObjectNotifier::release_data() noexcept
-{
-    m_row = nullptr;
-}
-
-void ObjectNotifier::do_attach_to(SharedGroup& sg)
-{
-    REALM_ASSERT(m_handover);
-    REALM_ASSERT(!m_row);
-    m_row = sg.import_from_handover(std::move(m_handover));
-}
-
-void ObjectNotifier::do_detach_from(SharedGroup& sg)
-{
-    REALM_ASSERT(!m_handover);
-    if (m_row) {
-        m_handover = sg.export_for_handover(*m_row);
-        m_row = nullptr;
-    }
 }
 
 bool ObjectNotifier::do_add_required_change_info(TransactionChangeInfo& info)
 {
-    REALM_ASSERT(!m_handover);
     m_info = &info;
-    if (m_row && m_row->is_attached()) {
-        size_t table_ndx = m_row->get_table()->get_index_in_group();
-        if (table_ndx >= info.table_modifications_needed.size())
-            info.table_modifications_needed.resize(table_ndx + 1);
-        info.table_modifications_needed[table_ndx] = true;
-    }
+    info.tables[m_table.value];
     return false;
 }
 
 void ObjectNotifier::run()
 {
-    if (!m_row)
+    if (!m_table)
         return;
-    if (!m_row->is_attached()) {
+
+    auto it = m_info->tables.find(m_table.value);
+    if (it == m_info->tables.end())
+        return;
+    auto& change = it->second;
+
+    if (change.deletions_contains(m_obj.value)) {
         m_change.deletions.add(0);
-        m_row = nullptr;
+        m_table = {};
+        m_obj = {};
         return;
     }
 
-    size_t table_ndx = m_row->get_table()->get_index_in_group();
-    if (table_ndx >= m_info->tables.size())
-        return;
-    auto& change = m_info->tables[table_ndx];
-    if (!change.modifications.contains(m_row->get_index()))
+    auto column_modifications = change.get_columns_modified(m_obj.value);
+    if (!column_modifications)
         return;
     m_change.modifications.add(0);
-    m_change.columns.reserve(change.columns.size());
-    for (auto& col : change.columns) {
-        m_change.columns.emplace_back();
-        if (col.contains(m_row->get_index()))
-            m_change.columns.back().add(0);
+    for (auto col : *column_modifications) {
+        m_change.columns[col].add(0);
     }
-}
-
-void ObjectNotifier::do_prepare_handover(SharedGroup&)
-{
-    add_changes(std::move(m_change));
 }

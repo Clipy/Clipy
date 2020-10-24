@@ -30,11 +30,9 @@
     own intrinsics to be assembled by the back end assembler and omit passing -msse to gcc.
 */
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && defined(REALM_COMPILER_SSE)
 
-#ifdef REALM_COMPILER_SSE
 #include <emmintrin.h> // SSE2 (using __m128i)
-#endif
 
 namespace realm {
 
@@ -178,5 +176,5 @@ static inline __m128i __attribute__((always_inline)) _mm_cvtepi32_epi64(__m128i 
 
 } // namespace realm
 
-#endif
+#endif // !defined(_MSC_VER) && defined(REALM_COMPILER_SSE)
 #endif

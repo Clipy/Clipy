@@ -20,14 +20,6 @@ import Foundation
 import Realm
 import Realm.Private
 
-#if !swift(>=4.1)
-fileprivate extension Sequence {
-    func compactMap<T>(_ fn: (Self.Iterator.Element) throws -> T?) rethrows -> [T] {
-        return try flatMap(fn)
-    }
-}
-#endif
-
 extension Realm {
     /**
      A `Configuration` instance describes the different options used to create an instance of a Realm.
@@ -112,30 +104,28 @@ extension Realm {
 
         /**
          A configuration value used to configure a Realm for synchronization with the Realm Object Server. Mutually
-         exclusive with `inMemoryIdentifier` and `fileURL`.
+         exclusive with `inMemoryIdentifier`.
          */
         public var syncConfiguration: SyncConfiguration? {
-            set {
-                _path = nil
-                _inMemoryIdentifier = nil
-                _syncConfiguration = newValue
-            }
             get {
                 return _syncConfiguration
+            }
+            set {
+                _inMemoryIdentifier = nil
+                _syncConfiguration = newValue
             }
         }
 
         private var _syncConfiguration: SyncConfiguration?
 
-        /// The local URL of the Realm file. Mutually exclusive with `inMemoryIdentifier` and `syncConfiguration`.
+        /// The local URL of the Realm file. Mutually exclusive with `inMemoryIdentifier`.
         public var fileURL: URL? {
-            set {
-                _inMemoryIdentifier = nil
-                _syncConfiguration = nil
-                _path = newValue?.path
-            }
             get {
                 return _path.map { URL(fileURLWithPath: $0) }
+            }
+            set {
+                _inMemoryIdentifier = nil
+                _path = newValue?.path
             }
         }
 
@@ -144,13 +134,13 @@ extension Realm {
         /// A string used to identify a particular in-memory Realm. Mutually exclusive with `fileURL` and
         /// `syncConfiguration`.
         public var inMemoryIdentifier: String? {
+            get {
+                return _inMemoryIdentifier
+            }
             set {
                 _path = nil
                 _syncConfiguration = nil
                 _inMemoryIdentifier = newValue
-            }
-            get {
-                return _inMemoryIdentifier
             }
         }
 
@@ -162,11 +152,21 @@ extension Realm {
         /**
          Whether to open the Realm in read-only mode.
 
-         This is required to be able to open Realm files which are not writeable or are in a directory which is not
-         writeable. This should only be used on files which will not be modified by anyone while they are open, and not
-         just to get a read-only view of a file which may be written to by another thread or process. Opening in
-         read-only mode requires disabling Realm's reader/writer coordination, so committing a write transaction from
-         another process will result in crashes.
+         For non-synchronized Realms, this is required to be able to open Realm files which are not
+         writeable or are in a directory which is not writeable.  This should only be used on files
+         which will not be modified by anyone while they are open, and not just to get a read-only
+         view of a file which may be written to by another thread or process. Opening in read-only
+         mode requires disabling Realm's reader/writer coordination, so committing a write
+         transaction from another process will result in crashes.
+
+         Syncronized Realms must always be writeable (as otherwise no synchronization could happen),
+         and this instead merely disallows performing write transactions on the Realm. In addition,
+         it will skip some automatic writes made to the Realm, such as to initialize the Realm's
+         schema. Setting `readOnly = YES` is not strictly required for Realms which the sync user
+         does not have write access to, but is highly recommended as it will improve error reporting
+         and catch some errors earlier.
+
+         Realms using query-based sync cannot be opened in read-only mode.
          */
         public var readOnly: Bool = false
 
@@ -199,13 +199,37 @@ extension Realm {
 
         /// The classes managed by the Realm.
         public var objectTypes: [Object.Type]? {
-            set {
-                self.customSchema = newValue.map { RLMSchema(objectClasses: $0) }
-            }
             get {
                 return self.customSchema.map { $0.objectSchema.compactMap { $0.objectClass as? Object.Type } }
             }
+            set {
+                self.customSchema = newValue.map { RLMSchema(objectClasses: $0) }
+            }
         }
+        /**
+         The maximum number of live versions in the Realm file before an exception will
+         be thrown when attempting to start a write transaction.
+
+         Realm provides MVCC snapshot isolation, meaning that writes on one thread do
+         not overwrite data being read on another thread, and instead write a new copy
+         of that data. When a Realm refreshes it updates to the latest version of the
+         data and releases the old versions, allowing them to be overwritten by
+         subsequent write transactions.
+
+         Under normal circumstances this is not a problem, but if the number of active
+         versions grow too large, it will have a negative effect on the filesize on
+         disk. This can happen when performing writes on many different threads at
+         once, when holding on to frozen objects for an extended time, or when
+         performing long operations on background threads which do not allow the Realm
+         to refresh.
+
+         Setting this property to a non-zero value makes it so that exceeding the set
+         number of versions will instead throw an exception. This can be used with a
+         low value during development to help identify places that may be problematic,
+         or in production use to cause the app to crash rather than produce a Realm
+         file which is too large to be oened.
+         */
+        public var maximumNumberOfActiveVersions: UInt?
 
         /// A custom schema to use for the Realm.
         private var customSchema: RLMSchema?
@@ -217,13 +241,14 @@ extension Realm {
 
         internal var rlmConfiguration: RLMRealmConfiguration {
             let configuration = RLMRealmConfiguration()
+            if let syncConfiguration = syncConfiguration {
+                configuration.syncConfiguration = syncConfiguration.asConfig()
+            }
             if let fileURL = fileURL {
                 configuration.fileURL = fileURL
             } else if let inMemoryIdentifier = inMemoryIdentifier {
                 configuration.inMemoryIdentifier = inMemoryIdentifier
-            } else if let syncConfiguration = syncConfiguration {
-                configuration.syncConfiguration = syncConfiguration.asConfig()
-            } else {
+            } else if syncConfiguration == nil {
                 fatalError("A Realm Configuration must specify a path or an in-memory identifier.")
             }
             configuration.encryptionKey = self.encryptionKey
@@ -238,6 +263,7 @@ extension Realm {
             }
             configuration.setCustomSchemaWithoutCopying(self.customSchema)
             configuration.disableFormatUpgrade = self.disableFormatUpgrade
+            configuration.maximumNumberOfActiveVersions = self.maximumNumberOfActiveVersions ?? 0
             return configuration
         }
 
@@ -262,6 +288,7 @@ extension Realm {
             configuration.shouldCompactOnLaunch = rlmConfiguration.shouldCompactOnLaunch.map(ObjectiveCSupport.convert)
             configuration.customSchema = rlmConfiguration.customSchema
             configuration.disableFormatUpgrade = rlmConfiguration.disableFormatUpgrade
+            configuration.maximumNumberOfActiveVersions = rlmConfiguration.maximumNumberOfActiveVersions
             return configuration
         }
     }

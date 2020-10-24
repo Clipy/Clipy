@@ -1,8 +1,6 @@
 platform :osx, '10.10'
 use_frameworks!
 
-source 'https://github.com/CocoaPods/Specs.git'
-
 target 'Clipy' do
 
   # Application
@@ -17,6 +15,7 @@ target 'Clipy' do
   pod 'RxOptional'
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'
+  pod 'Magnet', '2.3.1'
   pod 'RxScreeen'
   pod 'AEXML'
   pod 'LetsMove'

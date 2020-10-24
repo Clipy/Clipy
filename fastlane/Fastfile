@@ -33,9 +33,7 @@ platform :mac do
 
   desc "Runs all the tests"
   lane :test do
-    slack(message: "Start Testing")
     scan_clipy
-    slack(message: "Passed All Tests")
   end
   
   desc "Release"
@@ -62,11 +60,5 @@ platform :mac do
   end
 
   error do |lane, exception|
-    if lane == :scan_clipy
-      slack(
-        message: "Failed Tests: " + ENV['FL_REPORT_PATH'],
-        success: false
-      )
-    end
   end
 end

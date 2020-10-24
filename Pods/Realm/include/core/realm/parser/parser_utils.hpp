@@ -37,7 +37,10 @@ namespace util {
 // check a precondition and throw an exception if it is not met
 // this should be used iff the condition being false indicates a bug in the caller
 // of the function checking its preconditions
-#define realm_precondition(condition, message) if (!REALM_LIKELY(condition)) { throw std::logic_error(message); }
+#define realm_precondition(condition, message)                                                                       \
+    if (!REALM_LIKELY(condition)) {                                                                                  \
+        throw std::logic_error(message);                                                                             \
+    }
 
 
 template <typename T>

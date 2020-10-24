@@ -25,6 +25,7 @@
 #include <exception>
 #include <memory>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 
 namespace realm {
@@ -86,7 +87,7 @@ struct CollectionChangeSet {
     std::vector<Move> moves;
 
     // Per-column version of `modifications`
-    std::vector<IndexSet> columns;
+    std::unordered_map<int64_t, IndexSet> columns;
 
     bool empty() const noexcept
     {
@@ -126,6 +127,7 @@ public:
 
 private:
     struct Base {
+        virtual ~Base() {}
         virtual void before(CollectionChangeSet const&)=0;
         virtual void after(CollectionChangeSet const&)=0;
         virtual void error(std::exception_ptr)=0;
