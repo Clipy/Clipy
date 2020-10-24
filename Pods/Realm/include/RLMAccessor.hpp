@@ -44,7 +44,7 @@ public:
     id box(realm::List&&);
     id box(realm::Results&&);
     id box(realm::Object&&);
-    id box(realm::RowExpr);
+    id box(realm::Obj&&);
 
     id box(bool v) { return @(v); }
     id box(double v) { return @(v); }
@@ -60,25 +60,26 @@ public:
     id box(realm::util::Optional<float> v) { return v ? @(*v) : NSNull.null; }
     id box(realm::util::Optional<int64_t> v) { return v ? @(*v) : NSNull.null; }
 
-    void will_change(realm::Row const&, realm::Property const&);
-    void will_change(realm::Object& obj, realm::Property const& prop) { will_change(obj.row(), prop); }
+    void will_change(realm::Obj const&, realm::Property const&);
+    void will_change(realm::Object& obj, realm::Property const& prop) { will_change(obj.obj(), prop); }
     void did_change();
 
-    RLMOptionalId value_for_property(id dict, std::string const&, size_t prop_index);
+    RLMOptionalId value_for_property(id dict, realm::Property const&, size_t prop_index);
     RLMOptionalId default_value_for_property(realm::ObjectSchema const&,
-                                             std::string const& prop);
+                                             realm::Property const& prop);
 
     bool is_same_list(realm::List const& list, id v) const noexcept;
 
     template<typename Func>
     void enumerate_list(__unsafe_unretained const id v, Func&& func) {
-        for (id value in v) {
+        id enumerable = RLMAsFastEnumeration(v) ?: v;
+        for (id value in enumerable) {
             func(value);
         }
     }
 
     template<typename T>
-    T unbox(id v, bool create = false, bool update = false);
+    T unbox(id v, realm::CreatePolicy = realm::CreatePolicy::Skip, realm::ObjKey = {});
 
     bool is_null(id v) { return v == NSNull.null; }
     id null_value() { return NSNull.null; }
@@ -89,7 +90,7 @@ public:
 
     // Internal API
     RLMAccessorContext(RLMObjectBase *parentObject, const realm::Property *property = nullptr);
-    RLMAccessorContext(RLMRealm *realm, RLMClassInfo& info, bool promote=true);
+    RLMAccessorContext(RLMClassInfo& info, bool promote=true);
 
     // The property currently being accessed; needed for KVO things for boxing
     // List and Results

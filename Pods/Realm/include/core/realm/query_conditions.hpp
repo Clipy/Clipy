@@ -28,6 +28,50 @@
 
 namespace realm {
 
+enum Action {
+    act_ReturnFirst,
+    act_Sum,
+    act_Max,
+    act_Min,
+    act_Count,
+    act_FindAll,
+    act_CallIdx,
+    act_CallbackIdx,
+    act_CallbackVal,
+    act_CallbackNone,
+    act_CallbackBoth,
+    act_Average
+};
+
+class ClusterKeyArray;
+
+class QueryStateBase {
+public:
+    size_t m_match_count;
+    size_t m_limit;
+    int64_t m_minmax_index; // used only for min/max, to save index of current min/max value
+    uint64_t m_key_offset;
+    const ClusterKeyArray* m_key_values;
+    QueryStateBase(size_t limit)
+        : m_match_count(0)
+        , m_limit(limit)
+        , m_minmax_index(-1)
+        , m_key_offset(0)
+        , m_key_values(nullptr)
+    {
+    }
+    virtual ~QueryStateBase()
+    {
+    }
+
+private:
+    virtual void dyncast();
+};
+
+template <class>
+class QueryState;
+
+
 // Array::VTable only uses the first 4 conditions (enums) in an array of function pointers
 enum { cond_Equal, cond_NotEqual, cond_Greater, cond_Less, cond_VTABLE_FINDER_COUNT, cond_None, cond_LeftNotNull };
 
@@ -282,11 +326,7 @@ struct NotEqual {
     }
 
     template <class A, class B, class C, class D>
-    bool operator()(A, B, C, D) const
-    {
-        REALM_ASSERT(false);
-        return false;
-    }
+    bool operator()(A, B, C, D) const = delete;
 
     static std::string description()
     {
@@ -327,7 +367,7 @@ struct ContainsIns : public HackClass {
         StringData s2(b2.data(), b2.size());
         return this->operator()(s1, s2, false, false);
     }
-    
+
     // Case insensitive Boyer-Moore version
     bool operator()(StringData v1, const char* v1_upper, const char* v1_lower, const std::array<uint8_t, 256> &charmap, StringData v2) const
     {
@@ -800,6 +840,13 @@ struct LessEqual : public HackClass {
 
         return (!v1null && !v2null && v1 <= v2);
     }
+    bool operator()(const util::Optional<bool>& v1, const util::Optional<bool>& v2, bool v1null, bool v2null) const
+    {
+        if (v1null && v2null)
+            return false;
+
+        return (!v1null && !v2null && v1.value() <= v2.value());
+    }
     template <class A, class B, class C, class D>
     bool operator()(A, B, C, D) const
     {
@@ -822,6 +869,13 @@ struct GreaterEqual : public HackClass {
             return true;
 
         return (!v1null && !v2null && v1 >= v2);
+    }
+    bool operator()(const util::Optional<bool>& v1, const util::Optional<bool>& v2, bool v1null, bool v2null) const
+    {
+        if (v1null && v2null)
+            return false;
+
+        return (!v1null && !v2null && v1.value() >= v2.value());
     }
     template <class A, class B, class C, class D>
     bool operator()(A, B, C, D) const

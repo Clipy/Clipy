@@ -22,7 +22,6 @@
 
 #import "RLMResults_Private.hpp"
 
-#import <realm/link_view_fwd.hpp>
 #import <realm/table_ref.hpp>
 
 namespace realm {
@@ -48,7 +47,6 @@ class RLMObservationInfo;
 @interface RLMManagedArray : RLMArray <RLMFastEnumerable>
 - (instancetype)initWithParent:(RLMObjectBase *)parentObject property:(RLMProperty *)property;
 - (RLMManagedArray *)initWithList:(realm::List)list
-                            realm:(__unsafe_unretained RLMRealm *const)realm
                        parentInfo:(RLMClassInfo *)parentInfo
                          property:(__unsafe_unretained RLMProperty *const)property;
 

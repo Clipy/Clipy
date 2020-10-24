@@ -219,6 +219,8 @@ inline void InterprocessMutex::set_shared_part(SharedPart& shared_part, const st
     // Always use mod_Write to open file and retreive the uid in case other process
     // deletes the file.
     m_lock_info->m_file.open(m_filename, File::mode_Write);
+    // exFAT does not allocate a unique id for the file until it's non-empty
+    m_lock_info->m_file.resize(1);
     m_fileuid = m_lock_info->m_file.get_unique_id();
 
     (*s_info_map)[m_fileuid] = m_lock_info;

@@ -20,461 +20,121 @@
 #define REALM_TABLE_REF_HPP
 
 #include <cstddef>
-#include <algorithm>
-
-#include <realm/util/bind_ptr.hpp>
-
+#include <ostream>
 namespace realm {
 
 
 class Table;
+class TableRef;
 
-
-/// A reference-counting "smart pointer" for referring to table
-/// accessors.
-///
-/// The purpose of this smart pointer is to keep the referenced table
-/// accessor alive for as long as anybody is referring to it, however,
-/// for stack allocated table accessors, the lifetime is necessarily
-/// determined by scope (see below).
-///
-/// Please take note of the distinction between a "table" and a "table
-/// accessor" here. A table accessor is an instance of `Table`,
-/// and it may, or may not be attached to an
-/// actual table at any specific point in time, but this state of
-/// attachment of the accessor has nothing to do with the function of
-/// the smart pointer. Also, in the rest of the documentation of this
-/// class, whenever you see `Table::%foo`, you are supposed to read it
-/// as, `Table::%foo`.
-///
-///
-/// Table accessors are either created directly by an application via
-/// a call to one of the public table constructors, or they are
-/// created internally by the Realm library, such as when the
-/// application calls Group::get_table(), Table::get_subtable(), or
-/// Table::create().
-///
-/// Applications can safely assume that all table accessors, created
-/// internally by the Realm library, have a lifetime that is managed
-/// by reference counting. This means that the application can prolong
-/// the lifetime of *such* table accessors indefinitely by holding on
-/// to at least one smart pointer, but note that the guarantee of the
-/// continued existence of the accessor, does not imply that the
-/// accessor remains attached to the underlying table (see
-/// Table::is_attached() for details). Accessors whose lifetime are
-/// controlled by reference counting are destroyed exactly when the
-/// reference count drops to zero.
-///
-/// When an application creates a new table accessor by a direct call
-/// to one of the public constructors, the lifetime of that table
-/// accessor is *not*, and cannot be managed by reference
-/// counting. This is true regardless of the way the accessor is
-/// created (i.e., regardless of whether it is an automatic variable
-/// on the stack, or created on the heap using `new`). However, for
-/// convenience, but with one important caveat, it is still possible
-/// to use smart pointers to refer to such accessors. The caveat is
-/// that no smart pointers are allowed to refer to the accessor at the
-/// point in time when its destructor is called. It is entirely the
-/// responsibility of the application to ensure that this requirement
-/// is met. Failing to do so, will result in undefined
-/// behavior. Finally, please note that an application is always free
-/// to use Table::create() as an alternative to creating free-standing
-/// top-level tables on the stack, and that this is indeed neccessary
-/// when fully reference counted lifetimes are required.
-///
-/// So, at any time, and for any table accessor, an application can
-/// call Table::get_table_ref() to obtain a smart pointer that refers
-/// to that table, however, while that is always possible and safe, it
-/// is not always possible to extend the lifetime of an accessor by
-/// holding on to a smart pointer. The question of whether that is
-/// possible, depends directly on the way the accessor was created.
-///
-///
-/// Apart from keeping track of the number of references, these smart
-/// pointers behaves almost exactly like regular pointers. In
-/// particular, it is possible to dereference a TableRef and get a
-/// `Table&` out of it, however, if you are not careful, this can
-/// easily lead to dangling references:
-///
-/// \code{.cpp}
-///
-///   Table& sub_1 = *(table.get_subtable(0,0));
-///   sub_1.add_empty_row(); // Oops, sub_1 may be dangling!
-///
-/// \endcode
-///
-/// Whether `sub_1` is actually dangling in the example above will
-/// depend on whether other references to the same subtable accessor
-/// already exist, but it is never wise to rely in this. Here is a
-/// safe and proper alternative:
-///
-/// \code{.cpp}
-///
-///   TableRef sub_2 = table.get_subtable(0,0);
-///   sub_2.add_empty_row(); // Safe!
-///
-///   void do_something(Table&);
-///   do_something(*(table.get_subtable(0,0))); // Also safe!
-///
-/// \endcode
-///
-///
-/// \sa Table
-/// \sa TableRef
-template <class T>
-class BasicTableRef : util::bind_ptr<T> {
+class ConstTableRef {
 public:
-    constexpr BasicTableRef() noexcept
-    {
-    }
-    ~BasicTableRef() noexcept
-    {
-    }
+    ConstTableRef() noexcept {}
+    ConstTableRef(std::nullptr_t) noexcept {}
+    ConstTableRef(const TableRef& other) noexcept;
 
-    // Copy construct
-    BasicTableRef(const BasicTableRef& r) noexcept
-        : util::bind_ptr<T>(r)
+    const Table* operator->() const;
+    const Table& operator*() const;
+    operator bool() const noexcept;
+    const Table* unchecked_ptr() const
     {
-    }
-    template <class U>
-    BasicTableRef(const BasicTableRef<U>& r) noexcept
-        : util::bind_ptr<T>(r)
-    {
+        return m_table;
     }
 
-    // Copy assign
-    BasicTableRef& operator=(const BasicTableRef&) noexcept;
-    template <class U>
-    BasicTableRef& operator=(const BasicTableRef<U>&) noexcept;
-
-    // Move construct
-    BasicTableRef(BasicTableRef&& r) noexcept
-        : util::bind_ptr<T>(std::move(r))
+    bool operator==(const ConstTableRef& other) const
     {
-    }
-    template <class U>
-    BasicTableRef(BasicTableRef<U>&& r) noexcept
-        : util::bind_ptr<T>(std::move(r))
-    {
+        return m_table == other.m_table && m_instance_version == other.m_instance_version;
     }
 
-    // Move assign
-    BasicTableRef& operator=(BasicTableRef&&) noexcept;
-    template <class U>
-    BasicTableRef& operator=(BasicTableRef<U>&&) noexcept;
-
-    //@{
-    /// Comparison
-    template <class U>
-    bool operator==(const BasicTableRef<U>&) const noexcept;
-
-    template <class U>
-    bool operator==(U*) const noexcept;
-
-    template <class U>
-    bool operator!=(const BasicTableRef<U>&) const noexcept;
-
-    template <class U>
-    bool operator!=(U*) const noexcept;
-
-    template <class U>
-    bool operator<(const BasicTableRef<U>&) const noexcept;
-
-    template <class U>
-    bool operator<(U*) const noexcept;
-
-    template <class U>
-    bool operator>(const BasicTableRef<U>&) const noexcept;
-
-    template <class U>
-    bool operator>(U*) const noexcept;
-
-    template <class U>
-    bool operator<=(const BasicTableRef<U>&) const noexcept;
-
-    template <class U>
-    bool operator<=(U*) const noexcept;
-
-    template <class U>
-    bool operator>=(const BasicTableRef<U>&) const noexcept;
-
-    template <class U>
-    bool operator>=(U*) const noexcept;
-//@}
-
-// Dereference
-#ifdef __clang__
-    // Clang has a bug that causes it to effectively ignore the 'using' declaration.
-    T& operator*() const noexcept
+    bool operator!=(const ConstTableRef& other) const
     {
-        return util::bind_ptr<T>::operator*();
-    }
-#else
-    using util::bind_ptr<T>::operator*;
-#endif
-    using util::bind_ptr<T>::operator->;
-
-    using util::bind_ptr<T>::operator bool;
-
-    T* get() const noexcept
-    {
-        return util::bind_ptr<T>::get();
-    }
-    void reset() noexcept
-    {
-        util::bind_ptr<T>::reset();
-    }
-    void reset(T* t) noexcept
-    {
-        util::bind_ptr<T>::reset(t);
+        return !(*this == other);
     }
 
-    void swap(BasicTableRef& r) noexcept
+    bool operator<(const ConstTableRef& other) const
     {
-        this->util::bind_ptr<T>::swap(r);
-    }
-    friend void swap(BasicTableRef& a, BasicTableRef& b) noexcept
-    {
-        a.swap(b);
-    }
-
-    template <class U>
-    friend BasicTableRef<U> unchecked_cast(BasicTableRef<Table>) noexcept;
-
-    template <class U>
-    friend BasicTableRef<const U> unchecked_cast(BasicTableRef<const Table>) noexcept;
-
-private:
-    template <class>
-    struct GetRowAccType {
-        typedef void type;
-    };
-
-    typedef typename GetRowAccType<T>::type RowAccessor;
-
-public:
-    /// Same as 'table[i]' where 'table' is the referenced table.
-    RowAccessor operator[](size_t i) const noexcept
-    {
-        return (*this->get())[i];
+        if (m_table == other.m_table)
+            return m_instance_version < other.m_instance_version;
+        else
+            return m_table < other.m_table;
     }
 
-    explicit BasicTableRef(T* t) noexcept
-        : util::bind_ptr<T>(t)
+    bool operator>(const ConstTableRef& other) const
     {
+        if (m_table == other.m_table)
+            return m_instance_version > other.m_instance_version;
+        else
+            return m_table > other.m_table;
     }
 
-    T* release() { return util::bind_ptr<T>::release(); }
-private:
-    friend class SubtableColumnBase;
-    friend class Table;
+    std::ostream& print(std::ostream& o) const
+    {
+        return o << "TableRef(" << m_table << ", " << m_instance_version << ")";
+    }
+    TableRef cast_away_const() const;
+    static ConstTableRef unsafe_create(const Table* t_ptr);
+    void check() const;
+
+protected:
+    explicit ConstTableRef(const Table* t_ptr, uint64_t instance_version)
+        : m_table(const_cast<Table*>(t_ptr))
+        , m_instance_version(instance_version)
+    {
+    }
     friend class Group;
+    friend class Table;
+    friend class ClusterTree;
 
-    template <class>
-    friend class BasicTableRef;
+    Table* m_table = nullptr;
+    uint64_t m_instance_version = 0;
+};
 
-    typedef typename util::bind_ptr<T>::casting_move_tag casting_move_tag;
-    template <class U>
-    BasicTableRef(BasicTableRef<U>* r, casting_move_tag) noexcept
-        : util::bind_ptr<T>(r, casting_move_tag())
+class TableRef : public ConstTableRef {
+public:
+    TableRef() noexcept
+        : ConstTableRef()
     {
     }
+    TableRef(std::nullptr_t) noexcept
+        : ConstTableRef()
+    {
+    }
+
+    Table* operator->() const;
+    Table& operator*() const;
+    Table* unchecked_ptr() const
+    {
+        return m_table;
+    }
+    static TableRef unsafe_create(Table* t_ptr);
+
+private:
+    explicit TableRef(Table* t_ptr, uint64_t instance_version)
+        : ConstTableRef(t_ptr, instance_version)
+    {
+    }
+    friend class Group;
+    friend class Table;
+    friend class ClusterTree;
+    friend class ConstTableRef;
 };
 
 
-typedef BasicTableRef<Table> TableRef;
-typedef BasicTableRef<const Table> ConstTableRef;
-
-
-template <class C, class T, class U>
-inline std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& out, const BasicTableRef<U>& p)
+inline ConstTableRef::ConstTableRef(const TableRef& other) noexcept
+    : m_table(other.m_table)
+    , m_instance_version(other.m_instance_version)
 {
-    out << static_cast<const void*>(&*p);
-    return out;
 }
 
-template <class T>
-inline BasicTableRef<T> unchecked_cast(TableRef t) noexcept
+inline TableRef ConstTableRef::cast_away_const() const
 {
-    return BasicTableRef<T>(&t, typename BasicTableRef<T>::casting_move_tag());
+    return TableRef(m_table, m_instance_version);
 }
 
-template <class T>
-inline BasicTableRef<const T> unchecked_cast(ConstTableRef t) noexcept
+inline std::ostream& operator<<(std::ostream& o, const ConstTableRef& tr)
 {
-    return BasicTableRef<const T>(&t, typename BasicTableRef<T>::casting_move_tag());
+    return tr.print(o);
 }
-
-
-//@{
-/// Comparison
-template <class T, class U>
-bool operator==(T*, const BasicTableRef<U>&) noexcept;
-template <class T, class U>
-bool operator!=(T*, const BasicTableRef<U>&) noexcept;
-template <class T, class U>
-bool operator<(T*, const BasicTableRef<U>&) noexcept;
-template <class T, class U>
-bool operator>(T*, const BasicTableRef<U>&) noexcept;
-template <class T, class U>
-bool operator<=(T*, const BasicTableRef<U>&) noexcept;
-template <class T, class U>
-bool operator>=(T*, const BasicTableRef<U>&) noexcept;
-//@}
-
-
-// Implementation:
-
-template <class T>
-inline BasicTableRef<T>& BasicTableRef<T>::operator=(const BasicTableRef& r) noexcept
-{
-    this->util::bind_ptr<T>::operator=(r);
-    return *this;
-}
-
-template <class T>
-template <class U>
-inline BasicTableRef<T>& BasicTableRef<T>::operator=(const BasicTableRef<U>& r) noexcept
-{
-    this->util::bind_ptr<T>::operator=(r);
-    return *this;
-}
-
-template <class T>
-inline BasicTableRef<T>& BasicTableRef<T>::operator=(BasicTableRef&& r) noexcept
-{
-    this->util::bind_ptr<T>::operator=(std::move(r));
-    return *this;
-}
-
-template <class T>
-template <class U>
-inline BasicTableRef<T>& BasicTableRef<T>::operator=(BasicTableRef<U>&& r) noexcept
-{
-    this->util::bind_ptr<T>::operator=(std::move(r));
-    return *this;
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator==(const BasicTableRef<U>& p) const noexcept
-{
-    return get() == p.get();
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator==(U* p) const noexcept
-{
-    return get() == p;
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator!=(const BasicTableRef<U>& p) const noexcept
-{
-    return get() != p.get();
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator!=(U* p) const noexcept
-{
-    return get() != p;
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator<(const BasicTableRef<U>& p) const noexcept
-{
-    return get() < p.get();
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator<(U* p) const noexcept
-{
-    return get() < p;
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator>(const BasicTableRef<U>& p) const noexcept
-{
-    return get() > p.get();
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator>(U* p) const noexcept
-{
-    return get() > p;
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator<=(const BasicTableRef<U>& p) const noexcept
-{
-    return get() <= p.get();
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator<=(U* p) const noexcept
-{
-    return get() <= p;
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator>=(const BasicTableRef<U>& p) const noexcept
-{
-    return get() >= p.get();
-}
-
-template <class T>
-template <class U>
-bool BasicTableRef<T>::operator>=(U* p) const noexcept
-{
-    return get() >= p;
-}
-
-template <class T, class U>
-bool operator==(T* a, const BasicTableRef<U>& b) noexcept
-{
-    return b == a;
-}
-
-template <class T, class U>
-bool operator!=(T* a, const BasicTableRef<U>& b) noexcept
-{
-    return b != a;
-}
-
-template <class T, class U>
-bool operator<(T* a, const BasicTableRef<U>& b) noexcept
-{
-    return b > a;
-}
-
-template <class T, class U>
-bool operator>(T* a, const BasicTableRef<U>& b) noexcept
-{
-    return b < a;
-}
-
-template <class T, class U>
-bool operator<=(T* a, const BasicTableRef<U>& b) noexcept
-{
-    return b >= a;
-}
-
-template <class T, class U>
-bool operator>=(T* a, const BasicTableRef<U>& b) noexcept
-{
-    return b <= a;
-}
-
 
 } // namespace realm
 

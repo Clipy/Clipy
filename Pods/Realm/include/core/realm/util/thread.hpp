@@ -65,7 +65,7 @@ public:
     Thread(const Thread&) = delete;
     Thread& operator=(const Thread&) = delete;
 
-    Thread(Thread&&);
+    Thread(Thread&&) noexcept;
 
     /// This method is an extension of the API provided by
     /// std::thread. This method exists because proper move semantics
@@ -89,7 +89,7 @@ public:
     // If supported by the platform, this function assigns the name of the
     // calling thread to \a name, and returns true, otherwise it does nothing
     // and returns false.
-    static bool get_name(std::string& name);
+    static bool get_name(std::string& name) noexcept;
 
 private:
 
@@ -375,6 +375,42 @@ private:
 };
 
 
+class RaceDetector {
+    std::atomic<bool> busy;
+
+public:
+    RaceDetector()
+    {
+        busy.store(false);
+    }
+    void enter()
+    {
+        bool already_busy = busy.exchange(true, std::memory_order_acq_rel);
+        if (already_busy)
+            throw std::runtime_error("Race detected - critical section busy on entry");
+    }
+    void leave()
+    {
+        busy.store(false, std::memory_order_release);
+    }
+    friend class CriticalSection;
+};
+
+class CriticalSection {
+    RaceDetector& rd;
+
+public:
+    CriticalSection(RaceDetector& race)
+        : rd(race)
+    {
+        rd.enter();
+    }
+    ~CriticalSection()
+    {
+        rd.leave();
+    }
+};
+
 // Implementation:
 
 inline Thread::Thread()
@@ -391,7 +427,7 @@ inline Thread::Thread(F func)
     func2.release();
 }
 
-inline Thread::Thread(Thread&& thread)
+inline Thread::Thread(Thread&& thread) noexcept
 {
 #ifndef _WIN32
     m_id = thread.m_id;
@@ -750,6 +786,25 @@ inline void CondVar::notify_all() noexcept
     int r = pthread_cond_broadcast(&m_impl);
     REALM_ASSERT(r == 0);
 #endif
+}
+
+// helpers which can ensure atomic access to memory which has not itself been declared atomic.
+// This can be used to e.g. ensure atomic access to members of a vector. Vectors does not
+// fully allow atomic members because operations on vector may relocate the underlying memory.
+// use with care!
+template <typename T>
+T load_atomic(T& t_ref, std::memory_order order)
+{
+    std::atomic<T>* t_ptr = reinterpret_cast<std::atomic<T>*>(&t_ref);
+    T t = atomic_load_explicit(t_ptr, order);
+    return t;
+}
+
+template <typename T>
+void store_atomic(T& t_ref, T value, std::memory_order order)
+{
+    std::atomic<T>* t_ptr = reinterpret_cast<std::atomic<T>*>(&t_ref);
+    atomic_store_explicit(t_ptr, value, order);
 }
 
 

@@ -27,7 +27,7 @@ namespace realm {
 namespace sync {
 
 /// Copy raw changesets unmodified.
-class TrivialChangesetCooker: public ClientHistory::ChangesetCooker {
+class TrivialChangesetCooker: public ClientReplication::ChangesetCooker {
 public:
     bool cook_changeset(const Group&, const char* changeset,
                         std::size_t changeset_size,

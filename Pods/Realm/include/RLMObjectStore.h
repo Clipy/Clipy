@@ -24,7 +24,15 @@ extern "C" {
 
 @class RLMRealm, RLMSchema, RLMObjectBase, RLMResults, RLMProperty;
 
+typedef NS_ENUM(NSUInteger, RLMUpdatePolicy) {
+    RLMUpdatePolicyError = 1,
+    RLMUpdatePolicyUpdateChanged = 3,
+    RLMUpdatePolicyUpdateAll = 2,
+};
+
 NS_ASSUME_NONNULL_BEGIN
+
+void RLMVerifyHasPrimaryKey(Class cls);
 
 //
 // Accessor Creation
@@ -39,7 +47,7 @@ void RLMRealmCreateAccessors(RLMSchema *schema);
 //
 
 // add an object to the given realm
-void RLMAddObjectToRealm(RLMObjectBase *object, RLMRealm *realm, bool createOrUpdate);
+void RLMAddObjectToRealm(RLMObjectBase *object, RLMRealm *realm, RLMUpdatePolicy);
 
 // delete an object from its realm
 void RLMDeleteObjectFromRealm(RLMObjectBase *object, RLMRealm *realm);
@@ -56,9 +64,8 @@ id _Nullable RLMGetObject(RLMRealm *realm, NSString *objectClassName, id _Nullab
 
 // create object from array or dictionary
 RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *className,
-                                               id _Nullable value, bool createOrUpdate)
+                                               id _Nullable value, RLMUpdatePolicy updatePolicy)
 NS_RETURNS_RETAINED;
-
 
 //
 // Accessor Creation
@@ -73,16 +80,13 @@ void RLMInitializeSwiftAccessorGenerics(RLMObjectBase *object);
 
 namespace realm {
     class Table;
-    template<typename T> class BasicRowExpr;
-    using RowExpr = BasicRowExpr<Table>;
+    class Obj;
 }
 class RLMClassInfo;
 
 // Create accessors
-RLMObjectBase *RLMCreateObjectAccessor(RLMRealm *realm, RLMClassInfo& info,
-                                       NSUInteger index) NS_RETURNS_RETAINED;
-RLMObjectBase *RLMCreateObjectAccessor(RLMRealm *realm, RLMClassInfo& info,
-                                       realm::RowExpr row) NS_RETURNS_RETAINED;
+RLMObjectBase *RLMCreateObjectAccessor(RLMClassInfo& info, int64_t key) NS_RETURNS_RETAINED;
+RLMObjectBase *RLMCreateObjectAccessor(RLMClassInfo& info, realm::Obj&& obj) NS_RETURNS_RETAINED;
 #endif
 
 NS_ASSUME_NONNULL_END

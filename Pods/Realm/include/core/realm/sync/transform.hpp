@@ -25,8 +25,10 @@
 
 #include <realm/util/buffer.hpp>
 #include <realm/impl/cont_transact_hist.hpp>
-#include <realm/group_shared.hpp>
+#include <realm/db.hpp>
+#include <realm/impl/transact_log.hpp>
 #include <realm/chunked_binary.hpp>
+#include <realm/sync/instructions.hpp>
 #include <realm/sync/protocol.hpp>
 
 namespace realm {
@@ -109,7 +111,7 @@ public:
     /// to point to it with BinaryData. entry.changeset.size() always gives the
     /// size of the changeset.
     ///
-    /// \param begin_version, end_version The range of versions to consider. If
+    /// \param begin_version end_version The range of versions to consider. If
     /// `begin_version` is equal to `end_version`, it is the empty range. If
     /// `begin_version` is zero, it means that everything preceeding
     /// `end_version` is to be considered, which is again the empty range if
@@ -183,10 +185,6 @@ public:
     /// changeset is of local origin. The specified identifier must never be
     /// zero.
     ///
-    /// \return The size of the transformed version of the specified
-    /// changesets. Upon return, the transformed changesets are concatenated
-    /// and placed in \a output_buffer.
-    ///
     /// \throw TransformError Thrown if operational transformation fails due to
     /// a problem with the specified changeset.
     ///
@@ -197,14 +195,73 @@ public:
                                              version_type current_local_version,
                                              Changeset* changesets,
                                              std::size_t num_changesets,
-                                             Reporter* = nullptr) = 0;
+                                             Reporter* = nullptr,
+                                             util::Logger* = nullptr) = 0;
 
     virtual ~Transformer() noexcept {}
 };
 
 std::unique_ptr<Transformer> make_transformer();
 
+} // namespace sync
 
+
+namespace _impl {
+
+class TransformerImpl : public sync::Transformer {
+public:
+    using Changeset = sync::Changeset;
+    using file_ident_type = sync::file_ident_type;
+    using HistoryEntry = sync::HistoryEntry;
+    using Instruction = sync::Instruction;
+    using TransformHistory = sync::TransformHistory;
+    using version_type = sync::version_type;
+
+    TransformerImpl();
+
+    void transform_remote_changesets(TransformHistory&, file_ident_type, version_type, Changeset*,
+                                     std::size_t, Reporter*, util::Logger*) override;
+
+    struct Side;
+    struct MajorSide;
+    struct MinorSide;
+
+protected:
+    virtual void merge_changesets(file_ident_type local_file_ident,
+                                  Changeset* their_changesets,
+                                  std::size_t their_size,
+                                  // our_changesets is a pointer-pointer because these changesets
+                                  // are held by the reciprocal transform cache.
+                                  Changeset** our_changesets,
+                                  std::size_t our_size,
+                                  Reporter* reporter,
+                                  util::Logger* logger);
+
+private:
+    util::metered::map<version_type, std::unique_ptr<Changeset>> m_reciprocal_transform_cache;
+
+    TransactLogParser m_changeset_parser;
+
+    Changeset& get_reciprocal_transform(TransformHistory&, file_ident_type local_file_ident,
+                                        version_type version, const HistoryEntry&);
+    void flush_reciprocal_transform_cache(TransformHistory&);
+
+    static size_t emit_changesets(const Changeset*,
+                                  size_t num_changesets,
+                                  util::Buffer<char>& output_buffer);
+
+    struct Discriminant;
+    struct Transformer;
+    struct MergeTracer;
+
+    template <class LeftSide, class RightSide>
+    void merge_instructions(LeftSide&, RightSide&);
+};
+
+} // namespace _impl
+
+
+namespace sync {
 
 class Transformer::RemoteChangeset {
 public:
@@ -244,7 +301,7 @@ public:
 
     /// If the changeset was compacted during download, the size of the original
     /// changeset.
-    size_t original_changeset_size = 0;
+    std::size_t original_changeset_size = 0;
 
     RemoteChangeset() {}
     RemoteChangeset(version_type rv, version_type lv, ChunkedBinaryData d, timestamp_type ot,

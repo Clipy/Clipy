@@ -155,7 +155,7 @@ extension ClipService {
             if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
                 if NSKeyedArchiver.archiveRootObject(data, toFile: savedPath) {
                     dispatchRealm.transaction {
-                        dispatchRealm.add(clip, update: true)
+                        dispatchRealm.add(clip, update: .all)
                     }
                 }
             }

@@ -25,6 +25,7 @@
 #include <system_error>
 #include <map>
 
+#include <realm/util/string_view.hpp>
 #include <realm/util/logger.hpp>
 #include <realm/util/http.hpp>
 
@@ -40,6 +41,8 @@ using ReadCompletionHandler =
 
 class Config {
 public:
+    virtual ~Config() {}
+
     /// The Socket uses the caller supplied logger for logging.
     virtual util::Logger& websocket_get_logger() noexcept = 0;
 
@@ -72,23 +75,27 @@ public:
     /// websocket_read_error_handler() and websocket_write_error_handler() are called when an
     /// error occurs on the underlying stream given by the async_read and async_write functions above.
     /// The error_code is passed through.
+    ///
     /// websocket_handshake_error_handler() will be called when there is an error in the handshake
     /// such as "404 Not found".
+    ///
     /// websocket_protocol_error_handler() is called when there is an protocol error in the incoming
     /// websocket messages.
+    ///
     /// After calling any of these error callbacks, the Socket will move into the stopped state, and
     /// no more messages should be sent, or will be received.
     /// It is safe to destroy the WebSocket object in these handlers.
     virtual void websocket_read_error_handler(std::error_code) = 0;
     virtual void websocket_write_error_handler(std::error_code) = 0;
-    virtual void websocket_handshake_error_handler(std::error_code, const HTTPHeaders&) = 0;
+    virtual void websocket_handshake_error_handler(std::error_code, const HTTPHeaders*,
+                                                   const util::StringView* body) = 0;
     virtual void websocket_protocol_error_handler(std::error_code) = 0;
     //@}
 
     //@{
     /// The five callback functions below are called whenever a full message has arrived.
     /// The Socket defragments fragmented messages internally and delivers a full message.
-    /// The message is delivered in the buffer \param data of size \param size.
+    /// The message is delivered in the buffer \p data of size \p size.
     /// The buffer is only valid until the function returns.
     /// The return value designates whether the WebSocket object should continue
     /// processing messages. The normal return value is true. False must be returned if the
@@ -155,8 +162,8 @@ public:
     /// The handler is type std::function<void()> and is called when the frame has been successfully
     /// sent. In case of errors, the Config::websocket_write_error_handler() is called.
 
-    /// async_write_frame() sends a single frame with the fin bit set to 0 or 1 from \param fin, and the opcode
-    /// set by \param opcode. The frame payload is taken from \param data of size \param size. \param handler is
+    /// async_write_frame() sends a single frame with the fin bit set to 0 or 1 from \p fin, and the opcode
+    /// set by \p opcode. The frame payload is taken from \p data of size \p size. \p handler is
     /// called when the frame has been successfully sent. Error s are reported through
     /// websocket_write_error_handler() in Config.
     /// This function is rather low level and should only be used with knowledge of the WebSocket protocol.

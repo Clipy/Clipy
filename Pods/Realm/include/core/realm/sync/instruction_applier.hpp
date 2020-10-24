@@ -23,6 +23,8 @@
 #include <realm/sync/changeset.hpp>
 #include <realm/sync/object.hpp>
 #include <realm/util/logger.hpp>
+#include <realm/list.hpp>
+
 
 namespace realm {
 namespace sync {
@@ -30,16 +32,16 @@ namespace sync {
 struct Changeset;
 
 struct InstructionApplier {
-    explicit InstructionApplier(Group& group) noexcept;
+    explicit InstructionApplier(Transaction&, TableInfoCache&) noexcept;
 
     /// Throws BadChangesetError if application fails due to a problem with the
     /// changeset.
     ///
     /// FIXME: Consider using std::error_code instead of throwing
     /// BadChangesetError.
-    void apply(const Changeset& log, util::Logger* logger);
+    void apply(const Changeset&, util::Logger*);
 
-    void begin_apply(const Changeset& log, util::Logger* logger) noexcept;
+    void begin_apply(const Changeset&, util::Logger*) noexcept;
     void end_apply() noexcept;
 
 protected:
@@ -50,17 +52,19 @@ protected:
 #undef REALM_DECLARE_INSTRUCTION_HANDLER
     friend struct Instruction; // to allow visitor
 
-    template<class A> static void apply(A& applier, const Changeset& log, util::Logger* logger);
+    template<class A> static void apply(A& applier, const Changeset&, util::Logger*);
 
-    Group& m_group;
-private:
-    const Changeset* m_log = nullptr;
-    util::Logger* m_logger = nullptr;
+    // Allows for in-place modification of changeset while applying it
+    template<class A> static void apply(A& applier, Changeset&, util::Logger*);
+
+    TableRef table_for_class_name(StringData) const; // Throws
+    REALM_NORETURN void bad_transaction_log(const char*) const;
+
+    Transaction& m_transaction;
+    TableInfoCache& m_table_info_cache;
+    std::unique_ptr<LstBase> m_selected_array;
     TableRef m_selected_table;
-    TableRef m_selected_array;
-    LinkViewRef m_selected_link_list;
     TableRef m_link_target_table;
-    TableInfoCache m_table_info;
 
     template <class... Args>
     void log(const char* fmt, Args&&... args)
@@ -70,9 +74,9 @@ private:
         }
     }
 
-    void bad_transaction_log(const char*) const; // Throws
-
-    TableRef table_for_class_name(StringData) const; // Throws
+private:
+    const Changeset* m_log = nullptr;
+    util::Logger* m_logger = nullptr;
 };
 
 
@@ -80,9 +84,9 @@ private:
 
 // Implementation
 
-inline InstructionApplier::InstructionApplier(Group& group) noexcept:
-    m_group(group),
-    m_table_info(m_group)
+inline InstructionApplier::InstructionApplier(Transaction& group, TableInfoCache& table_info_cache) noexcept:
+    m_transaction(group),
+    m_table_info_cache(table_info_cache)
 {
 }
 
@@ -97,22 +101,38 @@ inline void InstructionApplier::end_apply() noexcept
     m_log = nullptr;
     m_logger = nullptr;
     m_selected_table = TableRef{};
-    m_selected_array = TableRef{};
-    m_selected_link_list = LinkViewRef{};
+    m_selected_array.reset();
     m_link_target_table = TableRef{};
 }
 
 template<class A>
-inline void InstructionApplier::apply(A& applier, const Changeset& log, util::Logger* logger)
+inline void InstructionApplier::apply(A& applier, const Changeset& changeset, util::Logger* logger)
 {
-    applier.begin_apply(log, logger);
-    for (auto instr: log) {
+    applier.begin_apply(changeset, logger);
+    for (auto instr : changeset) {
         if (!instr)
             continue;
         instr->visit(applier); // Throws
+#if REALM_DEBUG
+        applier.m_table_info_cache.verify();
+#endif
     }
     applier.end_apply();
+}
 
+template<class A>
+inline void InstructionApplier::apply(A& applier, Changeset& changeset, util::Logger* logger)
+{
+    applier.begin_apply(changeset, logger);
+    for (auto instr : changeset) {
+        if (!instr)
+            continue;
+        instr->visit(applier); // Throws
+#if REALM_DEBUG
+        applier.m_table_info_cache.verify();
+#endif
+    }
+    applier.end_apply();
 }
 
 inline void InstructionApplier::apply(const Changeset& log, util::Logger* logger)

@@ -19,7 +19,7 @@
 #include "impl/weak_realm_notifier.hpp"
 
 #include "shared_realm.hpp"
-#include "util/event_loop_signal.hpp"
+#include "util/scheduler.hpp"
 
 using namespace realm;
 using namespace realm::_impl;
@@ -27,23 +27,39 @@ using namespace realm::_impl;
 
 WeakRealmNotifier::WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool cache)
 : m_realm(realm)
-, m_execution_context(realm->config().execution_context)
 , m_realm_key(realm.get())
 , m_cache(cache)
-, m_signal(std::make_shared<util::EventLoopSignal<Callback>>(Callback{realm}))
 {
+    bind_to_scheduler();
 }
 
 WeakRealmNotifier::~WeakRealmNotifier() = default;
 
-void WeakRealmNotifier::Callback::operator()() const
+void WeakRealmNotifier::notify()
 {
-    if (auto realm = weak_realm.lock()) {
-        realm->notify();
+    if (m_scheduler)
+        m_scheduler->notify();
+}
+
+void WeakRealmNotifier::bind_to_scheduler()
+{
+    REALM_ASSERT(!m_scheduler);
+    m_scheduler = realm()->scheduler();
+    if (m_scheduler) {
+        m_scheduler->set_notify_callback([weak_realm = m_realm] {
+            if (auto realm = weak_realm.lock()) {
+                realm->notify();
+            }
+        });
     }
 }
 
-void WeakRealmNotifier::notify()
+bool WeakRealmNotifier::is_cached_for_scheduler(std::shared_ptr<util::Scheduler> scheduler) const
 {
-    m_signal->notify();
+    return m_cache && (m_scheduler && scheduler) && (m_scheduler->is_same_as(scheduler.get()));
+}
+
+bool WeakRealmNotifier::scheduler_is_on_thread() const
+{
+    return m_scheduler && m_scheduler->is_on_thread();
 }

@@ -24,7 +24,7 @@ public protocol RealmOptionalType {
 
 public extension RealmOptionalType {
     /// :nodoc:
-    public static func className() -> String {
+    static func className() -> String {
         return ""
     }
 }
@@ -64,3 +64,20 @@ public final class RealmOptional<Value: RealmOptionalType>: RLMOptionalBase {
         self.value = value
     }
 }
+
+extension RealmOptional: Codable where Value: Codable {
+    public convenience init(from decoder: Decoder) throws {
+        self.init()
+        // `try decoder.singleValueContainer().decode(Value?.self)` incorrectly
+        // rejects null values: https://bugs.swift.org/browse/SR-7404
+        let container = try decoder.singleValueContainer()
+        self.value = container.decodeNil() ? nil : try container.decode(Value.self)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        try self.value.encode(to: encoder)
+    }
+}
+
+internal protocol RealmOptionalProtocol { }
+extension RealmOptional: RealmOptionalProtocol { }

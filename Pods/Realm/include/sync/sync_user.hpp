@@ -172,7 +172,7 @@ private:
     // FIXME: remove this flag once bindings take responsible for admin token users
     TokenType m_token_type;
 
-    bool m_is_admin;
+    bool m_is_admin = false;
 
     // The user's refresh token.
     std::string m_refresh_token;

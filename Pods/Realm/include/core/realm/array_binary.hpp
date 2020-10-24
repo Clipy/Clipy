@@ -19,241 +19,99 @@
 #ifndef REALM_ARRAY_BINARY_HPP
 #define REALM_ARRAY_BINARY_HPP
 
-#include <realm/binary_data.hpp>
-#include <realm/array_blob.hpp>
-#include <realm/array_integer.hpp>
-#include <realm/exceptions.hpp>
+#include <realm/array_blobs_small.hpp>
+#include <realm/array_blobs_big.hpp>
 
 namespace realm {
 
-/*
-STORAGE FORMAT
----------------------------------------------------------------------------------------
-ArrayBinary stores binary elements using two ArrayInteger and one ArrayBlob. The ArrayBlob can only store one
-single concecutive array of bytes (contrary to its 'Array' name that misleadingly indicates it could store multiple
-elements).
-
-Assume we have the strings "a", "", "abc", null, "ab". Then the three arrays will contain:
-
-ArrayInteger    m_offsets   1, 1, 5, 5, 6
-ArrayBlob       m_blob      aabcab
-ArrayInteger    m_nulls     0, 0, 0, 1, 0 // 1 indicates null, 0 indicates non-null
-
-So for each element the ArrayInteger, the ArrayInteger points into the ArrayBlob at the position of the first
-byte of the next element.
-
-m_nulls is always present (except for old database files; see below), so any ArrayBinary is always nullable!
-The nullable property (such as throwing exception upon set(null) on non-nullable column, etc) is handled on
-column level only.
-
-DATABASE FILE VERSION CHANGES
----------------------------------------------------------------------------------------
-Old database files do not have any m_nulls array. To be backwardscompatible, many methods will have tests like
-`if(Array::size() == 3)` and have a backwards compatible code paths for these (e.g. avoid writing to m_nulls
-in set(), etc). This way no file format upgrade is needed to support nulls for BinaryData.
-*/
-
-class ArrayBinary : public Array {
+class ArrayBinary : public ArrayPayload {
 public:
-    explicit ArrayBinary(Allocator&) noexcept;
-    ~ArrayBinary() noexcept override
+    using value_type = BinaryData;
+
+    explicit ArrayBinary(Allocator&);
+
+    static BinaryData default_value(bool nullable)
     {
+        return nullable ? BinaryData{} : BinaryData{"", 0};
     }
 
-    // Disable copying, this is not allowed.
-    ArrayBinary& operator=(const ArrayBinary&) = delete;
-    ArrayBinary(const ArrayBinary&) = delete;
-
-    /// Create a new empty binary array and attach this accessor to
-    /// it. This does not modify the parent reference information of
-    /// this accessor.
-    ///
-    /// Note that the caller assumes ownership of the allocated
-    /// underlying node. It is not owned by the accessor.
     void create();
 
-    // Old database files will not have the m_nulls array, so we need code paths for
-    // backwards compatibility for these cases.
-    bool legacy_array_type() const noexcept;
+    ref_type get_ref() const
+    {
+        return m_arr->get_ref();
+    }
 
-    //@{
-    /// Overriding functions of Array
-    void init_from_ref(ref_type) noexcept;
-    void init_from_mem(MemRef) noexcept;
-    void init_from_parent() noexcept;
-    //@}
+    void set_parent(ArrayParent* parent, size_t ndx_in_parent) noexcept override
+    {
+        m_arr->set_parent(parent, ndx_in_parent);
+    }
 
-    bool is_empty() const noexcept;
-    size_t size() const noexcept;
+    void update_parent()
+    {
+        m_arr->update_parent();
+    }
 
-    BinaryData get(size_t ndx) const noexcept;
-    size_t read(size_t ndx, size_t pos, char* buffer, size_t max_size) const noexcept;
+    void init_from_mem(MemRef mem) noexcept;
+    void init_from_ref(ref_type ref) noexcept override
+    {
+        init_from_mem(MemRef(m_alloc.translate(ref), ref, m_alloc));
+    }
+    void init_from_parent();
 
-    void add(BinaryData value, bool add_zero_term = false);
-    void set(size_t ndx, BinaryData value, bool add_zero_term = false);
-    void insert(size_t ndx, BinaryData value, bool add_zero_term = false);
+    size_t size() const;
+
+    void add(BinaryData value);
+    void set(size_t ndx, BinaryData value);
+    void set_null(size_t ndx)
+    {
+        set(ndx, BinaryData{});
+    }
+    void insert(size_t ndx, BinaryData value);
+    BinaryData get(size_t ndx) const;
+    BinaryData get_at(size_t ndx, size_t& pos) const;
+    bool is_null(size_t ndx) const;
     void erase(size_t ndx);
-    void truncate(size_t new_size);
+    void move(ArrayBinary& dst, size_t ndx);
     void clear();
-    void destroy();
+
+    size_t find_first(BinaryData value, size_t begin, size_t end) const noexcept;
 
     /// Get the specified element without the cost of constructing an
     /// array instance. If an array instance is already available, or
     /// you need to get multiple values, then this method will be
     /// slower.
-    static BinaryData get(const char* header, size_t ndx, Allocator&) noexcept;
+    static BinaryData get(const char* header, size_t ndx, Allocator& alloc) noexcept;
 
-    ref_type bptree_leaf_insert(size_t ndx, BinaryData, bool add_zero_term, TreeInsertBase& state);
-
-    static size_t get_size_from_header(const char*, Allocator&) noexcept;
-
-    /// Construct a binary array of the specified size and return just
-    /// the reference to the underlying memory. All elements will be
-    /// initialized to the binary value `defaults`, which can be either
-    /// null or zero-length non-null (value with size > 0 is not allowed as
-    /// initialization value).
-    static MemRef create_array(size_t size, Allocator&, BinaryData defaults);
-
-    /// Construct a copy of the specified slice of this binary array
-    /// using the specified target allocator.
-    MemRef slice(size_t offset, size_t slice_size, Allocator& target_alloc) const;
-
-#ifdef REALM_DEBUG
-    void to_dot(std::ostream&, bool is_strings, StringData title = StringData()) const;
-#endif
-    bool update_from_parent(size_t old_baseline) noexcept;
+    void verify() const;
 
 private:
-    ArrayInteger m_offsets;
-    ArrayBlob m_blob;
-    ArrayInteger m_nulls;
+    static constexpr size_t small_blob_max_size = 64;
+
+    union Storage {
+        std::aligned_storage<sizeof(ArraySmallBlobs), alignof(ArraySmallBlobs)>::type m_small_blobs;
+        std::aligned_storage<sizeof(ArrayBigBlobs), alignof(ArrayBigBlobs)>::type m_big_blobs;
+    };
+
+    bool m_is_big = false;
+
+    Allocator& m_alloc;
+    Storage m_storage;
+    Array* m_arr;
+
+    bool upgrade_leaf(size_t value_size);
 };
 
-
-// Implementation:
-
-inline ArrayBinary::ArrayBinary(Allocator& allocator) noexcept
-    : Array(allocator)
-    , m_offsets(allocator)
-    , m_blob(allocator)
-    , m_nulls(allocator)
+inline BinaryData ArrayBinary::get(const char* header, size_t ndx, Allocator& alloc) noexcept
 {
-    m_offsets.set_parent(this, 0);
-    m_blob.set_parent(this, 1);
-    m_nulls.set_parent(this, 2);
-}
-
-inline void ArrayBinary::create()
-{
-    size_t init_size = 0;
-    BinaryData defaults = BinaryData{};                          // This init value is ignored because size = 0
-    MemRef mem = create_array(init_size, get_alloc(), defaults); // Throws
-    init_from_mem(mem);
-}
-
-inline void ArrayBinary::init_from_ref(ref_type ref) noexcept
-{
-    REALM_ASSERT(ref);
-    char* header = get_alloc().translate(ref);
-    init_from_mem(MemRef(header, ref, m_alloc));
-}
-
-inline void ArrayBinary::init_from_parent() noexcept
-{
-    ref_type ref = get_ref_from_parent();
-    init_from_ref(ref);
-}
-
-inline bool ArrayBinary::is_empty() const noexcept
-{
-    return m_offsets.is_empty();
-}
-
-// Old database files will not have the m_nulls array, so we need code paths for
-// backwards compatibility for these cases. We can test if m_nulls exists by looking
-// at number of references in this ArrayBinary.
-inline bool ArrayBinary::legacy_array_type() const noexcept
-{
-    if (Array::size() == 3)
-        return false; // New database file
-    else if (Array::size() == 2)
-        return true; // Old database file
-    else
-        REALM_ASSERT(false); // Should never happen
-    return false;
-}
-
-inline size_t ArrayBinary::size() const noexcept
-{
-    return m_offsets.size();
-}
-
-inline BinaryData ArrayBinary::get(size_t ndx) const noexcept
-{
-    REALM_ASSERT_3(ndx, <, m_offsets.size());
-
-    if (!legacy_array_type() && m_nulls.get(ndx)) {
-        return BinaryData();
+    bool is_big = Array::get_context_flag_from_header(header);
+    if (!is_big) {
+        return ArraySmallBlobs::get(header, ndx, alloc);
     }
     else {
-        size_t begin = ndx ? to_size_t(m_offsets.get(ndx - 1)) : 0;
-        size_t end = to_size_t(m_offsets.get(ndx));
-
-        BinaryData bd = BinaryData(m_blob.get(begin), end - begin);
-        // Old database file (non-nullable column should never return null)
-        REALM_ASSERT(!bd.is_null());
-        return bd;
+        return ArrayBigBlobs::get(header, ndx, alloc);
     }
 }
-
-inline void ArrayBinary::truncate(size_t new_size)
-{
-    REALM_ASSERT_3(new_size, <, m_offsets.size());
-
-    size_t sz = new_size ? to_size_t(m_offsets.get(new_size - 1)) : 0;
-
-    m_offsets.truncate(new_size);
-    m_blob.truncate(sz);
-    if (!legacy_array_type())
-        m_nulls.truncate(new_size);
 }
 
-inline void ArrayBinary::clear()
-{
-    m_blob.clear();
-    m_offsets.clear();
-    if (!legacy_array_type())
-        m_nulls.clear();
-}
-
-inline void ArrayBinary::destroy()
-{
-    m_blob.destroy();
-    m_offsets.destroy();
-    if (!legacy_array_type())
-        m_nulls.destroy();
-    Array::destroy();
-}
-
-inline size_t ArrayBinary::get_size_from_header(const char* header, Allocator& alloc) noexcept
-{
-    ref_type offsets_ref = to_ref(Array::get(header, 0));
-    const char* offsets_header = alloc.translate(offsets_ref);
-    return Array::get_size_from_header(offsets_header);
-}
-
-inline bool ArrayBinary::update_from_parent(size_t old_baseline) noexcept
-{
-    bool res = Array::update_from_parent(old_baseline);
-    if (res) {
-        m_blob.update_from_parent(old_baseline);
-        m_offsets.update_from_parent(old_baseline);
-        if (!legacy_array_type())
-            m_nulls.update_from_parent(old_baseline);
-    }
-    return res;
-}
-
-} // namespace realm
-
-#endif // REALM_ARRAY_BINARY_HPP
+#endif /* SRC_REALM_ARRAY_BINARY_HPP_ */

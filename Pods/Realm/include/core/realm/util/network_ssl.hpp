@@ -257,7 +257,7 @@ public:
     /// set_check_host() includes a host name check in the
     /// certificate verification. It is typically used by clients
     /// to secure that the received certificate has a common name
-    /// or subject alternative name that matches \param host_name.
+    /// or subject alternative name that matches \p host_name.
     ///
     /// set_check_host() is only useful if verify_mode is
     /// set to VerifyMode::peer.
