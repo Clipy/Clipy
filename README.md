@@ -4,7 +4,8 @@
 
 <br>
 
-[![Build Status](https://app.bitrise.io/app/4660f968baa24514/status.svg?token=u8XErsQsveSu74-PGWRrdw&branch=develop)](https://app.bitrise.io/app/4660f968baa24514)
+![CI](https://github.com/Clipy/Clipy/workflows/CI/badge.svg)
+[![Release version](https://img.shields.io/github/release/Clipy/Clipy.svg)](https://github.com/Clipy/Clipy/releases/latest)
 [![OpenCollective](https://opencollective.com/clipy/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/clipy/sponsors/badge.svg)](#sponsors)
 
