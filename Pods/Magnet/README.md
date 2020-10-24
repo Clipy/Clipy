@@ -11,8 +11,8 @@ Also supports sandbox application.
 
 ## Requirements
 - macOS 10.9+
-- Xcode 9.0+
-- Swift 4.0+
+- Xcode 9.4+
+- Swift 4.1+
 
 ## Usage
 ### CocoaPods
@@ -66,13 +66,13 @@ if let keyCombo = KeyCombo(doubledCarbonModifiers: controlKey) {
 #### Support modifiers
 Double tap hotkey only support following modifiers.
 - Command Key
- - `NSEventModifierFlags.command` or `cmdKey`
+  - `NSEventModifierFlags.command` or `cmdKey`
 - Shift Key
- - `NSEventModifierFlags.shift` or `shiftKey`
+  - `NSEventModifierFlags.shift` or `shiftKey`
 - Option Key
- - `NSEventModifierFlags.option` or `optionKey`
+  - `NSEventModifierFlags.option` or `optionKey`
 - Control Key
- - `NSEventModifierFlags.control` or `controlKey`
+  - `NSEventModifierFlags.control` or `controlKey`
 
 ### Unregister hotkeys
 ```swift

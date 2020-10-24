@@ -9,7 +9,7 @@
 import Cocoa
 import Carbon
 
-public final class HotKey: Equatable {
+public final class HotKey: NSObject {
 
     // MARK: - Properties
     public let identifier: String
@@ -47,6 +47,7 @@ public final class HotKey: Equatable {
         self.target         = target
         self.action         = action
         self.actionQueue    = actionQueue
+        super.init()
     }
 
     public init(identifier: String, keyCombo: KeyCombo, actionQueue: ActionQueue = .main, handler: @escaping ((HotKey) -> Void)) {
@@ -56,8 +57,9 @@ public final class HotKey: Equatable {
         self.target         = nil
         self.action         = nil
         self.actionQueue    = actionQueue
+        super.init()
     }
-    
+
 }
 
 // MARK: - Invoke
@@ -91,10 +93,14 @@ public extension HotKey {
     }
 }
 
-// MARK: - Equatable
-public func == (lhs: HotKey, rhs: HotKey) -> Bool {
-    return lhs.identifier == rhs.identifier &&
-            lhs.keyCombo == rhs.keyCombo &&
-            lhs.hotKeyId == rhs.hotKeyId &&
-            lhs.hotKeyRef == rhs.hotKeyRef
+// MARK: - override isEqual
+public extension HotKey {
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let hotKey = object as? HotKey else { return false }
+
+        return self.identifier == hotKey.identifier &&
+               self.keyCombo == hotKey.keyCombo &&
+               self.hotKeyId == hotKey.hotKeyId &&
+               self.hotKeyRef == hotKey.hotKeyRef
+    }
 }

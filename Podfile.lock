@@ -8,7 +8,7 @@ PODS:
     - Magnet (~> 2.1)
   - LetsMove (1.24)
   - LoginServiceKit (2.0.2)
-  - Magnet (2.2.0)
+  - Magnet (2.3.1)
   - Nimble (9.0.0)
   - PINCache (2.3)
   - Quick (3.0.0)
@@ -42,10 +42,11 @@ DEPENDENCIES:
   - KeyHolder
   - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
+  - Magnet (= 2.3.1)
   - Nimble
   - PINCache
   - Quick
-  - RealmSwift (= 5.5.0)
+  - RealmSwift
   - RxCocoa
   - RxOptional
   - RxScreeen
@@ -98,7 +99,7 @@ SPEC CHECKSUMS:
   KeyHolder: 22fc9d2c939bf5a24078d0bbb2a354d9da1386e3
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
   LoginServiceKit: 5b4736234dc4cc96d786d8cd83e43b9ce5e7f1ca
-  Magnet: ab06348db5815184ac59b4f64b57001b1e5b793a
+  Magnet: f8dac2ffc845ffe68b2dd21c68a801f866f4a098
   Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
   Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
@@ -115,6 +116,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 7f9f7e6bdce888d821e11749279733e5ddff5f51
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
 
-PODFILE CHECKSUM: 12a210cd57b7eec6dda6a9b17f0887123b27fd03
+PODFILE CHECKSUM: 90849257c60b97d08f1594efb367fbf8e8b5508d
 
 COCOAPODS: 1.10.0
