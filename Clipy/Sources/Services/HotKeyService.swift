@@ -126,12 +126,12 @@ private extension HotKeyService {
 }
 
 // MARK: - Migration
-fileprivate extension HotKeyService {
+private extension HotKeyService {
     /**
      *  Migration for changing the storage with v1.1.0
      *  Changed framework, PTHotKey to Magnet
      */
-    fileprivate func migrationKeyCombos() {
+    func migrationKeyCombos() {
         guard let keyCombos = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
 
         // Main menu
@@ -154,7 +154,7 @@ fileprivate extension HotKeyService {
         }
     }
 
-    private func parse(with keyCombos: [String: Any], forKey key: String) -> (Int, Int)? {
+    func parse(with keyCombos: [String: Any], forKey key: String) -> (Int, Int)? {
         guard let combos = keyCombos[key] as? [String: Any] else { return nil }
         guard let keyCode = combos["keyCode"] as? Int, let modifiers = combos["modifiers"] as? Int else { return nil }
         return (keyCode, modifiers)

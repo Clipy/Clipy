@@ -15,7 +15,7 @@ import Cocoa
 final class CPYPreferencesWindowController: NSWindowController {
 
     // MARK: - Properties
-    static let sharedController = CPYPreferencesWindowController(windowNibName: NSNib.Name(rawValue: "CPYPreferencesWindowController"))
+    static let sharedController = CPYPreferencesWindowController(windowNibName: "CPYPreferencesWindowController")
     @IBOutlet private weak var toolBar: NSView!
     // ImageViews
     @IBOutlet private weak var generalImageView: NSImageView!
@@ -42,13 +42,13 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet private weak var updatesButton: NSButton!
     @IBOutlet private weak var betaButton: NSButton!
     // ViewController
-    fileprivate let viewController = [NSViewController(nibName: NSNib.Name(rawValue: "CPYGeneralPreferenceViewController"), bundle: nil),
-                                  NSViewController(nibName: NSNib.Name(rawValue: "CPYMenuPreferenceViewController"), bundle: nil),
-                                  CPYTypePreferenceViewController(nibName: NSNib.Name(rawValue: "CPYTypePreferenceViewController"), bundle: nil),
-                                  CPYExcludeAppPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYExcludeAppPreferenceViewController"), bundle: nil),
-                                  CPYShortcutsPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYShortcutsPreferenceViewController"), bundle: nil),
-                                  CPYUpdatesPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYUpdatesPreferenceViewController"), bundle: nil),
-                                  CPYBetaPreferenceViewController(nibName: NSNib.Name(rawValue: "CPYBetaPreferenceViewController"), bundle: nil)]
+    private let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil),
+                                  NSViewController(nibName: "CPYMenuPreferenceViewController", bundle: nil),
+                                  CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil),
+                                  CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil),
+                                  CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil),
+                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil),
+                                  CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)]
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
@@ -97,8 +97,8 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 }
 
 // MARK: - Layout
-fileprivate extension CPYPreferencesWindowController {
-    private func resetImages() {
+private extension CPYPreferencesWindowController {
+    func resetImages() {
         generalImageView.image = Asset.Preference.prefGeneral.image
         menuImageView.image = Asset.Preference.prefMenu.image
         typeImageView.image = Asset.Preference.prefType.image
@@ -145,7 +145,7 @@ fileprivate extension CPYPreferencesWindowController {
         }
     }
 
-    fileprivate func switchView(_ index: Int) {
+    func switchView(_ index: Int) {
         let newView = viewController[index].view
         // Remove current views without toolbar
         window?.contentView?.subviews.forEach { view in
