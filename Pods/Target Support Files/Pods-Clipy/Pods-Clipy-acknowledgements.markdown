@@ -61,7 +61,7 @@ Fabric: Copyright 2018 Google, Inc. All Rights Reserved. Use of this software is
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Clipy Project
+Copyright (c) 2015-2019 Clipy Project
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -291,7 +291,7 @@ SOFTWARE.
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Clipy Project
+Copyright (c) 2015-2020 Clipy Project
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1097,7 +1097,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 MIT License
 
-Copyright (c) 2018 Clipy Project
+Copyright (c) 2015-2020 Clipy Project
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

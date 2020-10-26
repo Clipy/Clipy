@@ -1,12 +1,11 @@
+//
 //  TISInputSource+Property.swift
 //
 //  Sauce
 //  GitHub: https://github.com/clipy
 //  HP: https://clipy-app.com
 //
-//  Created by Econa77 on 2018/07/30.
-//
-//  Copyright © 2018 Clipy Project.
+//  Copyright © 2015-2020 Clipy Project.
 //
 
 import Foundation

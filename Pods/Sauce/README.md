@@ -1,22 +1,19 @@
 # Sauce
+![CI](https://github.com/Clipy/Sauce/workflows/CI/badge.svg)
 [![Release version](https://img.shields.io/github/release/Clipy/Sauce.svg)](https://github.com/Clipy/Sauce/releases/latest)
 [![License: MIT](https://img.shields.io/github/license/Clipy/Sauce.svg)](https://github.com/Clipy/Sauce/blob/master/LICENSE)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/Sauce.svg)](http://cocoadocs.org/docsets/Sauce)
 [![Platform](https://img.shields.io/cocoapods/p/Sauce.svg)](http://cocoadocs.org/docsets/Sauce)
+[![SPM supported](https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat)](https://swift.org/package-manager)
 
 Mapping various keyboard layout sources and key codes in macOS. (e.g.: QWERTY, Dvorak)
-
-## Requirements
-- macOS 10.9+
-- Xcode 9.0+
-- Swift 4.0+
 
 ## Motivation
 Only the ANSI-standard US keyboard is defined for the key code defined in Carbon.framework. Therefore, we can obtain only the key code of the QWERTY keyboard layout. (e.g.: `kVK_ANSI_V`)  
 In layout other than QWERTY, (e.g. Dvorak) the virtual key code is different.
 
-|  Keyboard Layout  |  Key  |  Key Code  | 
+|  Keyboard Layout  |  Key  |  Key Code  |
 | :---------------: | :---: | :--------: |
 |      QWERTY       |   v   |      9     |
 |      Dvorak       |   v   |     47     |
@@ -42,29 +39,19 @@ Get the key code of the current input source.
 let keyCode = Sauce.shared.keyCode(by: .v)
 ```
 
-Get ASCII capable input source list.
+### Key
+Get the `Key` of the current input source.
 
 ```swift
-let sources = Sauce.shared.ASCIICapableInputSources()
-```
-
-Get key code corresponding to input source.
-
-```swift
-let keyCode = Sauce.shared.keyCode(with: inputSource, key: .v)
+let key = Sauce.shared.key(by: keyCode)
 ```
 
 ### Character
 Get the character of the current input source.
 
 ```swift
-let character = Sauce.shared.character(by: keyCode, modifiers: modifiers)
-```
-
-However, since character strings can only be acquired in an ASCII Capable layout, **we recommend using this.**
-
-```swift
-let character = Sauce.shared.currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
+let character = Sauce.shared.character(by: keyCode, carbonModifiers: shiftKey)
+let character = Sauce.shared.character(by: keyCode, cocoaModifiers: [.shift])
 ```
 
 ## Notification

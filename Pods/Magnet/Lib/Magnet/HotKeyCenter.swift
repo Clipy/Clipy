@@ -1,9 +1,11 @@
 //
 //  HotKeyCenter.swift
-//  Magnet
 //
-//  Created by 古林俊佑 on 2016/03/09.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Magnet
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Copyright © 2015-2020 Clipy Project.
 //
 
 import Cocoa
@@ -13,78 +15,86 @@ public final class HotKeyCenter {
 
     // MARK: - Properties
     public static let shared = HotKeyCenter()
-    fileprivate var hotKeys = [String: HotKey]()
-    fileprivate var hotKeyMap = [NSNumber: HotKey]()
-    fileprivate var hotKeyCount: UInt32 = 0
 
-    fileprivate var tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
-    fileprivate var multiModifiers = false
+    private var hotKeys = [String: HotKey]()
+    private var hotKeyCount: UInt32 = 0
+    private let modifierEventHandler: ModifierEventHandler
+    private let notificationCenter: NotificationCenter
 
     // MARK: - Initialize
-    init() {
-        installEventHandler()
+    init(modifierEventHandler: ModifierEventHandler = .init(), notificationCenter: NotificationCenter = .default) {
+        self.modifierEventHandler = modifierEventHandler
+        self.notificationCenter = notificationCenter
+        installHotKeyPressedEventHandler()
+        installModifiersChangedEventHandlerIfNeeded()
         observeApplicationTerminate()
+    }
+
+    deinit {
+        notificationCenter.removeObserver(self)
     }
 
 }
 
 // MARK: - Register & Unregister
 public extension HotKeyCenter {
-    public func register(with hotKey: HotKey) -> Bool {
+    @discardableResult
+    func register(with hotKey: HotKey) -> Bool {
         guard !hotKeys.keys.contains(hotKey.identifier) else { return false }
         guard !hotKeys.values.contains(hotKey) else { return false }
 
-        if !hotKey.keyCombo.doubledModifiers {
-            // Normal HotKey
-            let hotKeyId = EventHotKeyID(signature: UTGetOSTypeFromString("Magnet" as CFString), id: hotKeyCount)
-            var carbonHotKey: EventHotKeyRef? = nil
-            let error = RegisterEventHotKey(UInt32(hotKey.keyCombo.keyCode),
-                                            UInt32(hotKey.keyCombo.modifiers),
-                                            hotKeyId,
-                                            GetEventDispatcherTarget(),
-                                            0,
-                                            &carbonHotKey)
-            if error != 0 { return false }
-
-            hotKey.hotKeyId = hotKeyId.id
-            hotKey.hotKeyRef = carbonHotKey
-        }
-
-        let kId = NSNumber(value: hotKeyCount as UInt32)
-        hotKeyMap[kId] = hotKey
-        hotKeyCount += 1
-
         hotKeys[hotKey.identifier] = hotKey
+        guard !hotKey.keyCombo.doubledModifiers else { return true }
+        /*
+         *  Normal macOS shortcut
+         *
+         *  Discussion:
+         *    When registering a hotkey, a KeyCode that conforms to the
+         *    keyboard layout at the time of registration is registered.
+         *    To register a `v` on the QWERTY keyboard, `9` is registered,
+         *    and to register a `v` on the Dvorak keyboard, `47` is registered.
+         *    Therefore, if you change the keyboard layout after registering
+         *    a hot key, the hot key is not assigned to the correct key.
+         *    To solve this problem, you need to re-register the hotkeys
+         *    when you change the layout, but it's not supported by the
+         *    Apple Genuine app either, so it's not supported now.
+         */
+        let hotKeyId = EventHotKeyID(signature: UTGetOSTypeFromString("Magnet" as CFString), id: hotKeyCount)
+        var carbonHotKey: EventHotKeyRef?
+        let error = RegisterEventHotKey(UInt32(hotKey.keyCombo.currentKeyCode),
+                                        UInt32(hotKey.keyCombo.modifiers),
+                                        hotKeyId,
+                                        GetEventDispatcherTarget(),
+                                        0,
+                                        &carbonHotKey)
+        guard error == noErr else {
+            unregister(with: hotKey)
+            return false
+        }
+        hotKey.hotKeyId = hotKeyId.id
+        hotKey.hotKeyRef = carbonHotKey
+        hotKeyCount += 1
 
         return true
     }
-    
-    public func unregister(with hotKey: HotKey) {
-        guard hotKeys.values.contains(hotKey) else { return }
 
-        if !hotKey.keyCombo.doubledModifiers {
-            // Notmal HotKey
-            guard let carbonHotKey = hotKey.hotKeyRef else { return }
+    func unregister(with hotKey: HotKey) {
+        if let carbonHotKey = hotKey.hotKeyRef {
             UnregisterEventHotKey(carbonHotKey)
         }
-
         hotKeys.removeValue(forKey: hotKey.identifier)
-
         hotKey.hotKeyId = nil
         hotKey.hotKeyRef = nil
-
-        hotKeyMap
-            .filter { $1 == hotKey }
-            .map { $0.0 }
-            .forEach { hotKeyMap.removeValue(forKey: $0) }
     }
 
-    public func unregisterHotKey(with identifier: String) {
-        guard let hotKey = hotKeys[identifier] else { return }
+    @discardableResult
+    func unregisterHotKey(with identifier: String) -> Bool {
+        guard let hotKey = hotKeys[identifier] else { return false }
         unregister(with: hotKey)
+        return true
     }
 
-    public func unregisterAll() {
+    func unregisterAll() {
         hotKeys.forEach { unregister(with: $1) }
     }
 }
@@ -92,10 +102,10 @@ public extension HotKeyCenter {
 // MARK: - Terminate
 extension HotKeyCenter {
     private func observeApplicationTerminate() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(HotKeyCenter.applicationWillTerminate),
-                                               name: NSApplication.willTerminateNotification,
-                                               object: nil)
+        notificationCenter.addObserver(self,
+                                       selector: #selector(HotKeyCenter.applicationWillTerminate),
+                                       name: NSApplication.willTerminateNotification,
+                                       object: nil)
     }
 
     @objc func applicationWillTerminate() {
@@ -105,30 +115,16 @@ extension HotKeyCenter {
 
 // MARK: - HotKey Events
 private extension HotKeyCenter {
-    func installEventHandler() {
-        // Press HotKey Event
+    func installHotKeyPressedEventHandler() {
         var pressedEventType = EventTypeSpec()
         pressedEventType.eventClass = OSType(kEventClassKeyboard)
         pressedEventType.eventKind = OSType(kEventHotKeyPressed)
-        InstallEventHandler(GetEventDispatcherTarget(), { (_, inEvent, _) -> OSStatus in
-            return HotKeyCenter.shared.sendCarbonEvent(inEvent!)
+        InstallEventHandler(GetEventDispatcherTarget(), { _, inEvent, _ -> OSStatus in
+            return HotKeyCenter.shared.sendPressedKeyboardEvent(inEvent!)
         }, 1, &pressedEventType, nil, nil)
-
-        // Press Modifiers Event
-        let mask = CGEventMask((1 << CGEventType.flagsChanged.rawValue))
-        let event = CGEvent.tapCreate(tap: .cghidEventTap,
-                                     place: .headInsertEventTap,
-                                     options: .listenOnly,
-                                     eventsOfInterest: mask,
-                                     callback: { (_, _, event, _) in return HotKeyCenter.shared.sendModifiersEvent(event) },
-                                     userInfo: nil)
-        if event == nil { return }
-        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, event!, 0)
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, CFRunLoopMode.commonModes)
-        CGEvent.tapEnable(tap: event!, enable: true)
     }
 
-    func sendCarbonEvent(_ event: EventRef) -> OSStatus {
+    func sendPressedKeyboardEvent(_ event: EventRef) -> OSStatus {
         assert(Int(GetEventClass(event)) == kEventClassKeyboard, "Unknown event class")
 
         var hotKeyId = EventHotKeyID()
@@ -140,84 +136,35 @@ private extension HotKeyCenter {
                                       nil,
                                       &hotKeyId)
 
-        if error != 0 { return error }
-
+        guard error == noErr else { return error }
         assert(hotKeyId.signature == UTGetOSTypeFromString("Magnet" as CFString), "Invalid hot key id")
 
-        let kId = NSNumber(value: hotKeyId.id as UInt32)
-        let hotKey = hotKeyMap[kId]
-
+        let hotKey = hotKeys.values.first(where: { $0.hotKeyId == hotKeyId.id })
         switch GetEventKind(event) {
         case EventParamName(kEventHotKeyPressed):
-            hotKeyDown(hotKey)
+            hotKey?.invoke()
         default:
             assert(false, "Unknown event kind")
         }
-
         return noErr
-    }
-
-    func hotKeyDown(_ hotKey: HotKey?) {
-        guard let hotKey = hotKey else { return }
-        hotKey.invoke()
     }
 }
 
 // MARK: - Double Tap Modifier Event
 private extension HotKeyCenter {
-    func sendModifiersEvent(_ event: CGEvent) -> Unmanaged<CGEvent>? {
-        let flags = event.flags
-
-        let commandTapped = flags.contains(.maskCommand)
-        let shiftTapped = flags.contains(.maskShift)
-        let controlTapped = flags.contains(.maskControl)
-        let altTapped = flags.contains(.maskAlternate)
-
-        // Only one modifier key
-        let totalHash = commandTapped.intValue + altTapped.intValue + shiftTapped.intValue + controlTapped.intValue
-        if totalHash == 0 { return Unmanaged.passUnretained(event) }
-        if totalHash > 1 {
-            multiModifiers = true
-            return Unmanaged.passUnretained(event)
+    func installModifiersChangedEventHandlerIfNeeded() {
+        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+            self?.modifierEventHandler.handleModifiersEvent(with: event.modifierFlags, timestamp: event.timestamp)
         }
-        if multiModifiers {
-            multiModifiers = false
-            return Unmanaged.passUnretained(event)
+        NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event -> NSEvent? in
+            self?.modifierEventHandler.handleModifiersEvent(with: event.modifierFlags, timestamp: event.timestamp)
+            return event
         }
-
-        if (tappedModifierKey.contains(.command) && commandTapped) ||
-            (tappedModifierKey.contains(.shift) && shiftTapped)    ||
-            (tappedModifierKey.contains(.control) && controlTapped) ||
-            (tappedModifierKey.contains(.option) && altTapped) {
-            doubleTapped(with: KeyTransformer.carbonFlags(from: tappedModifierKey))
-            tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
-        } else {
-            if commandTapped {
-                tappedModifierKey = .command
-            } else if shiftTapped {
-                tappedModifierKey = .shift
-            } else if controlTapped {
-                tappedModifierKey = .control
-            } else if altTapped {
-                tappedModifierKey = .option
-            } else {
-                tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
-            }
+        modifierEventHandler.doubleTapped = { [weak self] tappedModifierFlags in
+            self?.hotKeys.values
+                .filter { $0.keyCombo.doubledModifiers }
+                .filter { $0.keyCombo.modifiers == tappedModifierFlags.carbonModifiers() }
+                .forEach { $0.invoke() }
         }
-
-        // Clean Flag
-        let delay = 0.3 * Double(NSEC_PER_SEC)
-        let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
-        DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
-            self?.tappedModifierKey = NSEvent.ModifierFlags(rawValue: 0)
-        })
-
-        return Unmanaged.passUnretained(event)
-    }
-
-    func doubleTapped(with key: Int) {
-        hotKeys.values
-            .filter { $0.keyCombo.doubledModifiers && $0.keyCombo.modifiers == key }
-            .forEach { $0.invoke() }
     }
 }
