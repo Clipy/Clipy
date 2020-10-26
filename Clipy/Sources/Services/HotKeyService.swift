@@ -136,19 +136,19 @@ private extension HotKeyService {
 
         // Main menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.clip) {
-            if let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: modifiers) {
+            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
                 AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.mainKeyCombo)
             }
         }
         // History menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.history) {
-            if let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: modifiers) {
+            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
                 AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.historyKeyCombo)
             }
         }
         // Snippet menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.snippet) {
-            if let keyCombo = KeyCombo(keyCode: keyCode, carbonModifiers: modifiers) {
+            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
                 AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.snippetKeyCombo)
             }
         }

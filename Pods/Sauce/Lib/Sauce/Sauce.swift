@@ -5,16 +5,16 @@
 //  GitHub: https://github.com/clipy
 //  HP: https://clipy-app.com
 //
-//  Created by Econa77 on 2018/07/30.
-//
-//  Copyright © 2018 Clipy Project.
+//  Copyright © 2015-2020 Clipy Project.
 //
 
 import Foundation
+import AppKit
 
 public extension NSNotification.Name {
-    public static let SauceSelectedKeyboardInputSourceChanged = Notification.Name("SauceSelectedKeyboardInputSourceChanged")
-    public static let SauceEnabledKeyboardInputSoucesChanged = Notification.Name("SauceEnabledKeyboardInputSoucesChanged")
+    static let SauceSelectedKeyboardInputSourceChanged = Notification.Name("SauceSelectedKeyboardInputSourceChanged")
+    static let SauceEnabledKeyboardInputSoucesChanged = Notification.Name("SauceEnabledKeyboardInputSoucesChanged")
+    static let SauceSelectedKeyboardKeyCodesChanged = Notification.Name("SauceSelectedKeyboardKeyCodesChanged")
 }
 
 public final class Sauce {
@@ -23,52 +23,92 @@ public final class Sauce {
     public static let shared = Sauce()
 
     private let layout: KeyboardLayout
+    private let modifierTransformar: ModifierTransformer
 
     // MARK: - Initialize
-    init(layout: KeyboardLayout = KeyboardLayout()) {
+    init(layout: KeyboardLayout = KeyboardLayout(), modifierTransformar: ModifierTransformer = ModifierTransformer()) {
         self.layout = layout
+        self.modifierTransformar = modifierTransformar
     }
 
 }
 
+// MARK: - Input Sources
+public extension Sauce {
+    func currentInputSources() -> [InputSource] {
+        return layout.inputSources
+    }
+}
+
 // MARK: - KeyCodes
 public extension Sauce {
-    public func keyCode(by key: Key) -> CGKeyCode {
-        return currentKeyCode(by: key) ?? currentASCIICapableKeyCode(by: key) ?? key.QWERTYKeyCode
+    func keyCode(by key: Key) -> CGKeyCode {
+        return currentKeyCode(by: key) ?? key.QWERTYKeyCode
     }
 
-    public func currentKeyCode(by key: Key) -> CGKeyCode? {
+    func currentKeyCode(by key: Key) -> CGKeyCode? {
         return layout.currentKeyCode(by: key)
     }
 
-    public func currentASCIICapableKeyCode(by key: Key) -> CGKeyCode? {
-        return layout.currentASCIICapableKeyCode(by: key)
+    func currentKeyCodes() -> [Key: CGKeyCode]? {
+        return layout.currentKeyCodes()
     }
 
-    public func keyCode(with source: InputSource, key: Key) -> CGKeyCode? {
+    func keyCode(with source: InputSource, key: Key) -> CGKeyCode? {
         return layout.keyCode(with: source, key: key)
     }
 
-    public func ASCIICapableInputSources() -> [InputSource] {
-        return layout.ASCIICapableInputSources
+    func keyCodes(with source: InputSource) -> [Key: CGKeyCode]? {
+        return layout.keyCodes(with: source)
+    }
+}
+
+// MARK: - Key
+public extension Sauce {
+    func key(by keyCode: Int) -> Key? {
+        return currentKey(by: keyCode) ?? Key(QWERTYKeyCode: keyCode)
+    }
+
+    func currentKey(by keyCode: Int) -> Key? {
+        return layout.currentKey(by: keyCode)
+    }
+
+    func key(with souce: InputSource, keyCode: Int) -> Key? {
+        return layout.key(with: souce, keyCode: keyCode)
     }
 }
 
 // MARK: - Characters
 public extension Sauce {
-    public func character(by keyCode: Int, modifiers: Int) -> String? {
-        return currentCharacter(by: keyCode, modifiers: modifiers) ?? currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
+    func character(by keyCode: Int, carbonModifiers: Int) -> String? {
+        return currentCharacter(by: keyCode, carbonModifiers: carbonModifiers) ?? currentASCIICapableCharacter(by: keyCode, carbonModifiers: carbonModifiers)
     }
 
-    public func currentCharacter(by keyCode: Int, modifiers: Int) -> String? {
-        return layout.currentCharacter(by: keyCode, modifiers: modifiers)
+    func character(by keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String? {
+        return character(by: keyCode, carbonModifiers: modifierTransformar.carbonFlags(from: cocoaModifiers))
     }
 
-    public func currentASCIICapableCharacter(by keyCode: Int, modifiers: Int) -> String? {
-        return layout.currentASCIICapableCharacter(by: keyCode, modifiers: modifiers)
+    func currentCharacter(by keyCode: Int, carbonModifiers: Int) -> String? {
+        return layout.currentCharacter(by: keyCode, carbonModifiers: carbonModifiers)
     }
 
-    public func character(with source: InputSource, keyCode: Int, modifiers: Int) -> String? {
-        return layout.character(with: source, keyCode: keyCode, modifiers: modifiers)
+    func currentCharacter(by keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String? {
+        return currentCharacter(by: keyCode, carbonModifiers: modifierTransformar.carbonFlags(from: cocoaModifiers))
+    }
+
+    func currentASCIICapableCharacter(by keyCode: Int, carbonModifiers: Int) -> String? {
+        return layout.currentASCIICapableCharacter(by: keyCode, carbonModifiers: carbonModifiers)
+    }
+
+    func currentASCIICapableCharacter(by keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String? {
+        return currentASCIICapableCharacter(by: keyCode, carbonModifiers: modifierTransformar.carbonFlags(from: cocoaModifiers))
+    }
+
+    func character(with source: InputSource, keyCode: Int, carbonModifiers: Int) -> String? {
+        return layout.character(with: source, keyCode: keyCode, carbonModifiers: carbonModifiers)
+    }
+
+    func character(with source: InputSource, keyCode: Int, cocoaModifiers: NSEvent.ModifierFlags) -> String? {
+        return character(with: source, keyCode: keyCode, carbonModifiers: modifierTransformar.carbonFlags(from: cocoaModifiers))
     }
 }

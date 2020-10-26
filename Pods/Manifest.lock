@@ -4,11 +4,12 @@ PODS:
   - Crashlytics (3.10.9):
     - Fabric (~> 1.7.13)
   - Fabric (1.7.13)
-  - KeyHolder (2.1.0):
-    - Magnet (~> 2.1)
+  - KeyHolder (4.0.0):
+    - Magnet (~> 3.2)
   - LetsMove (1.24)
   - LoginServiceKit (2.0.2)
-  - Magnet (2.3.1)
+  - Magnet (3.2.0):
+    - Sauce (~> 2.1)
   - Nimble (9.0.0)
   - PINCache (2.3)
   - Quick (3.0.0)
@@ -27,7 +28,7 @@ PODS:
     - RxSwift (~> 4.0)
     - Screeen (~> 1.2)
   - RxSwift (4.3.1)
-  - Sauce (1.0.0)
+  - Sauce (2.1.0)
   - Screeen (1.2.0)
   - Sparkle (1.20.0)
   - SwiftGen (5.3.0)
@@ -42,7 +43,7 @@ DEPENDENCIES:
   - KeyHolder
   - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
-  - Magnet (= 2.3.1)
+  - Magnet
   - Nimble
   - PINCache
   - Quick
@@ -96,10 +97,10 @@ SPEC CHECKSUMS:
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   Crashlytics: f836e1d564b4492da572b056ce7ea0476c53ec4b
   Fabric: e88a14d80173bcf3db4eac866c83619f2894183d
-  KeyHolder: 22fc9d2c939bf5a24078d0bbb2a354d9da1386e3
+  KeyHolder: 457d8dde330a17452672756ae0e3b9c2e180a7e2
   LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
   LoginServiceKit: 5b4736234dc4cc96d786d8cd83e43b9ce5e7f1ca
-  Magnet: f8dac2ffc845ffe68b2dd21c68a801f866f4a098
+  Magnet: 8316a30fe91fdc6f2816ec0f04e20c72e341ca2e
   Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
   PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
   Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
@@ -109,13 +110,13 @@ SPEC CHECKSUMS:
   RxOptional: bd32ff8ca9df4177683d56ffeb618a9d4d5d5cad
   RxScreeen: 56b432893feaab6b50cf807fb6bd1aefd79e7346
   RxSwift: fe0fd770a43acdb7d0a53da411c9b892e69bb6e4
-  Sauce: 88a62dc6209dd651675e76a43a76f7cc8b02637e
+  Sauce: a4075a04b6041e7a0c992a952cc79f7a0ebdb8e3
   Screeen: c725fd8035f07dd4d1db9d8e94d3a07534b43801
   Sparkle: 48999e7ee032f05ca05e28451eadf4af8ede6b44
   SwiftGen: 4379bd3640b0a212a0f6ea3c494adba385513d10
   SwiftHEXColors: 7f9f7e6bdce888d821e11749279733e5ddff5f51
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
 
-PODFILE CHECKSUM: 90849257c60b97d08f1594efb367fbf8e8b5508d
+PODFILE CHECKSUM: 837cee12dd4486551e08a428879a1f3a4121c7b5
 
 COCOAPODS: 1.10.0

@@ -1,9 +1,11 @@
 //
 //  HotKey.swift
-//  Magnet
 //
-//  Created by 古林俊佑 on 2016/03/09.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  Magnet
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Copyright © 2015-2020 Clipy Project.
 //
 
 import Cocoa
@@ -41,22 +43,22 @@ public final class HotKey: NSObject {
 
     // MARK: - Initialize
     public init(identifier: String, keyCombo: KeyCombo, target: AnyObject, action: Selector, actionQueue: ActionQueue = .main) {
-        self.identifier     = identifier
-        self.keyCombo       = keyCombo
-        self.callback       = nil
-        self.target         = target
-        self.action         = action
-        self.actionQueue    = actionQueue
+        self.identifier = identifier
+        self.keyCombo = keyCombo
+        self.callback = nil
+        self.target = target
+        self.action = action
+        self.actionQueue = actionQueue
         super.init()
     }
 
     public init(identifier: String, keyCombo: KeyCombo, actionQueue: ActionQueue = .main, handler: @escaping ((HotKey) -> Void)) {
-        self.identifier     = identifier
-        self.keyCombo       = keyCombo
-        self.callback       = handler
-        self.target         = nil
-        self.action         = nil
-        self.actionQueue    = actionQueue
+        self.identifier = identifier
+        self.keyCombo = keyCombo
+        self.callback = handler
+        self.target = nil
+        self.action = nil
+        self.actionQueue = actionQueue
         super.init()
     }
 
@@ -64,7 +66,7 @@ public final class HotKey: NSObject {
 
 // MARK: - Invoke
 public extension HotKey {
-    public func invoke() {
+    func invoke() {
         guard let callback = self.callback else {
             guard let target = self.target as? NSObject, let selector = self.action else { return }
             guard target.responds(to: selector) else { return }
@@ -84,18 +86,18 @@ public extension HotKey {
 // MARK: - Register & UnRegister
 public extension HotKey {
     @discardableResult
-    public func register() -> Bool {
+    func register() -> Bool {
         return HotKeyCenter.shared.register(with: self)
     }
 
-    public func unregister() {
+    func unregister() {
         return HotKeyCenter.shared.unregister(with: self)
     }
 }
 
 // MARK: - override isEqual
 public extension HotKey {
-    public override func isEqual(_ object: Any?) -> Bool {
+    override func isEqual(_ object: Any?) -> Bool {
         guard let hotKey = object as? HotKey else { return false }
 
         return self.identifier == hotKey.identifier &&
