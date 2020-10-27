@@ -1,9 +1,11 @@
 //
 //  RxScreeenDelegateProxy.swift
-//  RxScreeen
 //
-//  Created by 古林俊佑 on 2016/07/16.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  RxScreeen
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Copyright © 2015-2020 Clipy Project.
 //
 
 import Foundation

@@ -1,36 +1,38 @@
 //
 //  Screeen+Rx.swift
-//  RxScreeen
 //
-//  Created by 古林俊佑 on 2016/07/16.
-//  Copyright © 2016年 Shunsuke Furubayashi. All rights reserved.
+//  RxScreeen
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Copyright © 2015-2020 Clipy Project.
 //
 
-import Foundation
+import AppKit
 import Screeen
 import RxSwift
 import RxCocoa
 
-extension Reactive where Base: ScreenShotObserver {
+public extension Reactive where Base: ScreenShotObserver {
 
     /**
      Reactive wrapper for `delegate`.
 
      For more information take a look at `DelegateProxyType` protocol documentation.
      */
-    public var delegate: DelegateProxy<ScreenShotObserver, ScreenShotObserverDelegate> {
+    var delegate: DelegateProxy<ScreenShotObserver, ScreenShotObserverDelegate> {
         return RxScreeenDelegateProxy.proxy(for: base)
     }
 
     // MARK: - Responding to screenshot image
-    public var image: Observable<NSImage> {
+    var image: Observable<NSImage> {
         return Observable.merge(
             delegate.methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:addedItem:))),
             delegate.methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:updatedItem:))),
             delegate.methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:removedItem:)))
         )
-        .flatMap { a -> Observable<NSImage> in
-            guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+        .flatMap { argument -> Observable<NSImage> in
+            guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
             guard let imagePath = metadataItem.value(forAttribute: "kMDItemPath") as? String else { return Observable.empty() }
             guard let image = NSImage(contentsOfFile: imagePath) else { return Observable.empty() }
 
@@ -39,35 +41,35 @@ extension Reactive where Base: ScreenShotObserver {
     }
 
     // MARK: - Responding to screenshot item
-    public var item: Observable<NSMetadataItem> {
+    var item: Observable<NSMetadataItem> {
         return Observable.merge(
             delegate.methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:addedItem:))),
             delegate.methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:updatedItem:))),
             delegate.methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:removedItem:)))
         )
-        .flatMap { a -> Observable<NSMetadataItem> in
-            guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+        .flatMap { argument -> Observable<NSMetadataItem> in
+            guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
 
             return Observable.just(metadataItem)
         }
     }
 
     // MARK: - Delegate methods
-    public var addedItem: Observable<NSMetadataItem> {
+    var addedItem: Observable<NSMetadataItem> {
         return delegate
             .methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:addedItem:)))
-            .flatMap { a -> Observable<NSMetadataItem> in
-                guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+            .flatMap { argument -> Observable<NSMetadataItem> in
+                guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
 
                 return Observable.just(metadataItem)
             }
     }
 
-    public var addedImage: Observable<NSImage> {
+    var addedImage: Observable<NSImage> {
         return delegate
             .methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:addedItem:)))
-            .flatMap { a -> Observable<NSImage> in
-                guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+            .flatMap { argument -> Observable<NSImage> in
+                guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
                 guard let imagePath = metadataItem.value(forAttribute: "kMDItemPath") as? String else { return Observable.empty() }
                 guard let image = NSImage(contentsOfFile: imagePath) else { return Observable.empty() }
 
@@ -75,21 +77,21 @@ extension Reactive where Base: ScreenShotObserver {
             }
     }
 
-    public var updatedItem: Observable<NSMetadataItem> {
+    var updatedItem: Observable<NSMetadataItem> {
         return delegate
             .methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:updatedItem:)))
-            .flatMap { a -> Observable<NSMetadataItem> in
-                guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+            .flatMap { argument -> Observable<NSMetadataItem> in
+                guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
 
                 return Observable.just(metadataItem)
             }
     }
 
-    public var updatedImage: Observable<NSImage> {
+    var updatedImage: Observable<NSImage> {
         return delegate
             .methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:updatedItem:)))
-            .flatMap { a -> Observable<NSImage> in
-                guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+            .flatMap { argument -> Observable<NSImage> in
+                guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
                 guard let imagePath = metadataItem.value(forAttribute: "kMDItemPath") as? String else { return Observable.empty() }
                 guard let image = NSImage(contentsOfFile: imagePath) else { return Observable.empty() }
 
@@ -97,21 +99,21 @@ extension Reactive where Base: ScreenShotObserver {
             }
     }
 
-    public var removedItem: Observable<NSMetadataItem> {
+    var removedItem: Observable<NSMetadataItem> {
         return delegate
             .methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:removedItem:)))
-            .flatMap { a -> Observable<NSMetadataItem> in
-                guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+            .flatMap { argument -> Observable<NSMetadataItem> in
+                guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
 
                 return Observable.just(metadataItem)
             }
     }
 
-    public var removedImage: Observable<NSImage> {
+    var removedImage: Observable<NSImage> {
         return delegate
             .methodInvoked(#selector(ScreenShotObserverDelegate.screenShotObserver(_:removedItem:)))
-            .flatMap { a -> Observable<NSImage> in
-                guard let metadataItem = a[1] as? NSMetadataItem else { return Observable.empty() }
+            .flatMap { argument -> Observable<NSImage> in
+                guard let metadataItem = argument[1] as? NSMetadataItem else { return Observable.empty() }
                 guard let imagePath = metadataItem.value(forAttribute: "kMDItemPath") as? String else { return Observable.empty() }
                 guard let image = NSImage(contentsOfFile: imagePath) else { return Observable.empty() }
 

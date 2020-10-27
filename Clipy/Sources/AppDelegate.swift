@@ -14,7 +14,6 @@ import Cocoa
 import Sparkle
 import RxCocoa
 import RxSwift
-import RxOptional
 import LoginServiceKit
 import Magnet
 import Screeen
@@ -215,14 +214,14 @@ private extension AppDelegate {
     func bind() {
         // Login Item
         AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
-            .filterNil()
+            .compactMap { $0 }
             .subscribe(onNext: { [weak self] _ in
                 self?.reflectLoginItemState()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
         AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
-            .filterNil()
+            .compactMap { $0 }
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
             })
