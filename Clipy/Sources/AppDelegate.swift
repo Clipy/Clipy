@@ -220,10 +220,19 @@ private extension AppDelegate {
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
+        let observerScreenshot = AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
             .compactMap { $0 }
+            .share(replay: 1)
+        observerScreenshot
             .subscribe(onNext: { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
+            })
+            .disposed(by: disposeBag)
+        observerScreenshot
+            .filter { $0 }
+            .take(1)
+            .subscribe(onNext: { [weak self] _ in
+                self?.screenshotObserver.start()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot image
