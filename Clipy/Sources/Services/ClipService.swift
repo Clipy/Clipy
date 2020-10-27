@@ -16,7 +16,6 @@ import RealmSwift
 import PINCache
 import RxSwift
 import RxCocoa
-import RxOptional
 
 final class ClipService {
 
@@ -31,7 +30,7 @@ final class ClipService {
     func startMonitoring() {
         disposeBag = DisposeBag()
         // Pasteboard observe timer
-        Observable<Int>.interval(0.75, scheduler: scheduler)
+        Observable<Int>.interval(.microseconds(750), scheduler: scheduler)
             .map { _ in NSPasteboard.general.changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
@@ -43,7 +42,7 @@ final class ClipService {
         // Store types
         AppEnvironment.current.defaults.rx
             .observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
-            .filterNil()
+            .compactMap { $0 }
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] in
                 self?.storeTypes = $0

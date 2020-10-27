@@ -25,7 +25,7 @@ final class DataCleanService {
     func startMonitoring() {
         disposeBag = DisposeBag()
         // Clean datas every 30 minutes
-        Observable<Int>.interval(60 * 30, scheduler: scheduler)
+        Observable<Int>.interval(.seconds(60 * 30), scheduler: scheduler)
             .subscribe(onNext: { [weak self] _ in
                 self?.cleanDatas()
             })
