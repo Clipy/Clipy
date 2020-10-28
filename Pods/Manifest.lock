@@ -1,17 +1,24 @@
 PODS:
-  - AEXML (4.3.0)
+  - AEXML (4.6.0)
   - BartyCrouch (3.13.0)
   - Crashlytics (3.10.9):
     - Fabric (~> 1.7.13)
   - Fabric (1.7.13)
   - KeyHolder (4.0.0):
     - Magnet (~> 3.2)
-  - LetsMove (1.24)
+  - LetsMove (1.25)
   - LoginServiceKit (2.0.2)
   - Magnet (3.2.0):
     - Sauce (~> 2.1)
   - Nimble (9.0.0)
-  - PINCache (2.3)
+  - PINCache (3.0.3):
+    - PINCache/Arc-exception-safe (= 3.0.3)
+    - PINCache/Core (= 3.0.3)
+  - PINCache/Arc-exception-safe (3.0.3):
+    - PINCache/Core
+  - PINCache/Core (3.0.3):
+    - PINOperation (~> 1.2.1)
+  - PINOperation (1.2.1)
   - Quick (3.0.0)
   - Realm (5.5.0):
     - Realm/Headers (= 5.5.0)
@@ -30,10 +37,10 @@ PODS:
   - RxSwift (5.1.1)
   - Sauce (2.1.0)
   - Screeen (2.0.1)
-  - Sparkle (1.20.0)
-  - SwiftGen (5.3.0)
-  - SwiftHEXColors (1.1.2)
-  - SwiftLint (0.27.0)
+  - Sparkle (1.23.0)
+  - SwiftGen (6.4.0)
+  - SwiftHEXColors (1.4.1)
+  - SwiftLint (0.40.3)
 
 DEPENDENCIES:
   - AEXML
@@ -68,6 +75,7 @@ SPEC REPOS:
     - Magnet
     - Nimble
     - PINCache
+    - PINOperation
     - Quick
     - Realm
     - RealmSwift
@@ -92,16 +100,17 @@ CHECKOUT OPTIONS:
     :git: https://github.com/Clipy/LoginServiceKit.git
 
 SPEC CHECKSUMS:
-  AEXML: bae92c01e0da64132fd72f748721cda07466032b
+  AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   Crashlytics: f836e1d564b4492da572b056ce7ea0476c53ec4b
   Fabric: e88a14d80173bcf3db4eac866c83619f2894183d
   KeyHolder: 457d8dde330a17452672756ae0e3b9c2e180a7e2
-  LetsMove: fefe56bc7bc7fb7d37049e28a14f297961229fc5
+  LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   LoginServiceKit: 5b4736234dc4cc96d786d8cd83e43b9ce5e7f1ca
   Magnet: 8316a30fe91fdc6f2816ec0f04e20c72e341ca2e
   Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
-  PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
+  PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
+  PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
   Realm: fb399d76f44042e5cdfc630f33828fdb4d077345
   RealmSwift: 3b7e62356207ef16d34de4e55d475163bd2062bb
@@ -111,10 +120,10 @@ SPEC CHECKSUMS:
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   Sauce: a4075a04b6041e7a0c992a952cc79f7a0ebdb8e3
   Screeen: e5c570d3df139b8d5d0e1ffd41094204787d9f1a
-  Sparkle: 48999e7ee032f05ca05e28451eadf4af8ede6b44
-  SwiftGen: 4379bd3640b0a212a0f6ea3c494adba385513d10
-  SwiftHEXColors: 7f9f7e6bdce888d821e11749279733e5ddff5f51
-  SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
+  Sparkle: 55b1a87ba69d56913375a281546b7c82dec95bb0
+  SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
+  SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
+  SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
 
 PODFILE CHECKSUM: d510239aa535b9433858d624de4ba7449b70d472
 

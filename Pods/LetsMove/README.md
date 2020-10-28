@@ -43,6 +43,10 @@ Public domain
 Version History
 ---------------
 
+* 1.25
+	- Added Greek and Vietnamese localizations
+	- Update project for Xcode 11.5
+
 * 1.24
 	- Add PFMoveIsInProgress function
 	- Update project for Xcode 9.1
@@ -202,5 +206,7 @@ Translators:
 * Inndy Lin (Traditional Chinese)
 * aONe (Catalan)
 * Marek Hrusovsky (Slovak)
+* Sotirios Papathanasiou (Greek)
+* Minh-Ton (Vietnamese)
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)

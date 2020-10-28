@@ -58,7 +58,7 @@ final class ClipService {
         clips
             .filter { !$0.thumbnailPath.isEmpty }
             .map { $0.thumbnailPath }
-            .forEach { PINCache.shared().removeObject(forKey: $0) }
+            .forEach { PINCache.shared.removeObject(forKey: $0) }
         // Delete Realm
         realm.transaction { realm.delete(clips) }
         // Delete writed datas
@@ -70,7 +70,7 @@ final class ClipService {
         // Delete saved images
         let path = clip.thumbnailPath
         if !path.isEmpty {
-            PINCache.shared().removeObject(forKey: path)
+            PINCache.shared.removeObject(forKey: path)
         }
         // Delete Realm
         realm.transaction { realm.delete(clip) }
@@ -141,11 +141,11 @@ extension ClipService {
         DispatchQueue.main.async {
             // Save thumbnail image
             if let thumbnailImage = data.thumbnailImage {
-                PINCache.shared().setObject(thumbnailImage, forKey: "\(unixTime)")
+                PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
                 clip.thumbnailPath = "\(unixTime)"
             }
             if let colorCodeImage = data.colorCodeImage {
-                PINCache.shared().setObject(colorCodeImage, forKey: "\(unixTime)")
+                PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
                 clip.thumbnailPath = "\(unixTime)"
                 clip.isColorCode = true
             }

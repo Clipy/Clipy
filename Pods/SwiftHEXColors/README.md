@@ -66,7 +66,7 @@ let package = Package(
     name: "MyPackage",
         dependencies: [
         // Other dependencies
-        .Package(url: "https://github.com/thii/SwiftHEXColors.git", majorVersion: 1)
+	.package(url: "https://github.com/thii/SwiftHEXColors.git", from: "1.3.1")
     ]
 )
 ```
