@@ -26,8 +26,8 @@ final class MenuManager: NSObject {
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
-    fileprivate let folderIcon = Asset.Common.iconFolder.image
-    fileprivate let snippetIcon = Asset.Common.iconText.image
+    fileprivate let folderIcon = Asset.iconFolder.image
+    fileprivate let snippetIcon = Asset.iconText.image
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let notificationCenter = NotificationCenter.default
@@ -350,18 +350,18 @@ private extension MenuManager {
         }
 
         if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
-            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
+            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
                 }
-            })
+            }
         }
         if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
-            PINCache.shared().object(forKey: clip.thumbnailPath, block: { [weak menuItem] _, _, object in
+            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
                 DispatchQueue.main.async {
                     menuItem?.image = object as? NSImage
                 }
-            })
+            }
         }
 
         return menuItem
@@ -432,9 +432,9 @@ private extension MenuManager {
         let image: NSImage?
         switch type {
         case .black:
-            image = Asset.StatusIcon.statusbarMenuBlack.image
+            image = Asset.statusbarMenuBlack.image
         case .white:
-            image = Asset.StatusIcon.statusbarMenuWhite.image
+            image = Asset.statusbarMenuWhite.image
         case .none: return
         }
         image?.isTemplate = true
