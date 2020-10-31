@@ -1,19 +1,16 @@
 # LoginServiceKit
+![CI](https://github.com/Clipy/LoginServiceKit/workflows/Xcode-Build/badge.svg)
 [![Release version](https://img.shields.io/github/release/Clipy/LoginServiceKit.svg)]()
-[![License: MIT](https://img.shields.io/github/license/Clipy/LoginServiceKit.svg)](https://github.com/Clipy/LoginServiceKit/blob/master/LICENSE)
+[![License: Apache-2.0](https://img.shields.io/github/license/Clipy/LoginServiceKit.svg)](https://github.com/Clipy/LoginServiceKit/blob/master/LICENSE)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![SPM supported](https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat)](https://swift.org/package-manager)
 
 Easy manage login items in macOS.
-
-## Requirements
-- macOS 10.13+
-- Xcode 9.4+
-- Swift 4.1+
 
 ## Usage
 ### CocoaPods
 ```
-pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
+pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit'
 ```
 
 ### Carthage
@@ -33,7 +30,7 @@ or
 let isExistLoginItem = LoginServiceKit.isExistLoginItems(at: Bundle.main.bundlePath)
 ```
 
-#### Add login item 
+#### Add login item
 ```swift
 LoginServiceKit.addLoginItems() // default Bundle.main.bundlePath
 ```
@@ -49,15 +46,14 @@ LoginServiceKit.addLoginItems(at: Bundle.main.bundlePath)
 LoginServiceKit.removeLoginItems() // default Bundle.main.bundlePath
 ```
 
-or 
+or
 
 ```swift
 LoginServiceKit.removeLoginItems(at: Bundle.main.bundlePath)
 ```
 
-### Contributing
-1. Fork it ( https://github.com/Clipy/LoginServiceKit/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+## About Deprecated APIs
+LoginServiceKit uses an API that has been deprecated since macOS 10.11 El Capitan. However, there is no API migration destination that meets the current specifications.
+Therefore, this library will be discontinued when the API used is discontinued.
+
+See this [issue](https://github.com/Clipy/LoginServiceKit/issues/10) for more details.
