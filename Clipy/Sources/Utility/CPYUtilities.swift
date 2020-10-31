@@ -12,18 +12,15 @@
 
 import Cocoa
 import RealmSwift
-import Fabric
-import Crashlytics
 
 final class CPYUtilities {
 
     static func initSDKs() {
         // Fabric
         AppEnvironment.current.defaults.register(defaults: ["NSApplicationCrashOnExceptions": true])
-        if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) {
-            Fabric.with([Answers.self, Crashlytics.self])
-            CPYUtilities.sendCustomLog(with: "applicationDidFinishLaunching")
-        }
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
+        // TODO: - Migrate Firebase Crashlytics
+        CPYUtilities.sendCustomLog(with: "applicationDidFinishLaunching")
     }
 
     static func registerUserDefaultKeys() {
@@ -107,8 +104,7 @@ final class CPYUtilities {
     }
 
     static func sendCustomLog(with name: String) {
-        if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) {
-            Answers.logCustomEvent(withName: name, customAttributes: nil)
-        }
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
+        // TODO: - Migrate Firebase Crashlytics
     }
 }
