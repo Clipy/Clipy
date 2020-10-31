@@ -1,9 +1,11 @@
 //
 //  LoginServiceKit.swift
-//  LoginServiceKit
 //
-//  Created by ShunsukeFurubayashi on 2016/04/05.
-//  Copyright © 2016 Shunsuke Furubayashi. All rights reserved.
+//  LoginServiceKit
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Copyright © 2015-2020 Clipy Project.
 //
 
 //
@@ -49,12 +51,12 @@ import Cocoa
 public final class LoginServiceKit: NSObject {}
 
 public extension LoginServiceKit {
-    public static func isExistLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
+    static func isExistLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
         return (loginItem(at: path) != nil)
     }
 
     @discardableResult
-    public static func addLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
+    static func addLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
         guard !isExistLoginItems(at: path) else { return false }
 
         guard let sharedFileList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil) else { return false }
@@ -65,7 +67,7 @@ public extension LoginServiceKit {
     }
 
     @discardableResult
-    public static func removeLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
+    static func removeLoginItems(at path: String = Bundle.main.bundlePath) -> Bool {
         guard isExistLoginItems(at: path) else { return false }
 
         guard let sharedFileList = LSSharedFileListCreate(nil, kLSSharedFileListSessionLoginItems.takeRetainedValue(), nil) else { return false }
