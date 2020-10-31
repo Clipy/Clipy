@@ -8,8 +8,6 @@ target 'Clipy' do
   pod 'Sauce'
   pod 'Sparkle'
   pod 'RealmSwift'
-  pod 'Fabric'
-  pod 'Crashlytics'
   pod 'RxCocoa'
   pod 'RxSwift'
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
