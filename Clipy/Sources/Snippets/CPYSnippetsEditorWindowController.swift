@@ -173,7 +173,9 @@ extension CPYSnippetsEditorWindowController {
             let lastFolder = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true).last
             var folderIndex = (lastFolder?.index ?? -1) + 1
             // Create Document
-            let xmlDocument = try AEXMLDocument(xml: data)
+            var options = AEXMLOptions()
+            options.parserSettings.shouldTrimWhitespace = false
+            let xmlDocument = try AEXMLDocument(xml: data, options: options)
             xmlDocument[Constants.Xml.rootElement]
                 .children
                 .forEach { folderElement in
