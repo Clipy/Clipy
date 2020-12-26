@@ -135,33 +135,34 @@ private extension MenuManager {
             .disposed(by: disposeBag)
         // Observe change preference settings
         let defaults = AppEnvironment.current.defaults
-        Observable.merge(defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Int.self, Constants.UserDefaults.maxHistorySize, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.showIconInTheMenu, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInline, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInsideFolder, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Int.self, Constants.UserDefaults.maxMenuItemTitleLength, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsTitleStartWithZero, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsAreMarkedWithNumbers, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.showToolTipOnMenuItem, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.showImageInTheMenu, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.addNumericKeyEquivalents, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in },
-                         defaults.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new], retainSelf: false)
-                            .compactMap { $0 }.distinctUntilChanged().map { _ in })
-            .skip(1)
+        var menuChangedObservables = [Observable<Void>]()
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Int.self, Constants.UserDefaults.maxHistorySize, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.showIconInTheMenu, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInline, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInsideFolder, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Int.self, Constants.UserDefaults.maxMenuItemTitleLength, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsTitleStartWithZero, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.menuItemsAreMarkedWithNumbers, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.showToolTipOnMenuItem, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.showImageInTheMenu, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.addNumericKeyEquivalents, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        menuChangedObservables.append(defaults.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new], retainSelf: false)
+                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
+        Observable.merge(menuChangedObservables)
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] in
