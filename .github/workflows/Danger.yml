@@ -1,8 +1,13 @@
 name: Danger
+
 on: pull_request
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_12.2.app
+
 jobs:
   danger:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
     - uses: actions/checkout@v2
       with:
@@ -12,9 +17,6 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: '2.6'
-
-    - name: Select Xcode
-      run: sudo xcode-select -s /Applications/Xcode_11.5.app
 
     - name: Cache RubyGems
       uses: actions/cache@v1
