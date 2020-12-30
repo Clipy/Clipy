@@ -19,12 +19,20 @@ jobs:
         ruby-version: '2.6'
 
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gem-
+
+    - name: Cache CocoaPods
+      uses: actions/cache@v2
+      with:
+        path: Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
 
     - name: Bundle install
       run: |
@@ -36,4 +44,3 @@ jobs:
       run: bundle exec danger
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

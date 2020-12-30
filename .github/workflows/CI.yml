@@ -17,12 +17,20 @@ jobs:
         ruby-version: '2.6'
   
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gem-
+      
+    - name: Cache CocoaPods
+      uses: actions/cache@v2
+      with:
+        path: Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
 
     - name: Bundle install
       run: |
@@ -30,7 +38,9 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
 
+    - name: Pod install
+      run: bundle exec pod install
+
     - name: Run fastlane
       run: bundle exec fastlane test
-
     
