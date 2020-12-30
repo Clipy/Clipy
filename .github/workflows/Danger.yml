@@ -40,6 +40,9 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
 
+    - name: Pod install
+      run: bundle exec pod install
+
     - name: Run Danger
       run: bundle exec danger
       env:
