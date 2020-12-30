@@ -4,6 +4,7 @@ on: pull_request
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12.2.app
+  CP_HOME_DIR: ${{ github.workspace }}/cocoapods
 
 jobs:
   danger:
@@ -41,8 +42,7 @@ jobs:
         bundle install --jobs 4 --retry 3
 
     - name: Pod install
-      # The Realm installation script could not be run on Github Actions, so run it with root privileges.
-      run: sudo bundle exec pod install --allow-root
+      run: bundle exec pod install
 
     - name: Run Danger
       run: bundle exec danger
