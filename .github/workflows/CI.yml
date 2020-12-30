@@ -39,7 +39,8 @@ jobs:
         bundle install --jobs 4 --retry 3
 
     - name: Pod install
-      run: bundle exec pod install
+      # The Realm installation script could not be run on Github Actions, so run it with root privileges.
+      run: sudo bundle exec pod install --allow-root
 
     - name: Run fastlane
       run: bundle exec fastlane test
