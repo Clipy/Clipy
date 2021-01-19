@@ -212,6 +212,9 @@ private extension MenuManager {
         if end < lastNumber {
             lastNumber = end
         }
+        if start == 0 {
+            lastNumber -= 1
+        }
         let menuItemTitle = "\(count + 1) - \(lastNumber)"
         return makeSubmenuItem(menuItemTitle)
     }
