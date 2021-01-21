@@ -284,7 +284,7 @@ private extension MenuManager {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
                 if i == subMenuCount {
-                    let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder,firstIndex == 0)
+                    let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder, firstIndex == 0)
                     menu.addItem(subMenuItem)
                     listNumber = firstIndex
                 }
