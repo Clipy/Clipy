@@ -203,7 +203,7 @@ private extension MenuManager {
         return (isMarkWithNumber) ? "\(listNumber). \(title)" : title
     }
 
-    func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
+    func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int, _ isFirstIndexZero: Bool = false) -> NSMenuItem {
         var count = count
         if start == 0 {
             count -= 1
@@ -211,6 +211,9 @@ private extension MenuManager {
         var lastNumber = count + numberOfItems
         if end < lastNumber {
             lastNumber = end
+        }
+        if isFirstIndexZero && lastNumber == end {
+            lastNumber -= 1
         }
         let menuItemTitle = "\(count + 1) - \(lastNumber)"
         return makeSubmenuItem(menuItemTitle)
@@ -281,7 +284,7 @@ private extension MenuManager {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
                 if i == subMenuCount {
-                    let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder)
+                    let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder,firstIndex == 0)
                     menu.addItem(subMenuItem)
                     listNumber = firstIndex
                 }
