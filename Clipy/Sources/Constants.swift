@@ -78,6 +78,10 @@ struct Constants {
         static let pasteAndDeleteHistory = "kCPYBetaPasteAndDeleteHistory"
         static let pasteAndDeleteHistoryModifier = "kCPYBetapasteAndDeleteHistoryModifier"
         static let observerScreenshot = "kCPYBetaObserveScreenshot"
+        static let pasteCommaSeparatedList = "kCPYBetaPasteCommaSeparatedList"
+        static let pasteCommaSeparatedListModifier = "kCPYBetaPasteCommaSeparatedListModifier"
+        static let pasteSpaceSeparatedList = "kCPYBetaPasteSpaceSeparatedList"
+        static let pasteSpaceSeparatedListModifier = "kCPYBetaPasteSpaceSeparatedListModifier"
     }
 
     struct Update {
