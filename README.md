@@ -38,7 +38,7 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### Localization Contributors
 Clipy is looking for localization contributors.  
-If you can cooperate, please see [CONTRIBUTING.md](https://github.com/Clipy/Clipy/blob/master/.github/CONTRIBUTING.md)
+If you can contribute, please see [CONTRIBUTING.md](https://github.com/Clipy/Clipy/blob/master/.github/CONTRIBUTING.md)
 
 ### Distribution
 If you distribute derived work, especially in the Mac App Store, I ask you to follow two rules:
