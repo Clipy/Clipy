@@ -17,11 +17,11 @@ PODS:
     - PINOperation (~> 1.2.1)
   - PINOperation (1.2.1)
   - Quick (3.0.0)
-  - Realm (5.5.0):
-    - Realm/Headers (= 5.5.0)
-  - Realm/Headers (5.5.0)
-  - RealmSwift (5.5.0):
-    - Realm (= 5.5.0)
+  - Realm (10.7.2):
+    - Realm/Headers (= 10.7.2)
+  - Realm/Headers (10.7.2)
+  - RealmSwift (10.7.2):
+    - Realm (= 10.7.2)
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
@@ -34,7 +34,7 @@ PODS:
   - RxSwift (5.1.1)
   - Sauce (2.1.0)
   - Screeen (2.0.1)
-  - Sparkle (1.23.0)
+  - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
   - SwiftHEXColors (1.4.1)
   - SwiftLint (0.40.3)
@@ -103,15 +103,15 @@ SPEC CHECKSUMS:
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
-  Realm: fb399d76f44042e5cdfc630f33828fdb4d077345
-  RealmSwift: 3b7e62356207ef16d34de4e55d475163bd2062bb
+  Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
+  RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxScreeen: e0806b8a4b747cde7100be4e09b6e133a6017cfd
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   Sauce: a4075a04b6041e7a0c992a952cc79f7a0ebdb8e3
   Screeen: e5c570d3df139b8d5d0e1ffd41094204787d9f1a
-  Sparkle: 55b1a87ba69d56913375a281546b7c82dec95bb0
+  Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
