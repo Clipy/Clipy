@@ -15,13 +15,13 @@ import Cocoa
 
 extension UserDefaults {
     func setArchiveData<T: NSCoding>(_ object: T, forKey key: String) {
-        let data = NSKeyedArchiver.archivedData(withRootObject: object)
+        let data = try? NSKeyedArchiver.archivedData(withRootObject: object, requiringSecureCoding: false)
         set(data, forKey: key)
     }
 
     func archiveDataForKey<T: NSCoding>(_: T.Type, key: String) -> T? {
         guard let data = object(forKey: key) as? Data else { return nil }
-        guard let object = NSKeyedUnarchiver.unarchiveObject(with: data) as? T else { return nil }
+        guard let object = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? T else { return nil }
         return object
     }
 }
