@@ -205,12 +205,17 @@ private extension MenuManager {
 
     func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
         var count = count
+        let isStartFromZero = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
+
         if start == 0 {
             count -= 1
         }
         var lastNumber = count + numberOfItems
         if end < lastNumber {
             lastNumber = end
+        }
+        if isStartFromZero && lastNumber == end {
+            lastNumber -= 1
         }
         let menuItemTitle = "\(count + 1) - \(lastNumber)"
         return makeSubmenuItem(menuItemTitle)
@@ -277,6 +282,7 @@ private extension MenuManager {
         let clipResults = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
         let currentSize = Int(clipResults.count)
         var i = 0
+
         for clip in clipResults {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
@@ -300,6 +306,7 @@ private extension MenuManager {
             }
 
             i += 1
+            // increase submenu count
             if i == subMenuCount + placeInsideFolder {
                 subMenuCount += placeInsideFolder
                 subMenuIndex += 1
@@ -315,12 +322,10 @@ private extension MenuManager {
         let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
         let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
         let addNumbericKeyEquivalents = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.addNumericKeyEquivalents)
-
+        let isStartFromZero = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
         var keyEquivalent = ""
 
-        if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents) {
-            let isStartFromZero = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
-
+        if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents - ((isStartFromZero) ? 1 : 0 )) {
             var shortCutNumber = (isStartFromZero) ? index : index + 1
             if shortCutNumber == kMaxKeyEquivalents {
                 shortCutNumber = 0
