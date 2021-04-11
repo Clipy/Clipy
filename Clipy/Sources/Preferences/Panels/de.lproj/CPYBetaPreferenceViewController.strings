@@ -55,3 +55,27 @@
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "z3A-El-En9"; */
 "z3A-El-En9.title" = "Control";
+
+/* Class = "NSMenuItem"; title = "Shift"; ObjectID = "8WA-mG-8fR"; */
+"8WA-mG-8fR.title" = "";
+
+/* Class = "NSButtonCell"; title = "Paste Comma-separated List"; ObjectID = "ApN-5y-nmY"; */
+"ApN-5y-nmY.title" = "";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "DML-C1-Tv3"; */
+"DML-C1-Tv3.title" = "";
+
+/* Class = "NSMenuItem"; title = "Shift"; ObjectID = "WFw-3d-jdP"; */
+"WFw-3d-jdP.title" = "";
+
+/* Class = "NSMenuItem"; title = "Alt"; ObjectID = "X31-J5-pQj"; */
+"X31-J5-pQj.title" = "";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "fJ6-qm-Lw0"; */
+"fJ6-qm-Lw0.title" = "";
+
+/* Class = "NSMenuItem"; title = "Alt"; ObjectID = "u9H-aM-PNv"; */
+"u9H-aM-PNv.title" = "";
+
+/* Class = "NSButtonCell"; title = "Paste Space-separated List"; ObjectID = "wxu-zh-cJE"; */
+"wxu-zh-cJE.title" = "";
