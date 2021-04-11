@@ -325,7 +325,7 @@ private extension MenuManager {
         let isStartFromZero = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
         var keyEquivalent = ""
 
-        if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents -  ((isStartFromZero) ? 1 : 0 )){
+        if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents - ((isStartFromZero) ? 1 : 0 )) {
             var shortCutNumber = (isStartFromZero) ? index : index + 1
             if shortCutNumber == kMaxKeyEquivalents {
                 shortCutNumber = 0
