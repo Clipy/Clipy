@@ -26,8 +26,9 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### How to Build
 0. Move to the project root directory
-1. Open `Clipy.xcworkspace` on Xcode.
-2. build.
+1. `bundle install --path=vendor/bundle && bundle exec pod install`
+2. Open `Clipy.xcworkspace` on Xcode.
+3. build.
 
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )
@@ -38,7 +39,7 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### Localization Contributors
 Clipy is looking for localization contributors.  
-If you can cooperate, please see [CONTRIBUTING.md](https://github.com/Clipy/Clipy/blob/master/.github/CONTRIBUTING.md)
+If you can contribute, please see [CONTRIBUTING.md](https://github.com/Clipy/Clipy/blob/master/.github/CONTRIBUTING.md)
 
 ### Distribution
 If you distribute derived work, especially in the Mac App Store, I ask you to follow two rules:
