@@ -35,6 +35,7 @@ extension ExcludeAppService {
         // Monitoring top active application
         NSWorkspace.shared.notificationCenter.rx.notification(NSWorkspace.didActivateApplicationNotification)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
+            .startWith(NSWorkspace.shared.frontmostApplication)
             .bind(to: frontApplication)
             .disposed(by: disposeBag)
     }
@@ -88,18 +89,9 @@ extension ExcludeAppService {
     private enum Application: String {
         case onePassword = "com.agilebits.onepassword"
 
-        // MARK: - Properties
-        private var macApplicationIdentifiers: [String] {
-            switch self {
-            case .onePassword:
-                return ["com.agilebits.onepassword-osx", // for 1Password 6
-                        "com.agilebits.onepassword7"] // for 1Password 7
-            }
-        }
-
         // MARK: - Excluded
         func isExcluded(applications: [CPYAppInfo]) -> Bool {
-            return !applications.filter { macApplicationIdentifiers.contains($0.identifier) }.isEmpty
+            return applications.contains { $0.identifier.hasPrefix(rawValue) }
         }
 
     }
