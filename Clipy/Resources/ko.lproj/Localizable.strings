@@ -1,0 +1,59 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
+
+"Launch Clipy on system startup?" = "시스템 시작시 Clipy를 실행할까요?";
+
+"You can change this setting in the Preferences if you want" = "원할 경우 이 설정을 환경설정에서 변경할 수 있습니다. ";
+
+"Launch on system startup" = "시스템 시작시 실행";
+
+"Don't Launch" = "실행하지 않음";
+
+"Clear History" = "기록 지우기";
+
+"Are you sure you want to clear your clipboard history?" = "정말로 클립보드 기록을 지울까요?";
+
+"Cancel" = "취소";
+
+"Edit Snippets" = "Snippets 편집...";
+
+"Preferences" = "환경설정...";
+
+"Quit Clipy" = "Clipy 종료";
+
+"History" = "히스토리";
+
+"Snippet" = "Snippet";
+
+"General" = "일반";
+
+"Menu" = "메뉴";
+
+"Type" = "타입";
+
+"Shortcuts" = "단축키";
+
+"Updates" = "업데이트";
+
+"Delete Item" = "항목 삭제";
+
+"Are you sure want to delete this item?" = "해당 항목을 정말로 지울까요?";
+
+"Add" = "추가";
+
+"Please fill in the contents of the snippet" = "Snippet에 내용을 추가하여 주세요. ";
+
+"Please allow Accessibility" = "손쉬운 사용 권한을 허용해 주세요.";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "이 작업을 실행하려면 시스템 환경설정의 보안 및 개인정보 보호에 위치해 있는 손쉬운 사용을 제발 허용해 주세요.";
+
+"Open System Preferences" = "시스템 환경설정 열기";

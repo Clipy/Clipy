@@ -1,0 +1,24 @@
+
+/* Class = "NSButtonCell"; title = "PDF"; ObjectID = "27s-8p-tdh"; */
+"27s-8p-tdh.title" = "PDF";
+
+/* Class = "NSButtonCell"; title = "Plain Text"; ObjectID = "9wr-mR-kmC"; */
+"9wr-mR-kmC.title" = "일반 텍스트";
+
+/* Class = "NSButtonCell"; title = "Rich Text Format Directory (RTFD)"; ObjectID = "Nvy-pc-6hl"; */
+"Nvy-pc-6hl.title" = "서식 있는 텍스트 형식 디렉토리 (RTFD)";
+
+/* Class = "NSButtonCell"; title = "Filenames"; ObjectID = "iO6-7x-OcH"; */
+"iO6-7x-OcH.title" = "파일 이름";
+
+/* Class = "NSBox"; title = "Select clipboard types to store:"; ObjectID = "lSu-gq-grM"; */
+"lSu-gq-grM.title" = "저장할 클립 보드 유형 선택:";
+
+/* Class = "NSButtonCell"; title = "TIFF Image"; ObjectID = "lZ0-qQ-qWk"; */
+"lZ0-qQ-qWk.title" = "TIFF 이미지";
+
+/* Class = "NSButtonCell"; title = "URL"; ObjectID = "oXv-rM-kj5"; */
+"oXv-rM-kj5.title" = "URL";
+
+/* Class = "NSButtonCell"; title = "Rich Text Format (RTF)"; ObjectID = "xyj-FL-88b"; */
+"xyj-FL-88b.title" = "서식 있는 텍스트 (RTF)";

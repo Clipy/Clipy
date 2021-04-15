@@ -1,0 +1,27 @@
+
+/* Class = "NSWindow"; title = "Clipy - Setting"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Clipy - 설정";
+
+/* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
+"Fxs-BH-hPx.title" = "베타";
+
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "N5e-ba-0Q0"; */
+"N5e-ba-0Q0.title" = "업데이트";
+
+/* Class = "NSTextFieldCell"; title = "No Pane is Selected."; ObjectID = "Vy6-Ui-lLf"; */
+"Vy6-Ui-lLf.title" = "패널이 선택되어 있지 않음";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "avh-w8-RcC"; */
+"avh-w8-RcC.title" = "타입";
+
+/* Class = "NSTextFieldCell"; title = "Exclude"; ObjectID = "odU-xs-hZL"; */
+"odU-xs-hZL.title" = "제외";
+
+/* Class = "NSTextFieldCell"; title = "General"; ObjectID = "qS1-uo-9im"; */
+"qS1-uo-9im.title" = "일반";
+
+/* Class = "NSTextFieldCell"; title = "Shortcuts"; ObjectID = "qx8-Vm-eow"; */
+"qx8-Vm-eow.title" = "단축키";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "vEM-JU-92T"; */
+"vEM-JU-92T.title" = "메뉴";
