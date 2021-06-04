@@ -1,6 +1,6 @@
 PODS:
   - AEXML (4.6.0)
-  - BartyCrouch (4.6.0)
+  - BartyCrouch (3.13.0)
   - KeyHolder (4.0.0):
     - Magnet (~> 3.3.0)
   - LetsMove (1.25)
@@ -41,7 +41,7 @@ PODS:
 
 DEPENDENCIES:
   - AEXML
-  - BartyCrouch
+  - BartyCrouch (= 3.13.0)
   - KeyHolder (from `https://github.com/Clipy/KeyHolder.git`)
   - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
@@ -98,7 +98,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
-  BartyCrouch: c045303db193de949afc48fc2b661bf2deba0393
+  BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   KeyHolder: 5e346f4134dbb3a9ac50e95f1eb1d443831ad7b6
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   LoginServiceKit: 3c86ce2f2bcd1e373326839d6d863d8a6a5915b4
@@ -120,6 +120,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
 
-PODFILE CHECKSUM: 663ed0a3f45c817c2bd2d64b761aaf51c358d225
+PODFILE CHECKSUM: 8dfaab3970e3a80eec87ed28401e067a7c996722
 
 COCOAPODS: 1.10.1

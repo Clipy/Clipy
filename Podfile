@@ -18,7 +18,7 @@ target 'Clipy' do
   pod 'LetsMove'
   pod 'SwiftHEXColors'
   # Utility
-  pod 'BartyCrouch'
+  pod 'BartyCrouch', '3.13.0'
   pod 'SwiftLint'
   pod 'SwiftGen'
 
