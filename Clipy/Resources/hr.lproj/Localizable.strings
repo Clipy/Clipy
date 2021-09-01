@@ -1,0 +1,59 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
+
+"Launch Clipy on system startup?" = "Pokrenuti Clipy nakon pokretanja sustava?";
+
+"You can change this setting in the Preferences if you want" = "Ova se opcija može promijeniti u postavkama.";
+
+"Launch on system startup" = "Pokreni nakon pokretanja sustava";
+
+"Don't Launch" = "Nemoj pokrenuti";
+
+"Clear History" = "Izbriši povijest";
+
+"Are you sure you want to clear your clipboard history?" = "Stvarno želiš izbrisati povijest tvog međuspremnika?";
+
+"Cancel" = "Odustani";
+
+"Edit Snippets" = "Uredi isječke";
+
+"Preferences" = "Postavke …";
+
+"Quit Clipy" = "Zatvori Clipy";
+
+"History" = "Povijest";
+
+"Snippet" = "Isječak";
+
+"General" = "Opće";
+
+"Menu" = "Izbornik";
+
+"Type" = "Vrsta";
+
+"Shortcuts" = "Prečaci";
+
+"Updates" = "Aktualiziranja";
+
+"Delete Item" = "Izbriši unos";
+
+"Are you sure want to delete this item?" = "Stvarno želiš izbrisati ovaj unos?";
+
+"Add" = "Dodaj";
+
+"Please fill in the contents of the snippet" = "Upiši sadržaj isječka";
+
+"Please allow Accessibility" = "Aktiviraj Pristupačnost";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "Za ovu radnju aktiviraj Pristupačnost u postavkama sustava.";
+
+"Open System Preferences" = "Otvori postavke sustava";
