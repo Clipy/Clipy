@@ -1,0 +1,39 @@
+
+/* Class = "NSButtonCell"; title = "Input \"⌘ + V\" after menu item selection"; ObjectID = "0yt-u0-ROt"; */
+"0yt-u0-ROt.title" = "Ввести \"⌘ + V\" после выбора пункта меню";
+
+/* Class = "NSTextFieldCell"; title = "Appearance"; ObjectID = "FM4-mw-DCx"; */
+"FM4-mw-DCx.title" = "Внешний вид";
+
+/* Class = "NSTextFieldCell"; title = "Status Bar icon style:"; ObjectID = "Faj-kQ-G1v"; */
+"Faj-kQ-G1v.title" = "Стиль иконок строки состояния:";
+
+/* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
+"Lps-06-dPB.title" = "Сортировать историю как:";
+
+/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "Отправлять отчет об ошибках (при следующем запуске)";
+
+/* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
+"Nab-CO-ytH.title" = "Максимальный размер истории буфера:";
+
+/* Class = "NSTextFieldCell"; title = "Clipboard History"; ObjectID = "OOT-F5-Pal"; */
+"OOT-F5-Pal.title" = "История буфера обмена";
+
+/* Class = "NSButtonCell"; title = "Launch on Login"; ObjectID = "Su3-mF-z1T"; */
+"Su3-mF-z1T.title" = "Запускать при входе в систему";
+
+/* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "YmS-J6-ERc"; */
+"YmS-J6-ERc.title" = "Дате создания";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "aEh-u0-hQR"; */
+"aEh-u0-hQR.title" = "None";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "eeq-cw-v00"; */
+"eeq-cw-v00.title" = "items";
+
+/* Class = "NSMenuItem"; title = "Last Used"; ObjectID = "ju3-6a-6xj"; */
+"ju3-6a-6xj.title" = "Последнему использованию";
+
+/* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
+"nDk-8y-89n.title" = "Действия";
