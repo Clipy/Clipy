@@ -1,0 +1,24 @@
+
+/* Class = "NSButtonCell"; title = "PDF"; ObjectID = "27s-8p-tdh"; */
+"27s-8p-tdh.title" = "PDF";
+
+/* Class = "NSButtonCell"; title = "Plain Text"; ObjectID = "9wr-mR-kmC"; */
+"9wr-mR-kmC.title" = "Neformatirani tekst";
+
+/* Class = "NSButtonCell"; title = "Rich Text Format Directory (RTFD)"; ObjectID = "Nvy-pc-6hl"; */
+"Nvy-pc-6hl.title" = "Mapa formatiranog teksta (RTFD)";
+
+/* Class = "NSButtonCell"; title = "Filenames"; ObjectID = "iO6-7x-OcH"; */
+"iO6-7x-OcH.title" = "Ime datoteke";
+
+/* Class = "NSBox"; title = "Select clipboard types to store:"; ObjectID = "lSu-gq-grM"; */
+"lSu-gq-grM.title" = "Odaberi vrste međuspremnika za spremanje:";
+
+/* Class = "NSButtonCell"; title = "TIFF Image"; ObjectID = "lZ0-qQ-qWk"; */
+"lZ0-qQ-qWk.title" = "TIFF slika";
+
+/* Class = "NSButtonCell"; title = "URL"; ObjectID = "oXv-rM-kj5"; */
+"oXv-rM-kj5.title" = "URL";
+
+/* Class = "NSButtonCell"; title = "Rich Text Format (RTF)"; ObjectID = "xyj-FL-88b"; */
+"xyj-FL-88b.title" = "Formatirani tekst (RTF)";
