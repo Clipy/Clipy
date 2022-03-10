@@ -1,0 +1,69 @@
+
+/* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "2Ra-jY-ADW"; */
+"2Ra-jY-ADW.title" = "픽셀";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "4dH-7h-Ssv"; */
+"4dH-7h-Ssv.title" = "항목";
+
+/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "67F-2m-Txz"; */
+"67F-2m-Txz.title" = "글자";
+
+/* Class = "NSTextFieldCell"; title = "pixel"; ObjectID = "90g-HQ-9Ua"; */
+"90g-HQ-9Ua.title" = "픽셀";
+
+/* Class = "NSButtonCell"; title = "Show Image"; ObjectID = "Drj-kg-Km5"; */
+"Drj-kg-Km5.title" = "이미지 보기";
+
+/* Class = "NSTextFieldCell"; title = "Number of items place inside a folder:"; ObjectID = "FP7-VI-YVJ"; */
+"FP7-VI-YVJ.title" = "폴더 내 항목 수:";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "Ovp-if-Azp"; */
+"Ovp-if-Azp.title" = "항목";
+
+/* Class = "NSTextFieldCell"; title = "Max length of tool tip string:"; ObjectID = "QFO-xC-Z3p"; */
+"QFO-xC-Z3p.title" = "툴팁 최대 글자 길이:";
+
+/* Class = "NSButtonCell"; title = "Show alert panel before clear history"; ObjectID = "U2I-bu-kTR"; */
+"U2I-bu-kTR.title" = "기록을 삭제하기 전에 알람을 띄우기";
+
+/* Class = "NSTextFieldCell"; title = "Height:"; ObjectID = "WKb-6V-Q9w"; */
+"WKb-6V-Q9w.title" = "높이:";
+
+/* Class = "NSButtonCell"; title = "Place already copied history at the top"; ObjectID = "a32-zW-R74"; */
+"a32-zW-R74.title" = "중복으로 복사한 기록을 맨 위에 배치";
+
+/* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
+"h4n-Nv-zj1.title" = "메뉴 항목에 툴팁 표시";
+
+/* Class = "NSTextFieldCell"; title = "Number of characters in the menu:"; ObjectID = "hBb-sd-DcP"; */
+"hBb-sd-DcP.title" = "메뉴 글자 수:";
+
+/* Class = "NSButtonCell"; title = "Add key equivalents to numeric keys"; ObjectID = "hE2-DL-MKl"; */
+"hE2-DL-MKl.title" = "Add key equivalents to numeric keys";
+
+/* Class = "NSButtonCell"; title = "Show color code preview"; ObjectID = "hgW-RK-5oy"; */
+"hgW-RK-5oy.title" = "컬러 코드 미리보기";
+
+/* Class = "NSButtonCell"; title = "Move instead of copying (removes the older one from the list)"; ObjectID = "lsx-Y0-zFR"; */
+"lsx-Y0-zFR.title" = "중복 항목을 또 추가하지 않고 기존 항목을 맨 위로 옮기기";
+
+/* Class = "NSButtonCell"; title = "Mark menu items with numbers"; ObjectID = "nMF-6D-hXu"; */
+"nMF-6D-hXu.title" = "메뉴 항목을 숫자와 함께 표시";
+
+/* Class = "NSTextFieldCell"; title = "chars"; ObjectID = "nzx-q5-ifH"; */
+"nzx-q5-ifH.title" = "글자";
+
+/* Class = "NSButtonCell"; title = "Add a menu item to clear clipboard history"; ObjectID = "p80-3o-bgA"; */
+"p80-3o-bgA.title" = "메뉴에 '기록 지우기' 사용";
+
+/* Class = "NSTextFieldCell"; title = "Width:"; ObjectID = "saf-vP-Qwl"; */
+"saf-vP-Qwl.title" = "높이:";
+
+/* Class = "NSButtonCell"; title = "Menu items' title starts with 0"; ObjectID = "seq-HO-d27"; */
+"seq-HO-d27.title" = "항목 숫자 0부터 시작";
+
+/* Class = "NSTextFieldCell"; title = "Number of items place inline:"; ObjectID = "wef-NB-6p6"; */
+"wef-NB-6p6.title" = "Inline에 배치되는 항목 수:";
+
+/* Class = "NSButtonCell"; title = "Display icons in menu items"; ObjectID = "yrU-qO-OwD"; */
+"yrU-qO-OwD.title" = "메뉴 내부 항목에 아이콘 표시";
