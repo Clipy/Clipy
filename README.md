@@ -27,8 +27,9 @@ __Distribution Site__ : <https://clipy-app.com>
 ### How to Build
 0. Move to the project root directory
 1. `bundle install --path=vendor/bundle && bundle exec pod install`
-2. Open `Clipy.xcworkspace` on Xcode.
-3. build.
+2. `pod update`
+3. Open `Clipy.xcworkspace` on Xcode.
+4. build.
 
 ### Contributing
 1. Fork it ( https://github.com/Clipy/Clipy/fork )
