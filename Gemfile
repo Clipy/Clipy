@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'cocoapods'
+gem 'activesupport', '< 6.0'
 gem 'fastlane'
 gem 'danger'
 gem 'danger-swiftlint'

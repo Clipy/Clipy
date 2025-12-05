@@ -1,7 +1,7 @@
 // swiftlint:disable all
 // Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
 
-#if os(OSX)
+#if os(macOS)
   import AppKit.NSColor
   internal typealias Color = NSColor
 #elseif os(iOS) || os(tvOS) || os(watchOS)
@@ -52,9 +52,7 @@ private struct RGBAComponents {
   }
 
   private var components: [CGFloat] {
-    shifts.map {
-      CGFloat($0 & 0xff)
-    }
+    shifts.map { CGFloat($0 & 0xff) }
   }
 
   var normalized: [CGFloat] {
