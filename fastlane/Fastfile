@@ -35,6 +35,35 @@ platform :mac do
   lane :test do
     scan_clipy
   end
+
+  desc "Build DMG for Release"
+  lane :build_dmg do
+    # Build the app using Gym
+    # Using ad-hoc signing for distribution without original certs
+    gym(
+      scheme: "Clipy",
+      workspace: "Clipy.xcworkspace",
+      clean: true,
+      configuration: "Release",
+      output_directory: "./build",
+      output_name: "Clipy-AppleSilicon", # Changed from 'Clipy'
+      export_method: "development",
+      include_bitcode: false,
+      xcargs: "CODE_SIGN_IDENTITY='-' CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES"
+    )
+
+    # Create DMG
+    dmg_path = "./build/Clipy-AppleSilicon.dmg"
+    app_path = "./build/Clipy-AppleSilicon.app"
+    
+    # Remove existing DMG if any
+    sh "rm -f #{dmg_path}"
+    
+    # Create DMG using hdiutil
+    sh "hdiutil create -volname 'Clipy Apple Silicon' -srcfolder #{app_path} -ov -format UDZO #{dmg_path}"
+    
+    UI.message("DMG created successfully at #{dmg_path}")
+  end
   
   desc "Release"
   lane :release do

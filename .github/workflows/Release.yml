@@ -1,0 +1,65 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: macos-12
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7' # Updated from 2.6 for better compatibility
+
+    - name: Cache RubyGems
+      uses: actions/cache@v3
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gem-
+
+    - name: Cache CocoaPods
+      uses: actions/cache@v3
+      with:
+        path: Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+
+    - name: Install Bundler & Gems
+      run: |
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+
+    - name: Install CocoaPods
+      run: bundle exec pod install
+
+    - name: Build DMG
+      run: bundle exec fastlane build_dmg
+      env:
+        MATCH_READONLY: true
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/Clipy-AppleSilicon.dmg
+        name: Clipy (Apple Silicon Build) ${{ github.ref_name }}
+        body: |
+          This is an **unofficial** build of Clipy, created to support Apple Silicon.
+          
+          **Disclaimer:** This build is not affiliated with the original Clipy project.
+          
+          ### Installation
+          1. Download `Clipy-AppleSilicon.dmg`.
+          2. Drag Clipy to your Applications folder.
+          3. Since this build is ad-hoc signed, you might need to right-click and select "Open" the first time.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

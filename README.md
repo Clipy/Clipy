@@ -2,6 +2,12 @@
   <img src="./Resources/clipy_logo.png" width="400">
 </div>
 
+> [!NOTE]
+> **Unofficial Apple Silicon Build**
+> This repository provides an unofficial build of Clipy optimized for Apple Silicon (M1/M2/M3).
+> Please download the latest build from the [Releases](https://github.com/Clipy/Clipy/releases) page.
+> This build is not affiliated with the original Clipy project.
+
 <br>
 
 ![CI](https://github.com/Clipy/Clipy/workflows/CI/badge.svg)
