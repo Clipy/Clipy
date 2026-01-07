@@ -30,7 +30,7 @@ final class ClipService {
     func startMonitoring() {
         disposeBag = DisposeBag()
         // Pasteboard observe timer
-        Observable<Int>.interval(.microseconds(750), scheduler: scheduler)
+        Observable<Int>.interval(.milliseconds(750), scheduler: scheduler)
             .map { _ in NSPasteboard.general.changeCount }
             .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
             .filter { $0 != $1 }
@@ -125,7 +125,8 @@ extension ClipService {
 
         // Overwrite same history
         let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.overwriteSameHistory)
-        let savedHash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
+        let isImageType = (data.primaryType == .deprecatedTIFF || data.primaryType == .publicTIFF || data.primaryType == .publicPNG || data.primaryType == .publicJPEG)
+        let savedHash = (isOverwriteHistory && !isImageType) ? data.hash : Int(arc4random() % 1000000)
 
         // Saved time and path
         let unixTime = Int(Date().timeIntervalSince1970)
@@ -133,7 +134,8 @@ extension ClipService {
         // Create Realm object
         let clip = CPYClip()
         clip.dataPath = savedPath
-        clip.title = data.stringValue[0...10000]
+        let isImageTypeForTitle = (data.primaryType == .deprecatedTIFF || data.primaryType == .publicTIFF || data.primaryType == .publicPNG || data.primaryType == .publicJPEG)
+        clip.title = (data.stringValue.isEmpty && isImageTypeForTitle) ? "(Image)" : data.stringValue[0...10000]
         clip.dataHash = "\(savedHash)"
         clip.updateTime = unixTime
         clip.primaryType = data.primaryType?.rawValue ?? ""

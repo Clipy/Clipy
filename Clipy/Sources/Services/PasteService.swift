@@ -128,9 +128,14 @@ extension PasteService {
             case .deprecatedURL:
                 let url = data.URLs
                 pasteboard.setPropertyList(url, forType: .deprecatedURL)
-            case .deprecatedTIFF:
+            case .deprecatedTIFF, .publicTIFF:
                 guard let image = data.image, let imageData = image.tiffRepresentation else { return }
-                pasteboard.setData(imageData, forType: .deprecatedTIFF)
+                pasteboard.setData(imageData, forType: type)
+            case .publicPNG:
+                guard let image = data.image else { return }
+                guard let tiffData = image.tiffRepresentation, let bitmap = NSBitmapImageRep(data: tiffData) else { return }
+                guard let pngData = bitmap.representation(using: .png, properties: [:]) else { return }
+                pasteboard.setData(pngData, forType: type)
             default: break
             }
         }
@@ -147,7 +152,7 @@ extension PasteService {
             return
         }
 
-        let vKeyCode = Sauce.shared.keyCode(by: .v)
+        let vKeyCode = Sauce.shared.keyCode(for: .v)
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting

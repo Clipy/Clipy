@@ -18,20 +18,14 @@ extension NSImage {
 
         let representations = self.representations
         var bitmapRep: NSBitmapImageRep?
-
         for rep in representations {
             if let rep = rep as? NSBitmapImageRep {
                 bitmapRep = rep
                 break
             }
         }
-
-        if bitmapRep == nil {
-            return nil
-        }
-
-        let origWidth = CGFloat(bitmapRep!.pixelsWide)
-        let origHeight = CGFloat(bitmapRep!.pixelsHigh)
+        let origWidth: CGFloat = bitmapRep != nil ? CGFloat(bitmapRep!.pixelsWide) : self.size.width
+        let origHeight: CGFloat = bitmapRep != nil ? CGFloat(bitmapRep!.pixelsHigh) : self.size.height
 
         let aspect = CGFloat(origWidth) / CGFloat(origHeight)
 
@@ -65,14 +59,16 @@ extension NSImage {
             newHeight = origHeight
         }
 
-        let newImageRep = self.bestRepresentation(for: NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil)
-        if newImageRep == nil {
-            return nil
+        if let newImageRep = self.bestRepresentation(for: NSRect(x: 0, y: 0, width: newWidth, height: newHeight), context: nil, hints: nil) {
+            let thumbnail = NSImage(size: NSSize(width: newWidth, height: newHeight))
+            thumbnail.addRepresentation(newImageRep)
+            return thumbnail
+        } else {
+            let thumbnail = NSImage(size: NSSize(width: newWidth, height: newHeight))
+            thumbnail.lockFocus()
+            self.draw(in: NSRect(x: 0, y: 0, width: newWidth, height: newHeight))
+            thumbnail.unlockFocus()
+            return thumbnail
         }
-
-        let thumbnail = NSImage(size: NSSize(width: newWidth, height: newHeight))
-        thumbnail.addRepresentation(newImageRep!)
-
-        return thumbnail
     }
 }

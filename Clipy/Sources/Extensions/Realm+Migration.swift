@@ -58,6 +58,31 @@ extension Realm {
             }
         })
         Realm.Configuration.defaultConfiguration = config
-        _ = try! Realm()
+        do {
+            _ = try Realm()
+        } catch let error as NSError {
+            if error.domain == "io.realm" && (error.code == 16 || error.code == 8) {
+                if let url = config.fileURL {
+                    let fm = FileManager.default
+                    let timestamp = Int(Date().timeIntervalSince1970)
+                    let backupURL = url.deletingPathExtension().appendingPathExtension("bak-\(timestamp)")
+                    _ = try? fm.moveItem(at: url, to: backupURL)
+                    let lockURL = url.deletingPathExtension().appendingPathExtension("lock")
+                    _ = try? fm.removeItem(at: lockURL)
+                    let managementURL = url.deletingLastPathComponent().appendingPathComponent("default.realm.management")
+                    _ = try? fm.removeItem(at: managementURL)
+                }
+                do {
+                    _ = try Realm()
+                } catch {
+                    var inMemory = config
+                    inMemory.inMemoryIdentifier = "dev"
+                    Realm.Configuration.defaultConfiguration = inMemory
+                    _ = try! Realm()
+                }
+            } else {
+                fatalError("Realm init failed: \(error)")
+            }
+        }
     }
 }

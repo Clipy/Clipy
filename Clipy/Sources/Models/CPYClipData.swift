@@ -36,6 +36,8 @@ final class CPYClipData: NSObject {
         var hash = types.map { $0.rawValue }.joined().hash
         if let image = self.image, let imageData = image.tiffRepresentation {
             hash ^= imageData.count
+            // Add image size to hash to avoid same size image conflict
+            hash ^= Int(image.size.width) ^ Int(image.size.height)
         } else if let image = self.image {
             hash ^= image.hash
         }
@@ -90,7 +92,10 @@ final class CPYClipData: NSObject {
                 .deprecatedPDF,
                 .deprecatedFilenames,
                 .deprecatedURL,
-                .deprecatedTIFF]
+                .deprecatedTIFF,
+                .publicTIFF,
+                .publicPNG,
+                .publicJPEG]
     }
     static var availableTypesString: [String] {
         return ["String",
@@ -99,6 +104,9 @@ final class CPYClipData: NSObject {
                 "PDF",
                 "Filenames",
                 "URL",
+                "TIFF",
+                "TIFF",
+                "TIFF",
                 "TIFF"]
     }
     static var availableTypesDictinary: [NSPasteboard.PasteboardType: String] {
@@ -128,7 +136,7 @@ final class CPYClipData: NSObject {
             case .deprecatedURL:
                 guard let urls = pasteboard.propertyList(forType: .deprecatedURL) as? [String] else { return }
                 URLs = urls
-            case .deprecatedTIFF:
+            case .deprecatedTIFF, .publicTIFF, .publicPNG, .publicJPEG:
                 image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage
             default: break
             }

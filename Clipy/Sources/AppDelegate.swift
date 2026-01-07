@@ -17,9 +17,9 @@ import RxSwift
 import LoginServiceKit
 import Magnet
 import Screeen
-import RxScreeen
+// import RxScreeen
 import RealmSwift
-import LetsMove
+// import LetsMove
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -199,11 +199,14 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Managers
         AppEnvironment.current.menuManager.setup()
+        
+        // Screenshot Observer
+        screenshotObserver.delegate = self
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         #if RELEASE
-            PFMoveToApplicationsFolderIfNecessary()
+            // PFMoveToApplicationsFolderIfNecessary()
         #endif
     }
 
@@ -235,11 +238,13 @@ private extension AppDelegate {
                 self?.screenshotObserver.start()
             })
             .disposed(by: disposeBag)
-        // Observe Screenshot image
-        screenshotObserver.rx.addedImage
-            .subscribe(onNext: { image in
-                AppEnvironment.current.clipService.create(with: image)
-            })
-            .disposed(by: disposeBag)
+    }
+}
+
+extension AppDelegate: ScreenShotObserverDelegate {
+    func screenShotObserver(_ observer: ScreenShotObserver, addedItem item: NSMetadataItem) {
+        guard let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return }
+        guard let image = NSImage(contentsOfFile: path) else { return }
+        AppEnvironment.current.clipService.create(with: image)
     }
 }
