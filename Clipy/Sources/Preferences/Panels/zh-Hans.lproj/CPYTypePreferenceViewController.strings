@@ -15,7 +15,7 @@
 "lSu-gq-grM.title" = "选择要保留的剪贴板类型：";
 
 /* Class = "NSButtonCell"; title = "TIFF Image"; ObjectID = "lZ0-qQ-qWk"; */
-"lZ0-qQ-qWk.title" = "TIFF 图像";
+"lZ0-qQ-qWk.title" = "图像 (TIFF, PNG, JPEG)";
 
 /* Class = "NSButtonCell"; title = "URL"; ObjectID = "oXv-rM-kj5"; */
 "oXv-rM-kj5.title" = "URL";
