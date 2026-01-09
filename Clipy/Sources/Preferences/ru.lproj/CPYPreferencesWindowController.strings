@@ -1,0 +1,28 @@
+
+/* Class = "NSWindow"; title = "Clipy - Setting"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Clipy - настройки";
+
+/* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
+"Fxs-BH-hPx.title" = "Бета";
+
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "N5e-ba-0Q0"; */
+"N5e-ba-0Q0.title" = "Обновления";
+
+/* Class = "NSTextFieldCell"; title = "No Pane is Selected."; ObjectID = "Vy6-Ui-lLf"; */
+"Vy6-Ui-lLf.title" = "Панель не выбрана.";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "avh-w8-RcC"; */
+"avh-w8-RcC.title" = "Типы";
+
+/* Class = "NSTextFieldCell"; title = "Exclude"; ObjectID = "odU-xs-hZL"; */
+"odU-xs-hZL.title" = "Исключения";
+
+/* Class = "NSTextFieldCell"; title = "General"; ObjectID = "qS1-uo-9im"; */
+"qS1-uo-9im.title" = "Общие";
+
+/* Class = "NSTextFieldCell"; title = "Shortcuts"; ObjectID = "qx8-Vm-eow"; */
+"qx8-Vm-eow.title" = "Горячие клавиши";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "vEM-JU-92T"; */
+"vEM-JU-92T.title" = "Меню";
+
