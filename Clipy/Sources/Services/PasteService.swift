@@ -17,12 +17,21 @@ import Sauce
 final class PasteService {
 
     // MARK: - Properties
+
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
+    fileprivate let markdownService = MarkdownService.shared
+
     fileprivate var isPastePlainText: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
 
         let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
         return isPressedModifier(modifierSetting)
+    }
+
+    /// Returns `true` if SHIFT key is currently pressed.
+    /// Used to determine if Markdown should be pasted as plain text instead of formatted HTML.
+    fileprivate var isShiftPressed: Bool {
+        return NSEvent.modifierFlags.contains(.shift)
     }
     fileprivate var isDeleteHistory: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.deleteHistory) else { return false }
@@ -100,12 +109,42 @@ extension PasteService {
 
         guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
 
+        // Check if paste plain text is enabled
         if isPastePlainText {
             copyToPasteboard(with: data.stringValue)
             return
         }
 
         let pasteboard = NSPasteboard.general
+        let stringValue = data.stringValue
+
+        // MARK: Markdown Handling
+        // When content contains Markdown formatting:
+        // - Normal paste (click): Convert to formatted HTML/RTF with styling
+        // - SHIFT + paste: Keep as plain Markdown text
+        if !stringValue.isEmpty && markdownService.isMarkdown(stringValue) {
+            // Prevent ClipService from capturing our own pasteboard modification
+            AppEnvironment.current.clipService.incrementChangeCount()
+
+            if isShiftPressed {
+                // SHIFT pressed: paste as plain Markdown text
+                pasteboard.clearContents()
+                pasteboard.declareTypes([.string], owner: nil)
+                pasteboard.setString(stringValue, forType: .string)
+                return
+            }
+
+            // Normal paste: convert Markdown to formatted RTF
+            if let rtfData = markdownService.markdownToRTFData(stringValue) {
+                pasteboard.clearContents()
+                pasteboard.declareTypes([.rtf, .string], owner: nil)
+                pasteboard.setData(rtfData, forType: .rtf)
+                pasteboard.setString(stringValue, forType: .string)
+                return
+            }
+        }
+
+        // Default behavior: paste with all available types
         let types = data.types
         pasteboard.declareTypes(types, owner: nil)
         types.forEach { type in
@@ -147,7 +186,7 @@ extension PasteService {
             return
         }
 
-        let vKeyCode = Sauce.shared.keyCode(by: .v)
+        let vKeyCode = Sauce.shared.keyCode(for: .v)
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting
