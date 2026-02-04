@@ -104,6 +104,12 @@ final class CPYClipData: NSObject {
     static var availableTypesDictinary: [NSPasteboard.PasteboardType: String] {
         var availableTypes = [NSPasteboard.PasteboardType: String]()
         zip(CPYClipData.availableTypes, CPYClipData.availableTypesString).forEach { availableTypes[$0] = $1 }
+        // Also include modern UTI types so that canSave(with:) recognizes them
+        for (modern, deprecated) in NSPasteboard.PasteboardType.modernToDeprecatedMap {
+            if let value = availableTypes[deprecated] {
+                availableTypes[modern] = value
+            }
+        }
         return availableTypes
     }
 

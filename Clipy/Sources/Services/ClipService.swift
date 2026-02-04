@@ -162,7 +162,9 @@ extension ClipService {
     }
 
     private func types(with pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-        let types = pasteboard.types?.filter { canSave(with: $0) } ?? []
+        // Filter to saveable types, then normalize modern UTI types to deprecated equivalents
+        // for backward compatibility with existing stored clip data
+        let types = pasteboard.types?.filter { canSave(with: $0) }.map { $0.normalizedType } ?? []
         return NSOrderedSet(array: types).array as? [NSPasteboard.PasteboardType] ?? []
     }
 

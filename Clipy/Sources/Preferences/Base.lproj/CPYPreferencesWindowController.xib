@@ -26,9 +26,6 @@
                 <outlet property="typeButton" destination="re2-ih-xqq" id="amJ-Th-Owc"/>
                 <outlet property="typeImageView" destination="o3h-5z-gAo" id="vLK-jc-GxL"/>
                 <outlet property="typeTextField" destination="Atd-Sw-OzP" id="SjP-de-eOc"/>
-                <outlet property="updatesButton" destination="qwu-rn-gk4" id="zHW-sn-OKa"/>
-                <outlet property="updatesImageView" destination="miw-wN-6dz" id="ZFr-xp-Tg0"/>
-                <outlet property="updatesTextField" destination="bGH-iV-ocf" id="gY0-IQ-Nhm"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -277,50 +274,6 @@
                                     <constraint firstItem="1CN-v1-FRq" firstAttribute="top" secondItem="Rws-24-H8e" secondAttribute="bottom" constant="4" id="wUy-Za-lnD"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="bgn-yY-thR">
-                                <rect key="frame" x="258" y="0.0" width="51" height="56"/>
-                                <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="miw-wN-6dz">
-                                        <rect key="frame" x="8" y="24" width="36" height="24"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="24" id="unq-x5-7Ks"/>
-                                            <constraint firstAttribute="width" constant="36" id="zG6-Iy-yqI"/>
-                                        </constraints>
-                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="pref_update" id="DuC-vy-RB1"/>
-                                    </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bGH-iV-ocf">
-                                        <rect key="frame" x="1" y="8" width="49" height="12"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Updates" id="N5e-ba-0Q0">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
-                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="qwu-rn-gk4">
-                                        <rect key="frame" x="0.0" y="0.0" width="51" height="56"/>
-                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="WqD-9f-VJc">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="toolBarItemTapped:" target="-2" id="2zD-TS-O5b"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="4Be-eN-hIh"/>
-                                    <constraint firstItem="bGH-iV-ocf" firstAttribute="top" secondItem="miw-wN-6dz" secondAttribute="bottom" constant="4" id="CbI-bH-jtY"/>
-                                    <constraint firstAttribute="trailing" secondItem="qwu-rn-gk4" secondAttribute="trailing" id="KYB-av-lz5"/>
-                                    <constraint firstItem="bGH-iV-ocf" firstAttribute="leading" secondItem="bgn-yY-thR" secondAttribute="leading" constant="3" id="RLL-aF-rT8"/>
-                                    <constraint firstItem="miw-wN-6dz" firstAttribute="top" secondItem="bgn-yY-thR" secondAttribute="top" constant="8" id="Sbl-Uy-4eF"/>
-                                    <constraint firstItem="miw-wN-6dz" firstAttribute="centerX" secondItem="bgn-yY-thR" secondAttribute="centerX" id="U1Y-ly-fT9"/>
-                                    <constraint firstItem="qwu-rn-gk4" firstAttribute="leading" secondItem="bgn-yY-thR" secondAttribute="leading" id="Xe3-vq-BRq"/>
-                                    <constraint firstItem="qwu-rn-gk4" firstAttribute="top" secondItem="bgn-yY-thR" secondAttribute="top" id="eH9-nf-yKI"/>
-                                    <constraint firstAttribute="bottom" secondItem="bGH-iV-ocf" secondAttribute="bottom" constant="8" id="fjF-sf-BS5"/>
-                                    <constraint firstAttribute="bottom" secondItem="qwu-rn-gk4" secondAttribute="bottom" id="nDb-bs-Hsh"/>
-                                    <constraint firstAttribute="trailing" secondItem="bGH-iV-ocf" secondAttribute="trailing" constant="3" id="pvp-ce-oEr"/>
-                                </constraints>
-                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LzX-pA-tjM">
                                 <rect key="frame" x="309" y="0.0" width="50" height="56"/>
                                 <subviews>
@@ -340,7 +293,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <button verticalHuggingPriority="750" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="Tkb-uY-5PB">
+                                    <button verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="Tkb-uY-5PB">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="56"/>
                                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="Loo-mm-qBT">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -387,13 +340,11 @@
                             <constraint firstAttribute="bottom" secondItem="oZv-f1-ez4" secondAttribute="bottom" id="Hlq-hj-fhd"/>
                             <constraint firstItem="qLI-td-kAj" firstAttribute="top" secondItem="DB4-0I-ThE" secondAttribute="top" id="NEk-eZ-6z2"/>
                             <constraint firstItem="RKs-Gr-vpv" firstAttribute="leading" secondItem="DB4-0I-ThE" secondAttribute="leading" id="Tzy-QD-D7g"/>
-                            <constraint firstItem="bgn-yY-thR" firstAttribute="leading" secondItem="Tm1-Ve-7A5" secondAttribute="trailing" id="UPC-VY-j0a"/>
                             <constraint firstAttribute="bottom" secondItem="Tm1-Ve-7A5" secondAttribute="bottom" id="cQI-AQ-8i4"/>
-                            <constraint firstItem="bgn-yY-thR" firstAttribute="top" secondItem="DB4-0I-ThE" secondAttribute="top" id="cuX-DF-Mnw"/>
                             <constraint firstItem="oZv-f1-ez4" firstAttribute="top" secondItem="DB4-0I-ThE" secondAttribute="top" id="dsY-m0-zED"/>
                             <constraint firstItem="oZv-f1-ez4" firstAttribute="leading" secondItem="Eo5-Xw-WPV" secondAttribute="trailing" id="eeC-iS-g5z"/>
                             <constraint firstAttribute="bottom" secondItem="d0L-ue-dHf" secondAttribute="bottom" id="fc1-Il-8He"/>
-                            <constraint firstItem="LzX-pA-tjM" firstAttribute="leading" secondItem="bgn-yY-thR" secondAttribute="trailing" id="k3i-xi-Nzt"/>
+                            <constraint firstItem="LzX-pA-tjM" firstAttribute="leading" secondItem="Tm1-Ve-7A5" secondAttribute="trailing" id="k3i-xi-Nzt"/>
                             <constraint firstItem="Tm1-Ve-7A5" firstAttribute="top" secondItem="DB4-0I-ThE" secondAttribute="top" id="mLx-hj-SgI"/>
                             <constraint firstItem="d0L-ue-dHf" firstAttribute="leading" secondItem="qLI-td-kAj" secondAttribute="trailing" id="ok5-iH-56k"/>
                             <constraint firstItem="Eo5-Xw-WPV" firstAttribute="top" secondItem="DB4-0I-ThE" secondAttribute="top" id="pmH-u2-Tu6"/>
@@ -401,7 +352,6 @@
                             <constraint firstItem="qLI-td-kAj" firstAttribute="leading" secondItem="oZv-f1-ez4" secondAttribute="trailing" id="ufE-IM-cub"/>
                             <constraint firstAttribute="bottom" secondItem="LzX-pA-tjM" secondAttribute="bottom" id="uke-85-OUo"/>
                             <constraint firstItem="Eo5-Xw-WPV" firstAttribute="leading" secondItem="DB4-0I-ThE" secondAttribute="leading" id="v17-rx-F6g"/>
-                            <constraint firstAttribute="bottom" secondItem="bgn-yY-thR" secondAttribute="bottom" id="yhs-N3-ukR"/>
                             <constraint firstAttribute="height" constant="56" id="zEv-xk-Ocs"/>
                         </constraints>
                     </customView>
@@ -427,6 +377,5 @@
         <image name="pref_menu" width="36" height="24"/>
         <image name="pref_shortcut" width="36" height="24"/>
         <image name="pref_type" width="36" height="24"/>
-        <image name="pref_update" width="36" height="24"/>
     </resources>
 </document>

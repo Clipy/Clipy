@@ -47,4 +47,26 @@ extension NSPasteboard.PasteboardType {
         return NSPasteboard.PasteboardType(rawValue: "NSTIFFPboardType")
     }
 
+    // MARK: - Modern UTI Type Mapping
+    // Modern macOS uses UTI-based type strings (e.g., "public.tiff") instead of
+    // the old NS-style strings (e.g., "NSTIFFPboardType").
+    // This mapping allows Clipy to recognize modern types while keeping backward
+    // compatibility with existing stored clip data.
+    static var modernToDeprecatedMap: [NSPasteboard.PasteboardType: NSPasteboard.PasteboardType] {
+        return [
+            .init(rawValue: "public.utf8-plain-text"): .deprecatedString,
+            .init(rawValue: "public.rtf"): .deprecatedRTF,
+            .init(rawValue: "com.apple.flat-rtfd"): .deprecatedRTFD,
+            .init(rawValue: "com.adobe.pdf"): .deprecatedPDF,
+            .init(rawValue: "public.tiff"): .deprecatedTIFF,
+            .init(rawValue: "public.url"): .deprecatedURL,
+        ]
+    }
+
+    /// Normalizes a modern UTI type to its deprecated equivalent for internal consistency.
+    /// Returns self if no mapping exists.
+    var normalizedType: NSPasteboard.PasteboardType {
+        return NSPasteboard.PasteboardType.modernToDeprecatedMap[self] ?? self
+    }
+
 }

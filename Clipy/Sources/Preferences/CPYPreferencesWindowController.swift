@@ -23,7 +23,6 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet private weak var typeImageView: NSImageView!
     @IBOutlet private weak var excludeImageView: NSImageView!
     @IBOutlet private weak var shortcutsImageView: NSImageView!
-    @IBOutlet private weak var updatesImageView: NSImageView!
     @IBOutlet private weak var betaImageView: NSImageView!
     // Labels
     @IBOutlet private weak var generalTextField: NSTextField!
@@ -31,7 +30,6 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet private weak var typeTextField: NSTextField!
     @IBOutlet private weak var excludeTextField: NSTextField!
     @IBOutlet private weak var shortcutsTextField: NSTextField!
-    @IBOutlet private weak var updatesTextField: NSTextField!
     @IBOutlet private weak var betaTextField: NSTextField!
     // Buttons
     @IBOutlet private weak var generalButton: NSButton!
@@ -39,7 +37,6 @@ final class CPYPreferencesWindowController: NSWindowController {
     @IBOutlet private weak var typeButton: NSButton!
     @IBOutlet private weak var excludeButton: NSButton!
     @IBOutlet private weak var shortcutsButton: NSButton!
-    @IBOutlet private weak var updatesButton: NSButton!
     @IBOutlet private weak var betaButton: NSButton!
     // ViewController
     private let viewController = [NSViewController(nibName: "CPYGeneralPreferenceViewController", bundle: nil),
@@ -47,14 +44,13 @@ final class CPYPreferencesWindowController: NSWindowController {
                                   CPYTypePreferenceViewController(nibName: "CPYTypePreferenceViewController", bundle: nil),
                                   CPYExcludeAppPreferenceViewController(nibName: "CPYExcludeAppPreferenceViewController", bundle: nil),
                                   CPYShortcutsPreferenceViewController(nibName: "CPYShortcutsPreferenceViewController", bundle: nil),
-                                  CPYUpdatesPreferenceViewController(nibName: "CPYUpdatesPreferenceViewController", bundle: nil),
                                   CPYBetaPreferenceViewController(nibName: "CPYBetaPreferenceViewController", bundle: nil)]
 
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.collectionBehavior = .canJoinAllSpaces
-        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
+        self.window?.backgroundColor = .windowBackgroundColor
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
@@ -64,7 +60,6 @@ final class CPYPreferencesWindowController: NSWindowController {
         typeButton.sendAction(on: .leftMouseDown)
         excludeButton.sendAction(on: .leftMouseDown)
         shortcutsButton.sendAction(on: .leftMouseDown)
-        updatesButton.sendAction(on: .leftMouseDown)
         betaButton.sendAction(on: .leftMouseDown)
     }
 
@@ -104,7 +99,6 @@ private extension CPYPreferencesWindowController {
         typeImageView.image = Asset.prefType.image
         excludeImageView.image = Asset.prefExcluded.image
         shortcutsImageView.image = Asset.prefShortcut.image
-        updatesImageView.image = Asset.prefUpdate.image
         betaImageView.image = Asset.prefBeta.image
 
         generalTextField.textColor = ColorName.tabTitle.color
@@ -112,7 +106,6 @@ private extension CPYPreferencesWindowController {
         typeTextField.textColor = ColorName.tabTitle.color
         excludeTextField.textColor = ColorName.tabTitle.color
         shortcutsTextField.textColor = ColorName.tabTitle.color
-        updatesTextField.textColor = ColorName.tabTitle.color
         betaTextField.textColor = ColorName.tabTitle.color
     }
 
@@ -136,9 +129,6 @@ private extension CPYPreferencesWindowController {
             shortcutsImageView.image = Asset.prefShortcutOn.image
             shortcutsTextField.textColor = ColorName.clipy.color
         case 5:
-            updatesImageView.image = Asset.prefUpdateOn.image
-            updatesTextField.textColor = ColorName.clipy.color
-        case 6:
             betaImageView.image = Asset.prefBetaOn.image
             betaTextField.textColor = ColorName.clipy.color
         default: break
@@ -153,13 +143,16 @@ private extension CPYPreferencesWindowController {
                 view.removeFromSuperview()
             }
         }
-        // Resize view
+        // Resize window to fit new view + toolbar
         let frame = window!.frame
-        var newFrame = window!.frameRect(forContentRect: newView.frame)
+        let toolBarHeight = toolBar.frame.height
+        let contentHeight = newView.frame.height + toolBarHeight
+        var newFrame = window!.frameRect(forContentRect: NSRect(x: 0, y: 0, width: newView.frame.width, height: contentHeight))
         newFrame.origin = frame.origin
-        newFrame.origin.y += frame.height - newFrame.height - toolBar.frame.height
-        newFrame.size.height += toolBar.frame.height
+        newFrame.origin.y += frame.height - newFrame.height
         window?.setFrame(newFrame, display: true)
+        // Position new view below toolbar
+        newView.frame.origin = NSPoint(x: 0, y: 0)
         window?.contentView?.addSubview(newView)
     }
 }
