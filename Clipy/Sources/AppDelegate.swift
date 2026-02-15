@@ -27,6 +27,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Properties
     let screenshotObserver = ScreenShotObserver()
     let disposeBag = DisposeBag()
+    private var updaterController: SPUStandardUpdaterController?
+    private var updaterStarted = false
 
     // MARK: - Init
     override func awakeFromNib() {
@@ -153,12 +155,20 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     private func toggleAddingToLoginItems(_ isEnable: Bool) {
         let appPath = Bundle.main.bundlePath
+        let exists = LoginServiceKit.isExistLoginItems(at: appPath)
+        if isEnable {
+            guard exists == false else { return }
+            LoginServiceKit.addLoginItems(at: appPath)
+            return
+        }
+        guard exists else { return }
         LoginServiceKit.removeLoginItems(at: appPath)
-        guard isEnable else { return }
-        LoginServiceKit.addLoginItems(at: appPath)
     }
 
     private func reflectLoginItemState() {
+        #if DEBUG
+        return
+        #endif
         let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem)
         toggleAddingToLoginItems(isInLoginItems)
     }
@@ -175,18 +185,23 @@ extension AppDelegate: NSApplicationDelegate {
         // SDKs
         CPYUtilities.initSDKs()
         // Check Accessibility Permission
-        AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
+        AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false)
 
         // Show Login Item
+        #if !DEBUG
         if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
+        #endif
 
         // Sparkle
-        let updater = SUUpdater.shared()
-        updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        let updaterController = SPUStandardUpdaterController(
+            startingUpdater: false,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
+        self.updaterController = updaterController
+        reflectUpdaterState()
 
         // Binding Events
         bind()
@@ -211,6 +226,19 @@ extension AppDelegate: NSApplicationDelegate {
 
 // MARK: - Bind
 private extension AppDelegate {
+    func reflectUpdaterState() {
+        guard let updaterController = updaterController else { return }
+        let updater = updaterController.updater
+        let autoCheckEnabled = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
+        updater.automaticallyChecksForUpdates = autoCheckEnabled
+        updater.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+
+        guard autoCheckEnabled else { return }
+        guard updaterStarted == false else { return }
+        updaterController.startUpdater()
+        updaterStarted = true
+    }
+
     func bind() {
         // Login Item
         AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
@@ -233,6 +261,19 @@ private extension AppDelegate {
             .take(1)
             .subscribe(onNext: { [weak self] _ in
                 self?.screenshotObserver.start()
+            })
+            .disposed(by: disposeBag)
+        // Update checks
+        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Update.enableAutomaticCheck, retainSelf: false)
+            .compactMap { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                self?.reflectUpdaterState()
+            })
+            .disposed(by: disposeBag)
+        AppEnvironment.current.defaults.rx.observe(Int.self, Constants.Update.checkInterval, retainSelf: false)
+            .compactMap { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                self?.reflectUpdaterState()
             })
             .disposed(by: disposeBag)
         // Observe Screenshot image

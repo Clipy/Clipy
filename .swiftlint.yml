@@ -10,7 +10,6 @@ opt_in_rules:
   - overridden_super_call
   - redundant_nil_coalescing
   - private_outlet
-  - nimble_operator
   - operator_usage_whitespace
   - closure_end_indentation
   - first_where
@@ -34,6 +33,8 @@ disabled_rules:
   - todo
   - cyclomatic_complexity
   - force_try
+  - blanket_disable_command
+  - legacy_random
 identifier_name:
   excluded:
     - i

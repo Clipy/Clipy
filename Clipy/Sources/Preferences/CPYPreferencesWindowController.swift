@@ -16,6 +16,7 @@ final class CPYPreferencesWindowController: NSWindowController {
 
     // MARK: - Properties
     static let sharedController = CPYPreferencesWindowController(windowNibName: "CPYPreferencesWindowController")
+    private var selectedTabIndex: Int = 0
     @IBOutlet private weak var toolBar: NSView!
     // ImageViews
     @IBOutlet private weak var generalImageView: NSImageView!
@@ -54,7 +55,7 @@ final class CPYPreferencesWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.collectionBehavior = .canJoinAllSpaces
-        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
+        self.window?.backgroundColor = .windowBackgroundColor
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
@@ -66,17 +67,20 @@ final class CPYPreferencesWindowController: NSWindowController {
         shortcutsButton.sendAction(on: .leftMouseDown)
         updatesButton.sendAction(on: .leftMouseDown)
         betaButton.sendAction(on: .leftMouseDown)
+        applyAppearance()
     }
 
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
         window?.makeKeyAndOrderFront(self)
+        applyAppearance()
     }
 }
 
 // MARK: - IBActions
 extension CPYPreferencesWindowController {
     @IBAction private func toolBarItemTapped(_ sender: NSButton) {
+        selectedTabIndex = sender.tag
         selectedTab(sender.tag)
         switchView(sender.tag)
     }
@@ -98,22 +102,52 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 
 // MARK: - Layout
 private extension CPYPreferencesWindowController {
-    func resetImages() {
-        generalImageView.image = Asset.prefGeneral.image
-        menuImageView.image = Asset.prefMenu.image
-        typeImageView.image = Asset.prefType.image
-        excludeImageView.image = Asset.prefExcluded.image
-        shortcutsImageView.image = Asset.prefShortcut.image
-        updatesImageView.image = Asset.prefUpdate.image
-        betaImageView.image = Asset.prefBeta.image
+    var selectedLabelColor: NSColor {
+        if #available(macOS 10.14, *) {
+            return .controlAccentColor
+        }
+        return ColorName.clipy.color
+    }
 
-        generalTextField.textColor = ColorName.tabTitle.color
-        menuTextField.textColor = ColorName.tabTitle.color
-        typeTextField.textColor = ColorName.tabTitle.color
-        excludeTextField.textColor = ColorName.tabTitle.color
-        shortcutsTextField.textColor = ColorName.tabTitle.color
-        updatesTextField.textColor = ColorName.tabTitle.color
-        betaTextField.textColor = ColorName.tabTitle.color
+    var borderSeparatorColor: NSColor {
+        if #available(macOS 10.14, *) {
+            return .separatorColor
+        }
+        return .gridColor
+    }
+
+    var unselectedLabelColor: NSColor {
+        if #available(macOS 10.14, *) {
+            return .secondaryLabelColor
+        }
+        return ColorName.tabTitle.color
+    }
+
+    func configureToolbarIcon(_ imageView: NSImageView, image: NSImage) {
+        let renderedImage = (image.copy() as? NSImage) ?? image
+        renderedImage.isTemplate = false
+        imageView.image = renderedImage
+        if #available(macOS 10.14, *) {
+            imageView.contentTintColor = nil
+        }
+    }
+
+    func resetImages() {
+        configureToolbarIcon(generalImageView, image: Asset.prefGeneral.image)
+        configureToolbarIcon(menuImageView, image: Asset.prefMenu.image)
+        configureToolbarIcon(typeImageView, image: Asset.prefType.image)
+        configureToolbarIcon(excludeImageView, image: Asset.prefExcluded.image)
+        configureToolbarIcon(shortcutsImageView, image: Asset.prefShortcut.image)
+        configureToolbarIcon(updatesImageView, image: Asset.prefUpdate.image)
+        configureToolbarIcon(betaImageView, image: Asset.prefBeta.image)
+
+        generalTextField.textColor = unselectedLabelColor
+        menuTextField.textColor = unselectedLabelColor
+        typeTextField.textColor = unselectedLabelColor
+        excludeTextField.textColor = unselectedLabelColor
+        shortcutsTextField.textColor = unselectedLabelColor
+        updatesTextField.textColor = unselectedLabelColor
+        betaTextField.textColor = unselectedLabelColor
     }
 
     func selectedTab(_ index: Int) {
@@ -121,26 +155,26 @@ private extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalImageView.image = Asset.prefGeneralOn.image
-            generalTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(generalImageView, image: Asset.prefGeneralOn.image)
+            generalTextField.textColor = selectedLabelColor
         case 1:
-            menuImageView.image = Asset.prefMenuOn.image
-            menuTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(menuImageView, image: Asset.prefMenuOn.image)
+            menuTextField.textColor = selectedLabelColor
         case 2:
-            typeImageView.image = Asset.prefTypeOn.image
-            typeTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(typeImageView, image: Asset.prefTypeOn.image)
+            typeTextField.textColor = selectedLabelColor
         case 3:
-            excludeImageView.image = Asset.prefExcludedOn.image
-            excludeTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(excludeImageView, image: Asset.prefExcludedOn.image)
+            excludeTextField.textColor = selectedLabelColor
         case 4:
-            shortcutsImageView.image = Asset.prefShortcutOn.image
-            shortcutsTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(shortcutsImageView, image: Asset.prefShortcutOn.image)
+            shortcutsTextField.textColor = selectedLabelColor
         case 5:
-            updatesImageView.image = Asset.prefUpdateOn.image
-            updatesTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(updatesImageView, image: Asset.prefUpdateOn.image)
+            updatesTextField.textColor = selectedLabelColor
         case 6:
-            betaImageView.image = Asset.prefBetaOn.image
-            betaTextField.textColor = ColorName.clipy.color
+            configureToolbarIcon(betaImageView, image: Asset.prefBetaOn.image)
+            betaTextField.textColor = selectedLabelColor
         default: break
         }
     }
@@ -161,5 +195,34 @@ private extension CPYPreferencesWindowController {
         newFrame.size.height += toolBar.frame.height
         window?.setFrame(newFrame, display: true)
         window?.contentView?.addSubview(newView)
+        applyAppearance()
+    }
+
+    func applyAppearance() {
+        window?.backgroundColor = .windowBackgroundColor
+        applyAppearance(to: toolBar)
+        if let contentView = window?.contentView {
+            for view in contentView.subviews where view != toolBar {
+                applyAppearance(to: view)
+            }
+        }
+        selectedTab(selectedTabIndex)
+    }
+
+    func applyAppearance(to view: NSView) {
+        if let designableView = view as? CPYDesignableView {
+            designableView.backgroundColor = .controlBackgroundColor
+            if designableView.borderWidth > 0 {
+                designableView.borderColor = borderSeparatorColor
+            }
+        }
+        if let textField = view as? NSTextField {
+            if textField.isEditable {
+                textField.textColor = .textColor
+            } else {
+                textField.textColor = .labelColor
+            }
+        }
+        view.subviews.forEach { applyAppearance(to: $0) }
     }
 }

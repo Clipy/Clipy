@@ -56,7 +56,11 @@ final class PasteService {
 // MARK: - Copy
 extension PasteService {
     func paste(with clip: CPYClip) {
-        guard !clip.isInvalidated else { return }
+        NSLog("[ClipyDebug] paste(with clip:) called. clip: \(clip.title)")
+        guard !clip.isInvalidated else {
+            NSLog("[ClipyDebug] Clip invalidated.")
+            return
+        }
         guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
 
         // Handling modifier actions
@@ -140,16 +144,28 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
-        // Check Accessibility Permission
-        guard AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) else {
-            AppEnvironment.current.accessibilityService.showAccessibilityAuthenticationAlert()
+        NSLog("[ClipyDebug] paste() called")
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) else {
+            NSLog("[ClipyDebug] inputPasteCommand is false")
             return
         }
+        // Check Accessibility Permission
+        guard AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) else {
+           NSLog("[ClipyDebug] Accessibility not enabled")
+           return
+        }
+        // if !AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) {
+        //     NSLog("[ClipyDebug] Accessibility check returned false, but proceeding for testing.")
+        // }
 
         let vKeyCode = Sauce.shared.keyCode(for: .v)
-        DispatchQueue.main.async {
-            let source = CGEventSource(stateID: .combinedSessionState)
+
+        // Hide Clipy to force focus back to the previous app
+        NSApp.hide(nil)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            NSLog("[ClipyDebug] Dispatching paste event")
+            let source = CGEventSource(stateID: .hidSystemState)
             // Disable local keyboard events while pasting
             source?.setLocalEventsFilterDuringSuppressionState([.permitLocalMouseEvents, .permitSystemDefinedEvents], state: .eventSuppressionStateSuppressionInterval)
             // Press Command + V
@@ -161,6 +177,7 @@ extension PasteService {
             // Post Paste Command
             keyVDown?.post(tap: .cgAnnotatedSessionEventTap)
             keyVUp?.post(tap: .cgAnnotatedSessionEventTap)
+            NSLog("[ClipyDebug] Paste events posted")
         }
     }
 }
