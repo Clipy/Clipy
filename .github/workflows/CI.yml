@@ -1,46 +1,39 @@
 name: CI
 
-on: [push, pull_request]
-
-env:
-  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
 
 jobs:
-  test:
-    runs-on: macos-10.15
+  build:
+    runs-on: macos-15
+
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup ruby
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: '2.6'
-  
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gem-
-      
-    - name: Cache CocoaPods
-      uses: actions/cache@v2
-      with:
-        path: Pods
-        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-pods-
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
 
-    - name: Bundle install
-      run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
+      - name: Install XcodeGen
+        run: brew install xcodegen
 
-    - name: Pod install
-      run: bundle exec pod install
+      - name: Generate Project
+        run: xcodegen generate
 
-    - name: Run fastlane
-      run: bundle exec fastlane test
+      - name: Resolve Packages
+        run: xcodebuild -resolvePackageDependencies -project Clipy.xcodeproj
+
+      - name: Build Release
+        run: |
+          xcodebuild \
+            -project Clipy.xcodeproj \
+            -scheme Clipy \
+            -configuration Release \
+            -destination 'platform=macOS,arch=arm64' \
+            clean build
     
