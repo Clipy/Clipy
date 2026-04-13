@@ -1,0 +1,82 @@
+name: Clipy
+options:
+  bundleIdPrefix: com.clipy-app
+  deploymentTarget:
+    macOS: 10.13
+  xcodeVersion: 12.0
+settings:
+  base:
+    MARKETING_VERSION: 1.2.1
+    CURRENT_PROJECT_VERSION: 1
+    PRODUCT_NAME: Clipy
+    SWIFT_VERSION: 5.0
+    INFOPLIST_FILE: Clipy/Supporting Files/Info.plist
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    COMBINE_HIDPI_IMAGES: YES
+    LD_RUNPATH_SEARCH_PATHS: ["$(inherited)", "@executable_path/../Frameworks"]
+packages:
+  Realm:
+    url: https://github.com/realm/realm-swift.git
+    majorVersion: 20.0.4
+  RxSwift:
+    url: https://github.com/ReactiveX/RxSwift.git
+    majorVersion: 6.0.0
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle.git
+    majorVersion: 2.0.0
+  PINCache:
+    url: https://github.com/pinterest/PINCache.git
+    majorVersion: 3.0.0
+  SwiftHEXColors:
+    url: https://github.com/thii/SwiftHEXColors.git
+    majorVersion: 1.3.1
+  AEXML:
+    url: https://github.com/tadija/AEXML.git
+    majorVersion: 4.6.0
+  Magnet:
+    url: https://github.com/Clipy/Magnet.git
+    majorVersion: 3.0.0
+  Sauce:
+    url: https://github.com/Clipy/Sauce.git
+    majorVersion: 2.0.0
+  KeyHolder:
+    url: https://github.com/Clipy/KeyHolder.git
+    majorVersion: 4.0.0
+  Screeen:
+    url: https://github.com/Clipy/Screeen.git
+    majorVersion: 2.0.0
+  LoginServiceKit:
+    url: https://github.com/Clipy/LoginServiceKit.git
+    majorVersion: 2.0.0
+
+targets:
+  Clipy:
+    type: application
+    platform: macOS
+    sources:
+      - Clipy
+    dependencies:
+      - package: Realm
+        product: RealmSwift
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: Sparkle
+        product: Sparkle
+      - package: PINCache
+        product: PINCache
+      - package: SwiftHEXColors
+        product: SwiftHEXColors
+      - package: AEXML
+        product: AEXML
+      - package: Magnet
+        product: Magnet
+      - package: Sauce
+        product: Sauce
+      - package: KeyHolder
+        product: KeyHolder
+      - package: Screeen
+        product: Screeen
+      - package: LoginServiceKit
+        product: LoginServiceKit
