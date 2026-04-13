@@ -2,48 +2,23 @@ name: Danger
 
 on: pull_request
 
-env:
-  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
-
 jobs:
   danger:
-    runs-on: macos-10.15
+    runs-on: macos-15
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-    - name: Setup ruby
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: '2.6'
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gem-
+      - name: Install SwiftLint
+        run: brew install swiftlint
 
-    - name: Cache CocoaPods
-      uses: actions/cache@v2
-      with:
-        path: Pods
-        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-pods-
-
-    - name: Bundle install
-      run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
-
-    - name: Pod install
-      run: bundle exec pod install
-
-    - name: Run Danger
-      run: bundle exec danger
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Danger
+        run: bundle exec danger
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
