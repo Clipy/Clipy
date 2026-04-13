@@ -1,0 +1,63 @@
+name: Build Release App
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  package:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Project
+        run: xcodegen generate
+
+      - name: Resolve Packages
+        run: xcodebuild -resolvePackageDependencies -project Clipy.xcodeproj
+
+      - name: Build Release
+        run: |
+          xcodebuild \
+            -project Clipy.xcodeproj \
+            -scheme Clipy \
+            -configuration Release \
+            -destination 'platform=macOS,arch=arm64' \
+            clean build
+
+      - name: Prepare Artifacts
+        run: |
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/Release/Clipy.app" | head -n 1)
+          test -n "$APP_PATH"
+          mkdir -p release
+          cp -R "$APP_PATH" release/Clipy.app
+          cd release
+          zip -r Clipy.zip Clipy.app
+
+      - name: Upload App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Clipy-app
+          path: release/Clipy.app
+
+      - name: Upload Zip Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Clipy-zip
+          path: release/Clipy.zip
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/Clipy.zip
