@@ -7,7 +7,6 @@ PODS:
   - LoginServiceKit (2.2.0)
   - Magnet (3.2.0):
     - Sauce (~> 2.1)
-  - Nimble (9.0.0)
   - PINCache (3.0.3):
     - PINCache/Arc-exception-safe (= 3.0.3)
     - PINCache/Core (= 3.0.3)
@@ -16,7 +15,6 @@ PODS:
   - PINCache/Core (3.0.3):
     - PINOperation (~> 1.2.1)
   - PINOperation (1.2.1)
-  - Quick (3.0.0)
   - Realm (10.7.2):
     - Realm/Headers (= 10.7.2)
   - Realm/Headers (10.7.2)
@@ -46,9 +44,7 @@ DEPENDENCIES:
   - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
   - Magnet
-  - Nimble
   - PINCache
-  - Quick
   - RealmSwift
   - RxCocoa
   - RxScreeen
@@ -66,10 +62,8 @@ SPEC REPOS:
     - KeyHolder
     - LetsMove
     - Magnet
-    - Nimble
     - PINCache
     - PINOperation
-    - Quick
     - Realm
     - RealmSwift
     - RxCocoa
@@ -99,10 +93,8 @@ SPEC CHECKSUMS:
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   LoginServiceKit: 3c86ce2f2bcd1e373326839d6d863d8a6a5915b4
   Magnet: 8316a30fe91fdc6f2816ec0f04e20c72e341ca2e
-  Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
-  Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
   Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
   RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
@@ -116,6 +108,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
 
-PODFILE CHECKSUM: 57ecd94a3cf36d020cb8926562e41104c4fea206
+PODFILE CHECKSUM: 420f64d591b59e8dd228750130399ac37375edac
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.16.2

@@ -166,3 +166,8 @@ release/
 
 # Xcode Shared Data (Generated)
 Clipy.xcodeproj/project.xcworkspace/xcshareddata/
+
+# Local build outputs and tool caches
+.derived/
+.home/
+Clipy.xcworkspace/xcshareddata/swiftpm/

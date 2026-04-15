@@ -25,7 +25,7 @@ __Distribution Site__ : <https://clipy-app.com>
 * Swift 5.3
 
 ### How to Build
-0. Move to the project root directory
+0. Move to the project root directory.
 1. `bundle install --path=vendor/bundle && bundle exec pod install`
 2. Open `Clipy.xcworkspace` on Xcode.
 3. build.
