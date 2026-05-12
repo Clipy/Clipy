@@ -47,7 +47,7 @@ PODS:
   - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
   - SwiftHEXColors (1.4.1)
-  - SwiftLint (0.40.3)
+  - SwiftLint (0.63.2)
 
 DEPENDENCIES:
   - AEXML
@@ -134,7 +134,7 @@ SPEC CHECKSUMS:
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
-  SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
+  SwiftLint: 4fa4a9b437ccc4fc72f6c0bc98556e8e9e05bccf
 
 PODFILE CHECKSUM: 3aab90bc46efa5af6c4c928c794b6d6ac5a2b8b4
 
