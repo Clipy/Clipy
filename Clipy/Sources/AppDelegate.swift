@@ -17,7 +17,6 @@ import RxSwift
 import LoginServiceKit
 import Magnet
 import Screeen
-import RxScreeen
 import RealmSwift
 import LetsMove
 
@@ -200,6 +199,8 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Managers
         AppEnvironment.current.menuManager.setup()
+        // Screenshot
+        screenshotObserver.delegate = self
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -236,11 +237,14 @@ private extension AppDelegate {
                 self?.screenshotObserver.start()
             })
             .disposed(by: disposeBag)
-        // Observe Screenshot image
-        screenshotObserver.rx.addedImage
-            .subscribe(onNext: { image in
-                AppEnvironment.current.clipService.create(with: image)
-            })
-            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - ScreenShotObserver Delegate
+extension AppDelegate: ScreenShotObserverDelegate {
+    func screenShotObserver(_ observer: ScreenShotObserver, addedItem item: NSMetadataItem) {
+        guard let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return }
+        guard let image = NSImage(contentsOfFile: path) else { return }
+        AppEnvironment.current.clipService.create(with: image)
     }
 }
