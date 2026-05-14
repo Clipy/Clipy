@@ -14,7 +14,6 @@ target 'Clipy' do
   pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
   pod 'KeyHolder'
   pod 'Magnet'
-  pod 'RxScreeen'
   pod 'AEXML'
   pod 'LetsMove'
   pod 'SwiftHEXColors'
