@@ -1,23 +1,12 @@
 PODS:
   - AEXML (4.6.0)
   - BartyCrouch (3.13.0)
-  - CwlCatchException (2.2.1):
-    - CwlCatchExceptionSupport (~> 2.2.1)
-  - CwlCatchExceptionSupport (2.2.1)
-  - CwlMachBadInstructionHandler (2.2.2)
-  - CwlPosixPreconditionTesting (2.2.2)
-  - CwlPreconditionTesting (2.2.2):
-    - CwlCatchException (~> 2.2.1)
-    - CwlMachBadInstructionHandler (~> 2.2.2)
-    - CwlPosixPreconditionTesting (~> 2.2.2)
   - KeyHolder (4.0.0):
     - Magnet (~> 3.2)
   - LetsMove (1.25)
   - LoginServiceKit (2.5.0)
   - Magnet (3.2.0):
     - Sauce (~> 2.1)
-  - Nimble (14.0.0):
-    - CwlPreconditionTesting (~> 2.2.0)
   - PINCache (3.0.3):
     - PINCache/Arc-exception-safe (= 3.0.3)
     - PINCache/Core (= 3.0.3)
@@ -26,7 +15,6 @@ PODS:
   - PINCache/Core (3.0.3):
     - PINOperation (~> 1.2.1)
   - PINOperation (1.2.1)
-  - Quick (3.0.0)
   - Realm (10.7.2):
     - Realm/Headers (= 10.7.2)
   - Realm/Headers (10.7.2)
@@ -51,9 +39,7 @@ DEPENDENCIES:
   - LetsMove
   - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
   - Magnet
-  - Nimble
   - PINCache
-  - Quick
   - RealmSwift
   - RxCocoa
   - RxSwift
@@ -67,18 +53,11 @@ SPEC REPOS:
   trunk:
     - AEXML
     - BartyCrouch
-    - CwlCatchException
-    - CwlCatchExceptionSupport
-    - CwlMachBadInstructionHandler
-    - CwlPosixPreconditionTesting
-    - CwlPreconditionTesting
     - KeyHolder
     - LetsMove
     - Magnet
-    - Nimble
     - PINCache
     - PINOperation
-    - Quick
     - Realm
     - RealmSwift
     - RxCocoa
@@ -102,19 +81,12 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
-  CwlCatchException: 7acc161b299a6de7f0a46a6ed741eae2c8b4d75a
-  CwlCatchExceptionSupport: 54ccab8d8c78907b57f99717fb19d4cc3bce02dc
-  CwlMachBadInstructionHandler: dae4fdd124d45c9910ac240287cc7b898f4502a1
-  CwlPosixPreconditionTesting: ecd095aa2129e740b44301c34571e8d85906fb88
-  CwlPreconditionTesting: 67a0047dd4de4382b93442c0e3f25207f984f35a
   KeyHolder: 457d8dde330a17452672756ae0e3b9c2e180a7e2
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   LoginServiceKit: 87c3d42ddb80d39ee8ea6b7a93f8c654ff58781b
   Magnet: 8316a30fe91fdc6f2816ec0f04e20c72e341ca2e
-  Nimble: fcfcaab1cca78e301543f78669d70c166b4fadc3
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
-  Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
   Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
   RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
@@ -126,6 +98,6 @@ SPEC CHECKSUMS:
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: 4fa4a9b437ccc4fc72f6c0bc98556e8e9e05bccf
 
-PODFILE CHECKSUM: 0c2675efab7eea8323a6c12c500bfb33984f8c08
+PODFILE CHECKSUM: 891e7be693f44dc8eb86c7ed1d64fe7c4c807cb9
 
 COCOAPODS: 1.16.2

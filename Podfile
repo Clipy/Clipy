@@ -24,10 +24,6 @@ target 'Clipy' do
 
   target 'ClipyTests' do
     inherit! :search_paths
-
-    pod 'Quick'
-    pod 'Nimble'
-
   end
 
 end
