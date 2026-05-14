@@ -54,7 +54,7 @@ final class CPYPreferencesWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.collectionBehavior = .canJoinAllSpaces
-        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
+        applyWindowAppearance()
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
@@ -70,6 +70,7 @@ final class CPYPreferencesWindowController: NSWindowController {
 
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
+        applyWindowAppearance()
         window?.makeKeyAndOrderFront(self)
     }
 }
@@ -147,6 +148,7 @@ private extension CPYPreferencesWindowController {
 
     func switchView(_ index: Int) {
         let newView = viewController[index].view
+        applyAppearance(to: newView)
         // Remove current views without toolbar
         window?.contentView?.subviews.forEach { view in
             if view != toolBar {
@@ -161,5 +163,45 @@ private extension CPYPreferencesWindowController {
         newFrame.size.height += toolBar.frame.height
         window?.setFrame(newFrame, display: true)
         window?.contentView?.addSubview(newView)
+    }
+
+    func applyWindowAppearance() {
+        window?.backgroundColor = .windowBackgroundColor
+        window?.contentView?.wantsLayer = true
+        window?.contentView?.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        window?.contentView?.subviews.forEach { view in
+            if view != toolBar {
+                applyAppearance(to: view)
+            }
+        }
+    }
+
+    func applyAppearance(to view: NSView) {
+        view.wantsLayer = true
+        if !(view is NSControl) {
+            view.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        }
+
+        switch view {
+        case let textField as NSTextField where !textField.isEditable:
+            textField.textColor = .labelColor
+            textField.backgroundColor = .clear
+        case let button as NSButton where !button.title.isEmpty:
+            let color: NSColor = button.isEnabled ? .labelColor : .disabledControlTextColor
+            button.attributedTitle = NSAttributedString(string: button.title, attributes: [
+                .font: button.font ?? NSFont.systemFont(ofSize: NSFont.systemFontSize),
+                .foregroundColor: color
+            ])
+        case let scrollView as NSScrollView:
+            scrollView.drawsBackground = true
+            scrollView.backgroundColor = .controlBackgroundColor
+        case let tableView as NSTableView:
+            tableView.backgroundColor = .controlBackgroundColor
+            tableView.gridColor = .gridColor
+        default:
+            break
+        }
+
+        view.subviews.forEach(applyAppearance)
     }
 }
