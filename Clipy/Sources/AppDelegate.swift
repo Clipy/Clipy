@@ -17,7 +17,6 @@ import RxSwift
 import LoginServiceKit
 import Magnet
 import Screeen
-import RxScreeen
 import RealmSwift
 import LetsMove
 
@@ -154,15 +153,11 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     private func toggleAddingToLoginItems(_ isEnable: Bool) {
-        let appPath = Bundle.main.bundlePath
-        let exists = LoginServiceKit.isExistLoginItems(at: appPath)
         if isEnable {
-            guard exists == false else { return }
-            LoginServiceKit.addLoginItems(at: appPath)
-            return
+            LoginServiceKit.addLoginItems()
+        } else {
+            LoginServiceKit.removeLoginItems()
         }
-        guard exists else { return }
-        LoginServiceKit.removeLoginItems(at: appPath)
     }
 
     private func reflectLoginItemState() {
@@ -214,6 +209,8 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Managers
         AppEnvironment.current.menuManager.setup()
+        // Screenshot
+        screenshotObserver.delegate = self
     }
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -276,11 +273,14 @@ private extension AppDelegate {
                 self?.reflectUpdaterState()
             })
             .disposed(by: disposeBag)
-        // Observe Screenshot image
-        screenshotObserver.rx.addedImage
-            .subscribe(onNext: { image in
-                AppEnvironment.current.clipService.create(with: image)
-            })
-            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - ScreenShotObserver Delegate
+extension AppDelegate: ScreenShotObserverDelegate {
+    func screenShotObserver(_ observer: ScreenShotObserver, addedItem item: NSMetadataItem) {
+        guard let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return }
+        guard let image = NSImage(contentsOfFile: path) else { return }
+        AppEnvironment.current.clipService.create(with: image)
     }
 }

@@ -1,0 +1,15 @@
+{
+  "originHash" : "4738e85c85f0fbf2f85c0183a829586fb3ad2f2679212078b8e1728039a6ef8a",
+  "pins" : [
+    {
+      "identity" : "screeen",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Clipy/Screeen",
+      "state" : {
+        "revision" : "357a72be0060765a8e93b9a70b283fc63c75f4a9",
+        "version" : "2.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}

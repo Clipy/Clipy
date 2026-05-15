@@ -2,12 +2,6 @@
   <img src="./Resources/clipy_logo.png" width="400">
 </div>
 
-> [!NOTE]
-> **Unofficial Apple Silicon Build**
-> This repository provides an unofficial build of Clipy optimized for Apple Silicon (M1/M2/M3).
-> Please download the latest build from the [Releases](https://github.com/Clipy/Clipy/releases) page.
-> This build is not affiliated with the original Clipy project.
-
 <br>
 
 ![CI](https://github.com/Clipy/Clipy/workflows/CI/badge.svg)
@@ -19,15 +13,15 @@ Clipy is a Clipboard extension app for macOS.
 
 ---
 
-__Requirement__: macOS 10.10 Yosemite or higher
+__Requirement__: macOS 13 Ventura or later
 
 __Distribution Site__ : <https://clipy-app.com>
 
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
 ### Development Environment
-* macOS 10.15 Catalina
-* Xcode 12.2
+* macOS 26 Tahoe
+* Xcode 26.2
 * Swift 5.3
 
 ### How to Build

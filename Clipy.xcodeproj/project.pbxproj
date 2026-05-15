@@ -3,14 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */; };
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
+		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
-		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */; };
+		ED83803EDC60449A8E751A01 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */; };
+		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
 		FA10897D20EC22E200A3FEFC /* AssetsImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897B20EC22E200A3FEFC /* AssetsImages.swift */; };
 		FA10897E20EC22E200A3FEFC /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */; };
@@ -64,9 +65,9 @@
 		FA3778931F3B691A003B5BAB /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778921F3B691A003B5BAB /* AppEnvironment.swift */; };
 		FA3778951F3B6920003B5BAB /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3778941F3B6920003B5BAB /* Environment.swift */; };
 		FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */; };
-		FA6167921D3ABEB10049FA14 /* FolderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167911D3ABEB10049FA14 /* FolderSpec.swift */; };
-		FA6167941D3ACCB90049FA14 /* DraggedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */; };
-		FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */; };
+		FA6167921D3ABEB10049FA14 /* FolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167911D3ABEB10049FA14 /* FolderTests.swift */; };
+		FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */; };
+		FA6167961D3ACDD80049FA14 /* SnippetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetTests.swift */; };
 		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
@@ -106,8 +107,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClipyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C2D23FF23B07B76585DC610 /* Pods-ClipyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.release.xcconfig"; sourceTree = "<group>"; };
+		2275A344436EA9C665F24F7C /* Pods-ClipyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.release.xcconfig"; sourceTree = "<group>"; };
 		31064F137CFB046737D1709D /* Pods-Clipy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.debug.xcconfig"; sourceTree = "<group>"; };
 		314B299D1EC49AD5004DD070 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYSnippetsEditorWindowController.xib; sourceTree = "<group>"; };
 		314B299E1EC49AEF004DD070 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
@@ -133,6 +133,7 @@
 		54ADE1012008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
 		54ADE1022008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		54ADE1032008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5F52AB5A94F2CB5147DB71E3 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846004961FD5511800BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
 		846004971FD5511900BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
@@ -144,10 +145,10 @@
 		8460049D1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		8460049E1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		8460049F1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
-		994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
+		C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClipyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
-		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceSpec.swift; sourceTree = "<group>"; };
+		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceTests.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
 		FA10897B20EC22E200A3FEFC /* AssetsImages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetsImages.swift; sourceTree = "<group>"; };
 		FA10897C20EC22E200A3FEFC /* LocalizedStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
@@ -195,9 +196,9 @@
 		FA3778921F3B691A003B5BAB /* AppEnvironment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		FA3778941F3B6920003B5BAB /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collection+Safe.swift"; sourceTree = "<group>"; };
-		FA6167911D3ABEB10049FA14 /* FolderSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderSpec.swift; sourceTree = "<group>"; };
-		FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggedDataSpec.swift; sourceTree = "<group>"; };
-		FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnippetSpec.swift; sourceTree = "<group>"; };
+		FA6167911D3ABEB10049FA14 /* FolderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderTests.swift; sourceTree = "<group>"; };
+		FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggedDataTests.swift; sourceTree = "<group>"; };
+		FA6167951D3ACDD80049FA14 /* SnippetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnippetTests.swift; sourceTree = "<group>"; };
 		FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityService.swift; sourceTree = "<group>"; };
 		FAAA885C1E6853B80088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA88621E6858030088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
@@ -233,6 +234,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5E3D0512FB43570005D632A /* Screeen in Frameworks */,
 				FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */,
 				FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */,
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
@@ -246,7 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				242EC2327861D35B7C3AE84E /* Pods_ClipyTests.framework in Frameworks */,
+				ED83803EDC60449A8E751A01 /* Pods_ClipyTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +264,7 @@
 				FAC43E241B35DFD000C06102 /* AppKit.framework */,
 				FAC43E221B35DFC800C06102 /* Foundation.framework */,
 				73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */,
-				00A4B450122D7FCE6BD57E77 /* Pods_ClipyTests.framework */,
+				C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -272,8 +274,8 @@
 			children = (
 				31064F137CFB046737D1709D /* Pods-Clipy.debug.xcconfig */,
 				9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */,
-				994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */,
-				1C2D23FF23B07B76585DC610 /* Pods-ClipyTests.release.xcconfig */,
+				5F52AB5A94F2CB5147DB71E3 /* Pods-ClipyTests.debug.xcconfig */,
+				2275A344436EA9C665F24F7C /* Pods-ClipyTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -530,10 +532,10 @@
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
 			isa = PBXGroup;
 			children = (
-				FA08EDF71D1FED7D000D1D13 /* HotKeyServiceSpec.swift */,
-				FA6167931D3ACCB90049FA14 /* DraggedDataSpec.swift */,
-				FA6167911D3ABEB10049FA14 /* FolderSpec.swift */,
-				FA6167951D3ACDD80049FA14 /* SnippetSpec.swift */,
+				FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */,
+				FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */,
+				FA6167911D3ABEB10049FA14 /* FolderTests.swift */,
+				FA6167951D3ACDD80049FA14 /* SnippetTests.swift */,
 				FAC43DDC1B35D8B100C06102 /* Supporting Files */,
 			);
 			path = ClipyTests;
@@ -577,11 +579,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAC43DE51B35D8B100C06102 /* Build configuration list for PBXNativeTarget "ClipyTests" */;
 			buildPhases = (
-				7BFBD366B210014B03083E71 /* [CP] Check Pods Manifest.lock */,
+				BF3F35724C8D864DF07C369D /* [CP] Check Pods Manifest.lock */,
 				FAC43DD41B35D8B100C06102 /* Sources */,
 				FAC43DD51B35D8B100C06102 /* Frameworks */,
 				FAC43DD61B35D8B100C06102 /* Resources */,
-				321A1AC02A519AFA3A4D43D2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -631,6 +632,9 @@
 				"zh-Hans",
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
+			packageReferences = (
+				C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */,
+			);
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -692,10 +696,8 @@
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework",
-				"${BUILT_PRODUCTS_DIR}/RxScreeen/RxScreeen.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Sauce/Sauce.framework",
-				"${BUILT_PRODUCTS_DIR}/Screeen/Screeen.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftHEXColors/SwiftHEXColors.framework",
 			);
@@ -712,54 +714,14 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRelay.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxScreeen.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sauce.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Screeen.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftHEXColors.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		321A1AC02A519AFA3A4D43D2 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
-				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Quick.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ClipyTests/Pods-ClipyTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7BFBD366B210014B03083E71 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ClipyTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8E8162F076D1C3115EAAB644 /* [CP] Check Pods Manifest.lock */ = {
@@ -774,6 +736,28 @@
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-Clipy-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BF3F35724C8D864DF07C369D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ClipyTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -808,7 +792,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/BartyCrouch/bartycrouch\" interfaces -p \"$PROJECT_DIR\"";
+			shellScript = "\"${PODS_ROOT}/BartyCrouch/bartycrouch\" update -p \"$PROJECT_DIR\" -x";
 		};
 		FAAD02201CA98E20007C6EEE /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -823,7 +807,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"";
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -886,10 +870,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA6167921D3ABEB10049FA14 /* FolderSpec.swift in Sources */,
-				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceSpec.swift in Sources */,
-				FA6167961D3ACDD80049FA14 /* SnippetSpec.swift in Sources */,
-				FA6167941D3ACCB90049FA14 /* DraggedDataSpec.swift in Sources */,
+				FA6167921D3ABEB10049FA14 /* FolderTests.swift in Sources */,
+				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
+				FA6167961D3ACDD80049FA14 /* SnippetTests.swift in Sources */,
+				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1075,7 +1059,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
@@ -1125,11 +1109,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-D RELEASE";
 				SDKROOT = macosx;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
 		};
@@ -1149,8 +1134,10 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 				PRODUCT_MODULE_NAME = Clipy;
 				PRODUCT_NAME = "Clipy-AppleSilicon";
@@ -1179,8 +1166,10 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 				PRODUCT_MODULE_NAME = Clipy;
 				PRODUCT_NAME = "Clipy-AppleSilicon";
@@ -1194,7 +1183,7 @@
 		};
 		FAC43DE61B35D8B100C06102 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 994536AAB91CE22186C3CFB1 /* Pods-ClipyTests.debug.xcconfig */;
+			baseConfigurationReference = 5F52AB5A94F2CB5147DB71E3 /* Pods-ClipyTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1208,7 +1197,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ClipyTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipyapp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -1219,7 +1212,7 @@
 		};
 		FAC43DE71B35D8B100C06102 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C2D23FF23B07B76585DC610 /* Pods-ClipyTests.release.xcconfig */;
+			baseConfigurationReference = 2275A344436EA9C665F24F7C /* Pods-ClipyTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1229,7 +1222,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ClipyTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipyapp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -1269,6 +1266,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Clipy/Screeen";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C5E3D0502FB43570005D632A /* Screeen */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */;
+			productName = Screeen;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FAC43DBE1B35D8B100C06102 /* Project object */;
 }
