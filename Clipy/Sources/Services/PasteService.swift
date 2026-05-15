@@ -18,6 +18,7 @@ final class PasteService {
 
     // MARK: - Properties
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
+    private var hasShownAccessibilityAlert = false
     fileprivate var isPastePlainText: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
 
@@ -152,6 +153,12 @@ extension PasteService {
         // Check Accessibility Permission
         guard AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) else {
            NSLog("[ClipyDebug] Accessibility not enabled")
+           if hasShownAccessibilityAlert == false {
+               hasShownAccessibilityAlert = true
+               DispatchQueue.main.async {
+                   AppEnvironment.current.accessibilityService.showAccessibilityAuthenticationAlert()
+               }
+           }
            return
         }
         // if !AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: false) {
