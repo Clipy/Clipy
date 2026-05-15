@@ -33,7 +33,7 @@ final class SnippetTests {
         #expect(snippet.content == snippet2.content)
     }
 
-    @Test("Remove snippet")
+    @Test
     func removeSnippet() {
         let realm = try! Realm()
         #expect(realm.objects(CPYSnippet.self).isEmpty)
