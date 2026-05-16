@@ -6,14 +6,10 @@ target 'Clipy' do
 
   # Application
   pod 'PINCache'
-  pod 'Sauce'
   pod 'Sparkle'
   pod 'RealmSwift'
   pod 'RxCocoa'
   pod 'RxSwift'
-  pod 'LoginServiceKit', :git => 'https://github.com/Clipy/LoginServiceKit.git'
-  pod 'KeyHolder'
-  pod 'Magnet'
   pod 'AEXML'
   pod 'LetsMove'
   pod 'SwiftHEXColors'

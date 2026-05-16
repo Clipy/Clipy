@@ -1,12 +1,7 @@
 PODS:
   - AEXML (4.6.0)
   - BartyCrouch (3.13.0)
-  - KeyHolder (4.0.0):
-    - Magnet (~> 3.2)
   - LetsMove (1.25)
-  - LoginServiceKit (2.5.0)
-  - Magnet (3.2.0):
-    - Sauce (~> 2.1)
   - PINCache (3.0.3):
     - PINCache/Arc-exception-safe (= 3.0.3)
     - PINCache/Core (= 3.0.3)
@@ -26,7 +21,6 @@ PODS:
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
-  - Sauce (2.1.0)
   - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
   - SwiftHEXColors (1.4.1)
@@ -35,15 +29,11 @@ PODS:
 DEPENDENCIES:
   - AEXML
   - BartyCrouch
-  - KeyHolder
   - LetsMove
-  - LoginServiceKit (from `https://github.com/Clipy/LoginServiceKit.git`)
-  - Magnet
   - PINCache
   - RealmSwift
   - RxCocoa
   - RxSwift
-  - Sauce
   - Sparkle
   - SwiftGen
   - SwiftHEXColors
@@ -53,9 +43,7 @@ SPEC REPOS:
   trunk:
     - AEXML
     - BartyCrouch
-    - KeyHolder
     - LetsMove
-    - Magnet
     - PINCache
     - PINOperation
     - Realm
@@ -63,28 +51,15 @@ SPEC REPOS:
     - RxCocoa
     - RxRelay
     - RxSwift
-    - Sauce
     - Sparkle
     - SwiftGen
     - SwiftHEXColors
     - SwiftLint
 
-EXTERNAL SOURCES:
-  LoginServiceKit:
-    :git: https://github.com/Clipy/LoginServiceKit.git
-
-CHECKOUT OPTIONS:
-  LoginServiceKit:
-    :commit: 8fd8237c48c4c04bd25ef8bf073c6dd293d30a2c
-    :git: https://github.com/Clipy/LoginServiceKit.git
-
 SPEC CHECKSUMS:
   AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
-  KeyHolder: 457d8dde330a17452672756ae0e3b9c2e180a7e2
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
-  LoginServiceKit: 87c3d42ddb80d39ee8ea6b7a93f8c654ff58781b
-  Magnet: 8316a30fe91fdc6f2816ec0f04e20c72e341ca2e
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
@@ -92,12 +67,11 @@ SPEC CHECKSUMS:
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
-  Sauce: a4075a04b6041e7a0c992a952cc79f7a0ebdb8e3
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
   SwiftLint: 4fa4a9b437ccc4fc72f6c0bc98556e8e9e05bccf
 
-PODFILE CHECKSUM: 891e7be693f44dc8eb86c7ed1d64fe7c4c807cb9
+PODFILE CHECKSUM: 324426ab405a476779cb69f4af338bb9a9f0e7e7
 
 COCOAPODS: 1.16.2
