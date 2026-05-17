@@ -1,6 +1,42 @@
 {
-  "originHash" : "4738e85c85f0fbf2f85c0183a829586fb3ad2f2679212078b8e1728039a6ef8a",
+  "originHash" : "84c70c71c71681e44da66125567e23db1e6d4e4a0c46fad75d989766920fa0d5",
   "pins" : [
+    {
+      "identity" : "keyholder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Clipy/KeyHolder",
+      "state" : {
+        "revision" : "69cfeabc06965bf98d6aa75c5a06c430795e01e4",
+        "version" : "4.3.0"
+      }
+    },
+    {
+      "identity" : "loginservicekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Clipy/LoginServiceKit",
+      "state" : {
+        "revision" : "56dce9dbf4367c1445ef2343a2a912bbe5019a6c",
+        "version" : "2.5.0"
+      }
+    },
+    {
+      "identity" : "magnet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Clipy/Magnet",
+      "state" : {
+        "revision" : "c721032f386a6664a234e04b98cb68823865369a",
+        "version" : "3.5.0"
+      }
+    },
+    {
+      "identity" : "sauce",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/clipy/sauce",
+      "state" : {
+        "revision" : "c9ebdcfddb4b94da5b9a6ebd113ab385edda88c1",
+        "version" : "2.5.0"
+      }
+    },
     {
       "identity" : "screeen",
       "kind" : "remoteSourceControl",
