@@ -3,19 +3,19 @@
 "F0z-JX-Cv5.title" = "Clipy - 设置";
 
 /* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
-"Fxs-BH-hPx.title" = "Beta测试";
+"Fxs-BH-hPx.title" = "测试版";
 
 /* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "N5e-ba-0Q0"; */
 "N5e-ba-0Q0.title" = "更新";
 
 /* Class = "NSTextFieldCell"; title = "No Pane is Selected."; ObjectID = "Vy6-Ui-lLf"; */
-"Vy6-Ui-lLf.title" = "没有选中面板。";
+"Vy6-Ui-lLf.title" = "当前没有选中任何面板";
 
 /* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "avh-w8-RcC"; */
 "avh-w8-RcC.title" = "类型";
 
 /* Class = "NSTextFieldCell"; title = "Exclude"; ObjectID = "odU-xs-hZL"; */
-"odU-xs-hZL.title" = "排除";
+"odU-xs-hZL.title" = "禁用于：";
 
 /* Class = "NSTextFieldCell"; title = "General"; ObjectID = "qS1-uo-9im"; */
 "qS1-uo-9im.title" = "通用";

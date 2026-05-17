@@ -27,25 +27,25 @@
 "U2I-bu-kTR.title" = "清空历史前显示警告面板";
 
 /* Class = "NSTextFieldCell"; title = "Height:"; ObjectID = "WKb-6V-Q9w"; */
-"WKb-6V-Q9w.title" = "高度：";
+"WKb-6V-Q9w.title" = "高：";
 
 /* Class = "NSButtonCell"; title = "Place already copied history at the top"; ObjectID = "a32-zW-R74"; */
-"a32-zW-R74.title" = "把已经粘贴的历史置顶";
+"a32-zW-R74.title" = "置顶已粘贴历史";
 
 /* Class = "NSButtonCell"; title = "Show tool tip on a menu item"; ObjectID = "h4n-Nv-zj1"; */
-"h4n-Nv-zj1.title" = "为菜单项显示工具提示";
+"h4n-Nv-zj1.title" = "在菜单项显示工具提示";
 
 /* Class = "NSTextFieldCell"; title = "Number of characters in the menu:"; ObjectID = "hBb-sd-DcP"; */
-"hBb-sd-DcP.title" = "菜单中字符的个数：";
+"hBb-sd-DcP.title" = "菜单中字符数：";
 
 /* Class = "NSButtonCell"; title = "Add key equivalents to numeric keys"; ObjectID = "hE2-DL-MKl"; */
 "hE2-DL-MKl.title" = "添加等效于数字键的按键";
 
 /* Class = "NSButtonCell"; title = "Show color code preview"; ObjectID = "hgW-RK-5oy"; */
-"hgW-RK-5oy.title" = "为颜色代码显示预览";
+"hgW-RK-5oy.title" = "显示代码高亮";
 
 /* Class = "NSButtonCell"; title = "Move instead of copying (removes the older one from the list)"; ObjectID = "lsx-Y0-zFR"; */
-"lsx-Y0-zFR.title" = "移动而非拷贝（第二次粘贴时把旧的项从列表中移除）";
+"lsx-Y0-zFR.title" = "移动（再次粘贴时将从列表中移除）";
 
 /* Class = "NSButtonCell"; title = "Mark menu items with numbers"; ObjectID = "nMF-6D-hXu"; */
 "nMF-6D-hXu.title" = "用数字标记菜单项";
@@ -57,13 +57,13 @@
 "p80-3o-bgA.title" = "在菜单项中添加清空历史";
 
 /* Class = "NSTextFieldCell"; title = "Width:"; ObjectID = "saf-vP-Qwl"; */
-"saf-vP-Qwl.title" = "宽度：";
+"saf-vP-Qwl.title" = "宽：";
 
 /* Class = "NSButtonCell"; title = "Menu items' title starts with 0"; ObjectID = "seq-HO-d27"; */
 "seq-HO-d27.title" = "菜单项标题从0开始";
 
 /* Class = "NSTextFieldCell"; title = "Number of items place inline:"; ObjectID = "wef-NB-6p6"; */
-"wef-NB-6p6.title" = "不放进文件夹的菜单项个数：";
+"wef-NB-6p6.title" = "单次显示项数：";
 
 /* Class = "NSButtonCell"; title = "Display icons in menu items"; ObjectID = "yrU-qO-OwD"; */
 "yrU-qO-OwD.title" = "在菜单项中显示图标";

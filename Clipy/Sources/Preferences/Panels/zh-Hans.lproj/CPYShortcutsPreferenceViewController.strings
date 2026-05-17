@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Main:"; ObjectID = "5sL-G8-1io"; */
-"5sL-G8-1io.title" = "主体：";
+"5sL-G8-1io.title" = "主要：";
 
 /* Class = "NSTextFieldCell"; title = "History:"; ObjectID = "Abl-cO-JwU"; */
 "Abl-cO-JwU.title" = "历史：";
@@ -15,4 +15,4 @@
 "f3b-Ht-X5w.title" = "清空历史：";
 
 /* Class = "NSTextFieldCell"; title = "Snippets:"; ObjectID = "fXr-ry-5ds"; */
-"fXr-ry-5ds.title" = "片断：";
+"fXr-ry-5ds.title" = "代码片断：";

@@ -21,7 +21,7 @@
 "Ncl-nV-zr8.title" = "Alt";
 
 /* Class = "NSTextFieldCell"; title = "Beta settings might be moved to a different pane in future versions."; ObjectID = "c4z-RD-3UN"; */
-"c4z-RD-3UN.title" = "Beta 测试设置将来可能会被移到其它面板。";
+"c4z-RD-3UN.title" = "测试版的设置将来可能会被移到其它地方。";
 
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "gRa-Te-dcH"; */
 "gRa-Te-dcH.title" = "Command";

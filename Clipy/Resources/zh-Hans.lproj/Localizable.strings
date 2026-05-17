@@ -10,11 +10,11 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
-"Launch Clipy on system startup?" = "系统启动时打开 Clipy?";
+"Launch Clipy on system startup?" = "开机自动打开Clipy?";
 
-"You can change this setting in the Preferences if you want" = "如有需要可在偏好设置中修改本设置。";
+"You can change this setting in the Preferences if you want" = "如有需要可在偏好设置中修改本设置";
 
-"Launch on system startup" = "系统启动时打开";
+"Launch on system startup" = "开机自动打开";
 
 "Don't Launch" = "不要打开";
 
@@ -24,15 +24,15 @@
 
 "Cancel" = "取消";
 
-"Edit Snippets" = "编辑片断...";
+"Edit Snippets" = "编辑代码片断";
 
-"Preferences" = "偏好设置...";
+"Preferences" = "偏好设置";
 
 "Quit Clipy" = "退出 Clipy";
 
 "History" = "历史";
 
-"Snippet" = "片断";
+"Snippet" = "代码片断";
 
 "General" = "通用";
 
@@ -50,10 +50,10 @@
 
 "Add" = "添加";
 
-"Please fill in the contents of the snippet" = "请填写代码段的内容";
+"Please fill in the contents of the snippet" = "请输入代码片段";
 
-"Please allow Accessibility" = "Please allow Accessibility.";
+"Please allow Accessibility" = "请允许辅助功能";
 
-"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "To do this action please allow Accessibility in Security & Privacy preferences, located in System Preferences.";
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "如需使用此功能，请在系统偏好设置的隐私安全设置中允许辅助功能";
 
-"Open System Preferences" = "Open System Preferences";
+"Open System Preferences" = "打开系统偏好";

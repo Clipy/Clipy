@@ -9,13 +9,13 @@
 "Faj-kQ-G1v.title" = "状态栏图标样式：";
 
 /* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
-"Lps-06-dPB.title" = "历史排序按照：";
+"Lps-06-dPB.title" = "历史排序规则：";
 
 /* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
 "LsC-YB-qAw.title" = "发送崩溃报告和错误日志（下次启动时生效）";
 
 /* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
-"Nab-CO-ytH.title" = "最大剪贴板历史：";
+"Nab-CO-ytH.title" = "剪贴板历史容量上限：";
 
 /* Class = "NSTextFieldCell"; title = "Clipboard History"; ObjectID = "OOT-F5-Pal"; */
 "OOT-F5-Pal.title" = "剪贴板历史";
