@@ -24,7 +24,6 @@ PODS:
   - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
   - SwiftHEXColors (1.4.1)
-  - SwiftLint (0.63.2)
 
 DEPENDENCIES:
   - AEXML
@@ -37,7 +36,6 @@ DEPENDENCIES:
   - Sparkle
   - SwiftGen
   - SwiftHEXColors
-  - SwiftLint
 
 SPEC REPOS:
   trunk:
@@ -54,7 +52,6 @@ SPEC REPOS:
     - Sparkle
     - SwiftGen
     - SwiftHEXColors
-    - SwiftLint
 
 SPEC CHECKSUMS:
   AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
@@ -70,8 +67,7 @@ SPEC CHECKSUMS:
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
-  SwiftLint: 4fa4a9b437ccc4fc72f6c0bc98556e8e9e05bccf
 
-PODFILE CHECKSUM: 324426ab405a476779cb69f4af338bb9a9f0e7e7
+PODFILE CHECKSUM: 651855f4f99d6d7df2beed921c6e94449b872ab0
 
 COCOAPODS: 1.16.2

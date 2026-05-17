@@ -15,7 +15,6 @@ target 'Clipy' do
   pod 'SwiftHEXColors'
   # Utility
   pod 'BartyCrouch'
-  pod 'SwiftLint'
   pod 'SwiftGen'
 
   target 'ClipyTests' do
