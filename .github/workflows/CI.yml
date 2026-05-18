@@ -3,40 +3,27 @@ name: CI
 on: [push, pull_request]
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
 
 jobs:
   test:
-    runs-on: macos-10.15
+    runs-on: macos-26
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
     - name: Setup ruby
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@c4e5b1316158f92e3d49443a9d58b31d25ac0f8f # v1.306.0
       with:
-        ruby-version: '2.6'
-  
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gem-
-      
+        ruby-version: '3.4'
+        bundler-cache: true
+        
     - name: Cache CocoaPods
-      uses: actions/cache@v2
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: Pods
         key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-pods-
-
-    - name: Bundle install
-      run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
 
     - name: Pod install
       run: bundle exec pod install
