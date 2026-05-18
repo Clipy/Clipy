@@ -8,7 +8,6 @@ target 'Clipy' do
   pod 'Sparkle'
   pod 'RealmSwift'
   pod 'LetsMove'
-  pod 'SwiftHEXColors'
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftGen'

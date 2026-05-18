@@ -16,6 +16,7 @@
 		C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9F2FBA939E0083839F /* RxSwift */; };
 		C5D76DA52FBA98A90083839F /* AEXML in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA42FBA98A90083839F /* AEXML */; };
 		C5D76DA82FBA9C150083839F /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA72FBA9C150083839F /* PINCache */; };
+		C5D76DAB2FBA9D2E0083839F /* SwiftHEXColors in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */; };
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		ED83803EDC60449A8E751A01 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */; };
@@ -244,6 +245,7 @@
 			files = (
 				C5E3D0512FB43570005D632A /* Screeen in Frameworks */,
 				FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */,
+				C5D76DAB2FBA9D2E0083839F /* SwiftHEXColors in Frameworks */,
 				FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */,
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				C5D76DA52FBA98A90083839F /* AEXML in Frameworks */,
@@ -659,6 +661,7 @@
 				C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */,
 				C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */,
 				C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */,
+				C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */,
 			);
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
@@ -714,7 +717,6 @@
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftHEXColors/SwiftHEXColors.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -722,7 +724,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftHEXColors.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1324,6 +1325,14 @@
 				minimumVersion = 3.0.4;
 			};
 		};
+		C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/thii/SwiftHEXColors";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.4.1;
+			};
+		};
 		C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Clipy/Screeen";
@@ -1379,6 +1388,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */;
 			productName = PINCache;
+		};
+		C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */;
+			productName = SwiftHEXColors;
 		};
 		C5E3D0502FB43570005D632A /* Screeen */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -8,7 +8,6 @@ PODS:
     - Realm (= 10.7.2)
   - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
-  - SwiftHEXColors (1.4.1)
 
 DEPENDENCIES:
   - BartyCrouch
@@ -16,7 +15,6 @@ DEPENDENCIES:
   - RealmSwift
   - Sparkle
   - SwiftGen
-  - SwiftHEXColors
 
 SPEC REPOS:
   trunk:
@@ -26,7 +24,6 @@ SPEC REPOS:
     - RealmSwift
     - Sparkle
     - SwiftGen
-    - SwiftHEXColors
 
 SPEC CHECKSUMS:
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
@@ -35,8 +32,7 @@ SPEC CHECKSUMS:
   RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
-  SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
 
-PODFILE CHECKSUM: 6e033fd8a75827205f0799fcf9480da6a311d293
+PODFILE CHECKSUM: 04a2a48a4edb9f01baf59ad0d9505d4107c2c857
 
 COCOAPODS: 1.16.2
