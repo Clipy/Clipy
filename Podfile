@@ -7,7 +7,6 @@ target 'Clipy' do
   # Application
   pod 'Sparkle'
   pod 'RealmSwift'
-  pod 'LetsMove'
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftGen'

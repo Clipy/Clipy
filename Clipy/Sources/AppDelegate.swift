@@ -18,7 +18,6 @@ import LoginServiceKit
 import Magnet
 import Screeen
 import RealmSwift
-import LetsMove
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -201,12 +200,6 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.menuManager.setup()
         // Screenshot
         screenshotObserver.delegate = self
-    }
-
-    func applicationWillFinishLaunching(_ notification: Notification) {
-        #if RELEASE
-            PFMoveToApplicationsFolderIfNecessary()
-        #endif
     }
 
 }
