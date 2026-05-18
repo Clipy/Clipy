@@ -15,12 +15,6 @@ PODS:
   - Realm/Headers (10.7.2)
   - RealmSwift (10.7.2):
     - Realm (= 10.7.2)
-  - RxCocoa (5.1.1):
-    - RxRelay (~> 5)
-    - RxSwift (~> 5)
-  - RxRelay (5.1.1):
-    - RxSwift (~> 5)
-  - RxSwift (5.1.1)
   - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
   - SwiftHEXColors (1.4.1)
@@ -31,8 +25,6 @@ DEPENDENCIES:
   - LetsMove
   - PINCache
   - RealmSwift
-  - RxCocoa
-  - RxSwift
   - Sparkle
   - SwiftGen
   - SwiftHEXColors
@@ -46,9 +38,6 @@ SPEC REPOS:
     - PINOperation
     - Realm
     - RealmSwift
-    - RxCocoa
-    - RxRelay
-    - RxSwift
     - Sparkle
     - SwiftGen
     - SwiftHEXColors
@@ -61,13 +50,10 @@ SPEC CHECKSUMS:
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
   RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
-  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
-  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
-  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
 
-PODFILE CHECKSUM: 651855f4f99d6d7df2beed921c6e94449b872ab0
+PODFILE CHECKSUM: 60dc5da057fdee0fbad8aa6588b335cddac57682
 
 COCOAPODS: 1.16.2

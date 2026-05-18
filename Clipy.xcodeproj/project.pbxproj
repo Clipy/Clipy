@@ -12,6 +12,8 @@
 		C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75E2FB86A0200C9DCB6 /* Magnet */; };
 		C5D3A7622FB86A1C00C9DCB6 /* KeyHolder in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A7612FB86A1C00C9DCB6 /* KeyHolder */; };
 		C5D3A7652FB86A2C00C9DCB6 /* LoginServiceKit in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A7642FB86A2C00C9DCB6 /* LoginServiceKit */; };
+		C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9D2FBA939E0083839F /* RxCocoa */; };
+		C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9F2FBA939E0083839F /* RxSwift */; };
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		ED83803EDC60449A8E751A01 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */; };
@@ -72,8 +74,8 @@
 		FA6167921D3ABEB10049FA14 /* FolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167911D3ABEB10049FA14 /* FolderTests.swift */; };
 		FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */; };
 		FA6167961D3ACDD80049FA14 /* SnippetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetTests.swift */; };
-		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
-		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -244,6 +246,8 @@
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				C5D3A7652FB86A2C00C9DCB6 /* LoginServiceKit in Frameworks */,
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
+				C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */,
+				C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */,
 				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
 				C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */,
 				C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */,
@@ -648,6 +652,7 @@
 				C5D3A7602FB86A1C00C9DCB6 /* XCRemoteSwiftPackageReference "KeyHolder" */,
 				C5D3A7632FB86A2C00C9DCB6 /* XCRemoteSwiftPackageReference "LoginServiceKit" */,
 				C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
@@ -705,9 +710,6 @@
 				"${BUILT_PRODUCTS_DIR}/PINOperation/PINOperation.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework",
-				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftHEXColors/SwiftHEXColors.framework",
 			);
@@ -719,9 +721,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINOperation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRelay.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftHEXColors.framework",
 			);
@@ -1301,6 +1300,14 @@
 				minimumVersion = 2.5.0;
 			};
 		};
+		C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 6.10.2;
+			};
+		};
 		C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Clipy/Screeen";
@@ -1336,6 +1343,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5D3A7632FB86A2C00C9DCB6 /* XCRemoteSwiftPackageReference "LoginServiceKit" */;
 			productName = LoginServiceKit;
+		};
+		C5D76D9D2FBA939E0083839F /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		C5D76D9F2FBA939E0083839F /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 		C5E3D0502FB43570005D632A /* Screeen */ = {
 			isa = XCSwiftPackageProductDependency;
