@@ -1,14 +1,6 @@
 PODS:
   - BartyCrouch (3.13.0)
   - LetsMove (1.25)
-  - PINCache (3.0.3):
-    - PINCache/Arc-exception-safe (= 3.0.3)
-    - PINCache/Core (= 3.0.3)
-  - PINCache/Arc-exception-safe (3.0.3):
-    - PINCache/Core
-  - PINCache/Core (3.0.3):
-    - PINOperation (~> 1.2.1)
-  - PINOperation (1.2.1)
   - Realm (10.7.2):
     - Realm/Headers (= 10.7.2)
   - Realm/Headers (10.7.2)
@@ -21,7 +13,6 @@ PODS:
 DEPENDENCIES:
   - BartyCrouch
   - LetsMove
-  - PINCache
   - RealmSwift
   - Sparkle
   - SwiftGen
@@ -31,8 +22,6 @@ SPEC REPOS:
   trunk:
     - BartyCrouch
     - LetsMove
-    - PINCache
-    - PINOperation
     - Realm
     - RealmSwift
     - Sparkle
@@ -42,14 +31,12 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
-  PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
-  PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
   RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
 
-PODFILE CHECKSUM: 6e10958bfd9cb4445567e20d27cae50e402eba5f
+PODFILE CHECKSUM: 6e033fd8a75827205f0799fcf9480da6a311d293
 
 COCOAPODS: 1.16.2

@@ -5,7 +5,6 @@ inhibit_all_warnings!
 target 'Clipy' do
 
   # Application
-  pod 'PINCache'
   pod 'Sparkle'
   pod 'RealmSwift'
   pod 'LetsMove'

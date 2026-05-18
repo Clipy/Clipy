@@ -1,5 +1,5 @@
 {
-  "originHash" : "ebc0952a8bc14e6aa4b9f9f909b91246f1ea23cd9f80f91f797684b6781b53c6",
+  "originHash" : "d6869abac34f31032809cd7ec6351b0cd5298e302c231c5d8ad5fd165114bfd7",
   "pins" : [
     {
       "identity" : "aexml",
@@ -35,6 +35,24 @@
       "state" : {
         "revision" : "c721032f386a6664a234e04b98cb68823865369a",
         "version" : "3.5.0"
+      }
+    },
+    {
+      "identity" : "pincache",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pinterest/pincache",
+      "state" : {
+        "revision" : "2fb85948463292c2e824148cf17dc62a4c217a94",
+        "version" : "3.0.4"
+      }
+    },
+    {
+      "identity" : "pinoperation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pinterest/PINOperation.git",
+      "state" : {
+        "revision" : "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
+        "version" : "1.2.3"
       }
     },
     {

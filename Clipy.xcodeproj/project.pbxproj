@@ -15,6 +15,7 @@
 		C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9D2FBA939E0083839F /* RxCocoa */; };
 		C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9F2FBA939E0083839F /* RxSwift */; };
 		C5D76DA52FBA98A90083839F /* AEXML in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA42FBA98A90083839F /* AEXML */; };
+		C5D76DA82FBA9C150083839F /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA72FBA9C150083839F /* PINCache */; };
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		ED83803EDC60449A8E751A01 /* Pods_ClipyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */; };
@@ -247,6 +248,7 @@
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				C5D76DA52FBA98A90083839F /* AEXML in Frameworks */,
 				C5D3A7652FB86A2C00C9DCB6 /* LoginServiceKit in Frameworks */,
+				C5D76DA82FBA9C150083839F /* PINCache in Frameworks */,
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
 				C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */,
 				C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */,
@@ -656,6 +658,7 @@
 				C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */,
 				C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */,
+				C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */,
 			);
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
@@ -708,8 +711,6 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Clipy/Pods-Clipy-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/LetsMove/LetsMove.framework",
-				"${BUILT_PRODUCTS_DIR}/PINCache/PINCache.framework",
-				"${BUILT_PRODUCTS_DIR}/PINOperation/PINOperation.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
@@ -718,8 +719,6 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LetsMove.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINCache.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINOperation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
@@ -1317,6 +1316,14 @@
 				minimumVersion = 4.7.0;
 			};
 		};
+		C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pinterest/pincache";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 3.0.4;
+			};
+		};
 		C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Clipy/Screeen";
@@ -1367,6 +1374,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */;
 			productName = AEXML;
+		};
+		C5D76DA72FBA9C150083839F /* PINCache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */;
+			productName = PINCache;
 		};
 		C5E3D0502FB43570005D632A /* Screeen */ = {
 			isa = XCSwiftPackageProductDependency;
