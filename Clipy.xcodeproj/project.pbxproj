@@ -1265,8 +1265,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
 			requirement = {
-				kind = exactVersion;
-				version = 0.63.2;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.63.2;
 			};
 		};
 		C5D3A75A2FB869EA00C9DCB6 /* XCRemoteSwiftPackageReference "sauce" */ = {
