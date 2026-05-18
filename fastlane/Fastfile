@@ -50,7 +50,8 @@ platform :mac do
       scheme: "Clipy",
       skip_build: true,
       verbose: true,
-      clean: true
+      clean: true,
+      xcargs: "-skipPackagePluginValidation"
     )
   end
 
