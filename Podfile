@@ -8,7 +8,6 @@ target 'Clipy' do
   pod 'PINCache'
   pod 'Sparkle'
   pod 'RealmSwift'
-  pod 'AEXML'
   pod 'LetsMove'
   pod 'SwiftHEXColors'
   # Utility

@@ -1,5 +1,4 @@
 PODS:
-  - AEXML (4.6.0)
   - BartyCrouch (3.13.0)
   - LetsMove (1.25)
   - PINCache (3.0.3):
@@ -20,7 +19,6 @@ PODS:
   - SwiftHEXColors (1.4.1)
 
 DEPENDENCIES:
-  - AEXML
   - BartyCrouch
   - LetsMove
   - PINCache
@@ -31,7 +29,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - AEXML
     - BartyCrouch
     - LetsMove
     - PINCache
@@ -43,7 +40,6 @@ SPEC REPOS:
     - SwiftHEXColors
 
 SPEC CHECKSUMS:
-  AEXML: 2fbb73d8724797ed2cde888731e176fa4d44dd83
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
   LetsMove: 7b9fe44737707d984fbd3f47af46609a9a07b461
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
@@ -54,6 +50,6 @@ SPEC CHECKSUMS:
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
 
-PODFILE CHECKSUM: 60dc5da057fdee0fbad8aa6588b335cddac57682
+PODFILE CHECKSUM: 6e10958bfd9cb4445567e20d27cae50e402eba5f
 
 COCOAPODS: 1.16.2
