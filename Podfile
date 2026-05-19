@@ -4,8 +4,6 @@ inhibit_all_warnings!
 
 target 'Clipy' do
 
-  # Application
-  pod 'RealmSwift'
   # Utility
   pod 'BartyCrouch'
   pod 'SwiftGen'

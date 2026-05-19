@@ -1,30 +1,20 @@
 PODS:
   - BartyCrouch (3.13.0)
-  - Realm (10.7.2):
-    - Realm/Headers (= 10.7.2)
-  - Realm/Headers (10.7.2)
-  - RealmSwift (10.7.2):
-    - Realm (= 10.7.2)
   - SwiftGen (6.4.0)
 
 DEPENDENCIES:
   - BartyCrouch
-  - RealmSwift
   - SwiftGen
 
 SPEC REPOS:
   trunk:
     - BartyCrouch
-    - Realm
-    - RealmSwift
     - SwiftGen
 
 SPEC CHECKSUMS:
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
-  Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
-  RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
 
-PODFILE CHECKSUM: dcdd942d418c7834a3e0a4a249f619a9c2490b2c
+PODFILE CHECKSUM: 8092eb0c4a44b0753ecfeae74e0c9eae9a9c0bea
 
 COCOAPODS: 1.16.2
