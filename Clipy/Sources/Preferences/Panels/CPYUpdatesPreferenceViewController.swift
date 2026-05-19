@@ -31,7 +31,7 @@ class CPYUpdatesPreferenceViewController: NSViewController {
         super.loadView()
         updaterController?.updater.publisher(for: \.lastUpdateCheckDate)
             .compactMap { $0 }
-            .assign(to: \NSControl.objectValue, on: lastUpdateCheckDateTextField)
+            .assign(to: \.objectValue, on: lastUpdateCheckDateTextField)
             .store(in: &cancellables)
         versionTextField.stringValue = "v\(Bundle.main.appVersion ?? "")"
     }
