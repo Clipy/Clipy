@@ -23,8 +23,9 @@ import RealmSwift
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
-    let screenshotObserver = ScreenShotObserver()
-    let disposeBag = DisposeBag()
+    private(set) var updaterController: SPUStandardUpdaterController?
+    private let screenshotObserver = ScreenShotObserver()
+    private let disposeBag = DisposeBag()
 
     // MARK: - Init
     override func awakeFromNib() {
@@ -182,10 +183,12 @@ extension AppDelegate: NSApplicationDelegate {
         }
 
         // Sparkle
-        let updater = SUUpdater.shared()
-        updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        self.updaterController = SPUStandardUpdaterController(
+            startingUpdater: AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck),
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
+        updaterController?.updater.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
 
         // Binding Events
         bind()
