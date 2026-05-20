@@ -107,13 +107,13 @@ private extension CPYPreferencesWindowController {
         updatesImageView.image = NSImage(resource: .prefUpdate)
         betaImageView.image = NSImage(resource: .prefBeta)
 
-        generalTextField.textColor = ColorName.tabTitle.color
-        menuTextField.textColor = ColorName.tabTitle.color
-        typeTextField.textColor = ColorName.tabTitle.color
-        excludeTextField.textColor = ColorName.tabTitle.color
-        shortcutsTextField.textColor = ColorName.tabTitle.color
-        updatesTextField.textColor = ColorName.tabTitle.color
-        betaTextField.textColor = ColorName.tabTitle.color
+        generalTextField.textColor = NSColor(resource: .tabTitle)
+        menuTextField.textColor = NSColor(resource: .tabTitle)
+        typeTextField.textColor = NSColor(resource: .tabTitle)
+        excludeTextField.textColor = NSColor(resource: .tabTitle)
+        shortcutsTextField.textColor = NSColor(resource: .tabTitle)
+        updatesTextField.textColor = NSColor(resource: .tabTitle)
+        betaTextField.textColor = NSColor(resource: .tabTitle)
     }
 
     func selectedTab(_ index: Int) {
@@ -121,26 +121,26 @@ private extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalTextField.textColor = ColorName.clipy.color
             generalImageView.image = NSImage(resource: .prefGeneralOn)
+            generalTextField.textColor = NSColor(resource: .clipy)
         case 1:
-            menuTextField.textColor = ColorName.clipy.color
             menuImageView.image = NSImage(resource: .prefMenuOn)
+            menuTextField.textColor = NSColor(resource: .clipy)
         case 2:
-            typeTextField.textColor = ColorName.clipy.color
             typeImageView.image = NSImage(resource: .prefTypeOn)
+            typeTextField.textColor = NSColor(resource: .clipy)
         case 3:
-            excludeTextField.textColor = ColorName.clipy.color
             excludeImageView.image = NSImage(resource: .prefExcludedOn)
+            excludeTextField.textColor = NSColor(resource: .clipy)
         case 4:
-            shortcutsTextField.textColor = ColorName.clipy.color
             shortcutsImageView.image = NSImage(resource: .prefShortcutOn)
+            shortcutsTextField.textColor = NSColor(resource: .clipy)
         case 5:
-            updatesTextField.textColor = ColorName.clipy.color
             updatesImageView.image = NSImage(resource: .prefUpdateOn)
+            updatesTextField.textColor = NSColor(resource: .clipy)
         case 6:
-            betaTextField.textColor = ColorName.clipy.color
             betaImageView.image = NSImage(resource: .prefBetaOn)
+            betaTextField.textColor = NSColor(resource: .clipy)
         default: break
         }
     }
