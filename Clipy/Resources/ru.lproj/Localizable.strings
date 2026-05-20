@@ -1,0 +1,53 @@
+//
+//  Localizable.strings
+//  Russian
+//
+
+"Launch Clipy on system startup?" = "Запускать Clipy при входе в систему?";
+
+"You can change this setting in the Preferences if you want" = "Вы можете изменить эту настройку в параметрах приложения.";
+
+"Launch on system startup" = "Запускать при входе в систему";
+
+"Don't Launch" = "Не запускать";
+
+"Clear History" = "Очистить историю";
+
+"Are you sure you want to clear your clipboard history?" = "Вы действительно хотите очистить историю буфера обмена?";
+
+"Cancel" = "Отмена";
+
+"Edit Snippets" = "Редактировать сниппеты...";
+
+"Preferences" = "Настройки...";
+
+"Quit Clipy" = "Выйти из Clipy";
+
+"History" = "История";
+
+"Snippet" = "Сниппет";
+
+"General" = "Общие";
+
+"Menu" = "Меню";
+
+"Type" = "Типы";
+
+"Shortcuts" = "Горячие клавиши";
+
+"Updates" = "Обновления";
+
+"Delete Item" = "Удалить элемент";
+
+"Are you sure want to delete this item?" = "Вы действительно хотите удалить этот элемент?";
+
+"Add" = "Добавить";
+
+"Please fill in the contents of the snippet" = "Пожалуйста, заполните содержимое сниппета.";
+
+"Please allow Accessibility" = "Пожалуйста, включите доступность (Accessibility).";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "Чтобы выполнить это действие, включите доступность (Accessibility) в разделе «Защита и безопасность» системных настроек.";
+
+"Open System Preferences" = "Открыть системные настройки";
+
