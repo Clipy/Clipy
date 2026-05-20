@@ -6,7 +6,6 @@ target 'Clipy' do
 
   # Utility
   pod 'BartyCrouch'
-  pod 'SwiftGen'
 
   target 'ClipyTests' do
     inherit! :search_paths

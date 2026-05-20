@@ -1,20 +1,16 @@
 PODS:
   - BartyCrouch (3.13.0)
-  - SwiftGen (6.4.0)
 
 DEPENDENCIES:
   - BartyCrouch
-  - SwiftGen
 
 SPEC REPOS:
   trunk:
     - BartyCrouch
-    - SwiftGen
 
 SPEC CHECKSUMS:
   BartyCrouch: 69e5e6ec67e77951dc1c22aa48abbf05d175b81c
-  SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
 
-PODFILE CHECKSUM: 8092eb0c4a44b0753ecfeae74e0c9eae9a9c0bea
+PODFILE CHECKSUM: 6ec3a25724d820d97d5048617cf697fa9c24366e
 
 COCOAPODS: 1.16.2
