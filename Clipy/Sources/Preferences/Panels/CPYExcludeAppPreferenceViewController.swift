@@ -24,7 +24,7 @@ extension CPYExcludeAppPreferenceViewController {
         openPanel.allowedFileTypes = ["app"]
         openPanel.allowsMultipleSelection = true
         openPanel.resolvesAliases = true
-        openPanel.prompt = L10n.add
+        openPanel.prompt = String(localized: "Add")
         let directories = NSSearchPathForDirectoriesInDomains(.applicationDirectory, .localDomainMask, true)
         let basePath = (directories.isEmpty) ? NSHomeDirectory() : directories.first!
         openPanel.directoryURL = URL(fileURLWithPath: basePath)

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B7CC520B88EAA6AD38E93462 /* Pods_Clipy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */; };
+		C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C576AD7B2FBD345000B71213 /* Localizable.xcstrings */; };
 		C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C5A6BA732FBC5A6E00C8B9EB /* Sparkle */; };
 		C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D220A72FBD2655005CD45E /* RealmSwift */; };
 		C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75B2FB869EA00C9DCB6 /* Sauce */; };
@@ -30,7 +31,6 @@
 		FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */; };
 		FA1DB4901DDCA5D9007F95C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB48F1DDCA5D9007F95C8 /* Assets.xcassets */; };
 		FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */; };
-		FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */; };
 		FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA1DB49E1DDCB417007F95C8 /* MainMenu.xib */; };
 		FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4A01DDCB433007F95C8 /* AppDelegate.swift */; };
 		FA1DB4A31DDCB433007F95C8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4A11DDCB433007F95C8 /* Constants.swift */; };
@@ -133,7 +133,6 @@
 		31ACA9F61EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		31ACA9F71EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		31ACA9F81EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
-		31ACA9F91EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		54ADE0FA2008F63F00239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYPreferencesWindowController.strings"; sourceTree = "<group>"; };
 		54ADE0FB2008F64000239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYBetaPreferenceViewController.strings"; sourceTree = "<group>"; };
 		54ADE0FC2008F64000239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYExcludeAppPreferenceViewController.strings"; sourceTree = "<group>"; };
@@ -143,7 +142,6 @@
 		54ADE1002008F64000239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYTypePreferenceViewController.strings"; sourceTree = "<group>"; };
 		54ADE1012008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
 		54ADE1022008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
-		54ADE1032008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5F52AB5A94F2CB5147DB71E3 /* Pods-ClipyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClipyTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ClipyTests/Pods-ClipyTests.debug.xcconfig"; sourceTree = "<group>"; };
 		73A92F6DEE6CFF50A567CFEF /* Pods_Clipy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clipy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846004961FD5511800BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYPreferencesWindowController.strings; sourceTree = "<group>"; };
@@ -155,8 +153,8 @@
 		8460049C1FD5511900BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		8460049D1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		8460049E1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
-		8460049F1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9DBBF976436A0651CB8BD4B2 /* Pods-Clipy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clipy.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clipy/Pods-Clipy.release.xcconfig"; sourceTree = "<group>"; };
+		C576AD7B2FBD345000B71213 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C59647672DCCA473560079B8 /* Pods_ClipyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClipyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceTests.swift; sourceTree = "<group>"; };
@@ -169,8 +167,6 @@
 		FA1DB48F1DDCA5D9007F95C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA1DB4921DDCB22C007F95C8 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		FA1DB4931DDCB22C007F95C8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA1DB4971DDCB2CB007F95C8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		FA1DB4991DDCB2D0007F95C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FA1DB49E1DDCB417007F95C8 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		FA1DB4A01DDCB433007F95C8 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA1DB4A11DDCB433007F95C8 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -305,8 +301,8 @@
 		FA06D2D21DD882BD002FB7C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */,
 				FA10898020EC297000A3FEFC /* colors.txt */,
+				C576AD7B2FBD345000B71213 /* Localizable.xcstrings */,
 				FA1DB48F1DDCA5D9007F95C8 /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -694,8 +690,8 @@
 				FA1DB51A1DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
 				FA1DB5191DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.xib in Resources */,
 				FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */,
+				C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */,
 				FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */,
-				FA1DB4981DDCB2CB007F95C8 /* Localizable.strings in Resources */,
 				FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */,
 				FA1DB5221DDCB4C0007F95C8 /* CPYSnippetsEditorWindowController.xib in Resources */,
 			);
@@ -866,18 +862,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		FA1DB4961DDCB2CB007F95C8 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				FA1DB4971DDCB2CB007F95C8 /* en */,
-				FA1DB4991DDCB2D0007F95C8 /* ja */,
-				31ACA9F91EC5B85C00BD34C0 /* it */,
-				8460049F1FD5511A00BA733E /* de */,
-				54ADE1032008F64100239852 /* zh-Hans */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
 		FA1DB4EE1DDCB4C0007F95C8 /* CPYPreferencesWindowController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1042,6 +1026,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1092,6 +1077,7 @@
 				OTHER_SWIFT_FLAGS = "-D RELEASE";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
