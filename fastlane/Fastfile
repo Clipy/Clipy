@@ -46,7 +46,7 @@ platform :mac do
 
   private_lane :scan_clipy do
     scan(
-      workspace: "Clipy.xcworkspace",
+      project: "Clipy.xcodeproj",
       scheme: "Clipy",
       skip_build: true,
       verbose: true,

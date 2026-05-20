@@ -1,8 +1,6 @@
 included:
   - Clipy/Sources
   - ClipyTests
-excluded:
-  - Pods
 opt_in_rules:
   - empty_count
   - explicit_init

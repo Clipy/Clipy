@@ -24,8 +24,7 @@ __Distribution Site__ : <https://clipy-app.com>
 * Xcode 26.2
 
 ### How to Build
-1. `bundle install && bundle exec pod install`
-2. Open `Clipy.xcworkspace` on Xcode.
+1. Open `Clipy.xcodeproj` on Xcode.
 3. build.
 
 ### Localization Contributors

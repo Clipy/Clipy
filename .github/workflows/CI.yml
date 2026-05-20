@@ -16,17 +16,6 @@ jobs:
       with:
         ruby-version: '3.4'
         bundler-cache: true
-        
-    - name: Cache CocoaPods
-      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-      with:
-        path: Pods
-        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-pods-
-
-    - name: Pod install
-      run: bundle exec pod install
 
     - name: Run fastlane
       run: bundle exec fastlane test
