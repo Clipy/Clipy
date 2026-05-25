@@ -11,6 +11,14 @@ jobs:
     steps:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+    - name: Cache Swift packages
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: .spm-cache
+        key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          spm-${{ runner.os }}-
+
     - name: Setup ruby
       uses: ruby/setup-ruby@c4e5b1316158f92e3d49443a9d58b31d25ac0f8f # v1.306.0
       with:
@@ -18,5 +26,7 @@ jobs:
         bundler-cache: true
 
     - name: Run fastlane
+      env:
+        SCAN_CLONED_SOURCE_PACKAGES_PATH: ${{ github.workspace }}/.spm-cache/SourcePackages
+        SCAN_PACKAGE_CACHE_PATH: ${{ github.workspace }}/.spm-cache/PackageCache
       run: bundle exec fastlane test
-    
