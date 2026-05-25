@@ -51,7 +51,7 @@ platform :mac do
       skip_build: true,
       verbose: true,
       clean: true,
-      xcargs: "-skipPackagePluginValidation"
+      xcargs: "-skipPackagePluginValidation -skipMacroValidation"
     )
   end
 
