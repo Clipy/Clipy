@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -103,13 +103,11 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		FAC43E1D1B35DF4A00C06102 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -225,7 +223,6 @@
 /* Begin PBXFrameworksBuildPhase section */
 		FAC43DC31B35D8B100C06102 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */,
 				C5E3D0512FB43570005D632A /* Screeen in Frameworks */,
@@ -246,14 +243,11 @@
 				C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */,
 				C5D3A7622FB86A1C00C9DCB6 /* KeyHolder in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		FAC43DD51B35D8B100C06102 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -593,7 +587,6 @@
 				};
 			};
 			buildConfigurationList = FAC43DC11B35D8B100C06102 /* Build configuration list for PBXProject "Clipy" */;
-			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -620,6 +613,7 @@
 				C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */,
 			);
+			preferredProjectObjectVersion = 46;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -633,7 +627,6 @@
 /* Begin PBXResourcesBuildPhase section */
 		FAC43DC41B35D8B100C06102 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				FA1DB5131DDCB4C0007F95C8 /* CPYPreferencesWindowController.xib in Resources */,
 				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
@@ -651,21 +644,17 @@
 				FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */,
 				FA1DB5221DDCB4C0007F95C8 /* CPYSnippetsEditorWindowController.xib in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		FAC43DD61B35D8B100C06102 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FAC43DC21B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */,
 				FA1DB4A61DDCB443007F95C8 /* MenuType.swift in Sources */,
@@ -712,18 +701,15 @@
 				FAE911BB1DE054F1008A4BEC /* NSCoding+Archive.swift in Sources */,
 				FA3778951F3B6920003B5BAB /* Environment.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		FAC43DD41B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				FA6167921D3ABEB10049FA14 /* FolderTests.swift in Sources */,
 				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
 				FA6167961D3ACDD80049FA14 /* SnippetTests.swift in Sources */,
 				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -855,7 +841,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		FAC43DE01B35D8B100C06102 /* Debug */ = {
+		FAC43DE01B35D8B100C06102 /* Debug configuration for PBXProject "Clipy" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -913,7 +899,7 @@
 			};
 			name = Debug;
 		};
-		FAC43DE11B35D8B100C06102 /* Release */ = {
+		FAC43DE11B35D8B100C06102 /* Release configuration for PBXProject "Clipy" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -964,7 +950,7 @@
 			};
 			name = Release;
 		};
-		FAC43DE31B35D8B100C06102 /* Debug */ = {
+		FAC43DE31B35D8B100C06102 /* Debug configuration for PBXNativeTarget "Clipy" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -992,7 +978,7 @@
 			};
 			name = Debug;
 		};
-		FAC43DE41B35D8B100C06102 /* Release */ = {
+		FAC43DE41B35D8B100C06102 /* Release configuration for PBXNativeTarget "Clipy" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -1021,7 +1007,7 @@
 			};
 			name = Release;
 		};
-		FAC43DE61B35D8B100C06102 /* Debug */ = {
+		FAC43DE61B35D8B100C06102 /* Debug configuration for PBXNativeTarget "ClipyTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -1049,7 +1035,7 @@
 			};
 			name = Debug;
 		};
-		FAC43DE71B35D8B100C06102 /* Release */ = {
+		FAC43DE71B35D8B100C06102 /* Release configuration for PBXNativeTarget "ClipyTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -1079,28 +1065,25 @@
 		FAC43DC11B35D8B100C06102 /* Build configuration list for PBXProject "Clipy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FAC43DE01B35D8B100C06102 /* Debug */,
-				FAC43DE11B35D8B100C06102 /* Release */,
+				FAC43DE01B35D8B100C06102 /* Debug configuration for PBXProject "Clipy" */,
+				FAC43DE11B35D8B100C06102 /* Release configuration for PBXProject "Clipy" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		FAC43DE21B35D8B100C06102 /* Build configuration list for PBXNativeTarget "Clipy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FAC43DE31B35D8B100C06102 /* Debug */,
-				FAC43DE41B35D8B100C06102 /* Release */,
+				FAC43DE31B35D8B100C06102 /* Debug configuration for PBXNativeTarget "Clipy" */,
+				FAC43DE41B35D8B100C06102 /* Release configuration for PBXNativeTarget "Clipy" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		FAC43DE51B35D8B100C06102 /* Build configuration list for PBXNativeTarget "ClipyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FAC43DE61B35D8B100C06102 /* Debug */,
-				FAC43DE71B35D8B100C06102 /* Release */,
+				FAC43DE61B35D8B100C06102 /* Debug configuration for PBXNativeTarget "ClipyTests" */,
+				FAC43DE71B35D8B100C06102 /* Release configuration for PBXNativeTarget "ClipyTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
@@ -1113,6 +1096,9 @@
 				kind = upToNextMinorVersion;
 				minimumVersion = 1.6.1;
 			};
+			traits = (
+				SQLiteDataTagged,
+			);
 		};
 		C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;

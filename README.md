@@ -21,7 +21,7 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### Development Environment
 * macOS 26 Tahoe
-* Xcode 26.2
+* Xcode 26.5
 
 ### How to Build
 1. Open `Clipy.xcodeproj` on Xcode.

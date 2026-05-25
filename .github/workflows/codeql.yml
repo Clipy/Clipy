@@ -43,7 +43,7 @@ jobs:
     - name: Run manual build steps
       if: matrix.build-mode == 'manual'
       run: |
-        /Applications/Xcode_26.2.app/Contents/Developer/usr/bin/xcodebuild \
+        /Applications/Xcode_26.5.app/Contents/Developer/usr/bin/xcodebuild \
           build \
           -project Clipy.xcodeproj \
           -scheme Clipy \
