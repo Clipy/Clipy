@@ -53,7 +53,7 @@ struct PasteboardHistoryThumbnailAsset: Identifiable {
 }
 
 @Table
-struct SnippetFolder: Identifiable {
+struct SnippetFolder: Identifiable, Equatable {
     typealias ID = Tagged<Self, UUID>
 
     @Column(primaryKey: true)
@@ -64,7 +64,7 @@ struct SnippetFolder: Identifiable {
 }
 
 @Table
-struct Snippet: Identifiable {
+struct Snippet: Identifiable, Equatable {
     typealias ID = Tagged<Self, UUID>
 
     @Column(primaryKey: true)
