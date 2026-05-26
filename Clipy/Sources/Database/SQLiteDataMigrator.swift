@@ -14,6 +14,11 @@ import SQLiteData
 
 extension DatabaseMigrator {
     mutating func registerMigration() {
+        registerMigrationV1()
+    }
+
+    // swiftlint:disable:next function_body_length
+    mutating func registerMigrationV1() {
         registerMigration("Create initial tables") { database in
             try #sql(
                 """
@@ -94,8 +99,32 @@ extension DatabaseMigrator {
 
             try #sql(
                 """
+                CREATE INDEX "index_snippetFolders_on_index"
+                ON "snippetFolders" ("index")
+                """
+            )
+            .execute(database)
+
+            try #sql(
+                """
                 CREATE INDEX "index_snippets_on_folderID"
                 ON "snippets" ("folderID")
+                """
+            )
+            .execute(database)
+
+            try #sql(
+                """
+                CREATE INDEX "index_snippets_on_index"
+                ON "snippets" ("index")
+                """
+            )
+            .execute(database)
+
+            try #sql(
+                """
+                CREATE INDEX "index_snippets_on_folderID_index"
+                ON "snippets" ("folderID", "index")
                 """
             )
             .execute(database)
