@@ -1,5 +1,5 @@
 //
-//  SQLIteDataSchema.swift
+//  SQLiteDataSchema.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
