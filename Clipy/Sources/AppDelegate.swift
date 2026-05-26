@@ -189,6 +189,7 @@ extension AppDelegate: NSApplicationDelegate {
             userDriverDelegate: nil
         )
         updaterController?.updater.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        updaterController?.updater.clearFeedURLFromUserDefaults()
 
         // Binding Events
         bind()
