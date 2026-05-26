@@ -14,6 +14,7 @@ import Cocoa
 import Sparkle
 import RxCocoa
 import RxSwift
+import Dependencies
 import LoginServiceKit
 import Magnet
 import Screeen
@@ -26,6 +27,9 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private(set) var updaterController: SPUStandardUpdaterController?
     private let screenshotObserver = ScreenShotObserver()
     private let disposeBag = DisposeBag()
+
+    @Dependency(\.context)
+    var context
 
     // MARK: - Init
     override func awakeFromNib() {
@@ -172,6 +176,9 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
+
+        guard context != .test else { return }
+
         // SDKs
         CPYUtilities.initSDKs()
         // Check Accessibility Permission
