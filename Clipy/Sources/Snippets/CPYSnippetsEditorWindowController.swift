@@ -11,7 +11,7 @@
 //
 
 import Cocoa
-import RealmSwift
+import Dependencies
 import KeyHolder
 import Magnet
 import AEXML
@@ -44,19 +44,12 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         }
     }
 
-    private var folders = [CPYFolder]()
-    private var selectedSnippet: CPYSnippet? {
-        guard let snippet = outlineView.item(atRow: outlineView.selectedRow) as? CPYSnippet else { return nil }
-        return snippet
-    }
-    private var selectedFolder: CPYFolder? {
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
+    private var folders = [EditorSnippetFolder]()
+    private var selectedFolder: EditorSnippetFolder? {
         guard let item = outlineView.item(atRow: outlineView.selectedRow) else { return nil }
-        if let folder = outlineView.parent(forItem: item) as? CPYFolder {
-            return folder
-        } else if let folder = item as? CPYFolder {
-            return folder
-        }
-        return nil
+        return item as? EditorSnippetFolder ?? outlineView.parent(forItem: item) as? EditorSnippetFolder
     }
 
     // MARK: - Window Life Cycle
@@ -67,12 +60,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
         if #available(OSX 10.10, *) {
             self.window?.titlebarAppearsTransparent = true
         }
-        // HACK: Copy as an object that does not put under Realm management.
-        // https://github.com/realm/realm-cocoa/issues/1734
-        let realm = try! Realm()
-        folders = realm.objects(CPYFolder.self)
-                    .sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
-                    .map { $0.deepCopy() }
+        folders = snippetRepository.fetchFolderDetails().map(EditorSnippetFolder.init)
         outlineView.reloadData()
         // Select first folder
         if let folder = folders.first {
@@ -90,25 +78,27 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
 // MARK: - IBActions
 extension CPYSnippetsEditorWindowController {
     @IBAction private func addSnippetButtonTapped(_ sender: AnyObject) {
-        guard let folder = selectedFolder else {
+        guard let folder = selectedFolder, let snippet = snippetRepository.insertSnippet(to: folder.id) else {
             NSSound.beep()
             return
         }
-        let snippet = folder.createSnippet()
-        folder.snippets.append(snippet)
-        folder.mergeSnippet(snippet)
+        let editorSnippet = EditorSnippet(snippet: snippet)
+        folder.snippets.append(editorSnippet)
         outlineView.reloadData()
         outlineView.expandItem(folder)
-        outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: snippet)), byExtendingSelection: false)
+        outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: editorSnippet)), byExtendingSelection: false)
         changeItemFocus()
     }
 
     @IBAction private func addFolderButtonTapped(_ sender: AnyObject) {
-        let folder = CPYFolder.create()
-        folders.append(folder)
-        folder.merge()
+        guard let folder = snippetRepository.insertFolder() else {
+            NSSound.beep()
+            return
+        }
+        let editorFolder = EditorSnippetFolder(folder: folder)
+        folders.append(editorFolder)
         outlineView.reloadData()
-        outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: folder)), byExtendingSelection: false)
+        outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: editorFolder)), byExtendingSelection: false)
         changeItemFocus()
     }
 
@@ -127,13 +117,13 @@ extension CPYSnippetsEditorWindowController {
         let result = alert.runModal()
         if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
 
-        if let folder = item as? CPYFolder {
-            folders.removeObject(folder)
-            folder.remove()
-            AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: folder.identifier)
-        } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: item) as? CPYFolder, let index = folder.snippets.index(of: snippet) {
-            folder.snippets.remove(at: index)
-            snippet.remove()
+        if let folder = item as? EditorSnippetFolder {
+            folders.removeAll(where: { $0.id == folder.id })
+            snippetRepository.deleteFolder(folder.id)
+            AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: folder.id.uuidString)
+        } else if let snippet = item as? EditorSnippet, let folder = outlineView.parent(forItem: item) as? EditorSnippetFolder {
+            folder.snippets.removeAll(where: { $0.id == snippet.id })
+            snippetRepository.deleteSnippet(snippet.id)
         }
         outlineView.reloadData()
         changeItemFocus()
@@ -144,12 +134,12 @@ extension CPYSnippetsEditorWindowController {
             NSSound.beep()
             return
         }
-        if let folder = item as? CPYFolder {
-            folder.enable = !folder.enable
-            folder.merge()
-        } else if let snippet = item as? CPYSnippet {
-            snippet.enable = !snippet.enable
-            snippet.merge()
+        if let folder = item as? EditorSnippetFolder {
+            folder.isEnabled.toggle()
+            snippetRepository.updateFolderIsEnabled(folder.id, isEnabled: folder.isEnabled)
+        } else if let snippet = item as? EditorSnippet {
+            snippet.isEnabled.toggle()
+            snippetRepository.updateSnippetIsEnabled(snippet.id, isEnabled: snippet.isEnabled)
         }
         outlineView.reloadData()
         changeItemFocus()
@@ -169,42 +159,23 @@ extension CPYSnippetsEditorWindowController {
         guard let data = try? Data(contentsOf: url) else { return }
 
         do {
-            let realm = try! Realm()
-            let lastFolder = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true).last
-            var folderIndex = (lastFolder?.index ?? -1) + 1
-            // Create Document
             var options = AEXMLOptions()
             options.parserSettings.shouldTrimWhitespace = false
             let xmlDocument = try AEXMLDocument(xml: data, options: options)
-            xmlDocument[Constants.Xml.rootElement]
+            let folders = xmlDocument[Constants.Xml.rootElement]
                 .children
-                .forEach { folderElement in
-                    let folder = CPYFolder()
-                    // Title
-                    folder.title = folderElement[Constants.Xml.titleElement].value ?? "untitled folder"
-                    // Index
-                    folder.index = folderIndex
-                    // Sync DB
-                    realm.transaction { realm.add(folder) }
-                    // Snippet
-                    var snippetIndex = 0
-                    folderElement[Constants.Xml.snippetsElement][Constants.Xml.snippetElement]
+                .map { folderElement in
+                    let title = folderElement[Constants.Xml.titleElement].value ?? "untitled folder"
+                    let snippets = folderElement[Constants.Xml.snippetsElement][Constants.Xml.snippetElement]
                         .all?
-                        .forEach { snippetElement in
-                            let snippet = CPYSnippet()
-                            snippet.title = snippetElement[Constants.Xml.titleElement].value ?? "untitled snippet"
-                            snippet.content = snippetElement[Constants.Xml.contentElement].value ?? ""
-                            snippet.index = snippetIndex
-                            realm.transaction { folder.snippets.append(snippet) }
-                            // Increment snippet index
-                            snippetIndex += 1
-                        }
-                    // Increment folder index
-                    folderIndex += 1
-                    // Add folder
-                    let copyFolder = folder.deepCopy()
-                    folders.append(copyFolder)
+                        .map { (title: $0[Constants.Xml.titleElement].value ?? "untitled snippet", content: $0[Constants.Xml.contentElement].value ?? "") } ?? []
+                    return (title: title, snippets: snippets)
                 }
+            guard let folderDetails = snippetRepository.insertFolders(folders) else {
+                NSSound.beep()
+                return
+            }
+            self.folders.append(contentsOf: folderDetails.map(EditorSnippetFolder.init))
             outlineView.reloadData()
         } catch {
             NSSound.beep()
@@ -215,8 +186,6 @@ extension CPYSnippetsEditorWindowController {
         let xmlDocument = AEXMLDocument()
         let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
 
-        let realm = try! Realm()
-        let folders = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
         folders.forEach { folder in
             let folderElement = rootElement.addChild(name: Constants.Xml.folderElement)
 
@@ -224,7 +193,6 @@ extension CPYSnippetsEditorWindowController {
 
             let snippetsElement = folderElement.addChild(name: Constants.Xml.snippetsElement)
             folder.snippets
-                .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
                 .forEach { snippet in
                     let snippetElement = snippetsElement.addChild(name: Constants.Xml.snippetElement)
                     snippetElement.addChild(name: Constants.Xml.titleElement, value: snippet.title)
@@ -266,13 +234,13 @@ private extension CPYSnippetsEditorWindowController {
             folderTitleTextField.stringValue = ""
             return
         }
-        if let folder = item as? CPYFolder {
+        if let folder = item as? EditorSnippetFolder {
             textView.string = ""
             folderTitleTextField.stringValue = folder.title
-            folderShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo(forIdentifier: folder.identifier)
+            folderShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo(forIdentifier: folder.id.uuidString)
             folderSettingView.isHidden = false
             textView.isHidden = true
-        } else if let snippet = item as? CPYSnippet {
+        } else if let snippet = item as? EditorSnippet {
             textView.string = snippet.content
             folderTitleTextField.stringValue = ""
             folderShortcutRecordView.keyCombo = nil
@@ -285,11 +253,11 @@ private extension CPYSnippetsEditorWindowController {
 // MARK: - NSSplitView Delegate
 extension CPYSnippetsEditorWindowController: NSSplitViewDelegate {
     func splitView(_ splitView: NSSplitView, constrainMinCoordinate proposedMinimumPosition: CGFloat, ofSubviewAt dividerIndex: Int) -> CGFloat {
-        return proposedMinimumPosition + 150
+        proposedMinimumPosition + 150
     }
 
     func splitView(_ splitView: NSSplitView, constrainMaxCoordinate proposedMaximumPosition: CGFloat, ofSubviewAt dividerIndex: Int) -> CGFloat {
-        return proposedMaximumPosition / 2
+        proposedMaximumPosition / 2
     }
 }
 
@@ -297,49 +265,36 @@ extension CPYSnippetsEditorWindowController: NSSplitViewDelegate {
 extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
         if item == nil {
-            return Int(folders.count)
-        } else if let folder = item as? CPYFolder {
-            return Int(folder.snippets.count)
+            return folders.count
+        } else if let folder = item as? EditorSnippetFolder {
+            return folder.snippets.count
         }
         return 0
     }
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        if let folder = item as? CPYFolder {
-            return !folder.snippets.isEmpty
-        }
-        return false
+        (item as? EditorSnippetFolder).map { !$0.snippets.isEmpty } ?? false
     }
 
     func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
-        if item == nil {
-            return folders[index]
-        } else if let folder = item as? CPYFolder {
-            return folder.snippets[index]
-        }
-        return ""
+        (item as? EditorSnippetFolder).map { $0.snippets[index] as Any } ?? folders[index] as Any
     }
 
     func outlineView(_ outlineView: NSOutlineView, objectValueFor tableColumn: NSTableColumn?, byItem item: Any?) -> Any? {
-        if let folder = item as? CPYFolder {
-            return folder.title
-        } else if let snippet = item as? CPYSnippet {
-            return snippet.title
-        }
-        return ""
+        (item as? EditorSnippetFolder).map { $0.title } ?? (item as? EditorSnippet).map { $0.title } ?? ""
     }
 
     // MARK: - Drag and Drop
     func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
         let pasteboardItem = NSPasteboardItem()
-        if let folder = item as? CPYFolder, let index = folders.firstIndex(of: folder) {
-            let draggedData = CPYDraggedData(type: .folder, folderIdentifier: folder.identifier, snippetIdentifier: nil, index: index)
-            let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
+        if let folder = item as? EditorSnippetFolder, let index = folders.firstIndex(where: { $0.id == folder.id }) {
+            let draggedData = DraggedData(type: .folder, folderID: folder.id, snippetID: nil, index: index)
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true) else { return nil }
             pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
-        } else if let snippet = item as? CPYSnippet, let folder = outlineView.parent(forItem: snippet) as? CPYFolder {
-            guard let index = folder.snippets.index(of: snippet) else { return nil }
-            let draggedData = CPYDraggedData(type: .snippet, folderIdentifier: folder.identifier, snippetIdentifier: snippet.identifier, index: Int(index))
-            let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
+        } else if let snippet = item as? EditorSnippet, let folder = outlineView.parent(forItem: snippet) as? EditorSnippetFolder {
+            guard let index = folder.snippets.firstIndex(where: { $0.id == snippet.id }) else { return nil }
+            let draggedData = DraggedData(type: .snippet, folderID: folder.id, snippetID: snippet.id, index: index)
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true) else { return nil }
             pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
         } else {
             return nil
@@ -350,12 +305,12 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return NSDragOperation() }
-        guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return NSDragOperation() }
+        guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return NSDragOperation() }
 
         switch draggedData.type {
         case .folder where item == nil:
             return .move
-        case .snippet where item is CPYFolder:
+        case .snippet where item is EditorSnippetFolder:
             return .move
         default:
             return NSDragOperation()
@@ -365,51 +320,49 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         let pasteboard = info.draggingPasteboard
         guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return false }
-        guard let draggedData = NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData else { return false }
+        guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return false }
 
         switch draggedData.type {
-        case .folder where index != draggedData.index:
-            guard index >= 0 else { return false }
-            guard let folder = folders.first(where: { $0.identifier == draggedData.folderIdentifier }) else { return false }
+        case .folder where index != draggedData.index && index >= 0:
+            guard let folder = folders.first(where: { $0.id == draggedData.folderID }) else { return false }
             folders.insert(folder, at: index)
             let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
             folders.remove(at: removedIndex)
+            snippetRepository.updateFolderIndexes(folders.map(\.id))
             outlineView.reloadData()
             outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: folder)), byExtendingSelection: false)
-            CPYFolder.rearrangesIndex(folders)
             changeItemFocus()
             return true
         case .snippet:
-            guard let fromFolder = folders.first(where: { $0.identifier == draggedData.folderIdentifier }) else { return false }
-            guard let toFolder = item as? CPYFolder else { return false }
-            guard let snippet = fromFolder.snippets.first(where: { $0.identifier == draggedData.snippetIdentifier }) else { return false }
+            guard let fromFolder = folders.first(where: { $0.id == draggedData.folderID }) else { return false }
+            guard let toFolder = item as? EditorSnippetFolder else { return false }
+            guard let snippet = fromFolder.snippets.first(where: { $0.id == draggedData.snippetID }) else { return false }
 
-            if fromFolder.identifier == toFolder.identifier {
-                guard index >= 0 else { return false }
-                if index == draggedData.index { return false }
+            if draggedData.folderID == toFolder.id {
+                guard index >= 0, index != draggedData.index else { return false }
                 // Move to same folder
                 fromFolder.snippets.insert(snippet, at: index)
                 let removedIndex = (index < draggedData.index) ? draggedData.index + 1 : draggedData.index
                 fromFolder.snippets.remove(at: removedIndex)
+                snippetRepository.updateSnippetIndexes(fromFolder.snippets.map(\.id))
                 outlineView.reloadData()
                 outlineView.selectRowIndexes(NSIndexSet(index: outlineView.row(forItem: snippet)) as IndexSet, byExtendingSelection: false)
-                fromFolder.rearrangesSnippetIndex()
                 changeItemFocus()
                 return true
             } else {
                 // Move to other folder
                 let index = max(0, index)
                 toFolder.snippets.insert(snippet, at: index)
-                fromFolder.snippets.remove(at: draggedData.index)
+                fromFolder.snippets.removeAll(where: { $0.id == snippet.id })
+                snippetRepository.moveSnippet(snippet.id, to: toFolder.id, snippetIDs: toFolder.snippets.map(\.id))
                 outlineView.reloadData()
                 outlineView.expandItem(toFolder)
                 outlineView.selectRowIndexes(NSIndexSet(index: outlineView.row(forItem: snippet)) as IndexSet, byExtendingSelection: false)
-                toFolder.insertSnippet(snippet, index: index)
-                fromFolder.removeSnippet(snippet)
                 changeItemFocus()
                 return true
             }
-        default: return false
+        default:
+            return false
         }
     }
 }
@@ -418,12 +371,12 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 extension CPYSnippetsEditorWindowController: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, willDisplayCell cell: Any, for tableColumn: NSTableColumn?, item: Any) {
         guard let cell = cell as? CPYSnippetsEditorCell else { return }
-        if let folder = item as? CPYFolder {
+        if let folder = item as? EditorSnippetFolder {
             cell.iconType = .folder
-            cell.isItemEnabled = folder.enable
-        } else if let snippet = item as? CPYSnippet {
+            cell.isItemEnabled = folder.isEnabled
+        } else if let snippet = item as? EditorSnippet {
             cell.iconType = .none
-            cell.isItemEnabled = snippet.enable
+            cell.isItemEnabled = snippet.isEnabled
         }
     }
 
@@ -436,12 +389,12 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDelegate {
         guard !text.isEmpty else { return false }
         guard let outlineView = control as? NSOutlineView else { return false }
         guard let item = outlineView.item(atRow: outlineView.selectedRow) else { return false }
-        if let folder = item as? CPYFolder {
+        if let folder = item as? EditorSnippetFolder {
             folder.title = text
-            folder.merge()
-        } else if let snippet = item as? CPYSnippet {
+            snippetRepository.updateFolderTitle(folder.id, title: text)
+        } else if let snippet = item as? EditorSnippet {
             snippet.title = text
-            snippet.merge()
+            snippetRepository.updateSnippetTitle(snippet.id, title: text)
         }
         changeItemFocus()
         return true
@@ -452,11 +405,12 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDelegate {
 extension CPYSnippetsEditorWindowController: NSTextViewDelegate {
     func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
         guard let replacementString = replacementString else { return false }
-        let text = textView.string
-        guard let snippet = selectedSnippet else { return false }
-        let string = (text as NSString).replacingCharacters(in: affectedCharRange, with: replacementString)
+        guard let snippet = outlineView.item(atRow: outlineView.selectedRow) as? EditorSnippet else { return false }
+
+        let string = (textView.string as NSString).replacingCharacters(in: affectedCharRange, with: replacementString)
         snippet.content = string
-        snippet.merge()
+        snippetRepository.updateSnippetContent(snippet.id, content: string)
+
         return true
     }
 }
@@ -476,11 +430,63 @@ extension CPYSnippetsEditorWindowController: RecordViewDelegate {
     func recordView(_ recordView: RecordView, didChangeKeyCombo keyCombo: KeyCombo?) {
         guard let selectedFolder = selectedFolder else { return }
         guard let keyCombo = keyCombo else {
-            AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: selectedFolder.identifier)
+            AppEnvironment.current.hotKeyService.unregisterSnippetHotKey(with: selectedFolder.id.uuidString)
             return
         }
-        AppEnvironment.current.hotKeyService.registerSnippetHotKey(with: selectedFolder.identifier, keyCombo: keyCombo)
+        AppEnvironment.current.hotKeyService.registerSnippetHotKey(with: selectedFolder.id.uuidString, keyCombo: keyCombo)
     }
 
     func recordViewDidEndRecording(_ recordView: RecordView) {}
+}
+
+// MARK: - Objects
+/// Snippet editor objects used only by the snippets editor outline view.
+///
+/// `NSOutlineView` infers visual state such as expansion and selection from item object
+/// identity, so using SQLiteData table values directly can cause visual updates to be
+/// treated as different items after reloads. Keep dedicated `NSObject` wrappers for this
+/// screen so the outline view can maintain its UI state while the database remains table-based.
+private final class EditorSnippetFolder: NSObject {
+    let id: SnippetFolder.ID
+    var title: String
+    var index: Int
+    var isEnabled: Bool
+    var snippets: [EditorSnippet]
+
+    init(folderDetail: SnippetFolderDetail) {
+        self.id = folderDetail.folder.id
+        self.title = folderDetail.folder.title
+        self.index = folderDetail.folder.index
+        self.isEnabled = folderDetail.folder.isEnabled
+        self.snippets = folderDetail.snippets.map(EditorSnippet.init)
+        super.init()
+    }
+
+    init(folder: SnippetFolder) {
+        self.id = folder.id
+        self.title = folder.title
+        self.index = folder.index
+        self.isEnabled = folder.isEnabled
+        self.snippets = []
+        super.init()
+    }
+}
+
+private final class EditorSnippet: NSObject {
+    let id: Snippet.ID
+    var folderID: SnippetFolder.ID
+    var title: String
+    var content: String
+    var index: Int
+    var isEnabled: Bool
+
+    init(snippet: Snippet) {
+        self.id = snippet.id
+        self.folderID = snippet.folderID
+        self.title = snippet.title
+        self.content = snippet.content
+        self.index = snippet.index
+        self.isEnabled = snippet.isEnabled
+        super.init()
+    }
 }

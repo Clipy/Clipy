@@ -1,5 +1,5 @@
 //
-//  CPYDraggedData.swift
+//  DraggedData.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
@@ -12,12 +12,13 @@
 
 import Foundation
 
-final class CPYDraggedData: NSObject, NSCoding {
-
+final class DraggedData: NSObject, NSSecureCoding {
     // MARK: - Properties
+    static let supportsSecureCoding: Bool = true
+
     let type: DragType
-    let folderIdentifier: String?
-    let snippetIdentifier: String?
+    let folderID: SnippetFolder.ID?
+    let snippetID: Snippet.ID?
     let index: Int
 
     // MARK: - Enums
@@ -26,10 +27,10 @@ final class CPYDraggedData: NSObject, NSCoding {
     }
 
     // MARK: - Initialize
-    init(type: DragType, folderIdentifier: String?, snippetIdentifier: String?, index: Int) {
+    init(type: DragType, folderID: SnippetFolder.ID?, snippetID: Snippet.ID?, index: Int) {
         self.type = type
-        self.folderIdentifier = folderIdentifier
-        self.snippetIdentifier = snippetIdentifier
+        self.folderID = folderID
+        self.snippetID = snippetID
         self.index = index
         super.init()
     }
@@ -37,16 +38,16 @@ final class CPYDraggedData: NSObject, NSCoding {
     // MARK: - NSCoding
     required init?(coder aDecoder: NSCoder) {
         self.type = DragType(rawValue: aDecoder.decodeInteger(forKey: "type")) ?? .folder
-        self.folderIdentifier = aDecoder.decodeObject(forKey: "folderIdentifier") as? String
-        self.snippetIdentifier = aDecoder.decodeObject(forKey: "snippetIdentifier") as? String
+        self.folderID = (aDecoder.decodeObject(forKey: "folderID") as? UUID).map { .init(rawValue: $0) }
+        self.snippetID = (aDecoder.decodeObject(forKey: "snippetID") as? UUID).map { .init(rawValue: $0) }
         self.index = aDecoder.decodeInteger(forKey: "index")
         super.init()
     }
 
     func encode(with aCoder: NSCoder) {
         aCoder.encode(type.rawValue, forKey: "type")
-        aCoder.encode(folderIdentifier, forKey: "folderIdentifier")
-        aCoder.encode(snippetIdentifier, forKey: "snippetIdentifier")
+        aCoder.encode(folderID?.rawValue, forKey: "folderID")
+        aCoder.encode(snippetID?.rawValue, forKey: "snippetID")
         aCoder.encode(index, forKey: "index")
     }
 }

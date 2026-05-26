@@ -6,13 +6,13 @@ import Testing
 struct DraggedDataTests {
     @Test
     func archiveData() throws {
-        let draggedData = CPYDraggedData(type: .folder, folderIdentifier: UUID().uuidString, snippetIdentifier: nil, index: 10)
-        let data = NSKeyedArchiver.archivedData(withRootObject: draggedData)
+        let draggedData = DraggedData(type: .folder, folderID: .init(rawValue: UUID()), snippetID: nil, index: 10)
+        let data = try NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true)
 
-        let unarchiveData = try #require(NSKeyedUnarchiver.unarchiveObject(with: data) as? CPYDraggedData)
+        let unarchiveData = try #require(NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData)
         #expect(unarchiveData.type == draggedData.type)
-        #expect(unarchiveData.folderIdentifier == draggedData.folderIdentifier)
-        #expect(unarchiveData.snippetIdentifier == nil)
+        #expect(unarchiveData.folderID == draggedData.folderID)
+        #expect(unarchiveData.snippetID == nil)
         #expect(unarchiveData.index == draggedData.index)
     }
 }
