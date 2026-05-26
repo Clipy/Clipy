@@ -73,17 +73,16 @@ extension MenuManager {
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
-    func popUpSnippetFolder(_ folder: CPYFolder) {
-        let folderMenu = NSMenu(title: folder.title)
+    func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
+        let folderMenu = NSMenu(title: folderDetail.folder.title)
         // Folder title
-        let labelItem = NSMenuItem(title: folder.title, action: nil)
+        let labelItem = NSMenuItem(title: folderDetail.folder.title, action: nil)
         labelItem.isEnabled = false
         folderMenu.addItem(labelItem)
         // Snippets
         var index = firstIndexOfMenuItems()
-        folder.snippets
-            .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
-            .filter { $0.enable }
+        folderDetail.snippets
+            .filter { $0.isEnabled }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
                 folderMenu.addItem(subMenuItem)
@@ -408,7 +407,7 @@ private extension MenuManager {
             }
     }
 
-    func makeSnippetMenuItem(_ snippet: CPYSnippet, listNumber: Int) -> NSMenuItem {
+    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int) -> NSMenuItem {
         let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowIcon = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
 
@@ -416,7 +415,7 @@ private extension MenuManager {
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
-        menuItem.representedObject = snippet.identifier
+        menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.content
         menuItem.image = (isShowIcon) ? snippetIcon : nil
 

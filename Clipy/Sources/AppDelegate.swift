@@ -11,14 +11,14 @@
 //
 
 import Cocoa
-import Sparkle
-import RxCocoa
-import RxSwift
 import Dependencies
 import LoginServiceKit
 import Magnet
-import Screeen
 import RealmSwift
+import RxCocoa
+import RxSwift
+import Screeen
+import Sparkle
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -30,12 +30,17 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     @Dependency(\.context)
     var context
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
 
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
         // Migrate Realm
         Realm.migration()
+        prepareDependencies { values in
+            try! values.bootstrapDatabase()
+        }
     }
 
     // MARK: - NSMenuItem Validation
@@ -111,15 +116,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
-        guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
-            NSSound.beep()
-            return
-        }
-        let realm = try! Realm()
-        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
+        guard let id = sender.representedObject as? Snippet.ID, let snippet = snippetRepository.fetchSnippet(id: id) else {
             NSSound.beep()
             return
         }
