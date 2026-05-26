@@ -61,6 +61,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             newFrame = cellFrame
             newFrame.origin.x += 8
             newFrame.origin.y += 2
+            newFrame.size.width -= 8
             newFrame.size.height -= 2
         case .none:
             newFrame = cellFrame
@@ -103,6 +104,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             var newFrame = cellRect
             newFrame.origin.x += 10
             newFrame.origin.y += 2
+            newFrame.size.width -= 10
             newFrame.size.height -= 2
 
             return newFrame
