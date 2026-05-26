@@ -42,12 +42,19 @@ enum SQLiteDataDatabase {
 
 extension DependencyValues {
     mutating func bootstrapDatabase() throws {
+        @Dependency(\.context) var context
+
         var configuration = Configuration()
+        #if DEBUG
         configuration.prepareDatabase {
-            #if DEBUG
+            switch context {
+            case .live, .preview:
                 $0.trace { print($0.expandedDescription) }
-            #endif
+            case .test:
+                break
+            }
         }
+        #endif
         let database = try SQLiteData.defaultDatabase(
             path: SQLiteDataDatabase.databaseURL().absoluteString,
             configuration: configuration
