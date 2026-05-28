@@ -19,7 +19,7 @@ jobs:
         restore-keys: |
           spm-${{ runner.os }}-
 
-    - name: Run fastlane
+    - name: Run tests
       run: |
         xcodebuild \
           CODE_SIGN_IDENTITY=- \
