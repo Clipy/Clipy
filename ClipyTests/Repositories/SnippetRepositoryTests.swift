@@ -37,11 +37,18 @@ struct SnippetRepositoryTests {
         }
         defer { _ = cancellable }
 
-        let folder = try #require(repository.insertFolder())
-        let snippet = try #require(repository.insertSnippet(to: folder.id))
-        let snippet2 = try #require(repository.insertSnippet(to: folder.id))
-        let folder2 = try #require(repository.insertFolder())
+        try await waitUntil { folderDetails.count >= 1 }
 
+        let folder = try #require(repository.insertFolder())
+        try await waitUntil { folderDetails.count >= 2 }
+
+        let snippet = try #require(repository.insertSnippet(to: folder.id))
+        try await waitUntil { folderDetails.count >= 3 }
+
+        let snippet2 = try #require(repository.insertSnippet(to: folder.id))
+        try await waitUntil { folderDetails.count >= 4 }
+
+        let folder2 = try #require(repository.insertFolder())
         try await waitUntil { folderDetails.count >= 5 }
 
         #expect(
