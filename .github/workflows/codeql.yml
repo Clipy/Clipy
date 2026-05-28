@@ -26,8 +26,6 @@ jobs:
         include:
         - language: actions
           build-mode: none
-        - language: ruby
-          build-mode: none
         - language: swift
           build-mode: manual
 
@@ -53,17 +51,16 @@ jobs:
       if: matrix.build-mode == 'manual'
       run: |
         /Applications/Xcode_26.5.app/Contents/Developer/usr/bin/xcodebuild \
-          build \
-          -project Clipy.xcodeproj \
-          -scheme Clipy \
-          ARCH=arm64 \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
+          -project Clipy.xcodeproj \
+          -scheme Clipy \
           -clonedSourcePackagesDirPath "$GITHUB_WORKSPACE/.spm-cache/SourcePackages" \
           -packageCachePath "$GITHUB_WORKSPACE/.spm-cache/PackageCache" \
           -skipPackagePluginValidation \
-          -skipMacroValidation
+          -skipMacroValidation \
+          build
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@9e0d7b8d25671d64c341c19c0152d693099fb5ba # v4.35.5
