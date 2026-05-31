@@ -48,8 +48,14 @@ struct PasteboardHistoryAsset: Identifiable {
 struct PasteboardHistoryThumbnailAsset: Identifiable {
     @Column(primaryKey: true)
     let pasteboardHistoryID: PasteboardHistory.ID
+    let kind: Kind
     let data: Data
     var id: PasteboardHistory.ID { pasteboardHistoryID }
+
+    enum Kind: String, QueryBindable {
+        case image
+        case colorCode
+    }
 }
 
 @Table
