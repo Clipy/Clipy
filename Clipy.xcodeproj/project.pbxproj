@@ -19,6 +19,8 @@
 		C5700B4C2FC5C3D500C8F965 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C5700B4B2FC5C3D500C8F965 /* Dependencies */; };
 		C5700B4E2FC5C3D500C8F965 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C5700B4D2FC5C3D500C8F965 /* DependenciesTestSupport */; };
 		C57100012FCAE00000C8F965 /* SnippetRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100002FCAE00000C8F965 /* SnippetRepositoryTests.swift */; };
+		C57100032FCEB00000C8F965 /* PasteboardHistoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100022FCEB00000C8F965 /* PasteboardHistoryRepository.swift */; };
+		C57100052FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100042FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift */; };
 		C57100072FCEB02000C8F965 /* PasteboardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100062FCEB02000C8F965 /* PasteboardContent.swift */; };
 		C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C571000B2FCEB03000C8F965 /* PasteboardContentTests.swift */; };
 		C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C576AD7B2FBD345000B71213 /* Localizable.xcstrings */; };
@@ -156,6 +158,8 @@
 		C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetRepository.swift; sourceTree = "<group>"; };
 		C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataMigratorTests.swift; sourceTree = "<group>"; };
 		C57100002FCAE00000C8F965 /* SnippetRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetRepositoryTests.swift; sourceTree = "<group>"; };
+		C57100022FCEB00000C8F965 /* PasteboardHistoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryRepository.swift; sourceTree = "<group>"; };
+		C57100042FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryRepositoryTests.swift; sourceTree = "<group>"; };
 		C57100062FCEB02000C8F965 /* PasteboardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardContent.swift; sourceTree = "<group>"; };
 		C571000B2FCEB03000C8F965 /* PasteboardContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardContentTests.swift; sourceTree = "<group>"; };
 		C576AD7B2FBD345000B71213 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -301,6 +305,7 @@
 		C5700B452FC40BBF00C8F965 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				C57100022FCEB00000C8F965 /* PasteboardHistoryRepository.swift */,
 				C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */,
 			);
 			path = Repositories;
@@ -317,6 +322,7 @@
 		C5700B4F2FC5C8C800C8F965 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				C57100042FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift */,
 				C57100002FCAE00000C8F965 /* SnippetRepositoryTests.swift */,
 			);
 			path = Repositories;
@@ -761,6 +767,7 @@
 				FA1DB4BC1DDCB452007F95C8 /* Realm+NoCatch.swift in Sources */,
 				C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */,
 				C5700B462FC40BBF00C8F965 /* SnippetRepository.swift in Sources */,
+				C57100032FCEB00000C8F965 /* PasteboardHistoryRepository.swift in Sources */,
 				FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */,
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
@@ -797,6 +804,7 @@
 				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
 				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,
 				C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */,
+				C57100052FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift in Sources */,
 				C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */,
 				C57100012FCAE00000C8F965 /* SnippetRepositoryTests.swift in Sources */,
 			);

@@ -15,7 +15,7 @@ import SQLiteData
 import Tagged
 
 @Table
-struct PasteboardHistory: Identifiable {
+struct PasteboardHistory: Identifiable, Equatable {
     typealias ID = Tagged<Self, String>
 
     @Column(primaryKey: true)
@@ -28,7 +28,7 @@ struct PasteboardHistory: Identifiable {
 }
 
 @Table
-struct PasteboardHistoryAsset: Identifiable {
+struct PasteboardHistoryAsset: Identifiable, Equatable {
     typealias ID = Tagged<Self, String>
 
     @Column(primaryKey: true)
@@ -46,7 +46,7 @@ struct PasteboardHistoryAsset: Identifiable {
 }
 
 @Table
-struct PasteboardHistoryThumbnailAsset: Identifiable {
+struct PasteboardHistoryThumbnailAsset: Identifiable, Equatable {
     @Column(primaryKey: true)
     let pasteboardHistoryID: PasteboardHistory.ID
     let kind: Kind
@@ -57,6 +57,12 @@ struct PasteboardHistoryThumbnailAsset: Identifiable {
         case image
         case colorCode
     }
+}
+
+@Selection
+struct PasteboardHistoryDetail: Equatable {
+    let history: PasteboardHistory
+    let thumbnailAsset: PasteboardHistoryThumbnailAsset?
 }
 
 @Table
