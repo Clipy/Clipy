@@ -62,6 +62,14 @@ extension DependencyValues {
 
         var migrator = DatabaseMigrator()
         migrator.registerMigration()
+        #if DEBUG
+        switch context {
+        case .live, .preview:
+            migrator.eraseDatabaseOnSchemaChange = true
+        case .test:
+            break
+        }
+        #endif
         try migrator.migrate(database)
 
         defaultDatabase = database
