@@ -30,6 +30,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     @Dependency(\.context)
     var context
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
     private var snippetRepository
 
@@ -200,7 +202,6 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         AppEnvironment.current.clipService.startMonitoring()
-        AppEnvironment.current.dataCleanService.startMonitoring()
         AppEnvironment.current.excludeAppService.startMonitoring()
         AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
@@ -208,6 +209,14 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.menuManager.setup()
         // Screenshot
         screenshotObserver.delegate = self
+
+        // Clean datas every 30 minutes
+        Observable<Int>.interval(.seconds(60 * 30), scheduler: MainScheduler.asyncInstance)
+            .subscribe(onNext: { [weak self] _ in
+                let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+                self?.pasteboardHistoryRepository.deleteOverflowingHistories(maxHistorySize: maxHistorySize)
+            })
+            .disposed(by: disposeBag)
     }
 
 }

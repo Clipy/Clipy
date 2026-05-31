@@ -17,7 +17,6 @@ struct Environment {
     // MARK: - Properties
     let clipService: ClipService
     let hotKeyService: HotKeyService
-    let dataCleanService: DataCleanService
     let pasteService: PasteService
     let excludeAppService: ExcludeAppService
     let accessibilityService: AccessibilityService
@@ -28,7 +27,6 @@ struct Environment {
     // MARK: - Initialize
     init(clipService: ClipService = ClipService(),
          hotKeyService: HotKeyService = HotKeyService(),
-         dataCleanService: DataCleanService = DataCleanService(),
          pasteService: PasteService = PasteService(),
          excludeAppService: ExcludeAppService = ExcludeAppService(applications: []),
          accessibilityService: AccessibilityService = AccessibilityService(),
@@ -37,7 +35,6 @@ struct Environment {
 
         self.clipService = clipService
         self.hotKeyService = hotKeyService
-        self.dataCleanService = dataCleanService
         self.pasteService = pasteService
         self.excludeAppService = excludeAppService
         self.accessibilityService = accessibilityService
