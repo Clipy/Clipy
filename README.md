@@ -36,6 +36,45 @@ For this reason, the default signing settings use the Clipy signing certificate.
     2. Uncomment `#include "Configurations/CodeSigning-AdHoc.xcconfig"`.
 3. Build the `Clipy` scheme.
 
+#### Build a universal Apple Silicon release
+
+Clipy does not pin `ARCHS`, `VALID_ARCHS`, or `EXCLUDED_ARCHS`, so Release builds should inherit Xcode's standard macOS architectures. Use a generic macOS destination when archiving to produce a universal app with both `arm64` and `x86_64` slices.
+
+```sh
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+# If you keep versioned Xcode installs, use that path instead:
+# export DEVELOPER_DIR=/Applications/Xcode_26.5.app/Contents/Developer
+
+xcodebuild \
+  -project Clipy.xcodeproj \
+  -scheme Clipy \
+  -destination 'platform=macOS' \
+  CODE_SIGN_IDENTITY=- \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  clean test
+
+xcodebuild \
+  -project Clipy.xcodeproj \
+  -scheme Clipy \
+  -configuration Release \
+  -destination 'generic/platform=macOS' \
+  CODE_SIGN_IDENTITY=- \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  clean archive
+```
+
+After archiving, verify the app binary contains both slices:
+
+```sh
+lipo -info path/to/Clipy.app/Contents/MacOS/Clipy
+```
+
+The output should include both `arm64` and `x86_64`. If Swift Package products are embedded as frameworks, verify those binaries the same way.
+
+Clipboard history is treated as temporary data. Existing history should remain readable after moving from Intel/Rosetta to native Apple Silicon, but duplicate detection and "overwrite same history" behavior may differ for old entries because Clipy stores Swift hash values as clip identity.
+
 ### Localization Contributors
 Clipy is looking for localization contributors.  
 If you can contribute, please see [CONTRIBUTING.md](https://github.com/Clipy/Clipy/blob/master/.github/CONTRIBUTING.md)

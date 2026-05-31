@@ -16,13 +16,25 @@
 		C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */; };
 		C5700B4C2FC5C3D500C8F965 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C5700B4B2FC5C3D500C8F965 /* Dependencies */; };
 		C5700B4E2FC5C3D500C8F965 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C5700B4D2FC5C3D500C8F965 /* DependenciesTestSupport */; };
+		C5700B522FCF000100C8F965 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = C587AF502FBF4E040043D5E7 /* SQLiteData */; };
 		C57100012FCAE00000C8F965 /* SnippetRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100002FCAE00000C8F965 /* SnippetRepositoryTests.swift */; };
 		C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C576AD7B2FBD345000B71213 /* Localizable.xcstrings */; };
 		C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = C587AF502FBF4E040043D5E7 /* SQLiteData */; };
+		C5E000092FCF000100000001 /* StructuredQueries in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000022FCF000100000001 /* StructuredQueries */; };
+		C5E0000A2FCF000100000001 /* StructuredQueriesCore in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000032FCF000100000001 /* StructuredQueriesCore */; };
+		C5E0000B2FCF000100000001 /* StructuredQueriesSQLite in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000042FCF000100000001 /* StructuredQueriesSQLite */; };
+		C5E0000C2FCF000100000001 /* StructuredQueriesSQLiteCore in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000052FCF000100000001 /* StructuredQueriesSQLiteCore */; };
+		C5E0000D2FCF000100000001 /* CombineSchedulers in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000062FCF000100000001 /* CombineSchedulers */; };
+		C5E0000E2FCF000100000001 /* IssueReporting in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000072FCF000100000001 /* IssueReporting */; };
+		C5E0000F2FCF000100000001 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000082FCF000100000001 /* GRDB */; };
+		C5E000432FCF000100000001 /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000422FCF000100000001 /* Tagged */; };
+		C5E000442FCF000100000001 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000082FCF000100000001 /* GRDB */; };
+		C5E000452FCF000100000001 /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = C5E000422FCF000100000001 /* Tagged */; };
 		C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C5A6BA732FBC5A6E00C8B9EB /* Sparkle */; };
 		C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D220A72FBD2655005CD45E /* RealmSwift */; };
 		C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75B2FB869EA00C9DCB6 /* Sauce */; };
 		C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75E2FB86A0200C9DCB6 /* Magnet */; };
+		C5D3A7662FCF000100C9DCB6 /* Magnet in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75E2FB86A0200C9DCB6 /* Magnet */; };
 		C5D3A7622FB86A1C00C9DCB6 /* KeyHolder in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A7612FB86A1C00C9DCB6 /* KeyHolder */; };
 		C5D3A7652FB86A2C00C9DCB6 /* LoginServiceKit in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A7642FB86A2C00C9DCB6 /* LoginServiceKit */; };
 		C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9D2FBA939E0083839F /* RxCocoa */; };
@@ -243,6 +255,14 @@
 				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
 				C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */,
 				C5700B4C2FC5C3D500C8F965 /* Dependencies in Frameworks */,
+				C5E000092FCF000100000001 /* StructuredQueries in Frameworks */,
+				C5E0000A2FCF000100000001 /* StructuredQueriesCore in Frameworks */,
+				C5E0000B2FCF000100000001 /* StructuredQueriesSQLite in Frameworks */,
+				C5E0000C2FCF000100000001 /* StructuredQueriesSQLiteCore in Frameworks */,
+				C5E0000D2FCF000100000001 /* CombineSchedulers in Frameworks */,
+				C5E0000E2FCF000100000001 /* IssueReporting in Frameworks */,
+				C5E0000F2FCF000100000001 /* GRDB in Frameworks */,
+				C5E000432FCF000100000001 /* Tagged in Frameworks */,
 				C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */,
 				C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */,
 				C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */,
@@ -253,6 +273,10 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				C5700B4E2FC5C3D500C8F965 /* DependenciesTestSupport in Frameworks */,
+				C5700B522FCF000100C8F965 /* SQLiteData in Frameworks */,
+				C5E000442FCF000100000001 /* GRDB in Frameworks */,
+				C5E000452FCF000100000001 /* Tagged in Frameworks */,
+				C5D3A7662FCF000100C9DCB6 /* Magnet in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -593,6 +617,27 @@
 			name = Clipy;
 			packageProductDependencies = (
 				C5700B4B2FC5C3D500C8F965 /* Dependencies */,
+				C587AF502FBF4E040043D5E7 /* SQLiteData */,
+				C5E000022FCF000100000001 /* StructuredQueries */,
+				C5E000032FCF000100000001 /* StructuredQueriesCore */,
+				C5E000042FCF000100000001 /* StructuredQueriesSQLite */,
+				C5E000052FCF000100000001 /* StructuredQueriesSQLiteCore */,
+				C5E000062FCF000100000001 /* CombineSchedulers */,
+				C5E000072FCF000100000001 /* IssueReporting */,
+				C5E000082FCF000100000001 /* GRDB */,
+				C5E000422FCF000100000001 /* Tagged */,
+				C5A6BA732FBC5A6E00C8B9EB /* Sparkle */,
+				C5D220A72FBD2655005CD45E /* RealmSwift */,
+				C5D3A75B2FB869EA00C9DCB6 /* Sauce */,
+				C5D3A75E2FB86A0200C9DCB6 /* Magnet */,
+				C5D3A7612FB86A1C00C9DCB6 /* KeyHolder */,
+				C5D3A7642FB86A2C00C9DCB6 /* LoginServiceKit */,
+				C5D76D9D2FBA939E0083839F /* RxCocoa */,
+				C5D76D9F2FBA939E0083839F /* RxSwift */,
+				C5D76DA42FBA98A90083839F /* AEXML */,
+				C5D76DA72FBA9C150083839F /* PINCache */,
+				C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */,
+				C5E3D0502FB43570005D632A /* Screeen */,
 			);
 			productName = Clipy;
 			productReference = FAC43DC61B35D8B100C06102 /* Clipy.app */;
@@ -615,6 +660,10 @@
 			name = ClipyTests;
 			packageProductDependencies = (
 				C5700B4D2FC5C3D500C8F965 /* DependenciesTestSupport */,
+				C587AF502FBF4E040043D5E7 /* SQLiteData */,
+				C5E000082FCF000100000001 /* GRDB */,
+				C5E000422FCF000100000001 /* Tagged */,
+				C5D3A75E2FB86A0200C9DCB6 /* Magnet */,
 			);
 			productName = ClipyTests;
 			productReference = FAC43DD81B35D8B100C06102 /* ClipyTests.xctest */;
@@ -673,6 +722,11 @@
 				C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */,
 				C5700B4A2FC5C3D500C8F965 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				C5E000012FCF000100000001 /* XCRemoteSwiftPackageReference "swift-structured-queries" */,
+				C5E000112FCF000100000001 /* XCRemoteSwiftPackageReference "combine-schedulers" */,
+				C5E000212FCF000100000001 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */,
+				C5E000312FCF000100000001 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				C5E000412FCF000100000001 /* XCRemoteSwiftPackageReference "swift-tagged" */,
 			);
 			preferredProjectObjectVersion = 46;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
@@ -1235,6 +1289,49 @@
 				minimumVersion = 2.1.0;
 			};
 		};
+		C5E000012FCF000100000001 /* XCRemoteSwiftPackageReference "swift-structured-queries" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-structured-queries";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.31.1;
+			};
+			traits = (
+				StructuredQueriesTagged,
+			);
+		};
+		C5E000112FCF000100000001 /* XCRemoteSwiftPackageReference "combine-schedulers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/combine-schedulers";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		C5E000212FCF000100000001 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.9.0;
+			};
+		};
+		C5E000312FCF000100000001 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 7.10.0;
+			};
+		};
+		C5E000412FCF000100000001 /* XCRemoteSwiftPackageReference "swift-tagged" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-tagged";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.10.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1252,6 +1349,46 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */;
 			productName = SQLiteData;
+		};
+		C5E000022FCF000100000001 /* StructuredQueries */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000012FCF000100000001 /* XCRemoteSwiftPackageReference "swift-structured-queries" */;
+			productName = StructuredQueries;
+		};
+		C5E000032FCF000100000001 /* StructuredQueriesCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000012FCF000100000001 /* XCRemoteSwiftPackageReference "swift-structured-queries" */;
+			productName = StructuredQueriesCore;
+		};
+		C5E000042FCF000100000001 /* StructuredQueriesSQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000012FCF000100000001 /* XCRemoteSwiftPackageReference "swift-structured-queries" */;
+			productName = StructuredQueriesSQLite;
+		};
+		C5E000052FCF000100000001 /* StructuredQueriesSQLiteCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000012FCF000100000001 /* XCRemoteSwiftPackageReference "swift-structured-queries" */;
+			productName = StructuredQueriesSQLiteCore;
+		};
+		C5E000062FCF000100000001 /* CombineSchedulers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000112FCF000100000001 /* XCRemoteSwiftPackageReference "combine-schedulers" */;
+			productName = CombineSchedulers;
+		};
+		C5E000072FCF000100000001 /* IssueReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000212FCF000100000001 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */;
+			productName = IssueReporting;
+		};
+		C5E000082FCF000100000001 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000312FCF000100000001 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		C5E000422FCF000100000001 /* Tagged */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5E000412FCF000100000001 /* XCRemoteSwiftPackageReference "swift-tagged" */;
+			productName = Tagged;
 		};
 		C5A4B2012FC9D76000B71510 /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
