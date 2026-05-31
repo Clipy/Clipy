@@ -24,6 +24,7 @@ struct PasteboardHistory: Identifiable {
     @Column(as: [NSPasteboard.PasteboardType].JSONRepresentation.self)
     let pasteboardTypes: [NSPasteboard.PasteboardType]
     let updateAt: Int
+    let deviceID: String?
 }
 
 @Table

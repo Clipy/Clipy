@@ -83,6 +83,7 @@ struct SQLiteDataMigratorTests {
             .fetchAll(database)
             #expect(
                 columnNames == [
+                    "deviceID",
                     "id",
                     "pasteboardTypes",
                     "title",

@@ -11,9 +11,26 @@
 //
 
 import Cocoa
+import IOKit
 import RealmSwift
 
 final class CPYUtilities {
+    // ref: https://gist.github.com/vadimpiven/3373bb2592d59560b5d698ba1e2ed7e4
+    static var deviceID: String? = {
+        let platformExpert = IOServiceGetMatchingService(
+            kIOMainPortDefault,
+            IOServiceMatching("IOPlatformExpertDevice")
+        )
+        guard platformExpert != 0 else { return nil }
+        defer { IOObjectRelease(platformExpert) }
+
+        return IORegistryEntryCreateCFProperty(
+            platformExpert,
+            kIOPlatformUUIDKey as CFString,
+            kCFAllocatorDefault,
+            0
+        ).takeRetainedValue() as? String
+    }()
 
     static func initSDKs() {
         // Fabric

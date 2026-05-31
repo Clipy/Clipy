@@ -26,6 +26,7 @@ extension DatabaseMigrator {
                   "id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
                   "title" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
                   "pasteboardTypes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '[]',
+                  "deviceID" TEXT,
                   "updateAt" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT (unixepoch())
                 ) STRICT
                 """
