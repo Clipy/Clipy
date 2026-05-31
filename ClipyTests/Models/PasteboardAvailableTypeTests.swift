@@ -54,6 +54,21 @@ struct PasteboardAvailableTypeTests {
     }
 
     @Test
+    func availableTypesSkipsDeprecatedTypesWhenModernTypesAreAvailable() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [
+                .deprecatedString,
+                .fileURL,
+                .string,
+                .deprecatedPDF,
+                .pdf
+            ],
+            storeAvailableTypes: [.filenames, .string, .pdf]
+        )
+        #expect(availableTypes == [.fileURL, .string, .pdf])
+    }
+
+    @Test
     func availableTypesUsesDeprecatedTypesWhenModernTypesAreUnavailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedURL, .deprecatedString, .deprecatedPDF],

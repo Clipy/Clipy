@@ -94,19 +94,12 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
         CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
-        guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch clip primary key")
-            NSSound.beep()
-            return
-        }
-        let realm = try! Realm()
-        guard let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch clip data")
+        guard let id = sender.representedObject as? PasteboardHistory.ID, let history = pasteboardHistoryRepository.fetchHistory(id: id) else {
             NSSound.beep()
             return
         }
 
-        AppEnvironment.current.pasteService.paste(with: clip)
+        AppEnvironment.current.pasteService.paste(with: history)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {

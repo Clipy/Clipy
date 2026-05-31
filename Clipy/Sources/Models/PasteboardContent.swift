@@ -32,9 +32,6 @@ struct PasteboardContent: Equatable {
         guard let data = data(for: .string) ?? data(for: .deprecatedString) else { return "" }
         return String(data: data, encoding: .utf8) ?? ""
     }
-    var fileNames: [String] {
-        propertyList(for: .fileURL) ?? propertyList(for: .deprecatedFilenames) ?? []
-    }
     var colorCodeImage: NSImage? {
         guard let color = NSColor(hexString: stringValue) else { return nil }
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
@@ -44,15 +41,13 @@ struct PasteboardContent: Equatable {
         let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
         let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
 
-        if let data = data(for: .tiff) ?? data(for: .deprecatedTIFF), fileNames.isEmpty {
+        let imageURL = assets.filter { $0.type == .fileURL }
+            .compactMap { URL(dataRepresentation: $0.data, relativeTo: nil) }
+            .first(where: { ["jpg", "jpeg", "png", "bmp", "tiff"].contains($0.pathExtension.lowercased()) })
+        if let imageURL {
+            return NSImage(contentsOf: imageURL)?.resizeImage(CGFloat(width), CGFloat(height))
+        } else if let data = data(for: .tiff) ?? data(for: .deprecatedTIFF) {
             return NSImage(data: data)?.resizeImage(CGFloat(width), CGFloat(height))
-        } else if let fileName = fileNames.first {
-            switch URL(fileURLWithPath: fileName).pathExtension.lowercased() {
-            case "jpg", "jpeg", "png", "bmp", "tiff":
-                return NSImage(contentsOfFile: fileName)?.resizeImage(CGFloat(width), CGFloat(height))
-            default:
-                break
-            }
         }
         return nil
     }
@@ -72,11 +67,15 @@ struct PasteboardContent: Equatable {
     }
 
     init?(pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        let assets = types.compactMap { type -> Asset? in
-            guard let data = pasteboard.data(forType: type) else { return nil }
-            return Asset(type: type, data: data)
+        let assets = pasteboard.pasteboardItems?.compactMap { item -> [Asset]? in
+            item.types.filter { types.contains($0) }
+                .compactMap { type -> Asset? in
+                    guard let data = item.data(forType: type) else { return nil }
+                    return Asset(type: type, data: data)
+                }
         }
-        guard !assets.isEmpty else { return nil }
+        .flatMap { $0 }
+        guard let assets, !assets.isEmpty else { return nil }
         self.init(assets: assets)
     }
 
@@ -89,11 +88,6 @@ struct PasteboardContent: Equatable {
 private extension PasteboardContent {
     func data(for type: NSPasteboard.PasteboardType) -> Data? {
         assets.first(where: { $0.type == type })?.data
-    }
-
-    func propertyList<T>(for type: NSPasteboard.PasteboardType) -> T? {
-        guard let data = data(for: type) else { return nil }
-        return (try? PropertyListSerialization.propertyList(from: data, options: [], format: nil)) as? T
     }
 }
 

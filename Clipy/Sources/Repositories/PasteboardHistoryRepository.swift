@@ -110,9 +110,6 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
     }
 
     func save(id: PasteboardHistory.ID, content: PasteboardContent, updateAt: Int) {
-        let assets = content.assets.map {
-            PasteboardHistoryAsset(pasteboardHistoryID: id, pasteboardType: $0.type, data: $0.data)
-        }
         let history = PasteboardHistory(
             id: id,
             title: content.stringValue[0...10000],
@@ -120,15 +117,24 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
             updateAt: updateAt,
             deviceID: CPYUtilities.deviceID
         )
-        let thumbnailAsset = thumbnailAsset(from: content, id: id)
         withErrorReporting {
             try database.write { database in
+                let exists = try PasteboardHistory
+                    .find(id)
+                    .fetchOne(database) != nil
                 try PasteboardHistory
                     .upsert { history }
                     .execute(database)
-                try PasteboardHistoryAsset.upsert { assets }.execute(database)
-                if let thumbnailAsset {
-                    try PasteboardHistoryThumbnailAsset.upsert { thumbnailAsset }.execute(database)
+                // When a history already exists, its ID is derived from the content hash,
+                // so the assets are guaranteed to be identical and do not need to be inserted again.
+                if !exists {
+                    let assets = content.assets.map {
+                        PasteboardHistoryAsset.Draft(pasteboardHistoryID: id, pasteboardType: $0.type, data: $0.data)
+                    }
+                    try PasteboardHistoryAsset.insert { assets }.execute(database)
+                    if let thumbnailAsset = thumbnailAsset(from: content, id: id) {
+                        try PasteboardHistoryThumbnailAsset.insert { thumbnailAsset }.execute(database)
+                    }
                 }
             }
         }

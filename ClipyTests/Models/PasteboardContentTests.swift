@@ -30,22 +30,6 @@ struct PasteboardContentTests {
     }
 
     @Test
-    func pasteboardInitializerKeepsReadableTypesInRequestedOrder() throws {
-        let pasteboard = NSPasteboard.withUniqueName()
-        pasteboard.declareTypes([.rtf, .string], owner: nil)
-        pasteboard.setData(Data("rtf".utf8), forType: .rtf)
-        pasteboard.setData(Data("Hello".utf8), forType: .string)
-
-        let content = try #require(
-            PasteboardContent(
-                pasteboard: pasteboard,
-                types: [.string, .pdf, .rtf]
-            )
-        )
-        #expect(content.types == [.string, .rtf])
-    }
-
-    @Test
     func imageInitializerStoresTiffAsset() throws {
         let image = NSImage.create(with: .red, size: NSSize(width: 10, height: 10))
         let content = try #require(PasteboardContent(image: image))
@@ -81,35 +65,6 @@ struct PasteboardContentTests {
         #expect(deprecatedContent.stringValue == "Legacy")
         #expect(!mixedContent.isOnlyStringType)
         #expect(mixedContent.stringValue == "Hello")
-    }
-
-    @Test
-    func fileNamesUseModernAndDeprecatedFileLists() throws {
-        let fileNames = ["/tmp/image.png", "/tmp/document.pdf"]
-        let data = try PropertyListSerialization.data(
-            fromPropertyList: fileNames,
-            format: .binary,
-            options: 0
-        )
-        let modernContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .fileURL, data: data)
-            ]
-        )
-        let deprecatedContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .deprecatedFilenames, data: data)
-            ]
-        )
-        let stringContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
-            ]
-        )
-
-        #expect(modernContent.fileNames == fileNames)
-        #expect(deprecatedContent.fileNames == fileNames)
-        #expect(stringContent.fileNames.isEmpty)
     }
 
     @Test

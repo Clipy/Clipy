@@ -10,9 +10,9 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
-import Foundation
 import Cocoa
-import RealmSwift
+import Dependencies
+import Foundation
 import PINCache
 import RxSwift
 import RxCocoa
@@ -25,6 +25,9 @@ final class ClipService {
     fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     fileprivate var disposeBag = DisposeBag()
+
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
 
     // MARK: - Clips
     func startMonitoring() {
@@ -51,29 +54,14 @@ final class ClipService {
     }
 
     func clearAll() {
-        let realm = try! Realm()
-        let clips = realm.objects(CPYClip.self)
-
-        // Delete saved images
-        clips
-            .filter { !$0.thumbnailPath.isEmpty }
-            .map { $0.thumbnailPath }
-            .forEach { PINCache.shared.removeObject(forKey: $0) }
-        // Delete Realm
-        realm.transaction { realm.delete(clips) }
-        // Delete writed datas
-        AppEnvironment.current.dataCleanService.cleanDatas()
+        pasteboardHistoryRepository.deleteAll()
+        // Clear legacy Realm-backed history caches used through v1.2.1.
+        PINCache.shared.removeAllObjects()
+        try? FileManager.default.removeItem(atPath: CPYUtilities.applicationSupportFolder())
     }
 
-    func delete(with clip: CPYClip) {
-        let realm = try! Realm()
-        // Delete saved images
-        let path = clip.thumbnailPath
-        if !path.isEmpty {
-            PINCache.shared.removeObject(forKey: path)
-        }
-        // Delete Realm
-        realm.transaction { realm.delete(clip) }
+    func delete(with history: PasteboardHistory) {
+        pasteboardHistoryRepository.deleteHistory(id: history.id)
     }
 
     func incrementChangeCount() {
@@ -87,89 +75,44 @@ extension ClipService {
     fileprivate func create() {
         lock.lock(); defer { lock.unlock() }
 
-        // Store types
-        if !storeTypes.values.contains(NSNumber(value: true)) { return }
         // Pasteboard types
         let pasteboard = NSPasteboard.general
-        let types = self.types(with: pasteboard)
-        if types.isEmpty { return }
+        let types = PasteboardAvailableType.availableTypes(
+            from: pasteboard.pasteboardItems?.flatMap { $0.types } ?? [],
+            storeAvailableTypes: storeTypes.filter { $0.value.boolValue }.compactMap { PasteboardAvailableType(rawValue: $0.key) }
+        )
+        guard !types.isEmpty else { return }
 
         // Excluded application
         guard !AppEnvironment.current.excludeAppService.frontProcessIsExcludedApplication() else { return }
         // Special applications
         guard !AppEnvironment.current.excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
 
-        // Create data
-        let data = CPYClipData(pasteboard: pasteboard, types: types)
-        save(with: data)
+        guard let content = PasteboardContent(pasteboard: pasteboard, types: types) else { return }
+        save(content)
     }
 
     func create(with image: NSImage) {
         lock.lock(); defer { lock.unlock() }
 
-        // Create only image data
-        let data = CPYClipData(image: image)
-        save(with: data)
+        guard let content = PasteboardContent(image: image) else { return }
+        save(content)
     }
 
-    fileprivate func save(with data: CPYClipData) {
-        let realm = try! Realm()
+    private func save(_ content: PasteboardContent) {
         // Copy already copied history
         let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
-        if realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)") != nil, !isCopySameHistory { return }
-        // Don't save invalidated clip
-        if let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: "\(data.hash)"), clip.isInvalidated { return }
+        let historyID = PasteboardHistory.ID(rawValue: content.hash)
+        if pasteboardHistoryRepository.fetchHistory(id: historyID) != nil, !isCopySameHistory { return }
 
         // Don't save empty string history
-        if data.isOnlyStringType && data.stringValue.isEmpty { return }
+        if content.isOnlyStringType && content.stringValue.isEmpty { return }
 
         // Overwrite same history
         let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.overwriteSameHistory)
-        let savedHash = (isOverwriteHistory) ? data.hash : Int(arc4random() % 1000000)
+        let savedHash = (isOverwriteHistory) ? content.hash : UUID().uuidString
 
-        // Saved time and path
         let unixTime = Int(Date().timeIntervalSince1970)
-        let savedPath = CPYUtilities.applicationSupportFolder() + "/\(NSUUID().uuidString).data"
-        // Create Realm object
-        let clip = CPYClip()
-        clip.dataPath = savedPath
-        clip.title = data.stringValue[0...10000]
-        clip.dataHash = "\(savedHash)"
-        clip.updateTime = unixTime
-        clip.primaryType = data.primaryType?.rawValue ?? ""
-
-        DispatchQueue.main.async {
-            // Save thumbnail image
-            if let thumbnailImage = data.thumbnailImage {
-                PINCache.shared.setObjectAsync(thumbnailImage, forKey: "\(unixTime)", completion: nil)
-                clip.thumbnailPath = "\(unixTime)"
-            }
-            if let colorCodeImage = data.colorCodeImage {
-                PINCache.shared.setObjectAsync(colorCodeImage, forKey: "\(unixTime)", completion: nil)
-                clip.thumbnailPath = "\(unixTime)"
-                clip.isColorCode = true
-            }
-            // Save Realm and .data file
-            let dispatchRealm = try! Realm()
-            if CPYUtilities.prepareSaveToPath(CPYUtilities.applicationSupportFolder()) {
-                if NSKeyedArchiver.archiveRootObject(data, toFile: savedPath) {
-                    dispatchRealm.transaction {
-                        dispatchRealm.add(clip, update: .all)
-                    }
-                }
-            }
-        }
-    }
-
-    private func types(with pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-        let types = pasteboard.types?.filter { canSave(with: $0) } ?? []
-        return NSOrderedSet(array: types).array as? [NSPasteboard.PasteboardType] ?? []
-    }
-
-    private func canSave(with type: NSPasteboard.PasteboardType) -> Bool {
-        let dictionary = CPYClipData.availableTypesDictinary
-        guard let value = dictionary[type] else { return false }
-        guard let number = storeTypes[value] else { return false }
-        return number.boolValue
+        pasteboardHistoryRepository.save(id: .init(rawValue: savedHash), content: content, updateAt: unixTime)
     }
 }

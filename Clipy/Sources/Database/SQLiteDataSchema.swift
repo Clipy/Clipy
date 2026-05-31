@@ -25,24 +25,21 @@ struct PasteboardHistory: Identifiable, Equatable {
     let pasteboardTypes: [NSPasteboard.PasteboardType]
     let updateAt: Int
     let deviceID: String?
+
+    var primaryType: NSPasteboard.PasteboardType? {
+        pasteboardTypes.first
+    }
 }
 
 @Table
 struct PasteboardHistoryAsset: Identifiable, Equatable {
-    typealias ID = Tagged<Self, String>
+    typealias ID = Tagged<Self, UUID>
 
     @Column(primaryKey: true)
     let id: ID
     let pasteboardHistoryID: PasteboardHistory.ID
     let pasteboardType: NSPasteboard.PasteboardType
     let data: Data
-
-    init(pasteboardHistoryID: PasteboardHistory.ID, pasteboardType: NSPasteboard.PasteboardType, data: Data) {
-        self.id = ID(rawValue: "\(pasteboardHistoryID.rawValue)_\(pasteboardType.rawValue)")
-        self.pasteboardHistoryID = pasteboardHistoryID
-        self.pasteboardType = pasteboardType
-        self.data = data
-    }
 }
 
 @Table

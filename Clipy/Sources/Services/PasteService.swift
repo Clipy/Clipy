@@ -10,14 +10,19 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
-import Foundation
 import Cocoa
+import Dependencies
+import Foundation
 import Sauce
 
 final class PasteService {
 
     // MARK: - Properties
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
+
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
+
     fileprivate var isPastePlainText: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
 
@@ -55,16 +60,15 @@ final class PasteService {
 
 // MARK: - Copy
 extension PasteService {
-    func paste(with clip: CPYClip) {
-        guard !clip.isInvalidated else { return }
-        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
+    func paste(with history: PasteboardHistory) {
+        guard let content = pasteboardHistoryRepository.fetchContent(id: history.id) else { return }
 
         // Handling modifier actions
         let isPastePlainText = self.isPastePlainText
         let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
         let isDeleteHistory = self.isDeleteHistory
         guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
-            copyToPasteboard(with: clip)
+            copyToPasteboard(with: content)
             paste()
             return
         }
@@ -75,15 +79,15 @@ extension PasteService {
         }
         // Paste history
         if isPastePlainText {
-            copyToPasteboard(with: data.stringValue)
+            copyToPasteboard(with: content.stringValue)
             paste()
         } else if isPasteAndDeleteHistory {
-            copyToPasteboard(with: clip)
+            copyToPasteboard(with: content)
             paste()
         }
         // Delete clip
         if isDeleteHistory || isPasteAndDeleteHistory {
-            AppEnvironment.current.clipService.delete(with: clip)
+            AppEnvironment.current.clipService.delete(with: history)
         }
     }
 
@@ -91,49 +95,30 @@ extension PasteService {
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
-        pasteboard.declareTypes([.deprecatedString], owner: nil)
-        pasteboard.setString(string, forType: .deprecatedString)
+        pasteboard.declareTypes([.string], owner: nil)
+        pasteboard.setString(string, forType: .string)
     }
 
-    func copyToPasteboard(with clip: CPYClip) {
+    private func copyToPasteboard(with content: PasteboardContent) {
         lock.lock(); defer { lock.unlock() }
 
-        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: clip.dataPath) as? CPYClipData else { return }
-
         if isPastePlainText {
-            copyToPasteboard(with: data.stringValue)
+            copyToPasteboard(with: content.stringValue)
             return
         }
 
-        let pasteboard = NSPasteboard.general
-        let types = data.types
-        pasteboard.declareTypes(types, owner: nil)
-        types.forEach { type in
-            switch type {
-            case .deprecatedString:
-                let pbString = data.stringValue
-                pasteboard.setString(pbString, forType: .deprecatedString)
-            case .deprecatedRTFD:
-                guard let rtfData = data.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .deprecatedRTFD)
-            case .deprecatedRTF:
-                guard let rtfData = data.RTFData else { return }
-                pasteboard.setData(rtfData, forType: .deprecatedRTF)
-            case .deprecatedPDF:
-                guard let pdfData = data.PDF, let pdfRep = NSPDFImageRep(data: pdfData) else { return }
-                pasteboard.setData(pdfRep.pdfRepresentation, forType: .deprecatedPDF)
-            case .deprecatedFilenames:
-                let fileNames = data.fileNames
-                pasteboard.setPropertyList(fileNames, forType: .deprecatedFilenames)
-            case .deprecatedURL:
-                let url = data.URLs
-                pasteboard.setPropertyList(url, forType: .deprecatedURL)
-            case .deprecatedTIFF:
-                guard let image = data.image, let imageData = image.tiffRepresentation else { return }
-                pasteboard.setData(imageData, forType: .deprecatedTIFF)
-            default: break
+        var countsByType: [NSPasteboard.PasteboardType: Int] = [:]
+        let items = content.assets.reduce(into: [NSPasteboardItem]()) { items, asset in
+            let index = countsByType[asset.type] ?? 0
+            countsByType[asset.type] = index + 1
+            if !items.indices.contains(index) {
+                items.append(NSPasteboardItem())
             }
+            items[index].setData(asset.data, forType: asset.type)
         }
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.writeObjects(items)
     }
 }
 

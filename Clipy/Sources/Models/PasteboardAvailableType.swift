@@ -11,6 +11,7 @@
 //
 
 import AppKit
+import Collections
 import Foundation
 
 enum PasteboardAvailableType: String, Equatable, CaseIterable {
@@ -26,51 +27,57 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
         from pasteboardTypes: [NSPasteboard.PasteboardType],
         storeAvailableTypes: [PasteboardAvailableType]
     ) -> [NSPasteboard.PasteboardType] {
-        let availableTypes = storeAvailableTypes.compactMap { availableType -> NSPasteboard.PasteboardType? in
-            switch availableType {
-            case .string where pasteboardTypes.contains(.string):
-                return .string
-            case .string where pasteboardTypes.contains(.deprecatedString):
-                return .deprecatedString
-
-            case .rtf where pasteboardTypes.contains(.rtf):
-                return .rtf
-            case .rtf where pasteboardTypes.contains(.deprecatedRTF):
-                return .deprecatedRTF
-
-            case .rtfd where pasteboardTypes.contains(.rtfd):
-                return .rtfd
-            case .rtfd where pasteboardTypes.contains(.deprecatedRTFD):
-                return .deprecatedRTFD
-
-            case .pdf where pasteboardTypes.contains(.pdf):
-                return .pdf
-            case .pdf where pasteboardTypes.contains(.deprecatedPDF):
-                return .deprecatedPDF
-
-            case .filenames where pasteboardTypes.contains(.fileURL):
-                return .fileURL
-            case .filenames where pasteboardTypes.contains(.deprecatedFilenames):
-                return .deprecatedFilenames
-
-            case .url where pasteboardTypes.contains(.URL):
-                return .URL
-            case .url where pasteboardTypes.contains(.deprecatedURL):
-                return .deprecatedURL
-
-            case .tiff where pasteboardTypes.contains(.tiff):
-                return .tiff
-            case .tiff where pasteboardTypes.contains(.deprecatedTIFF):
-                return .deprecatedTIFF
-
-            default:
+        let uniquePasteboardTypes = OrderedSet(pasteboardTypes)
+        return uniquePasteboardTypes.compactMap { pasteboardType -> NSPasteboard.PasteboardType? in
+            guard let availableType = pasteboardType.availableType,
+                storeAvailableTypes.contains(availableType) else { return nil }
+            if let modernType = pasteboardType.modernType,
+               uniquePasteboardTypes.contains(modernType) {
                 return nil
             }
+            return pasteboardType
         }
-        return availableTypes.sorted {
-            guard let lhsIndex = pasteboardTypes.firstIndex(of: $0),
-                  let rhsIndex = pasteboardTypes.firstIndex(of: $1) else { return false }
-            return lhsIndex < rhsIndex
+    }
+}
+
+private extension NSPasteboard.PasteboardType {
+    var availableType: PasteboardAvailableType? {
+        switch self {
+        case .string, .deprecatedString:
+            return .string
+        case .rtf, .deprecatedRTF:
+            return .rtf
+        case .rtfd, .deprecatedRTFD:
+            return .rtfd
+        case .pdf, .deprecatedPDF:
+            return .pdf
+        case .fileURL:
+            return .filenames
+        case .URL, .deprecatedURL:
+            return .url
+        case .tiff, .deprecatedTIFF:
+            return .tiff
+        default:
+            return nil
+        }
+    }
+
+    var modernType: NSPasteboard.PasteboardType? {
+        switch self {
+        case .deprecatedString:
+            return .string
+        case .deprecatedRTF:
+            return .rtf
+        case .deprecatedRTFD:
+            return .rtfd
+        case .deprecatedPDF:
+            return .pdf
+        case .deprecatedURL:
+            return .URL
+        case .deprecatedTIFF:
+            return .tiff
+        default:
+            return nil
         }
     }
 }

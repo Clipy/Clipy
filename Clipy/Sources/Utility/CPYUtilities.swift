@@ -98,20 +98,6 @@ final class CPYUtilities {
         return (basePath as NSString).appendingPathComponent(Constants.Application.name)
     }
 
-    static func prepareSaveToPath(_ path: String) -> Bool {
-        let fileManager = FileManager.default
-        var isDir: ObjCBool = false
-
-        if (fileManager.fileExists(atPath: path, isDirectory: &isDir) && isDir.boolValue) == false {
-            do {
-                try fileManager.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                return false
-            }
-        }
-        return true
-    }
-
     static func sendCustomLog(with name: String) {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
         // TODO: - Migrate Firebase Crashlytics
