@@ -16,7 +16,7 @@ import RealmSwift
 
 final class CPYUtilities {
     // ref: https://gist.github.com/vadimpiven/3373bb2592d59560b5d698ba1e2ed7e4
-    static var deviceID: String? = {
+    static let deviceID: String? = {
         let platformExpert = IOServiceGetMatchingService(
             kIOMainPortDefault,
             IOServiceMatching("IOPlatformExpertDevice")
@@ -49,7 +49,8 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.UserDefaults.suppressAlertForLoginItem)
         defaultValues.updateValue(NSNumber(value: 30), forKey: Constants.UserDefaults.maxHistorySize)
         defaultValues.updateValue(NSNumber(value: 1), forKey: Constants.UserDefaults.showStatusItem)
-        defaultValues.updateValue(AppDelegate.storeTypesDictinary(), forKey: Constants.UserDefaults.storeTypes)
+        let storeTypes = PasteboardAvailableType.allCases.reduce(into: [:]) { $0[$1.rawValue] = NSNumber(value: true) }
+        defaultValues.updateValue(storeTypes, forKey: Constants.UserDefaults.storeTypes)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.inputPasteCommand)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.reorderClipsAfterPasting)
         defaultValues.updateValue(NSNumber(value: true), forKey: Constants.UserDefaults.collectCrashReport)
@@ -109,15 +110,6 @@ final class CPYUtilities {
             }
         }
         return true
-    }
-
-    static func deleteData(at path: String) {
-        autoreleasepool {
-            let fileManager = FileManager.default
-            if fileManager.fileExists(atPath: path) {
-                try? fileManager.removeItem(atPath: path)
-            }
-        }
     }
 
     static func sendCustomLog(with name: String) {

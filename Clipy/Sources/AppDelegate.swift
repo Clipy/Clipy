@@ -48,17 +48,9 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            let realm = try! Realm()
-            return !realm.objects(CPYClip.self).isEmpty
+            return pasteboardHistoryRepository.hasHistories()
         }
         return true
-    }
-
-    // MARK: - Class Methods
-    static func storeTypesDictinary() -> [String: NSNumber] {
-        var storeTypes = [String: NSNumber]()
-        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
-        return storeTypes
     }
 
     // MARK: - Menu Actions
