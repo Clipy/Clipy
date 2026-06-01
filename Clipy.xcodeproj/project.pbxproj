@@ -74,8 +74,8 @@
 		FA6167921D3ABEB10049FA14 /* FolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167911D3ABEB10049FA14 /* FolderTests.swift */; };
 		FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */; };
 		FA6167961D3ACDD80049FA14 /* SnippetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167951D3ACDD80049FA14 /* SnippetTests.swift */; };
-		FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
-		FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
 		FAC0DCE91DE15FD900309C49 /* DataCleanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCE81DE15FD900309C49 /* DataCleanService.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
@@ -144,6 +144,15 @@
 		8460049C1FD5511900BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYTypePreferenceViewController.strings; sourceTree = "<group>"; };
 		8460049D1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		8460049E1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
+		A07D838E2FC384F000390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYPreferencesWindowController.strings"; sourceTree = "<group>"; };
+		A07D838F2FC384F000390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYBetaPreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83902FC384F000390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYExcludeAppPreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83912FC384F000390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYGeneralPreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83922FC384F000390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYMenuPreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83932FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYShortcutsPreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83942FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYTypePreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83952FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
+		A07D83962FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		C576AD7B2FBD345000B71213 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceTests.swift; sourceTree = "<group>"; };
@@ -601,6 +610,7 @@
 				it,
 				de,
 				"zh-Hans",
+				"pt-BR",
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			packageReferences = (
@@ -633,7 +643,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA1DB5131DDCB4C0007F95C8 /* CPYPreferencesWindowController.xib in Resources */,
-				FA6DD5141C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5141C7DEDB600317E73 /* (null) in Resources */,
 				FA1DB51E1DDCB4C0007F95C8 /* CPYTypePreferenceViewController.xib in Resources */,
 				FA1DB4901DDCA5D9007F95C8 /* Assets.xcassets in Resources */,
 				FA1DB51D1DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.xib in Resources */,
@@ -642,7 +652,7 @@
 				FA1DB51B1DDCB4C0007F95C8 /* CPYGeneralPreferenceViewController.xib in Resources */,
 				FA1DB51A1DDCB4C0007F95C8 /* CPYExcludeAppPreferenceViewController.xib in Resources */,
 				FA1DB5191DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.xib in Resources */,
-				FA6DD5151C7DEDB600317E73 /* BuildFile in Resources */,
+				FA6DD5151C7DEDB600317E73 /* (null) in Resources */,
 				C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */,
 				FA1DB4941DDCB22C007F95C8 /* dsa_pub.pem in Resources */,
 				FA1DB49F1DDCB417007F95C8 /* MainMenu.xib in Resources */,
@@ -727,11 +737,11 @@
 /* Begin PBXTargetDependency section */
 		C5A4B2022FC9D76000B71510 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = C5A4B2012FC9D76000B71510 /* plugin:SwiftLintBuildToolPlugin */;
+			productRef = C5A4B2012FC9D76000B71510 /* SwiftLintBuildToolPlugin */;
 		};
 		C5A4B2032FC9D76000B71510 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = C5A4B2012FC9D76000B71510 /* plugin:SwiftLintBuildToolPlugin */;
+			productRef = C5A4B2012FC9D76000B71510 /* SwiftLintBuildToolPlugin */;
 		};
 		FAC43DDA1B35D8B100C06102 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -749,6 +759,7 @@
 				31ACA9F01EC5B85B00BD34C0 /* it */,
 				846004961FD5511800BA733E /* de */,
 				54ADE0FA2008F63F00239852 /* zh-Hans */,
+				A07D838E2FC384F000390DB2 /* pt-BR */,
 			);
 			name = CPYPreferencesWindowController.xib;
 			sourceTree = "<group>";
@@ -761,6 +772,7 @@
 				31ACA9F11EC5B85B00BD34C0 /* it */,
 				846004971FD5511900BA733E /* de */,
 				54ADE0FB2008F64000239852 /* zh-Hans */,
+				A07D838F2FC384F000390DB2 /* pt-BR */,
 			);
 			name = CPYBetaPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -773,6 +785,7 @@
 				31ACA9F21EC5B85B00BD34C0 /* it */,
 				846004981FD5511900BA733E /* de */,
 				54ADE0FC2008F64000239852 /* zh-Hans */,
+				A07D83902FC384F000390DB2 /* pt-BR */,
 			);
 			name = CPYExcludeAppPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -785,6 +798,7 @@
 				31ACA9F31EC5B85B00BD34C0 /* it */,
 				846004991FD5511900BA733E /* de */,
 				54ADE0FD2008F64000239852 /* zh-Hans */,
+				A07D83912FC384F000390DB2 /* pt-BR */,
 			);
 			name = CPYGeneralPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -797,6 +811,7 @@
 				31ACA9F41EC5B85B00BD34C0 /* it */,
 				8460049A1FD5511900BA733E /* de */,
 				54ADE0FE2008F64000239852 /* zh-Hans */,
+				A07D83922FC384F000390DB2 /* pt-BR */,
 			);
 			name = CPYMenuPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -809,6 +824,7 @@
 				31ACA9F51EC5B85B00BD34C0 /* it */,
 				8460049B1FD5511900BA733E /* de */,
 				54ADE0FF2008F64000239852 /* zh-Hans */,
+				A07D83932FC384F100390DB2 /* pt-BR */,
 			);
 			name = CPYShortcutsPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -821,6 +837,7 @@
 				31ACA9F61EC5B85C00BD34C0 /* it */,
 				8460049C1FD5511900BA733E /* de */,
 				54ADE1002008F64000239852 /* zh-Hans */,
+				A07D83942FC384F100390DB2 /* pt-BR */,
 			);
 			name = CPYTypePreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -833,6 +850,7 @@
 				31ACA9F71EC5B85C00BD34C0 /* it */,
 				8460049D1FD5511A00BA733E /* de */,
 				54ADE1012008F64100239852 /* zh-Hans */,
+				A07D83952FC384F100390DB2 /* pt-BR */,
 			);
 			name = CPYUpdatesPreferenceViewController.xib;
 			sourceTree = "<group>";
@@ -845,6 +863,7 @@
 				31ACA9F81EC5B85C00BD34C0 /* it */,
 				8460049E1FD5511A00BA733E /* de */,
 				54ADE1022008F64100239852 /* zh-Hans */,
+				A07D83962FC384F100390DB2 /* pt-BR */,
 			);
 			name = CPYSnippetsEditorWindowController.xib;
 			sourceTree = "<group>";
@@ -1202,7 +1221,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C5A4B2012FC9D76000B71510 /* plugin:SwiftLintBuildToolPlugin */ = {
+		C5A4B2012FC9D76000B71510 /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";

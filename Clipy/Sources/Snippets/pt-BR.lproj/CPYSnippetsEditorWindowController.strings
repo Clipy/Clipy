@@ -1,0 +1,36 @@
+
+/* Class = "NSTextFieldCell"; title = "Importar"; ObjectID = "Ett-SG-3wO"; */
+"Ett-SG-3wO.title" = "Importar";
+
+/* Class = "NSTextFieldCell"; title = "Texto"; ObjectID = "J4q-sY-gcS"; */
+"J4q-sY-gcS.title" = "Texto";
+
+/* Class = "NSTextFieldCell"; title = "Apagar"; ObjectID = "Lxb-5c-zOc"; */
+"Lxb-5c-zOc.title" = "Apagar";
+
+/* Class = "NSWindow"; title = "Clipy - Editor de Snippets"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Clipy - Editor de Snippets";
+
+/* Class = "NSTextFieldCell"; title = "Exportar"; ObjectID = "Uqj-Zh-vde"; */
+"Uqj-Zh-vde.title" = "Exportar";
+
+/* Class = "NSTextFieldCell"; title = "Habilitar/Desabilitar"; ObjectID = "WZs-f9-lGW"; */
+"WZs-f9-lGW.title" = "Habilitar/Desabilitar";
+
+/* Class = "NSTextFieldCell"; title = "Adicionar Pasta"; ObjectID = "hoO-RC-sTG"; */
+"hoO-RC-sTG.title" = "Adicionar Pasta";
+
+/* Class = "NSTextFieldCell"; title = "Atalho"; ObjectID = "pfw-sA-4aA"; */
+"pfw-sA-4aA.title" = "Atalho";
+
+/* Class = "NSTextFieldCell"; title = "título da pasta"; ObjectID = "rI9-rT-YTs"; */
+"rI9-rT-YTs.title" = "título da pasta";
+
+/* Class = "NSTextFieldCell"; title = "Compartilhar snippets"; ObjectID = "wwo-lh-lMK"; */
+"wwo-lh-lMK.title" = "Compartilhar snippets";
+
+/* Class = "NSTextFieldCell"; title = "Adicionar Snippet"; ObjectID = "xPC-Uv-z03"; */
+"xPC-Uv-z03.title" = "Adicionar Snippet";
+
+/* Class = "NSTextFieldCell"; title = "Em Breve"; ObjectID = "yzF-k8-xUT"; */
+"yzF-k8-xUT.title" = "Em Breve";

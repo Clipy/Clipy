@@ -1,0 +1,27 @@
+
+/* Class = "NSWindow"; title = "Clipy - Configurações"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Clipy - Configurações";
+
+/* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
+"Fxs-BH-hPx.title" = "Beta";
+
+/* Class = "NSTextFieldCell"; title = "Atualizações"; ObjectID = "N5e-ba-0Q0"; */
+"N5e-ba-0Q0.title" = "Atualizações";
+
+/* Class = "NSTextFieldCell"; title = "Nenhum painel selecionado."; ObjectID = "Vy6-Ui-lLf"; */
+"Vy6-Ui-lLf.title" = "Nenhum painel selecionado.";
+
+/* Class = "NSTextFieldCell"; title = "Tipo"; ObjectID = "avh-w8-RcC"; */
+"avh-w8-RcC.title" = "Tipo";
+
+/* Class = "NSTextFieldCell"; title = "Exceções"; ObjectID = "odU-xs-hZL"; */
+"odU-xs-hZL.title" = "Exceções";
+
+/* Class = "NSTextFieldCell"; title = "Geral"; ObjectID = "qS1-uo-9im"; */
+"qS1-uo-9im.title" = "Geral";
+
+/* Class = "NSTextFieldCell"; title = "Atalhos"; ObjectID = "qx8-Vm-eow"; */
+"qx8-Vm-eow.title" = "Atalhos";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "vEM-JU-92T"; */
+"vEM-JU-92T.title" = "Menu";

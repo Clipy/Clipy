@@ -1,0 +1,21 @@
+
+/* Class = "NSButtonCell"; title = "Verificar Agora"; ObjectID = "DDI-ts-HPE"; */
+"DDI-ts-HPE.title" = "Verificar Agora";
+
+/* Class = "NSMenuItem"; title = "Diariamente"; ObjectID = "HwP-AM-nID"; */
+"HwP-AM-nID.title" = "Diariamente";
+
+/* Class = "NSButtonCell"; title = "Verificar atualizações automaticamente:"; ObjectID = "Kdw-AL-Nnj"; */
+"Kdw-AL-Nnj.title" = "Verificar atualizações automaticamente:";
+
+/* Class = "NSMenuItem"; title = "Semanalmente"; ObjectID = "NBD-wq-yMq"; */
+"NBD-wq-yMq.title" = "Semanalmente";
+
+/* Class = "NSTextFieldCell"; title = "v1.0.0"; ObjectID = "hhl-AS-dQ0"; */
+"hhl-AS-dQ0.title" = "v1.0.0";
+
+/* Class = "NSTextFieldCell"; title = "data"; ObjectID = "nG5-PB-zcE"; */
+"nG5-PB-zcE.title" = "data";
+
+/* Class = "NSMenuItem"; title = "Mensalmente"; ObjectID = "o5Q-Ao-iQN"; */
+"o5Q-Ao-iQN.title" = "Mensalmente";

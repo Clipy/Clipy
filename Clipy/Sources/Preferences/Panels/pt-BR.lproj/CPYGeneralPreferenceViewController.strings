@@ -1,0 +1,39 @@
+
+/* Class = "NSButtonCell"; title = "Pressionar \"⌘ + V\" após a seleção no menu"; ObjectID = "0yt-u0-ROt"; */
+"0yt-u0-ROt.title" = "Pressionar \"⌘ + V\" após a seleção no menu";
+
+/* Class = "NSTextFieldCell"; title = "Aparência"; ObjectID = "FM4-mw-DCx"; */
+"FM4-mw-DCx.title" = "Aparência";
+
+/* Class = "NSTextFieldCell"; title = "Estilo do ícone na barra de status:"; ObjectID = "Faj-kQ-G1v"; */
+"Faj-kQ-G1v.title" = "Estilo do ícone na barra de status:";
+
+/* Class = "NSTextFieldCell"; title = "Ordenar o histórico por:"; ObjectID = "Lps-06-dPB"; */
+"Lps-06-dPB.title" = "Ordenar o histórico por:";
+
+/* Class = "NSButtonCell"; title = "Enviar relatório de erro e log (refletido na próxima inicialização)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "Enviar relatório de erro e log (refletido na próxima inicialização)";
+
+/* Class = "NSTextFieldCell"; title = "Tamanho máximo do histórico:"; ObjectID = "Nab-CO-ytH"; */
+"Nab-CO-ytH.title" = "Tamanho máximo do histórico:";
+
+/* Class = "NSTextFieldCell"; title = "Histórico da Área de Transferência"; ObjectID = "OOT-F5-Pal"; */
+"OOT-F5-Pal.title" = "Histórico da Área de Transferência";
+
+/* Class = "NSButtonCell"; title = "Iniciar no Login"; ObjectID = "Su3-mF-z1T"; */
+"Su3-mF-z1T.title" = "Iniciar no Login";
+
+/* Class = "NSMenuItem"; title = "Data de Criação"; ObjectID = "YmS-J6-ERc"; */
+"YmS-J6-ERc.title" = "Data de Criação";
+
+/* Class = "NSMenuItem"; title = "Nenhum"; ObjectID = "aEh-u0-hQR"; */
+"aEh-u0-hQR.title" = "Nenhum";
+
+/* Class = "NSTextFieldCell"; title = "itens"; ObjectID = "eeq-cw-v00"; */
+"eeq-cw-v00.title" = "itens";
+
+/* Class = "NSMenuItem"; title = "Último Usado"; ObjectID = "ju3-6a-6xj"; */
+"ju3-6a-6xj.title" = "Último Usado";
+
+/* Class = "NSTextFieldCell"; title = "Comportamento"; ObjectID = "nDk-8y-89n"; */
+"nDk-8y-89n.title" = "Comportamento";
