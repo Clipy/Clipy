@@ -10,13 +10,12 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
-import Foundation
 import Cocoa
+import Dependencies
+import Foundation
 import Magnet
-import RealmSwift
 
 final class HotKeyService: NSObject {
-
     // MARK: - Properties
     static var defaultKeyCombos: [String: Any] = {
         // MainMenu:    ⌘ + Shift + V
@@ -32,6 +31,8 @@ final class HotKeyService: NSObject {
     fileprivate(set) var snippetKeyCombo: KeyCombo?
     fileprivate(set) var clearHistoryKeyCombo: KeyCombo?
 
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
 }
 
 // MARK: - Actions
@@ -204,16 +205,15 @@ extension HotKeyService {
     }
 
     @objc func popupSnippetFolder(_ object: AnyObject) {
-        guard let hotKey = object as? HotKey else { return }
-        let realm = try! Realm()
-        guard let folder = realm.object(ofType: CPYFolder.self, forPrimaryKey: hotKey.identifier) else {
+        guard let hotKey = object as? HotKey, let folderID = UUID(uuidString: hotKey.identifier) else { return }
+
+        guard let folderDetail = snippetRepository.fetchFolderDetail(id: SnippetFolder.ID(rawValue: folderID)) else {
             // When already deleted folder, remove keycombos
             unregisterSnippetHotKey(with: hotKey.identifier)
             return
         }
-        if !folder.enable { return }
-
-        AppEnvironment.current.menuManager.popUpSnippetFolder(folder)
+        guard folderDetail.folder.isEnabled else { return }
+        AppEnvironment.current.menuManager.popUpSnippetFolder(folderDetail)
     }
 
     fileprivate func setupSnippetHotKeys() {
