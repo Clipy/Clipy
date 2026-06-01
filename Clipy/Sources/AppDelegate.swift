@@ -11,26 +11,36 @@
 //
 
 import Cocoa
-import Sparkle
-import RxCocoa
-import RxSwift
+import Dependencies
 import LoginServiceKit
 import Magnet
-import Screeen
 import RealmSwift
+import RxCocoa
+import RxSwift
+import Screeen
+import Sparkle
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
-    let screenshotObserver = ScreenShotObserver()
-    let disposeBag = DisposeBag()
+    private(set) var updaterController: SPUStandardUpdaterController?
+    private let screenshotObserver = ScreenShotObserver()
+    private let disposeBag = DisposeBag()
+
+    @Dependency(\.context)
+    var context
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
 
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
         // Migrate Realm
         Realm.migration()
+        prepareDependencies { values in
+            try! values.bootstrapDatabase()
+        }
     }
 
     // MARK: - NSMenuItem Validation
@@ -68,10 +78,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = L10n.clearHistory
-            alert.informativeText = L10n.areYouSureYouWantToClearYourClipboardHistory
-            alert.addButton(withTitle: L10n.clearHistory)
-            alert.addButton(withTitle: L10n.cancel)
+            alert.messageText = String(localized: "Clear History")
+            alert.informativeText = String(localized: "Are you sure you want to clear your clipboard history?")
+            alert.addButton(withTitle: String(localized: "Clear History"))
+            alert.addButton(withTitle: String(localized: "Cancel"))
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -106,15 +116,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
-        guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
-            NSSound.beep()
-            return
-        }
-        let realm = try! Realm()
-        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
+        guard let id = sender.representedObject as? Snippet.ID, let snippet = snippetRepository.fetchSnippet(id: id) else {
             NSSound.beep()
             return
         }
@@ -129,10 +131,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = L10n.launchClipyOnSystemStartup
-        alert.informativeText = L10n.youCanChangeThisSettingInThePreferencesIfYouWant
-        alert.addButton(withTitle: L10n.launchOnSystemStartup)
-        alert.addButton(withTitle: L10n.donTLaunch)
+        alert.messageText = String(localized: "Launch Clipy on system startup?")
+        alert.informativeText = String(localized: "You can change this setting in the Preferences if you want")
+        alert.addButton(withTitle: String(localized: "Launch on system startup"))
+        alert.addButton(withTitle: String(localized: "Don't Launch"))
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
@@ -171,6 +173,9 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
+
+        guard context != .test else { return }
+
         // SDKs
         CPYUtilities.initSDKs()
         // Check Accessibility Permission
@@ -182,10 +187,13 @@ extension AppDelegate: NSApplicationDelegate {
         }
 
         // Sparkle
-        let updater = SUUpdater.shared()
-        updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        self.updaterController = SPUStandardUpdaterController(
+            startingUpdater: AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck),
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
+        updaterController?.updater.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        updaterController?.updater.clearFeedURLFromUserDefaults()
 
         // Binding Events
         bind()

@@ -1,0 +1,20 @@
+// 
+//  CodeSigning.xcconfig
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+// 
+//  Created by Shunsuke Furubayashi on 2026/05/27.
+// 
+//  Copyright © 2015-2026 Clipy Project.
+//
+
+CODE_SIGN_IDENTITY[config=Debug] = Mac Developer
+CODE_SIGN_IDENTITY[config=Release] = Developer ID Application
+CODE_SIGN_STYLE = Manual
+DEVELOPMENT_TEAM = BBCHAJ584H
+PROVISIONING_PROFILE_SPECIFIER[config=Debug] = ClipyDevelopment
+PROVISIONING_PROFILE_SPECIFIER[config=Release] = ClipyDistribution
+
+// #include "Configurations/CodeSigning-AdHoc.xcconfig"

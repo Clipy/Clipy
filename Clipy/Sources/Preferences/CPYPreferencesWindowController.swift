@@ -99,21 +99,21 @@ extension CPYPreferencesWindowController: NSWindowDelegate {
 // MARK: - Layout
 private extension CPYPreferencesWindowController {
     func resetImages() {
-        generalImageView.image = Asset.prefGeneral.image
-        menuImageView.image = Asset.prefMenu.image
-        typeImageView.image = Asset.prefType.image
-        excludeImageView.image = Asset.prefExcluded.image
-        shortcutsImageView.image = Asset.prefShortcut.image
-        updatesImageView.image = Asset.prefUpdate.image
-        betaImageView.image = Asset.prefBeta.image
+        generalImageView.image = NSImage(resource: .prefGeneral)
+        menuImageView.image = NSImage(resource: .prefMenu)
+        typeImageView.image = NSImage(resource: .prefType)
+        excludeImageView.image = NSImage(resource: .prefExcluded)
+        shortcutsImageView.image = NSImage(resource: .prefShortcut)
+        updatesImageView.image = NSImage(resource: .prefUpdate)
+        betaImageView.image = NSImage(resource: .prefBeta)
 
-        generalTextField.textColor = ColorName.tabTitle.color
-        menuTextField.textColor = ColorName.tabTitle.color
-        typeTextField.textColor = ColorName.tabTitle.color
-        excludeTextField.textColor = ColorName.tabTitle.color
-        shortcutsTextField.textColor = ColorName.tabTitle.color
-        updatesTextField.textColor = ColorName.tabTitle.color
-        betaTextField.textColor = ColorName.tabTitle.color
+        generalTextField.textColor = NSColor(resource: .tabTitle)
+        menuTextField.textColor = NSColor(resource: .tabTitle)
+        typeTextField.textColor = NSColor(resource: .tabTitle)
+        excludeTextField.textColor = NSColor(resource: .tabTitle)
+        shortcutsTextField.textColor = NSColor(resource: .tabTitle)
+        updatesTextField.textColor = NSColor(resource: .tabTitle)
+        betaTextField.textColor = NSColor(resource: .tabTitle)
     }
 
     func selectedTab(_ index: Int) {
@@ -121,26 +121,26 @@ private extension CPYPreferencesWindowController {
 
         switch index {
         case 0:
-            generalImageView.image = Asset.prefGeneralOn.image
-            generalTextField.textColor = ColorName.clipy.color
+            generalImageView.image = NSImage(resource: .prefGeneralOn)
+            generalTextField.textColor = NSColor(resource: .clipy)
         case 1:
-            menuImageView.image = Asset.prefMenuOn.image
-            menuTextField.textColor = ColorName.clipy.color
+            menuImageView.image = NSImage(resource: .prefMenuOn)
+            menuTextField.textColor = NSColor(resource: .clipy)
         case 2:
-            typeImageView.image = Asset.prefTypeOn.image
-            typeTextField.textColor = ColorName.clipy.color
+            typeImageView.image = NSImage(resource: .prefTypeOn)
+            typeTextField.textColor = NSColor(resource: .clipy)
         case 3:
-            excludeImageView.image = Asset.prefExcludedOn.image
-            excludeTextField.textColor = ColorName.clipy.color
+            excludeImageView.image = NSImage(resource: .prefExcludedOn)
+            excludeTextField.textColor = NSColor(resource: .clipy)
         case 4:
-            shortcutsImageView.image = Asset.prefShortcutOn.image
-            shortcutsTextField.textColor = ColorName.clipy.color
+            shortcutsImageView.image = NSImage(resource: .prefShortcutOn)
+            shortcutsTextField.textColor = NSColor(resource: .clipy)
         case 5:
-            updatesImageView.image = Asset.prefUpdateOn.image
-            updatesTextField.textColor = ColorName.clipy.color
+            updatesImageView.image = NSImage(resource: .prefUpdateOn)
+            updatesTextField.textColor = NSColor(resource: .clipy)
         case 6:
-            betaImageView.image = Asset.prefBetaOn.image
-            betaTextField.textColor = ColorName.clipy.color
+            betaImageView.image = NSImage(resource: .prefBetaOn)
+            betaTextField.textColor = NSColor(resource: .clipy)
         default: break
         }
     }

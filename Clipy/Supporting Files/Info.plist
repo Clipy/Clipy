@@ -36,5 +36,7 @@
 	<string>https://clipy-app.com/appcast.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>SUPublicEDKey</key>
+	<string>IxLVywb2tpxuJi02oxH/bAZ2OEyhY6/MoVTLMaQnbSU=</string>
 </dict>
 </plist>

@@ -11,6 +11,8 @@
 //
 
 import Cocoa
+import Combine
+import Dependencies
 import PINCache
 import RealmSwift
 import RxCocoa
@@ -26,8 +28,8 @@ final class MenuManager: NSObject {
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
-    fileprivate let folderIcon = Asset.iconFolder.image
-    fileprivate let snippetIcon = Asset.iconText.image
+    fileprivate let folderIcon = NSImage(resource: .iconFolder)
+    fileprivate let snippetIcon = NSImage(resource: .iconText)
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let notificationCenter = NotificationCenter.default
@@ -37,6 +39,12 @@ final class MenuManager: NSObject {
     fileprivate let realm = try! Realm()
     fileprivate var clipToken: NotificationToken?
     fileprivate var snippetToken: NotificationToken?
+
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
+    @Dependency(\.mainQueue)
+    private var mainQueue
+    private var cancellables: Set<AnyCancellable> = []
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -73,17 +81,16 @@ extension MenuManager {
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
-    func popUpSnippetFolder(_ folder: CPYFolder) {
-        let folderMenu = NSMenu(title: folder.title)
+    func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
+        let folderMenu = NSMenu(title: folderDetail.folder.title)
         // Folder title
-        let labelItem = NSMenuItem(title: folder.title, action: nil)
+        let labelItem = NSMenuItem(title: folderDetail.folder.title, action: nil)
         labelItem.isEnabled = false
         folderMenu.addItem(labelItem)
         // Snippets
         var index = firstIndexOfMenuItems()
-        folder.snippets
-            .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
-            .filter { $0.enable }
+        folderDetail.snippets
+            .filter { $0.isEnabled }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
                 folderMenu.addItem(subMenuItem)
@@ -103,12 +110,10 @@ private extension MenuManager {
                                 self?.createClipMenu()
                             }
                         }
-        snippetToken = realm.objects(CPYFolder.self)
-                        .observe { [weak self] _ in
-                            DispatchQueue.main.async { [weak self] in
-                                self?.createClipMenu()
-                            }
-                        }
+        snippetRepository.observeFolderDetails()
+            .receive(on: mainQueue)
+            .sink { [weak self] _ in self?.createClipMenu() }
+            .store(in: &cancellables)
         // Menu icon
         AppEnvironment.current.defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem, retainSelf: false)
             .compactMap { $0 }
@@ -188,13 +193,13 @@ private extension MenuManager {
         clipMenu?.addItem(NSMenuItem.separator())
 
         if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
-            clipMenu?.addItem(NSMenuItem(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
+            clipMenu?.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
         }
 
-        clipMenu?.addItem(NSMenuItem(title: L10n.editSnippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
-        clipMenu?.addItem(NSMenuItem(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Preferences"), action: #selector(AppDelegate.showPreferenceWindow)))
         clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
 
         statusItem?.menu = clipMenu
     }
@@ -263,7 +268,7 @@ private extension MenuManager {
         let maxHistory = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
 
         // History title
-        let labelItem = NSMenuItem(title: L10n.history, action: nil)
+        let labelItem = NSMenuItem(title: String(localized: "History"), action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
@@ -372,32 +377,31 @@ private extension MenuManager {
 // MARK: - Snippets
 private extension MenuManager {
     func addSnippetItems(_ menu: NSMenu, separateMenu: Bool) {
-        let folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
-        guard !folderResults.isEmpty else { return }
+        let details = snippetRepository.fetchFolderDetails()
+        guard !details.isEmpty else { return }
+
         if separateMenu {
             menu.addItem(NSMenuItem.separator())
         }
 
         // Snippet title
-        let labelItem = NSMenuItem(title: L10n.snippet, action: nil)
+        let labelItem = NSMenuItem(title: String(localized: "Snippet"), action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
         var subMenuIndex = menu.numberOfItems - 1
         let firstIndex = firstIndexOfMenuItems()
-
-        folderResults
-            .filter { $0.enable }
-            .forEach { folder in
-                let folderTitle = folder.title
+        details
+            .filter { $0.folder.isEnabled }
+            .forEach { detail in
+                let folderTitle = detail.folder.title
                 let subMenuItem = makeSubmenuItem(folderTitle)
                 menu.addItem(subMenuItem)
                 subMenuIndex += 1
 
                 var i = firstIndex
-                folder.snippets
-                    .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
-                    .filter { $0.enable }
+                detail.snippets
+                    .filter { $0.isEnabled }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
                         if let subMenu = menu.item(at: subMenuIndex)?.submenu {
@@ -408,7 +412,7 @@ private extension MenuManager {
             }
     }
 
-    func makeSnippetMenuItem(_ snippet: CPYSnippet, listNumber: Int) -> NSMenuItem {
+    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int) -> NSMenuItem {
         let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowIcon = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
 
@@ -416,7 +420,7 @@ private extension MenuManager {
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
-        menuItem.representedObject = snippet.identifier
+        menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.content
         menuItem.image = (isShowIcon) ? snippetIcon : nil
 
@@ -433,9 +437,9 @@ private extension MenuManager {
         let image: NSImage?
         switch type {
         case .black:
-            image = Asset.statusbarMenuBlack.image
+            image = NSImage(resource: .statusbarMenuBlack)
         case .white:
-            image = Asset.statusbarMenuWhite.image
+            image = NSImage(resource: .statusbarMenuWhite)
         case .none: return
         }
         image?.isTemplate = true

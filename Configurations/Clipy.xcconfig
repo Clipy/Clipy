@@ -1,0 +1,13 @@
+// 
+//  Clipy.xcconfig
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+// 
+//  Created by Shunsuke Furubayashi on 2026/05/27.
+// 
+//  Copyright © 2015-2026 Clipy Project.
+//
+
+#include "Configurations/CodeSigning.xcconfig"

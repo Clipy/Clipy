@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
 
 jobs:
   test:
@@ -11,23 +11,24 @@ jobs:
     steps:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-    - name: Setup ruby
-      uses: ruby/setup-ruby@c4e5b1316158f92e3d49443a9d58b31d25ac0f8f # v1.306.0
-      with:
-        ruby-version: '3.4'
-        bundler-cache: true
-        
-    - name: Cache CocoaPods
+    - name: Cache Swift packages
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
-        path: Pods
-        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+        path: .spm-cache
+        key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
         restore-keys: |
-          ${{ runner.os }}-pods-
+          spm-${{ runner.os }}-
 
-    - name: Pod install
-      run: bundle exec pod install
-
-    - name: Run fastlane
-      run: bundle exec fastlane test
-    
+    - name: Run tests
+      run: |
+        xcodebuild \
+          CODE_SIGN_IDENTITY=- \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          -scheme Clipy \
+          -project Clipy.xcodeproj \
+          -clonedSourcePackagesDirPath "$GITHUB_WORKSPACE/.spm-cache/SourcePackages" \
+          -packageCachePath "$GITHUB_WORKSPACE/.spm-cache/PackageCache" \
+          -skipPackagePluginValidation \
+          -skipMacroValidation \
+          clean test

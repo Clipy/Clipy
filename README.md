@@ -21,12 +21,20 @@ __Distribution Site__ : <https://clipy-app.com>
 
 ### Development Environment
 * macOS 26 Tahoe
-* Xcode 26.2
+* Xcode 26.5
 
 ### How to Build
-1. `bundle install && bundle exec pod install`
-2. Open `Clipy.xcworkspace` on Xcode.
-3. build.
+macOS checks Accessibility permission by the app's code signature. If Clipy is built without a stable signing certificate, macOS may ask for Accessibility permission again for every build.
+
+For this reason, the default signing settings use the Clipy signing certificate. This certificate is available only to the maintainer, so local builds require switching to ad-hoc signing before building.
+
+#### Build for ad-hoc usage
+
+1. Open `Clipy.xcodeproj` in Xcode.
+2. Switch to ad-hoc build mode:
+    1. Open `Configurations/CodeSigning.xcconfig`.
+    2. Uncomment `#include "Configurations/CodeSigning-AdHoc.xcconfig"`.
+3. Build the `Clipy` scheme.
 
 ### Localization Contributors
 Clipy is looking for localization contributors.  
