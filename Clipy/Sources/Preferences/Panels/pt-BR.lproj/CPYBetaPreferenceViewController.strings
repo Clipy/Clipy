@@ -1,14 +1,14 @@
 
-/* Class = "NSTextFieldCell"; title = "Captura de tela"; ObjectID = "0f7-ic-bHq"; */
+/* Class = "NSTextFieldCell"; title = "Screenshot"; ObjectID = "0f7-ic-bHq"; */
 "0f7-ic-bHq.title" = "Captura de tela";
 
-/* Class = "NSTextFieldCell"; title = "Ação"; ObjectID = "6RM-Ow-USQ"; */
+/* Class = "NSTextFieldCell"; title = "Action"; ObjectID = "6RM-Ow-USQ"; */
 "6RM-Ow-USQ.title" = "Ação";
 
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "HZd-yn-p4o"; */
 "HZd-yn-p4o.title" = "Command";
 
-/* Class = "NSButtonCell"; title = "Colar e apagar histórico"; ObjectID = "M5n-Mr-02l"; */
+/* Class = "NSButtonCell"; title = "Paste and delete history"; ObjectID = "M5n-Mr-02l"; */
 "M5n-Mr-02l.title" = "Colar e apagar histórico";
 
 /* Class = "NSMenuItem"; title = "Alt"; ObjectID = "M9s-9f-OKA"; */
@@ -20,7 +20,7 @@
 /* Class = "NSMenuItem"; title = "Alt"; ObjectID = "Ncl-nV-zr8"; */
 "Ncl-nV-zr8.title" = "Alt";
 
-/* Class = "NSTextFieldCell"; title = "As configurações beta podem ser movidas para um painel diferente em versões futuras."; ObjectID = "c4z-RD-3UN"; */
+/* Class = "NSTextFieldCell"; title = "Beta settings might be moved to a different pane in future versions."; ObjectID = "c4z-RD-3UN"; */
 "c4z-RD-3UN.title" = "As configurações beta podem ser movidas para um painel diferente em versões futuras.";
 
 /* Class = "NSMenuItem"; title = "Command"; ObjectID = "gRa-Te-dcH"; */
@@ -35,16 +35,16 @@
 /* Class = "NSMenuItem"; title = "Alt"; ObjectID = "orJ-AB-Oxl"; */
 "orJ-AB-Oxl.title" = "Alt";
 
-/* Class = "NSButtonCell"; title = "Salvar capturas de tela no histórico"; ObjectID = "pgE-3j-ZEy"; */
+/* Class = "NSButtonCell"; title = "Save screenshots in history"; ObjectID = "pgE-3j-ZEy"; */
 "pgE-3j-ZEy.title" = "Salvar capturas de tela no histórico";
 
-/* Class = "NSButtonCell"; title = "Colar como Texto Simples"; ObjectID = "r0C-kF-Q0z"; */
+/* Class = "NSButtonCell"; title = "Paste as PlainText"; ObjectID = "r0C-kF-Q0z"; */
 "r0C-kF-Q0z.title" = "Colar como Texto Simples";
 
 /* Class = "NSMenuItem"; title = "Shift"; ObjectID = "riQ-CH-Kcr"; */
 "riQ-CH-Kcr.title" = "Shift";
 
-/* Class = "NSButtonCell"; title = "Apagar histórico"; ObjectID = "sYs-Da-TSj"; */
+/* Class = "NSButtonCell"; title = "Delete history"; ObjectID = "sYs-Da-TSj"; */
 "sYs-Da-TSj.title" = "Apagar histórico";
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "vtQ-7v-nLJ"; */

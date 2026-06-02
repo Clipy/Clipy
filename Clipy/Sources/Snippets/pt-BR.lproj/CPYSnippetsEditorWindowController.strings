@@ -1,36 +1,36 @@
 
-/* Class = "NSTextFieldCell"; title = "Importar"; ObjectID = "Ett-SG-3wO"; */
+/* Class = "NSTextFieldCell"; title = "Import"; ObjectID = "Ett-SG-3wO"; */
 "Ett-SG-3wO.title" = "Importar";
 
-/* Class = "NSTextFieldCell"; title = "Texto"; ObjectID = "J4q-sY-gcS"; */
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "J4q-sY-gcS"; */
 "J4q-sY-gcS.title" = "Texto";
 
-/* Class = "NSTextFieldCell"; title = "Apagar"; ObjectID = "Lxb-5c-zOc"; */
+/* Class = "NSTextFieldCell"; title = "Delete"; ObjectID = "Lxb-5c-zOc"; */
 "Lxb-5c-zOc.title" = "Apagar";
 
-/* Class = "NSWindow"; title = "Clipy - Editor de Snippets"; ObjectID = "QvC-M9-y7g"; */
+/* Class = "NSWindow"; title = "Clipy - Snippets Editor"; ObjectID = "QvC-M9-y7g"; */
 "QvC-M9-y7g.title" = "Clipy - Editor de Snippets";
 
-/* Class = "NSTextFieldCell"; title = "Exportar"; ObjectID = "Uqj-Zh-vde"; */
+/* Class = "NSTextFieldCell"; title = "Export"; ObjectID = "Uqj-Zh-vde"; */
 "Uqj-Zh-vde.title" = "Exportar";
 
-/* Class = "NSTextFieldCell"; title = "Habilitar/Desabilitar"; ObjectID = "WZs-f9-lGW"; */
+/* Class = "NSTextFieldCell"; title = "Enable/Disable"; ObjectID = "WZs-f9-lGW"; */
 "WZs-f9-lGW.title" = "Habilitar/Desabilitar";
 
-/* Class = "NSTextFieldCell"; title = "Adicionar Pasta"; ObjectID = "hoO-RC-sTG"; */
+/* Class = "NSTextFieldCell"; title = "Add Folder"; ObjectID = "hoO-RC-sTG"; */
 "hoO-RC-sTG.title" = "Adicionar Pasta";
 
-/* Class = "NSTextFieldCell"; title = "Atalho"; ObjectID = "pfw-sA-4aA"; */
+/* Class = "NSTextFieldCell"; title = "Shortcut"; ObjectID = "pfw-sA-4aA"; */
 "pfw-sA-4aA.title" = "Atalho";
 
-/* Class = "NSTextFieldCell"; title = "título da pasta"; ObjectID = "rI9-rT-YTs"; */
+/* Class = "NSTextFieldCell"; title = "folder title"; ObjectID = "rI9-rT-YTs"; */
 "rI9-rT-YTs.title" = "título da pasta";
 
-/* Class = "NSTextFieldCell"; title = "Compartilhar snippets"; ObjectID = "wwo-lh-lMK"; */
+/* Class = "NSTextFieldCell"; title = "Share snippets"; ObjectID = "wwo-lh-lMK"; */
 "wwo-lh-lMK.title" = "Compartilhar snippets";
 
-/* Class = "NSTextFieldCell"; title = "Adicionar Snippet"; ObjectID = "xPC-Uv-z03"; */
+/* Class = "NSTextFieldCell"; title = "Add Snippet"; ObjectID = "xPC-Uv-z03"; */
 "xPC-Uv-z03.title" = "Adicionar Snippet";
 
-/* Class = "NSTextFieldCell"; title = "Em Breve"; ObjectID = "yzF-k8-xUT"; */
+/* Class = "NSTextFieldCell"; title = "Coming Soon"; ObjectID = "yzF-k8-xUT"; */
 "yzF-k8-xUT.title" = "Em Breve";
