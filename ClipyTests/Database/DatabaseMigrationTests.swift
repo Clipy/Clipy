@@ -84,9 +84,12 @@ final class DatabaseMigrationTests {
 
         try database.read { database in
             let histories = try PasteboardHistory.all.fetchAll(database)
-            let assets = try PasteboardHistoryAsset.all.fetchAll(database)
+            let assets = try PasteboardHistoryAsset.all
+                .order(by: \.index)
+                .fetchAll(database)
 
-            let id = PasteboardHistory.ID(rawValue: "d0897a166c36fb32746d988ff412d74bb34cf271ab33a70520a7bbdecbe7a500")
+            let content = try #require(data.toPasteboardContent())
+            let id = PasteboardHistory.ID(rawValue: content.hash)
             #expect(histories.count == 1)
             #expect(histories.first?.id == id)
             #expect(histories.first?.title == "String")
