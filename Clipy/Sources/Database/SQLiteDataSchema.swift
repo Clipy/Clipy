@@ -38,6 +38,7 @@ struct PasteboardHistoryAsset: Identifiable, Equatable {
     @Column(primaryKey: true)
     let id: ID
     let pasteboardHistoryID: PasteboardHistory.ID
+    let index: Int
     let pasteboardType: NSPasteboard.PasteboardType
     let data: Data
 }

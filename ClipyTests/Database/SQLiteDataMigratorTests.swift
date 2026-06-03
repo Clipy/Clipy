@@ -62,7 +62,7 @@ struct SQLiteDataMigratorTests {
             #expect(
                 indexes == [
                     "index_pasteboardHistories_on_updateAt",
-                    "index_pasteboardHistoryAssets_on_pasteboardHistoryID",
+                    "index_pasteboardHistoryAssets_on_pasteboardHistoryID_index",
                     "index_snippetFolders_on_index",
                     "index_snippets_on_folderID",
                     "index_snippets_on_folderID_index",
@@ -106,6 +106,7 @@ struct SQLiteDataMigratorTests {
                 columnNames == [
                     "data",
                     "id",
+                    "index",
                     "pasteboardHistoryID",
                     "pasteboardType"
                 ]

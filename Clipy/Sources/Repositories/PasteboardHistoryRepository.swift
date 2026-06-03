@@ -99,6 +99,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
             try database.read { database in
                 let assets = try PasteboardHistoryAsset
                     .where { $0.pasteboardHistoryID.eq(id) }
+                    .order(by: \.index)
                     .fetchAll(database)
                 return PasteboardContent(
                     assets: assets.map {
@@ -128,8 +129,13 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                 // When a history already exists, its ID is derived from the content hash,
                 // so the assets are guaranteed to be identical and do not need to be inserted again.
                 if !exists {
-                    let assets = content.assets.map {
-                        PasteboardHistoryAsset.Draft(pasteboardHistoryID: id, pasteboardType: $0.type, data: $0.data)
+                    let assets = content.assets.enumerated().map { index, asset in
+                        PasteboardHistoryAsset.Draft(
+                            pasteboardHistoryID: id,
+                            index: index,
+                            pasteboardType: asset.type,
+                            data: asset.data
+                        )
                     }
                     try PasteboardHistoryAsset.insert { assets }.execute(database)
                     if let thumbnailAsset = thumbnailAsset(from: content, id: id) {

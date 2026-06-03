@@ -84,6 +84,22 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func fetchContentPreservesAssetOrder() throws {
+        let content = PasteboardContent(
+            assets: [
+                PasteboardContent.Asset(type: .fileURL, data: Data("file1".utf8)),
+                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
+                PasteboardContent.Asset(type: .fileURL, data: Data("file2".utf8))
+            ]
+        )
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+
+        repository.save(id: id, content: content, updateAt: 1)
+
+        #expect(repository.fetchContent(id: id) == content)
+    }
+
+    @Test
     func fetchHistoryDetailsOrdersAndLimitsHistories() throws {
         let content = PasteboardContent("First")
         let content2 = PasteboardContent("Second")

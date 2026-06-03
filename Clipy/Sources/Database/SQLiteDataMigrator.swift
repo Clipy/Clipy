@@ -46,6 +46,7 @@ extension DatabaseMigrator {
                 CREATE TABLE "pasteboardHistoryAssets" (
                   "id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
                   "pasteboardHistoryID" TEXT NOT NULL,
+                  "index" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
                   "pasteboardType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
                   "data" BLOB NOT NULL,
                   FOREIGN KEY ("pasteboardHistoryID")
@@ -58,8 +59,8 @@ extension DatabaseMigrator {
 
             try #sql(
                 """
-                CREATE INDEX "index_pasteboardHistoryAssets_on_pasteboardHistoryID"
-                ON "pasteboardHistoryAssets" ("pasteboardHistoryID")
+                CREATE INDEX "index_pasteboardHistoryAssets_on_pasteboardHistoryID_index"
+                ON "pasteboardHistoryAssets" ("pasteboardHistoryID", "index")
                 """
             )
             .execute(database)
