@@ -35,6 +35,10 @@ extension NSPasteboard.PasteboardType {
         return NSPasteboard.PasteboardType(rawValue: "NSPDFPboardType")
     }
 
+    static var deprecatedFilenames: NSPasteboard.PasteboardType {
+        return NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")
+    }
+
     static var deprecatedURL: NSPasteboard.PasteboardType {
         return NSPasteboard.PasteboardType(rawValue: "NSURLPboardType")
     }

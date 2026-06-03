@@ -54,10 +54,29 @@ struct PasteboardAvailableTypeTests {
     }
 
     @Test
+    func availableTypesSkipsTIFFWhenPNGIsAvailable() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.tiff, .deprecatedTIFF, .png],
+            storeAvailableTypes: [.tiff]
+        )
+        #expect(availableTypes == [.png])
+    }
+
+    @Test
+    func availableTypesUsesTIFFWhenOnlyTIFFTypesAreAvailable() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.tiff, .deprecatedTIFF],
+            storeAvailableTypes: [.tiff]
+        )
+        #expect(availableTypes == [.tiff])
+    }
+
+    @Test
     func availableTypesSkipsDeprecatedTypesWhenModernTypesAreAvailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [
                 .deprecatedString,
+                .deprecatedFilenames,
                 .fileURL,
                 .string,
                 .deprecatedPDF,
@@ -71,9 +90,9 @@ struct PasteboardAvailableTypeTests {
     @Test
     func availableTypesUsesDeprecatedTypesWhenModernTypesAreUnavailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
-            from: [.deprecatedURL, .deprecatedString, .deprecatedPDF],
-            storeAvailableTypes: [.string, .pdf, .url]
+            from: [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF],
+            storeAvailableTypes: [.filenames, .string, .pdf, .url, .tiff]
         )
-        #expect(availableTypes == [.deprecatedURL, .deprecatedString, .deprecatedPDF])
+        #expect(availableTypes == [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF])
     }
 }

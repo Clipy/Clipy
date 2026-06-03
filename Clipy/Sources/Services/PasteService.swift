@@ -107,18 +107,8 @@ extension PasteService {
             return
         }
 
-        var countsByType: [NSPasteboard.PasteboardType: Int] = [:]
-        let items = content.assets.reduce(into: [NSPasteboardItem]()) { items, asset in
-            let index = countsByType[asset.type] ?? 0
-            countsByType[asset.type] = index + 1
-            if !items.indices.contains(index) {
-                items.append(NSPasteboardItem())
-            }
-            items[index].setData(asset.data, forType: asset.type)
-        }
         let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.writeObjects(items)
+        content.writeObjects(to: pasteboard)
     }
 }
 

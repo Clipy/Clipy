@@ -31,6 +31,9 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
         return uniquePasteboardTypes.compactMap { pasteboardType -> NSPasteboard.PasteboardType? in
             guard let availableType = pasteboardType.availableType,
                 storeAvailableTypes.contains(availableType) else { return nil }
+            if pasteboardType.isCovered(by: uniquePasteboardTypes) {
+                return nil
+            }
             if let modernType = pasteboardType.modernType,
                uniquePasteboardTypes.contains(modernType) {
                 return nil
@@ -51,11 +54,11 @@ private extension NSPasteboard.PasteboardType {
             return .rtfd
         case .pdf, .deprecatedPDF:
             return .pdf
-        case .fileURL:
+        case .fileURL, .deprecatedFilenames:
             return .filenames
         case .URL, .deprecatedURL:
             return .url
-        case .tiff, .deprecatedTIFF:
+        case .png, .tiff, .deprecatedTIFF:
             return .tiff
         default:
             return nil
@@ -74,10 +77,23 @@ private extension NSPasteboard.PasteboardType {
             return .pdf
         case .deprecatedURL:
             return .URL
+        case .deprecatedFilenames:
+            return .fileURL
         case .deprecatedTIFF:
             return .tiff
         default:
             return nil
+        }
+    }
+
+    func isCovered(by pasteboardTypes: OrderedSet<NSPasteboard.PasteboardType>) -> Bool {
+        switch self {
+        case .tiff, .deprecatedTIFF:
+            // Prefer PNG when it is available. Undefined image types can still be
+            // recovered as TIFF from the pasteboard root fallback.
+            return pasteboardTypes.contains(.png)
+        default:
+            return false
         }
     }
 }

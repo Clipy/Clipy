@@ -30,6 +30,100 @@ struct PasteboardContentTests {
     }
 
     @Test
+    func pasteboardInitializerSortsAssetsByRequestedTypes() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.clearContents() }
+
+        let stringAsset = PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
+        let firstPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf1".utf8))
+        let secondPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf2".utf8))
+        let copiedContent = PasteboardContent(
+            assets: [
+                stringAsset,
+                firstPDFAsset,
+                secondPDFAsset
+            ]
+        )
+        #expect(copiedContent.writeObjects(to: pasteboard))
+
+        let content = try #require(PasteboardContent(pasteboard: pasteboard, types: [.pdf, .string]))
+
+        #expect(content.assets == [firstPDFAsset, secondPDFAsset, stringAsset])
+    }
+
+    @Test
+    func pasteboardInitializerFallsBackToRootFilenames() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.clearContents() }
+
+        let stringAsset = PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
+        let tiffData = try #require(NSImage.create(with: .blue, size: NSSize(width: 4, height: 4)).tiffRepresentation)
+        let tiffAsset = PasteboardContent.Asset(type: .tiff, data: tiffData)
+        let filenamesAsset = try deprecatedFilenamesAsset(["/tmp/file.txt"])
+        let copiedContent = PasteboardContent(
+            assets: [
+                stringAsset,
+                tiffAsset,
+                filenamesAsset
+            ]
+        )
+        #expect(copiedContent.writeObjects(to: pasteboard))
+
+        let content = try #require(PasteboardContent(
+            pasteboard: pasteboard,
+            types: [.tiff, .deprecatedFilenames, .string]
+        ))
+
+        #expect(content.assets == [tiffAsset, filenamesAsset, stringAsset])
+    }
+
+    @Test
+    func writeObjectsWritesAndRestoresPasteboardItemsAndRootFilenames() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.clearContents() }
+
+        let firstStringAsset = PasteboardContent.Asset(type: .string, data: Data("First".utf8))
+        let firstPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf1".utf8))
+        let tiffData = try #require(NSImage.create(with: .blue, size: NSSize(width: 4, height: 4)).tiffRepresentation)
+        let tiffAsset = PasteboardContent.Asset(type: .tiff, data: tiffData)
+        let filenamesAsset = try deprecatedFilenamesAsset(["/tmp/first.txt", "/tmp/second.txt"])
+        let secondStringAsset = PasteboardContent.Asset(type: .string, data: Data("Second".utf8))
+        let secondPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf2".utf8))
+        let content = PasteboardContent(
+            assets: [
+                firstStringAsset,
+                firstPDFAsset,
+                tiffAsset,
+                filenamesAsset,
+                secondStringAsset,
+                secondPDFAsset
+            ]
+        )
+
+        let items = content.pasteboardItems
+        #expect(items.count == 2)
+        #expect(items[0].types == [.string, .pdf, .tiff])
+        #expect(items[1].types == [.string, .pdf])
+        #expect(content.writeObjects(to: pasteboard))
+        #expect(pasteboard.data(forType: .deprecatedFilenames) != nil)
+
+        let restoredContent = try #require(PasteboardContent(
+            pasteboard: pasteboard,
+            types: [.string, .pdf, .deprecatedFilenames, .tiff]
+        ))
+        #expect(
+            restoredContent.assets == [
+                firstStringAsset,
+                secondStringAsset,
+                firstPDFAsset,
+                secondPDFAsset,
+                filenamesAsset,
+                tiffAsset
+            ]
+        )
+    }
+
+    @Test
     func imageInitializerStoresTiffAsset() throws {
         let image = NSImage.create(with: .red, size: NSSize(width: 10, height: 10))
         let content = try #require(PasteboardContent(image: image))
@@ -142,4 +236,15 @@ struct PasteboardContentTests {
         #expect(content.hash != changedDataContent.hash)
         #expect(content.hash != changedOrderContent.hash)
     }
+}
+
+private func deprecatedFilenamesAsset(_ filenames: [String]) throws -> PasteboardContent.Asset {
+    PasteboardContent.Asset(
+        type: .deprecatedFilenames,
+        data: try PropertyListSerialization.data(
+            fromPropertyList: filenames,
+            format: .xml,
+            options: 0
+        )
+    )
 }

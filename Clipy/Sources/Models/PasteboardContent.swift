@@ -46,10 +46,23 @@ struct PasteboardContent: Equatable {
             .first(where: { ["jpg", "jpeg", "png", "bmp", "tiff"].contains($0.pathExtension.lowercased()) })
         if let imageURL {
             return NSImage(contentsOf: imageURL)?.resizeImage(CGFloat(width), CGFloat(height))
-        } else if let data = data(for: .tiff) ?? data(for: .deprecatedTIFF) {
+        } else if let data = data(for: .png) ?? data(for: .tiff) ?? data(for: .deprecatedTIFF) {
             return NSImage(data: data)?.resizeImage(CGFloat(width), CGFloat(height))
         }
         return nil
+    }
+    var pasteboardItems: [NSPasteboardItem] {
+        var countsByType: [NSPasteboard.PasteboardType: Int] = [:]
+        return assets
+            .filter { $0.type != .deprecatedFilenames }
+            .reduce(into: [NSPasteboardItem]()) { items, asset in
+                let index = countsByType[asset.type] ?? 0
+                countsByType[asset.type] = index + 1
+                if !items.indices.contains(index) {
+                    items.append(NSPasteboardItem())
+                }
+                items[index].setData(asset.data, forType: asset.type)
+            }
     }
 
     // MARK: - Initialize
@@ -67,15 +80,25 @@ struct PasteboardContent: Equatable {
     }
 
     init?(pasteboard: NSPasteboard, types: [NSPasteboard.PasteboardType]) {
-        let assets = pasteboard.pasteboardItems?.compactMap { item -> [Asset]? in
+        let itemAssets = pasteboard.pasteboardItems?.compactMap { item -> [Asset]? in
             item.types.filter { types.contains($0) }
                 .compactMap { type -> Asset? in
                     guard let data = item.data(forType: type) else { return nil }
                     return Asset(type: type, data: data)
                 }
         }
-        .flatMap { $0 }
-        guard let assets, !assets.isEmpty else { return nil }
+        .flatMap { $0 } ?? []
+        // Fall back to the pasteboard root for types that may only be available there,
+        // such as .tiff and .deprecatedFilenames.
+        let itemAssetTypes = itemAssets.map(\.type)
+        let rootAssets = types
+            .filter { !itemAssetTypes.contains($0) }
+            .compactMap { type -> Asset? in
+                guard let data = pasteboard.data(forType: type) else { return nil }
+                return Asset(type: type, data: data)
+            }
+        let assets = (itemAssets + rootAssets).sorted(by: types)
+        guard !assets.isEmpty else { return nil }
         self.init(assets: assets)
     }
 
@@ -85,9 +108,36 @@ struct PasteboardContent: Equatable {
     }
 }
 
+extension PasteboardContent {
+    @discardableResult
+    func writeObjects(to pasteboard: NSPasteboard) -> Bool {
+        let pasteboardItems = self.pasteboardItems
+        let filenamesAsset = self.assets.first(where: { $0.type == .deprecatedFilenames })
+
+        pasteboard.clearContents()
+        var didWriteFilenames = true
+        // File URLs are normally written as per-item fileURL data.
+        // Keep NSFilenamesPboardType on the pasteboard root for legacy history entries
+        // and apps that only understand the deprecated filenames flavor.
+        if let filenamesAsset {
+            didWriteFilenames = pasteboard.setData(filenamesAsset.data, forType: filenamesAsset.type)
+        }
+        let didWriteItems = pasteboardItems.isEmpty || pasteboard.writeObjects(pasteboardItems)
+        return didWriteFilenames && didWriteItems
+    }
+}
+
 private extension PasteboardContent {
     func data(for type: NSPasteboard.PasteboardType) -> Data? {
         assets.first(where: { $0.type == type })?.data
+    }
+}
+
+private extension [PasteboardContent.Asset] {
+    func sorted(by types: [NSPasteboard.PasteboardType]) -> Self {
+        types.flatMap { type in
+            filter { $0.type == type }
+        }
     }
 }
 

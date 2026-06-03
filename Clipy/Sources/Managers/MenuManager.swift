@@ -345,7 +345,7 @@ private extension MenuManager {
             menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
         }
 
-        if primaryPboardType == .tiff || primaryPboardType == .deprecatedTIFF {
+        if primaryPboardType == .png || primaryPboardType == .tiff || primaryPboardType == .deprecatedTIFF {
             menuItem.title = menuItemTitle("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         } else if primaryPboardType == .pdf || primaryPboardType == .deprecatedPDF {
             menuItem.title = menuItemTitle("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)

@@ -43,6 +43,7 @@ final class ClipService {
             })
             .disposed(by: disposeBag)
         // Store types
+        storeTypes = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: NSNumber] ?? [:]
         AppEnvironment.current.defaults.rx
             .observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
             .compactMap { $0 }
@@ -75,10 +76,12 @@ extension ClipService {
     fileprivate func create() {
         lock.lock(); defer { lock.unlock() }
 
-        // Pasteboard types
         let pasteboard = NSPasteboard.general
+        // Prefer the root pasteboard types because they are comprehensive and can include root-only
+        // fallback types such as .deprecatedFilenames and .tiff. Fall back to item types when needed,
+        // then let PasteboardAvailableType filter the storeable types.
         let types = PasteboardAvailableType.availableTypes(
-            from: pasteboard.pasteboardItems?.flatMap { $0.types } ?? [],
+            from: pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? [],
             storeAvailableTypes: storeTypes.filter { $0.value.boolValue }.compactMap { PasteboardAvailableType(rawValue: $0.key) }
         )
         guard !types.isEmpty else { return }
