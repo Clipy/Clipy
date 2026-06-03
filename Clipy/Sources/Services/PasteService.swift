@@ -61,10 +61,7 @@ extension PasteService {
         let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
         let isDeleteHistory = self.isDeleteHistory
         guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
-            guard copyToPasteboard(with: content) else {
-                NSSound.beep()
-                return
-            }
+            copyToPasteboard(with: content)
             paste()
             return
         }
@@ -75,17 +72,11 @@ extension PasteService {
         }
         // Paste history
         if isPastePlainText {
-            if copyToPasteboard(with: content.stringValue) {
-                paste()
-            } else {
-                NSSound.beep()
-            }
+            copyToPasteboard(with: content.stringValue)
+            paste()
         } else if isPasteAndDeleteHistory {
-            if copyToPasteboard(with: content) {
-                paste()
-            } else {
-                NSSound.beep()
-            }
+            copyToPasteboard(with: content)
+            paste()
         }
         // Delete clip
         if isDeleteHistory || isPasteAndDeleteHistory {
@@ -93,23 +84,24 @@ extension PasteService {
         }
     }
 
-    func copyToPasteboard(with string: String) -> Bool {
+    func copyToPasteboard(with string: String) {
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
         pasteboard.declareTypes([.string], owner: nil)
-        return pasteboard.setString(string, forType: .string)
+        pasteboard.setString(string, forType: .string)
     }
 
-    private func copyToPasteboard(with content: PasteboardContent) -> Bool {
+    private func copyToPasteboard(with content: PasteboardContent) {
         lock.lock(); defer { lock.unlock() }
 
         if isPastePlainText {
-            return copyToPasteboard(with: content.stringValue)
+            copyToPasteboard(with: content.stringValue)
+            return
         }
 
         let pasteboard = NSPasteboard.general
-        return content.writeObjects(to: pasteboard)
+        content.writeObjects(to: pasteboard)
     }
 }
 

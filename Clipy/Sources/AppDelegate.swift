@@ -108,10 +108,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             NSSound.beep()
             return
         }
-        guard AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content) else {
-            NSSound.beep()
-            return
-        }
+        AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
         AppEnvironment.current.pasteService.paste()
     }
 

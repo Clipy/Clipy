@@ -113,21 +113,18 @@ struct PasteboardContent: Equatable {
 }
 
 extension PasteboardContent {
-    @discardableResult
-    func writeObjects(to pasteboard: NSPasteboard) -> Bool {
+    func writeObjects(to pasteboard: NSPasteboard) {
         let pasteboardItems = self.pasteboardItems
         let filenamesAsset = self.assets.first(where: { $0.type == .deprecatedFilenames })
 
         pasteboard.clearContents()
-        var didWriteFilenames = true
         // File URLs are normally written as per-item fileURL data.
         // Keep NSFilenamesPboardType on the pasteboard root for legacy history entries
         // and apps that only understand the deprecated filenames flavor.
         if let filenamesAsset {
-            didWriteFilenames = pasteboard.setData(filenamesAsset.data, forType: filenamesAsset.type)
+            pasteboard.setData(filenamesAsset.data, forType: filenamesAsset.type)
         }
-        let didWriteItems = pasteboardItems.isEmpty || pasteboard.writeObjects(pasteboardItems)
-        return didWriteFilenames && didWriteItems
+        pasteboard.writeObjects(pasteboardItems)
     }
 }
 

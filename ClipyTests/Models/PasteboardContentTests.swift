@@ -53,7 +53,7 @@ struct PasteboardContentTests {
                 ]
             )
         )
-        #expect(copiedContent.writeObjects(to: pasteboard))
+        copiedContent.writeObjects(to: pasteboard)
 
         let content = try #require(PasteboardContent(pasteboard: pasteboard, types: [.pdf, .string]))
 
@@ -78,7 +78,7 @@ struct PasteboardContentTests {
                 ]
             )
         )
-        #expect(copiedContent.writeObjects(to: pasteboard))
+        copiedContent.writeObjects(to: pasteboard)
 
         let content = try #require(PasteboardContent(
             pasteboard: pasteboard,
@@ -117,7 +117,7 @@ struct PasteboardContentTests {
         #expect(items.count == 2)
         #expect(items[0].types == [.string, .pdf, .tiff])
         #expect(items[1].types == [.string, .pdf])
-        #expect(content.writeObjects(to: pasteboard))
+        content.writeObjects(to: pasteboard)
         #expect(pasteboard.data(forType: .deprecatedFilenames) != nil)
 
         let restoredContent = try #require(PasteboardContent(
