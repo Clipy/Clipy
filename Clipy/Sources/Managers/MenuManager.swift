@@ -349,7 +349,7 @@ private extension MenuManager {
             menuItem.title = menuItemTitle("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         } else if primaryPboardType == .pdf || primaryPboardType == .deprecatedPDF {
             menuItem.title = menuItemTitle("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .fileURL {
+        } else if primaryPboardType == .fileURL || primaryPboardType == .deprecatedFilenames {
             menuItem.title = menuItemTitle("(Files)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
 
