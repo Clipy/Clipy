@@ -36,6 +36,18 @@ final class PasteService {
         let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
         return isPressedModifier(modifierSetting)
     }
+    fileprivate var isPasteCommaSeparatedList: Bool {
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pasteCommaSeparatedList) else { return false }
+
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pasteCommaSeparatedListModifier)
+        return isPressedModifier(modifierSetting)
+    }
+    fileprivate var isPasteSpaceSeparatedList: Bool {
+        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pasteSpaceSeparatedList) else { return false }
+
+        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pasteSpaceSeparatedListModifier)
+        return isPressedModifier(modifierSetting)
+    }
 
     // MARK: - Modifiers
     private func isPressedModifier(_ flag: Int) -> Bool {
@@ -112,7 +124,23 @@ extension PasteService {
             switch type {
             case .deprecatedString:
                 let pbString = data.stringValue
-                pasteboard.setString(pbString, forType: .deprecatedString)
+                if isPasteCommaSeparatedList {
+                    var commaSeparatedList = pbString.replacingOccurrences(of: "\r\n", with: ",", options: .regularExpression)
+                    commaSeparatedList = commaSeparatedList.replacingOccurrences(of: "\n", with: ",", options: .regularExpression)
+                    if commaSeparatedList.hasSuffix(",") {
+                        commaSeparatedList = String(commaSeparatedList.dropLast())
+                    }
+                    pasteboard.setString(commaSeparatedList, forType: .deprecatedString)
+                } else if isPasteSpaceSeparatedList {
+                    var spaceSeparatedList = pbString.replacingOccurrences(of: "\r\n", with: " ", options: .regularExpression)
+                    spaceSeparatedList = spaceSeparatedList.replacingOccurrences(of: "\n", with: " ", options: .regularExpression)
+                    if spaceSeparatedList.hasSuffix(" ") {
+                        spaceSeparatedList = String(spaceSeparatedList.dropLast())
+                    }
+                    pasteboard.setString(spaceSeparatedList, forType: .deprecatedString)
+                } else {
+                    pasteboard.setString(pbString, forType: .deprecatedString)
+                }
             case .deprecatedRTFD:
                 guard let rtfData = data.RTFData else { return }
                 pasteboard.setData(rtfData, forType: .deprecatedRTFD)

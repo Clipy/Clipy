@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,11 +14,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="229"/>
+            <rect key="frame" x="0.0" y="0.0" width="478" height="315"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aNl-8j-KxN" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="138" width="237" height="18"/>
+                    <rect key="frame" x="59" y="224" width="237" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Paste as PlainText" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="r0C-kF-Q0z">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -28,7 +29,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="3h0-VG-ZCf">
-                    <rect key="frame" x="59" y="162" width="210" height="17"/>
+                    <rect key="frame" x="59" y="248" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Action" id="6RM-Ow-USQ">
                         <font key="font" size="13" name=".HiraKakuInterface-W6"/>
@@ -37,7 +38,7 @@
                     </textFieldCell>
                 </textField>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fya-Fc-ZWk" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="18" width="364" height="18"/>
+                    <rect key="frame" x="59" y="43" width="364" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Save screenshots in history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="pgE-3j-ZEy">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -48,7 +49,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="206" translatesAutoresizingMaskIntoConstraints="NO" id="2iQ-ta-6Z6">
-                    <rect key="frame" x="59" y="42" width="210" height="17"/>
+                    <rect key="frame" x="59" y="67" width="210" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Screenshot" id="0f7-ic-bHq">
                         <font key="font" size="13" name=".HiraKakuInterface-W6"/>
@@ -57,7 +58,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" preferredMaxLayoutWidth="436" translatesAutoresizingMaskIntoConstraints="NO" id="5vu-ef-NJt">
-                    <rect key="frame" x="20" y="185" width="440" height="27"/>
+                    <rect key="frame" x="20" y="271" width="440" height="27"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Beta settings might be moved to a different pane in future versions." id="c4z-RD-3UN">
                         <font key="font" size="13" name=".HiraKakuInterface-W3"/>
@@ -66,7 +67,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cPO-Kb-LG8">
-                    <rect key="frame" x="316" y="133" width="108" height="26"/>
+                    <rect key="frame" x="316" y="219" width="108" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="DPj-O5-TCm">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -86,7 +87,7 @@
                     </connections>
                 </popUpButton>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uSX-Yy-86r" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="107" width="237" height="18"/>
+                    <rect key="frame" x="59" y="193" width="237" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Delete history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="sYs-Da-TSj">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -97,7 +98,7 @@
                     </connections>
                 </button>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xih-Sx-WpW">
-                    <rect key="frame" x="316" y="102" width="108" height="26"/>
+                    <rect key="frame" x="316" y="188" width="108" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Command" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="I0s-bs-Y8L">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -117,7 +118,7 @@
                     </connections>
                 </popUpButton>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="195-Rx-goW" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
-                    <rect key="frame" x="59" y="76" width="237" height="18"/>
+                    <rect key="frame" x="59" y="162" width="237" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Paste and delete history" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="M5n-Mr-02l">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -128,9 +129,9 @@
                     </connections>
                 </button>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pwa-Yn-1fY">
-                    <rect key="frame" x="316" y="71" width="108" height="26"/>
+                    <rect key="frame" x="316" y="157" width="108" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Command" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="RLH-Us-QOE">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="RLH-Us-QOE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="etc-Mh-b0d">
@@ -147,8 +148,72 @@
                         <binding destination="zBg-yp-15f" name="selectedIndex" keyPath="values.kCPYBetapasteAndDeleteHistoryModifier" id="2KJ-zu-vKd"/>
                     </connections>
                 </popUpButton>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TBu-83-hjb" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                    <rect key="frame" x="57" y="132" width="237" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Paste Comma-separated List" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="ApN-5y-nmY">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="zBg-yp-15f" name="value" keyPath="values.kCPYBetaPasteCommaSeparatedList" id="HMz-6p-nbP"/>
+                    </connections>
+                </button>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yxA-AR-Ut6">
+                    <rect key="frame" x="314" y="127" width="108" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="z9V-wq-2PB" id="65I-kK-xld">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                        <menu key="menu" id="qcX-rH-UBT">
+                            <items>
+                                <menuItem state="on" id="z9V-wq-2PB"/>
+                                <menuItem title="Shift" id="8WA-mG-8fR"/>
+                                <menuItem title="Control" id="DML-C1-Tv3"/>
+                                <menuItem title="Alt" id="X31-J5-pQj"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="zBg-yp-15f" name="selectedIndex" keyPath="values.kCPYBetaPasteCommaSeparatedListModifier" id="DdV-bJ-mlv"/>
+                        <binding destination="zBg-yp-15f" name="enabled" keyPath="values.kCPYBetaCommaify" id="du9-xJ-kdn"/>
+                    </connections>
+                </popUpButton>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nss-6q-IJT" customClass="CPYDesignableButton" customModule="Clipy" customModuleProvider="target">
+                    <rect key="frame" x="57" y="102" width="237" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Paste Space-separated List" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="wxu-zh-cJE">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="zBg-yp-15f" name="value" keyPath="values.kCPYBetaPasteSpaceSeparatedList" id="ZcM-Kp-0JP"/>
+                    </connections>
+                </button>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Vu-wu-77w">
+                    <rect key="frame" x="314" y="97" width="108" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="HLi-wx-hfJ" id="bPT-EL-mvp">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                        <menu key="menu" id="yrV-kx-Y1N">
+                            <items>
+                                <menuItem state="on" id="HLi-wx-hfJ"/>
+                                <menuItem title="Shift" id="WFw-3d-jdP"/>
+                                <menuItem title="Control" id="fJ6-qm-Lw0"/>
+                                <menuItem title="Alt" id="u9H-aM-PNv"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="zBg-yp-15f" name="enabled" keyPath="values.kCPYBetaCommaify" id="akg-e0-fUj"/>
+                        <binding destination="zBg-yp-15f" name="selectedIndex" keyPath="values.kCPYBetaPasteSpaceSeparatedListModifier" id="i69-ml-Kjw"/>
+                    </connections>
+                </popUpButton>
             </subviews>
-            <point key="canvasLocation" x="445" y="443.5"/>
+            <point key="canvasLocation" x="444" y="486.5"/>
         </customView>
         <userDefaultsController id="zPt-b5-lYK"/>
         <userDefaultsController representsSharedInstance="YES" id="zBg-yp-15f"/>
