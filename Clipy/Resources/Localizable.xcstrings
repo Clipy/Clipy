@@ -3,6 +3,12 @@
   "strings" : {
     "Add" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31,6 +37,12 @@
     },
     "Are you sure want to delete this item?" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tem certeza de que deseja excluir este item?"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -59,6 +71,12 @@
     },
     "Are you sure you want to clear your clipboard history?" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tem certeza de que deseja limpar seu histórico da área de transferência?"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -87,6 +105,12 @@
     },
     "Cancel" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -115,6 +139,12 @@
     },
     "Clear History" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar Histórico"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -143,6 +173,12 @@
     },
     "Delete Item" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir Item"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -171,6 +207,12 @@
     },
     "Don't Launch" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não Iniciar"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -199,6 +241,12 @@
     },
     "Edit Snippets" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar Snippets..."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -234,6 +282,12 @@
     "General" : {
       "extractionState" : "manual",
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geral"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -268,6 +322,12 @@
     },
     "History" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Histórico"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -296,6 +356,12 @@
     },
     "Launch Clipy on system startup?" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar o Clipy ao iniciar o sistema?"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -324,6 +390,12 @@
     },
     "Launch on system startup" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar com o sistema"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -353,6 +425,12 @@
     "Menu" : {
       "extractionState" : "manual",
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -387,6 +465,12 @@
     },
     "Open System Preferences" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Preferências do Sistema"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -415,6 +499,12 @@
     },
     "Please allow Accessibility" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, permita Acessibilidade"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -449,6 +539,12 @@
     },
     "Please fill in the contents of the snippet" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, preencha o conteúdo do snippet"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -477,6 +573,12 @@
     },
     "Preferences" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferências..."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -511,6 +613,12 @@
     },
     "Quit Clipy" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encerrar Clipy"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -540,6 +648,12 @@
     "Shortcuts" : {
       "extractionState" : "manual",
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -574,6 +688,12 @@
     },
     "Snippet" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snippet"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -602,6 +722,12 @@
     },
     "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para realizar esta ação, permita Acessibilidade nas preferências de Segurança e Privacidade localizadas nas Preferências do Sistema."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -637,6 +763,12 @@
     "Updates" : {
       "extractionState" : "manual",
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualizações"
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -671,6 +803,12 @@
     },
     "You can change this setting in the Preferences if you want" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você pode alterar essa configuração nas Preferências, se desejar."
+          }
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
