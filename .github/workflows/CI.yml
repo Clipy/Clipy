@@ -51,4 +51,5 @@ jobs:
           -skipMacroValidation \
           clean build
 
-        lipo -verify_arch arm64 "$GITHUB_WORKSPACE/build/Build/Products/Release/Clipy.app/Contents/MacOS/Clipy"
+        binary="$GITHUB_WORKSPACE/build/Build/Products/Release/Clipy.app/Contents/MacOS/Clipy"
+        lipo "$binary" -verify_arch arm64
