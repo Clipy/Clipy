@@ -41,6 +41,7 @@ final class MenuManager: NSObject {
     @Dependency(\.mainQueue)
     private var mainQueue
     private var cancellables: Set<AnyCancellable> = []
+    private var snippetFolderDetails = [SnippetFolderDetail]()
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -105,7 +106,10 @@ private extension MenuManager {
             .store(in: &cancellables)
         snippetRepository.observeFolderDetails()
             .receive(on: mainQueue)
-            .sink { [weak self] _ in self?.createClipMenu() }
+            .sink { [weak self] folderDetails in
+                self?.snippetFolderDetails = folderDetails
+                self?.createClipMenu()
+            }
             .store(in: &cancellables)
         // Menu icon
         AppEnvironment.current.defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem, retainSelf: false)
@@ -180,8 +184,8 @@ private extension MenuManager {
         addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)
 
-        addSnippetItems(clipMenu!, separateMenu: true)
-        addSnippetItems(snippetMenu!, separateMenu: false)
+        addSnippetItems(clipMenu!, separateMenu: true, details: snippetFolderDetails)
+        addSnippetItems(snippetMenu!, separateMenu: false, details: snippetFolderDetails)
 
         clipMenu?.addItem(NSMenuItem.separator())
 
@@ -368,8 +372,7 @@ private extension MenuManager {
 
 // MARK: - Snippets
 private extension MenuManager {
-    func addSnippetItems(_ menu: NSMenu, separateMenu: Bool) {
-        let details = snippetRepository.fetchFolderDetails()
+    func addSnippetItems(_ menu: NSMenu, separateMenu: Bool, details: [SnippetFolderDetail]) {
         guard !details.isEmpty else { return }
 
         if separateMenu {
