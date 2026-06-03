@@ -14,7 +14,6 @@ import Cocoa
 import Dependencies
 import LoginServiceKit
 import Magnet
-import RealmSwift
 import RxCocoa
 import RxSwift
 import Screeen

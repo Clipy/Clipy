@@ -19,6 +19,7 @@
 		C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */; };
 		C5700B4C2FC5C3D500C8F965 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = C5700B4B2FC5C3D500C8F965 /* Dependencies */; };
 		C5700B4E2FC5C3D500C8F965 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C5700B4D2FC5C3D500C8F965 /* DependenciesTestSupport */; };
+		C5700B502FD106000C8F965 /* DatabaseMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B4F2FD106000C8F965 /* DatabaseMigrationTests.swift */; };
 		C57100012FCAE00000C8F965 /* SnippetRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100002FCAE00000C8F965 /* SnippetRepositoryTests.swift */; };
 		C57100032FCEB00000C8F965 /* PasteboardHistoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100022FCEB00000C8F965 /* PasteboardHistoryRepository.swift */; };
 		C57100052FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100042FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift */; };
@@ -166,6 +167,7 @@
 		C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetFolderDetail.swift; sourceTree = "<group>"; };
 		C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetRepository.swift; sourceTree = "<group>"; };
 		C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataMigratorTests.swift; sourceTree = "<group>"; };
+		C5700B4F2FD106000C8F965 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
 		C57100002FCAE00000C8F965 /* SnippetRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetRepositoryTests.swift; sourceTree = "<group>"; };
 		C57100022FCEB00000C8F965 /* PasteboardHistoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryRepository.swift; sourceTree = "<group>"; };
 		C57100042FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryRepositoryTests.swift; sourceTree = "<group>"; };
@@ -326,6 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */,
+				C5700B4F2FD106000C8F965 /* DatabaseMigrationTests.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -833,6 +836,7 @@
 		FAC43DD41B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				C5700B502FD106000C8F965 /* DatabaseMigrationTests.swift in Sources */,
 				C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */,
 				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
 				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,

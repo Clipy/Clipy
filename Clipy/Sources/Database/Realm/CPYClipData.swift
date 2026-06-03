@@ -32,7 +32,22 @@ final class CPYClipData: NSObject {
     var PDF: Data?
     var image: NSImage?
 
+    // MARK: - Initialize
+    override init() {
+        super.init()
+    }
+
     // MARK: - NSCoding
+    @objc func encodeWithCoder(_ aCoder: NSCoder) {
+       aCoder.encode(types.map { $0.rawValue }, forKey: kTypesKey)
+       aCoder.encode(stringValue, forKey: kStringValueKey)
+       aCoder.encode(RTFData, forKey: kRTFDataKey)
+       aCoder.encode(PDF, forKey: kPDFKey)
+       aCoder.encode(fileNames, forKey: kFileNamesKey)
+       aCoder.encode(URLs, forKey: kURLsKey)
+       aCoder.encode(image, forKey: kImageKey)
+   }
+
     @objc required init(coder aDecoder: NSCoder) {
         types = (aDecoder.decodeObject(forKey: kTypesKey) as? [String])?.compactMap { NSPasteboard.PasteboardType(rawValue: $0) } ?? []
         fileNames = aDecoder.decodeObject(forKey: kFileNamesKey) as? [String] ?? [String]()
