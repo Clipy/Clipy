@@ -357,7 +357,9 @@ private extension MenuManager {
            let thumbnailAsset = historyDetail.thumbnailAsset,
            let image = NSImage(data: thumbnailAsset.data),
            (thumbnailAsset.kind == .image && isShowImage) || (thumbnailAsset.kind == .colorCode && isShowColorCode) {
-            menuItem.image = image
+            let width = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
+            let height = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
+            menuItem.image = image.aspectFitImage(CGFloat(width), CGFloat(height))
         }
 
         return menuItem
