@@ -12,7 +12,6 @@
 
 import Cocoa
 import IOKit
-import RealmSwift
 
 final class CPYUtilities {
     // ref: https://gist.github.com/vadimpiven/3373bb2592d59560b5d698ba1e2ed7e4
