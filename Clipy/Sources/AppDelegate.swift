@@ -27,6 +27,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private(set) var updaterController: SPUStandardUpdaterController?
     private let screenshotObserver = ScreenShotObserver()
     private let disposeBag = DisposeBag()
+    private let historyPruningScheduler = SerialDispatchQueueScheduler(qos: .utility)
 
     @Dependency(\.context)
     var context
@@ -107,7 +108,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             NSSound.beep()
             return
         }
-        AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
+        guard AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content) else {
+            NSSound.beep()
+            return
+        }
         AppEnvironment.current.pasteService.paste()
     }
 
@@ -195,8 +199,8 @@ extension AppDelegate: NSApplicationDelegate {
         // Screenshot
         screenshotObserver.delegate = self
 
-        // Clean datas every 30 minutes
-        Observable<Int>.interval(.seconds(60 * 30), scheduler: MainScheduler.asyncInstance)
+        // Clean histories every 30 minutes
+        Observable<Int>.interval(.seconds(60 * 30), scheduler: historyPruningScheduler)
             .subscribe(onNext: { [weak self] _ in
                 let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
                 self?.pasteboardHistoryRepository.deleteOverflowingHistories(maxHistorySize: maxHistorySize)

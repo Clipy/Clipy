@@ -40,12 +40,12 @@ struct PasteboardHistoryRepositoryTests {
 
         try await waitUntil { histories.count >= 1 }
 
-        let content = PasteboardContent("First")
+        let content = try #require(PasteboardContent("First"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
         repository.save(id: id, content: content, updateAt: 1)
         try await waitUntil { histories.count >= 2 }
 
-        let content2 = PasteboardContent("Second")
+        let content2 = try #require(PasteboardContent("Second"))
         let id2 = PasteboardHistory.ID(rawValue: content2.hash)
         repository.save(id: id2, content: content2, updateAt: 2)
         try await waitUntil { histories.count >= 3 }
@@ -67,7 +67,7 @@ struct PasteboardHistoryRepositoryTests {
     func saveAndFetchHistory() throws {
         #expect(!repository.hasHistories())
 
-        let content = PasteboardContent("Hello")
+        let content = try #require(PasteboardContent("Hello"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
         let history = PasteboardHistory(id: id, title: "Hello", updateAt: 1)
 
@@ -84,13 +84,20 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func fetchContentReturnsNilForMissingHistory() {
+        #expect(repository.fetchContent(id: PasteboardHistory.ID(rawValue: "missing")) == nil)
+    }
+
+    @Test
     func fetchContentPreservesAssetOrder() throws {
-        let content = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .fileURL, data: Data("file1".utf8)),
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
-                PasteboardContent.Asset(type: .fileURL, data: Data("file2".utf8))
-            ]
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .fileURL, data: Data("file1".utf8)),
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
+                    PasteboardContent.Asset(type: .fileURL, data: Data("file2".utf8))
+                ]
+            )
         )
         let id = PasteboardHistory.ID(rawValue: content.hash)
 
@@ -101,9 +108,9 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func fetchHistoryDetailsOrdersAndLimitsHistories() throws {
-        let content = PasteboardContent("First")
-        let content2 = PasteboardContent("Second")
-        let content3 = PasteboardContent("Third")
+        let content = try #require(PasteboardContent("First"))
+        let content2 = try #require(PasteboardContent("Second"))
+        let content3 = try #require(PasteboardContent("Third"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
         let id2 = PasteboardHistory.ID(rawValue: content2.hash)
         let id3 = PasteboardHistory.ID(rawValue: content3.hash)
@@ -126,8 +133,8 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func fetchHistoryDetailsIncludesThumbnailAssetsOnlyWhenRequested() throws {
-        let textContent = PasteboardContent("Hello")
-        let colorContent = PasteboardContent("#ff0000")
+        let textContent = try #require(PasteboardContent("Hello"))
+        let colorContent = try #require(PasteboardContent("#ff0000"))
         let imageContent = try #require(
             PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
         )
@@ -164,7 +171,7 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func saveExistingHistoryUpdatesStoredHistory() throws {
-        let content = PasteboardContent("Same")
+        let content = try #require(PasteboardContent("Same"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
 
         repository.save(id: id, content: content, updateAt: 1)
@@ -184,7 +191,7 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func deleteHistory() throws {
-        let content = PasteboardContent("Hello")
+        let content = try #require(PasteboardContent("Hello"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
 
         repository.save(id: id, content: content, updateAt: 1)
@@ -196,8 +203,8 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func deleteAll() throws {
-        let content = PasteboardContent("First")
-        let content2 = PasteboardContent("Second")
+        let content = try #require(PasteboardContent("First"))
+        let content2 = try #require(PasteboardContent("Second"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
         let id2 = PasteboardHistory.ID(rawValue: content2.hash)
 
@@ -212,9 +219,9 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func deleteOverflowingHistories() throws {
-        let content = PasteboardContent("First")
-        let content2 = PasteboardContent("Second")
-        let content3 = PasteboardContent("Third")
+        let content = try #require(PasteboardContent("First"))
+        let content2 = try #require(PasteboardContent("Second"))
+        let content3 = try #require(PasteboardContent("Third"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
         let id2 = PasteboardHistory.ID(rawValue: content2.hash)
         let id3 = PasteboardHistory.ID(rawValue: content3.hash)
@@ -237,12 +244,14 @@ struct PasteboardHistoryRepositoryTests {
 }
 
 private extension PasteboardContent {
-    init(_ string: String) {
-        self.init(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: string.data(using: .utf8)!)
-            ]
-        )
+    init?(_ string: String) {
+        guard let data = string.data(using: .utf8) else {
+            return nil
+        }
+        guard let content = PasteboardContent(assets: [PasteboardContent.Asset(type: .string, data: data)]) else {
+            return nil
+        }
+        self = content
     }
 }
 

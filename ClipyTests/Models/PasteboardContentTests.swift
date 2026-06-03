@@ -18,15 +18,22 @@ import Testing
 @Suite
 struct PasteboardContentTests {
     @Test
-    func typesAreDerivedFromAssetsInOrder() {
-        let content = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8)),
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
-                PasteboardContent.Asset(type: .pdf, data: Data("pdf".utf8))
-            ]
+    func typesAreDerivedFromAssetsInOrder() throws {
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8)),
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
+                    PasteboardContent.Asset(type: .pdf, data: Data("pdf".utf8))
+                ]
+            )
         )
         #expect(content.types == [.rtf, .string, .pdf])
+    }
+
+    @Test
+    func assetsInitializerFailsForEmptyAssets() {
+        #expect(PasteboardContent(assets: []) == nil)
     }
 
     @Test
@@ -37,12 +44,14 @@ struct PasteboardContentTests {
         let stringAsset = PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
         let firstPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf1".utf8))
         let secondPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf2".utf8))
-        let copiedContent = PasteboardContent(
-            assets: [
-                stringAsset,
-                firstPDFAsset,
-                secondPDFAsset
-            ]
+        let copiedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    stringAsset,
+                    firstPDFAsset,
+                    secondPDFAsset
+                ]
+            )
         )
         #expect(copiedContent.writeObjects(to: pasteboard))
 
@@ -60,12 +69,14 @@ struct PasteboardContentTests {
         let tiffData = try #require(NSImage.create(with: .blue, size: NSSize(width: 4, height: 4)).tiffRepresentation)
         let tiffAsset = PasteboardContent.Asset(type: .tiff, data: tiffData)
         let filenamesAsset = try deprecatedFilenamesAsset(["/tmp/file.txt"])
-        let copiedContent = PasteboardContent(
-            assets: [
-                stringAsset,
-                tiffAsset,
-                filenamesAsset
-            ]
+        let copiedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    stringAsset,
+                    tiffAsset,
+                    filenamesAsset
+                ]
+            )
         )
         #expect(copiedContent.writeObjects(to: pasteboard))
 
@@ -89,15 +100,17 @@ struct PasteboardContentTests {
         let filenamesAsset = try deprecatedFilenamesAsset(["/tmp/first.txt", "/tmp/second.txt"])
         let secondStringAsset = PasteboardContent.Asset(type: .string, data: Data("Second".utf8))
         let secondPDFAsset = PasteboardContent.Asset(type: .pdf, data: Data("pdf2".utf8))
-        let content = PasteboardContent(
-            assets: [
-                firstStringAsset,
-                firstPDFAsset,
-                tiffAsset,
-                filenamesAsset,
-                secondStringAsset,
-                secondPDFAsset
-            ]
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    firstStringAsset,
+                    firstPDFAsset,
+                    tiffAsset,
+                    filenamesAsset,
+                    secondStringAsset,
+                    secondPDFAsset
+                ]
+            )
         )
 
         let items = content.pasteboardItems
@@ -135,22 +148,28 @@ struct PasteboardContentTests {
     }
 
     @Test
-    func stringPropertiesUseModernAndDeprecatedStringData() {
-        let modernContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
-            ]
+    func stringPropertiesUseModernAndDeprecatedStringData() throws {
+        let modernContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
+                ]
+            )
         )
-        let deprecatedContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .deprecatedString, data: Data("Legacy".utf8))
-            ]
+        let deprecatedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .deprecatedString, data: Data("Legacy".utf8))
+                ]
+            )
         )
-        let mixedContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
-                PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
-            ]
+        let mixedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
+                    PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
+                ]
+            )
         )
 
         #expect(modernContent.isOnlyStringType)
@@ -162,16 +181,20 @@ struct PasteboardContentTests {
     }
 
     @Test
-    func colorCodeImageIsCreatedFromHexString() {
-        let colorContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("#ff0000".utf8))
-            ]
+    func colorCodeImageIsCreatedFromHexString() throws {
+        let colorContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("#ff0000".utf8))
+                ]
+            )
         )
-        let invalidContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("not a color".utf8))
-            ]
+        let invalidContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("not a color".utf8))
+                ]
+            )
         )
 
         #expect(colorContent.colorCodeImage?.size == NSSize(width: 20, height: 20))
@@ -205,30 +228,38 @@ struct PasteboardContentTests {
     }
 
     @Test
-    func contentHashIsStableAndContentBased() {
-        let content = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
-                PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
-            ]
+    func contentHashIsStableAndContentBased() throws {
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
+                    PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
+                ]
+            )
         )
-        let equivalentContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
-                PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
-            ]
+        let equivalentContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8)),
+                    PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
+                ]
+            )
         )
-        let changedDataContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .string, data: Data("Hello!".utf8)),
-                PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
-            ]
+        let changedDataContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data("Hello!".utf8)),
+                    PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8))
+                ]
+            )
         )
-        let changedOrderContent = PasteboardContent(
-            assets: [
-                PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8)),
-                PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
-            ]
+        let changedOrderContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .rtf, data: Data("rtf".utf8)),
+                    PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
+                ]
+            )
         )
 
         #expect(content.hash == "4c6a4ba3cd6a6aad6a2c6620542b11c94edf2af3297611aeba21a86e79dbeb20")

@@ -23,12 +23,15 @@ final class CPYUtilities {
         guard platformExpert != 0 else { return nil }
         defer { IOObjectRelease(platformExpert) }
 
-        return IORegistryEntryCreateCFProperty(
+        guard let property = IORegistryEntryCreateCFProperty(
             platformExpert,
             kIOPlatformUUIDKey as CFString,
             kCFAllocatorDefault,
             0
-        ).takeRetainedValue() as? String
+        ) else {
+            return nil
+        }
+        return property.takeRetainedValue() as? String
     }()
 
     static func initSDKs() {

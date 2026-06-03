@@ -53,6 +53,9 @@ struct PasteboardContent: Equatable {
     }
     var pasteboardItems: [NSPasteboardItem] {
         var countsByType: [NSPasteboard.PasteboardType: Int] = [:]
+        // History assets intentionally do not persist the original NSPasteboardItem boundaries.
+        // Replaying groups assets by each pasteboard type's occurrence index, which keeps
+        // multi-item file writes working without making item boundaries part of the schema.
         return assets
             .filter { $0.type != .deprecatedFilenames }
             .reduce(into: [NSPasteboardItem]()) { items, asset in
@@ -66,7 +69,8 @@ struct PasteboardContent: Equatable {
     }
 
     // MARK: - Initialize
-    init(assets: [Asset]) {
+    init?(assets: [Asset]) {
+        guard !assets.isEmpty else { return nil }
         self.types = assets.map(\.type)
         self.assets = assets
         var data = Data()

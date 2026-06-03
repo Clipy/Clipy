@@ -4,9 +4,9 @@
 //  Clipy
 //  GitHub: https://github.com/clipy
 //  HP: https://clipy-app.com
-// 
+//
 //  Created by Shunsuke Furubayashi on 2026/05/31.
-// 
+//
 //  Copyright © 2015-2026 Clipy Project.
 //
 
