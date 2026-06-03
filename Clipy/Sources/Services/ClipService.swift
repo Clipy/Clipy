@@ -61,8 +61,8 @@ final class ClipService {
         try? FileManager.default.removeItem(atPath: CPYUtilities.applicationSupportFolder())
     }
 
-    func delete(with history: PasteboardHistory) {
-        pasteboardHistoryRepository.deleteHistory(id: history.id)
+    func delete(id: PasteboardHistory.ID) {
+        pasteboardHistoryRepository.deleteHistory(id: id)
     }
 
     func incrementChangeCount() {

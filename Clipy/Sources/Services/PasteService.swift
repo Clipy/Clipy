@@ -11,7 +11,6 @@
 //
 
 import Cocoa
-import Dependencies
 import Foundation
 import Sauce
 
@@ -19,9 +18,6 @@ final class PasteService {
 
     // MARK: - Properties
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
-
-    @Dependency(\.pasteboardHistoryRepository)
-    private var pasteboardHistoryRepository
 
     fileprivate var isPastePlainText: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
@@ -60,9 +56,7 @@ final class PasteService {
 
 // MARK: - Copy
 extension PasteService {
-    func paste(with history: PasteboardHistory) {
-        guard let content = pasteboardHistoryRepository.fetchContent(id: history.id) else { return }
-
+    func paste(id: PasteboardHistory.ID, content: PasteboardContent) {
         // Handling modifier actions
         let isPastePlainText = self.isPastePlainText
         let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
@@ -87,7 +81,7 @@ extension PasteService {
         }
         // Delete clip
         if isDeleteHistory || isPasteAndDeleteHistory {
-            AppEnvironment.current.clipService.delete(with: history)
+            AppEnvironment.current.clipService.delete(id: id)
         }
     }
 

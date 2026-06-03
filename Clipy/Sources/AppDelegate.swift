@@ -94,12 +94,12 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
         CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
-        guard let id = sender.representedObject as? PasteboardHistory.ID, let history = pasteboardHistoryRepository.fetchHistory(id: id) else {
+        guard let id = sender.representedObject as? PasteboardHistory.ID, let content = pasteboardHistoryRepository.fetchContent(id: id) else {
             NSSound.beep()
             return
         }
 
-        AppEnvironment.current.pasteService.paste(with: history)
+        AppEnvironment.current.pasteService.paste(id: id, content: content)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
