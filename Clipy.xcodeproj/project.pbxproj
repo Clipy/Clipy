@@ -248,9 +248,22 @@
 		FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSCoding+Archive.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C51993EC2FD14E8F00364620 /* Exceptions for "GoogleService" folder in "Clipy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitkeep,
+			);
+			target = FAC43DC51B35D8B100C06102 /* Clipy */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C57447452FD142D0000D64D3 /* GoogleService */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C51993EC2FD14E8F00364620 /* Exceptions for "GoogleService" folder in "Clipy" target */,
+			);
 			path = GoogleService;
 			sourceTree = "<group>";
 		};
