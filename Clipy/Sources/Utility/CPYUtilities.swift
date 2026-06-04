@@ -11,6 +11,7 @@
 //
 
 import Cocoa
+import Firebase
 import IOKit
 
 final class CPYUtilities {
@@ -35,11 +36,12 @@ final class CPYUtilities {
     }()
 
     static func initSDKs() {
-        // Fabric
         AppEnvironment.current.defaults.register(defaults: ["NSApplicationCrashOnExceptions": true])
         guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
-        // TODO: - Migrate Firebase Crashlytics
-        CPYUtilities.sendCustomLog(with: "applicationDidFinishLaunching")
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") else { return }
+        guard let options = FirebaseOptions(contentsOfFile: path) else { return }
+        guard FirebaseApp.app() == nil else { return }
+        FirebaseApp.configure(options: options)
     }
 
     static func registerUserDefaultKeys() {
@@ -98,10 +100,5 @@ final class CPYUtilities {
         let paths = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
         let basePath: String = paths.first ?? NSTemporaryDirectory()
         return (basePath as NSString).appendingPathComponent(Constants.Application.name)
-    }
-
-    static func sendCustomLog(with name: String) {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
-        // TODO: - Migrate Firebase Crashlytics
     }
 }

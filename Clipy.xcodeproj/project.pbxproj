@@ -32,6 +32,8 @@
 		C57447232FD09FC6000D64D3 /* CPYFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471D2FD09FC6000D64D3 /* CPYFolder.swift */; };
 		C57447242FD09FC6000D64D3 /* DatabaseMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471A2FD09FC6000D64D3 /* DatabaseMigration.swift */; };
 		C57447272FD09FD9000D64D3 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57447252FD09FD9000D64D3 /* RealmConfiguration.swift */; };
+		C574472C2FD13ADF000D64D3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C574472B2FD13ADF000D64D3 /* FirebaseCrashlytics */; };
+		C574472F2FD13FD9000D64D3 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = C574472E2FD13FD9000D64D3 /* FirebaseAnalyticsCore */; };
 		C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C576AD7B2FBD345000B71213 /* Localizable.xcstrings */; };
 		C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = C587AF502FBF4E040043D5E7 /* SQLiteData */; };
 		C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C5A6BA732FBC5A6E00C8B9EB /* Sparkle */; };
@@ -246,6 +248,14 @@
 		FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSCoding+Archive.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C57447452FD142D0000D64D3 /* GoogleService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GoogleService;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		FAC43DC31B35D8B100C06102 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -255,6 +265,7 @@
 				C53FC6C02FCCA1C400219A25 /* Collections in Frameworks */,
 				FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */,
 				C5D76DAB2FBA9D2E0083839F /* SwiftHEXColors in Frameworks */,
+				C574472C2FD13ADF000D64D3 /* FirebaseCrashlytics in Frameworks */,
 				FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */,
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				C5D76DA52FBA98A90083839F /* AEXML in Frameworks */,
@@ -268,6 +279,7 @@
 				C5700B4C2FC5C3D500C8F965 /* Dependencies in Frameworks */,
 				C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */,
 				C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */,
+				C574472F2FD13FD9000D64D3 /* FirebaseAnalyticsCore in Frameworks */,
 				C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */,
 				C5D3A7622FB86A1C00C9DCB6 /* KeyHolder in Frameworks */,
 			);
@@ -609,6 +621,7 @@
 				FA1DB49D1DDCB405007F95C8 /* Xibs */,
 				FA1DB49C1DDCB3FB007F95C8 /* Sources */,
 				FA1DB4911DDCB205007F95C8 /* Supporting Files */,
+				C57447452FD142D0000D64D3 /* GoogleService */,
 			);
 			path = Clipy;
 			sourceTree = "<group>";
@@ -645,16 +658,22 @@
 				FAC43DC21B35D8B100C06102 /* Sources */,
 				FAC43DC31B35D8B100C06102 /* Frameworks */,
 				FAC43DC41B35D8B100C06102 /* Resources */,
+				C574472D2FD13BAF000D64D3 /* Firebase Crashlytics */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				C5A4B2022FC9D76000B71510 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				C57447452FD142D0000D64D3 /* GoogleService */,
+			);
 			name = Clipy;
 			packageProductDependencies = (
 				C5700B4B2FC5C3D500C8F965 /* Dependencies */,
 				C53FC6BF2FCCA1C400219A25 /* Collections */,
+				C574472B2FD13ADF000D64D3 /* FirebaseCrashlytics */,
+				C574472E2FD13FD9000D64D3 /* FirebaseAnalyticsCore */,
 			);
 			productName = Clipy;
 			productReference = FAC43DC61B35D8B100C06102 /* Clipy.app */;
@@ -737,6 +756,7 @@
 				C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */,
 				C5700B4A2FC5C3D500C8F965 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				C53FC6BE2FCCA1C400219A25 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				C57447282FD13ADF000D64D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 46;
 			productRefGroup = FAC43DC71B35D8B100C06102 /* Products */;
@@ -776,6 +796,34 @@
 			);
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C574472D2FD13BAF000D64D3 /* Firebase Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			name = "Firebase Crashlytics";
+			shellPath = /bin/sh;
+			shellScript = (
+				"GOOGLE_SERVICE_INFO=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"",
+				"",
+				"if [ ! -f \"$GOOGLE_SERVICE_INFO\" ]; then",
+				"  echo \"Skipping Crashlytics: GoogleService-Info.plist is missing.\"",
+				"  exit 0",
+				"fi",
+				"",
+				"\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"",
+				"",
+			);
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FAC43DC21B35D8B100C06102 /* Sources */ = {
@@ -1127,6 +1175,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy.debug";
 			};
 			name = Debug;
@@ -1137,6 +1186,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "Clipy/Supporting Files/Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.clipy-app.Clipy";
 			};
 			name = Release;
@@ -1213,6 +1263,14 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 1.12.0;
+			};
+		};
+		C57447282FD13ADF000D64D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 12.14.0;
 			};
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
@@ -1339,6 +1397,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5700B4A2FC5C3D500C8F965 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesTestSupport;
+		};
+		C574472B2FD13ADF000D64D3 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C57447282FD13ADF000D64D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		C574472E2FD13FD9000D64D3 /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C57447282FD13ADF000D64D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
 		};
 		C587AF502FBF4E040043D5E7 /* SQLiteData */ = {
 			isa = XCSwiftPackageProductDependency;
