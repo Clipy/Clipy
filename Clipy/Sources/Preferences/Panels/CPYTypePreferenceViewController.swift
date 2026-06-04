@@ -12,8 +12,7 @@
 
 import Cocoa
 
-class CPYTypePreferenceViewController: NSViewController {
-
+final class CPYTypePreferenceViewController: NSViewController {
     // MARK: - Properties
     @objc var storeTypes: NSMutableDictionary!
 
@@ -25,6 +24,20 @@ class CPYTypePreferenceViewController: NSViewController {
             storeTypes = NSMutableDictionary()
         }
         super.loadView()
+        PasteboardAvailableType.allCases.forEach { availableType in
+            storeTypes.addObserver(self, forKeyPath: availableType.rawValue, options: .new, context: nil)
+        }
     }
 
+    deinit {
+        PasteboardAvailableType.allCases.forEach { availableType in
+            storeTypes.removeObserver(self, forKeyPath: availableType.rawValue)
+        }
+    }
+
+    // swiftlint:disable:next block_based_kvo
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+        guard let dictionary = object as? NSMutableDictionary, dictionary == storeTypes else { return }
+        AppEnvironment.current.defaults.set(storeTypes, forKey: Constants.UserDefaults.storeTypes)
+    }
 }

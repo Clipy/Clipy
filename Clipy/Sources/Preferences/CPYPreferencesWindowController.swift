@@ -85,10 +85,6 @@ extension CPYPreferencesWindowController {
 // MARK: - NSWindow Delegate
 extension CPYPreferencesWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
-        if let viewController = viewController[2] as? CPYTypePreferenceViewController {
-            AppEnvironment.current.defaults.set(viewController.storeTypes, forKey: Constants.UserDefaults.storeTypes)
-            AppEnvironment.current.defaults.synchronize()
-        }
         if let window = window, !window.makeFirstResponder(window) {
             window.endEditing(for: nil)
         }
