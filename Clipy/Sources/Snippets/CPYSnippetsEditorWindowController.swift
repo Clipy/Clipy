@@ -55,11 +55,8 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
-        self.window?.collectionBehavior = NSWindow.CollectionBehavior.canJoinAllSpaces
         self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
-        if #available(OSX 10.10, *) {
-            self.window?.titlebarAppearsTransparent = true
-        }
+        self.window?.titlebarAppearsTransparent = true
         folders = snippetRepository.fetchFolderDetails().map(EditorSnippetFolder.init)
         outlineView.reloadData()
         // Select first folder
