@@ -20,5 +20,11 @@
 /* Class = "NSButtonCell"; title = "URL"; ObjectID = "oXv-rM-kj5"; */
 "oXv-rM-kj5.title" = "URL";
 
+/* Class = "NSButtonCell"; title = "Ignore clipboard data marked as Concealed"; ObjectID = "wVB-cH-qgn"; */
+"wVB-cH-qgn.title" = "Ignore clipboard data marked as Concealed";
+
+/* Class = "NSTextFieldCell"; title = "For confidential data, such as from password managers."; ObjectID = "gXw-o2-02L"; */
+"gXw-o2-02L.title" = "For confidential data, such as from password managers.";
+
 /* Class = "NSButtonCell"; title = "Rich Text Format (RTF)"; ObjectID = "xyj-FL-88b"; */
 "xyj-FL-88b.title" = "Formato Rich Text (RTF)";

@@ -21,7 +21,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesPreservesPasteboardTypeOrder() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.pdf, .string, .fileURL, .rtf],
-            storeAvailableTypes: [.string, .rtf, .pdf, .filenames]
+            storeAvailableTypes: [.string, .rtf, .pdf, .filenames],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.pdf, .string, .fileURL, .rtf])
     }
@@ -30,7 +31,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesFiltersDisabledStoreTypes() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.pdf, .string, .tiff, .rtf],
-            storeAvailableTypes: [.string, .tiff]
+            storeAvailableTypes: [.string, .tiff],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.string, .tiff])
     }
@@ -39,7 +41,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesFiltersDeprecatedTypesForDisabledStoreTypes() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedString, .deprecatedPDF, .deprecatedURL],
-            storeAvailableTypes: [.url]
+            storeAvailableTypes: [.url],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.deprecatedURL])
     }
@@ -48,7 +51,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesPrefersModernStringWhenBothStringTypesAreAvailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedString, .string],
-            storeAvailableTypes: [.string]
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.string])
     }
@@ -57,7 +61,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesSkipsTIFFWhenPNGIsAvailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.tiff, .deprecatedTIFF, .png],
-            storeAvailableTypes: [.tiff]
+            storeAvailableTypes: [.tiff],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.png])
     }
@@ -66,7 +71,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesUsesTIFFWhenOnlyTIFFTypesAreAvailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.tiff, .deprecatedTIFF],
-            storeAvailableTypes: [.tiff]
+            storeAvailableTypes: [.tiff],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.tiff])
     }
@@ -82,7 +88,8 @@ struct PasteboardAvailableTypeTests {
                 .deprecatedPDF,
                 .pdf
             ],
-            storeAvailableTypes: [.filenames, .string, .pdf]
+            storeAvailableTypes: [.filenames, .string, .pdf],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.fileURL, .string, .pdf])
     }
@@ -91,7 +98,8 @@ struct PasteboardAvailableTypeTests {
     func availableTypesUsesDeprecatedTypesWhenModernTypesAreUnavailable() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF],
-            storeAvailableTypes: [.filenames, .string, .pdf, .url, .tiff]
+            storeAvailableTypes: [.filenames, .string, .pdf, .url, .tiff],
+            ignoresConcealedType: false
         )
         #expect(availableTypes == [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF])
     }
@@ -99,8 +107,49 @@ struct PasteboardAvailableTypeTests {
     @Test
     func availableTypesIgnoresTransientPasteboards() {
         let availableTypes = PasteboardAvailableType.availableTypes(
-            from: [.string, NSPasteboard.PasteboardType(rawValue: "org.nspasteboard.TransientType")],
-            storeAvailableTypes: [.string]
+            from: [.string, .transient],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes.isEmpty)
+    }
+
+    @Test
+    func availableTypesKeepsConcealedPasteboardByDefault() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, .concealed],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes == [.string, .concealed])
+    }
+
+    @Test
+    func availableTypesPlacesConcealedPasteboardAfterStoredTypes() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.concealed, .string],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes == [.string, .concealed])
+    }
+
+    @Test
+    func availableTypesIgnoresConcealedPasteboardWhenEnabled() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, .concealed],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: true
+        )
+        #expect(availableTypes.isEmpty)
+    }
+
+    @Test
+    func availableTypesDoesNotStoreOnlyConcealedPasteboards() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.concealed],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false
         )
         #expect(availableTypes.isEmpty)
     }

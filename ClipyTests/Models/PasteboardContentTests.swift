@@ -137,6 +137,32 @@ struct PasteboardContentTests {
     }
 
     @Test
+    func writeObjectsPreservesConcealedMarker() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.clearContents() }
+
+        let stringAsset = PasteboardContent.Asset(type: .string, data: Data("Secret".utf8))
+        let concealedAsset = PasteboardContent.Asset(type: .concealed, data: Data("concealed".utf8))
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    stringAsset,
+                    concealedAsset
+                ]
+            )
+        )
+
+        content.writeObjects(to: pasteboard)
+
+        #expect(pasteboard.types?.contains(.concealed) == true)
+        let restoredContent = try #require(PasteboardContent(
+            pasteboard: pasteboard,
+            types: [.string, .concealed]
+        ))
+        #expect(restoredContent.assets == [stringAsset, concealedAsset])
+    }
+
+    @Test
     func imageInitializerStoresTiffAsset() throws {
         let image = NSImage.create(with: .red, size: NSSize(width: 10, height: 10))
         let content = try #require(PasteboardContent(image: image))

@@ -25,11 +25,13 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
 
     static func availableTypes(
         from pasteboardTypes: [NSPasteboard.PasteboardType],
-        storeAvailableTypes: [PasteboardAvailableType]
+        storeAvailableTypes: [PasteboardAvailableType],
+        ignoresConcealedType: Bool
     ) -> [NSPasteboard.PasteboardType] {
         let uniquePasteboardTypes = OrderedSet(pasteboardTypes)
-        guard uniquePasteboardTypes.allSatisfy({ !$0.isTransient }) else { return [] }
-        return uniquePasteboardTypes.compactMap { pasteboardType -> NSPasteboard.PasteboardType? in
+        guard uniquePasteboardTypes.allSatisfy({ $0 != .transient }) else { return [] }
+        guard !ignoresConcealedType || uniquePasteboardTypes.allSatisfy({ $0 != .concealed }) else { return [] }
+        let availableTypes = uniquePasteboardTypes.compactMap { pasteboardType -> NSPasteboard.PasteboardType? in
             guard let availableType = pasteboardType.availableType,
                 storeAvailableTypes.contains(availableType) else { return nil }
             if pasteboardType.isCovered(by: uniquePasteboardTypes) {
@@ -41,20 +43,15 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
             }
             return pasteboardType
         }
+        guard !availableTypes.isEmpty else { return [] }
+        if uniquePasteboardTypes.contains(.concealed) {
+            return availableTypes + [.concealed]
+        }
+        return availableTypes
     }
 }
 
 private extension NSPasteboard.PasteboardType {
-    // ref: https://nspasteboard.org/
-    var isTransient: Bool {
-        switch rawValue {
-        case "org.nspasteboard.TransientType":
-            return true
-        default:
-            return false
-        }
-    }
-
     var availableType: PasteboardAvailableType? {
         switch self {
         case .string, .deprecatedString:
@@ -107,4 +104,10 @@ private extension NSPasteboard.PasteboardType {
             return false
         }
     }
+}
+
+// ref: https://nspasteboard.org/
+extension NSPasteboard.PasteboardType {
+    static let transient = NSPasteboard.PasteboardType(rawValue: "org.nspasteboard.TransientType")
+    static let concealed = NSPasteboard.PasteboardType(rawValue: "org.nspasteboard.ConcealedType")
 }
