@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CPYUpdatesPreferenceViewController" customModule="Clipy" customModuleProvider="target">
             <connections>
+                <outlet property="lastUpdateCheckDateTextField" destination="bfd-d7-m1a" id="Cfq-L5-lDE"/>
                 <outlet property="versionTextField" destination="IJH-aY-lUJ" id="6Rg-gc-H50"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -17,7 +19,7 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="134"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bfd-d7-m1a">
+                <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bfd-d7-m1a">
                     <rect key="frame" x="60" y="40" width="361" height="14"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="date" id="nG5-PB-zcE">
@@ -26,9 +28,6 @@
                         <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
-                    <connections>
-                        <binding destination="BFl-Kb-QuK" name="value" keyPath="lastUpdateCheckDate" id="RZL-GJ-KxE"/>
-                    </connections>
                 </textField>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bnR-ek-Gzp">
                     <rect key="frame" x="159" y="62" width="162" height="32"/>
@@ -38,7 +37,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="checkForUpdates:" target="BFl-Kb-QuK" id="i13-OM-Vnw"/>
+                        <action selector="checkForUpdates:" target="-2" id="tDA-KR-qYc"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="evV-Ot-cOb">
@@ -57,7 +56,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Monthly" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2592000" imageScaling="proportionallyDown" inset="2" selectedItem="o5Q-Ao-iQN" id="EYE-Mb-K0U">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="scf-zc-AI1">
                             <items>
                                 <menuItem title="Daily" tag="86400" id="HwP-AM-nID"/>
@@ -71,7 +70,7 @@
                         <binding destination="Z9l-MW-Uqh" name="selectedTag" keyPath="values.kCPYUpdateCheckIntervalKey" id="QmO-Rj-lIC"/>
                     </connections>
                 </popUpButton>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IJH-aY-lUJ">
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IJH-aY-lUJ">
                     <rect key="frame" x="171" y="12" width="140" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="v1.0.0" id="hhl-AS-dQ0">
@@ -84,6 +83,5 @@
             <point key="canvasLocation" x="629" y="589"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="Z9l-MW-Uqh"/>
-        <customObject id="BFl-Kb-QuK" customClass="SUUpdater"/>
     </objects>
 </document>

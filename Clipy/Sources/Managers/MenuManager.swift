@@ -11,8 +11,8 @@
 //
 
 import Cocoa
-import PINCache
-import RealmSwift
+import Combine
+import Dependencies
 import RxCocoa
 import RxSwift
 
@@ -26,17 +26,22 @@ final class MenuManager: NSObject {
     // StatusMenu
     fileprivate var statusItem: NSStatusItem?
     // Icon Cache
-    fileprivate let folderIcon = Asset.iconFolder.image
-    fileprivate let snippetIcon = Asset.iconText.image
+    fileprivate let folderIcon = NSImage(resource: .iconFolder)
+    fileprivate let snippetIcon = NSImage(resource: .iconText)
     // Other
     fileprivate let disposeBag = DisposeBag()
     fileprivate let notificationCenter = NotificationCenter.default
     fileprivate let kMaxKeyEquivalents = 10
     fileprivate let shortenSymbol = "..."
-    // Realm
-    fileprivate let realm = try! Realm()
-    fileprivate var clipToken: NotificationToken?
-    fileprivate var snippetToken: NotificationToken?
+
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
+    @Dependency(\.mainQueue)
+    private var mainQueue
+    private var cancellables: Set<AnyCancellable> = []
+    private var snippetFolderDetails = [SnippetFolderDetail]()
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -73,17 +78,16 @@ extension MenuManager {
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
-    func popUpSnippetFolder(_ folder: CPYFolder) {
-        let folderMenu = NSMenu(title: folder.title)
+    func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
+        let folderMenu = NSMenu(title: folderDetail.folder.title)
         // Folder title
-        let labelItem = NSMenuItem(title: folder.title, action: nil)
+        let labelItem = NSMenuItem(title: folderDetail.folder.title, action: nil)
         labelItem.isEnabled = false
         folderMenu.addItem(labelItem)
         // Snippets
         var index = firstIndexOfMenuItems()
-        folder.snippets
-            .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
-            .filter { $0.enable }
+        folderDetail.snippets
+            .filter { $0.isEnabled }
             .forEach { snippet in
                 let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
                 folderMenu.addItem(subMenuItem)
@@ -96,19 +100,17 @@ extension MenuManager {
 // MARK: - Binding
 private extension MenuManager {
     func bind() {
-        // Realm Notification
-        clipToken = realm.objects(CPYClip.self)
-                        .observe { [weak self] _ in
-                            DispatchQueue.main.async { [weak self] in
-                                self?.createClipMenu()
-                            }
-                        }
-        snippetToken = realm.objects(CPYFolder.self)
-                        .observe { [weak self] _ in
-                            DispatchQueue.main.async { [weak self] in
-                                self?.createClipMenu()
-                            }
-                        }
+        pasteboardHistoryRepository.observeHistories()
+            .receive(on: mainQueue)
+            .sink { [weak self] _ in self?.createClipMenu() }
+            .store(in: &cancellables)
+        snippetRepository.observeFolderDetails()
+            .receive(on: mainQueue)
+            .sink { [weak self] folderDetails in
+                self?.snippetFolderDetails = folderDetails
+                self?.createClipMenu()
+            }
+            .store(in: &cancellables)
         // Menu icon
         AppEnvironment.current.defaults.rx.observe(Int.self, Constants.UserDefaults.showStatusItem, retainSelf: false)
             .compactMap { $0 }
@@ -182,19 +184,19 @@ private extension MenuManager {
         addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)
 
-        addSnippetItems(clipMenu!, separateMenu: true)
-        addSnippetItems(snippetMenu!, separateMenu: false)
+        addSnippetItems(clipMenu!, separateMenu: true, details: snippetFolderDetails)
+        addSnippetItems(snippetMenu!, separateMenu: false, details: snippetFolderDetails)
 
         clipMenu?.addItem(NSMenuItem.separator())
 
         if AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
-            clipMenu?.addItem(NSMenuItem(title: L10n.clearHistory, action: #selector(AppDelegate.clearAllHistory)))
+            clipMenu?.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
         }
 
-        clipMenu?.addItem(NSMenuItem(title: L10n.editSnippets, action: #selector(AppDelegate.showSnippetEditorWindow)))
-        clipMenu?.addItem(NSMenuItem(title: L10n.preferences, action: #selector(AppDelegate.showPreferenceWindow)))
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Preferences"), action: #selector(AppDelegate.showPreferenceWindow)))
         clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: L10n.quitClipy, action: #selector(AppDelegate.terminate)))
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
 
         statusItem?.menu = clipMenu
     }
@@ -263,7 +265,7 @@ private extension MenuManager {
         let maxHistory = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
 
         // History title
-        let labelItem = NSMenuItem(title: L10n.history, action: nil)
+        let labelItem = NSMenuItem(title: String(localized: "History"), action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
@@ -274,10 +276,16 @@ private extension MenuManager {
         var subMenuIndex = 1 + placeInLine
 
         let ascending = !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
-        let clipResults = realm.objects(CPYClip.self).sorted(byKeyPath: #keyPath(CPYClip.updateTime), ascending: ascending)
-        let currentSize = Int(clipResults.count)
+        let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
+        let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
+        let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
+            ascending: ascending,
+            includesThumbnailAsset: isShowImage || isShowColorCode,
+            limit: maxHistory
+        )
+        let currentSize = historyDetails.count
         var i = 0
-        for clip in clipResults {
+        historyDetails.forEach { historyDetail in
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
                 if i == subMenuCount {
@@ -288,13 +296,13 @@ private extension MenuManager {
 
                 // Clip
                 if let subMenu = menu.item(at: subMenuIndex)?.submenu {
-                    let menuItem = makeClipMenuItem(clip, index: i, listNumber: listNumber)
+                    let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
                     listNumber = incrementListNumber(listNumber, max: placeInsideFolder, start: firstIndex)
                 }
             } else {
                 // Clip
-                let menuItem = makeClipMenuItem(clip, index: i, listNumber: listNumber)
+                let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
                 menu.addItem(menuItem)
                 listNumber = incrementListNumber(listNumber, max: placeInLine, start: firstIndex)
             }
@@ -304,12 +312,11 @@ private extension MenuManager {
                 subMenuCount += placeInsideFolder
                 subMenuIndex += 1
             }
-
-            if maxHistory <= i { break }
         }
     }
 
-    func makeClipMenuItem(_ clip: CPYClip, index: Int, listNumber: Int) -> NSMenuItem {
+    func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int) -> NSMenuItem {
+        let history = historyDetail.history
         let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem)
         let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
@@ -328,13 +335,13 @@ private extension MenuManager {
             keyEquivalent = "\(shortCutNumber)"
         }
 
-        let primaryPboardType = NSPasteboard.PasteboardType(rawValue: clip.primaryType)
-        let clipString = clip.title
+        let primaryPboardType = history.primaryType
+        let clipString = history.title
         let title = trimTitle(clipString)
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
-        menuItem.representedObject = clip.dataHash
+        menuItem.representedObject = history.id
 
         if isShowToolTip {
             let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
@@ -342,27 +349,21 @@ private extension MenuManager {
             menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
         }
 
-        if primaryPboardType == .deprecatedTIFF {
+        if primaryPboardType == .png || primaryPboardType == .tiff || primaryPboardType == .deprecatedTIFF {
             menuItem.title = menuItemTitle("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .deprecatedPDF {
+        } else if primaryPboardType == .pdf || primaryPboardType == .deprecatedPDF {
             menuItem.title = menuItemTitle("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .deprecatedFilenames && title.isEmpty {
-            menuItem.title = menuItemTitle("(Filenames)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+        } else if primaryPboardType == .fileURL || primaryPboardType == .deprecatedFilenames {
+            menuItem.title = menuItemTitle("(Files)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
         }
 
-        if !clip.thumbnailPath.isEmpty && !clip.isColorCode && isShowImage {
-            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                DispatchQueue.main.async {
-                    menuItem?.image = object as? NSImage
-                }
-            }
-        }
-        if !clip.thumbnailPath.isEmpty && clip.isColorCode && isShowColorCode {
-            PINCache.shared.object(forKeyAsync: clip.thumbnailPath) { [weak menuItem] _, _, object in
-                DispatchQueue.main.async {
-                    menuItem?.image = object as? NSImage
-                }
-            }
+        if isShowImage || isShowColorCode,
+           let thumbnailAsset = historyDetail.thumbnailAsset,
+           let image = NSImage(data: thumbnailAsset.data),
+           (thumbnailAsset.kind == .image && isShowImage) || (thumbnailAsset.kind == .colorCode && isShowColorCode) {
+            let width = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
+            let height = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
+            menuItem.image = image.aspectFitImage(CGFloat(width), CGFloat(height))
         }
 
         return menuItem
@@ -371,33 +372,31 @@ private extension MenuManager {
 
 // MARK: - Snippets
 private extension MenuManager {
-    func addSnippetItems(_ menu: NSMenu, separateMenu: Bool) {
-        let folderResults = realm.objects(CPYFolder.self).sorted(byKeyPath: #keyPath(CPYFolder.index), ascending: true)
-        guard !folderResults.isEmpty else { return }
+    func addSnippetItems(_ menu: NSMenu, separateMenu: Bool, details: [SnippetFolderDetail]) {
+        guard !details.isEmpty else { return }
+
         if separateMenu {
             menu.addItem(NSMenuItem.separator())
         }
 
         // Snippet title
-        let labelItem = NSMenuItem(title: L10n.snippet, action: nil)
+        let labelItem = NSMenuItem(title: String(localized: "Snippet"), action: nil)
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
         var subMenuIndex = menu.numberOfItems - 1
         let firstIndex = firstIndexOfMenuItems()
-
-        folderResults
-            .filter { $0.enable }
-            .forEach { folder in
-                let folderTitle = folder.title
+        details
+            .filter { $0.folder.isEnabled }
+            .forEach { detail in
+                let folderTitle = detail.folder.title
                 let subMenuItem = makeSubmenuItem(folderTitle)
                 menu.addItem(subMenuItem)
                 subMenuIndex += 1
 
                 var i = firstIndex
-                folder.snippets
-                    .sorted(byKeyPath: #keyPath(CPYSnippet.index), ascending: true)
-                    .filter { $0.enable }
+                detail.snippets
+                    .filter { $0.isEnabled }
                     .forEach { snippet in
                         let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
                         if let subMenu = menu.item(at: subMenuIndex)?.submenu {
@@ -408,7 +407,7 @@ private extension MenuManager {
             }
     }
 
-    func makeSnippetMenuItem(_ snippet: CPYSnippet, listNumber: Int) -> NSMenuItem {
+    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int) -> NSMenuItem {
         let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowIcon = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
 
@@ -416,7 +415,7 @@ private extension MenuManager {
         let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
-        menuItem.representedObject = snippet.identifier
+        menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.content
         menuItem.image = (isShowIcon) ? snippetIcon : nil
 
@@ -433,9 +432,9 @@ private extension MenuManager {
         let image: NSImage?
         switch type {
         case .black:
-            image = Asset.statusbarMenuBlack.image
+            image = NSImage(resource: .statusbarMenuBlack)
         case .white:
-            image = Asset.statusbarMenuWhite.image
+            image = NSImage(resource: .statusbarMenuWhite)
         case .none: return
         }
         image?.isTemplate = true

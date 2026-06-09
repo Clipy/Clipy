@@ -11,43 +11,50 @@
 //
 
 import Cocoa
-import Sparkle
-import RxCocoa
-import RxSwift
+import Dependencies
 import LoginServiceKit
 import Magnet
+import RxCocoa
+import RxSwift
 import Screeen
-import RealmSwift
-import LetsMove
+import Sparkle
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
-    let screenshotObserver = ScreenShotObserver()
-    let disposeBag = DisposeBag()
+    private(set) var updaterController: SPUStandardUpdaterController?
+    private let screenshotObserver = ScreenShotObserver()
+    private let disposeBag = DisposeBag()
+    private let historyPruningScheduler = SerialDispatchQueueScheduler(qos: .utility)
+
+    @Dependency(\.context)
+    var context
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
+    private let migration = DatabaseMigration()
 
     // MARK: - Init
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Migrate Realm
-        Realm.migration()
+        // If the SQLite database file does not exist yet, start the database and then migrate Realm data to SQLiteData.
+        let sqliteDatabaseExists = (try? SQLiteDataDatabase.databaseURL().checkResourceIsReachable()) ?? false
+        prepareDependencies { values in
+            try! values.bootstrapDatabase()
+            if !sqliteDatabaseExists {
+                migration.migrateFromRealmToSQLiteData()
+            }
+        }
     }
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            let realm = try! Realm()
-            return !realm.objects(CPYClip.self).isEmpty
+            return pasteboardHistoryRepository.hasHistories()
         }
         return true
-    }
-
-    // MARK: - Class Methods
-    static func storeTypesDictinary() -> [String: NSNumber] {
-        var storeTypes = [String: NSNumber]()
-        CPYClipData.availableTypesString.forEach { storeTypes[$0] = NSNumber(value: true) }
-        return storeTypes
     }
 
     // MARK: - Menu Actions
@@ -69,10 +76,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
-            alert.messageText = L10n.clearHistory
-            alert.informativeText = L10n.areYouSureYouWantToClearYourClipboardHistory
-            alert.addButton(withTitle: L10n.clearHistory)
-            alert.addButton(withTitle: L10n.cancel)
+            alert.messageText = String(localized: "Clear History")
+            alert.informativeText = String(localized: "Are you sure you want to clear your clipboard history?")
+            alert.addButton(withTitle: String(localized: "Clear History"))
+            alert.addButton(withTitle: String(localized: "Cancel"))
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)
@@ -90,32 +97,16 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
-        CPYUtilities.sendCustomLog(with: "selectClipMenuItem")
-        guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch clip primary key")
-            NSSound.beep()
-            return
-        }
-        let realm = try! Realm()
-        guard let clip = realm.object(ofType: CPYClip.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch clip data")
+        guard let id = sender.representedObject as? PasteboardHistory.ID, let content = pasteboardHistoryRepository.fetchContent(id: id) else {
             NSSound.beep()
             return
         }
 
-        AppEnvironment.current.pasteService.paste(with: clip)
+        AppEnvironment.current.pasteService.paste(id: id, content: content)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        CPYUtilities.sendCustomLog(with: "selectSnippetMenuItem")
-        guard let primaryKey = sender.representedObject as? String else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet primary key")
-            NSSound.beep()
-            return
-        }
-        let realm = try! Realm()
-        guard let snippet = realm.object(ofType: CPYSnippet.self, forPrimaryKey: primaryKey) else {
-            CPYUtilities.sendCustomLog(with: "Cannot fetch snippet data")
+        guard let id = sender.representedObject as? Snippet.ID, let snippet = snippetRepository.fetchSnippet(id: id) else {
             NSSound.beep()
             return
         }
@@ -130,10 +121,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = L10n.launchClipyOnSystemStartup
-        alert.informativeText = L10n.youCanChangeThisSettingInThePreferencesIfYouWant
-        alert.addButton(withTitle: L10n.launchOnSystemStartup)
-        alert.addButton(withTitle: L10n.donTLaunch)
+        alert.messageText = String(localized: "Launch Clipy on system startup?")
+        alert.informativeText = String(localized: "You can change this setting in the Preferences if you want")
+        alert.addButton(withTitle: String(localized: "Launch on system startup"))
+        alert.addButton(withTitle: String(localized: "Don't Launch"))
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
@@ -172,6 +163,9 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys()
+
+        guard context != .test else { return }
+
         // SDKs
         CPYUtilities.initSDKs()
         // Check Accessibility Permission
@@ -183,17 +177,19 @@ extension AppDelegate: NSApplicationDelegate {
         }
 
         // Sparkle
-        let updater = SUUpdater.shared()
-        updater?.feedURL = Constants.Application.appcastURL
-        updater?.automaticallyChecksForUpdates = AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck)
-        updater?.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        self.updaterController = SPUStandardUpdaterController(
+            startingUpdater: AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck),
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
+        updaterController?.updater.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        updaterController?.updater.clearFeedURLFromUserDefaults()
 
         // Binding Events
         bind()
 
         // Services
         AppEnvironment.current.clipService.startMonitoring()
-        AppEnvironment.current.dataCleanService.startMonitoring()
         AppEnvironment.current.excludeAppService.startMonitoring()
         AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
@@ -201,12 +197,14 @@ extension AppDelegate: NSApplicationDelegate {
         AppEnvironment.current.menuManager.setup()
         // Screenshot
         screenshotObserver.delegate = self
-    }
 
-    func applicationWillFinishLaunching(_ notification: Notification) {
-        #if RELEASE
-            PFMoveToApplicationsFolderIfNecessary()
-        #endif
+        // Clean histories every 30 minutes
+        Observable<Int>.interval(.seconds(60 * 30), scheduler: historyPruningScheduler)
+            .subscribe(onNext: { [weak self] _ in
+                let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
+                self?.pasteboardHistoryRepository.deleteOverflowingHistories(maxHistorySize: maxHistorySize)
+            })
+            .disposed(by: disposeBag)
     }
 
 }

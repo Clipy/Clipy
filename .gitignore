@@ -71,8 +71,8 @@ Pods/
 Carthage/Build/
 
 # Accio dependency management
-Dependencies/
-.accio/
+# Dependencies/
+# .accio/
 
 # fastlane
 #
@@ -152,3 +152,6 @@ build-iPhoneSimulator/
 
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
+
+# Firebase
+GoogleService-Info.plist

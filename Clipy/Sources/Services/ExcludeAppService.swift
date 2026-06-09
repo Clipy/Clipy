@@ -10,6 +10,7 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
+import AppKit
 import Foundation
 import RxSwift
 import RxCocoa

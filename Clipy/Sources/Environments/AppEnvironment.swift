@@ -38,7 +38,6 @@ struct AppEnvironment {
 
     static func push(clipService: ClipService = current.clipService,
                      hotKeyService: HotKeyService = current.hotKeyService,
-                     dataCleanService: DataCleanService = current.dataCleanService,
                      pasteService: PasteService = current.pasteService,
                      excludeAppService: ExcludeAppService = current.excludeAppService,
                      accessibilityService: AccessibilityService = current.accessibilityService,
@@ -46,7 +45,6 @@ struct AppEnvironment {
                      defaults: UserDefaults = current.defaults) {
         push(environment: Environment(clipService: clipService,
                                       hotKeyService: hotKeyService,
-                                      dataCleanService: dataCleanService,
                                       pasteService: pasteService,
                                       excludeAppService: excludeAppService,
                                       accessibilityService: accessibilityService,
@@ -56,7 +54,6 @@ struct AppEnvironment {
 
     static func replaceCurrent(clipService: ClipService = current.clipService,
                                hotKeyService: HotKeyService = current.hotKeyService,
-                               dataCleanService: DataCleanService = current.dataCleanService,
                                pasteService: PasteService = current.pasteService,
                                excludeAppService: ExcludeAppService = current.excludeAppService,
                                accessibilityService: AccessibilityService = current.accessibilityService,
@@ -64,7 +61,6 @@ struct AppEnvironment {
                                defaults: UserDefaults = current.defaults) {
         replaceCurrent(environment: Environment(clipService: clipService,
                                                 hotKeyService: hotKeyService,
-                                                dataCleanService: dataCleanService,
                                                 pasteService: pasteService,
                                                 excludeAppService: excludeAppService,
                                                 accessibilityService: accessibilityService,
@@ -80,7 +76,6 @@ struct AppEnvironment {
         let excludeAppService = ExcludeAppService(applications: excludeApplications)
         return Environment(clipService: current.clipService,
                            hotKeyService: current.hotKeyService,
-                           dataCleanService: current.dataCleanService,
                            pasteService: current.pasteService,
                            excludeAppService: excludeAppService,
                            accessibilityService: current.accessibilityService,

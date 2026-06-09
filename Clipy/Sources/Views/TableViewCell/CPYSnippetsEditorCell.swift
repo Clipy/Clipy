@@ -54,13 +54,14 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             imageFrame.origin.y += 5
             imageFrame.size = NSSize(width: 16, height: 13)
 
-            let drawImage = (isHighlighted) ? Asset.snippetsIconFolderWhite.image : Asset.snippetsIconFolderBlue.image
+            let drawImage = (isHighlighted) ? NSImage(resource: .snippetsIconFolderWhite) : NSImage(resource: .snippetsIconFolderBlue)
             drawImage.size = NSSize(width: 16, height: 13)
             drawImage.draw(in: imageFrame, from: NSRect.zero, operation: .sourceOver, fraction: 1.0, respectFlipped: true, hints: nil)
 
             newFrame = cellFrame
             newFrame.origin.x += 8
             newFrame.origin.y += 2
+            newFrame.size.width -= 8
             newFrame.size.height -= 2
         case .none:
             newFrame = cellFrame
@@ -68,7 +69,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             newFrame.size.height -= 2
         }
 
-        textColor = (!isItemEnabled) ? .lightGray : (isHighlighted) ? .white : ColorName.title.color
+        textColor = (!isItemEnabled) ? .lightGray : (isHighlighted) ? .white : NSColor(resource: .title)
 
         super.draw(withFrame: newFrame, in: controlView)
     }
@@ -76,7 +77,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
     // MARK: - Frame
     override func select(withFrame aRect: NSRect, in controlView: NSView, editor textObj: NSText, delegate anObject: Any?, start selStart: Int, length selLength: Int) {
         let textFrame = titleRect(forBounds: aRect)
-        textColor = ColorName.title.color
+        textColor = NSColor(resource: .title)
         super.select(withFrame: textFrame, in: controlView, editor: textObj, delegate: anObject, start: selStart, length: selLength)
     }
 
@@ -103,6 +104,7 @@ final class CPYSnippetsEditorCell: NSTextFieldCell {
             var newFrame = cellRect
             newFrame.origin.x += 10
             newFrame.origin.y += 2
+            newFrame.size.width -= 10
             newFrame.size.height -= 2
 
             return newFrame
