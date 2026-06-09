@@ -226,14 +226,6 @@ private extension MenuManager {
         return subMenuItem
     }
 
-    func incrementListNumber(_ listNumber: NSInteger, max: NSInteger, start: NSInteger) -> NSInteger {
-        var listNumber = listNumber + 1
-        if listNumber == max && max == 10 && start == 1 {
-            listNumber = 0
-        }
-        return listNumber
-    }
-
     func trimTitle(_ title: String?) -> String {
         if title == nil { return "" }
         let theString = title!.trimmingCharacters(in: .whitespacesAndNewlines) as NSString
@@ -298,13 +290,13 @@ private extension MenuManager {
                 if let subMenu = menu.item(at: subMenuIndex)?.submenu {
                     let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
-                    listNumber = incrementListNumber(listNumber, max: placeInsideFolder, start: firstIndex)
+                    listNumber += 1
                 }
             } else {
                 // Clip
                 let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
                 menu.addItem(menuItem)
-                listNumber = incrementListNumber(listNumber, max: placeInLine, start: firstIndex)
+                listNumber += 1
             }
 
             i += 1
@@ -324,8 +316,7 @@ private extension MenuManager {
         let addNumbericKeyEquivalents = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.addNumericKeyEquivalents)
 
         var keyEquivalent = ""
-
-        if addNumbericKeyEquivalents && (index <= kMaxKeyEquivalents) {
+        if addNumbericKeyEquivalents && (index < kMaxKeyEquivalents) {
             let isStartFromZero = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
 
             var shortCutNumber = (isStartFromZero) ? index : index + 1
