@@ -36,6 +36,7 @@ extension ExcludeAppService {
         // Monitoring top active application
         NSWorkspace.shared.notificationCenter.rx.notification(NSWorkspace.didActivateApplicationNotification)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
+            .startWith(NSWorkspace.shared.frontmostApplication)
             .bind(to: frontApplication)
             .disposed(by: disposeBag)
     }
@@ -80,27 +81,14 @@ extension ExcludeAppService {
 
 // MARK: - Special Applications
 extension ExcludeAppService {
-    /**
-     *  Responding to applications that have special handling for protection of passwords etc.
-     *  e.g 1Password on GoogleChrome browser extension
-     *
-     *  ref: http://nspasteboard.org/
-     */
+    /// Applications that mark pasteboard data when the frontmost application cannot identify the copy source,
+    /// such as menu bar applications that do not take focus.
     private enum Application: String {
         case onePassword = "com.agilebits.onepassword"
 
-        // MARK: - Properties
-        private var macApplicationIdentifiers: [String] {
-            switch self {
-            case .onePassword:
-                return ["com.agilebits.onepassword-osx", // for 1Password 6
-                        "com.agilebits.onepassword7"] // for 1Password 7
-            }
-        }
-
         // MARK: - Excluded
         func isExcluded(applications: [CPYAppInfo]) -> Bool {
-            return !applications.filter { macApplicationIdentifiers.contains($0.identifier) }.isEmpty
+            return applications.contains { $0.identifier.hasPrefix(rawValue) }
         }
 
     }
