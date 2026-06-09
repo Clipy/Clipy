@@ -95,4 +95,13 @@ struct PasteboardAvailableTypeTests {
         )
         #expect(availableTypes == [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF])
     }
+
+    @Test
+    func availableTypesIgnoresTransientPasteboards() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, NSPasteboard.PasteboardType(rawValue: "org.nspasteboard.TransientType")],
+            storeAvailableTypes: [.string]
+        )
+        #expect(availableTypes.isEmpty)
+    }
 }

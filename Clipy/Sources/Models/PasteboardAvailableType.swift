@@ -28,6 +28,7 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
         storeAvailableTypes: [PasteboardAvailableType]
     ) -> [NSPasteboard.PasteboardType] {
         let uniquePasteboardTypes = OrderedSet(pasteboardTypes)
+        guard uniquePasteboardTypes.allSatisfy({ !$0.isTransient }) else { return [] }
         return uniquePasteboardTypes.compactMap { pasteboardType -> NSPasteboard.PasteboardType? in
             guard let availableType = pasteboardType.availableType,
                 storeAvailableTypes.contains(availableType) else { return nil }
@@ -44,6 +45,16 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
 }
 
 private extension NSPasteboard.PasteboardType {
+    // ref: https://nspasteboard.org/
+    var isTransient: Bool {
+        switch rawValue {
+        case "org.nspasteboard.TransientType":
+            return true
+        default:
+            return false
+        }
+    }
+
     var availableType: PasteboardAvailableType? {
         switch self {
         case .string, .deprecatedString:
