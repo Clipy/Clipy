@@ -55,6 +55,8 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
+        // Temporarily disable Dark Mode until this window is migrated to SwiftUI.
+        self.window?.appearance = NSAppearance(named: .aqua)
         self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
         self.window?.titlebarAppearsTransparent = true
         folders = snippetRepository.fetchFolderDetails().map(EditorSnippetFolder.init)
@@ -68,7 +70,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
 
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
-        window?.makeKeyAndOrderFront(self)
+        window?.orderFrontRegardless()
     }
 }
 
