@@ -105,6 +105,46 @@ struct PasteboardAvailableTypeTests {
     }
 
     @Test
+    func availableTypesIgnoresUniversalClipboardWhenFileURLIsPrimary() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.fileURL, .string, .universalClipboard],
+            storeAvailableTypes: [.filenames, .string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes.isEmpty)
+    }
+
+    @Test
+    func availableTypesIgnoresUniversalClipboardWhenDeprecatedFilenamesIsPrimary() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.deprecatedFilenames, .string, .universalClipboard],
+            storeAvailableTypes: [.filenames, .string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes.isEmpty)
+    }
+
+    @Test
+    func availableTypesIgnoresFileURLForUniversalClipboardWhenItIsNotPrimary() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, .fileURL, .universalClipboard],
+            storeAvailableTypes: [.filenames, .string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes == [.string])
+    }
+
+    @Test
+    func availableTypesIgnoresDeprecatedFilenamesForUniversalClipboardWhenItIsNotPrimary() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, .deprecatedFilenames, .universalClipboard],
+            storeAvailableTypes: [.filenames, .string],
+            ignoresConcealedType: false
+        )
+        #expect(availableTypes == [.string])
+    }
+
+    @Test
     func availableTypesIgnoresTransientPasteboards() {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.string, .transient],
