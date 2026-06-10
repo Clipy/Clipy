@@ -20,19 +20,24 @@ final class MenuManager: NSObject {
 
     // MARK: - Properties
     // Menus
-    fileprivate var clipMenu: NSMenu?
-    fileprivate var historyMenu: NSMenu?
-    fileprivate var snippetMenu: NSMenu?
+    private var clipMenu: NSMenu?
+    private var historyMenu: NSMenu?
+    private var snippetMenu: NSMenu?
     // StatusMenu
-    fileprivate var statusItem: NSStatusItem?
+    private lazy var statusBarItem: NSStatusItem = {
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        item.button?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
+        item.menu = clipMenu
+        return item
+    }()
     // Icon Cache
-    fileprivate let folderIcon = NSImage(resource: .iconFolder)
-    fileprivate let snippetIcon = NSImage(resource: .iconText)
+    private let folderIcon = NSImage(resource: .iconFolder)
+    private let snippetIcon = NSImage(resource: .iconText)
     // Other
-    fileprivate let disposeBag = DisposeBag()
-    fileprivate let notificationCenter = NotificationCenter.default
-    fileprivate let kMaxKeyEquivalents = 10
-    fileprivate let shortenSymbol = "..."
+    private let disposeBag = DisposeBag()
+    private let notificationCenter = NotificationCenter.default
+    private let kMaxKeyEquivalents = 10
+    private let shortenSymbol = "..."
 
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
@@ -198,7 +203,7 @@ private extension MenuManager {
         clipMenu?.addItem(NSMenuItem.separator())
         clipMenu?.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
 
-        statusItem?.menu = clipMenu
+        statusBarItem.menu = clipMenu
     }
 
     func menuItemTitle(_ title: String, listNumber: NSInteger, isMarkWithNumber: Bool) -> String {
@@ -417,30 +422,19 @@ private extension MenuManager {
 // MARK: - Status Item
 private extension MenuManager {
     func changeStatusItem(_ type: StatusType) {
-        removeStatusItem()
-        if type == .none { return }
-
-        let image: NSImage?
         switch type {
         case .black:
-            image = NSImage(resource: .statusbarMenuBlack)
+            let image = NSImage(resource: .statusbarMenuBlack)
+            image.isTemplate = true
+            statusBarItem.button?.image = image
+            statusBarItem.isVisible = true
         case .white:
-            image = NSImage(resource: .statusbarMenuWhite)
-        case .none: return
-        }
-        image?.isTemplate = true
-
-        statusItem = NSStatusBar.system.statusItem(withLength: -1)
-        statusItem?.image = image
-        statusItem?.highlightMode = true
-        statusItem?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
-        statusItem?.menu = clipMenu
-    }
-
-    func removeStatusItem() {
-        if let item = statusItem {
-            NSStatusBar.system.removeStatusItem(item)
-            statusItem = nil
+            let image = NSImage(resource: .statusbarMenuWhite)
+            image.isTemplate = true
+            statusBarItem.button?.image = image
+            statusBarItem.isVisible = true
+        case .none:
+            statusBarItem.isVisible = false
         }
     }
 }
