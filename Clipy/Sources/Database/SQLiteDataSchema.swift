@@ -64,6 +64,18 @@ struct PasteboardHistoryDetail: Equatable {
 }
 
 @Table
+struct PasteboardHistorySearch: FTS5, Equatable {
+    let id: PasteboardHistory.ID
+    let title: String
+}
+
+@Selection
+struct PasteboardHistorySearchResult: Equatable {
+    let history: PasteboardHistory?
+    let thumbnailAsset: PasteboardHistoryThumbnailAsset?
+}
+
+@Table
 struct SnippetFolder: Identifiable, Equatable {
     typealias ID = Tagged<Self, UUID>
 
@@ -85,6 +97,18 @@ struct Snippet: Identifiable, Equatable {
     let content: String
     let index: Int
     let isEnabled: Bool
+}
+
+@Table
+struct SnippetSearch: FTS5, Equatable {
+    let id: Snippet.ID
+    let title: String
+    let content: String
+}
+
+@Selection
+struct SnippetSearchResult: Equatable {
+    let snippet: Snippet?
 }
 
 extension NSPasteboard.PasteboardType: @retroactive SQLiteType {}

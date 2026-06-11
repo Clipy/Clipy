@@ -18,23 +18,14 @@ import Testing
 @Suite
 struct SQLiteDataMigratorTests {
     @Test
-    func migrationV1() throws { // swiftlint:disable:this function_body_length
+    func migrationV1() throws {
         let database = try DatabaseQueue()
         var migrator = DatabaseMigrator()
         migrator.registerMigrationV1()
         try migrator.migrate(database)
 
         try database.read { database in
-            let tables = try #sql(
-                """
-                SELECT "name"
-                FROM "sqlite_master"
-                WHERE "type" = 'table'
-                ORDER BY "name"
-                """,
-                as: String.self
-            )
-            .fetchAll(database)
+            let tables = try tableNames(database)
             #expect(
                 tables == [
                     "grdb_migrations",
@@ -47,18 +38,55 @@ struct SQLiteDataMigratorTests {
             )
         }
 
+        try expectV1Indexes(database)
+        try expectV1Tables(database)
+    }
+
+    @Test
+    func migrationV2() throws {
+        let database = try DatabaseQueue()
+        var migrator = DatabaseMigrator()
+        migrator.registerMigrationV1()
+        migrator.registerMigrationV2()
+        try migrator.migrate(database)
+
         try database.read { database in
-            let indexes = try #sql(
-                """
-                SELECT "name"
-                FROM "sqlite_master"
-                WHERE "type" = 'index'
-                AND "name" GLOB 'index_*'
-                ORDER BY "name"
-                """,
-                as: String.self
+            let tables = try tableNames(database)
+            #expect(
+                tables == [
+                    "grdb_migrations",
+                    "pasteboardHistories",
+                    "pasteboardHistoryAssets",
+                    "pasteboardHistorySearches",
+                    "pasteboardHistorySearches_config",
+                    "pasteboardHistorySearches_content",
+                    "pasteboardHistorySearches_data",
+                    "pasteboardHistorySearches_docsize",
+                    "pasteboardHistorySearches_idx",
+                    "pasteboardHistoryThumbnailAssets",
+                    "snippetFolders",
+                    "snippetSearches",
+                    "snippetSearches_config",
+                    "snippetSearches_content",
+                    "snippetSearches_data",
+                    "snippetSearches_docsize",
+                    "snippetSearches_idx",
+                    "snippets"
+                ]
             )
-            .fetchAll(database)
+        }
+
+        try expectV1Indexes(database)
+        try expectV1Tables(database)
+        try expectV2Triggers(database)
+        try expectV2Tables(database)
+    }
+}
+
+private extension SQLiteDataMigratorTests {
+    func expectV1Indexes(_ database: DatabaseQueue) throws {
+        try database.read { database in
+            let indexes = try indexes(database)
             #expect(
                 indexes == [
                     "index_pasteboardHistories_on_updateAt",
@@ -70,17 +98,11 @@ struct SQLiteDataMigratorTests {
                 ]
             )
         }
+    }
 
+    func expectV1Tables(_ database: DatabaseQueue) throws {
         try database.read { database in
-            let columnNames = try #sql(
-                """
-                SELECT "name"
-                FROM pragma_table_info('pasteboardHistories')
-                ORDER BY "name"
-                """,
-                as: String.self
-            )
-            .fetchAll(database)
+            let columnNames = try columnNames(of: "pasteboardHistories", database: database)
             #expect(
                 columnNames == [
                     "deviceID",
@@ -91,17 +113,8 @@ struct SQLiteDataMigratorTests {
                 ]
             )
         }
-
         try database.read { database in
-            let columnNames = try #sql(
-                """
-                SELECT "name"
-                FROM pragma_table_info('pasteboardHistoryAssets')
-                ORDER BY "name"
-                """,
-                as: String.self
-            )
-            .fetchAll(database)
+            let columnNames = try columnNames(of: "pasteboardHistoryAssets", database: database)
             #expect(
                 columnNames == [
                     "data",
@@ -112,17 +125,8 @@ struct SQLiteDataMigratorTests {
                 ]
             )
         }
-
         try database.read { database in
-            let columnNames = try #sql(
-                """
-                SELECT "name"
-                FROM pragma_table_info('pasteboardHistoryThumbnailAssets')
-                ORDER BY "name"
-                """,
-                as: String.self
-            )
-            .fetchAll(database)
+            let columnNames = try columnNames(of: "pasteboardHistoryThumbnailAssets", database: database)
             #expect(
                 columnNames == [
                     "data",
@@ -131,17 +135,8 @@ struct SQLiteDataMigratorTests {
                 ]
             )
         }
-
         try database.read { database in
-            let columnNames = try #sql(
-                """
-                SELECT "name"
-                FROM pragma_table_info('snippetFolders')
-                ORDER BY "name"
-                """,
-                as: String.self
-            )
-            .fetchAll(database)
+            let columnNames = try columnNames(of: "snippetFolders", database: database)
             #expect(
                 columnNames == [
                     "id",
@@ -151,17 +146,8 @@ struct SQLiteDataMigratorTests {
                 ]
             )
         }
-
         try database.read { database in
-            let columnNames = try #sql(
-                """
-                SELECT "name"
-                FROM pragma_table_info('snippets')
-                ORDER BY "name"
-                """,
-                as: String.self
-            )
-            .fetchAll(database)
+            let columnNames = try columnNames(of: "snippets", database: database)
             #expect(
                 columnNames == [
                     "content",
@@ -173,5 +159,97 @@ struct SQLiteDataMigratorTests {
                 ]
             )
         }
+    }
+
+    func expectV2Triggers(_ database: DatabaseQueue) throws {
+        try database.read { database in
+            let triggers = try triggers(database)
+            #expect(
+                triggers == [
+                    "delete_pasteboardHistories_from_pasteboardHistorySearches",
+                    "delete_snippets_from_snippetSearches",
+                    "insert_pasteboardHistories_into_pasteboardHistorySearches",
+                    "insert_snippets_into_snippetSearches",
+                    "update_pasteboardHistories_in_pasteboardHistorySearches",
+                    "update_snippets_in_snippetSearches"
+                ]
+            )
+        }
+    }
+
+    func expectV2Tables(_ database: DatabaseQueue) throws {
+        try database.read { database in
+            let columnNames = try columnNames(of: "pasteboardHistorySearches", database: database)
+            #expect(
+                columnNames == [
+                    "id",
+                    "title"
+                ]
+            )
+        }
+        try database.read { database in
+            let columnNames = try columnNames(of: "snippetSearches", database: database)
+            #expect(
+                columnNames == [
+                    "content",
+                    "id",
+                    "title"
+                ]
+            )
+        }
+    }
+}
+
+private extension SQLiteDataMigratorTests {
+    func tableNames(_ database: Database) throws -> [String] {
+        try #sql(
+            """
+            SELECT "name"
+            FROM "sqlite_master"
+            WHERE "type" = 'table'
+            ORDER BY "name"
+            """,
+            as: String.self
+        )
+        .fetchAll(database)
+    }
+
+    func indexes(_ database: Database) throws -> [String] {
+        try #sql(
+            """
+            SELECT "name"
+            FROM "sqlite_master"
+            WHERE "type" = 'index'
+            AND "name" GLOB 'index_*'
+            ORDER BY "name"
+            """,
+            as: String.self
+        )
+        .fetchAll(database)
+    }
+
+    func triggers(_ database: Database) throws -> [String] {
+        try #sql(
+            """
+            SELECT "name"
+            FROM "sqlite_master"
+            WHERE "type" = 'trigger'
+            ORDER BY "name"
+            """,
+            as: String.self
+        )
+        .fetchAll(database)
+    }
+
+    func columnNames(of tableName: String, database: Database) throws -> [String] {
+        try #sql(
+            """
+            SELECT "name"
+            FROM pragma_table_info('\(raw: tableName)')
+            ORDER BY "name"
+            """,
+            as: String.self
+        )
+        .fetchAll(database)
     }
 }

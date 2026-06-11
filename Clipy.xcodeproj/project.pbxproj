@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C50767032FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */; };
 		C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522FB942FCBD69A00E61800 /* PasteboardAvailableType.swift */; };
 		C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522FB982FCC019100E61800 /* PasteboardAvailableTypeTests.swift */; };
 		C53FC6C02FCCA1C400219A25 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = C53FC6BF2FCCA1C400219A25 /* Collections */; };
@@ -157,6 +158,7 @@
 		A07D83942FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYTypePreferenceViewController.strings"; sourceTree = "<group>"; };
 		A07D83952FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
 		A07D83962FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
+		C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataDatabase+TriggerTests.swift"; sourceTree = "<group>"; };
 		C5208B882FC6E7FF00BC4568 /* Clipy.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Clipy.xcconfig; sourceTree = "<group>"; };
 		C5208B8D2FC6E88E00BC4568 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		C5208B8E2FC6E8B000BC4568 /* CodeSigning-AdHoc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CodeSigning-AdHoc.xcconfig"; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 		C5700B472FC5C0DB00C8F965 /* Database */ = {
 			isa = PBXGroup;
 			children = (
+				C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */,
 				C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */,
 				C5700B4F2FD106000C8F965 /* DatabaseMigrationTests.swift */,
 			);
@@ -904,6 +907,7 @@
 				C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */,
 				C57100112FCEB45000C8F965 /* NSImage+ResizeTests.swift in Sources */,
 				C57100052FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift in Sources */,
+				C50767032FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift in Sources */,
 				C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */,
 				C57100012FCAE00000C8F965 /* SnippetRepositoryTests.swift in Sources */,
 			);
