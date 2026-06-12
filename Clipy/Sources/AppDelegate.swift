@@ -19,7 +19,6 @@ import RxSwift
 import Screeen
 import Sparkle
 
-@NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
@@ -37,8 +36,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private let migration = DatabaseMigration()
 
     // MARK: - Init
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override init() {
+        super.init()
         // If the SQLite database file does not exist yet, start the database and then migrate Realm data to SQLiteData.
         let sqliteDatabaseExists = (try? SQLiteDataDatabase.databaseURL().checkResourceIsReachable()) ?? false
         prepareDependencies { values in
