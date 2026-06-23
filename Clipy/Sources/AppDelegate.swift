@@ -33,20 +33,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
     private var snippetRepository
-    private let migration = DatabaseMigration()
-
-    // MARK: - Init
-    override init() {
-        super.init()
-        // If the SQLite database file does not exist yet, start the database and then migrate Realm data to SQLiteData.
-        let sqliteDatabaseExists = (try? SQLiteDataDatabase.databaseURL().checkResourceIsReachable()) ?? false
-        prepareDependencies { values in
-            try! values.bootstrapDatabase()
-            if !sqliteDatabaseExists {
-                migration.migrateFromRealmToSQLiteData()
-            }
-        }
-    }
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
