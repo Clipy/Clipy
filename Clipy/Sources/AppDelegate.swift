@@ -19,7 +19,6 @@ import RxSwift
 import Screeen
 import Sparkle
 
-@NSApplicationMain
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
@@ -34,20 +33,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
     private var snippetRepository
-    private let migration = DatabaseMigration()
-
-    // MARK: - Init
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // If the SQLite database file does not exist yet, start the database and then migrate Realm data to SQLiteData.
-        let sqliteDatabaseExists = (try? SQLiteDataDatabase.databaseURL().checkResourceIsReachable()) ?? false
-        prepareDependencies { values in
-            try! values.bootstrapDatabase()
-            if !sqliteDatabaseExists {
-                migration.migrateFromRealmToSQLiteData()
-            }
-        }
-    }
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
