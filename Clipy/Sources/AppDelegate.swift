@@ -154,7 +154,7 @@ extension AppDelegate: NSApplicationDelegate {
         // SDKs
         CPYUtilities.initSDKs()
         // Check Accessibility Permission
-        AppEnvironment.current.accessibilityService.isAccessibilityEnabled(isPrompt: true)
+        Accessibility.isAccessibilityEnabled(isPrompt: true)
 
         // Show Login Item
         if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {

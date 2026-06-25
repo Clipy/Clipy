@@ -38,6 +38,7 @@
 		C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C576AD7B2FBD345000B71213 /* Localizable.xcstrings */; };
 		C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = C587AF502FBF4E040043D5E7 /* SQLiteData */; };
 		C58E0A822FDAB5B100B3A901 /* ClipyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58E0A812FDAB5B100B3A901 /* ClipyApp.swift */; };
+		C5A67BC42FECF03C0015A0DE /* Accessibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A67BC32FECF0380015A0DE /* Accessibility.swift */; };
 		C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C5A6BA732FBC5A6E00C8B9EB /* Sparkle */; };
 		C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D220A72FBD2655005CD45E /* RealmSwift */; };
 		C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75B2FB869EA00C9DCB6 /* Sauce */; };
@@ -95,7 +96,6 @@
 		FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */; };
 		FA6DD5141C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
-		FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
 		FAC0DCF11DE576F300309C49 /* PasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCF01DE576F300309C49 /* PasteService.swift */; };
 		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
@@ -186,6 +186,7 @@
 		C57447252FD09FD9000D64D3 /* RealmConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmConfiguration.swift; sourceTree = "<group>"; };
 		C576AD7B2FBD345000B71213 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C58E0A812FDAB5B100B3A901 /* ClipyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipyApp.swift; sourceTree = "<group>"; };
+		C5A67BC32FECF0380015A0DE /* Accessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessibility.swift; sourceTree = "<group>"; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceTests.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
@@ -221,7 +222,6 @@
 		FA3778941F3B6920003B5BAB /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collection+Safe.swift"; sourceTree = "<group>"; };
 		FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggedDataTests.swift; sourceTree = "<group>"; };
-		FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityService.swift; sourceTree = "<group>"; };
 		FAAA885C1E6853B80088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYBetaPreferenceViewController.xib; sourceTree = "<group>"; };
 		FAAA88621E6858030088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYBetaPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAAA886C1E685DC70088FB34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYExcludeAppPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -406,6 +406,14 @@
 			path = Dependencies;
 			sourceTree = "<group>";
 		};
+		C5A67BC22FECF0010015A0DE /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				C5A67BC32FECF0380015A0DE /* Accessibility.swift */,
+			);
+			path = Accessibility;
+			sourceTree = "<group>";
+		};
 		FA06D2D21DD882BD002FB7C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -422,7 +430,6 @@
 				FAE911B81DE045E2008A4BEC /* HotKeyService.swift */,
 				FAC0DCF01DE576F300309C49 /* PasteService.swift */,
 				FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */,
-				FAA4BCCB2163DC9100FF5D18 /* AccessibilityService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -442,6 +449,7 @@
 				C57447262FD09FD9000D64D3 /* Dependencies */,
 				C54C29D32FC3E1F500EF30FB /* Database */,
 				C5700B452FC40BBF00C8F965 /* Repositories */,
+				C5A67BC22FECF0010015A0DE /* Accessibility */,
 				FA3778911F3B690D003B5BAB /* Environments */,
 				FA0D5CE61DDCC5D000AC9052 /* Services */,
 				FA1DB4EC1DDCB4C0007F95C8 /* Preferences */,
@@ -838,6 +846,7 @@
 			files = (
 				FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */,
 				FA1DB4A61DDCB443007F95C8 /* MenuType.swift in Sources */,
+				C5A67BC42FECF03C0015A0DE /* Accessibility.swift in Sources */,
 				C57447272FD09FD9000D64D3 /* RealmConfiguration.swift in Sources */,
 				C54C29D52FC3E20000EF30FB /* SQLiteDataDatabase.swift in Sources */,
 				FA3778931F3B691A003B5BAB /* AppEnvironment.swift in Sources */,
@@ -845,7 +854,6 @@
 				FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */,
 				FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */,
 				FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */,
-				FAA4BCCC2163DC9100FF5D18 /* AccessibilityService.swift in Sources */,
 				C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */,
 				C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */,
 				C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */,
