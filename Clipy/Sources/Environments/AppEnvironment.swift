@@ -40,14 +40,12 @@ struct AppEnvironment {
                      hotKeyService: HotKeyService = current.hotKeyService,
                      pasteService: PasteService = current.pasteService,
                      excludeAppService: ExcludeAppService = current.excludeAppService,
-                     accessibilityService: AccessibilityService = current.accessibilityService,
                      menuManager: MenuManager = current.menuManager,
                      defaults: UserDefaults = current.defaults) {
         push(environment: Environment(clipService: clipService,
                                       hotKeyService: hotKeyService,
                                       pasteService: pasteService,
                                       excludeAppService: excludeAppService,
-                                      accessibilityService: accessibilityService,
                                       menuManager: menuManager,
                                       defaults: defaults))
     }
@@ -56,14 +54,12 @@ struct AppEnvironment {
                                hotKeyService: HotKeyService = current.hotKeyService,
                                pasteService: PasteService = current.pasteService,
                                excludeAppService: ExcludeAppService = current.excludeAppService,
-                               accessibilityService: AccessibilityService = current.accessibilityService,
                                menuManager: MenuManager = current.menuManager,
                                defaults: UserDefaults = current.defaults) {
         replaceCurrent(environment: Environment(clipService: clipService,
                                                 hotKeyService: hotKeyService,
                                                 pasteService: pasteService,
                                                 excludeAppService: excludeAppService,
-                                                accessibilityService: accessibilityService,
                                                 menuManager: menuManager,
                                                 defaults: defaults))
     }
@@ -78,7 +74,6 @@ struct AppEnvironment {
                            hotKeyService: current.hotKeyService,
                            pasteService: current.pasteService,
                            excludeAppService: excludeAppService,
-                           accessibilityService: current.accessibilityService,
                            menuManager: current.menuManager,
                            defaults: current.defaults)
     }
