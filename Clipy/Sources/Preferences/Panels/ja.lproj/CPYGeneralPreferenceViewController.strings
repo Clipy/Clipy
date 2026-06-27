@@ -11,8 +11,8 @@
 /* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
 "Lps-06-dPB.title" = "履歴のソート順:";
 
-/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
-"LsC-YB-qAw.title" = "クラッシュレポートやエラーログを送信する(次回起動時に反映)";
+/* Class = "NSButtonCell"; title = "Send crash reports and usage logs (applies next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "クラッシュレポートと利用ログを送信する(次回起動時に適用)";
 
 /* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
 "Nab-CO-ytH.title" = "記憶する履歴の数:";

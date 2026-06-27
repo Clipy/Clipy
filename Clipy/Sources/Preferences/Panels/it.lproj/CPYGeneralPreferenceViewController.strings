@@ -11,8 +11,8 @@
 /* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
 "Lps-06-dPB.title" = "Ordina la Cronologia in base a:";
 
-/* Class = "NSButtonCell"; title = "Send crash report and error log (reflected at the next launch)"; ObjectID = "LsC-YB-qAw"; */
-"LsC-YB-qAw.title" = "Invia rapporti sugli arresti anomali";
+/* Class = "NSButtonCell"; title = "Send crash reports and usage logs (applies next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "Invia crash report e log d'uso (dal prossimo avvio)";
 
 /* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
 "Nab-CO-ytH.title" = "Dimensione massima della Cronologia:";

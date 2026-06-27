@@ -33,6 +33,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
     private var snippetRepository
+    @Dependency(\.firebase)
+    private var firebase
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -152,7 +154,7 @@ extension AppDelegate: NSApplicationDelegate {
         guard context != .test else { return }
 
         // SDKs
-        CPYUtilities.initSDKs()
+        firebase.configure()
         // Check Accessibility Permission
         Accessibility.isAccessibilityEnabled(isPrompt: true)
 
