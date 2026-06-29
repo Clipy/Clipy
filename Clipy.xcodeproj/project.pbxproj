@@ -27,6 +27,7 @@
 		C57100072FCEB02000C8F965 /* PasteboardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100062FCEB02000C8F965 /* PasteboardContent.swift */; };
 		C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C571000B2FCEB03000C8F965 /* PasteboardContentTests.swift */; };
 		C57100112FCEB45000C8F965 /* NSImage+ResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100102FCEB45000C8F965 /* NSImage+ResizeTests.swift */; };
+		C57235112FF24ADE002158F7 /* NSMenu+Highlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57235102FF24AD8002158F7 /* NSMenu+Highlight.swift */; };
 		C57447202FD09FC6000D64D3 /* CPYClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471B2FD09FC6000D64D3 /* CPYClip.swift */; };
 		C57447212FD09FC6000D64D3 /* CPYSnippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471E2FD09FC6000D64D3 /* CPYSnippet.swift */; };
 		C57447222FD09FC6000D64D3 /* CPYClipData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471C2FD09FC6000D64D3 /* CPYClipData.swift */; };
@@ -178,6 +179,7 @@
 		C57100062FCEB02000C8F965 /* PasteboardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardContent.swift; sourceTree = "<group>"; };
 		C571000B2FCEB03000C8F965 /* PasteboardContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardContentTests.swift; sourceTree = "<group>"; };
 		C57100102FCEB45000C8F965 /* NSImage+ResizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+ResizeTests.swift"; sourceTree = "<group>"; };
+		C57235102FF24AD8002158F7 /* NSMenu+Highlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMenu+Highlight.swift"; sourceTree = "<group>"; };
 		C574471A2FD09FC6000D64D3 /* DatabaseMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigration.swift; sourceTree = "<group>"; };
 		C574471B2FD09FC6000D64D3 /* CPYClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPYClip.swift; sourceTree = "<group>"; };
 		C574471C2FD09FC6000D64D3 /* CPYClipData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPYClipData.swift; sourceTree = "<group>"; };
@@ -488,6 +490,7 @@
 				FA1DB4B21DDCB452007F95C8 /* String+Substring.swift */,
 				FA431F011E6718CE00ACFF56 /* Collection+Safe.swift */,
 				C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */,
+				C57235102FF24AD8002158F7 /* NSMenu+Highlight.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -853,6 +856,7 @@
 				FAC0DCF11DE576F300309C49 /* PasteService.swift in Sources */,
 				FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */,
 				FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */,
+				C57235112FF24ADE002158F7 /* NSMenu+Highlight.swift in Sources */,
 				FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */,
 				C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */,
 				C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */,

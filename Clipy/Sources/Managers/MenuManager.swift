@@ -80,6 +80,7 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
+        menu?.highlightingfirstItemIfPossible()
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
@@ -98,6 +99,7 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
+        folderMenu.highlightingfirstItemIfPossible()
         folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 }
