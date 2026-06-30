@@ -12,11 +12,11 @@
 
 import Cocoa
 import Dependencies
-import LoginServiceKit
 import Magnet
 import RxCocoa
 import RxSwift
 import Screeen
+import ServiceManagement
 import Sparkle
 
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -117,26 +117,12 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
             AppEnvironment.current.defaults.synchronize()
-            reflectLoginItemState()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSControl.StateValue.on {
             AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
             AppEnvironment.current.defaults.synchronize()
         }
-    }
-
-    private func toggleAddingToLoginItems(_ isEnable: Bool) {
-        if isEnable {
-            LoginServiceKit.addLoginItems()
-        } else {
-            LoginServiceKit.removeLoginItems()
-        }
-    }
-
-    private func reflectLoginItemState() {
-        let isInLoginItems = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem)
-        toggleAddingToLoginItems(isInLoginItems)
     }
 }
 
@@ -200,8 +186,14 @@ private extension AppDelegate {
         // Login Item
         AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
             .compactMap { $0 }
-            .subscribe(onNext: { [weak self] _ in
-                self?.reflectLoginItemState()
+            .subscribe(onNext: { isEnabled in
+                if isEnabled {
+                    guard SMAppService.mainApp.status != .enabled else { return }
+                    try? SMAppService.mainApp.register()
+                } else {
+                    guard SMAppService.mainApp.status != .notRegistered else { return }
+                    try? SMAppService.mainApp.unregister()
+                }
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
