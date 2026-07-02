@@ -234,25 +234,21 @@ private extension MenuManager {
     }
 
     func trimTitle(_ title: String?) -> String {
-        if title == nil { return "" }
-        let theString = title!.trimmingCharacters(in: .whitespacesAndNewlines) as NSString
-
-        let aRange = NSRange(location: 0, length: 0)
-        var lineStart = 0, lineEnd = 0, contentsEnd = 0
-        theString.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: aRange)
-
-        var titleString = (lineEnd == theString.length) ? theString as String : theString.substring(to: contentsEnd)
+        guard let title else { return "" }
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let firstLineEnd = trimmedTitle.firstIndex(where: \.isNewline) ?? trimmedTitle.endIndex
+        var titleString = String(trimmedTitle[..<firstLineEnd])
 
         var maxMenuItemTitleLength = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxMenuItemTitleLength)
         if maxMenuItemTitleLength < shortenSymbol.count {
             maxMenuItemTitleLength = shortenSymbol.count
         }
 
-        if titleString.utf16.count > maxMenuItemTitleLength {
-            titleString = (titleString as NSString).substring(to: maxMenuItemTitleLength - shortenSymbol.count) + shortenSymbol
+        if titleString.count > maxMenuItemTitleLength {
+            titleString = String(titleString.prefix(maxMenuItemTitleLength - shortenSymbol.count)) + shortenSymbol
         }
 
-        return titleString as String
+        return titleString
     }
 }
 
@@ -343,8 +339,7 @@ private extension MenuManager {
 
         if isShowToolTip {
             let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
-            let toIndex = (clipString.count < maxLengthOfToolTip) ? clipString.count : maxLengthOfToolTip
-            menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
+            menuItem.toolTip = String(clipString.prefix(maxLengthOfToolTip))
         }
 
         if primaryPboardType == .png || primaryPboardType == .tiff || primaryPboardType == .deprecatedTIFF {
