@@ -15,7 +15,7 @@ import Dependencies
 import Sharing
 
 extension Snippet {
-    var tooltip: String? {
+    var toolTip: String? {
         @Dependency(\.defaultAppStorage) var appStorage
 
         guard appStorage.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem) else { return nil }

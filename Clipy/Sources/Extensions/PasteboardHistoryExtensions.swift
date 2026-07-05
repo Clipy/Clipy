@@ -32,7 +32,7 @@ extension PasteboardHistory {
             .filter { !$0.isEmpty }
             .joined(separator: " ")
     }
-    var tooltip: String? {
+    var toolTip: String? {
         @Dependency(\.defaultAppStorage) var appStorage
 
         guard appStorage.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem) else { return nil }

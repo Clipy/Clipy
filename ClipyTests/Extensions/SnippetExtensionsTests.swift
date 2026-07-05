@@ -28,32 +28,32 @@ struct SnippetExtensionsTests {
     )
 
     @Test
-    func tooltipShowsFullContentWhenEnabled() {
+    func toolTipShowsFullContentWhenEnabled() {
         withDependencies {
             $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
             $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxLengthOfToolTip)
         } operation: {
-            #expect(snippet.tooltip == "Snippet content")
+            #expect(snippet.toolTip == "Snippet content")
         }
     }
 
     @Test
-    func tooltipShortensWhenEnabled() {
+    func toolTipShortensWhenEnabled() {
         withDependencies {
             $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
             $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
         } operation: {
-            #expect(snippet.tooltip == "Snippet c")
+            #expect(snippet.toolTip == "Snippet c")
         }
     }
 
     @Test
-    func tooltipIsNilWhenDisabled() {
+    func toolTipIsNilWhenDisabled() {
         withDependencies {
             $0.defaultAppStorage.set(false, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
             $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
         } operation: {
-            #expect(snippet.tooltip == nil)
+            #expect(snippet.toolTip == nil)
         }
     }
 }

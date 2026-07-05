@@ -313,7 +313,7 @@ private extension MenuManager {
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.representedObject = history.id
-        menuItem.toolTip = history.tooltip
+        menuItem.toolTip = history.toolTip
 
         if isShowImage || isShowColorCode,
            let thumbnailAsset = historyDetail.thumbnailAsset,
@@ -373,7 +373,7 @@ private extension MenuManager {
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
         menuItem.representedObject = snippet.id
-        menuItem.toolTip = snippet.tooltip
+        menuItem.toolTip = snippet.toolTip
         menuItem.image = (isShowIcon) ? snippetIcon : nil
 
         return menuItem

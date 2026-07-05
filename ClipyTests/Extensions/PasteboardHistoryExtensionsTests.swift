@@ -113,32 +113,32 @@ struct PasteboardHistoryExtensionsTests {
     }
 
     @Test
-    func tooltipShowsFullTitleWhenEnabled() {
+    func toolTipShowsFullTitleWhenEnabled() {
         withDependencies {
             $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
             $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxLengthOfToolTip)
         } operation: {
-            #expect(history.tooltip == "Clipboard title")
+            #expect(history.toolTip == "Clipboard title")
         }
     }
 
     @Test
-    func tooltipShortensWhenEnabled() {
+    func toolTipShortensWhenEnabled() {
         withDependencies {
             $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
             $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
         } operation: {
-            #expect(history.tooltip == "Clipboard")
+            #expect(history.toolTip == "Clipboard")
         }
     }
 
     @Test
-    func tooltipIsNilWhenDisabled() {
+    func toolTipIsNilWhenDisabled() {
         withDependencies {
             $0.defaultAppStorage.set(false, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
             $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
         } operation: {
-            #expect(history.tooltip == nil)
+            #expect(history.toolTip == nil)
         }
     }
 }
