@@ -27,6 +27,9 @@
 		C57100072FCEB02000C8F965 /* PasteboardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100062FCEB02000C8F965 /* PasteboardContent.swift */; };
 		C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C571000B2FCEB03000C8F965 /* PasteboardContentTests.swift */; };
 		C57100112FCEB45000C8F965 /* NSImage+ResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57100102FCEB45000C8F965 /* NSImage+ResizeTests.swift */; };
+		C5E8EE6E2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE6D2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift */; };
+		C5E8EE702FFA46F400270F1F /* SnippetExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE6F2FFA46F400270F1F /* SnippetExtensionsTests.swift */; };
+		C5E8EE722FFA46F400270F1F /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE712FFA46F400270F1F /* StringExtensionsTests.swift */; };
 		C57235112FF24ADE002158F7 /* NSMenu+Highlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57235102FF24AD8002158F7 /* NSMenu+Highlight.swift */; };
 		C57447202FD09FC6000D64D3 /* CPYClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471B2FD09FC6000D64D3 /* CPYClip.swift */; };
 		C57447212FD09FC6000D64D3 /* CPYSnippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C574471E2FD09FC6000D64D3 /* CPYSnippet.swift */; };
@@ -53,6 +56,9 @@
 		C5D76DA82FBA9C150083839F /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA72FBA9C150083839F /* PINCache */; };
 		C5D76DAB2FBA9D2E0083839F /* SwiftHEXColors in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */; };
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
+		C5E8EE642FFA260700270F1F /* PasteboardHistoryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */; };
+		C5E8EE682FFA28DD00270F1F /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE672FFA28D900270F1F /* StringExtensions.swift */; };
+		C5E8EE6A2FFA2A5600270F1F /* SnippetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */; };
 		FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5CE71DDCC61600AC9052 /* ClipService.swift */; };
@@ -190,6 +196,12 @@
 		C58E0A812FDAB5B100B3A901 /* ClipyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipyApp.swift; sourceTree = "<group>"; };
 		C5A67BC32FECF0380015A0DE /* Accessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessibility.swift; sourceTree = "<group>"; };
 		C5A67BC92FECF8640015A0DE /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
+		C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryExtensions.swift; sourceTree = "<group>"; };
+		C5E8EE672FFA28D900270F1F /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetExtensions.swift; sourceTree = "<group>"; };
+		C5E8EE6D2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryExtensionsTests.swift; sourceTree = "<group>"; };
+		C5E8EE6F2FFA46F400270F1F /* SnippetExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetExtensionsTests.swift; sourceTree = "<group>"; };
+		C5E8EE712FFA46F400270F1F /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
 		FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyServiceTests.swift; sourceTree = "<group>"; };
 		FA0D5CE71DDCC61600AC9052 /* ClipService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClipService.swift; sourceTree = "<group>"; };
@@ -385,6 +397,9 @@
 			isa = PBXGroup;
 			children = (
 				C57100102FCEB45000C8F965 /* NSImage+ResizeTests.swift */,
+				C5E8EE6D2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift */,
+				C5E8EE6F2FFA46F400270F1F /* SnippetExtensionsTests.swift */,
+				C5E8EE712FFA46F400270F1F /* StringExtensionsTests.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -481,6 +496,9 @@
 		FA1DB4A71DDCB452007F95C8 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */,
+				C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */,
+				C5E8EE672FFA28D900270F1F /* StringExtensions.swift */,
 				FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */,
 				FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */,
 				FA1DB4A91DDCB452007F95C8 /* NSBundle+Version.swift */,
@@ -864,12 +882,14 @@
 				FA1DB4A31DDCB433007F95C8 /* Constants.swift in Sources */,
 				FA1DB4B41DDCB452007F95C8 /* NSBundle+Version.swift in Sources */,
 				FA1DB5171DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift in Sources */,
+				C5E8EE682FFA28DD00270F1F /* StringExtensions.swift in Sources */,
 				C58E0A822FDAB5B100B3A901 /* ClipyApp.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
 				FA1DB5141DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift in Sources */,
 				C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */,
 				C5700B462FC40BBF00C8F965 /* SnippetRepository.swift in Sources */,
 				C57100032FCEB00000C8F965 /* PasteboardHistoryRepository.swift in Sources */,
+				C5E8EE6A2FFA2A5600270F1F /* SnippetExtensions.swift in Sources */,
 				FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */,
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
@@ -889,6 +909,7 @@
 				FA1DB4EA1DDCB49C007F95C8 /* CPYSnippetsEditorCell.swift in Sources */,
 				FA1DB5161DDCB4C0007F95C8 /* CPYShortcutsPreferenceViewController.swift in Sources */,
 				FA431F021E6718CE00ACFF56 /* Collection+Safe.swift in Sources */,
+				C5E8EE642FFA260700270F1F /* PasteboardHistoryExtensions.swift in Sources */,
 				C5A67BCA2FECF8670015A0DE /* Firebase.swift in Sources */,
 				FA1DB4E71DDCB49C007F95C8 /* CPYDesignableButton.swift in Sources */,
 				FA1DB4D21DDCB479007F95C8 /* CPYAppInfo.swift in Sources */,
@@ -910,6 +931,9 @@
 				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,
 				C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */,
 				C57100112FCEB45000C8F965 /* NSImage+ResizeTests.swift in Sources */,
+				C5E8EE6E2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift in Sources */,
+				C5E8EE702FFA46F400270F1F /* SnippetExtensionsTests.swift in Sources */,
+				C5E8EE722FFA46F400270F1F /* StringExtensionsTests.swift in Sources */,
 				C57100052FCEB01000C8F965 /* PasteboardHistoryRepositoryTests.swift in Sources */,
 				C50767032FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift in Sources */,
 				C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */,
