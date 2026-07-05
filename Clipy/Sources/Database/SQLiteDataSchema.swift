@@ -25,10 +25,6 @@ struct PasteboardHistory: Identifiable, Equatable {
     let pasteboardTypes: [NSPasteboard.PasteboardType]
     let updateAt: Int
     let deviceID: String?
-
-    var primaryType: NSPasteboard.PasteboardType? {
-        pasteboardTypes.first
-    }
 }
 
 @Table
