@@ -113,7 +113,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
     func save(id: PasteboardHistory.ID, content: PasteboardContent, updateAt: Int) {
         let history = PasteboardHistory(
             id: id,
-            title: content.stringValue[0...10000],
+            title: String(content.stringValue.prefix(10000)),
             pasteboardTypes: content.types,
             updateAt: updateAt,
             deviceID: CPYUtilities.deviceID

@@ -37,7 +37,6 @@ final class MenuManager: NSObject {
     private let disposeBag = DisposeBag()
     private let notificationCenter = NotificationCenter.default
     private let kMaxKeyEquivalents = 10
-    private let shortenSymbol = "..."
 
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
@@ -232,28 +231,6 @@ private extension MenuManager {
         subMenuItem.image = (AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showIconInTheMenu)) ? folderIcon : nil
         return subMenuItem
     }
-
-    func trimTitle(_ title: String?) -> String {
-        if title == nil { return "" }
-        let theString = title!.trimmingCharacters(in: .whitespacesAndNewlines) as NSString
-
-        let aRange = NSRange(location: 0, length: 0)
-        var lineStart = 0, lineEnd = 0, contentsEnd = 0
-        theString.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: aRange)
-
-        var titleString = (lineEnd == theString.length) ? theString as String : theString.substring(to: contentsEnd)
-
-        var maxMenuItemTitleLength = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        if maxMenuItemTitleLength < shortenSymbol.count {
-            maxMenuItemTitleLength = shortenSymbol.count
-        }
-
-        if titleString.utf16.count > maxMenuItemTitleLength {
-            titleString = (titleString as NSString).substring(to: maxMenuItemTitleLength - shortenSymbol.count) + shortenSymbol
-        }
-
-        return titleString as String
-    }
 }
 
 // MARK: - Clips
@@ -317,7 +294,6 @@ private extension MenuManager {
     func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int) -> NSMenuItem {
         let history = historyDetail.history
         let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
-        let isShowToolTip = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem)
         let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
         let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
         let addNumbericKeyEquivalents = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.addNumericKeyEquivalents)
@@ -333,27 +309,11 @@ private extension MenuManager {
             keyEquivalent = "\(shortCutNumber)"
         }
 
-        let primaryPboardType = history.primaryType
-        let clipString = history.title
-        let title = trimTitle(clipString)
-        let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+        let titleWithMark = menuItemTitle(history.typedTitle, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.representedObject = history.id
-
-        if isShowToolTip {
-            let maxLengthOfToolTip = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
-            let toIndex = (clipString.count < maxLengthOfToolTip) ? clipString.count : maxLengthOfToolTip
-            menuItem.toolTip = (clipString as NSString).substring(to: toIndex)
-        }
-
-        if primaryPboardType == .png || primaryPboardType == .tiff || primaryPboardType == .deprecatedTIFF {
-            menuItem.title = menuItemTitle("(Image)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .pdf || primaryPboardType == .deprecatedPDF {
-            menuItem.title = menuItemTitle("(PDF)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        } else if primaryPboardType == .fileURL || primaryPboardType == .deprecatedFilenames {
-            menuItem.title = menuItemTitle("(Files)", listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-        }
+        menuItem.toolTip = history.toolTip
 
         if isShowImage || isShowColorCode,
            let thumbnailAsset = historyDetail.thumbnailAsset,
@@ -409,12 +369,11 @@ private extension MenuManager {
         let isMarkWithNumber = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowIcon = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
 
-        let title = trimTitle(snippet.title)
-        let titleWithMark = menuItemTitle(title, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
+        let titleWithMark = menuItemTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
 
         let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
         menuItem.representedObject = snippet.id
-        menuItem.toolTip = snippet.content
+        menuItem.toolTip = snippet.toolTip
         menuItem.image = (isShowIcon) ? snippetIcon : nil
 
         return menuItem
