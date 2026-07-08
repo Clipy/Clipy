@@ -120,7 +120,7 @@ extension PasteService {
             return
         }
         let modifier = pasteMenu?.keyEquivalentModifierMask ?? .command
-        let keyCode = Sauce.shared.keyCode(for: pasteMenu?.key ?? .v, cocoaModifiers: modifier)
+        let keyCode = Sauce.shared.keyCode(for: pasteMenu?.key ?? .v, modifiers: .cocoa(modifier))
         let modifierFlags = CGEventFlags(rawValue: UInt64(modifier.rawValue))
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
