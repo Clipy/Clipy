@@ -251,11 +251,11 @@ private extension MenuManager {
         var subMenuCount = placeInLine
         var subMenuIndex = 1 + placeInLine
 
-        let ascending = !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+        let reorderClipsAfterPasting = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
         let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
         let isShowColorCode = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
         let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
-            ascending: ascending,
+            sortsByCreatedAt: !reorderClipsAfterPasting,
             includesThumbnailAsset: isShowImage || isShowColorCode,
             limit: maxHistory
         )

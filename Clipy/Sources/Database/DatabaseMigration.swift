@@ -57,6 +57,7 @@ struct DatabaseMigration {
                         id: id,
                         title: clip.title,
                         pasteboardTypes: content.types,
+                        createdAt: clip.updateTime,
                         updateAt: clip.updateTime,
                         deviceID: CPYUtilities.deviceID
                     )

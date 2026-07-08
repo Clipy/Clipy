@@ -13,6 +13,9 @@
 		C53FC6C02FCCA1C400219A25 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = C53FC6BF2FCCA1C400219A25 /* Collections */; };
 		C54C29D52FC3E20000EF30FB /* SQLiteDataDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54C29D42FC3E1FD00EF30FB /* SQLiteDataDatabase.swift */; };
 		C54C29D72FC3E21400EF30FB /* SQLiteDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */; };
+		C5D41A052FDB4A0500EF30FB /* SQLiteDataMigrator+V1.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D41A022FDB4A0200EF30FB /* SQLiteDataMigrator+V1.swift */; };
+		C5D41A062FDB4A0600EF30FB /* SQLiteDataMigrator+V2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D41A032FDB4A0300EF30FB /* SQLiteDataMigrator+V2.swift */; };
+		C5D41A072FDB4A0700EF30FB /* SQLiteDataMigrator+V3.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D41A042FDB4A0400EF30FB /* SQLiteDataMigrator+V3.swift */; };
 		C54C29D92FC3E22000EF30FB /* SQLiteDataSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54C29D82FC3E21A00EF30FB /* SQLiteDataSchema.swift */; };
 		C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */; };
 		C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */; };
@@ -173,6 +176,9 @@
 		C522FB982FCC019100E61800 /* PasteboardAvailableTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardAvailableTypeTests.swift; sourceTree = "<group>"; };
 		C54C29D42FC3E1FD00EF30FB /* SQLiteDataDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataDatabase.swift; sourceTree = "<group>"; };
 		C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataMigrator.swift; sourceTree = "<group>"; };
+		C5D41A022FDB4A0200EF30FB /* SQLiteDataMigrator+V1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V1.swift"; sourceTree = "<group>"; };
+		C5D41A032FDB4A0300EF30FB /* SQLiteDataMigrator+V2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V2.swift"; sourceTree = "<group>"; };
+		C5D41A042FDB4A0400EF30FB /* SQLiteDataMigrator+V3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V3.swift"; sourceTree = "<group>"; };
 		C54C29D82FC3E21A00EF30FB /* SQLiteDataSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataSchema.swift; sourceTree = "<group>"; };
 		C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggedData.swift; sourceTree = "<group>"; };
 		C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetFolderDetail.swift; sourceTree = "<group>"; };
@@ -348,12 +354,23 @@
 			isa = PBXGroup;
 			children = (
 				C574471F2FD09FC6000D64D3 /* Realm */,
+				C5D41A012FDB4A0100EF30FB /* Migrations */,
 				C54C29D42FC3E1FD00EF30FB /* SQLiteDataDatabase.swift */,
 				C54C29D82FC3E21A00EF30FB /* SQLiteDataSchema.swift */,
-				C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */,
 				C574471A2FD09FC6000D64D3 /* DatabaseMigration.swift */,
 			);
 			path = Database;
+			sourceTree = "<group>";
+		};
+		C5D41A012FDB4A0100EF30FB /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */,
+				C5D41A022FDB4A0200EF30FB /* SQLiteDataMigrator+V1.swift */,
+				C5D41A032FDB4A0300EF30FB /* SQLiteDataMigrator+V2.swift */,
+				C5D41A042FDB4A0400EF30FB /* SQLiteDataMigrator+V3.swift */,
+			);
+			path = Migrations;
 			sourceTree = "<group>";
 		};
 		C5700B452FC40BBF00C8F965 /* Repositories */ = {
@@ -919,6 +936,9 @@
 				FA1DB5121DDCB4C0007F95C8 /* CPYPreferencesWindowController.swift in Sources */,
 				FAE911BB1DE054F1008A4BEC /* NSCoding+Archive.swift in Sources */,
 				C54C29D72FC3E21400EF30FB /* SQLiteDataMigrator.swift in Sources */,
+				C5D41A052FDB4A0500EF30FB /* SQLiteDataMigrator+V1.swift in Sources */,
+				C5D41A062FDB4A0600EF30FB /* SQLiteDataMigrator+V2.swift in Sources */,
+				C5D41A072FDB4A0700EF30FB /* SQLiteDataMigrator+V3.swift in Sources */,
 				FA3778951F3B6920003B5BAB /* Environment.swift in Sources */,
 			);
 		};

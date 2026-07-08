@@ -23,6 +23,7 @@ struct PasteboardHistory: Identifiable, Equatable {
     let title: String
     @Column(as: [NSPasteboard.PasteboardType].JSONRepresentation.self)
     let pasteboardTypes: [NSPasteboard.PasteboardType]
+    let createdAt: Int
     let updateAt: Int
     let deviceID: String?
 }
