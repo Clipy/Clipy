@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/clipy/sauce",
       "state" : {
-        "revision" : "c9ebdcfddb4b94da5b9a6ebd113ab385edda88c1",
-        "version" : "2.5.0"
+        "revision" : "84d03fcddebf78e08f3105b1159300bfdae3b217",
+        "version" : "2.5.1"
       }
     },
     {
