@@ -1,31 +1,19 @@
 import Carbon
+import Dependencies
+import DependenciesTestSupport
 import Foundation
 import Magnet
+import Sharing
 import Testing
 @testable import Clipy
 
-@Suite(.serialized)
+@Suite(.serialized, .dependencies)
 final class HotKeyServiceTests {
-    init() {
-        let defaults = UserDefaults.standard
-        defaults.removeObject(forKey: Constants.UserDefaults.hotKeys)
-        defaults.removeObject(forKey: Constants.HotKey.migrateNewKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.mainKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.historyKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.snippetKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.clearHistoryKeyCombo)
-        defaults.synchronize()
-    }
+    @Dependency(\.defaultAppStorage)
+    var appStorage
 
-    deinit {
-        let defaults = UserDefaults.standard
-        defaults.removeObject(forKey: Constants.UserDefaults.hotKeys)
-        defaults.removeObject(forKey: Constants.HotKey.migrateNewKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.mainKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.historyKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.snippetKeyCombo)
-        defaults.removeObject(forKey: Constants.HotKey.clearHistoryKeyCombo)
-        defaults.synchronize()
+    init() {
+        CPYUtilities.registerUserDefaultKeys(appStorage)
     }
 
     @Test
@@ -35,10 +23,9 @@ final class HotKeyServiceTests {
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
 
-        let defaults = UserDefaults.standard
-        #expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == false)
+        #expect(appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == false)
         service.setupDefaultHotKeys()
-        #expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == true)
+        #expect(appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == true)
 
         let mainKeyCombo = try #require(service.mainKeyCombo)
         #expect(mainKeyCombo.QWERTYKeyCode == 9)
@@ -66,16 +53,14 @@ final class HotKeyServiceTests {
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
 
-        let defaults = UserDefaults.standard
         let defaultKeyCombos: [String: Any] = [Constants.Menu.clip: ["keyCode": 0, "modifiers": 4352],
                                                Constants.Menu.history: ["keyCode": 9, "modifiers": 768],
                                                Constants.Menu.snippet: ["keyCode": 11, "modifiers": 4352]]
-        defaults.register(defaults: [Constants.UserDefaults.hotKeys: defaultKeyCombos])
-        defaults.synchronize()
+        appStorage.register(defaults: [Constants.UserDefaults.hotKeys: defaultKeyCombos])
 
-        #expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == false)
+        #expect(appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == false)
         service.setupDefaultHotKeys()
-        #expect(defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == true)
+        #expect(appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == true)
 
         let mainKeyCombo = try #require(service.mainKeyCombo)
         #expect(mainKeyCombo.QWERTYKeyCode == 0)
@@ -98,17 +83,16 @@ final class HotKeyServiceTests {
 
     @Test
     func saveKeyCombos() throws {
-        let defaults = UserDefaults.standard
-        defaults.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
+        appStorage.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
 
         let service = HotKeyService()
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
 
-        #expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
-        #expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo) == nil)
-        #expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo) == nil)
+        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
+        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo) == nil)
+        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo) == nil)
 
         service.setupDefaultHotKeys()
         #expect(service.mainKeyCombo == nil)
@@ -123,9 +107,9 @@ final class HotKeyServiceTests {
         service.change(with: .history, keyCombo: historyKeyCombo)
         service.change(with: .snippet, keyCombo: snippetKeyCombo)
 
-        let savedMainKeyCombo = try #require(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo))
-        let savedHistoryKeyCombo = try #require(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo))
-        let savedSnippetKeyCombo = try #require(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo))
+        let savedMainKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo))
+        let savedHistoryKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo))
+        let savedSnippetKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo))
 
         #expect(savedMainKeyCombo.QWERTYKeyCode == 9)
         #expect(savedMainKeyCombo.modifiers == 768)
@@ -144,21 +128,20 @@ final class HotKeyServiceTests {
 
         service.change(with: .main, keyCombo: nil)
         #expect(service.mainKeyCombo == nil)
-        #expect(defaults.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
+        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
     }
 
     @Test
     func unarchiveSavedKeyCombos() throws {
-        let defaults = UserDefaults.standard
-        defaults.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
+        appStorage.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
 
         let mainKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
         let historyKeyCombo = try #require(KeyCombo(doubledCocoaModifiers: .command))
         let snippetKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift))
 
-        defaults.setArchiveData(mainKeyCombo, forKey: Constants.HotKey.mainKeyCombo)
-        defaults.setArchiveData(historyKeyCombo, forKey: Constants.HotKey.historyKeyCombo)
-        defaults.setArchiveData(snippetKeyCombo, forKey: Constants.HotKey.snippetKeyCombo)
+        appStorage.setArchiveData(mainKeyCombo, forKey: Constants.HotKey.mainKeyCombo)
+        appStorage.setArchiveData(historyKeyCombo, forKey: Constants.HotKey.historyKeyCombo)
+        appStorage.setArchiveData(snippetKeyCombo, forKey: Constants.HotKey.snippetKeyCombo)
 
         let service = HotKeyService()
         #expect(service.mainKeyCombo == nil)
@@ -215,8 +198,7 @@ final class HotKeyServiceTests {
         #expect(service.clearHistoryKeyCombo != nil)
         #expect(service.clearHistoryKeyCombo == keyCombo)
 
-        let defaults = UserDefaults.standard
-        let savedData = try #require(defaults.object(forKey: Constants.HotKey.clearHistoryKeyCombo) as? Data)
+        let savedData = try #require(appStorage.object(forKey: Constants.HotKey.clearHistoryKeyCombo) as? Data)
         let savedKeyCombo = try #require(NSKeyedUnarchiver.unarchiveObject(with: savedData) as? KeyCombo)
         #expect(savedKeyCombo == keyCombo)
 

@@ -34,7 +34,7 @@ final class CPYUtilities {
         return property.takeRetainedValue() as? String
     }()
 
-    static func registerUserDefaultKeys() {
+    static func registerUserDefaultKeys(_ defaults: UserDefaults) {
         var defaultValues = [String: Any]()
 
         defaultValues.updateValue(HotKeyService.defaultKeyCombos, forKey: Constants.UserDefaults.hotKeys)
@@ -83,8 +83,8 @@ final class CPYUtilities {
         defaultValues.updateValue(NSNumber(value: 0), forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
         defaultValues.updateValue(NSNumber(value: false), forKey: Constants.Beta.observerScreenshot)
 
-        AppEnvironment.current.defaults.register(defaults: defaultValues)
-        AppEnvironment.current.defaults.synchronize()
+        defaults.register(defaults: defaultValues)
+        defaults.synchronize()
     }
 
     static func applicationSupportFolder() -> String {
