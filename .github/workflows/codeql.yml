@@ -8,6 +8,12 @@ on:
   schedule:
     - cron: '0 9 * * 0'
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
@@ -15,9 +21,7 @@ jobs:
     runs-on: ${{ (matrix.language == 'swift' && 'macos-26') || 'ubuntu-latest' }}
     
     permissions:
-      security-events: write
-      packages: read
-      actions: read
+      security-events: write # required to upload CodeQL analysis results
       contents: read
 
     strategy:
@@ -31,6 +35,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        persist-credentials: false
 
     - name: Cache Swift packages
       if: matrix.language == 'swift'
