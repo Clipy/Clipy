@@ -135,7 +135,7 @@ extension AppDelegate: NSApplicationDelegate {
         // Environments
         AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
-        CPYUtilities.registerUserDefaultKeys()
+        CPYUtilities.registerUserDefaultKeys(AppEnvironment.current.defaults)
 
         guard context != .test else { return }
 
