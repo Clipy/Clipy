@@ -36,6 +36,7 @@ struct SQLiteDataDatabaseTriggerTests {
                     id: historyID,
                     title: "Xqa History Start",
                     pasteboardTypes: [.string],
+                    createdAt: 1,
                     updateAt: 1,
                     deviceID: nil
                 )
@@ -71,6 +72,7 @@ struct SQLiteDataDatabaseTriggerTests {
                     id: historyID,
                     title: "Rpb History Finish",
                     pasteboardTypes: [.string],
+                    createdAt: 1,
                     updateAt: 2,
                     deviceID: nil
                 )

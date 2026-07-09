@@ -77,7 +77,7 @@ struct PasteboardHistoryRepositoryTests {
         #expect(repository.fetchHistory(id: id) == history)
         #expect(repository.fetchContent(id: id) == content)
         #expect(
-            repository.fetchHistoryDetails(ascending: false, includesThumbnailAsset: false, limit: 10) == [
+            repository.fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10) == [
                 PasteboardHistoryDetail(history: history, thumbnailAsset: nil)
             ]
         )
@@ -121,13 +121,25 @@ struct PasteboardHistoryRepositoryTests {
 
         #expect(
             repository
-                .fetchHistoryDetails(ascending: false, includesThumbnailAsset: false, limit: 2)
+                .fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 2)
                 .map(\.history.id) == [id3, id2]
         )
         #expect(
             repository
-                .fetchHistoryDetails(ascending: true, includesThumbnailAsset: false, limit: 2)
-                .map(\.history.id) == [id, id2]
+                .fetchHistoryDetails(sortsByCreatedAt: true, includesThumbnailAsset: false, limit: 2)
+                .map(\.history.id) == [id3, id2]
+        )
+        repository.save(id: id, content: content, updateAt: 4)
+
+        #expect(
+            repository
+                .fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 2)
+                .map(\.history.id) == [id, id3]
+        )
+        #expect(
+            repository
+                .fetchHistoryDetails(sortsByCreatedAt: true, includesThumbnailAsset: false, limit: 2)
+                .map(\.history.id) == [id3, id2]
         )
     }
 
@@ -147,7 +159,7 @@ struct PasteboardHistoryRepositoryTests {
         repository.save(id: imageID, content: imageContent, updateAt: 3)
 
         let details = repository.fetchHistoryDetails(
-            ascending: false,
+            sortsByCreatedAt: false,
             includesThumbnailAsset: true,
             limit: 10
         )
@@ -161,7 +173,7 @@ struct PasteboardHistoryRepositoryTests {
         #expect(details[2].thumbnailAsset == nil)
 
         let detailsWithoutThumbnailAssets = repository.fetchHistoryDetails(
-            ascending: false,
+            sortsByCreatedAt: false,
             includesThumbnailAsset: false,
             limit: 10
         )
@@ -181,11 +193,12 @@ struct PasteboardHistoryRepositoryTests {
             repository.fetchHistory(id: id) == PasteboardHistory(
                 id: id,
                 title: "Same",
+                createdAt: 1,
                 updateAt: 2
             )
         )
         #expect(
-            repository.fetchHistoryDetails(ascending: false, includesThumbnailAsset: false, limit: 10).map(\.history.id) == [id]
+            repository.fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10).map(\.history.id) == [id]
         )
     }
 
@@ -233,7 +246,7 @@ struct PasteboardHistoryRepositoryTests {
         repository.deleteOverflowingHistories(maxHistorySize: 2)
         #expect(
             repository
-                .fetchHistoryDetails(ascending: false, includesThumbnailAsset: false, limit: 10)
+                .fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10)
                 .map(\.history.id) == [id3, id2]
         )
         #expect(repository.fetchHistory(id: id) == nil)
@@ -256,11 +269,12 @@ private extension PasteboardContent {
 }
 
 private extension PasteboardHistory {
-    init(id: PasteboardHistory.ID, title: String, updateAt: Int) {
+    init(id: PasteboardHistory.ID, title: String, createdAt: Int? = nil, updateAt: Int) {
         self.init(
             id: id,
             title: title,
             pasteboardTypes: [.string],
+            createdAt: createdAt ?? updateAt,
             updateAt: updateAt,
             deviceID: CPYUtilities.deviceID
         )
