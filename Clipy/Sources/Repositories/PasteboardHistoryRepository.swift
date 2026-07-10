@@ -27,6 +27,7 @@ protocol PasteboardHistoryRepositoryProtocol {
     func fetchContent(id: PasteboardHistory.ID) -> PasteboardContent?
 
     func save(id: PasteboardHistory.ID, content: PasteboardContent, updateAt: Int)
+    func updateOCRText(id: PasteboardHistory.ID, ocrText: String)
     func deleteHistory(id: PasteboardHistory.ID)
     func deleteAll()
     func deleteOverflowingHistories(maxHistorySize: Int)
@@ -119,6 +120,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                 let history = PasteboardHistory(
                     id: id,
                     title: String(content.stringValue.prefix(10000)),
+                    ocrText: existingHistory?.ocrText,
                     pasteboardTypes: content.types,
                     createdAt: existingHistory?.createdAt ?? updateAt,
                     updateAt: updateAt,
@@ -143,6 +145,17 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                         try PasteboardHistoryThumbnailAsset.insert { thumbnailAsset }.execute(database)
                     }
                 }
+            }
+        }
+    }
+
+    func updateOCRText(id: PasteboardHistory.ID, ocrText: String) {
+        withErrorReporting {
+            try database.write { database in
+                try PasteboardHistory
+                    .find(id)
+                    .update { $0.ocrText = #bind(ocrText) }
+                    .execute(database)
             }
         }
     }

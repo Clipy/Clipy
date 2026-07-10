@@ -56,6 +56,7 @@ struct DatabaseMigration {
                     historiesByID[id] = PasteboardHistory(
                         id: id,
                         title: clip.title,
+                        ocrText: nil,
                         pasteboardTypes: content.types,
                         createdAt: clip.updateTime,
                         updateAt: clip.updateTime,

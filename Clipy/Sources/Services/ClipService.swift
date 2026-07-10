@@ -28,6 +28,8 @@ final class ClipService {
 
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
+    @Dependency(\.textRecognizer)
+    private var textRecognizer
 
     // MARK: - Clips
     func startMonitoring() {
@@ -117,6 +119,8 @@ extension ClipService {
         let savedHash = (isOverwriteHistory) ? content.hash : UUID().uuidString
 
         let unixTime = Int(Date().timeIntervalSince1970)
-        pasteboardHistoryRepository.save(id: .init(rawValue: savedHash), content: content, updateAt: unixTime)
+        let id = PasteboardHistory.ID(rawValue: savedHash)
+        pasteboardHistoryRepository.save(id: id, content: content, updateAt: unixTime)
+        textRecognizer.recognizeTextIfNeeded(id: id)
     }
 }

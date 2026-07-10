@@ -182,6 +182,36 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func updateOCRTextStoresRecognizedText() throws {
+        let imageContent = try #require(
+            PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
+        )
+        let id = PasteboardHistory.ID(rawValue: imageContent.hash)
+        repository.save(id: id, content: imageContent, updateAt: 1)
+
+        repository.updateOCRText(id: id, ocrText: "recognized text")
+
+        let history = try #require(repository.fetchHistory(id: id))
+        #expect(history.ocrText == "recognized text")
+    }
+
+    @Test
+    func saveExistingHistoryPreservesOCRText() throws {
+        let imageContent = try #require(
+            PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
+        )
+        let id = PasteboardHistory.ID(rawValue: imageContent.hash)
+        repository.save(id: id, content: imageContent, updateAt: 1)
+        repository.updateOCRText(id: id, ocrText: "recognized text")
+
+        repository.save(id: id, content: imageContent, updateAt: 2)
+
+        let history = try #require(repository.fetchHistory(id: id))
+        #expect(history.updateAt == 2)
+        #expect(history.ocrText == "recognized text")
+    }
+
+    @Test
     func saveExistingHistoryUpdatesStoredHistory() throws {
         let content = try #require(PasteboardContent("Same"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
@@ -269,27 +299,15 @@ private extension PasteboardContent {
 }
 
 private extension PasteboardHistory {
-    init(id: PasteboardHistory.ID, title: String, createdAt: Int? = nil, updateAt: Int) {
+    init(id: PasteboardHistory.ID, title: String, createdAt: Int? = nil, updateAt: Int, ocrText: String? = nil) {
         self.init(
             id: id,
             title: title,
+            ocrText: ocrText,
             pasteboardTypes: [.string],
             createdAt: createdAt ?? updateAt,
             updateAt: updateAt,
             deviceID: CPYUtilities.deviceID
         )
-    }
-}
-
-private func waitUntil(condition: @escaping @MainActor () async -> Bool) async throws {
-    try await confirmation { confirmation in
-        while true {
-            if await condition() {
-                confirmation()
-                return
-            } else {
-                try await Task.sleep(for: .seconds(0.01))
-            }
-        }
     }
 }

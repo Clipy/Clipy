@@ -151,6 +151,7 @@ private extension PasteboardHistoryExtensionsTests {
         PasteboardHistory(
             id: PasteboardHistory.ID(rawValue: UUID().uuidString),
             title: title,
+            ocrText: nil,
             pasteboardTypes: pasteboardTypes,
             createdAt: 1,
             updateAt: 1,
