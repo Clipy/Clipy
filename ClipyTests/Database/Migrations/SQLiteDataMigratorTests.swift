@@ -30,7 +30,8 @@ struct SQLiteDataMigratorTests {
                 identifiers == [
                     "Create initial tables",
                     "Create search indexes",
-                    "Add createdAt to pasteboardHistories"
+                    "Add createdAt to pasteboardHistories",
+                    "Add OCR text to history search"
                 ]
             )
         }

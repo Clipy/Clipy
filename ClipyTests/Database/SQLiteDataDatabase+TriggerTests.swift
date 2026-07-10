@@ -35,6 +35,7 @@ struct SQLiteDataDatabaseTriggerTests {
                 PasteboardHistory(
                     id: historyID,
                     title: "Xqa History Start",
+                    ocrText: nil,
                     pasteboardTypes: [.string],
                     createdAt: 1,
                     updateAt: 1,
@@ -67,17 +68,12 @@ struct SQLiteDataDatabaseTriggerTests {
         }
 
         try database.write { database in
-            try PasteboardHistory.upsert {
-                PasteboardHistory(
-                    id: historyID,
-                    title: "Rpb History Finish",
-                    pasteboardTypes: [.string],
-                    createdAt: 1,
-                    updateAt: 2,
-                    deviceID: nil
-                )
-            }
-            .execute(database)
+            try PasteboardHistory.where { $0.id.eq(historyID) }
+                .update {
+                    $0.title = #bind("Rpb History Finish")
+                    $0.updateAt = 2
+                }
+                .execute(database)
         }
 
         try database.read { database in
@@ -88,6 +84,22 @@ struct SQLiteDataDatabaseTriggerTests {
             let upsertedHistoryIDs = try pasteboardHistories(matching: "rpb", database: database)
                 .map(\.history?.id)
             #expect(upsertedHistoryIDs == [historyID])
+        }
+
+        try database.write { database in
+            try PasteboardHistory.where { $0.id.eq(historyID) }
+                .update { $0.ocrText = #bind("Zvw Screenshot Text") }
+                .execute(database)
+        }
+
+        try database.read { database in
+            let ocrHistoryIDs = try pasteboardHistories(matching: "zvw", database: database)
+                .map(\.history?.id)
+            #expect(ocrHistoryIDs == [historyID])
+
+            let titleHistoryIDs = try pasteboardHistories(matching: "rpb", database: database)
+                .map(\.history?.id)
+            #expect(titleHistoryIDs == [historyID])
         }
 
         try database.write { database in
@@ -168,17 +180,12 @@ struct SQLiteDataDatabaseTriggerTests {
         }
 
         try database.write { database in
-            try Snippet.upsert {
-                Snippet(
-                    id: snippetID,
-                    folderID: folderID,
-                    title: "Rpb Snippet Finish",
-                    content: "rst token",
-                    index: 0,
-                    isEnabled: true
-                )
-            }
-            .execute(database)
+            try Snippet.where { $0.id.eq(snippetID) }
+                .update {
+                    $0.title = "Rpb Snippet Finish"
+                    $0.content = "rst token"
+                }
+                .execute(database)
         }
 
         try database.read { database in

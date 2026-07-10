@@ -209,16 +209,3 @@ struct SnippetRepositoryTests {
         #expect(repository.fetchSnippet(id: snippet.id) == nil)
     }
 }
-
-private func waitUntil(condition: @escaping @MainActor () async -> Bool) async throws {
-    try await confirmation { confirmation in
-        while true {
-            if await condition() {
-                confirmation()
-                return
-            } else {
-                try await Task.sleep(for: .seconds(0.01))
-            }
-        }
-    }
-}
