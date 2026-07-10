@@ -40,16 +40,14 @@ struct PasteboardContent: Equatable {
         let defaults = UserDefaults.standard
         let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
         let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
-
-        let imageURL = assets.filter { $0.type == .fileURL }
-            .compactMap { URL(dataRepresentation: $0.data, relativeTo: nil) }
-            .first(where: { ["jpg", "jpeg", "png", "bmp", "tiff"].contains($0.pathExtension.lowercased()) })
-        if let imageURL {
-            return NSImage(contentsOf: imageURL)?.resizeImage(CGFloat(width), CGFloat(height))
-        } else if let data = data(for: .png) ?? data(for: .tiff) ?? data(for: .deprecatedTIFF) {
-            return NSImage(data: data)?.resizeImage(CGFloat(width), CGFloat(height))
+        guard let imageData else { return nil }
+        return NSImage(data: imageData)?.resizeImage(CGFloat(width), CGFloat(height))
+    }
+    var imageData: Data? {
+        if let imageFileURL {
+            return try? Data(contentsOf: imageFileURL)
         }
-        return nil
+        return storedImageData
     }
     var pasteboardItems: [NSPasteboardItem] {
         var countsByType: [NSPasteboard.PasteboardType: Int] = [:]
@@ -129,6 +127,16 @@ extension PasteboardContent {
 }
 
 private extension PasteboardContent {
+    var storedImageData: Data? {
+        data(for: .png) ?? data(for: .tiff) ?? data(for: .deprecatedTIFF)
+    }
+
+    var imageFileURL: URL? {
+        assets.filter { $0.type == .fileURL }
+            .compactMap { URL(dataRepresentation: $0.data, relativeTo: nil) }
+            .first { ["jpg", "jpeg", "png", "bmp", "tiff"].contains($0.pathExtension.lowercased()) }
+    }
+
     func data(for type: NSPasteboard.PasteboardType) -> Data? {
         assets.first(where: { $0.type == type })?.data
     }
