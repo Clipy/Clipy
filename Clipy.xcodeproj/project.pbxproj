@@ -70,6 +70,8 @@
 		C5F1AC0330190004AA110003 /* SQLiteDataMigratorTests+V4.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AC0430190004AA110004 /* SQLiteDataMigratorTests+V4.swift */; };
 		C5F1AE0130190006AA110001 /* SQLiteDataMigrator+V5.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AE0230190006AA110002 /* SQLiteDataMigrator+V5.swift */; };
 		C5F1AE0330190006AA110003 /* SQLiteDataMigratorTests+V5.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AE0430190006AA110004 /* SQLiteDataMigratorTests+V5.swift */; };
+		C5F1AF0130190007AA110001 /* SQLiteDataMigrator+V6.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AF0230190007AA110002 /* SQLiteDataMigrator+V6.swift */; };
+		C5F1AF0330190007AA110003 /* SQLiteDataMigratorTests+V6.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AF0430190007AA110004 /* SQLiteDataMigratorTests+V6.swift */; };
 		C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0230190005AA110002 /* TextRecognizer.swift */; };
 		C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
@@ -226,6 +228,8 @@
 		C5F1AC0430190004AA110004 /* SQLiteDataMigratorTests+V4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigratorTests+V4.swift"; sourceTree = "<group>"; };
 		C5F1AE0230190006AA110002 /* SQLiteDataMigrator+V5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V5.swift"; sourceTree = "<group>"; };
 		C5F1AE0430190006AA110004 /* SQLiteDataMigratorTests+V5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigratorTests+V5.swift"; sourceTree = "<group>"; };
+		C5F1AF0230190007AA110002 /* SQLiteDataMigrator+V6.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V6.swift"; sourceTree = "<group>"; };
+		C5F1AF0430190007AA110004 /* SQLiteDataMigratorTests+V6.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigratorTests+V6.swift"; sourceTree = "<group>"; };
 		C5F1AD0230190005AA110002 /* TextRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizer.swift; sourceTree = "<group>"; };
 		C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizerTests.swift; sourceTree = "<group>"; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
@@ -475,6 +479,7 @@
 				C5D41A042FDB4A0400EF30FB /* SQLiteDataMigrator+V3.swift */,
 				C5F1AC0230190004AA110002 /* SQLiteDataMigrator+V4.swift */,
 				C5F1AE0230190006AA110002 /* SQLiteDataMigrator+V5.swift */,
+				C5F1AF0230190007AA110002 /* SQLiteDataMigrator+V6.swift */,
 			);
 			path = Migrations;
 			sourceTree = "<group>";
@@ -488,6 +493,7 @@
 				C5D41A0B2FDB4A0B00EF30FB /* SQLiteDataMigratorTests+V3.swift */,
 				C5F1AC0430190004AA110004 /* SQLiteDataMigratorTests+V4.swift */,
 				C5F1AE0430190006AA110004 /* SQLiteDataMigratorTests+V5.swift */,
+				C5F1AF0430190007AA110004 /* SQLiteDataMigratorTests+V6.swift */,
 			);
 			path = Migrations;
 			sourceTree = "<group>";
@@ -1004,6 +1010,7 @@
 				C5D41A072FDB4A0700EF30FB /* SQLiteDataMigrator+V3.swift in Sources */,
 				C5F1AC0130190004AA110001 /* SQLiteDataMigrator+V4.swift in Sources */,
 				C5F1AE0130190006AA110001 /* SQLiteDataMigrator+V5.swift in Sources */,
+				C5F1AF0130190007AA110001 /* SQLiteDataMigrator+V6.swift in Sources */,
 				FA3778951F3B6920003B5BAB /* Environment.swift in Sources */,
 			);
 		};
@@ -1017,6 +1024,7 @@
 				C5D41A0E2FDB4A0E00EF30FB /* SQLiteDataMigratorTests+V3.swift in Sources */,
 				C5F1AC0330190004AA110003 /* SQLiteDataMigratorTests+V4.swift in Sources */,
 				C5F1AE0330190006AA110003 /* SQLiteDataMigratorTests+V5.swift in Sources */,
+				C5F1AF0330190007AA110003 /* SQLiteDataMigratorTests+V6.swift in Sources */,
 				C5348FB130008FE4008DFEB3 /* WaitUntil.swift in Sources */,
 				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
 				C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */,

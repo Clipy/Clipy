@@ -19,5 +19,6 @@ extension DatabaseMigrator {
         registerMigrationV3()
         registerMigrationV4()
         registerMigrationV5()
+        registerMigrationV6()
     }
 }
