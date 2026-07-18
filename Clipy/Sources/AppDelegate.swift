@@ -23,7 +23,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
     private(set) var updaterController: SPUStandardUpdaterController?
-    private let screenshotObserver = ScreenShotObserver()
+    private let screenshotObserver = ScreenShotObserver(searchDirectoryPaths: AppDelegate.screenshotSearchDirectoryPaths())
     private let disposeBag = DisposeBag()
     private let historyPruningScheduler = SerialDispatchQueueScheduler(qos: .utility)
 
@@ -223,5 +223,29 @@ extension AppDelegate: ScreenShotObserverDelegate {
         guard let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return }
         guard let image = NSImage(contentsOfFile: path) else { return }
         AppEnvironment.current.clipService.create(with: image)
+    }
+}
+
+// MARK: - Screenshot Search Paths
+private extension AppDelegate {
+    /// Directories the screenshot observer watches via Spotlight.
+    ///
+    /// Screeen's default scope is the Desktop only, so screenshots saved to a
+    /// custom location (configured via `defaults write com.apple.screencapture
+    /// location <path>`) are never detected. Read that configured destination
+    /// and watch it in addition to the Desktop.
+    static func screenshotSearchDirectoryPaths() -> [String] {
+        var paths: [String] = []
+        if let location = CFPreferencesCopyAppValue("location" as CFString,
+                                                    "com.apple.screencapture" as CFString) as? String {
+            paths.append((location as NSString).expandingTildeInPath)
+        }
+        if let desktop = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true).first {
+            paths.append(desktop)
+        }
+        // Deduplicate while preserving order. When empty, Screeen leaves the
+        // query scope unset and searches all indexed locations as a fallback.
+        var seen = Set<String>()
+        return paths.filter { seen.insert($0).inserted }
     }
 }
