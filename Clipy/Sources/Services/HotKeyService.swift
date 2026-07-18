@@ -14,6 +14,7 @@ import Cocoa
 import Dependencies
 import Foundation
 import Magnet
+import Sharing
 
 final class HotKeyService: NSObject {
     // MARK: - Properties
@@ -35,6 +36,8 @@ final class HotKeyService: NSObject {
     private var snippetRepository
     @Dependency(\.firebase)
     private var firebase
+    @Dependency(\.defaultAppStorage)
+    private var appStorage
 }
 
 // MARK: - Actions
@@ -64,10 +67,10 @@ extension HotKeyService {
 extension HotKeyService {
     func setupDefaultHotKeys() {
         // Migration new framework
-        if !AppEnvironment.current.defaults.bool(forKey: Constants.HotKey.migrateNewKeyCombo) {
+        if !appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) {
             migrationKeyCombos()
-            AppEnvironment.current.defaults.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
-            AppEnvironment.current.defaults.synchronize()
+            appStorage.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
+            appStorage.synchronize()
         }
         // Snippet hotkey
         setupSnippetHotKeys()
@@ -96,8 +99,8 @@ extension HotKeyService {
 
     func changeClearHistoryKeyCombo(_ keyCombo: KeyCombo?) {
         clearHistoryKeyCombo = keyCombo
-        AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: Constants.HotKey.clearHistoryKeyCombo)
-        AppEnvironment.current.defaults.synchronize()
+        appStorage.set(keyCombo?.archive(), forKey: Constants.HotKey.clearHistoryKeyCombo)
+        appStorage.synchronize()
         // Reset hotkey
         HotKeyCenter.shared.unregisterHotKey(with: "ClearHistory")
         // Register new hotkey
@@ -107,7 +110,7 @@ extension HotKeyService {
     }
 
     private func savedKeyCombo(forKey key: String) -> KeyCombo? {
-        guard let data = AppEnvironment.current.defaults.object(forKey: key) as? Data else { return nil }
+        guard let data = appStorage.object(forKey: key) as? Data else { return nil }
         guard let keyCombo = NSKeyedUnarchiver.unarchiveObject(with: data) as? KeyCombo else { return nil }
         return keyCombo
     }
@@ -126,8 +129,8 @@ private extension HotKeyService {
     }
 
     func save(with type: MenuType, keyCombo: KeyCombo?) {
-        AppEnvironment.current.defaults.set(keyCombo?.archive(), forKey: type.userDefaultsKey)
-        AppEnvironment.current.defaults.synchronize()
+        appStorage.set(keyCombo?.archive(), forKey: type.userDefaultsKey)
+        appStorage.synchronize()
     }
 }
 
@@ -138,24 +141,24 @@ private extension HotKeyService {
      *  Changed framework, PTHotKey to Magnet
      */
     func migrationKeyCombos() {
-        guard let keyCombos = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
+        guard let keyCombos = appStorage.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
 
         // Main menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.clip) {
             if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.mainKeyCombo)
+                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.mainKeyCombo)
             }
         }
         // History menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.history) {
             if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.historyKeyCombo)
+                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.historyKeyCombo)
             }
         }
         // Snippet menu
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.snippet) {
             if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                AppEnvironment.current.defaults.set(keyCombo.archive(), forKey: Constants.HotKey.snippetKeyCombo)
+                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.snippetKeyCombo)
             }
         }
     }
@@ -171,16 +174,16 @@ private extension HotKeyService {
 extension HotKeyService {
     private var folderKeyCombos: [String: KeyCombo]? {
         get {
-            guard let data = AppEnvironment.current.defaults.object(forKey: Constants.HotKey.folderKeyCombos) as? Data else { return nil }
+            guard let data = appStorage.object(forKey: Constants.HotKey.folderKeyCombos) as? Data else { return nil }
             return NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: KeyCombo]
         }
         set {
             if let value = newValue {
-                AppEnvironment.current.defaults.set(NSKeyedArchiver.archivedData(withRootObject: value), forKey: Constants.HotKey.folderKeyCombos)
+                appStorage.set(NSKeyedArchiver.archivedData(withRootObject: value), forKey: Constants.HotKey.folderKeyCombos)
             } else {
-                AppEnvironment.current.defaults.removeObject(forKey: Constants.HotKey.folderKeyCombos)
+                appStorage.removeObject(forKey: Constants.HotKey.folderKeyCombos)
             }
-            AppEnvironment.current.defaults.synchronize()
+            appStorage.synchronize()
         }
     }
 

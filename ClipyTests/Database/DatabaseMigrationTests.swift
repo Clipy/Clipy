@@ -94,6 +94,7 @@ final class DatabaseMigrationTests {
             #expect(histories.first?.id == id)
             #expect(histories.first?.title == "String")
             #expect(histories.first?.pasteboardTypes == [.string, .deprecatedFilenames, .URL, .rtf, .pdf, .tiff])
+            #expect(histories.first?.createdAt == 2)
             #expect(histories.first?.updateAt == 2)
             #expect(histories.first?.deviceID == CPYUtilities.deviceID)
 

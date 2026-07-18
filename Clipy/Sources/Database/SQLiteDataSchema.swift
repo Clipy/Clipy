@@ -21,14 +21,12 @@ struct PasteboardHistory: Identifiable, Equatable {
     @Column(primaryKey: true)
     let id: ID
     let title: String
+    let ocrText: String?
     @Column(as: [NSPasteboard.PasteboardType].JSONRepresentation.self)
     let pasteboardTypes: [NSPasteboard.PasteboardType]
+    let createdAt: Int
     let updateAt: Int
     let deviceID: String?
-
-    var primaryType: NSPasteboard.PasteboardType? {
-        pasteboardTypes.first
-    }
 }
 
 @Table
@@ -67,6 +65,7 @@ struct PasteboardHistoryDetail: Equatable {
 struct PasteboardHistorySearch: FTS5, Equatable {
     let id: PasteboardHistory.ID
     let title: String
+    let ocrText: String
 }
 
 @Selection

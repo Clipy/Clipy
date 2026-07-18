@@ -19,7 +19,7 @@ protocol PasteboardHistoryRepositoryProtocol {
     func observeHistories() -> AnyPublisher<[PasteboardHistory], Never>
     func hasHistories() -> Bool
     func fetchHistoryDetails(
-        ascending: Bool,
+        sortsByCreatedAt: Bool,
         includesThumbnailAsset: Bool,
         limit: Int,
     ) -> [PasteboardHistoryDetail]
@@ -27,6 +27,7 @@ protocol PasteboardHistoryRepositoryProtocol {
     func fetchContent(id: PasteboardHistory.ID) -> PasteboardContent?
 
     func save(id: PasteboardHistory.ID, content: PasteboardContent, updateAt: Int)
+    func updateOCRText(id: PasteboardHistory.ID, ocrText: String)
     func deleteHistory(id: PasteboardHistory.ID)
     func deleteAll()
     func deleteOverflowingHistories(maxHistorySize: Int)
@@ -55,7 +56,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
     }
 
     func fetchHistoryDetails(
-        ascending: Bool,
+        sortsByCreatedAt: Bool,
         includesThumbnailAsset: Bool,
         limit: Int
     ) -> [PasteboardHistoryDetail] {
@@ -64,8 +65,8 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                 let histories = PasteboardHistory
                     .all
                     .order { columns in
-                        if ascending {
-                            columns.updateAt
+                        if sortsByCreatedAt {
+                            columns.createdAt.desc()
                         } else {
                             columns.updateAt.desc()
                         }
@@ -111,24 +112,26 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
     }
 
     func save(id: PasteboardHistory.ID, content: PasteboardContent, updateAt: Int) {
-        let history = PasteboardHistory(
-            id: id,
-            title: content.stringValue[0...10000],
-            pasteboardTypes: content.types,
-            updateAt: updateAt,
-            deviceID: CPYUtilities.deviceID
-        )
         withErrorReporting {
             try database.write { database in
-                let exists = try PasteboardHistory
+                let existingHistory = try PasteboardHistory
                     .find(id)
-                    .fetchOne(database) != nil
+                    .fetchOne(database)
+                let history = PasteboardHistory(
+                    id: id,
+                    title: String(content.stringValue.prefix(10000)),
+                    ocrText: existingHistory?.ocrText,
+                    pasteboardTypes: content.types,
+                    createdAt: existingHistory?.createdAt ?? updateAt,
+                    updateAt: updateAt,
+                    deviceID: CPYUtilities.deviceID
+                )
                 try PasteboardHistory
                     .upsert { history }
                     .execute(database)
                 // When a history already exists, its ID is derived from the content hash,
                 // so the assets are guaranteed to be identical and do not need to be inserted again.
-                if !exists {
+                if existingHistory == nil {
                     let assets = content.assets.enumerated().map { index, asset in
                         PasteboardHistoryAsset.Draft(
                             pasteboardHistoryID: id,
@@ -142,6 +145,17 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                         try PasteboardHistoryThumbnailAsset.insert { thumbnailAsset }.execute(database)
                     }
                 }
+            }
+        }
+    }
+
+    func updateOCRText(id: PasteboardHistory.ID, ocrText: String) {
+        withErrorReporting {
+            try database.write { database in
+                try PasteboardHistory
+                    .find(id)
+                    .update { $0.ocrText = #bind(ocrText) }
+                    .execute(database)
             }
         }
     }

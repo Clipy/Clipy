@@ -1,5 +1,5 @@
 {
-  "originHash" : "a3351c55f7a919ac2fc96e9a127386c7a2e3a53e8d17d5281513c83271fe8de0",
+  "originHash" : "8406461c0ee4c6ded60f8b736d69f44c3c5f470b86a4f7442150adfc20105792",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -137,15 +137,6 @@
       }
     },
     {
-      "identity" : "loginservicekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Clipy/LoginServiceKit",
-      "state" : {
-        "revision" : "56dce9dbf4367c1445ef2343a2a912bbe5019a6c",
-        "version" : "2.5.0"
-      }
-    },
-    {
       "identity" : "magnet",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Clipy/Magnet",
@@ -222,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/clipy/sauce",
       "state" : {
-        "revision" : "c9ebdcfddb4b94da5b9a6ebd113ab385edda88c1",
-        "version" : "2.5.0"
+        "revision" : "84d03fcddebf78e08f3105b1159300bfdae3b217",
+        "version" : "2.5.1"
       }
     },
     {

@@ -17,6 +17,11 @@ import Sauce
 final class PasteService {
 
     // MARK: - Properties
+    private var pasteMenu: NSMenuItem? = {
+        NSApp.mainMenu?.items
+            .flatMap { $0.submenu?.items ?? [] }
+            .first { $0.action == #selector(NSText.paste(_:)) }
+    }()
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
     fileprivate var isPastePlainText: Bool {
         guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
@@ -114,21 +119,22 @@ extension PasteService {
             Accessibility.showAccessibilityAuthenticationAlert()
             return
         }
-
-        let vKeyCode = Sauce.shared.keyCode(for: .v, cocoaModifiers: .command)
+        let modifier = pasteMenu?.keyEquivalentModifierMask ?? .command
+        let keyCode = Sauce.shared.keyCode(for: pasteMenu?.key ?? .v, modifiers: .cocoa(modifier))
+        let modifierFlags = CGEventFlags(rawValue: UInt64(modifier.rawValue))
         DispatchQueue.main.async {
             let source = CGEventSource(stateID: .combinedSessionState)
             // Disable local keyboard events while pasting
             source?.setLocalEventsFilterDuringSuppressionState([.permitLocalMouseEvents, .permitSystemDefinedEvents], state: .eventSuppressionStateSuppressionInterval)
-            // Press Command + V
-            let keyVDown = CGEvent(keyboardEventSource: source, virtualKey: vKeyCode, keyDown: true)
-            keyVDown?.flags = .maskCommand
-            // Release Command + V
-            let keyVUp = CGEvent(keyboardEventSource: source, virtualKey: vKeyCode, keyDown: false)
-            keyVUp?.flags = .maskCommand
+            // Press paste keyboard shortcut
+            let keyDown = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true)
+            keyDown?.flags = modifierFlags
+            // Release paste keyboard shortcut
+            let keyUp = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false)
+            keyUp?.flags = modifierFlags
             // Post Paste Command
-            keyVDown?.post(tap: .cgAnnotatedSessionEventTap)
-            keyVUp?.post(tap: .cgAnnotatedSessionEventTap)
+            keyDown?.post(tap: .cgAnnotatedSessionEventTap)
+            keyUp?.post(tap: .cgAnnotatedSessionEventTap)
         }
     }
 }
