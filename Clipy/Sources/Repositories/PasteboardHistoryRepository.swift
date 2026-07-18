@@ -30,7 +30,7 @@ protocol PasteboardHistoryRepositoryProtocol {
     func updateOCRText(id: PasteboardHistory.ID, ocrText: String)
     func deleteHistory(id: PasteboardHistory.ID)
     func deleteAll()
-    func deleteOverflowingHistories(maxHistorySize: Int)
+    func deleteOverflowingHistories(sortsByCreatedAt: Bool, maxHistorySize: Int)
 }
 
 final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
@@ -179,7 +179,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
         }
     }
 
-    func deleteOverflowingHistories(maxHistorySize: Int) {
+    func deleteOverflowingHistories(sortsByCreatedAt: Bool, maxHistorySize: Int) {
         guard maxHistorySize > 0 else {
             deleteAll()
             return
@@ -187,7 +187,13 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
         withErrorReporting {
             try database.write { database in
                 let deletingIDs = try PasteboardHistory
-                    .order { $0.updateAt.desc() }
+                    .order { columns in
+                        if sortsByCreatedAt {
+                            columns.createdAt.desc()
+                        } else {
+                            columns.updateAt.desc()
+                        }
+                    }
                     .limit(-1, offset: maxHistorySize)
                     .select { $0.id }
                     .fetchAll(database)
