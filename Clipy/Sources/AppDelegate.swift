@@ -11,12 +11,14 @@
 //
 
 import Cocoa
+import Clocks
 import Dependencies
 import Magnet
 import RxCocoa
 import RxSwift
 import Screeen
 import ServiceManagement
+import Sharing
 import Sparkle
 
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -25,10 +27,13 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private(set) var updaterController: SPUStandardUpdaterController?
     private let screenshotObserver = ScreenShotObserver(searchDirectoryPaths: AppDelegate.screenshotSearchDirectoryPaths())
     private let disposeBag = DisposeBag()
-    private let historyPruningScheduler = SerialDispatchQueueScheduler(qos: .utility)
 
     @Dependency(\.context)
     var context
+    @Dependency(\.continuousClock)
+    private var continuousClock
+    @Dependency(\.defaultAppStorage)
+    var appStorage
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
@@ -171,13 +176,18 @@ extension AppDelegate: NSApplicationDelegate {
         // Screenshot
         screenshotObserver.delegate = self
 
-        // Clean histories every 30 minutes
-        Observable<Int>.interval(.seconds(60 * 30), scheduler: historyPruningScheduler)
-            .subscribe(onNext: { [weak self] _ in
-                let maxHistorySize = AppEnvironment.current.defaults.integer(forKey: Constants.UserDefaults.maxHistorySize)
-                self?.pasteboardHistoryRepository.deleteOverflowingHistories(maxHistorySize: maxHistorySize)
-            })
-            .disposed(by: disposeBag)
+        // Periodically trim excess history using the current size limit and sort preference.
+        Task(priority: .utility) { [weak self] in
+            guard let self else { return }
+            for await _ in continuousClock.timer(interval: .seconds(60)) {
+                let maxHistorySize = appStorage.integer(forKey: Constants.UserDefaults.maxHistorySize)
+                let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+                pasteboardHistoryRepository.deleteOverflowingHistories(
+                    sortsByCreatedAt: !reorderClipsAfterPasting,
+                    maxHistorySize: maxHistorySize
+                )
+            }
+        }
     }
 
 }

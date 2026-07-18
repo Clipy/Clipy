@@ -261,7 +261,7 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
-    func deleteOverflowingHistories() throws {
+    func deleteOverflowingHistoriesUsesSelectedSortOrder() throws {
         let content = try #require(PasteboardContent("First"))
         let content2 = try #require(PasteboardContent("Second"))
         let content3 = try #require(PasteboardContent("Third"))
@@ -272,16 +272,31 @@ struct PasteboardHistoryRepositoryTests {
         repository.save(id: id, content: content, updateAt: 1)
         repository.save(id: id2, content: content2, updateAt: 2)
         repository.save(id: id3, content: content3, updateAt: 3)
+        repository.save(id: id, content: content, updateAt: 4)
 
-        repository.deleteOverflowingHistories(maxHistorySize: 2)
+        repository.deleteOverflowingHistories(sortsByCreatedAt: false, maxHistorySize: 2)
         #expect(
             repository
                 .fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10)
+                .map(\.history.id) == [id, id3]
+        )
+        #expect(repository.fetchHistory(id: id2) == nil)
+
+        repository.deleteAll()
+        repository.save(id: id, content: content, updateAt: 1)
+        repository.save(id: id2, content: content2, updateAt: 2)
+        repository.save(id: id3, content: content3, updateAt: 3)
+        repository.save(id: id, content: content, updateAt: 4)
+
+        repository.deleteOverflowingHistories(sortsByCreatedAt: true, maxHistorySize: 2)
+        #expect(
+            repository
+                .fetchHistoryDetails(sortsByCreatedAt: true, includesThumbnailAsset: false, limit: 10)
                 .map(\.history.id) == [id3, id2]
         )
         #expect(repository.fetchHistory(id: id) == nil)
 
-        repository.deleteOverflowingHistories(maxHistorySize: 0)
+        repository.deleteOverflowingHistories(sortsByCreatedAt: true, maxHistorySize: 0)
         #expect(!repository.hasHistories())
     }
 }
