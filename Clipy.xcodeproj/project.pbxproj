@@ -1411,7 +1411,7 @@
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.5.1;
+				minimumVersion = 1.6.0;
 			};
 		};
 		C5700B4A2FC5C3D500C8F965 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
@@ -1419,15 +1419,19 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.12.0;
+				minimumVersion = 1.14.1;
 			};
+			traits = (
+				Clocks,
+				CombineSchedulers,
+			);
 		};
 		C57447282FD13ADF000D64D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 12.14.0;
+				minimumVersion = 12.16.0;
 			};
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
@@ -1435,10 +1439,10 @@
 			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.6.1;
+				minimumVersion = 1.7.0;
 			};
 			traits = (
-				SQLiteDataTagged,
+				Tagged,
 			);
 		};
 		C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
@@ -1446,7 +1450,7 @@
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.63.2;
+				minimumVersion = 0.65.0;
 			};
 		};
 		C5A6BA722FBC5A6E00C8B9EB /* XCRemoteSwiftPackageReference "Sparkle" */ = {
@@ -1454,7 +1458,7 @@
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.9.2;
+				minimumVersion = 2.9.4;
 			};
 		};
 		C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */ = {
