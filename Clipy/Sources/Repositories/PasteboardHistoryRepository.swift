@@ -23,6 +23,11 @@ protocol PasteboardHistoryRepositoryProtocol {
         includesThumbnailAsset: Bool,
         limit: Int,
     ) -> [PasteboardHistoryDetail]
+    func searchHistoryDetails(
+        containing fragment: String,
+        includesThumbnailAsset: Bool,
+        limit: Int
+    ) -> [PasteboardHistoryDetail]
     func fetchHistory(id: PasteboardHistory.ID) -> PasteboardHistory?
     func fetchContent(id: PasteboardHistory.ID) -> PasteboardContent?
 
@@ -83,6 +88,54 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                     .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($1.pasteboardHistoryID) }
                     .select { PasteboardHistoryDetail.Columns(history: $0, thumbnailAsset: $1) }
                     .fetchAll(database)
+            }
+        } ?? []
+    }
+
+    func searchHistoryDetails(
+        containing fragment: String,
+        includesThumbnailAsset: Bool,
+        limit: Int
+    ) -> [PasteboardHistoryDetail] {
+        let fragment = fragment.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !fragment.isEmpty, limit > 0 else { return [] }
+
+        return withErrorReporting {
+            try database.read { database in
+                let histories: [PasteboardHistory]
+                if fragment.count < 3 {
+                    histories = try PasteboardHistory.all
+                        .order { $0.updateAt.desc() }
+                        .fetchAll(database)
+                } else {
+                    let escapedFragment = fragment.replacingOccurrences(of: "\"", with: "\"\"")
+                    histories = try searchHistories(
+                        matching: "\"\(escapedFragment)\"",
+                        database: database
+                    )
+                }
+
+                let matches = Array(
+                    histories
+                        .lazy
+                        .filter { history in
+                            history.title.range(of: fragment, options: .caseInsensitive) != nil
+                                || history.ocrText?.range(of: fragment, options: .caseInsensitive) != nil
+                        }
+                        .prefix(limit)
+                )
+                guard includesThumbnailAsset, !matches.isEmpty else {
+                    return matches.map { PasteboardHistoryDetail(history: $0, thumbnailAsset: nil) }
+                }
+
+                let ids = matches.map(\.id)
+                let thumbnailAssets = try PasteboardHistoryThumbnailAsset
+                    .where { $0.pasteboardHistoryID.in(ids) }
+                    .fetchAll(database)
+                let thumbnailAssetsByID = Dictionary(uniqueKeysWithValues: thumbnailAssets.map { ($0.pasteboardHistoryID, $0) })
+                return matches.map {
+                    PasteboardHistoryDetail(history: $0, thumbnailAsset: thumbnailAssetsByID[$0.id])
+                }
             }
         } ?? []
     }
@@ -208,6 +261,19 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
 }
 
 private extension PasteboardHistoryRepository {
+    func searchHistories(
+        matching query: String,
+        database: Database
+    ) throws -> [PasteboardHistory] {
+        try PasteboardHistorySearch
+            .where { $0.match(query) }
+            .leftJoin(PasteboardHistory.all) { $0.id.eq($1.id) }
+            .select { $1 }
+            .fetchAll(database)
+            .compactMap { $0 }
+            .sorted { $0.updateAt > $1.updateAt }
+    }
+
     func thumbnailAsset(from content: PasteboardContent, id: PasteboardHistory.ID) -> PasteboardHistoryThumbnailAsset? {
         var asset: PasteboardHistoryThumbnailAsset?
         if let thumbnailImage = content.thumbnailImage, let thumbnailData = thumbnailImage.tiffRepresentation {

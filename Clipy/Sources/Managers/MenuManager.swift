@@ -245,11 +245,19 @@ private extension MenuManager {
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
+        menu.addItem(
+            NSMenuItem(
+                title: String(localized: "Search History"),
+                action: #selector(AppDelegate.showHistorySearchWindow),
+                keyEquivalent: ""
+            )
+        )
+
         // History
         let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = placeInLine
-        var subMenuIndex = 1 + placeInLine
+        var subMenuIndex = menu.numberOfItems + placeInLine
 
         let reorderClipsAfterPasting = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
         let isShowImage = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showImageInTheMenu)

@@ -60,6 +60,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         CPYSnippetsEditorWindowController.sharedController.showWindow(self)
     }
 
+    @objc func showHistorySearchWindow() {
+        HistorySearchWindowController.shared.showSearchWindow()
+    }
+
     @objc func terminate() {
         terminateApplication()
     }
