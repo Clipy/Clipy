@@ -104,6 +104,8 @@ struct Constants {
         static let mainKeyCombo = "kCPYHotKeyMainKeyCombo"
         static let historyKeyCombo = "kCPYHotKeyHistoryKeyCombo"
         static let snippetKeyCombo = "kCPYHotKeySnippetKeyCombo"
+        static let fuzzySearchKeyCombo = "kCPYHotKeyFuzzySearchKeyCombo"
+        static let fuzzySearchKeyComboSeeded = "kCPYHotKeyFuzzySearchKeyComboSeeded"
         static let migrateNewKeyCombo = "kCPYMigrateNewKeyCombo"
         static let folderKeyCombos = "kCPYFolderKeyCombos"
         static let clearHistoryKeyCombo = "kCPYClearHistoryKeyCombo"

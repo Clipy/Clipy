@@ -31,6 +31,7 @@ final class HotKeyService: NSObject {
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
     fileprivate(set) var clearHistoryKeyCombo: KeyCombo?
+    fileprivate(set) var fuzzySearchKeyCombo: KeyCombo?
 
     @Dependency(\.snippetRepository)
     private var snippetRepository
@@ -55,6 +56,11 @@ extension HotKeyService {
     @objc func popUpSnippetMenu() {
         AppEnvironment.current.menuManager.popUpMenu(.snippet)
         firebase.logEvent(event: .popUpMenu(.snippet))
+    }
+
+    @objc func popUpFuzzySearchPanel() {
+        AppEnvironment.current.menuManager.popUpFuzzySearch()
+        firebase.logEvent(event: .popUpMenu(.history))
     }
 
     @objc func popUpClearHistoryAlert() {
@@ -83,6 +89,24 @@ extension HotKeyService {
         change(with: .snippet, keyCombo: savedKeyCombo(forKey: Constants.HotKey.snippetKeyCombo))
         // Clear History
         changeClearHistoryKeyCombo(savedKeyCombo(forKey: Constants.HotKey.clearHistoryKeyCombo))
+        // Fuzzy Search panel
+        setupFuzzySearchDefaultHotKey()
+    }
+
+    /// Registers the fuzzy-search hotkey, seeding a ⌘⌥V default the first time
+    /// only, so a user who later clears it is not overridden on the next launch.
+    private func setupFuzzySearchDefaultHotKey() {
+        if !appStorage.bool(forKey: Constants.HotKey.fuzzySearchKeyComboSeeded) {
+            appStorage.set(true, forKey: Constants.HotKey.fuzzySearchKeyComboSeeded)
+            appStorage.synchronize()
+            if appStorage.object(forKey: Constants.HotKey.fuzzySearchKeyCombo) == nil,
+               // ⌘ + ⌥ + V  (keyCode 9 = "V", carbon modifiers cmdKey | optionKey = 256 | 2048)
+               let defaultKeyCombo = KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 2304) {
+                changeFuzzySearchKeyCombo(defaultKeyCombo)
+                return
+            }
+        }
+        changeFuzzySearchKeyCombo(savedKeyCombo(forKey: Constants.HotKey.fuzzySearchKeyCombo))
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
@@ -106,6 +130,18 @@ extension HotKeyService {
         // Register new hotkey
         guard let keyCombo = keyCombo else { return }
         let hotkey = HotKey(identifier: "ClearHistory", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpClearHistoryAlert))
+        hotkey.register()
+    }
+
+    func changeFuzzySearchKeyCombo(_ keyCombo: KeyCombo?) {
+        fuzzySearchKeyCombo = keyCombo
+        appStorage.set(keyCombo?.archive(), forKey: Constants.HotKey.fuzzySearchKeyCombo)
+        appStorage.synchronize()
+        // Reset hotkey
+        HotKeyCenter.shared.unregisterHotKey(with: "FuzzySearch")
+        // Register new hotkey
+        guard let keyCombo = keyCombo else { return }
+        let hotkey = HotKey(identifier: "FuzzySearch", keyCombo: keyCombo, target: self, action: #selector(HotKeyService.popUpFuzzySearchPanel))
         hotkey.register()
     }
 

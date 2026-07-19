@@ -20,6 +20,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     @IBOutlet private weak var mainShortcutRecordView: RecordView!
     @IBOutlet private weak var historyShortcutRecordView: RecordView!
     @IBOutlet private weak var snippetShortcutRecordView: RecordView!
+    @IBOutlet private weak var fuzzySearchShortcutRecordView: RecordView!
     @IBOutlet private weak var clearHistoryShortcutRecordView: RecordView!
 
     // MARK: - Initialize
@@ -28,6 +29,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
         mainShortcutRecordView.delegate = self
         historyShortcutRecordView.delegate = self
         snippetShortcutRecordView.delegate = self
+        fuzzySearchShortcutRecordView.delegate = self
         clearHistoryShortcutRecordView.delegate = self
         prepareHotKeys()
     }
@@ -40,6 +42,7 @@ private extension CPYShortcutsPreferenceViewController {
         mainShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.mainKeyCombo
         historyShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.historyKeyCombo
         snippetShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.snippetKeyCombo
+        fuzzySearchShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.fuzzySearchKeyCombo
         clearHistoryShortcutRecordView.keyCombo = AppEnvironment.current.hotKeyService.clearHistoryKeyCombo
     }
 }
@@ -62,6 +65,8 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
             AppEnvironment.current.hotKeyService.change(with: .history, keyCombo: keyCombo)
         case snippetShortcutRecordView:
             AppEnvironment.current.hotKeyService.change(with: .snippet, keyCombo: keyCombo)
+        case fuzzySearchShortcutRecordView:
+            AppEnvironment.current.hotKeyService.changeFuzzySearchKeyCombo(keyCombo)
         case clearHistoryShortcutRecordView:
             AppEnvironment.current.hotKeyService.changeClearHistoryKeyCombo(keyCombo)
         default: break
