@@ -57,7 +57,6 @@
 		C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9D2FBA939E0083839F /* RxCocoa */; };
 		C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9F2FBA939E0083839F /* RxSwift */; };
 		C5D76DA52FBA98A90083839F /* AEXML in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA42FBA98A90083839F /* AEXML */; };
-		C5D76DA82FBA9C150083839F /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA72FBA9C150083839F /* PINCache */; };
 		C5D76DAB2FBA9D2E0083839F /* SwiftHEXColors in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */; };
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
 		C5E8EE642FFA260700270F1F /* PasteboardHistoryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */; };
@@ -321,7 +320,6 @@
 				FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */,
 				FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */,
 				C5D76DA52FBA98A90083839F /* AEXML in Frameworks */,
-				C5D76DA82FBA9C150083839F /* PINCache in Frameworks */,
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
 				C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */,
 				C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */,
@@ -859,7 +857,6 @@
 				C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */,
 				C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */,
-				C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */,
 				C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */,
 				C5A6BA722FBC5A6E00C8B9EB /* XCRemoteSwiftPackageReference "Sparkle" */,
 				C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */,
@@ -1509,14 +1506,6 @@
 				minimumVersion = 4.7.0;
 			};
 		};
-		C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pinterest/pincache";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 3.0.4;
-			};
-		};
 		C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/thii/SwiftHEXColors";
@@ -1615,11 +1604,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */;
 			productName = AEXML;
-		};
-		C5D76DA72FBA9C150083839F /* PINCache */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C5D76DA62FBA9C140083839F /* XCRemoteSwiftPackageReference "pincache" */;
-			productName = PINCache;
 		};
 		C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */ = {
 			isa = XCSwiftPackageProductDependency;

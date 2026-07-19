@@ -1,5 +1,5 @@
 {
-  "originHash" : "8406461c0ee4c6ded60f8b736d69f44c3c5f470b86a4f7442150adfc20105792",
+  "originHash" : "a79bdd68278bff630297cfdc7511ebeeea3cc6c3789440daf385a5bc291afdd7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -152,24 +152,6 @@
       "state" : {
         "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
         "version" : "2.30910.0"
-      }
-    },
-    {
-      "identity" : "pincache",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pinterest/pincache",
-      "state" : {
-        "revision" : "2fb85948463292c2e824148cf17dc62a4c217a94",
-        "version" : "3.0.4"
-      }
-    },
-    {
-      "identity" : "pinoperation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pinterest/PINOperation.git",
-      "state" : {
-        "revision" : "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
-        "version" : "1.2.3"
       }
     },
     {

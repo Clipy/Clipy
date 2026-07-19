@@ -13,7 +13,6 @@
 import Cocoa
 import Dependencies
 import Foundation
-import PINCache
 import RxSwift
 import RxCocoa
 
@@ -59,7 +58,6 @@ final class ClipService {
     func clearAll() {
         pasteboardHistoryRepository.deleteAll()
         // Clear legacy Realm-backed history caches used through v1.2.1.
-        PINCache.shared.removeAllObjects()
         try? FileManager.default.removeItem(atPath: CPYUtilities.applicationSupportFolder())
     }
 
