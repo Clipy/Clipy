@@ -109,8 +109,8 @@ extension ClipService {
         let historyID = PasteboardHistory.ID(rawValue: content.hash)
         if pasteboardHistoryRepository.fetchHistory(id: historyID) != nil, !isCopySameHistory { return }
 
-        // Don't save empty string history
-        if content.isOnlyStringType && content.stringValue.isEmpty { return }
+        // Don't save empty or whitespace-only text history
+        if content.isBlankText { return }
 
         // Overwrite same history
         let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.overwriteSameHistory)

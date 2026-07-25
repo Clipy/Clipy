@@ -16,7 +16,7 @@ import Testing
 
 @MainActor
 @Suite
-struct PasteboardContentTests {
+struct PasteboardContentTests { // swiftlint:disable:this type_body_length
     @Test
     func typesAreDerivedFromAssetsInOrder() throws {
         let content = try #require(
@@ -197,13 +197,22 @@ struct PasteboardContentTests {
                 ]
             )
         )
+        let nonStringContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .pdf, data: Data("pdf".utf8))
+                ]
+            )
+        )
 
-        #expect(modernContent.isOnlyStringType)
+        #expect(!modernContent.isBlankText)
         #expect(modernContent.stringValue == "Hello")
-        #expect(deprecatedContent.isOnlyStringType)
+        #expect(!deprecatedContent.isBlankText)
         #expect(deprecatedContent.stringValue == "Legacy")
-        #expect(!mixedContent.isOnlyStringType)
+        #expect(!mixedContent.isBlankText)
         #expect(mixedContent.stringValue == "Hello")
+        #expect(!nonStringContent.isBlankText)
+        #expect(nonStringContent.stringValue == nil)
     }
 
     @Test
@@ -292,6 +301,66 @@ struct PasteboardContentTests {
         #expect(content.hash == equivalentContent.hash)
         #expect(content.hash != changedDataContent.hash)
         #expect(content.hash != changedOrderContent.hash)
+    }
+
+    @Test(arguments: ["", " ", "\t\r\n", "\u{00a0}\u{3000}"])
+    func emptyAndWhitespaceOnlyStringsAreBlank(string: String) throws {
+        let modernContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data(string.utf8))
+                ]
+            )
+        )
+        let deprecatedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .deprecatedString, data: Data(string.utf8))
+                ]
+            )
+        )
+        let mixedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data(string.utf8)),
+                    PasteboardContent.Asset(type: .concealed, data: Data())
+                ]
+            )
+        )
+
+        #expect(modernContent.isBlankText)
+        #expect(deprecatedContent.isBlankText)
+        #expect(mixedContent.isBlankText)
+    }
+
+    @Test(arguments: ["a", " text ", "\ntext\n"])
+    func stringsContainingNonWhitespaceAreNotBlank(string: String) throws {
+        let modernContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data(string.utf8))
+                ]
+            )
+        )
+        let deprecatedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .deprecatedString, data: Data(string.utf8))
+                ]
+            )
+        )
+        let mixedContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data(string.utf8)),
+                    PasteboardContent.Asset(type: .concealed, data: Data())
+                ]
+            )
+        )
+
+        #expect(!modernContent.isBlankText)
+        #expect(!deprecatedContent.isBlankText)
+        #expect(!mixedContent.isBlankText)
     }
 }
 
