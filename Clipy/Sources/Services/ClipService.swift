@@ -11,20 +11,23 @@
 //
 
 import Cocoa
+import Clocks
 import Dependencies
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 final class ClipService {
 
     // MARK: - Properties
-    fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
+    fileprivate var cachedChangeCount = 0
     fileprivate var storeTypes = [String: NSNumber]()
-    fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
+    fileprivate var monitoringTask: Task<Void, Never>?
     fileprivate var disposeBag = DisposeBag()
 
+    @Dependency(\.excludeAppService)
+    private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.textRecognizer)
@@ -32,17 +35,19 @@ final class ClipService {
 
     // MARK: - Clips
     func startMonitoring() {
+        monitoringTask?.cancel()
         disposeBag = DisposeBag()
         // Pasteboard observe timer
-        Observable<Int>.interval(.milliseconds(500), scheduler: scheduler)
-            .map { _ in NSPasteboard.general.changeCount }
-            .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
-            .filter { $0 != $1 }
-            .subscribe(onNext: { [weak self] changeCount, _ in
-                self?.cachedChangeCount.accept(changeCount)
+        monitoringTask = Task { @MainActor [weak self] in
+            @Dependency(\.continuousClock) var continuousClock
+
+            for await _ in continuousClock.timer(interval: .milliseconds(500)) {
+                let changeCount = NSPasteboard.general.changeCount
+                guard changeCount != self?.cachedChangeCount else { continue }
+                self?.cachedChangeCount = changeCount
                 self?.create()
-            })
-            .disposed(by: disposeBag)
+            }
+        }
         // Store types
         storeTypes = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: NSNumber] ?? [:]
         AppEnvironment.current.defaults.rx
@@ -66,9 +71,12 @@ final class ClipService {
     }
 
     func incrementChangeCount() {
-        cachedChangeCount.accept(cachedChangeCount.value + 1)
+        cachedChangeCount += 1
     }
 
+    deinit {
+        monitoringTask?.cancel()
+    }
 }
 
 // MARK: - Create Clip
@@ -88,9 +96,9 @@ extension ClipService {
         guard !types.isEmpty else { return }
 
         // Excluded application
-        guard !AppEnvironment.current.excludeAppService.frontProcessIsExcludedApplication() else { return }
+        guard !excludeAppService.frontProcessIsExcludedApplication() else { return }
         // Special applications
-        guard !AppEnvironment.current.excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
+        guard !excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
 
         guard let content = PasteboardContent(pasteboard: pasteboard, types: types) else { return }
         save(content)

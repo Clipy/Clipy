@@ -35,7 +35,6 @@ final class MenuManager: NSObject {
     private let snippetIcon = NSImage(resource: .iconText)
     // Other
     private let disposeBag = DisposeBag()
-    private let notificationCenter = NotificationCenter.default
     private let kMaxKeyEquivalents = 10
 
     @Dependency(\.pasteboardHistoryRepository)
@@ -132,13 +131,6 @@ private extension MenuManager {
             .drive(onNext: { [weak self] _ in
                 guard let wSelf = self else { return }
                 wSelf.createClipMenu()
-            })
-            .disposed(by: disposeBag)
-        // Edit snippets
-        notificationCenter.rx.notification(Notification.Name(rawValue: Constants.Notification.closeSnippetEditor))
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] _ in
-                self?.createClipMenu()
             })
             .disposed(by: disposeBag)
         // Observe change preference settings

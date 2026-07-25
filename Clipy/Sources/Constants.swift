@@ -85,10 +85,6 @@ struct Constants {
         static let checkInterval = "kCPYUpdateCheckIntervalKey"
     }
 
-    struct Notification {
-        static let closeSnippetEditor = "kCPYSnippetEditorWillCloseNotification"
-    }
-
     struct Xml {
         static let fileType = "xml"
         static let type = "type"

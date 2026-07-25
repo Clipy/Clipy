@@ -30,10 +30,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     @Dependency(\.context)
     var context
-    @Dependency(\.continuousClock)
-    private var continuousClock
     @Dependency(\.defaultAppStorage)
     var appStorage
+    @Dependency(\.excludeAppService)
+    private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
@@ -137,8 +137,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Environments
-        AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys(appStorage)
 
@@ -170,7 +168,7 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         AppEnvironment.current.clipService.startMonitoring()
-        AppEnvironment.current.excludeAppService.startMonitoring()
+        excludeAppService.startMonitoring()
         AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
         // Managers
@@ -180,8 +178,10 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Periodically trim excess history using the current size limit and sort preference.
         Task(priority: .utility) { [weak self] in
-            guard let self else { return }
+            @Dependency(\.continuousClock) var continuousClock
+
             for await _ in continuousClock.timer(interval: .seconds(60)) {
+                guard let self else { return }
                 let maxHistorySize = appStorage.integer(forKey: Constants.UserDefaults.maxHistorySize)
                 let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
                 pasteboardHistoryRepository.deleteOverflowingHistories(

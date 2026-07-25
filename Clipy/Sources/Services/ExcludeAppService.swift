@@ -11,34 +11,40 @@
 //
 
 import AppKit
+import Combine
+import Dependencies
 import Foundation
-import RxSwift
-import RxCocoa
+import Sharing
 
 final class ExcludeAppService {
-
     // MARK: - Properties
-    fileprivate(set) var applications = [CPYAppInfo]()
-    fileprivate var frontApplication = BehaviorRelay<NSRunningApplication?>(value: nil)
-    fileprivate var disposeBag = DisposeBag()
+    fileprivate(set) var applications: [CPYAppInfo] = []
+    fileprivate var frontApplication: NSRunningApplication?
+    private var cancellables: Set<AnyCancellable> = []
+    private let notificationCenter: NotificationCenter
+
+    @Dependency(\.defaultAppStorage)
+    private var appStorage
 
     // MARK: - Initialize
-    init(applications: [CPYAppInfo]) {
-        self.applications = applications
+    init(notificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter) {
+        self.notificationCenter = notificationCenter
     }
-
 }
 
 // MARK: - Monitor Applications
 extension ExcludeAppService {
     func startMonitoring() {
-        disposeBag = DisposeBag()
+        cancellables.removeAll()
         // Monitoring top active application
-        NSWorkspace.shared.notificationCenter.rx.notification(NSWorkspace.didActivateApplicationNotification)
+        self.applications = (appStorage.object(forKey: Constants.UserDefaults.excludeApplications) as? Data)
+            .flatMap { NSKeyedUnarchiver.unarchiveObject(with: $0) as? [CPYAppInfo] }
+            ?? []
+        notificationCenter.publisher(for: NSWorkspace.didActivateApplicationNotification)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
-            .startWith(NSWorkspace.shared.frontmostApplication)
-            .bind(to: frontApplication)
-            .disposed(by: disposeBag)
+            .prepend(NSWorkspace.shared.frontmostApplication)
+            .sink { [weak self] in self?.frontApplication = $0 }
+            .store(in: &cancellables)
     }
 }
 
@@ -46,7 +52,7 @@ extension ExcludeAppService {
 extension ExcludeAppService {
     func frontProcessIsExcludedApplication() -> Bool {
         if applications.isEmpty { return false }
-        guard let frontApplicationIdentifier = frontApplication.value?.bundleIdentifier else { return false }
+        guard let frontApplicationIdentifier = frontApplication?.bundleIdentifier else { return false }
 
         for app in applications where app.identifier == frontApplicationIdentifier {
             return true
@@ -74,8 +80,8 @@ extension ExcludeAppService {
 
     private func save() {
         let data = applications.archive()
-        AppEnvironment.current.defaults.set(data, forKey: Constants.UserDefaults.excludeApplications)
-        AppEnvironment.current.defaults.synchronize()
+        appStorage.set(data, forKey: Constants.UserDefaults.excludeApplications)
+        appStorage.synchronize()
     }
 }
 
@@ -97,5 +103,16 @@ extension ExcludeAppService {
         guard let types = pasteboard.types else { return false }
         guard let application = types.compactMap({ Application(rawValue: $0.rawValue) }).first else { return false }
         return application.isExcluded(applications: applications)
+    }
+}
+
+extension DependencyValues {
+    var excludeAppService: ExcludeAppService {
+        get { self[ExcludeAppServiceKey.self] }
+        set { self[ExcludeAppServiceKey.self] = newValue }
+    }
+
+    private enum ExcludeAppServiceKey: DependencyKey {
+        static let liveValue = ExcludeAppService()
     }
 }

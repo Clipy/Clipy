@@ -11,10 +11,14 @@
 //
 
 import Cocoa
+import Dependencies
 
 class CPYExcludeAppPreferenceViewController: NSViewController {
     // MARK: - Properties
     @IBOutlet private weak var tableView: NSTableView!
+
+    @Dependency(\.excludeAppService)
+    private var excludeAppService
 }
 
 // MARK: - IBActions
@@ -36,7 +40,7 @@ extension CPYExcludeAppPreferenceViewController {
         fileURLs.forEach {
             guard let bundle = Bundle(url: $0), let info = bundle.infoDictionary else { return }
             guard let appInfo = CPYAppInfo(info: info as [String: AnyObject]) else { return }
-            AppEnvironment.current.excludeAppService.add(with: appInfo)
+            excludeAppService.add(with: appInfo)
         }
         tableView.reloadData()
     }
@@ -47,7 +51,7 @@ extension CPYExcludeAppPreferenceViewController {
             NSSound.beep()
             return
         }
-        AppEnvironment.current.excludeAppService.delete(with: index)
+        excludeAppService.delete(with: index)
         tableView.reloadData()
     }
 }
@@ -55,10 +59,10 @@ extension CPYExcludeAppPreferenceViewController {
 // MARK: - NSTableView DataSource
 extension CPYExcludeAppPreferenceViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return AppEnvironment.current.excludeAppService.applications.count
+        return excludeAppService.applications.count
     }
 
     func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        return AppEnvironment.current.excludeAppService.applications[safe: row]?.name
+        return excludeAppService.applications[row].name
     }
 }

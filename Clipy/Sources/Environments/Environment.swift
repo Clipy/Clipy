@@ -18,7 +18,6 @@ struct Environment {
     let clipService: ClipService
     let hotKeyService: HotKeyService
     let pasteService: PasteService
-    let excludeAppService: ExcludeAppService
     let menuManager: MenuManager
 
     let defaults: UserDefaults
@@ -27,14 +26,12 @@ struct Environment {
     init(clipService: ClipService = ClipService(),
          hotKeyService: HotKeyService = HotKeyService(),
          pasteService: PasteService = PasteService(),
-         excludeAppService: ExcludeAppService = ExcludeAppService(applications: []),
          menuManager: MenuManager = MenuManager(),
          defaults: UserDefaults = .standard) {
 
         self.clipService = clipService
         self.hotKeyService = hotKeyService
         self.pasteService = pasteService
-        self.excludeAppService = excludeAppService
         self.menuManager = menuManager
         self.defaults = defaults
     }
