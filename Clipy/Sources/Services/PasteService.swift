@@ -77,7 +77,7 @@ extension PasteService {
         }
         // Paste history
         if isPastePlainText {
-            copyToPasteboard(with: content.stringValue)
+            copyToPasteboard(with: content.stringValue ?? "")
             paste()
         } else if isPasteAndDeleteHistory {
             copyToPasteboard(with: content)
@@ -101,7 +101,7 @@ extension PasteService {
         lock.lock(); defer { lock.unlock() }
 
         if isPastePlainText {
-            copyToPasteboard(with: content.stringValue)
+            copyToPasteboard(with: content.stringValue ?? "")
             return
         }
 

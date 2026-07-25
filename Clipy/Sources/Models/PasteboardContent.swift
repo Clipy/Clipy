@@ -25,15 +25,22 @@ struct PasteboardContent: Equatable {
     let assets: [Asset]
     let hash: String
 
-    var isOnlyStringType: Bool {
-        types == [.string] || types == [.deprecatedString]
+    var isBlankText: Bool {
+        guard
+            let primaryType = types.first,
+            [.string, .deprecatedString, .rtf, .deprecatedRTF].contains(primaryType),
+            let stringValue
+        else {
+            return false
+        }
+        return stringValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-    var stringValue: String {
-        guard let data = data(for: .string) ?? data(for: .deprecatedString) else { return "" }
-        return String(data: data, encoding: .utf8) ?? ""
+    var stringValue: String? {
+        guard let data = data(for: .string) ?? data(for: .deprecatedString) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
     var colorCodeImage: NSImage? {
-        guard let color = NSColor(hexString: stringValue) else { return nil }
+        guard let stringValue, let color = NSColor(hexString: stringValue) else { return nil }
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }
     var thumbnailImage: NSImage? {

@@ -119,7 +119,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                     .fetchOne(database)
                 let history = PasteboardHistory(
                     id: id,
-                    title: String(content.stringValue.prefix(10000)),
+                    title: content.stringValue.map { String($0.prefix(10000)) } ?? "",
                     ocrText: existingHistory?.ocrText,
                     pasteboardTypes: content.types,
                     createdAt: existingHistory?.createdAt ?? updateAt,
