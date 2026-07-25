@@ -11,20 +11,23 @@
 //
 
 import Cocoa
+import Clocks
 import Dependencies
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 final class ClipService {
 
     // MARK: - Properties
-    fileprivate var cachedChangeCount = BehaviorRelay<Int>(value: 0)
+    fileprivate var cachedChangeCount = 0
     fileprivate var storeTypes = [String: NSNumber]()
-    fileprivate let scheduler = SerialDispatchQueueScheduler(qos: .userInteractive)
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
+    fileprivate var monitoringTask: Task<Void, Never>?
     fileprivate var disposeBag = DisposeBag()
 
+    @Dependency(\.continuousClock)
+    private var continuousClock
     @Dependency(\.excludeAppService)
     private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
@@ -34,17 +37,18 @@ final class ClipService {
 
     // MARK: - Clips
     func startMonitoring() {
+        monitoringTask?.cancel()
         disposeBag = DisposeBag()
         // Pasteboard observe timer
-        Observable<Int>.interval(.milliseconds(500), scheduler: scheduler)
-            .map { _ in NSPasteboard.general.changeCount }
-            .withLatestFrom(cachedChangeCount.asObservable()) { ($0, $1) }
-            .filter { $0 != $1 }
-            .subscribe(onNext: { [weak self] changeCount, _ in
-                self?.cachedChangeCount.accept(changeCount)
-                self?.create()
-            })
-            .disposed(by: disposeBag)
+        monitoringTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            for await _ in continuousClock.timer(interval: .milliseconds(500)) {
+                let changeCount = NSPasteboard.general.changeCount
+                guard changeCount != cachedChangeCount else { continue }
+                cachedChangeCount = changeCount
+                create()
+            }
+        }
         // Store types
         storeTypes = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: NSNumber] ?? [:]
         AppEnvironment.current.defaults.rx
@@ -68,7 +72,7 @@ final class ClipService {
     }
 
     func incrementChangeCount() {
-        cachedChangeCount.accept(cachedChangeCount.value + 1)
+        cachedChangeCount += 1
     }
 
 }
