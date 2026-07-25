@@ -34,6 +34,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var continuousClock
     @Dependency(\.defaultAppStorage)
     var appStorage
+    @Dependency(\.excludeAppService)
+    private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
@@ -137,8 +139,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Environments
-        AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
         CPYUtilities.registerUserDefaultKeys(appStorage)
 
@@ -170,7 +170,7 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         AppEnvironment.current.clipService.startMonitoring()
-        AppEnvironment.current.excludeAppService.startMonitoring()
+        excludeAppService.startMonitoring()
         AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
 
         // Managers

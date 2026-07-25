@@ -25,6 +25,8 @@ final class ClipService {
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     fileprivate var disposeBag = DisposeBag()
 
+    @Dependency(\.excludeAppService)
+    private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.textRecognizer)
@@ -88,9 +90,9 @@ extension ClipService {
         guard !types.isEmpty else { return }
 
         // Excluded application
-        guard !AppEnvironment.current.excludeAppService.frontProcessIsExcludedApplication() else { return }
+        guard !excludeAppService.frontProcessIsExcludedApplication() else { return }
         // Special applications
-        guard !AppEnvironment.current.excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
+        guard !excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
 
         guard let content = PasteboardContent(pasteboard: pasteboard, types: types) else { return }
         save(content)
