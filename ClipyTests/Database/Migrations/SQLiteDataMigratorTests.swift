@@ -31,7 +31,9 @@ struct SQLiteDataMigratorTests {
                     "Create initial tables",
                     "Create search indexes",
                     "Add createdAt to pasteboardHistories",
-                    "Add OCR text to history search"
+                    "Add OCR text to history search",
+                    "Add deviceID to pasteboardHistories",
+                    "Repair legacy pasteboard asset columns"
                 ]
             )
         }
