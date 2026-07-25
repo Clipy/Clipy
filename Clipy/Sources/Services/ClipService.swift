@@ -32,6 +32,8 @@ final class ClipService {
     private var pasteboardHistoryRepository
     @Dependency(\.textRecognizer)
     private var textRecognizer
+    @Dependency(\.defaultAppStorage)
+    private var appStorage
 
     // MARK: - Clips
     func startMonitoring() {
@@ -49,8 +51,8 @@ final class ClipService {
             }
         }
         // Store types
-        storeTypes = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: NSNumber] ?? [:]
-        AppEnvironment.current.defaults.rx
+        storeTypes = appStorage.object(forKey: Constants.UserDefaults.storeTypes) as? [String: NSNumber] ?? [:]
+        appStorage.rx
             .observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
             .compactMap { $0 }
             .asDriver(onErrorDriveWith: .empty())
@@ -91,7 +93,7 @@ extension ClipService {
         let types = PasteboardAvailableType.availableTypes(
             from: pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? [],
             storeAvailableTypes: storeTypes.filter { $0.value.boolValue }.compactMap { PasteboardAvailableType(rawValue: $0.key) },
-            ignoresConcealedType: AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.ignoreConcealedPasteboardType)
+            ignoresConcealedType: appStorage.bool(forKey: Constants.UserDefaults.ignoreConcealedPasteboardType)
         )
         guard !types.isEmpty else { return }
 
@@ -113,7 +115,7 @@ extension ClipService {
 
     private func save(_ content: PasteboardContent) {
         // Copy already copied history
-        let isCopySameHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.copySameHistory)
+        let isCopySameHistory = appStorage.bool(forKey: Constants.UserDefaults.copySameHistory)
         let historyID = PasteboardHistory.ID(rawValue: content.hash)
         if pasteboardHistoryRepository.fetchHistory(id: historyID) != nil, !isCopySameHistory { return }
 
@@ -121,7 +123,7 @@ extension ClipService {
         if content.isBlankText { return }
 
         // Overwrite same history
-        let isOverwriteHistory = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.overwriteSameHistory)
+        let isOverwriteHistory = appStorage.bool(forKey: Constants.UserDefaults.overwriteSameHistory)
         let savedHash = (isOverwriteHistory) ? content.hash : UUID().uuidString
 
         let unixTime = Int(Date().timeIntervalSince1970)
