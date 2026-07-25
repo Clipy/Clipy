@@ -40,6 +40,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var snippetRepository
     @Dependency(\.firebase)
     private var firebase
+    @Dependency(\.clipService)
+    private var clipService
+    @Dependency(\.hotKeyService)
+    private var hotKeyService
+    @Dependency(\.pasteService)
+    private var pasteService
+    @Dependency(\.menuManager)
+    private var menuManager
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -85,7 +93,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             appStorage.synchronize()
         }
 
-        AppEnvironment.current.clipService.clearAll()
+        clipService.clearAll()
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
@@ -94,7 +102,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             return
         }
 
-        AppEnvironment.current.pasteService.paste(id: id, content: content)
+        pasteService.paste(id: id, content: content)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
@@ -102,8 +110,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             NSSound.beep()
             return
         }
-        AppEnvironment.current.pasteService.copyToPasteboard(with: snippet.content)
-        AppEnvironment.current.pasteService.paste()
+        pasteService.copyToPasteboard(with: snippet.content)
+        pasteService.paste()
     }
 
     func terminateApplication() {
@@ -167,12 +175,12 @@ extension AppDelegate: NSApplicationDelegate {
         bind()
 
         // Services
-        AppEnvironment.current.clipService.startMonitoring()
+        clipService.startMonitoring()
         excludeAppService.startMonitoring()
-        AppEnvironment.current.hotKeyService.setupDefaultHotKeys()
+        hotKeyService.setupDefaultHotKeys()
 
         // Managers
-        AppEnvironment.current.menuManager.setup()
+        menuManager.setup()
         // Screenshot
         screenshotObserver.delegate = self
 
@@ -243,7 +251,7 @@ extension AppDelegate: ScreenShotObserverDelegate {
     func screenShotObserver(_ observer: ScreenShotObserver, addedItem item: NSMetadataItem) {
         guard let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return }
         guard let image = NSImage(contentsOfFile: path) else { return }
-        AppEnvironment.current.clipService.create(with: image)
+        clipService.create(with: image)
     }
 }
 

@@ -398,3 +398,14 @@ private extension MenuManager {
         return appStorage.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero) ? 0 : 1
     }
 }
+
+extension DependencyValues {
+    var menuManager: MenuManager {
+        get { self[MenuManagerKey.self] }
+        set { self[MenuManagerKey.self] = newValue }
+    }
+
+    private enum MenuManagerKey: DependencyKey {
+        static let liveValue = MenuManager()
+    }
+}
