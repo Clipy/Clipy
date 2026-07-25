@@ -44,41 +44,41 @@ struct Firebase {
 
 extension DependencyValues {
     var firebase: Firebase {
-        get { self[Firebase.self] }
-        set { self[Firebase.self] = newValue }
+        get { self[FirebaseKey.self] }
+        set { self[FirebaseKey.self] = newValue }
     }
-}
 
-extension Firebase: DependencyKey {
-    static let liveValue: Firebase = .init(
-        configure: {
-            @Dependency(\.defaultAppStorage) var appStorage
+    private enum FirebaseKey: DependencyKey {
+        static let liveValue: Firebase = .init(
+            configure: {
+                @Dependency(\.defaultAppStorage) var appStorage
 
-            appStorage.register(defaults: ["NSApplicationCrashOnExceptions": true])
-            guard
-                appStorage.bool(forKey: Constants.UserDefaults.collectCrashReport),
-                let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
-                let options = FirebaseOptions(contentsOfFile: path),
-                FirebaseApp.app() == nil
-            else { return }
+                appStorage.register(defaults: ["NSApplicationCrashOnExceptions": true])
+                guard
+                    appStorage.bool(forKey: Constants.UserDefaults.collectCrashReport),
+                    let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+                    let options = FirebaseOptions(contentsOfFile: path),
+                    FirebaseApp.app() == nil
+                else { return }
 
-            FirebaseApp.configure(options: options)
-        },
-        logEvent: { event in
-            @Dependency(\.defaultAppStorage) var appStorage
+                FirebaseApp.configure(options: options)
+            },
+            logEvent: { event in
+                @Dependency(\.defaultAppStorage) var appStorage
 
-            guard appStorage.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
+                guard appStorage.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
 
-            Analytics.logEvent(event.name, parameters: event.parameters)
-        }
-    )
+                Analytics.logEvent(event.name, parameters: event.parameters)
+            }
+        )
 
-    static var previewValue: Firebase = Firebase(
-        configure: {},
-        logEvent: { _ in }
-    )
-    static var testValue: Firebase = Firebase(
-        configure: {},
-        logEvent: { _ in }
-    )
+        static var previewValue: Firebase = Firebase(
+            configure: {},
+            logEvent: { _ in }
+        )
+        static var testValue: Firebase = Firebase(
+            configure: {},
+            logEvent: { _ in }
+        )
+    }
 }

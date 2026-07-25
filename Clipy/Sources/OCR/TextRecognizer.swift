@@ -49,13 +49,13 @@ private extension TextRecognizer {
     }
 }
 
-private enum TextRecognizerKey: DependencyKey {
-    static let liveValue: any TextRecognizerProtocol = TextRecognizer()
-}
-
 extension DependencyValues {
     var textRecognizer: any TextRecognizerProtocol {
         get { self[TextRecognizerKey.self] }
         set { self[TextRecognizerKey.self] = newValue }
+    }
+
+    private enum TextRecognizerKey: DependencyKey {
+        static let liveValue: any TextRecognizerProtocol = TextRecognizer()
     }
 }

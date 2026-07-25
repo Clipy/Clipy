@@ -269,13 +269,13 @@ private extension SnippetRepository {
     }
 }
 
-private enum SnippetRepositoryKey: DependencyKey {
-    static let liveValue: any SnippetRepositoryProtocol = SnippetRepository()
-}
-
 extension DependencyValues {
     var snippetRepository: SnippetRepositoryProtocol {
         get { self[SnippetRepositoryKey.self] }
         set { self[SnippetRepositoryKey.self] = newValue }
+    }
+
+    private enum SnippetRepositoryKey: DependencyKey {
+        static let liveValue: any SnippetRepositoryProtocol = SnippetRepository()
     }
 }

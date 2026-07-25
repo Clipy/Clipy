@@ -228,13 +228,13 @@ private extension PasteboardHistoryRepository {
     }
 }
 
-private enum PasteboardHistoryRepositoryKey: DependencyKey {
-    static let liveValue: any PasteboardHistoryRepositoryProtocol = PasteboardHistoryRepository()
-}
-
 extension DependencyValues {
     var pasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
         get { self[PasteboardHistoryRepositoryKey.self] }
         set { self[PasteboardHistoryRepositoryKey.self] = newValue }
+    }
+
+    private enum PasteboardHistoryRepositoryKey: DependencyKey {
+        static let liveValue: any PasteboardHistoryRepositoryProtocol = PasteboardHistoryRepository()
     }
 }
