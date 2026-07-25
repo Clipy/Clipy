@@ -26,8 +26,6 @@ final class ClipService {
     fileprivate var monitoringTask: Task<Void, Never>?
     fileprivate var disposeBag = DisposeBag()
 
-    @Dependency(\.continuousClock)
-    private var continuousClock
     @Dependency(\.excludeAppService)
     private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
@@ -41,12 +39,13 @@ final class ClipService {
         disposeBag = DisposeBag()
         // Pasteboard observe timer
         monitoringTask = Task { @MainActor [weak self] in
-            guard let self else { return }
+            @Dependency(\.continuousClock) var continuousClock
+
             for await _ in continuousClock.timer(interval: .milliseconds(500)) {
                 let changeCount = NSPasteboard.general.changeCount
-                guard changeCount != cachedChangeCount else { continue }
-                cachedChangeCount = changeCount
-                create()
+                guard changeCount != self?.cachedChangeCount else { continue }
+                self?.cachedChangeCount = changeCount
+                self?.create()
             }
         }
         // Store types
@@ -75,6 +74,9 @@ final class ClipService {
         cachedChangeCount += 1
     }
 
+    deinit {
+        monitoringTask?.cancel()
+    }
 }
 
 // MARK: - Create Clip
