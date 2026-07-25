@@ -27,6 +27,8 @@ final class PasteService {
 
     @Dependency(\.defaultAppStorage)
     private var appStorage
+    @Dependency(\.clipService)
+    private var clipService
 
     private var isPastePlainText: Bool {
         guard appStorage.bool(forKey: Constants.Beta.pastePlainText) else { return false }
@@ -78,7 +80,7 @@ extension PasteService {
 
         // Increment change count for don't copy paste item
         if isPasteAndDeleteHistory {
-            AppEnvironment.current.clipService.incrementChangeCount()
+            clipService.incrementChangeCount()
         }
         // Paste history
         if isPastePlainText {
@@ -90,7 +92,7 @@ extension PasteService {
         }
         // Delete clip
         if isDeleteHistory || isPasteAndDeleteHistory {
-            AppEnvironment.current.clipService.delete(id: id)
+            clipService.delete(id: id)
         }
     }
 
@@ -141,5 +143,16 @@ extension PasteService {
             keyDown?.post(tap: .cgAnnotatedSessionEventTap)
             keyUp?.post(tap: .cgAnnotatedSessionEventTap)
         }
+    }
+}
+
+extension DependencyValues {
+    var pasteService: PasteService {
+        get { self[PasteServiceKey.self] }
+        set { self[PasteServiceKey.self] = newValue }
+    }
+
+    private enum PasteServiceKey: DependencyKey {
+        static let liveValue = PasteService()
     }
 }

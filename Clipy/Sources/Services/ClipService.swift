@@ -132,3 +132,14 @@ extension ClipService {
         textRecognizer.recognizeTextIfNeeded(id: id)
     }
 }
+
+extension DependencyValues {
+    var clipService: ClipService {
+        get { self[ClipServiceKey.self] }
+        set { self[ClipServiceKey.self] = newValue }
+    }
+
+    private enum ClipServiceKey: DependencyKey {
+        static let liveValue = ClipService()
+    }
+}

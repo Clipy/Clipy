@@ -38,22 +38,24 @@ final class HotKeyService: NSObject {
     private var firebase
     @Dependency(\.defaultAppStorage)
     private var appStorage
+    @Dependency(\.menuManager)
+    private var menuManager
 }
 
 // MARK: - Actions
 extension HotKeyService {
     @objc func popupMainMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.main)
+        menuManager.popUpMenu(.main)
         firebase.logEvent(event: .popUpMenu(.main))
     }
 
     @objc func popupHistoryMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.history)
+        menuManager.popUpMenu(.history)
         firebase.logEvent(event: .popUpMenu(.history))
     }
 
     @objc func popUpSnippetMenu() {
-        AppEnvironment.current.menuManager.popUpMenu(.snippet)
+        menuManager.popUpMenu(.snippet)
         firebase.logEvent(event: .popUpMenu(.snippet))
     }
 
@@ -221,7 +223,7 @@ extension HotKeyService {
             return
         }
         guard folderDetail.folder.isEnabled else { return }
-        AppEnvironment.current.menuManager.popUpSnippetFolder(folderDetail)
+        menuManager.popUpSnippetFolder(folderDetail)
         firebase.logEvent(event: .popUpSnippetFolderMenu)
     }
 
@@ -230,5 +232,16 @@ extension HotKeyService {
             let hotKey = HotKey(identifier: $0, keyCombo: $1, target: self, action: #selector(HotKeyService.popupSnippetFolder(_:)))
             hotKey.register()
         }
+    }
+}
+
+extension DependencyValues {
+    var hotKeyService: HotKeyService {
+        get { self[HotKeyServiceKey.self] }
+        set { self[HotKeyServiceKey.self] = newValue }
+    }
+
+    private enum HotKeyServiceKey: DependencyKey {
+        static let liveValue = HotKeyService()
     }
 }
