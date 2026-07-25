@@ -725,37 +725,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um diese Aktion auszuführen, erlauben Sie Clipy unter „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Bedienungshilfen“ den Zugriff.\n\nWenn diese Meldung wiederholt angezeigt wird, obwohl Clipy aktiviert ist, entfernen Sie Clipy aus der Liste, fügen Sie es erneut hinzu und aktivieren Sie es wieder."
+            "value" : "Erlauben Sie Clipy für diese Aktion unter „Systemeinstellungen“ > „Datenschutz & Sicherheit“ > „Bedienungshilfen“ den Zugriff. Wird die Meldung weiterhin angezeigt, entfernen Sie Clipy aus der Liste und fügen Sie es erneut hinzu."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To perform this action, allow Clipy under System Settings > Privacy & Security > Accessibility.\n\nIf this message keeps appearing even though Clipy is enabled, remove Clipy from the Accessibility list, then add and enable it again."
+            "value" : "To perform this action, allow Clipy in System Settings > Privacy & Security > Accessibility. If this message still appears, remove Clipy from the list and add it again."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per eseguire questa azione, consenti l'accesso a Clipy in Impostazioni di Sistema > Privacy e sicurezza > Accessibilità.\n\nSe questo messaggio continua a comparire anche se Clipy è abilitato, rimuovi Clipy dall'elenco Accessibilità, quindi aggiungilo e abilitalo di nuovo."
+            "value" : "Per eseguire questa azione, consenti l'accesso a Clipy in Impostazioni di Sistema > Privacy e sicurezza > Accessibilità. Se il messaggio ricompare, rimuovi Clipy dall'elenco e aggiungilo di nuovo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この動作を行うには、「システム設定」＞「プライバシーとセキュリティ」＞「アクセシビリティ」で、Clipyへのアクセスを許可してください。\n\nClipyを有効にしていてもこのメッセージが何度も表示される場合は、アクセシビリティの一覧からClipyを一度削除し、再度追加して有効にしてみてください。"
+            "value" : "この動作を行うには、システム設定の「プライバシーとセキュリティ」＞「アクセシビリティ」でClipyへのアクセスを許可してください。有効にしても表示される場合は、一覧からClipyを一度削除し、追加し直してみてください。"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para realizar esta ação, permita o acesso do Clipy em Ajustes do Sistema > Privacidade e Segurança > Acessibilidade.\n\nSe esta mensagem continuar aparecendo mesmo com o Clipy ativado, remova o Clipy da lista de Acessibilidade e, em seguida, adicione-o novamente e ative-o."
+            "value" : "Para realizar esta ação, permita o acesso do Clipy em Ajustes do Sistema > Privacidade e Segurança > Acessibilidade. Se a mensagem continuar aparecendo, remova o Clipy da lista e adicione-o novamente."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要执行此操作，请在“系统设置”>“隐私与安全性”>“辅助功能”中允许 Clipy 访问。\n\n如果 Clipy 已启用但此提示仍反复出现，请先从“辅助功能”列表中移除 Clipy，然后重新添加并启用。"
+            "value" : "要执行此操作，请在“系统设置”>“隐私与安全性”>“辅助功能”中允许 Clipy 访问。如果仍显示此提示，请从列表中移除 Clipy，然后重新添加。"
           }
         }
       }
