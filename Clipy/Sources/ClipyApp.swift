@@ -31,7 +31,7 @@ struct ClipyApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("", isInserted: .constant(false)) {
+        MenuBarExtra(String(), isInserted: .constant(false)) {
             EmptyView()
         }
     }

@@ -65,7 +65,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func clearAllHistory() {
-        let isShowAlert = AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+        let isShowAlert = appStorage.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
         if isShowAlert {
             let alert = NSAlert()
             alert.messageText = String(localized: "Clear History")
@@ -80,9 +80,9 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
 
             if alert.suppressionButton?.state == NSControl.StateValue.on {
-                AppEnvironment.current.defaults.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+                appStorage.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
             }
-            AppEnvironment.current.defaults.synchronize()
+            appStorage.synchronize()
         }
 
         AppEnvironment.current.clipService.clearAll()
@@ -122,13 +122,13 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
         //  Launch on system startup
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
-            AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.loginItem)
-            AppEnvironment.current.defaults.synchronize()
+            appStorage.set(true, forKey: Constants.UserDefaults.loginItem)
+            appStorage.synchronize()
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSControl.StateValue.on {
-            AppEnvironment.current.defaults.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
-            AppEnvironment.current.defaults.synchronize()
+            appStorage.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
+            appStorage.synchronize()
         }
     }
 }
@@ -140,27 +140,29 @@ extension AppDelegate: NSApplicationDelegate {
         // Environments
         AppEnvironment.replaceCurrent(environment: AppEnvironment.fromStorage())
         // UserDefaults
-        CPYUtilities.registerUserDefaultKeys(AppEnvironment.current.defaults)
+        CPYUtilities.registerUserDefaultKeys(appStorage)
 
         guard context != .test else { return }
 
         // SDKs
         firebase.configure()
         // Check Accessibility Permission
-        Accessibility.isAccessibilityEnabled(isPrompt: true)
+        if appStorage.bool(forKey: Constants.UserDefaults.inputPasteCommand) {
+            Accessibility.isAccessibilityEnabled(isPrompt: true)
+        }
 
         // Show Login Item
-        if !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.loginItem) && !AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
+        if !appStorage.bool(forKey: Constants.UserDefaults.loginItem) && !appStorage.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
             promptToAddLoginItems()
         }
 
         // Sparkle
         self.updaterController = SPUStandardUpdaterController(
-            startingUpdater: AppEnvironment.current.defaults.bool(forKey: Constants.Update.enableAutomaticCheck),
+            startingUpdater: appStorage.bool(forKey: Constants.Update.enableAutomaticCheck),
             updaterDelegate: nil,
             userDriverDelegate: nil
         )
-        updaterController?.updater.updateCheckInterval = TimeInterval(AppEnvironment.current.defaults.integer(forKey: Constants.Update.checkInterval))
+        updaterController?.updater.updateCheckInterval = TimeInterval(appStorage.integer(forKey: Constants.Update.checkInterval))
         updaterController?.updater.clearFeedURLFromUserDefaults()
 
         // Binding Events
@@ -195,8 +197,17 @@ extension AppDelegate: NSApplicationDelegate {
 // MARK: - Bind
 private extension AppDelegate {
     func bind() {
+        // Accessibility Permission
+        appStorage.rx.observe(Bool.self, Constants.UserDefaults.inputPasteCommand, options: [.new], retainSelf: false)
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { _ in
+                Accessibility.isAccessibilityEnabled(isPrompt: true)
+            })
+            .disposed(by: disposeBag)
         // Login Item
-        AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
+        appStorage.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
             .compactMap { $0 }
             .subscribe(onNext: { isEnabled in
                 if isEnabled {
@@ -209,7 +220,7 @@ private extension AppDelegate {
             })
             .disposed(by: disposeBag)
         // Observe Screenshot
-        let observerScreenshot = AppEnvironment.current.defaults.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
+        let observerScreenshot = appStorage.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
             .compactMap { $0 }
             .share(replay: 1)
         observerScreenshot
