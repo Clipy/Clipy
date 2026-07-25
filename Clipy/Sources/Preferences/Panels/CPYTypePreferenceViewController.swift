@@ -11,14 +11,18 @@
 //
 
 import Cocoa
+import Dependencies
 
 final class CPYTypePreferenceViewController: NSViewController {
     // MARK: - Properties
     @objc var storeTypes: NSMutableDictionary!
 
+    @Dependency(\.defaultAppStorage)
+    private var appStorage
+
     // MARK: - Initialize
     override func loadView() {
-        if let dictionary = AppEnvironment.current.defaults.object(forKey: Constants.UserDefaults.storeTypes) as? [String: Any] {
+        if let dictionary = appStorage.object(forKey: Constants.UserDefaults.storeTypes) as? [String: Any] {
             storeTypes = NSMutableDictionary(dictionary: dictionary)
         } else {
             storeTypes = NSMutableDictionary()
@@ -38,6 +42,6 @@ final class CPYTypePreferenceViewController: NSViewController {
     // swiftlint:disable:next block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard let dictionary = object as? NSMutableDictionary, dictionary == storeTypes else { return }
-        AppEnvironment.current.defaults.set(storeTypes, forKey: Constants.UserDefaults.storeTypes)
+        appStorage.set(storeTypes, forKey: Constants.UserDefaults.storeTypes)
     }
 }

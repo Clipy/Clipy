@@ -11,6 +11,7 @@
 //
 
 import Cocoa
+import Dependencies
 import Foundation
 import Sauce
 
@@ -22,23 +23,27 @@ final class PasteService {
             .flatMap { $0.submenu?.items ?? [] }
             .first { $0.action == #selector(NSText.paste(_:)) }
     }()
-    fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
-    fileprivate var isPastePlainText: Bool {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pastePlainText) else { return false }
+    private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
 
-        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pastePlainTextModifier)
+    @Dependency(\.defaultAppStorage)
+    private var appStorage
+
+    private var isPastePlainText: Bool {
+        guard appStorage.bool(forKey: Constants.Beta.pastePlainText) else { return false }
+
+        let modifierSetting = appStorage.integer(forKey: Constants.Beta.pastePlainTextModifier)
         return isPressedModifier(modifierSetting)
     }
-    fileprivate var isDeleteHistory: Bool {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.deleteHistory) else { return false }
+    private var isDeleteHistory: Bool {
+        guard appStorage.bool(forKey: Constants.Beta.deleteHistory) else { return false }
 
-        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.deleteHistoryModifier)
+        let modifierSetting = appStorage.integer(forKey: Constants.Beta.deleteHistoryModifier)
         return isPressedModifier(modifierSetting)
     }
-    fileprivate var isPasteAndDeleteHistory: Bool {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.Beta.pasteAndDeleteHistory) else { return false }
+    private var isPasteAndDeleteHistory: Bool {
+        guard appStorage.bool(forKey: Constants.Beta.pasteAndDeleteHistory) else { return false }
 
-        let modifierSetting = AppEnvironment.current.defaults.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
+        let modifierSetting = appStorage.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
         return isPressedModifier(modifierSetting)
     }
 
@@ -113,7 +118,7 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        guard AppEnvironment.current.defaults.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
+        guard appStorage.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
         // Check Accessibility Permission
         guard Accessibility.isAccessibilityEnabled(isPrompt: false) else {
             Accessibility.showAccessibilityAuthenticationAlert()
