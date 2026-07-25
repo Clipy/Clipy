@@ -23,6 +23,8 @@ final class MenuManager: NSObject {
     private var clipMenu: NSMenu?
     private var historyMenu: NSMenu?
     private var snippetMenu: NSMenu?
+    // Fuzzy search
+    private lazy var fuzzySearchWindowController = CPYFuzzySearchWindowController()
     // StatusMenu
     private lazy var statusBarItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -81,6 +83,10 @@ extension MenuManager {
         }
         menu?.highlightingFirstItemIfPossible()
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+    }
+
+    func popUpFuzzySearch() {
+        fuzzySearchWindowController.showPanel()
     }
 
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {

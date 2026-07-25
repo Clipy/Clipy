@@ -15,19 +15,32 @@ import Dependencies
 import Sharing
 
 extension PasteboardHistory {
-    var typedTitle: String {
+    /// Prefix marking non-text clips, e.g. "(Image)", "(PDF)", "(Files)".
+    private var typePrefix: String? {
         let primaryType = pasteboardTypes.first
-        let prefix: String?
         if primaryType == .png || primaryType == .tiff || primaryType == .deprecatedTIFF {
-            prefix = "(Image)"
+            return "(Image)"
         } else if primaryType == .pdf || primaryType == .deprecatedPDF {
-            prefix = "(PDF)"
+            return "(PDF)"
         } else if primaryType == .fileURL || primaryType == .deprecatedFilenames {
-            prefix = "(Files)"
-        } else {
-            prefix = nil
+            return "(Files)"
         }
-        return [prefix, title.trimmedMenuTitle]
+        return nil
+    }
+
+    var typedTitle: String {
+        return [typePrefix, title.trimmedMenuTitle]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+
+    /// Prefix + the full (multi-line) clip text with only the outer whitespace
+    /// trimmed, for UIs that linearize and truncate the text themselves — unlike
+    /// `typedTitle`, this keeps interior line breaks and applies no length cap.
+    var fullDisplaySource: String {
+        let body = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return [typePrefix, body]
             .compactMap { $0 }
             .filter { !$0.isEmpty }
             .joined(separator: " ")
