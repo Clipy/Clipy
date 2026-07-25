@@ -146,6 +146,10 @@ extension AppDelegate: NSApplicationDelegate {
 
         // SDKs
         firebase.configure()
+        // Check Accessibility Permission
+        if appStorage.bool(forKey: Constants.UserDefaults.inputPasteCommand) {
+            Accessibility.isAccessibilityEnabled(isPrompt: true)
+        }
 
         // Show Login Item
         if !appStorage.bool(forKey: Constants.UserDefaults.loginItem) && !appStorage.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
@@ -194,7 +198,7 @@ extension AppDelegate: NSApplicationDelegate {
 private extension AppDelegate {
     func bind() {
         // Accessibility Permission
-        appStorage.rx.observe(Bool.self, Constants.UserDefaults.inputPasteCommand, retainSelf: false)
+        appStorage.rx.observe(Bool.self, Constants.UserDefaults.inputPasteCommand, options: [.new], retainSelf: false)
             .compactMap { $0 }
             .distinctUntilChanged()
             .filter { $0 }
