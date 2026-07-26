@@ -62,7 +62,27 @@ final class ClipService {
             .disposed(by: disposeBag)
     }
 
-    func clearAll() {
+    @objc func clearAllHistory() {
+        let isShowAlert = appStorage.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+        if isShowAlert {
+            let alert = NSAlert()
+            alert.messageText = String(localized: "Clear History")
+            alert.informativeText = String(localized: "Are you sure you want to clear your clipboard history?")
+            alert.addButton(withTitle: String(localized: "Clear History"))
+            alert.addButton(withTitle: String(localized: "Cancel"))
+            alert.showsSuppressionButton = true
+
+            NSApp.activate(ignoringOtherApps: true)
+
+            let result = alert.runModal()
+            if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
+
+            if alert.suppressionButton?.state == NSControl.StateValue.on {
+                appStorage.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+            }
+            appStorage.synchronize()
+        }
+
         pasteboardHistoryRepository.deleteAll()
         // Clear legacy Realm-backed history caches used through v1.2.1.
         try? FileManager.default.removeItem(atPath: CPYUtilities.applicationSupportFolder())

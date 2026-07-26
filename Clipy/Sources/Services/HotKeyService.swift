@@ -40,6 +40,8 @@ final class HotKeyService: NSObject {
     private var appStorage
     @Dependency(\.menuManager)
     private var menuManager
+    @Dependency(\.clipService)
+    private var clipService
 }
 
 // MARK: - Actions
@@ -60,8 +62,7 @@ extension HotKeyService {
     }
 
     @objc func popUpClearHistoryAlert() {
-        guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
-        appDelegate.clearAllHistory()
+        clipService.clearAllHistory()
     }
 }
 
