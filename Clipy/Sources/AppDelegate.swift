@@ -19,12 +19,10 @@ import RxSwift
 import Screeen
 import ServiceManagement
 import Sharing
-import Sparkle
 
 class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
-    private(set) var updaterController: SPUStandardUpdaterController?
     private let screenshotObserver = ScreenShotObserver(searchDirectoryPaths: AppDelegate.screenshotSearchDirectoryPaths())
     private let disposeBag = DisposeBag()
 
@@ -48,6 +46,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var pasteService
     @Dependency(\.menuManager)
     private var menuManager
+    @Dependency(\.sparkle)
+    private var sparkle
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -73,27 +73,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func clearAllHistory() {
-        let isShowAlert = appStorage.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
-        if isShowAlert {
-            let alert = NSAlert()
-            alert.messageText = String(localized: "Clear History")
-            alert.informativeText = String(localized: "Are you sure you want to clear your clipboard history?")
-            alert.addButton(withTitle: String(localized: "Clear History"))
-            alert.addButton(withTitle: String(localized: "Cancel"))
-            alert.showsSuppressionButton = true
-
-            NSApp.activate(ignoringOtherApps: true)
-
-            let result = alert.runModal()
-            if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
-
-            if alert.suppressionButton?.state == NSControl.StateValue.on {
-                appStorage.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
-            }
-            appStorage.synchronize()
-        }
-
-        clipService.clearAll()
+        clipService.clearAllHistory()
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
@@ -163,13 +143,7 @@ extension AppDelegate: NSApplicationDelegate {
         }
 
         // Sparkle
-        self.updaterController = SPUStandardUpdaterController(
-            startingUpdater: appStorage.bool(forKey: Constants.Update.enableAutomaticCheck),
-            updaterDelegate: nil,
-            userDriverDelegate: nil
-        )
-        updaterController?.updater.updateCheckInterval = TimeInterval(appStorage.integer(forKey: Constants.Update.checkInterval))
-        updaterController?.updater.clearFeedURLFromUserDefaults()
+        sparkle.configure()
 
         // Binding Events
         bind()

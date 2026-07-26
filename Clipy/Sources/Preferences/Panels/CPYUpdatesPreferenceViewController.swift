@@ -12,6 +12,7 @@
 
 import Cocoa
 import Combine
+import Dependencies
 import Sparkle
 
 class CPYUpdatesPreferenceViewController: NSViewController {
@@ -20,24 +21,20 @@ class CPYUpdatesPreferenceViewController: NSViewController {
     @IBOutlet private weak var lastUpdateCheckDateTextField: NSTextField!
     @IBOutlet private weak var versionTextField: NSTextField!
 
-    private var updaterController: SPUStandardUpdaterController? {
-        guard let appDelegate = NSApp.delegate as? AppDelegate else { return nil }
-        return appDelegate.updaterController
-    }
+    @Dependency(\.sparkle)
+    private var sparkle
     private var cancellables: Set<AnyCancellable> = []
 
     // MARK: - Initialize
     override func loadView() {
         super.loadView()
-        updaterController?.updater.publisher(for: \.lastUpdateCheckDate)
-            .compactMap { $0 }
+        sparkle.lastUpdateCheckDate()
             .assign(to: \.objectValue, on: lastUpdateCheckDateTextField)
             .store(in: &cancellables)
         versionTextField.stringValue = "v\(Bundle.main.appVersion ?? "")"
     }
 
     @IBAction private func checkForUpdates(_ sender: Any) {
-        guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
-        appDelegate.updaterController?.checkForUpdates(sender)
+        sparkle.checkForUpdates(sender: sender)
     }
 }
