@@ -12,6 +12,9 @@
 		C50D1A013021000100000003 /* MonospacedDigitFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D1A013021000100000004 /* MonospacedDigitFormatter.swift */; };
 		C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522FB942FCBD69A00E61800 /* PasteboardAvailableType.swift */; };
 		C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522FB982FCC019100E61800 /* PasteboardAvailableTypeTests.swift */; };
+		C52D212A301D9718009D832A /* AppMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52D2129301D9717009D832A /* AppMigrator.swift */; };
+		C52D212C301D9746009D832A /* AppMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52D212B301D9742009D832A /* AppMigration.swift */; };
+		C52D2133301DB500009D832A /* AppMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52D2134301DB500009D832A /* AppMigratorTests.swift */; };
 		C5348FB130008FE4008DFEB3 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5348FB030008FE1008DFEB3 /* WaitUntil.swift */; };
 		C53FC6C02FCCA1C400219A25 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = C53FC6BF2FCCA1C400219A25 /* Collections */; };
 		C54C29D52FC3E20000EF30FB /* SQLiteDataDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54C29D42FC3E1FD00EF30FB /* SQLiteDataDatabase.swift */; };
@@ -185,6 +188,9 @@
 		C5208B8E2FC6E8B000BC4568 /* CodeSigning-AdHoc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CodeSigning-AdHoc.xcconfig"; sourceTree = "<group>"; };
 		C522FB942FCBD69A00E61800 /* PasteboardAvailableType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardAvailableType.swift; sourceTree = "<group>"; };
 		C522FB982FCC019100E61800 /* PasteboardAvailableTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardAvailableTypeTests.swift; sourceTree = "<group>"; };
+		C52D2129301D9717009D832A /* AppMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMigrator.swift; sourceTree = "<group>"; };
+		C52D212B301D9742009D832A /* AppMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMigration.swift; sourceTree = "<group>"; };
+		C52D2134301DB500009D832A /* AppMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMigratorTests.swift; sourceTree = "<group>"; };
 		C5348FB030008FE1008DFEB3 /* WaitUntil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
 		C54C29D42FC3E1FD00EF30FB /* SQLiteDataDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataDatabase.swift; sourceTree = "<group>"; };
 		C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataMigrator.swift; sourceTree = "<group>"; };
@@ -384,6 +390,23 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		C52D2128301D96C1009D832A /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+				C52D2129301D9717009D832A /* AppMigrator.swift */,
+				C52D212B301D9742009D832A /* AppMigration.swift */,
+			);
+			path = Migration;
+			sourceTree = "<group>";
+		};
+		C52D2132301DB200009D832A /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+				C52D2134301DB500009D832A /* AppMigratorTests.swift */,
+			);
+			path = Migration;
+			sourceTree = "<group>";
+		};
 		C5348FAF30008FDF008DFEB3 /* TestSupport */ = {
 			isa = PBXGroup;
 			children = (
@@ -556,6 +579,7 @@
 			children = (
 				C57447262FD09FD9000D64D3 /* Dependencies */,
 				C54C29D32FC3E1F500EF30FB /* Database */,
+				C52D2128301D96C1009D832A /* Migration */,
 				C5700B452FC40BBF00C8F965 /* Repositories */,
 				C5F1AD0330190005AA110003 /* OCR */,
 				C5A67BC22FECF0010015A0DE /* Accessibility */,
@@ -748,6 +772,7 @@
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
 			isa = PBXGroup;
 			children = (
+				C52D2132301DB200009D832A /* Migration */,
 				C5348FAF30008FDF008DFEB3 /* TestSupport */,
 				C5700B472FC5C0DB00C8F965 /* Database */,
 				C5F1AD0630190005AA110006 /* OCR */,
@@ -969,6 +994,7 @@
 				C5E8EE682FFA28DD00270F1F /* StringExtensions.swift in Sources */,
 				C58E0A822FDAB5B100B3A901 /* ClipyApp.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
+				C52D212C301D9746009D832A /* AppMigration.swift in Sources */,
 				FA1DB5141DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift in Sources */,
 				C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */,
 				C5700B462FC40BBF00C8F965 /* SnippetRepository.swift in Sources */,
@@ -985,6 +1011,7 @@
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,
 				FA1DB5181DDCB4C0007F95C8 /* CPYUpdatesPreferenceViewController.swift in Sources */,
 				C57100072FCEB02000C8F965 /* PasteboardContent.swift in Sources */,
+				C52D212A301D9718009D832A /* AppMigrator.swift in Sources */,
 				C57447202FD09FC6000D64D3 /* CPYClip.swift in Sources */,
 				C57447212FD09FC6000D64D3 /* CPYSnippet.swift in Sources */,
 				C57447222FD09FC6000D64D3 /* CPYClipData.swift in Sources */,
@@ -1016,6 +1043,7 @@
 			isa = PBXSourcesBuildPhase;
 			files = (
 				C50D1A013021000100000001 /* MonospacedDigitFormatterTests.swift in Sources */,
+				C52D2133301DB500009D832A /* AppMigratorTests.swift in Sources */,
 				C5700B502FD106000C8F965 /* DatabaseMigrationTests.swift in Sources */,
 				C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */,
 				C5D41A0C2FDB4A0C00EF30FB /* SQLiteDataMigratorTests+V1.swift in Sources */,
