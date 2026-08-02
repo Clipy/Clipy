@@ -199,10 +199,6 @@ private extension MenuManager {
         statusBarItem.menu = clipMenu
     }
 
-    func menuItemTitle(_ title: String, listNumber: NSInteger, isMarkWithNumber: Bool) -> String {
-        return (isMarkWithNumber) ? "\(listNumber). \(title)" : title
-    }
-
     func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
         var count = count
         if start == 0 {
@@ -212,8 +208,13 @@ private extension MenuManager {
         if end < lastNumber {
             lastNumber = end
         }
-        let menuItemTitle = "\(count + 1) - \(lastNumber)"
-        return makeSubmenuItem(menuItemTitle)
+        let menuItemTitle = MonospacedDigitFormatter.rangeTitle(
+            firstNumber: count + 1,
+            lastNumber: lastNumber
+        )
+        let subMenuItem = makeSubmenuItem(menuItemTitle.string)
+        subMenuItem.attributedTitle = menuItemTitle
+        return subMenuItem
     }
 
     func makeSubmenuItem(_ title: String) -> NSMenuItem {
@@ -301,9 +302,9 @@ private extension MenuManager {
             keyEquivalent = "\(shortCutNumber)"
         }
 
-        let titleWithMark = menuItemTitle(history.typedTitle, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-
-        let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
+        let titleWithMark = MonospacedDigitFormatter.numberedTitle(history.typedTitle, listNumber: listNumber, showsNumber: isMarkWithNumber)
+        let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
+        menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = history.id
         menuItem.toolTip = history.toolTip
 
@@ -361,9 +362,9 @@ private extension MenuManager {
         let isMarkWithNumber = appStorage.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
         let isShowIcon = appStorage.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
 
-        let titleWithMark = menuItemTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, isMarkWithNumber: isMarkWithNumber)
-
-        let menuItem = NSMenuItem(title: titleWithMark, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
+        let titleWithMark = MonospacedDigitFormatter.numberedTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, showsNumber: isMarkWithNumber)
+        let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
+        menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.toolTip
         menuItem.image = (isShowIcon) ? snippetIcon : nil
