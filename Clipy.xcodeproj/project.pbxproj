@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C50767032FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */; };
+		C50D1A013021000100000001 /* MonospacedDigitFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D1A013021000100000002 /* MonospacedDigitFormatterTests.swift */; };
+		C50D1A013021000100000003 /* MonospacedDigitFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D1A013021000100000004 /* MonospacedDigitFormatter.swift */; };
 		C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522FB942FCBD69A00E61800 /* PasteboardAvailableType.swift */; };
 		C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522FB982FCC019100E61800 /* PasteboardAvailableTypeTests.swift */; };
 		C5348FB130008FE4008DFEB3 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5348FB030008FE1008DFEB3 /* WaitUntil.swift */; };
@@ -174,6 +176,8 @@
 		A07D83952FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
 		A07D83962FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataDatabase+TriggerTests.swift"; sourceTree = "<group>"; };
+		C50D1A013021000100000002 /* MonospacedDigitFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonospacedDigitFormatterTests.swift; sourceTree = "<group>"; };
+		C50D1A013021000100000004 /* MonospacedDigitFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonospacedDigitFormatter.swift; sourceTree = "<group>"; };
 		C5208B882FC6E7FF00BC4568 /* Clipy.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Clipy.xcconfig; sourceTree = "<group>"; };
 		C5208B8D2FC6E88E00BC4568 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		C5208B8E2FC6E8B000BC4568 /* CodeSigning-AdHoc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CodeSigning-AdHoc.xcconfig"; sourceTree = "<group>"; };
@@ -348,6 +352,22 @@
 				FAC43E221B35DFC800C06102 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C50D1A013021000100000005 /* Formatters */ = {
+			isa = PBXGroup;
+			children = (
+				C50D1A013021000100000004 /* MonospacedDigitFormatter.swift */,
+			);
+			path = Formatters;
+			sourceTree = "<group>";
+		};
+		C50D1A013021000100000006 /* Formatters */ = {
+			isa = PBXGroup;
+			children = (
+				C50D1A013021000100000002 /* MonospacedDigitFormatterTests.swift */,
+			);
+			path = Formatters;
 			sourceTree = "<group>";
 		};
 		C5208B822FC6E74B00BC4568 /* Configurations */ = {
@@ -534,6 +554,7 @@
 				C5700B452FC40BBF00C8F965 /* Repositories */,
 				C5F1AD0330190005AA110003 /* OCR */,
 				C5A67BC22FECF0010015A0DE /* Accessibility */,
+				C50D1A013021000100000005 /* Formatters */,
 				FA0D5CE61DDCC5D000AC9052 /* Services */,
 				FA1DB4EC1DDCB4C0007F95C8 /* Preferences */,
 				FA1DB50C1DDCB4C0007F95C8 /* Snippets */,
@@ -724,6 +745,7 @@
 				C5348FAF30008FDF008DFEB3 /* TestSupport */,
 				C5700B472FC5C0DB00C8F965 /* Database */,
 				C5F1AD0630190005AA110006 /* OCR */,
+				C50D1A013021000100000006 /* Formatters */,
 				C571000D2FCEB44000C8F965 /* Extensions */,
 				C571000C2FCEB03000C8F965 /* Models */,
 				C5700B4F2FC5C8C800C8F965 /* Repositories */,
@@ -921,6 +943,7 @@
 		FAC43DC21B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				C50D1A013021000100000003 /* MonospacedDigitFormatter.swift in Sources */,
 				FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */,
 				FA1DB4A61DDCB443007F95C8 /* MenuType.swift in Sources */,
 				C5A67BC42FECF03C0015A0DE /* Accessibility.swift in Sources */,
@@ -984,6 +1007,7 @@
 		FAC43DD41B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				C50D1A013021000100000001 /* MonospacedDigitFormatterTests.swift in Sources */,
 				C5700B502FD106000C8F965 /* DatabaseMigrationTests.swift in Sources */,
 				C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */,
 				C5D41A0C2FDB4A0C00EF30FB /* SQLiteDataMigratorTests+V1.swift in Sources */,
