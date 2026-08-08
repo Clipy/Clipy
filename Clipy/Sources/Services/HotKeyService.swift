@@ -18,15 +18,6 @@ import Sharing
 
 final class HotKeyService: NSObject {
     // MARK: - Properties
-    static var defaultKeyCombos: [String: Any] = {
-        // MainMenu:    ⌘ + Shift + V
-        // HistoryMenu: ⌘ + Control + V
-        // SnipeetMenu: ⌘ + Shift B
-        return [Constants.Menu.clip: ["keyCode": 9, "modifiers": 768],
-                Constants.Menu.history: ["keyCode": 9, "modifiers": 4352],
-                Constants.Menu.snippet: ["keyCode": 11, "modifiers": 768]]
-    }()
-
     fileprivate(set) var mainKeyCombo: KeyCombo?
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
@@ -69,12 +60,6 @@ extension HotKeyService {
 // MARK: - Setup
 extension HotKeyService {
     func setupDefaultHotKeys() {
-        // Migration new framework
-        if !appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) {
-            migrationKeyCombos()
-            appStorage.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
-            appStorage.synchronize()
-        }
         // Snippet hotkey
         setupSnippetHotKeys()
 
@@ -134,42 +119,6 @@ private extension HotKeyService {
     func save(with type: MenuType, keyCombo: KeyCombo?) {
         appStorage.set(keyCombo?.archive(), forKey: type.userDefaultsKey)
         appStorage.synchronize()
-    }
-}
-
-// MARK: - Migration
-private extension HotKeyService {
-    /**
-     *  Migration for changing the storage with v1.1.0
-     *  Changed framework, PTHotKey to Magnet
-     */
-    func migrationKeyCombos() {
-        guard let keyCombos = appStorage.object(forKey: Constants.UserDefaults.hotKeys) as? [String: Any] else { return }
-
-        // Main menu
-        if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.clip) {
-            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.mainKeyCombo)
-            }
-        }
-        // History menu
-        if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.history) {
-            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.historyKeyCombo)
-            }
-        }
-        // Snippet menu
-        if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.snippet) {
-            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
-                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.snippetKeyCombo)
-            }
-        }
-    }
-
-    func parse(with keyCombos: [String: Any], forKey key: String) -> (Int, Int)? {
-        guard let combos = keyCombos[key] as? [String: Any] else { return nil }
-        guard let keyCode = combos["keyCode"] as? Int, let modifiers = combos["modifiers"] as? Int else { return nil }
-        return (keyCode, modifiers)
     }
 }
 

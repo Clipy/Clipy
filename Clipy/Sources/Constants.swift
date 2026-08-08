@@ -38,7 +38,6 @@ struct Constants {
     }
 
     struct UserDefaults {
-        static let hotKeys = "kCPYPrefHotKeysKey"
         static let menuIconSize = "kCPYPrefMenuIconSizeKey"
         static let maxHistorySize = "kCPYPrefMaxHistorySizeKey"
         static let storeTypes = "kCPYPrefStoreTypesKey"
@@ -100,7 +99,6 @@ struct Constants {
         static let mainKeyCombo = "kCPYHotKeyMainKeyCombo"
         static let historyKeyCombo = "kCPYHotKeyHistoryKeyCombo"
         static let snippetKeyCombo = "kCPYHotKeySnippetKeyCombo"
-        static let migrateNewKeyCombo = "kCPYMigrateNewKeyCombo"
         static let folderKeyCombos = "kCPYFolderKeyCombos"
         static let clearHistoryKeyCombo = "kCPYClearHistoryKeyCombo"
     }
