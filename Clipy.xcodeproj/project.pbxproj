@@ -48,6 +48,7 @@
 		C5A67BCC2FED00E10015A0DE /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = C5A67BCB2FED00E10015A0DE /* DependenciesMacros */; };
 		C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C5A6BA732FBC5A6E00C8B9EB /* Sparkle */; };
 		C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D220A72FBD2655005CD45E /* RealmSwift */; };
+		C5D220AA2FBD2655005CD45E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D220A92FBD2655005CD45E /* RealmSwift */; };
 		C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75B2FB869EA00C9DCB6 /* Sauce */; };
 		C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75E2FB86A0200C9DCB6 /* Magnet */; };
 		C5D3A7622FB86A1C00C9DCB6 /* KeyHolder in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A7612FB86A1C00C9DCB6 /* KeyHolder */; };
@@ -337,6 +338,7 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				C5700B4E2FC5C3D500C8F965 /* DependenciesTestSupport in Frameworks */,
+				C5D220AA2FBD2655005CD45E /* RealmSwift in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -813,6 +815,7 @@
 			name = ClipyTests;
 			packageProductDependencies = (
 				C5700B4D2FC5C3D500C8F965 /* DependenciesTestSupport */,
+				C5D220A92FBD2655005CD45E /* RealmSwift */,
 			);
 			productName = ClipyTests;
 			productReference = FAC43DD81B35D8B100C06102 /* ClipyTests.xctest */;
@@ -1436,7 +1439,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 12.16.0;
+				minimumVersion = 12.17.0;
 			};
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
@@ -1444,7 +1447,7 @@
 			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.7.0;
+				minimumVersion = 1.8.2;
 			};
 			traits = (
 				Tagged,
@@ -1463,7 +1466,7 @@
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.9.4;
+				minimumVersion = 2.9.5;
 			};
 		};
 		C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */ = {
@@ -1471,7 +1474,7 @@
 			repositoryURL = "https://github.com/realm/realm-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 10.7.2;
+				version = 20.0.5;
 			};
 		};
 		C5D3A75A2FB869EA00C9DCB6 /* XCRemoteSwiftPackageReference "sauce" */ = {
@@ -1479,7 +1482,7 @@
 			repositoryURL = "https://github.com/clipy/sauce";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.5.0;
+				minimumVersion = 2.5.2;
 			};
 		};
 		C5D3A75D2FB86A0200C9DCB6 /* XCRemoteSwiftPackageReference "Magnet" */ = {
@@ -1579,6 +1582,11 @@
 			productName = Sparkle;
 		};
 		C5D220A72FBD2655005CD45E /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		C5D220A92FBD2655005CD45E /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
