@@ -1,5 +1,5 @@
 //
-//  CPYAppInfo.swift
+//  ApplicationInformation.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
@@ -7,12 +7,12 @@
 //
 //  Created by Econa77 on 2016/08/08.
 //
-//  Copyright © 2015-2018 Clipy Project.
+//  Copyright © 2015-2026 Clipy Project.
 //
 
 import Cocoa
 
-final class CPYAppInfo: NSObject, NSCoding {
+final class ApplicationInformation: NSObject, Codable, NSCoding, Sendable {
 
     // MARK: - Properties
     let identifier: String
@@ -43,7 +43,7 @@ final class CPYAppInfo: NSObject, NSCoding {
 
     // MARK: - Equatable
     override func isEqual(_ object: Any?) -> Bool {
-        guard let object = object as? CPYAppInfo else { return false }
+        guard let object = object as? ApplicationInformation else { return false }
         return identifier == object.identifier && name == object.name
     }
 

@@ -23,4 +23,11 @@ struct AppStorageValuesTests {
 
         #expect(PasteboardAvailableType.allCases.allSatisfy { pasteboardTypeSettings[$0] })
     }
+
+    @Test
+    func loadDefaultExcludedApplications() {
+        @Shared(.excludedApplications) var excludedApplications
+
+        #expect(excludedApplications.isEmpty)
+    }
 }

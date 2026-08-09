@@ -20,3 +20,9 @@ extension SharedKey where Self == AppStorageKey<PasteboardTypeSettings>.Default 
         ]
     }
 }
+
+extension SharedKey where Self == AppStorageKey<[ApplicationInformation]>.Default {
+    static var excludedApplications: Self {
+        Self[.appStorage(AppStorageKeys.excludedApplications.rawValue), default: []]
+    }
+}

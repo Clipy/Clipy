@@ -13,4 +13,5 @@
 /// These case names are persisted as UserDefaults keys. Do not rename or reuse them without a migration.
 enum AppStorageKeys: String {
     case pasteboardTypeSettings
+    case excludedApplications
 }

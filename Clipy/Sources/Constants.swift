@@ -62,7 +62,6 @@ struct Constants {
         static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
         static let copySameHistory = "kCPYPrefCopySameHistroy"
         static let suppressAlertForDeleteSnippet = "kCPYSuppressAlertForDeleteSnippet"
-        static let excludeApplications = "kCPYExcludeApplications"
         static let collectCrashReport = "kCPYCollectCrashReport"
         static let showColorPreviewInTheMenu = "kCPYPrefShowColorPreviewInTheMenu"
         static let ignoreConcealedPasteboardType = "kCPYPrefIgnoreConcealedPasteboardType"
