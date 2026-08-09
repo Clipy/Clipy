@@ -14,4 +14,9 @@
 enum AppStorageKeys: String {
     case pasteboardTypeSettings
     case excludedApplications
+    case mainKeyCombo
+    case historyKeyCombo
+    case snippetKeyCombo
+    case clearHistoryKeyCombo
+    case folderKeyCombos
 }

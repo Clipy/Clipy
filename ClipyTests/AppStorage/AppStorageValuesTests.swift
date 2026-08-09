@@ -25,6 +25,30 @@ struct AppStorageValuesTests {
     }
 
     @Test
+    func loadDefaultKeyCombos() throws {
+        @Shared(.mainKeyCombo) var mainKeyCombo
+        @Shared(.historyKeyCombo) var historyKeyCombo
+        @Shared(.snippetKeyCombo) var snippetKeyCombo
+        @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
+        @Shared(.folderKeyCombos) var folderKeyCombos
+
+        let defaultMainKeyCombo = try #require(mainKeyCombo)
+        #expect(defaultMainKeyCombo.QWERTYKeyCode == 9)
+        #expect(defaultMainKeyCombo.modifiers == 768)
+
+        let defaultHistoryKeyCombo = try #require(historyKeyCombo)
+        #expect(defaultHistoryKeyCombo.QWERTYKeyCode == 9)
+        #expect(defaultHistoryKeyCombo.modifiers == 4352)
+
+        let defaultSnippetKeyCombo = try #require(snippetKeyCombo)
+        #expect(defaultSnippetKeyCombo.QWERTYKeyCode == 11)
+        #expect(defaultSnippetKeyCombo.modifiers == 768)
+
+        #expect(clearHistoryKeyCombo == nil)
+        #expect(folderKeyCombos.isEmpty)
+    }
+
+    @Test
     func loadDefaultExcludedApplications() {
         @Shared(.excludedApplications) var excludedApplications
 

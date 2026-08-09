@@ -9,110 +9,52 @@ import Testing
 
 @Suite(.serialized, .dependencies)
 final class HotKeyServiceTests {
-    @Dependency(\.defaultAppStorage)
-    var appStorage
+    @Shared(.mainKeyCombo) var mainKeyCombo
+    @Shared(.historyKeyCombo) var historyKeyCombo
+    @Shared(.snippetKeyCombo) var snippetKeyCombo
+    @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
+    @Shared(.folderKeyCombos) var folderKeyCombos
 
     @Test
     func saveKeyCombos() throws {
         let service = HotKeyService()
-        #expect(service.mainKeyCombo == nil)
-        #expect(service.historyKeyCombo == nil)
-        #expect(service.snippetKeyCombo == nil)
+        service.change(with: .main, keyCombo: KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
+        service.change(with: .history, keyCombo: KeyCombo(doubledCocoaModifiers: .command))
+        service.change(with: .snippet, keyCombo: KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift))
 
-        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
-        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo) == nil)
-        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo) == nil)
+        #expect(mainKeyCombo?.QWERTYKeyCode == 9)
+        #expect(mainKeyCombo?.modifiers == 768)
+        #expect(mainKeyCombo?.doubledModifiers == false)
+        #expect(mainKeyCombo?.keyEquivalent.uppercased() == "V")
 
-        service.setupDefaultHotKeys()
-        #expect(service.mainKeyCombo == nil)
-        #expect(service.historyKeyCombo == nil)
-        #expect(service.snippetKeyCombo == nil)
+        #expect(historyKeyCombo?.QWERTYKeyCode == 0)
+        #expect(historyKeyCombo?.modifiers == cmdKey)
+        #expect(historyKeyCombo?.doubledModifiers == true)
+        #expect(historyKeyCombo?.keyEquivalent.uppercased() == "")
 
-        let mainKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
-        let historyKeyCombo = try #require(KeyCombo(doubledCocoaModifiers: .command))
-        let snippetKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift))
-
-        service.change(with: .main, keyCombo: mainKeyCombo)
-        service.change(with: .history, keyCombo: historyKeyCombo)
-        service.change(with: .snippet, keyCombo: snippetKeyCombo)
-
-        let savedMainKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo))
-        let savedHistoryKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo))
-        let savedSnippetKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo))
-
-        #expect(savedMainKeyCombo.QWERTYKeyCode == 9)
-        #expect(savedMainKeyCombo.modifiers == 768)
-        #expect(savedMainKeyCombo.doubledModifiers == false)
-        #expect(savedMainKeyCombo.keyEquivalent.uppercased() == "V")
-
-        #expect(savedHistoryKeyCombo.QWERTYKeyCode == 0)
-        #expect(savedHistoryKeyCombo.modifiers == cmdKey)
-        #expect(savedHistoryKeyCombo.doubledModifiers == true)
-        #expect(savedHistoryKeyCombo.keyEquivalent.uppercased() == "")
-
-        #expect(savedSnippetKeyCombo.QWERTYKeyCode == 0)
-        #expect(savedSnippetKeyCombo.modifiers == shiftKey)
-        #expect(savedSnippetKeyCombo.doubledModifiers == false)
-        #expect(savedSnippetKeyCombo.keyEquivalent.uppercased() == "A")
+        #expect(snippetKeyCombo?.QWERTYKeyCode == 0)
+        #expect(snippetKeyCombo?.modifiers == shiftKey)
+        #expect(snippetKeyCombo?.doubledModifiers == false)
+        #expect(snippetKeyCombo?.keyEquivalent.uppercased() == "A")
 
         service.change(with: .main, keyCombo: nil)
-        #expect(service.mainKeyCombo == nil)
-        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
-    }
-
-    @Test
-    func unarchiveSavedKeyCombos() throws {
-        let mainKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
-        let historyKeyCombo = try #require(KeyCombo(doubledCocoaModifiers: .command))
-        let snippetKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift))
-
-        appStorage.setArchiveData(mainKeyCombo, forKey: Constants.HotKey.mainKeyCombo)
-        appStorage.setArchiveData(historyKeyCombo, forKey: Constants.HotKey.historyKeyCombo)
-        appStorage.setArchiveData(snippetKeyCombo, forKey: Constants.HotKey.snippetKeyCombo)
-
-        let service = HotKeyService()
-        #expect(service.mainKeyCombo == nil)
-        #expect(service.historyKeyCombo == nil)
-        #expect(service.snippetKeyCombo == nil)
-
-        service.setupDefaultHotKeys()
-
-        let savedMainKeyCombo = try #require(service.mainKeyCombo)
-        #expect(savedMainKeyCombo.QWERTYKeyCode == 9)
-        #expect(savedMainKeyCombo.modifiers == 768)
-        #expect(savedMainKeyCombo.doubledModifiers == false)
-        #expect(savedMainKeyCombo.keyEquivalent.uppercased() == "V")
-
-        let savedHistoryKeyCombo = try #require(service.historyKeyCombo)
-        #expect(savedHistoryKeyCombo.QWERTYKeyCode == 0)
-        #expect(savedHistoryKeyCombo.modifiers == cmdKey)
-        #expect(savedHistoryKeyCombo.doubledModifiers == true)
-        #expect(savedHistoryKeyCombo.keyEquivalent.uppercased() == "")
-
-        let savedSnippetKeyCombo = try #require(service.snippetKeyCombo)
-        #expect(savedSnippetKeyCombo.QWERTYKeyCode == 0)
-        #expect(savedSnippetKeyCombo.modifiers == shiftKey)
-        #expect(savedSnippetKeyCombo.doubledModifiers == false)
-        #expect(savedSnippetKeyCombo.keyEquivalent.uppercased() == "A")
+        #expect(mainKeyCombo == nil)
     }
 
     @Test
     func addAndRemoveClearHistoryHotkey() throws {
         let service = HotKeyService()
 
-        #expect(service.clearHistoryKeyCombo == nil)
+        #expect(clearHistoryKeyCombo == nil)
 
-        let keyCombo = try #require(KeyCombo(QWERTYKeyCode: 10, carbonModifiers: cmdKey))
-        service.changeClearHistoryKeyCombo(keyCombo)
+        service.changeClearHistoryKeyCombo(KeyCombo(QWERTYKeyCode: 0, carbonModifiers: cmdKey))
 
-        #expect(service.clearHistoryKeyCombo != nil)
-        #expect(service.clearHistoryKeyCombo == keyCombo)
-
-        let savedData = try #require(appStorage.object(forKey: Constants.HotKey.clearHistoryKeyCombo) as? Data)
-        let savedKeyCombo = try #require(NSKeyedUnarchiver.unarchiveObject(with: savedData) as? KeyCombo)
-        #expect(savedKeyCombo == keyCombo)
+        #expect(clearHistoryKeyCombo?.QWERTYKeyCode == 0)
+        #expect(clearHistoryKeyCombo?.modifiers == cmdKey)
+        #expect(clearHistoryKeyCombo?.doubledModifiers == false)
+        #expect(clearHistoryKeyCombo?.keyEquivalent.uppercased() == "A")
 
         service.changeClearHistoryKeyCombo(nil)
-        #expect(service.clearHistoryKeyCombo == nil)
+        #expect(clearHistoryKeyCombo == nil)
     }
 }

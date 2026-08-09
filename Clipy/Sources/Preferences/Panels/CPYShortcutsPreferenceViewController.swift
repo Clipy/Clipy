@@ -14,6 +14,7 @@ import Cocoa
 import Dependencies
 import KeyHolder
 import Magnet
+import Sharing
 
 class CPYShortcutsPreferenceViewController: NSViewController {
 
@@ -25,6 +26,14 @@ class CPYShortcutsPreferenceViewController: NSViewController {
 
     @Dependency(\.hotKeyService)
     private var hotKeyService
+    @Shared(.mainKeyCombo)
+    private var mainKeyCombo
+    @Shared(.historyKeyCombo)
+    private var historyKeyCombo
+    @Shared(.snippetKeyCombo)
+    private var snippetKeyCombo
+    @Shared(.clearHistoryKeyCombo)
+    private var clearHistoryKeyCombo
 
     // MARK: - Initialize
     override func loadView() {
@@ -41,10 +50,10 @@ class CPYShortcutsPreferenceViewController: NSViewController {
 // MARK: - Shortcut
 private extension CPYShortcutsPreferenceViewController {
     func prepareHotKeys() {
-        mainShortcutRecordView.keyCombo = hotKeyService.mainKeyCombo
-        historyShortcutRecordView.keyCombo = hotKeyService.historyKeyCombo
-        snippetShortcutRecordView.keyCombo = hotKeyService.snippetKeyCombo
-        clearHistoryShortcutRecordView.keyCombo = hotKeyService.clearHistoryKeyCombo
+        mainShortcutRecordView.keyCombo = mainKeyCombo
+        historyShortcutRecordView.keyCombo = historyKeyCombo
+        snippetShortcutRecordView.keyCombo = snippetKeyCombo
+        clearHistoryShortcutRecordView.keyCombo = clearHistoryKeyCombo
     }
 }
 
