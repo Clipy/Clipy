@@ -23,6 +23,8 @@
 		C567A88D3026DEC90070292B /* AppStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = C567A88C3026DEC60070292B /* AppStorageKeys.swift */; };
 		C567A8903026DF030070292B /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = C567A88F3026DF030070292B /* Sharing */; };
 		C567A8933026E3570070292B /* AppStorageValuesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C567A8923026E3530070292B /* AppStorageValuesTests.swift */; };
+		C567A89F3026E9390070292B /* UserDefaultsCodableMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C567A89D3026E9390070292B /* UserDefaultsCodableMigration.swift */; };
+		C567A8A23026E9510070292B /* UserDefaultsCodableMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C567A8A13026E9510070292B /* UserDefaultsCodableMigrationTests.swift */; };
 		C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */; };
 		C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */; };
 		C5700B462FC40BBF00C8F965 /* SnippetRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */; };
@@ -96,7 +98,6 @@
 		FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */; };
 		FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */; };
 		FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */; };
-		FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AF1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift */; };
 		FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */; };
 		FA1DB4D21DDCB479007F95C8 /* ApplicationInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4CC1DDCB479007F95C8 /* ApplicationInformation.swift */; };
 		FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */; };
@@ -132,7 +133,6 @@
 		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
-		FAE911BB1DE054F1008A4BEC /* NSCoding+Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -203,6 +203,8 @@
 		C54C29D82FC3E21A00EF30FB /* SQLiteDataSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataSchema.swift; sourceTree = "<group>"; };
 		C567A88C3026DEC60070292B /* AppStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKeys.swift; sourceTree = "<group>"; };
 		C567A8923026E3530070292B /* AppStorageValuesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageValuesTests.swift; sourceTree = "<group>"; };
+		C567A89D3026E9390070292B /* UserDefaultsCodableMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsCodableMigration.swift; sourceTree = "<group>"; };
+		C567A8A13026E9510070292B /* UserDefaultsCodableMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsCodableMigrationTests.swift; sourceTree = "<group>"; };
 		C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggedData.swift; sourceTree = "<group>"; };
 		C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetFolderDetail.swift; sourceTree = "<group>"; };
 		C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetRepository.swift; sourceTree = "<group>"; };
@@ -261,7 +263,6 @@
 		FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
 		FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Initialize.swift"; sourceTree = "<group>"; };
-		FA1DB4AF1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUserDefaults+ArchiveData.swift"; sourceTree = "<group>"; };
 		FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuManager.swift; sourceTree = "<group>"; };
 		FA1DB4CC1DDCB479007F95C8 /* ApplicationInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationInformation.swift; sourceTree = "<group>"; };
 		FA1DB4D91DDCB49C007F95C8 /* CPYUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYUtilities.swift; sourceTree = "<group>"; };
@@ -303,7 +304,6 @@
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FAE911B81DE045E2008A4BEC /* HotKeyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyService.swift; sourceTree = "<group>"; };
-		FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSCoding+Archive.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -405,6 +405,7 @@
 		C52D2128301D96C1009D832A /* Migration */ = {
 			isa = PBXGroup;
 			children = (
+				C567A89E3026E9390070292B /* Migrations */,
 				C52D2129301D9717009D832A /* AppMigrator.swift */,
 				C52D212B301D9742009D832A /* AppMigration.swift */,
 			);
@@ -414,6 +415,7 @@
 		C52D2132301DB200009D832A /* Migration */ = {
 			isa = PBXGroup;
 			children = (
+				C567A8A03026E9450070292B /* Migrations */,
 				C52D2134301DB500009D832A /* AppMigratorTests.swift */,
 			);
 			path = Migration;
@@ -454,6 +456,22 @@
 				C567A8923026E3530070292B /* AppStorageValuesTests.swift */,
 			);
 			path = AppStorage;
+			sourceTree = "<group>";
+		};
+		C567A89E3026E9390070292B /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				C567A89D3026E9390070292B /* UserDefaultsCodableMigration.swift */,
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
+		C567A8A03026E9450070292B /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				C567A8A13026E9510070292B /* UserDefaultsCodableMigrationTests.swift */,
+			);
+			path = Migrations;
 			sourceTree = "<group>";
 		};
 		C5700B452FC40BBF00C8F965 /* Repositories */ = {
@@ -646,13 +664,11 @@
 				C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */,
 				C5E8EE672FFA28D900270F1F /* StringExtensions.swift */,
 				C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */,
-				FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */,
 				FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */,
 				FA1DB4A91DDCB452007F95C8 /* NSBundle+Version.swift */,
 				FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */,
 				FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */,
 				FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */,
-				FA1DB4AF1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift */,
 				C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */,
 				C57235102FF24AD8002158F7 /* NSMenu+Highlight.swift */,
 			);
@@ -1019,7 +1035,6 @@
 				FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */,
 				FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */,
 				C57235112FF24ADE002158F7 /* NSMenu+Highlight.swift in Sources */,
-				FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */,
 				C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */,
 				C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */,
 				C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */,
@@ -1029,6 +1044,7 @@
 				C5E8EE682FFA28DD00270F1F /* StringExtensions.swift in Sources */,
 				C58E0A822FDAB5B100B3A901 /* ClipyApp.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
+				C567A89F3026E9390070292B /* UserDefaultsCodableMigration.swift in Sources */,
 				C52D212C301D9746009D832A /* AppMigration.swift in Sources */,
 				FA1DB5141DDCB4C0007F95C8 /* CPYBetaPreferenceViewController.swift in Sources */,
 				C522FB952FCBD6AA00E61800 /* PasteboardAvailableType.swift in Sources */,
@@ -1069,7 +1085,6 @@
 				FA1DB4EB1DDCB49C007F95C8 /* CPYPlaceHolderTextView.swift in Sources */,
 				FA1DB5121DDCB4C0007F95C8 /* CPYPreferencesWindowController.swift in Sources */,
 				C5CC3FD2303929E400875CFE /* FileManagerExtensions.swift in Sources */,
-				FAE911BB1DE054F1008A4BEC /* NSCoding+Archive.swift in Sources */,
 				C54C29D72FC3E21400EF30FB /* SQLiteDataMigrator.swift in Sources */,
 				C5D41A052FDB4A0500EF30FB /* SQLiteDataMigrator+V1.swift in Sources */,
 				C5D41A062FDB4A0600EF30FB /* SQLiteDataMigrator+V2.swift in Sources */,
@@ -1090,6 +1105,7 @@
 				C5D41A0E2FDB4A0E00EF30FB /* SQLiteDataMigratorTests+V3.swift in Sources */,
 				C5F1AC0330190004AA110003 /* SQLiteDataMigratorTests+V4.swift in Sources */,
 				C5348FB130008FE4008DFEB3 /* WaitUntil.swift in Sources */,
+				C567A8A23026E9510070292B /* UserDefaultsCodableMigrationTests.swift in Sources */,
 				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
 				C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */,
 				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,

@@ -21,7 +21,7 @@ final class AppMigrator {
     private var appStorage
 
     // MARK: - Initialize
-    init(migrations: [any AppMigration] = []) {
+    init(migrations: [any AppMigration] = [UserDefaultsCodableMigration()]) {
         self.migrations = migrations
     }
 
