@@ -10,8 +10,8 @@
 //  Copyright © 2015-2026 Clipy Project.
 //
 
-import Foundation
 import Dependencies
+import Foundation
 import IOKit
 
 extension DependencyValues {
