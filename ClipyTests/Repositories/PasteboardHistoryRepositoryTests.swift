@@ -315,6 +315,8 @@ private extension PasteboardContent {
 
 private extension PasteboardHistory {
     init(id: PasteboardHistory.ID, title: String, createdAt: Int? = nil, updateAt: Int, ocrText: String? = nil) {
+        @Dependency(\.deviceIdentifier) var deviceIdentifier
+
         self.init(
             id: id,
             title: title,
@@ -322,7 +324,7 @@ private extension PasteboardHistory {
             pasteboardTypes: [.string],
             createdAt: createdAt ?? updateAt,
             updateAt: updateAt,
-            deviceID: CPYUtilities.deviceID
+            deviceID: deviceIdentifier
         )
     }
 }
