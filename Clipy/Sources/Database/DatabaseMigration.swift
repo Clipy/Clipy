@@ -20,6 +20,8 @@ struct DatabaseMigration {
     private var database
     @Dependency(\.realmConfiguration)
     private var realmConfiguration
+    @Dependency(\.deviceIdentifier)
+    private var deviceIdentifier
 
     func migrateFromRealmToSQLiteData() {
         guard let realm = realm() else { return }
@@ -60,7 +62,7 @@ struct DatabaseMigration {
                         pasteboardTypes: content.types,
                         createdAt: clip.updateTime,
                         updateAt: clip.updateTime,
-                        deviceID: CPYUtilities.deviceID
+                        deviceID: deviceIdentifier
                     )
                 }
                 if assetsByHistoryID[id] == nil {

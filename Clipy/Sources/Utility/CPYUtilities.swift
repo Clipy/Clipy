@@ -11,29 +11,8 @@
 //
 
 import Cocoa
-import IOKit
 
 final class CPYUtilities {
-    // ref: https://gist.github.com/vadimpiven/3373bb2592d59560b5d698ba1e2ed7e4
-    static let deviceID: String? = {
-        let platformExpert = IOServiceGetMatchingService(
-            kIOMainPortDefault,
-            IOServiceMatching("IOPlatformExpertDevice")
-        )
-        guard platformExpert != 0 else { return nil }
-        defer { IOObjectRelease(platformExpert) }
-
-        guard let property = IORegistryEntryCreateCFProperty(
-            platformExpert,
-            kIOPlatformUUIDKey as CFString,
-            kCFAllocatorDefault,
-            0
-        ) else {
-            return nil
-        }
-        return property.takeRetainedValue() as? String
-    }()
-
     static func registerUserDefaultKeys(_ defaults: UserDefaults) {
         var defaultValues = [String: Any]()
 
@@ -85,11 +64,5 @@ final class CPYUtilities {
 
         defaults.register(defaults: defaultValues)
         defaults.synchronize()
-    }
-
-    static func applicationSupportFolder() -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-        let basePath: String = paths.first ?? NSTemporaryDirectory()
-        return (basePath as NSString).appendingPathComponent(Constants.Application.name)
     }
 }

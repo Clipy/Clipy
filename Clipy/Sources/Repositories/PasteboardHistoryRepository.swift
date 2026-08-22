@@ -36,6 +36,8 @@ protocol PasteboardHistoryRepositoryProtocol {
 final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
     @Dependency(\.defaultDatabase)
     private var database
+    @Dependency(\.deviceIdentifier)
+    private var deviceIdentifier
 
     @FetchAll(PasteboardHistory.all.order { $0.updateAt.desc() })
     private var histories
@@ -124,7 +126,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                     pasteboardTypes: content.types,
                     createdAt: existingHistory?.createdAt ?? updateAt,
                     updateAt: updateAt,
-                    deviceID: CPYUtilities.deviceID
+                    deviceID: deviceIdentifier
                 )
                 try PasteboardHistory
                     .upsert { history }
