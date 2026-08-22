@@ -102,6 +102,41 @@ final class UserDefaultsCodableMigrationTests {
         #expect(migratedPasteboardTypeSettings == pasteboardTypeSettings)
     }
 
+    @Test
+    func preservesDisabledKeyCombos() throws {
+        appStorage.set(
+            true,
+            forKey: UserDefaultsCodableMigration.LegacyAppStorageKey.didMigrateKeyCombosToMagnet.rawValue
+        )
+
+        @Shared(.mainKeyCombo) var mainKeyCombo
+        @Shared(.historyKeyCombo) var historyKeyCombo
+        @Shared(.snippetKeyCombo) var snippetKeyCombo
+
+        #expect(mainKeyCombo != nil)
+        #expect(historyKeyCombo != nil)
+        #expect(snippetKeyCombo != nil)
+
+        try UserDefaultsCodableMigration().run()
+
+        #expect(mainKeyCombo == nil)
+        #expect(historyKeyCombo == nil)
+        #expect(snippetKeyCombo == nil)
+    }
+
+    @Test
+    func keepsDefaultKeyCombosForNewInstallations() throws {
+        @Shared(.mainKeyCombo) var mainKeyCombo
+        @Shared(.historyKeyCombo) var historyKeyCombo
+        @Shared(.snippetKeyCombo) var snippetKeyCombo
+
+        try UserDefaultsCodableMigration().run()
+
+        #expect(mainKeyCombo != nil)
+        #expect(historyKeyCombo != nil)
+        #expect(snippetKeyCombo != nil)
+    }
+
     private func applicationInformation(identifier: String, name: String) throws -> ApplicationInformation {
         try #require(
             ApplicationInformation(

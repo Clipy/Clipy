@@ -13,6 +13,7 @@
 import Dependencies
 import Foundation
 import Magnet
+import Sharing
 
 final class UserDefaultsCodableMigration: AppMigration {
     enum LegacyAppStorageKey: String {
@@ -23,6 +24,7 @@ final class UserDefaultsCodableMigration: AppMigration {
         case snippetKeyCombo = "kCPYHotKeySnippetKeyCombo"
         case clearHistoryKeyCombo = "kCPYClearHistoryKeyCombo"
         case folderKeyCombos = "kCPYFolderKeyCombos"
+        case didMigrateKeyCombosToMagnet = "kCPYMigrateNewKeyCombo"
     }
 
     // MARK: - Properties
@@ -33,38 +35,81 @@ final class UserDefaultsCodableMigration: AppMigration {
 
     // MARK: - Migration
     func run() throws {
-        migrateValue(KeyCombo.self, from: .mainKeyCombo, to: .mainKeyCombo)
-        migrateValue(KeyCombo.self, from: .historyKeyCombo, to: .historyKeyCombo)
-        migrateValue(KeyCombo.self, from: .snippetKeyCombo, to: .snippetKeyCombo)
-        migrateValue(KeyCombo.self, from: .clearHistoryKeyCombo, to: .clearHistoryKeyCombo)
-        migrateValue([String: KeyCombo].self, from: .folderKeyCombos, to: .folderKeyCombos)
+        @Shared(.mainKeyCombo) var mainKeyCombo
+        @Shared(.historyKeyCombo) var historyKeyCombo
+        @Shared(.snippetKeyCombo) var snippetKeyCombo
+        @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
+        @Shared(.folderKeyCombos) var folderKeyCombos
+        @Shared(.excludedApplications) var excludedApplications
+        @Shared(.pasteboardTypeSettings) var pasteboardTypeSettings
+
+        let didMigrateKeyCombosToMagnet = appStorage.bool(forKey: LegacyAppStorageKey.didMigrateKeyCombosToMagnet.rawValue)
+        migrateKeyCombo(
+            from: .mainKeyCombo,
+            to: $mainKeyCombo,
+            isMissingValueDisabled: didMigrateKeyCombosToMagnet
+        )
+        migrateKeyCombo(
+            from: .historyKeyCombo,
+            to: $historyKeyCombo,
+            isMissingValueDisabled: didMigrateKeyCombosToMagnet
+        )
+        migrateKeyCombo(
+            from: .snippetKeyCombo,
+            to: $snippetKeyCombo,
+            isMissingValueDisabled: didMigrateKeyCombosToMagnet
+        )
+        migrateKeyCombo(
+            from: .clearHistoryKeyCombo,
+            to: $clearHistoryKeyCombo,
+            isMissingValueDisabled: false
+        )
+        migrateValue(
+            from: .folderKeyCombos,
+            to: $folderKeyCombos
+        )
         NSKeyedUnarchiver.setClass(ApplicationInformation.self, forClassName: "Clipy.CPYAppInfo")
-        migrateValue([ApplicationInformation].self, from: .excludedApplications, to: .excludedApplications)
-        migratePasteboardTypeSettings(from: .enabledPasteboardTypes, to: .pasteboardTypeSettings)
+        migrateValue(
+            from: .excludedApplications,
+            to: $excludedApplications
+        )
+        migratePasteboardTypeSettings(
+            from: .enabledPasteboardTypes,
+            to: $pasteboardTypeSettings
+        )
     }
 }
 
 private extension UserDefaultsCodableMigration {
-    func migrateValue<Value: Encodable>(
-        _ type: Value.Type,
+    func migrateKeyCombo(
         from legacyKey: LegacyAppStorageKey,
-        to key: AppStorageKeys
+        to destination: Shared<KeyCombo?>,
+        isMissingValueDisabled: Bool
+    ) {
+        guard let data = appStorage.object(forKey: legacyKey.rawValue) as? Data else {
+            guard isMissingValueDisabled else { return }
+            destination.withLock { $0 = nil }
+            return
+        }
+        guard let keyCombo = NSKeyedUnarchiver.unarchiveObject(with: data) as? KeyCombo else { return }
+        destination.withLock { $0 = keyCombo }
+    }
+
+    func migrateValue<Value>(
+        from legacyKey: LegacyAppStorageKey,
+        to destination: Shared<Value>
     ) {
         guard let data = appStorage.object(forKey: legacyKey.rawValue) as? Data else { return }
         guard let value = NSKeyedUnarchiver.unarchiveObject(with: data) as? Value else { return }
-        guard let encoded = try? JSONEncoder().encode(value) else { return }
-
-        appStorage.set(encoded, forKey: key.rawValue)
+        destination.withLock { $0 = value }
     }
 
     func migratePasteboardTypeSettings(
         from legacyKey: LegacyAppStorageKey,
-        to key: AppStorageKeys
+        to destination: Shared<PasteboardTypeSettings>
     ) {
         guard let values = appStorage.object(forKey: legacyKey.rawValue) as? [String: NSNumber] else { return }
         let settings = PasteboardTypeSettings(values: values.mapValues(\.boolValue))
-        guard let encoded = try? JSONEncoder().encode(settings) else { return }
-
-        appStorage.set(encoded, forKey: key.rawValue)
+        destination.withLock { $0 = settings }
     }
 }
