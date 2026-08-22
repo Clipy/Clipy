@@ -31,6 +31,8 @@ final class DatabaseMigrationTests {
     var database
     @Dependency(\.realmConfiguration)
     var realmConfiguration
+    @Dependency(\.deviceIdentifier)
+    var deviceIdentifier
 
     let migration: DatabaseMigration
     let temporaryDirectoryURL: URL
@@ -96,7 +98,7 @@ final class DatabaseMigrationTests {
             #expect(histories.first?.pasteboardTypes == [.string, .deprecatedFilenames, .URL, .rtf, .pdf, .tiff])
             #expect(histories.first?.createdAt == 2)
             #expect(histories.first?.updateAt == 2)
-            #expect(histories.first?.deviceID == CPYUtilities.deviceID)
+            #expect(histories.first?.deviceID == deviceIdentifier)
 
             #expect(assets.count == 6)
             #expect(assets.map(\.pasteboardHistoryID).allSatisfy { $0 == id })

@@ -47,6 +47,8 @@
 		C5A67BCA2FECF8670015A0DE /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A67BC92FECF8640015A0DE /* Firebase.swift */; };
 		C5A67BCC2FED00E10015A0DE /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = C5A67BCB2FED00E10015A0DE /* DependenciesMacros */; };
 		C5A6BA742FBC5A6E00C8B9EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C5A6BA732FBC5A6E00C8B9EB /* Sparkle */; };
+		C5CC3FD2303929E400875CFE /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */; };
+		C5CC3FD430392F7000875CFE /* DeviceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC3FD330392F6F00875CFE /* DeviceIdentifier.swift */; };
 		C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D220A72FBD2655005CD45E /* RealmSwift */; };
 		C5D3A75C2FB869EA00C9DCB6 /* Sauce in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75B2FB869EA00C9DCB6 /* Sauce */; };
 		C5D3A75F2FB86A0200C9DCB6 /* Magnet in Frameworks */ = {isa = PBXBuildFile; productRef = C5D3A75E2FB86A0200C9DCB6 /* Magnet */; };
@@ -210,6 +212,8 @@
 		C599B2313015B12300F563A6 /* Sparkle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sparkle.swift; sourceTree = "<group>"; };
 		C5A67BC32FECF0380015A0DE /* Accessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessibility.swift; sourceTree = "<group>"; };
 		C5A67BC92FECF8640015A0DE /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
+		C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExtensions.swift; sourceTree = "<group>"; };
+		C5CC3FD330392F6F00875CFE /* DeviceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentifier.swift; sourceTree = "<group>"; };
 		C5D41A022FDB4A0200EF30FB /* SQLiteDataMigrator+V1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V1.swift"; sourceTree = "<group>"; };
 		C5D41A032FDB4A0300EF30FB /* SQLiteDataMigrator+V2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V2.swift"; sourceTree = "<group>"; };
 		C5D41A042FDB4A0400EF30FB /* SQLiteDataMigrator+V3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V3.swift"; sourceTree = "<group>"; };
@@ -465,6 +469,7 @@
 				C57447252FD09FD9000D64D3 /* RealmConfiguration.swift */,
 				C5A67BC92FECF8640015A0DE /* Firebase.swift */,
 				C599B2313015B12300F563A6 /* Sparkle.swift */,
+				C5CC3FD330392F6F00875CFE /* DeviceIdentifier.swift */,
 			);
 			path = Dependencies;
 			sourceTree = "<group>";
@@ -585,6 +590,7 @@
 				C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */,
 				C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */,
 				C5E8EE672FFA28D900270F1F /* StringExtensions.swift */,
+				C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */,
 				FAE911BA1DE054F1008A4BEC /* NSCoding+Archive.swift */,
 				FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */,
 				FA1DB4A91DDCB452007F95C8 /* NSBundle+Version.swift */,
@@ -971,6 +977,7 @@
 				C5E8EE6A2FFA2A5600270F1F /* SnippetExtensions.swift in Sources */,
 				FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */,
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
+				C5CC3FD430392F7000875CFE /* DeviceIdentifier.swift in Sources */,
 				C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
 				FA1189331E4CD58C00244F12 /* ExcludeAppService.swift in Sources */,
@@ -996,6 +1003,7 @@
 				FA1DB5201DDCB4C0007F95C8 /* CPYSnippetsEditorWindowController.swift in Sources */,
 				FA1DB4EB1DDCB49C007F95C8 /* CPYPlaceHolderTextView.swift in Sources */,
 				FA1DB5121DDCB4C0007F95C8 /* CPYPreferencesWindowController.swift in Sources */,
+				C5CC3FD2303929E400875CFE /* FileManagerExtensions.swift in Sources */,
 				FAE911BB1DE054F1008A4BEC /* NSCoding+Archive.swift in Sources */,
 				C54C29D72FC3E21400EF30FB /* SQLiteDataMigrator.swift in Sources */,
 				C5D41A052FDB4A0500EF30FB /* SQLiteDataMigrator+V1.swift in Sources */,

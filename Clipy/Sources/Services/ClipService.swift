@@ -85,7 +85,7 @@ final class ClipService {
 
         pasteboardHistoryRepository.deleteAll()
         // Clear legacy Realm-backed history caches used through v1.2.1.
-        try? FileManager.default.removeItem(atPath: CPYUtilities.applicationSupportFolder())
+        try? FileManager.default.removeLegacyHistoryCacheDirectory()
     }
 
     func delete(id: PasteboardHistory.ID) {
