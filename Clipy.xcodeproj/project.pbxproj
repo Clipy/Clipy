@@ -1432,7 +1432,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.14.1;
+				minimumVersion = 1.15.0;
 			};
 			traits = (
 				Clocks,
@@ -1444,7 +1444,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 12.16.0;
+				minimumVersion = 12.17.0;
 			};
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
@@ -1452,7 +1452,7 @@
 			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.7.0;
+				minimumVersion = 1.10.0;
 			};
 			traits = (
 				Tagged,
@@ -1471,7 +1471,7 @@
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.9.4;
+				minimumVersion = 2.9.6;
 			};
 		};
 		C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */ = {
@@ -1487,7 +1487,7 @@
 			repositoryURL = "https://github.com/clipy/sauce";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.5.0;
+				minimumVersion = 2.5.2;
 			};
 		};
 		C5D3A75D2FB86A0200C9DCB6 /* XCRemoteSwiftPackageReference "Magnet" */ = {

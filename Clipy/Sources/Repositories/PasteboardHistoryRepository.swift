@@ -196,7 +196,8 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                             columns.updateAt.desc()
                         }
                     }
-                    .limit(-1, offset: maxHistorySize)
+                    .limit(-1)
+                    .offset(maxHistorySize)
                     .select { $0.id }
                     .fetchAll(database)
                 guard !deletingIDs.isEmpty else { return }
