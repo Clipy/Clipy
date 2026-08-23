@@ -309,8 +309,18 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
         guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return NSDragOperation() }
 
         switch draggedData.type {
-        case .folder where item == nil:
-            return .move
+        case .folder:
+            if let targetFolder = item as? EditorSnippetFolder,
+               let targetIndex = folders.firstIndex(where: { $0.id == targetFolder.id }) {
+                // AppKit may propose dropping onto a root folder instead of between
+                // root rows. Treat that as inserting immediately before the folder.
+                outlineView.setDropItem(nil, dropChildIndex: targetIndex)
+                return .move
+            } else if item == nil {
+                return .move
+            } else {
+                return NSDragOperation()
+            }
         case .snippet where item is EditorSnippetFolder:
             return .move
         default:
