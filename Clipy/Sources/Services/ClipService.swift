@@ -16,6 +16,7 @@ import Dependencies
 import Foundation
 import RxCocoa
 import RxSwift
+import SQLiteData
 
 final class ClipService {
 
@@ -34,6 +35,8 @@ final class ClipService {
     private var textRecognizer
     @Dependency(\.defaultAppStorage)
     private var appStorage
+    @Dependency(\.defaultDatabase)
+    private var database
 
     // MARK: - Clips
     func startMonitoring() {
@@ -84,6 +87,11 @@ final class ClipService {
         }
 
         pasteboardHistoryRepository.deleteAll()
+        Task(priority: .utility) { [database] in
+            await withErrorReporting {
+                try await database.vacuum()
+            }
+        }
         // Clear legacy Realm-backed history caches used through v1.2.1.
         try? FileManager.default.removeLegacyHistoryCacheDirectory()
     }
