@@ -26,6 +26,7 @@ protocol SnippetRepositoryProtocol {
     func updateFolderIndexes(_ folderIDs: [SnippetFolder.ID])
     func deleteFolder(_ id: SnippetFolder.ID)
 
+    func searchSnippets(matching query: String, limit: Int) -> [SnippetSearchMatch]
     func fetchSnippet(id: Snippet.ID) -> Snippet?
     func insertSnippet(to id: SnippetFolder.ID) -> Snippet?
     func updateSnippetTitle(_ id: Snippet.ID, title: String)
@@ -162,6 +163,50 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                 try SnippetFolder.delete().where { $0.id.eq(id) }.execute(database)
             }
         }
+    }
+
+    func searchSnippets(matching query: String, limit: Int) -> [SnippetSearchMatch] {
+        let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return [] }
+
+        return withErrorReporting {
+            try database.read { database in
+                // The search index is tokenized with `trigram`, which cannot match queries shorter
+                // than three characters. Fall back to a LIKE scan so that typing the first character
+                // still narrows the candidates down instead of emptying the list.
+                let snippets: [Snippet]
+                if query.count >= Constants.Search.minimumTrigramLength {
+                    snippets = try SnippetSearch
+                        .where { $0.match(query.fts5PhraseQuery) }
+                        .leftJoin(Snippet.all) { $0.id.eq($1.id) }
+                        .select { SnippetSearchResult.Columns(snippet: $1) }
+                        .fetchAll(database)
+                        .compactMap(\.snippet)
+                } else {
+                    snippets = try Snippet
+                        .where { $0.title.contains(query) || $0.content.contains(query) }
+                        .order(by: \.index)
+                        .fetchAll(database)
+                }
+
+                // The search index carries no `isEnabled` column, so disabled snippets and snippets
+                // inside disabled folders have to be filtered out here to match the menu's behaviour.
+                let foldersByID = try SnippetFolder
+                    .where(\.isEnabled)
+                    .fetchAll(database)
+                    .reduce(into: [SnippetFolder.ID: SnippetFolder]()) { $0[$1.id] = $1 }
+                return snippets
+                    .lazy
+                    .filter(\.isEnabled)
+                    .compactMap { snippet in
+                        foldersByID[snippet.folderID].map {
+                            SnippetSearchMatch(snippet: snippet, folder: $0)
+                        }
+                    }
+                    .prefix(limit)
+                    .map { $0 }
+            }
+        } ?? []
     }
 
     func fetchSnippet(id: Snippet.ID) -> Snippet? {

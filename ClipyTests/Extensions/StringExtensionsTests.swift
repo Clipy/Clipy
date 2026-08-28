@@ -43,4 +43,11 @@ struct StringExtensionsTests {
             #expect("Clipboard title".trimmedMenuTitle == "...")
         }
     }
+
+    @Test
+    func fts5PhraseQueryWrapsAndEscapesQuotes() {
+        #expect("hello".fts5PhraseQuery == "\"hello\"")
+        #expect("hello \"world\"".fts5PhraseQuery == "\"hello \"\"world\"\"\"")
+        #expect("special (query) * - :".fts5PhraseQuery == "\"special (query) * - :\"")
+    }
 }

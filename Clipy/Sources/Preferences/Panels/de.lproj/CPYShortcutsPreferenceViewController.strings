@@ -16,3 +16,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Snippets:"; ObjectID = "fXr-ry-5ds"; */
 "fXr-ry-5ds.title" = "Snippets:";
+
+/* Class = "NSTextFieldCell"; title = "Search:"; ObjectID = "sCh-Cl-77h"; */
+"sCh-Cl-77h.title" = "Suchen:";

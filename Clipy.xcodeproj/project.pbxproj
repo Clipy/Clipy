@@ -18,6 +18,8 @@
 		C54C29D72FC3E21400EF30FB /* SQLiteDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */; };
 		C54C29D92FC3E22000EF30FB /* SQLiteDataSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54C29D82FC3E21A00EF30FB /* SQLiteDataSchema.swift */; };
 		C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */; };
+		3F3CBD3A2FC069FA12584AA8 /* SnippetSearchMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1628BE2BC896D04F53A921CC /* SnippetSearchMatch.swift */; };
+		16AF7EABFF16B001D18B0DA0 /* SearchResultItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB5593AAD00A09135CC01D1 /* SearchResultItem.swift */; };
 		C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */; };
 		C5700B462FC40BBF00C8F965 /* SnippetRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */; };
 		C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */; };
@@ -117,6 +119,12 @@
 		FA6DD5151C7DEDB600317E73 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */; };
 		FAC0DCF11DE576F300309C49 /* PasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0DCF01DE576F300309C49 /* PasteService.swift */; };
+		0B60C4FE4388649941C07CE9 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7903224BE0C979DB73B4DD02 /* SearchService.swift */; };
+		C58000032FE0000100000001 /* SearchServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58000022FE0000100000001 /* SearchServiceTests.swift */; };
+		C59000022FE0000200000002 /* CPYSearchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59000012FE0000200000001 /* CPYSearchPanel.swift */; };
+		C59000042FE0000200000004 /* CPYSearchResultCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59000032FE0000200000003 /* CPYSearchResultCellView.swift */; };
+		C59000062FE0000200000006 /* CPYSearchPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59000052FE0000200000005 /* CPYSearchPanelViewController.swift */; };
+		C59000082FE0000200000008 /* CPYSearchPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59000072FE0000200000007 /* CPYSearchPanelController.swift */; };
 		FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E221B35DFC800C06102 /* Foundation.framework */; };
 		FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E241B35DFD000C06102 /* AppKit.framework */; };
 		FAC43E271B35DFD300C06102 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E261B35DFD300C06102 /* Carbon.framework */; };
@@ -191,6 +199,8 @@
 		C54C29D82FC3E21A00EF30FB /* SQLiteDataSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataSchema.swift; sourceTree = "<group>"; };
 		C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggedData.swift; sourceTree = "<group>"; };
 		C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetFolderDetail.swift; sourceTree = "<group>"; };
+		1628BE2BC896D04F53A921CC /* SnippetSearchMatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetSearchMatch.swift; sourceTree = "<group>"; };
+		DFB5593AAD00A09135CC01D1 /* SearchResultItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultItem.swift; sourceTree = "<group>"; };
 		C5700B442FC40BBF00C8F965 /* SnippetRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetRepository.swift; sourceTree = "<group>"; };
 		C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDataMigratorTests.swift; sourceTree = "<group>"; };
 		C5700B4F2FD106000C8F965 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
@@ -277,6 +287,12 @@
 		FAAA888E1E6862D90088FB34 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYUpdatesPreferenceViewController.strings; sourceTree = "<group>"; };
 		FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+NSColor.swift"; sourceTree = "<group>"; };
 		FAC0DCF01DE576F300309C49 /* PasteService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasteService.swift; sourceTree = "<group>"; };
+		7903224BE0C979DB73B4DD02 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
+		C58000022FE0000100000001 /* SearchServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchServiceTests.swift; sourceTree = "<group>"; };
+		C59000012FE0000200000001 /* CPYSearchPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSearchPanel.swift; sourceTree = "<group>"; };
+		C59000032FE0000200000003 /* CPYSearchResultCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSearchResultCellView.swift; sourceTree = "<group>"; };
+		C59000052FE0000200000005 /* CPYSearchPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSearchPanelViewController.swift; sourceTree = "<group>"; };
+		C59000072FE0000200000007 /* CPYSearchPanelController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYSearchPanelController.swift; sourceTree = "<group>"; };
 		FAC43DC61B35D8B100C06102 /* Clipy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DD81B35D8B100C06102 /* ClipyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAC43DDD1B35D8B100C06102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -432,6 +448,14 @@
 			path = Repositories;
 			sourceTree = "<group>";
 		};
+		C58000012FE0000100000001 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C58000022FE0000100000001 /* SearchServiceTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		C571000C2FCEB03000C8F965 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -537,6 +561,7 @@
 				FA0D5CE71DDCC61600AC9052 /* ClipService.swift */,
 				FAE911B81DE045E2008A4BEC /* HotKeyService.swift */,
 				FAC0DCF01DE576F300309C49 /* PasteService.swift */,
+				7903224BE0C979DB73B4DD02 /* SearchService.swift */,
 				FA1189321E4CD58C00244F12 /* ExcludeAppService.swift */,
 			);
 			path = Services;
@@ -563,6 +588,7 @@
 				FA0D5CE61DDCC5D000AC9052 /* Services */,
 				FA1DB4EC1DDCB4C0007F95C8 /* Preferences */,
 				FA1DB50C1DDCB4C0007F95C8 /* Snippets */,
+				C59000002FE0000200000000 /* Search */,
 				FA1DB4A41DDCB443007F95C8 /* Enums */,
 				FA1DB4D81DDCB49C007F95C8 /* Utility */,
 				FA1DB4DB1DDCB49C007F95C8 /* Views */,
@@ -620,6 +646,8 @@
 				C522FB942FCBD69A00E61800 /* PasteboardAvailableType.swift */,
 				C5700B3E2FC40ABF00C8F965 /* DraggedData.swift */,
 				C5700B3F2FC40ABF00C8F965 /* SnippetFolderDetail.swift */,
+				1628BE2BC896D04F53A921CC /* SnippetSearchMatch.swift */,
+				DFB5593AAD00A09135CC01D1 /* SearchResultItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -714,6 +742,17 @@
 			path = Snippets;
 			sourceTree = "<group>";
 		};
+		C59000002FE0000200000000 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				C59000012FE0000200000001 /* CPYSearchPanel.swift */,
+				C59000072FE0000200000007 /* CPYSearchPanelController.swift */,
+				C59000052FE0000200000005 /* CPYSearchPanelViewController.swift */,
+				C59000032FE0000200000003 /* CPYSearchResultCellView.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
 		FAC43DBD1B35D8B100C06102 = {
 			isa = PBXGroup;
 			children = (
@@ -755,6 +794,7 @@
 				C571000D2FCEB44000C8F965 /* Extensions */,
 				C571000C2FCEB03000C8F965 /* Models */,
 				C5700B4F2FC5C8C800C8F965 /* Repositories */,
+				C58000012FE0000100000001 /* Services */,
 				FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */,
 				FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */,
 				FAC43DDC1B35D8B100C06102 /* Supporting Files */,
@@ -956,11 +996,14 @@
 				C57447272FD09FD9000D64D3 /* RealmConfiguration.swift in Sources */,
 				C54C29D52FC3E20000EF30FB /* SQLiteDataDatabase.swift in Sources */,
 				FAC0DCF11DE576F300309C49 /* PasteService.swift in Sources */,
+				0B60C4FE4388649941C07CE9 /* SearchService.swift in Sources */,
 				FA1DB4E51DDCB49C007F95C8 /* CPYUtilities.swift in Sources */,
 				FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */,
 				C57235112FF24ADE002158F7 /* NSMenu+Highlight.swift in Sources */,
 				FA1DB4BA1DDCB452007F95C8 /* NSUserDefaults+ArchiveData.swift in Sources */,
 				C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */,
+				3F3CBD3A2FC069FA12584AA8 /* SnippetSearchMatch.swift in Sources */,
+				16AF7EABFF16B001D18B0DA0 /* SearchResultItem.swift in Sources */,
 				C5700B422FC40ABF00C8F965 /* DraggedData.swift in Sources */,
 				C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */,
 				FA1DB4A31DDCB433007F95C8 /* Constants.swift in Sources */,
@@ -1010,6 +1053,10 @@
 				C5D41A062FDB4A0600EF30FB /* SQLiteDataMigrator+V2.swift in Sources */,
 				C5D41A072FDB4A0700EF30FB /* SQLiteDataMigrator+V3.swift in Sources */,
 				C5F1AC0130190004AA110001 /* SQLiteDataMigrator+V4.swift in Sources */,
+				C59000022FE0000200000002 /* CPYSearchPanel.swift in Sources */,
+				C59000042FE0000200000004 /* CPYSearchResultCellView.swift in Sources */,
+				C59000062FE0000200000006 /* CPYSearchPanelViewController.swift in Sources */,
+				C59000082FE0000200000008 /* CPYSearchPanelController.swift in Sources */,
 			);
 		};
 		FAC43DD41B35D8B100C06102 /* Sources */ = {
@@ -1035,6 +1082,7 @@
 				C50767032FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift in Sources */,
 				C522FB992FCC019100E61800 /* PasteboardAvailableTypeTests.swift in Sources */,
 				C57100012FCAE00000C8F965 /* SnippetRepositoryTests.swift in Sources */,
+				C58000032FE0000100000001 /* SearchServiceTests.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
