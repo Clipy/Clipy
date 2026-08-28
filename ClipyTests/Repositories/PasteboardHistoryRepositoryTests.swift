@@ -299,6 +299,93 @@ struct PasteboardHistoryRepositoryTests {
         repository.deleteOverflowingHistories(sortsByCreatedAt: true, maxHistorySize: 0)
         #expect(!repository.hasHistories())
     }
+
+    @Test
+    func searchHistoriesWithFTS5Query() throws {
+        let textContent = try #require(PasteboardContent("xqa apple item"))
+        let imageContent = try #require(
+            PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
+        )
+        let textID = PasteboardHistory.ID(rawValue: textContent.hash)
+        let imageID = PasteboardHistory.ID(rawValue: imageContent.hash)
+
+        repository.save(id: textID, content: textContent, updateAt: 1)
+        repository.save(id: imageID, content: imageContent, updateAt: 2)
+        repository.updateOCRText(id: imageID, ocrText: "xqa ocr recognized text")
+
+        // Match by title
+        let titleMatches = repository.searchHistories(matching: "xqa apple", includesThumbnailAsset: false, limit: 10)
+        #expect(titleMatches.map(\.history.id).contains(textID))
+
+        // Match by OCR text
+        let ocrMatches = repository.searchHistories(matching: "ocr recognized", includesThumbnailAsset: true, limit: 10)
+        #expect(ocrMatches.map(\.history.id) == [imageID])
+        #expect(ocrMatches.first?.thumbnailAsset?.pasteboardHistoryID == imageID)
+        #expect(ocrMatches.first?.thumbnailAsset?.kind == .image)
+
+        // Non-matching query
+        let noMatches = repository.searchHistories(matching: "zztop", includesThumbnailAsset: false, limit: 10)
+        #expect(noMatches.isEmpty)
+    }
+
+    @Test
+    func searchHistoriesWithShortQueryFallsBackToLIKE() throws {
+        let content1 = try #require(PasteboardContent("ab first item"))
+        let content2 = try #require(PasteboardContent("ac second item"))
+        let content3 = try #require(PasteboardContent("xy third item"))
+        let id1 = PasteboardHistory.ID(rawValue: content1.hash)
+        let id2 = PasteboardHistory.ID(rawValue: content2.hash)
+        let id3 = PasteboardHistory.ID(rawValue: content3.hash)
+
+        repository.save(id: id1, content: content1, updateAt: 1)
+        repository.save(id: id2, content: content2, updateAt: 2)
+        repository.save(id: id3, content: content3, updateAt: 3)
+
+        // 2 characters (below trigram length 3)
+        let matches2Chars = repository.searchHistories(matching: "ab", includesThumbnailAsset: false, limit: 10)
+        #expect(matches2Chars.map(\.history.id) == [id1])
+
+        // 1 character
+        let matches1Char = repository.searchHistories(matching: "a", includesThumbnailAsset: false, limit: 10)
+        #expect(matches1Char.map(\.history.id) == [id2, id1])
+    }
+
+    @Test
+    func searchHistoriesWithSpecialCharacters() throws {
+        let content = try #require(PasteboardContent("test \"quoted\" (special) -hyphen *star:colon"))
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+        repository.save(id: id, content: content, updateAt: 1)
+
+        // Queries with FTS5 special operators/characters must not throw syntax errors
+        #expect(!repository.searchHistories(matching: "\"quoted\"", includesThumbnailAsset: false, limit: 10).isEmpty)
+        #expect(!repository.searchHistories(matching: "(special)", includesThumbnailAsset: false, limit: 10).isEmpty)
+        #expect(!repository.searchHistories(matching: "-hyphen", includesThumbnailAsset: false, limit: 10).isEmpty)
+        #expect(!repository.searchHistories(matching: "*star", includesThumbnailAsset: false, limit: 10).isEmpty)
+        #expect(repository.searchHistories(matching: "\"\"\"\"\"", includesThumbnailAsset: false, limit: 10).isEmpty)
+        #expect(repository.searchHistories(matching: "AND OR NOT", includesThumbnailAsset: false, limit: 10).isEmpty)
+    }
+
+    @Test
+    func searchHistoriesWithLimit() throws {
+        for i in 1...5 {
+            let content = try #require(PasteboardContent("search_target item \(i)"))
+            let id = PasteboardHistory.ID(rawValue: content.hash)
+            repository.save(id: id, content: content, updateAt: i)
+        }
+
+        let limitedMatches = repository.searchHistories(matching: "search_target", includesThumbnailAsset: false, limit: 2)
+        #expect(limitedMatches.count == 2)
+    }
+
+    @Test
+    func searchHistoriesWithEmptyOrWhitespaceQuery() throws {
+        let content = try #require(PasteboardContent("any item"))
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+        repository.save(id: id, content: content, updateAt: 1)
+
+        #expect(repository.searchHistories(matching: "", includesThumbnailAsset: false, limit: 10).isEmpty)
+        #expect(repository.searchHistories(matching: "   \t\n  ", includesThumbnailAsset: false, limit: 10).isEmpty)
+    }
 }
 
 private extension PasteboardContent {

@@ -68,6 +68,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         CPYSnippetsEditorWindowController.sharedController.showWindow(self)
     }
 
+    @objc func showSearchPanel() {
+        CPYSearchPanelController.sharedController.show()
+    }
+
     @objc func terminate() {
         terminateApplication()
     }
@@ -92,6 +96,20 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         }
         pasteService.copyToPasteboard(with: snippet.content)
         pasteService.paste()
+    }
+
+    func paste(searchResultItem: SearchResultItem) {
+        switch searchResultItem {
+        case .history(let detail):
+            guard let content = pasteboardHistoryRepository.fetchContent(id: detail.history.id) else {
+                NSSound.beep()
+                return
+            }
+            pasteService.paste(id: detail.history.id, content: content)
+        case .snippet(let match):
+            pasteService.copyToPasteboard(with: match.snippet.content)
+            pasteService.paste()
+        }
     }
 
     func terminateApplication() {

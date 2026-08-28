@@ -79,6 +79,9 @@ extension MenuManager {
             menu = historyMenu
         case .snippet:
             menu = snippetMenu
+        case .search:
+            assertionFailure("Search panel should be presented directly via popUpSearchPanel()")
+            return
         }
         menu?.highlightingFirstItemIfPossible()
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
@@ -186,6 +189,8 @@ private extension MenuManager {
         addSnippetItems(snippetMenu!, separateMenu: false, details: snippetFolderDetails)
 
         clipMenu?.addItem(NSMenuItem.separator())
+        clipMenu?.addItem(NSMenuItem(title: String(localized: "Search"), action: #selector(AppDelegate.showSearchPanel)))
+        clipMenu?.addItem(NSMenuItem.separator())
 
         if appStorage.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
             clipMenu?.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
@@ -242,7 +247,7 @@ private extension MenuManager {
         let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = placeInLine
-        var subMenuIndex = 1 + placeInLine
+        var currentSubMenu: NSMenu?
 
         let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
         let isShowImage = appStorage.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
@@ -260,11 +265,12 @@ private extension MenuManager {
                 if i == subMenuCount {
                     let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder)
                     menu.addItem(subMenuItem)
+                    currentSubMenu = subMenuItem.submenu
                     listNumber = firstIndex
                 }
 
                 // Clip
-                if let subMenu = menu.item(at: subMenuIndex)?.submenu {
+                if let subMenu = currentSubMenu {
                     let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
                     listNumber += 1
@@ -279,7 +285,6 @@ private extension MenuManager {
             i += 1
             if i == subMenuCount + placeInsideFolder {
                 subMenuCount += placeInsideFolder
-                subMenuIndex += 1
             }
         }
     }
@@ -335,7 +340,6 @@ private extension MenuManager {
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
-        var subMenuIndex = menu.numberOfItems - 1
         let firstIndex = firstIndexOfMenuItems()
         details
             .filter { $0.folder.isEnabled }
@@ -343,17 +347,15 @@ private extension MenuManager {
                 let folderTitle = detail.folder.title
                 let subMenuItem = makeSubmenuItem(folderTitle)
                 menu.addItem(subMenuItem)
-                subMenuIndex += 1
+                let subMenu = subMenuItem.submenu
 
                 var i = firstIndex
                 detail.snippets
                     .filter { $0.isEnabled }
                     .forEach { snippet in
-                        let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
-                        if let subMenu = menu.item(at: subMenuIndex)?.submenu {
-                            subMenu.addItem(subMenuItem)
-                            i += 1
-                        }
+                        let snippetMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
+                        subMenu?.addItem(snippetMenuItem)
+                        i += 1
                     }
             }
     }

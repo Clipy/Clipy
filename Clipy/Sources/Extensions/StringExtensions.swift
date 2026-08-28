@@ -32,4 +32,14 @@ extension String {
         }
         return String(title.prefix(maxMenuItemTitleLength - shortenSymbol.count)) + shortenSymbol
     }
+
+    /// Wraps the receiver in an FTS5 phrase so that it is matched literally.
+    ///
+    /// Characters such as `"`, `*`, `:`, `-`, `(`, `)` and bare keywords like `NEAR` are part of the
+    /// FTS5 query syntax. Passing raw user input to `MATCH` makes SQLite throw a syntax error, which
+    /// `withErrorReporting` swallows into an empty result. Quoting the whole input as a single phrase
+    /// (with embedded double quotes doubled) keeps every query valid.
+    var fts5PhraseQuery: String {
+        "\"\(replacingOccurrences(of: "\"", with: "\"\""))\""
+    }
 }

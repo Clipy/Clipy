@@ -26,6 +26,7 @@ struct Constants {
         static let clip = "ClipMenu"
         static let history = "HistoryMenu"
         static let snippet = "SnippetsMenu"
+        static let search = "SearchPanel"
     }
 
     struct Common {
@@ -103,6 +104,14 @@ struct Constants {
         static let migrateNewKeyCombo = "kCPYMigrateNewKeyCombo"
         static let folderKeyCombos = "kCPYFolderKeyCombos"
         static let clearHistoryKeyCombo = "kCPYClearHistoryKeyCombo"
+        static let searchKeyCombo = "kCPYHotKeySearchKeyCombo"
+    }
+
+    struct Search {
+        /// The search indexes use the `trigram` tokenizer, which never matches shorter queries.
+        static let minimumTrigramLength = 3
+        static let resultLimit = 50
+        static let maxVisibleRows = 8
     }
 
 }

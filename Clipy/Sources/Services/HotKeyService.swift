@@ -21,15 +21,18 @@ final class HotKeyService: NSObject {
     static var defaultKeyCombos: [String: Any] = {
         // MainMenu:    ⌘ + Shift + V
         // HistoryMenu: ⌘ + Control + V
-        // SnipeetMenu: ⌘ + Shift B
+        // SnipeetMenu: ⌘ + Shift + B
+        // SearchPanel: ⌘ + Shift + F
         return [Constants.Menu.clip: ["keyCode": 9, "modifiers": 768],
                 Constants.Menu.history: ["keyCode": 9, "modifiers": 4352],
-                Constants.Menu.snippet: ["keyCode": 11, "modifiers": 768]]
+                Constants.Menu.snippet: ["keyCode": 11, "modifiers": 768],
+                Constants.Menu.search: ["keyCode": 3, "modifiers": 768]]
     }()
 
     fileprivate(set) var mainKeyCombo: KeyCombo?
     fileprivate(set) var historyKeyCombo: KeyCombo?
     fileprivate(set) var snippetKeyCombo: KeyCombo?
+    fileprivate(set) var searchKeyCombo: KeyCombo?
     fileprivate(set) var clearHistoryKeyCombo: KeyCombo?
 
     @Dependency(\.snippetRepository)
@@ -61,6 +64,11 @@ extension HotKeyService {
         firebase.logEvent(event: .popUpMenu(.snippet))
     }
 
+    @objc func popUpSearchPanel() {
+        CPYSearchPanelController.sharedController.show()
+        firebase.logEvent(event: .popUpMenu(.search))
+    }
+
     @objc func popUpClearHistoryAlert() {
         clipService.clearAllHistory()
     }
@@ -84,6 +92,8 @@ extension HotKeyService {
         change(with: .history, keyCombo: savedKeyCombo(forKey: Constants.HotKey.historyKeyCombo))
         // Snippet menu
         change(with: .snippet, keyCombo: savedKeyCombo(forKey: Constants.HotKey.snippetKeyCombo))
+        // Search panel
+        change(with: .search, keyCombo: savedKeyCombo(forKey: Constants.HotKey.searchKeyCombo))
         // Clear History
         changeClearHistoryKeyCombo(savedKeyCombo(forKey: Constants.HotKey.clearHistoryKeyCombo))
     }
@@ -96,6 +106,8 @@ extension HotKeyService {
             historyKeyCombo = keyCombo
         case .snippet:
             snippetKeyCombo = keyCombo
+        case .search:
+            searchKeyCombo = keyCombo
         }
         register(with: type, keyCombo: keyCombo)
     }
@@ -162,6 +174,12 @@ private extension HotKeyService {
         if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.snippet) {
             if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
                 appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.snippetKeyCombo)
+            }
+        }
+        // Search panel
+        if let (keyCode, modifiers) = parse(with: keyCombos, forKey: Constants.Menu.search) {
+            if let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers) {
+                appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.searchKeyCombo)
             }
         }
     }

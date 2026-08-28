@@ -23,6 +23,11 @@ protocol PasteboardHistoryRepositoryProtocol {
         includesThumbnailAsset: Bool,
         limit: Int,
     ) -> [PasteboardHistoryDetail]
+    func searchHistories(
+        matching query: String,
+        includesThumbnailAsset: Bool,
+        limit: Int,
+    ) -> [PasteboardHistoryDetail]
     func fetchHistory(id: PasteboardHistory.ID) -> PasteboardHistory?
     func fetchContent(id: PasteboardHistory.ID) -> PasteboardContent?
 
@@ -85,6 +90,51 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                     .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($1.pasteboardHistoryID) }
                     .select { PasteboardHistoryDetail.Columns(history: $0, thumbnailAsset: $1) }
                     .fetchAll(database)
+            }
+        } ?? []
+    }
+
+    func searchHistories(
+        matching query: String,
+        includesThumbnailAsset: Bool,
+        limit: Int
+    ) -> [PasteboardHistoryDetail] {
+        let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return [] }
+
+        return withErrorReporting {
+            try database.read { database in
+                // The search indexes are tokenized with `trigram`, which cannot match queries shorter
+                // than three characters. Fall back to a LIKE scan so that typing the first character
+                // still narrows the candidates down instead of emptying the list.
+                guard query.count >= Constants.Search.minimumTrigramLength else {
+                    let histories = try PasteboardHistory
+                        .where { $0.title.contains(query) }
+                        .order { $0.updateAt.desc() }
+                        .limit(limit)
+                        .fetchAll(database)
+                    return try attachThumbnailAssets(
+                        to: histories,
+                        includesThumbnailAsset: includesThumbnailAsset,
+                        database: database
+                    )
+                }
+
+                let results = try PasteboardHistorySearch
+                    .where { $0.match(query.fts5PhraseQuery) }
+                    .leftJoin(PasteboardHistory.all) { $0.id.eq($1.id) }
+                    .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($2.pasteboardHistoryID) }
+                    .select { PasteboardHistorySearchResult.Columns(history: $1, thumbnailAsset: $2) }
+                    .limit(limit)
+                    .fetchAll(database)
+                return results.compactMap { result in
+                    result.history.map {
+                        PasteboardHistoryDetail(
+                            history: $0,
+                            thumbnailAsset: includesThumbnailAsset ? result.thumbnailAsset : nil
+                        )
+                    }
+                }
             }
         } ?? []
     }
@@ -211,6 +261,26 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
 }
 
 private extension PasteboardHistoryRepository {
+    func attachThumbnailAssets(
+        to histories: [PasteboardHistory],
+        includesThumbnailAsset: Bool,
+        database: Database
+    ) throws -> [PasteboardHistoryDetail] {
+        guard includesThumbnailAsset, !histories.isEmpty else {
+            return histories.map { PasteboardHistoryDetail(history: $0, thumbnailAsset: nil) }
+        }
+        let assets = try PasteboardHistoryThumbnailAsset
+            .where { $0.pasteboardHistoryID.in(histories.map(\.id)) }
+            .fetchAll(database)
+        let assetsByHistoryID = Dictionary(
+            assets.map { ($0.pasteboardHistoryID, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        return histories.map {
+            PasteboardHistoryDetail(history: $0, thumbnailAsset: assetsByHistoryID[$0.id])
+        }
+    }
+
     func thumbnailAsset(from content: PasteboardContent, id: PasteboardHistory.ID) -> PasteboardHistoryThumbnailAsset? {
         var asset: PasteboardHistoryThumbnailAsset?
         if let thumbnailImage = content.thumbnailImage, let thumbnailData = thumbnailImage.tiffRepresentation {

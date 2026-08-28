@@ -8,6 +8,9 @@
 /* Class = "NSTextFieldCell"; title = "Snippets:"; ObjectID = "fXr-ry-5ds"; */
 "fXr-ry-5ds.title" = "Snippet:";
 
+/* Class = "NSTextFieldCell"; title = "Search:"; ObjectID = "sCh-Cl-77h"; */
+"sCh-Cl-77h.title" = "Cerca:";
+
 /* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "X5L-5V-1eH"; */
 "X5L-5V-1eH.title" = "Menu";
 

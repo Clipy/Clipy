@@ -22,6 +22,7 @@ final class HotKeyServiceTests {
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
+        #expect(service.searchKeyCombo == nil)
 
         #expect(appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == false)
         service.setupDefaultHotKeys()
@@ -44,6 +45,12 @@ final class HotKeyServiceTests {
         #expect(snippetKeyCombo.modifiers == 768)
         #expect(snippetKeyCombo.doubledModifiers == false)
         #expect(snippetKeyCombo.keyEquivalent.uppercased() == "B")
+
+        let searchKeyCombo = try #require(service.searchKeyCombo)
+        #expect(searchKeyCombo.QWERTYKeyCode == 3)
+        #expect(searchKeyCombo.modifiers == 768)
+        #expect(searchKeyCombo.doubledModifiers == false)
+        #expect(searchKeyCombo.keyEquivalent.uppercased() == "F")
     }
 
     @Test
@@ -52,10 +59,12 @@ final class HotKeyServiceTests {
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
+        #expect(service.searchKeyCombo == nil)
 
         let defaultKeyCombos: [String: Any] = [Constants.Menu.clip: ["keyCode": 0, "modifiers": 4352],
                                                Constants.Menu.history: ["keyCode": 9, "modifiers": 768],
-                                               Constants.Menu.snippet: ["keyCode": 11, "modifiers": 4352]]
+                                               Constants.Menu.snippet: ["keyCode": 11, "modifiers": 4352],
+                                               Constants.Menu.search: ["keyCode": 3, "modifiers": 768]]
         appStorage.register(defaults: [Constants.UserDefaults.hotKeys: defaultKeyCombos])
 
         #expect(appStorage.bool(forKey: Constants.HotKey.migrateNewKeyCombo) == false)
@@ -89,27 +98,33 @@ final class HotKeyServiceTests {
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
+        #expect(service.searchKeyCombo == nil)
 
         #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
         #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo) == nil)
         #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo) == nil)
+        #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.searchKeyCombo) == nil)
 
         service.setupDefaultHotKeys()
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
+        #expect(service.searchKeyCombo == nil)
 
         let mainKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
         let historyKeyCombo = try #require(KeyCombo(doubledCocoaModifiers: .command))
         let snippetKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift))
+        let searchKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 3, carbonModifiers: 768))
 
         service.change(with: .main, keyCombo: mainKeyCombo)
         service.change(with: .history, keyCombo: historyKeyCombo)
         service.change(with: .snippet, keyCombo: snippetKeyCombo)
+        service.change(with: .search, keyCombo: searchKeyCombo)
 
         let savedMainKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo))
         let savedHistoryKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.historyKeyCombo))
         let savedSnippetKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.snippetKeyCombo))
+        let savedSearchKeyCombo = try #require(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.searchKeyCombo))
 
         #expect(savedMainKeyCombo.QWERTYKeyCode == 9)
         #expect(savedMainKeyCombo.modifiers == 768)
@@ -126,6 +141,11 @@ final class HotKeyServiceTests {
         #expect(savedSnippetKeyCombo.doubledModifiers == false)
         #expect(savedSnippetKeyCombo.keyEquivalent.uppercased() == "A")
 
+        #expect(savedSearchKeyCombo.QWERTYKeyCode == 3)
+        #expect(savedSearchKeyCombo.modifiers == 768)
+        #expect(savedSearchKeyCombo.doubledModifiers == false)
+        #expect(savedSearchKeyCombo.keyEquivalent.uppercased() == "F")
+
         service.change(with: .main, keyCombo: nil)
         #expect(service.mainKeyCombo == nil)
         #expect(appStorage.archiveDataForKey(KeyCombo.self, key: Constants.HotKey.mainKeyCombo) == nil)
@@ -138,15 +158,18 @@ final class HotKeyServiceTests {
         let mainKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
         let historyKeyCombo = try #require(KeyCombo(doubledCocoaModifiers: .command))
         let snippetKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 0, cocoaModifiers: .shift))
+        let searchKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 3, carbonModifiers: 768))
 
         appStorage.setArchiveData(mainKeyCombo, forKey: Constants.HotKey.mainKeyCombo)
         appStorage.setArchiveData(historyKeyCombo, forKey: Constants.HotKey.historyKeyCombo)
         appStorage.setArchiveData(snippetKeyCombo, forKey: Constants.HotKey.snippetKeyCombo)
+        appStorage.setArchiveData(searchKeyCombo, forKey: Constants.HotKey.searchKeyCombo)
 
         let service = HotKeyService()
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
+        #expect(service.searchKeyCombo == nil)
 
         service.setupDefaultHotKeys()
 
@@ -167,6 +190,12 @@ final class HotKeyServiceTests {
         #expect(savedSnippetKeyCombo.modifiers == shiftKey)
         #expect(savedSnippetKeyCombo.doubledModifiers == false)
         #expect(savedSnippetKeyCombo.keyEquivalent.uppercased() == "A")
+
+        let savedSearchKeyCombo = try #require(service.searchKeyCombo)
+        #expect(savedSearchKeyCombo.QWERTYKeyCode == 3)
+        #expect(savedSearchKeyCombo.modifiers == 768)
+        #expect(savedSearchKeyCombo.doubledModifiers == false)
+        #expect(savedSearchKeyCombo.keyEquivalent.uppercased() == "F")
     }
 
     @Test
@@ -175,6 +204,7 @@ final class HotKeyServiceTests {
         let mainCombos = keyCombos[Constants.Menu.clip] as? [String: Int]
         let historyCombos = keyCombos[Constants.Menu.history] as? [String: Int]
         let snippetCombos = keyCombos[Constants.Menu.snippet] as? [String: Int]
+        let searchCombos = keyCombos[Constants.Menu.search] as? [String: Int]
 
         #expect(mainCombos?["keyCode"] == 9)
         #expect(mainCombos?["modifiers"] == 768)
@@ -184,6 +214,9 @@ final class HotKeyServiceTests {
 
         #expect(snippetCombos?["keyCode"] == 11)
         #expect(snippetCombos?["modifiers"] == 768)
+
+        #expect(searchCombos?["keyCode"] == 3)
+        #expect(searchCombos?["modifiers"] == 768)
     }
 
     @Test

@@ -21,6 +21,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     @IBOutlet private weak var mainShortcutRecordView: RecordView!
     @IBOutlet private weak var historyShortcutRecordView: RecordView!
     @IBOutlet private weak var snippetShortcutRecordView: RecordView!
+    @IBOutlet private weak var searchShortcutRecordView: RecordView!
     @IBOutlet private weak var clearHistoryShortcutRecordView: RecordView!
 
     @Dependency(\.hotKeyService)
@@ -32,6 +33,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
         mainShortcutRecordView.delegate = self
         historyShortcutRecordView.delegate = self
         snippetShortcutRecordView.delegate = self
+        searchShortcutRecordView.delegate = self
         clearHistoryShortcutRecordView.delegate = self
         prepareHotKeys()
     }
@@ -44,6 +46,7 @@ private extension CPYShortcutsPreferenceViewController {
         mainShortcutRecordView.keyCombo = hotKeyService.mainKeyCombo
         historyShortcutRecordView.keyCombo = hotKeyService.historyKeyCombo
         snippetShortcutRecordView.keyCombo = hotKeyService.snippetKeyCombo
+        searchShortcutRecordView.keyCombo = hotKeyService.searchKeyCombo
         clearHistoryShortcutRecordView.keyCombo = hotKeyService.clearHistoryKeyCombo
     }
 }
@@ -66,6 +69,8 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
             hotKeyService.change(with: .history, keyCombo: keyCombo)
         case snippetShortcutRecordView:
             hotKeyService.change(with: .snippet, keyCombo: keyCombo)
+        case searchShortcutRecordView:
+            hotKeyService.change(with: .search, keyCombo: keyCombo)
         case clearHistoryShortcutRecordView:
             hotKeyService.changeClearHistoryKeyCombo(keyCombo)
         default: break
