@@ -366,6 +366,30 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func searchHistoriesWithFTS5QueryOrdersByRecencyBeforeLimit() throws {
+        let content1 = try #require(PasteboardContent("shared token item 1"))
+        let content2 = try #require(PasteboardContent("shared token item 2"))
+        let content3 = try #require(PasteboardContent("shared token item 3"))
+        let content4 = try #require(PasteboardContent("shared token item 4"))
+        let content5 = try #require(PasteboardContent("shared token item 5"))
+
+        let id1 = PasteboardHistory.ID(rawValue: content1.hash)
+        let id2 = PasteboardHistory.ID(rawValue: content2.hash)
+        let id3 = PasteboardHistory.ID(rawValue: content3.hash)
+        let id4 = PasteboardHistory.ID(rawValue: content4.hash)
+        let id5 = PasteboardHistory.ID(rawValue: content5.hash)
+
+        repository.save(id: id1, content: content1, updateAt: 1)
+        repository.save(id: id2, content: content2, updateAt: 2)
+        repository.save(id: id3, content: content3, updateAt: 3)
+        repository.save(id: id4, content: content4, updateAt: 4)
+        repository.save(id: id5, content: content5, updateAt: 5)
+
+        let matches = repository.searchHistories(matching: "shared", includesThumbnailAsset: false, limit: 3)
+        #expect(matches.map(\.history.id) == [id5, id4, id3])
+    }
+
+    @Test
     func searchHistoriesWithLimit() throws {
         for i in 1...5 {
             let content = try #require(PasteboardContent("search_target item \(i)"))

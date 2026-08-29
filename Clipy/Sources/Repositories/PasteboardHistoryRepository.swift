@@ -125,6 +125,7 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                     .leftJoin(PasteboardHistory.all) { $0.id.eq($1.id) }
                     .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($2.pasteboardHistoryID) }
                     .select { PasteboardHistorySearchResult.Columns(history: $1, thumbnailAsset: $2) }
+                    .order { $1.updateAt.desc() }
                     .limit(limit)
                     .fetchAll(database)
                 return results.compactMap { result in
