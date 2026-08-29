@@ -14,18 +14,15 @@ import Cocoa
 import Clocks
 import Dependencies
 import Foundation
-import RxCocoa
-import RxSwift
+import Sharing
 import SQLiteData
 
 final class ClipService {
 
     // MARK: - Properties
     fileprivate var cachedChangeCount = 0
-    fileprivate var storeTypes = [String: NSNumber]()
     fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
     fileprivate var monitoringTask: Task<Void, Never>?
-    fileprivate var disposeBag = DisposeBag()
 
     @Dependency(\.excludeAppService)
     private var excludeAppService
@@ -38,10 +35,12 @@ final class ClipService {
     @Dependency(\.defaultDatabase)
     private var database
 
+    @Shared(.pasteboardTypeSettings)
+    private var pasteboardTypeSettings
+
     // MARK: - Clips
     func startMonitoring() {
         monitoringTask?.cancel()
-        disposeBag = DisposeBag()
         // Pasteboard observe timer
         monitoringTask = Task { @MainActor [weak self] in
             @Dependency(\.continuousClock) var continuousClock
@@ -53,16 +52,6 @@ final class ClipService {
                 self?.create()
             }
         }
-        // Store types
-        storeTypes = appStorage.object(forKey: Constants.UserDefaults.storeTypes) as? [String: NSNumber] ?? [:]
-        appStorage.rx
-            .observe([String: NSNumber].self, Constants.UserDefaults.storeTypes)
-            .compactMap { $0 }
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] in
-                self?.storeTypes = $0
-            })
-            .disposed(by: disposeBag)
     }
 
     @objc func clearAllHistory() {
@@ -120,7 +109,7 @@ extension ClipService {
         // then let PasteboardAvailableType filter the storeable types.
         let types = PasteboardAvailableType.availableTypes(
             from: pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? [],
-            storeAvailableTypes: storeTypes.filter { $0.value.boolValue }.compactMap { PasteboardAvailableType(rawValue: $0.key) },
+            storeAvailableTypes: pasteboardTypeSettings.enabledTypes,
             ignoresConcealedType: appStorage.bool(forKey: Constants.UserDefaults.ignoreConcealedPasteboardType)
         )
         guard !types.isEmpty else { return }

@@ -38,10 +38,8 @@ struct Constants {
     }
 
     struct UserDefaults {
-        static let hotKeys = "kCPYPrefHotKeysKey"
         static let menuIconSize = "kCPYPrefMenuIconSizeKey"
         static let maxHistorySize = "kCPYPrefMaxHistorySizeKey"
-        static let storeTypes = "kCPYPrefStoreTypesKey"
         static let inputPasteCommand = "kCPYPrefInputPasteCommandKey"
         static let showIconInTheMenu = "kCPYPrefShowIconInTheMenuKey"
         static let numberOfItemsPlaceInline = "kCPYPrefNumberOfItemsPlaceInlineKey"
@@ -64,7 +62,6 @@ struct Constants {
         static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
         static let copySameHistory = "kCPYPrefCopySameHistroy"
         static let suppressAlertForDeleteSnippet = "kCPYSuppressAlertForDeleteSnippet"
-        static let excludeApplications = "kCPYExcludeApplications"
         static let collectCrashReport = "kCPYCollectCrashReport"
         static let showColorPreviewInTheMenu = "kCPYPrefShowColorPreviewInTheMenu"
         static let ignoreConcealedPasteboardType = "kCPYPrefIgnoreConcealedPasteboardType"
@@ -95,14 +92,4 @@ struct Constants {
         static let snippetsElement = "snippets"
         static let contentElement = "content"
     }
-
-    struct HotKey {
-        static let mainKeyCombo = "kCPYHotKeyMainKeyCombo"
-        static let historyKeyCombo = "kCPYHotKeyHistoryKeyCombo"
-        static let snippetKeyCombo = "kCPYHotKeySnippetKeyCombo"
-        static let migrateNewKeyCombo = "kCPYMigrateNewKeyCombo"
-        static let folderKeyCombos = "kCPYFolderKeyCombos"
-        static let clearHistoryKeyCombo = "kCPYClearHistoryKeyCombo"
-    }
-
 }

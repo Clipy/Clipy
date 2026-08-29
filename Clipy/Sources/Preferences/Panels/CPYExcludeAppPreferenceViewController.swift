@@ -39,8 +39,8 @@ extension CPYExcludeAppPreferenceViewController {
         let fileURLs = openPanel.urls
         fileURLs.forEach {
             guard let bundle = Bundle(url: $0), let info = bundle.infoDictionary else { return }
-            guard let appInfo = CPYAppInfo(info: info as [String: AnyObject]) else { return }
-            excludeAppService.add(with: appInfo)
+            guard let applicationInformation = ApplicationInformation(info: info as [String: AnyObject]) else { return }
+            excludeAppService.add(with: applicationInformation)
         }
         tableView.reloadData()
     }

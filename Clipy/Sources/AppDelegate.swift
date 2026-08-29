@@ -130,6 +130,8 @@ extension AppDelegate: NSApplicationDelegate {
 
         guard context != .test else { return }
 
+        AppMigrator().run()
+
         // SDKs
         firebase.configure()
         // Check Accessibility Permission

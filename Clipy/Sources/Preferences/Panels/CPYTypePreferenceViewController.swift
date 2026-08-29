@@ -11,22 +11,21 @@
 //
 
 import Cocoa
-import Dependencies
+import Sharing
 
 final class CPYTypePreferenceViewController: NSViewController {
     // MARK: - Properties
     @objc var storeTypes: NSMutableDictionary!
 
-    @Dependency(\.defaultAppStorage)
-    private var appStorage
+    @Shared(.pasteboardTypeSettings)
+    private var pasteboardTypeSettings
 
     // MARK: - Initialize
     override func loadView() {
-        if let dictionary = appStorage.object(forKey: Constants.UserDefaults.storeTypes) as? [String: Any] {
-            storeTypes = NSMutableDictionary(dictionary: dictionary)
-        } else {
-            storeTypes = NSMutableDictionary()
+        let values = PasteboardAvailableType.allCases.reduce(into: [String: Any]()) { values, type in
+            values[type.rawValue] = NSNumber(value: pasteboardTypeSettings[type])
         }
+        storeTypes = NSMutableDictionary(dictionary: values)
         super.loadView()
         PasteboardAvailableType.allCases.forEach { availableType in
             storeTypes.addObserver(self, forKeyPath: availableType.rawValue, options: .new, context: nil)
@@ -42,6 +41,8 @@ final class CPYTypePreferenceViewController: NSViewController {
     // swiftlint:disable:next block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard let dictionary = object as? NSMutableDictionary, dictionary == storeTypes else { return }
-        appStorage.set(storeTypes, forKey: Constants.UserDefaults.storeTypes)
+        guard let keyPath, let type = PasteboardAvailableType(rawValue: keyPath) else { return }
+        guard let value = storeTypes[keyPath] as? NSNumber else { return }
+        $pasteboardTypeSettings.withLock { $0[type] = value.boolValue }
     }
 }

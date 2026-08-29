@@ -18,13 +18,12 @@ import Sharing
 
 final class ExcludeAppService {
     // MARK: - Properties
-    fileprivate(set) var applications: [CPYAppInfo] = []
-    fileprivate var frontApplication: NSRunningApplication?
+    @Shared(.excludedApplications)
+    private(set) var applications
+
+    private var frontApplication: NSRunningApplication?
     private var cancellables: Set<AnyCancellable> = []
     private let notificationCenter: NotificationCenter
-
-    @Dependency(\.defaultAppStorage)
-    private var appStorage
 
     // MARK: - Initialize
     init(notificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter) {
@@ -37,9 +36,6 @@ extension ExcludeAppService {
     func startMonitoring() {
         cancellables.removeAll()
         // Monitoring top active application
-        self.applications = (appStorage.object(forKey: Constants.UserDefaults.excludeApplications) as? Data)
-            .flatMap { NSKeyedUnarchiver.unarchiveObject(with: $0) as? [CPYAppInfo] }
-            ?? []
         notificationCenter.publisher(for: NSWorkspace.didActivateApplicationNotification)
             .map { $0.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication }
             .prepend(NSWorkspace.shared.frontmostApplication)
@@ -63,25 +59,17 @@ extension ExcludeAppService {
 
 // MARK: - Add or Delete
 extension ExcludeAppService {
-    func add(with appInfo: CPYAppInfo) {
-        if applications.contains(appInfo) { return }
-        applications.append(appInfo)
-        save()
+    func add(with applicationInformation: ApplicationInformation) {
+        if applications.contains(applicationInformation) { return }
+        $applications.withLock { $0.append(applicationInformation) }
     }
 
-    func delete(with appInfo: CPYAppInfo) {
-        applications = applications.filter { $0 != appInfo }
-        save()
+    func delete(with applicationInformation: ApplicationInformation) {
+        $applications.withLock { $0.removeAll { $0 == applicationInformation } }
     }
 
     func delete(with index: Int) {
         delete(with: applications[index])
-    }
-
-    private func save() {
-        let data = applications.archive()
-        appStorage.set(data, forKey: Constants.UserDefaults.excludeApplications)
-        appStorage.synchronize()
     }
 }
 
@@ -93,7 +81,7 @@ extension ExcludeAppService {
         case onePassword = "com.agilebits.onepassword"
 
         // MARK: - Excluded
-        func isExcluded(applications: [CPYAppInfo]) -> Bool {
+        func isExcluded(applications: [ApplicationInformation]) -> Bool {
             return applications.contains { $0.identifier.hasPrefix(rawValue) }
         }
 
