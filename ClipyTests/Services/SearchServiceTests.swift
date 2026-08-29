@@ -174,6 +174,26 @@ struct SearchServiceTests {
         let resultsWithThumbnail = service.search(query: "image_search_tag", limit: 10)
         #expect(resultsWithThumbnail.count == 1)
         #expect(resultsWithThumbnail.first?.thumbnailImage != nil)
+
+        let colorContent = try #require(
+            PasteboardContent(assets: [
+                .init(type: .string, data: Data("#ff0000".utf8))
+            ])
+        )
+        let colorID = PasteboardHistory.ID(rawValue: colorContent.hash)
+        historyRepository.save(id: colorID, content: colorContent, updateAt: 2)
+        historyRepository.updateOCRText(id: colorID, ocrText: "color_search_tag")
+
+        let imageOnlyColorResults = service.search(query: "color_search_tag", limit: 10)
+        #expect(imageOnlyColorResults.count == 1)
+        #expect(imageOnlyColorResults.first?.thumbnailImage == nil)
+
+        appStorage.set(false, forKey: Constants.UserDefaults.showImageInTheMenu)
+        appStorage.set(true, forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
+
+        let colorResults = service.search(query: "color_search_tag", limit: 10)
+        #expect(colorResults.count == 1)
+        #expect(colorResults.first?.thumbnailImage != nil)
     }
 
     @Test

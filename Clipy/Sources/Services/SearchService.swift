@@ -46,7 +46,7 @@ final class SearchService: SearchServiceProtocol {
                     includesThumbnailAsset: includesThumbnailAsset,
                     limit: limit
                 )
-                .map { .history($0) }
+                .map { .history(filteredThumbnailAsset(in: $0)) }
         }
 
         let snippets = snippetRepository
@@ -58,9 +58,23 @@ final class SearchService: SearchServiceProtocol {
                 includesThumbnailAsset: includesThumbnailAsset,
                 limit: limit
             )
-            .map { SearchResultItem.history($0) }
+            .map { SearchResultItem.history(filteredThumbnailAsset(in: $0)) }
 
         return Array((snippets + histories).prefix(limit))
+    }
+
+    private func filteredThumbnailAsset(in detail: PasteboardHistoryDetail) -> PasteboardHistoryDetail {
+        let showsImage = appStorage.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
+        let showsColorCode = appStorage.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
+        let thumbnailAsset = detail.thumbnailAsset.flatMap { asset in
+            switch asset.kind {
+            case .image:
+                return showsImage ? asset : nil
+            case .colorCode:
+                return showsColorCode ? asset : nil
+            }
+        }
+        return PasteboardHistoryDetail(history: detail.history, thumbnailAsset: thumbnailAsset)
     }
 }
 
