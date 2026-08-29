@@ -77,6 +77,8 @@
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
 		C5E8EE642FFA260700270F1F /* PasteboardHistoryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */; };
 		C5E8EE682FFA28DD00270F1F /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE672FFA28D900270F1F /* StringExtensions.swift */; };
+		C5A10002303A000100000001 /* SharedExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A10001303A000100000001 /* SharedExtensions.swift */; };
+		C5A10004303A000100000001 /* SharedExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A10003303A000100000001 /* SharedExtensionsTests.swift */; };
 		C5E8EE6A2FFA2A5600270F1F /* SnippetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */; };
 		C5E8EE6E2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE6D2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift */; };
 		C5E8EE702FFA46F400270F1F /* SnippetExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E8EE6F2FFA46F400270F1F /* SnippetExtensionsTests.swift */; };
@@ -240,6 +242,8 @@
 		C5D41A0B2FDB4A0B00EF30FB /* SQLiteDataMigratorTests+V3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigratorTests+V3.swift"; sourceTree = "<group>"; };
 		C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryExtensions.swift; sourceTree = "<group>"; };
 		C5E8EE672FFA28D900270F1F /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		C5A10001303A000100000001 /* SharedExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedExtensions.swift; sourceTree = "<group>"; };
+		C5A10003303A000100000001 /* SharedExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedExtensionsTests.swift; sourceTree = "<group>"; };
 		C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetExtensions.swift; sourceTree = "<group>"; };
 		C5E8EE6D2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardHistoryExtensionsTests.swift; sourceTree = "<group>"; };
 		C5E8EE6F2FFA46F400270F1F /* SnippetExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetExtensionsTests.swift; sourceTree = "<group>"; };
@@ -517,6 +521,7 @@
 				C5E8EE6D2FFA46F400270F1F /* PasteboardHistoryExtensionsTests.swift */,
 				C5E8EE6F2FFA46F400270F1F /* SnippetExtensionsTests.swift */,
 				C5E8EE712FFA46F400270F1F /* StringExtensionsTests.swift */,
+				C5A10003303A000100000001 /* SharedExtensionsTests.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -660,6 +665,7 @@
 				C5E8EE632FFA260200270F1F /* PasteboardHistoryExtensions.swift */,
 				C5E8EE692FFA2A5000270F1F /* SnippetExtensions.swift */,
 				C5E8EE672FFA28D900270F1F /* StringExtensions.swift */,
+				C5A10001303A000100000001 /* SharedExtensions.swift */,
 				C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */,
 				FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */,
 				FA1DB4A91DDCB452007F95C8 /* NSBundle+Version.swift */,
@@ -1030,6 +1036,7 @@
 				FA1DB4B41DDCB452007F95C8 /* NSBundle+Version.swift in Sources */,
 				FA1DB5171DDCB4C0007F95C8 /* CPYTypePreferenceViewController.swift in Sources */,
 				C5E8EE682FFA28DD00270F1F /* StringExtensions.swift in Sources */,
+				C5A10002303A000100000001 /* SharedExtensions.swift in Sources */,
 				C58E0A822FDAB5B100B3A901 /* ClipyApp.swift in Sources */,
 				FA1DB4A21DDCB433007F95C8 /* AppDelegate.swift in Sources */,
 				C567A89F3026E9390070292B /* UserDefaultsCodableMigration.swift in Sources */,
@@ -1087,6 +1094,7 @@
 				C52D2133301DB500009D832A /* AppMigratorTests.swift in Sources */,
 				C5700B502FD106000C8F965 /* DatabaseMigrationTests.swift in Sources */,
 				C567A8933026E3570070292B /* AppStorageValuesTests.swift in Sources */,
+				C5A10004303A000100000001 /* SharedExtensionsTests.swift in Sources */,
 				C5700B492FC5C0E500C8F965 /* SQLiteDataMigratorTests.swift in Sources */,
 				C5D41A0C2FDB4A0C00EF30FB /* SQLiteDataMigratorTests+V1.swift in Sources */,
 				C5D41A0D2FDB4A0D00EF30FB /* SQLiteDataMigratorTests+V2.swift in Sources */,
