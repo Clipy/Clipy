@@ -1,0 +1,59 @@
+//
+//  Localizable.strings
+//
+//  Clipy
+//  GitHub: https://github.com/clipy
+//  HP: https://clipy-app.com
+//
+//  Created by Econa77 on 2015/06/21.
+//
+//  Copyright © 2015-2018 Clipy Project.
+//
+
+"Launch Clipy on system startup?" = "Добавить Clipy в автозагрузку?";
+
+"You can change this setting in the Preferences if you want" = "При желании Вы можете изменить это в настройках.";
+
+"Launch on system startup" = "Запускать при включении системы";
+
+"Don't Launch" = "Не запускать";
+
+"Clear History" = "Очистить историю";
+
+"Are you sure you want to clear your clipboard history?" = "Вы уверены, что хотите очистить историю буфера обмена?";
+
+"Cancel" = "Отмена";
+
+"Edit Snippets" = "Изменить сниппеты";
+
+"Preferences" = "Настройки";
+
+"Quit Clipy" = "Выйти из Clipy";
+
+"History" = "История";
+
+"Snippet" = "Сниппеты";
+
+"General" = "Главные";
+
+"Menu" = "Меню";
+
+"Type" = "Тип";
+
+"Shortcuts" = "Горячие клавиши";
+
+"Updates" = "Обновления";
+
+"Delete Item" = "Удалить";
+
+"Are you sure want to delete this item?" = "Вы уверены, что хотите удалить это?";
+
+"Add" = "Добавить";
+
+"Please fill in the contents of the snippet" = "Пожалуйста, заполните содержимое сниппета";
+
+"Please allow Accessibility" = "Пожалуйста, разрешите универсальный доступ";
+
+"To do this action please allow Accessibility in Security Privacy preferences located in System Preferences" = "Чтобы сделать это, пожалуйста, разрешите универсальный доступ в разделе Защита и безопасность в Системных настройках";
+
+"Open System Preferences" = "Открыть Системные настройки";
