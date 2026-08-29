@@ -83,6 +83,7 @@ extension HotKeyService {
             appStorage.set(true, forKey: Constants.HotKey.migrateNewKeyCombo)
             appStorage.synchronize()
         }
+        seedSearchHotKeyIfNeeded()
         // Snippet hotkey
         setupSnippetHotKeys()
 
@@ -151,6 +152,18 @@ private extension HotKeyService {
 
 // MARK: - Migration
 private extension HotKeyService {
+    func seedSearchHotKeyIfNeeded() {
+        guard appStorage.object(forKey: Constants.HotKey.searchKeyCombo) == nil else { return }
+        guard
+            let defaultKeyCombo = Self.defaultKeyCombos[Constants.Menu.search] as? [String: Int],
+            let keyCode = defaultKeyCombo["keyCode"],
+            let modifiers = defaultKeyCombo["modifiers"],
+            let keyCombo = KeyCombo(QWERTYKeyCode: keyCode, carbonModifiers: modifiers)
+        else { return }
+
+        appStorage.set(keyCombo.archive(), forKey: Constants.HotKey.searchKeyCombo)
+    }
+
     /**
      *  Migration for changing the storage with v1.1.0
      *  Changed framework, PTHotKey to Magnet

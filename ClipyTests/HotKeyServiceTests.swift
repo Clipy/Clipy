@@ -109,7 +109,11 @@ final class HotKeyServiceTests {
         #expect(service.mainKeyCombo == nil)
         #expect(service.historyKeyCombo == nil)
         #expect(service.snippetKeyCombo == nil)
-        #expect(service.searchKeyCombo == nil)
+        let seededSearchKeyCombo = try #require(service.searchKeyCombo)
+        #expect(seededSearchKeyCombo.QWERTYKeyCode == 3)
+        #expect(seededSearchKeyCombo.modifiers == 768)
+        #expect(seededSearchKeyCombo.doubledModifiers == false)
+        #expect(seededSearchKeyCombo.keyEquivalent.uppercased() == "F")
 
         let mainKeyCombo = try #require(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: 768))
         let historyKeyCombo = try #require(KeyCombo(doubledCocoaModifiers: .command))
