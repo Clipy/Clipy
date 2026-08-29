@@ -125,8 +125,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // UserDefaults
-        CPYUtilities.registerUserDefaultKeys(appStorage)
+        AppStorageValues.register()
 
         guard context != .test else { return }
 
