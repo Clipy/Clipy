@@ -13,8 +13,7 @@
 import Cocoa
 import Combine
 import Dependencies
-import RxCocoa
-import RxSwift
+import Sharing
 
 final class MenuManager: NSObject {
 
@@ -33,8 +32,6 @@ final class MenuManager: NSObject {
     // Icon Cache
     private let folderIcon = NSImage(resource: .iconFolder)
     private let snippetIcon = NSImage(resource: .iconText)
-    // Other
-    private let disposeBag = DisposeBag()
     private let kMaxKeyEquivalents = 10
 
     @Dependency(\.pasteboardHistoryRepository)
@@ -43,10 +40,43 @@ final class MenuManager: NSObject {
     private var snippetRepository
     @Dependency(\.mainQueue)
     private var mainQueue
-    @Dependency(\.defaultAppStorage)
-    private var appStorage
     private var cancellables: Set<AnyCancellable> = []
     private var snippetFolderDetails = [SnippetFolderDetail]()
+
+    @Shared(.statusItemDisplayMode)
+    private var statusItemDisplayMode
+    @Shared(.reordersClipsAfterPasting)
+    private var reordersClipsAfterPasting
+    @Shared(.showsClearHistoryMenuItem)
+    private var showsClearHistoryMenuItem
+    @Shared(.maximumHistoryCount)
+    private var maximumHistoryCount
+    @Shared(.showsIconsInMenu)
+    private var showsIconsInMenu
+    @Shared(.inlineMenuItemLimit)
+    private var inlineMenuItemLimit
+    @Shared(.folderMenuItemLimit)
+    private var folderMenuItemLimit
+    @Shared(.maximumMenuItemTitleLength)
+    private var maximumMenuItemTitleLength
+    @Shared(.startsMenuItemTitlesAtZero)
+    private var startsMenuItemTitlesAtZero
+    @Shared(.marksMenuItemsWithNumbers)
+    private var marksMenuItemsWithNumbers
+    @Shared(.showsToolTipsOnMenuItems)
+    private var showsToolTipsOnMenuItems
+    @Shared(.showsImagesInMenu)
+    private var showsImagesInMenu
+    @Shared(.addsNumericKeyEquivalents)
+    private var addsNumericKeyEquivalents
+    @Shared(.maximumToolTipLength)
+    private var maximumToolTipLength
+    @Shared(.showsColorPreviewInMenu)
+    private var showsColorPreviewInMenu
+    @Shared(.thumbnailWidth)
+    private var thumbnailWidth
+    @Shared(.thumbnailHeight)
+    private var thumbnailHeight
 
     // MARK: - Enum Values
     enum StatusType: Int {
@@ -119,56 +149,42 @@ private extension MenuManager {
             }
             .store(in: &cancellables)
         // Menu icon
-        appStorage.rx.observe(Int.self, Constants.UserDefaults.showStatusItem, retainSelf: false)
-            .compactMap { $0 }
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] key in
+        $statusItemDisplayMode.changes(includingInitialValue: true)
+            .receive(on: mainQueue)
+            .sink { [weak self] key in
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
         // Sort clips
-        appStorage.rx.observe(Bool.self, Constants.UserDefaults.reorderClipsAfterPasting, options: [.new], retainSelf: false)
-            .compactMap { $0 }
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] _ in
+        $reordersClipsAfterPasting.changes()
+            .receive(on: mainQueue)
+            .sink { [weak self] _ in
                 self?.createClipMenu()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
         // Observe change preference settings
-        var menuChangedObservables = [Observable<Void>]()
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.addClearHistoryMenuItem, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Int.self, Constants.UserDefaults.maxHistorySize, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.showIconInTheMenu, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInline, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Int.self, Constants.UserDefaults.numberOfItemsPlaceInsideFolder, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Int.self, Constants.UserDefaults.maxMenuItemTitleLength, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.menuItemsTitleStartWithZero, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.menuItemsAreMarkedWithNumbers, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.showToolTipOnMenuItem, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.showImageInTheMenu, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.addNumericKeyEquivalents, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Int.self, Constants.UserDefaults.maxLengthOfToolTip, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        menuChangedObservables.append(appStorage.rx.observe(Bool.self, Constants.UserDefaults.showColorPreviewInTheMenu, options: [.new], retainSelf: false)
-                                        .compactMap { $0 }.distinctUntilChanged().map { _ in })
-        Observable.merge(menuChangedObservables)
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { [weak self] in
-                self?.createClipMenu()
-            })
-            .disposed(by: disposeBag)
+        Publishers.MergeMany(
+            [
+                $showsClearHistoryMenuItem.changeEvents(),
+                $maximumHistoryCount.changeEvents(),
+                $showsIconsInMenu.changeEvents(),
+                $inlineMenuItemLimit.changeEvents(),
+                $folderMenuItemLimit.changeEvents(),
+                $maximumMenuItemTitleLength.changeEvents(),
+                $startsMenuItemTitlesAtZero.changeEvents(),
+                $marksMenuItemsWithNumbers.changeEvents(),
+                $showsToolTipsOnMenuItems.changeEvents(),
+                $showsImagesInMenu.changeEvents(),
+                $addsNumericKeyEquivalents.changeEvents(),
+                $maximumToolTipLength.changeEvents(),
+                $showsColorPreviewInMenu.changeEvents()
+            ]
+        )
+        .throttle(for: .seconds(1), scheduler: mainQueue, latest: true)
+        .sink { [weak self] in
+            self?.createClipMenu()
+        }
+        .store(in: &cancellables)
     }
 }
 
@@ -187,7 +203,7 @@ private extension MenuManager {
 
         clipMenu?.addItem(NSMenuItem.separator())
 
-        if appStorage.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
+        if showsClearHistoryMenuItem {
             clipMenu?.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
         }
 
@@ -221,7 +237,7 @@ private extension MenuManager {
         let subMenu = NSMenu(title: "")
         let subMenuItem = NSMenuItem(title: title, action: nil)
         subMenuItem.submenu = subMenu
-        subMenuItem.image = (appStorage.bool(forKey: Constants.UserDefaults.showIconInTheMenu)) ? folderIcon : nil
+        subMenuItem.image = showsIconsInMenu ? folderIcon : nil
         return subMenuItem
     }
 }
@@ -229,9 +245,9 @@ private extension MenuManager {
 // MARK: - Clips
 private extension MenuManager {
     func addHistoryItems(_ menu: NSMenu) {
-        let placeInLine = appStorage.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
-        let placeInsideFolder = appStorage.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
-        let maxHistory = appStorage.integer(forKey: Constants.UserDefaults.maxHistorySize)
+        let placeInLine = inlineMenuItemLimit
+        let placeInsideFolder = folderMenuItemLimit
+        let maxHistory = maximumHistoryCount
 
         // History title
         let labelItem = NSMenuItem(title: String(localized: "History"), action: nil)
@@ -244,12 +260,9 @@ private extension MenuManager {
         var subMenuCount = placeInLine
         var subMenuIndex = 1 + placeInLine
 
-        let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
-        let isShowImage = appStorage.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
-        let isShowColorCode = appStorage.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
         let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
-            sortsByCreatedAt: !reorderClipsAfterPasting,
-            includesThumbnailAsset: isShowImage || isShowColorCode,
+            sortsByCreatedAt: !reordersClipsAfterPasting,
+            includesThumbnailAsset: showsImagesInMenu || showsColorPreviewInMenu,
             limit: maxHistory
         )
         let currentSize = historyDetails.count
@@ -286,35 +299,26 @@ private extension MenuManager {
 
     func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int) -> NSMenuItem {
         let history = historyDetail.history
-        let isMarkWithNumber = appStorage.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
-        let isShowImage = appStorage.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
-        let isShowColorCode = appStorage.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
-        let addNumbericKeyEquivalents = appStorage.bool(forKey: Constants.UserDefaults.addNumericKeyEquivalents)
-
         var keyEquivalent = ""
-        if addNumbericKeyEquivalents && (index < kMaxKeyEquivalents) {
-            let isStartFromZero = appStorage.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero)
-
-            var shortCutNumber = (isStartFromZero) ? index : index + 1
+        if addsNumericKeyEquivalents && (index < kMaxKeyEquivalents) {
+            var shortCutNumber = startsMenuItemTitlesAtZero ? index : index + 1
             if shortCutNumber == kMaxKeyEquivalents {
                 shortCutNumber = 0
             }
             keyEquivalent = "\(shortCutNumber)"
         }
 
-        let titleWithMark = MonospacedDigitFormatter.numberedTitle(history.typedTitle, listNumber: listNumber, showsNumber: isMarkWithNumber)
+        let titleWithMark = MonospacedDigitFormatter.numberedTitle(history.typedTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
         let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = history.id
         menuItem.toolTip = history.toolTip
 
-        if isShowImage || isShowColorCode,
+        if showsImagesInMenu || showsColorPreviewInMenu,
            let thumbnailAsset = historyDetail.thumbnailAsset,
            let image = NSImage(data: thumbnailAsset.data),
-           (thumbnailAsset.kind == .image && isShowImage) || (thumbnailAsset.kind == .colorCode && isShowColorCode) {
-            let width = appStorage.integer(forKey: Constants.UserDefaults.thumbnailWidth)
-            let height = appStorage.integer(forKey: Constants.UserDefaults.thumbnailHeight)
-            menuItem.image = image.aspectFitImage(CGFloat(width), CGFloat(height))
+           (thumbnailAsset.kind == .image && showsImagesInMenu) || (thumbnailAsset.kind == .colorCode && showsColorPreviewInMenu) {
+            menuItem.image = image.aspectFitImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
         }
 
         return menuItem
@@ -359,15 +363,12 @@ private extension MenuManager {
     }
 
     func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int) -> NSMenuItem {
-        let isMarkWithNumber = appStorage.bool(forKey: Constants.UserDefaults.menuItemsAreMarkedWithNumbers)
-        let isShowIcon = appStorage.bool(forKey: Constants.UserDefaults.showIconInTheMenu)
-
-        let titleWithMark = MonospacedDigitFormatter.numberedTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, showsNumber: isMarkWithNumber)
+        let titleWithMark = MonospacedDigitFormatter.numberedTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
         let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
         menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.toolTip
-        menuItem.image = (isShowIcon) ? snippetIcon : nil
+        menuItem.image = showsIconsInMenu ? snippetIcon : nil
 
         return menuItem
     }
@@ -396,7 +397,7 @@ private extension MenuManager {
 // MARK: - Settings
 private extension MenuManager {
     func firstIndexOfMenuItems() -> NSInteger {
-        return appStorage.bool(forKey: Constants.UserDefaults.menuItemsTitleStartWithZero) ? 0 : 1
+        return startsMenuItemTitlesAtZero ? 0 : 1
     }
 }
 
