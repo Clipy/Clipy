@@ -70,8 +70,6 @@
 		C5D41A0C2FDB4A0C00EF30FB /* SQLiteDataMigratorTests+V1.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D41A092FDB4A0900EF30FB /* SQLiteDataMigratorTests+V1.swift */; };
 		C5D41A0D2FDB4A0D00EF30FB /* SQLiteDataMigratorTests+V2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D41A0A2FDB4A0A00EF30FB /* SQLiteDataMigratorTests+V2.swift */; };
 		C5D41A0E2FDB4A0E00EF30FB /* SQLiteDataMigratorTests+V3.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D41A0B2FDB4A0B00EF30FB /* SQLiteDataMigratorTests+V3.swift */; };
-		C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9D2FBA939E0083839F /* RxCocoa */; };
-		C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76D9F2FBA939E0083839F /* RxSwift */; };
 		C5D76DA52FBA98A90083839F /* AEXML in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DA42FBA98A90083839F /* AEXML */; };
 		C5D76DAB2FBA9D2E0083839F /* SwiftHEXColors in Frameworks */ = {isa = PBXBuildFile; productRef = C5D76DAA2FBA9D2E0083839F /* SwiftHEXColors */; };
 		C5E3D0512FB43570005D632A /* Screeen in Frameworks */ = {isa = PBXBuildFile; productRef = C5E3D0502FB43570005D632A /* Screeen */; };
@@ -345,8 +343,6 @@
 				C567A8903026DF030070292B /* Sharing in Frameworks */,
 				C5D76DA52FBA98A90083839F /* AEXML in Frameworks */,
 				FAC43E251B35DFD000C06102 /* AppKit.framework in Frameworks */,
-				C5D76DA02FBA939E0083839F /* RxSwift in Frameworks */,
-				C5D76D9E2FBA939E0083839F /* RxCocoa in Frameworks */,
 				FAC43E231B35DFC800C06102 /* Foundation.framework in Frameworks */,
 				C5D220A82FBD2655005CD45E /* RealmSwift in Frameworks */,
 				C5700B4C2FC5C3D500C8F965 /* Dependencies in Frameworks */,
@@ -939,7 +935,6 @@
 				C5D3A75D2FB86A0200C9DCB6 /* XCRemoteSwiftPackageReference "Magnet" */,
 				C5D3A7602FB86A1C00C9DCB6 /* XCRemoteSwiftPackageReference "KeyHolder" */,
 				C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
-				C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */,
 				C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */,
 				C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */,
 				C5A6BA722FBC5A6E00C8B9EB /* XCRemoteSwiftPackageReference "Sparkle" */,
@@ -1594,14 +1589,6 @@
 				minimumVersion = 4.3.0;
 			};
 		};
-		C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ReactiveX/RxSwift";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 6.10.2;
-			};
-		};
 		C5D76DA32FBA98A90083839F /* XCRemoteSwiftPackageReference "AEXML" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/tadija/AEXML";
@@ -1698,16 +1685,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5D3A7602FB86A1C00C9DCB6 /* XCRemoteSwiftPackageReference "KeyHolder" */;
 			productName = KeyHolder;
-		};
-		C5D76D9D2FBA939E0083839F /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-		C5D76D9F2FBA939E0083839F /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C5D76D9C2FBA939E0083839F /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
 		};
 		C5D76DA42FBA98A90083839F /* AEXML */ = {
 			isa = XCSwiftPackageProductDependency;
