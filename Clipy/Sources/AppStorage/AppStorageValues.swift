@@ -47,6 +47,10 @@ extension SharedKey where Self == AppStorageKey<KeyCombo?>.Default {
         ]
     }
 
+    static var editSnippetsKeyCombo: Self {
+        Self[.appStorage(AppStorageKeys.editSnippetsKeyCombo.rawValue), default: nil]
+    }
+
     static var clearHistoryKeyCombo: Self {
         Self[.appStorage(AppStorageKeys.clearHistoryKeyCombo.rawValue), default: nil]
     }

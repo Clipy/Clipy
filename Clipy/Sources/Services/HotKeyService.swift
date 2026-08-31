@@ -33,6 +33,8 @@ final class HotKeyService: NSObject {
     private var historyKeyCombo
     @Shared(.snippetKeyCombo)
     private var snippetKeyCombo
+    @Shared(.editSnippetsKeyCombo)
+    private var editSnippetsKeyCombo
     @Shared(.clearHistoryKeyCombo)
     private var clearHistoryKeyCombo
     @Shared(.folderKeyCombos)
@@ -51,6 +53,8 @@ extension HotKeyService {
         change(with: .history, keyCombo: historyKeyCombo)
         // Snippet menu
         change(with: .snippet, keyCombo: snippetKeyCombo)
+        // Edit Snippets
+        changeEditSnippetsKeyCombo(editSnippetsKeyCombo)
         // Clear History
         changeClearHistoryKeyCombo(clearHistoryKeyCombo)
     }
@@ -83,6 +87,19 @@ extension HotKeyService {
         guard let keyCombo = keyCombo else { return }
         let hotkey = HotKey(identifier: "ClearHistory", keyCombo: keyCombo) { [weak self] _ in
             self?.clipService.clearAllHistory()
+        }
+        hotkey.register()
+    }
+
+    func changeEditSnippetsKeyCombo(_ keyCombo: KeyCombo?) {
+        $editSnippetsKeyCombo.withLock { $0 = keyCombo }
+        // Reset hotkey
+        HotKeyCenter.shared.unregisterHotKey(with: "EditSnippets")
+        // Register new hotkey
+        guard let keyCombo = keyCombo else { return }
+        let hotkey = HotKey(identifier: "EditSnippets", keyCombo: keyCombo) { _ in
+            guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
+            appDelegate.showSnippetEditorWindow()
         }
         hotkey.register()
     }

@@ -17,6 +17,7 @@ enum AppStorageKeys: String {
     case mainKeyCombo
     case historyKeyCombo
     case snippetKeyCombo
+    case editSnippetsKeyCombo
     case clearHistoryKeyCombo
     case folderKeyCombos
 }
