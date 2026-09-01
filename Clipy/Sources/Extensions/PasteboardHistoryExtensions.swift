@@ -15,6 +15,16 @@ import Dependencies
 import Sharing
 
 extension PasteboardHistory {
+    func matchesSearch(_ query: String) -> Bool {
+        let searchableText = [title, ocrText]
+            .compactMap { $0 }
+            .joined(separator: " ")
+        let terms = query.split(whereSeparator: \.isWhitespace)
+        return terms.allSatisfy {
+            searchableText.range(of: String($0), options: [.caseInsensitive, .diacriticInsensitive]) != nil
+        }
+    }
+
     var typedTitle: String {
         let primaryType = pasteboardTypes.first
         let prefix: String?
