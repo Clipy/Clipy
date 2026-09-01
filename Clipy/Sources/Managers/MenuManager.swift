@@ -16,24 +16,23 @@ import Dependencies
 import RxCocoa
 import RxSwift
 
-final class MenuManager: NSObject {
-
+final class MenuManager: NSObject, NSSearchFieldDelegate, NSMenuDelegate {
     // MARK: - Properties
-    // Menus
     private var clipMenu: NSMenu?
     private var historyMenu: NSMenu?
     private var snippetMenu: NSMenu?
-    // StatusMenu
+    private weak var openMenu: NSMenu?
+    private var needsMenuRebuild = false
+    private var clipSearchField: NSSearchField?
+    private var historySearchField: NSSearchField?
     private lazy var statusBarItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
         item.menu = clipMenu
         return item
     }()
-    // Icon Cache
     private let folderIcon = NSImage(resource: .iconFolder)
     private let snippetIcon = NSImage(resource: .iconText)
-    // Other
     private let disposeBag = DisposeBag()
     private let kMaxKeyEquivalents = 10
 
@@ -46,6 +45,7 @@ final class MenuManager: NSObject {
     @Dependency(\.defaultAppStorage)
     private var appStorage
     private var cancellables: Set<AnyCancellable> = []
+    private var historyDetails = [PasteboardHistoryDetail]()
     private var snippetFolderDetails = [SnippetFolderDetail]()
 
     // MARK: - Enum Values
@@ -66,6 +66,32 @@ final class MenuManager: NSObject {
         bind()
     }
 
+    func controlTextDidChange(_ notification: Notification) {
+        guard let searchField = notification.object as? NSSearchField else { return }
+        if searchField === clipSearchField, let clipMenu {
+            rebuildClipMenu(clipMenu, query: searchField.stringValue)
+        } else if searchField === historySearchField, let historyMenu {
+            rebuildHistoryMenu(historyMenu, query: searchField.stringValue)
+        }
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        guard let searchField = searchField(for: menu) else { return }
+        openMenu = menu
+        searchField.stringValue = ""
+        rebuildSearchableMenu(menu, query: "")
+        RunLoop.current.perform(inModes: [.eventTracking]) { [weak searchField] in
+            searchField?.window?.makeFirstResponder(searchField)
+        }
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        searchField(for: menu)?.stringValue = ""
+        openMenu = nil
+        guard needsMenuRebuild else { return }
+        needsMenuRebuild = false
+        createClipMenu()
+    }
 }
 
 // MARK: - Popup Menu
@@ -174,29 +200,78 @@ private extension MenuManager {
 
 // MARK: - Menus
 private extension MenuManager {
-     func createClipMenu() {
+    func createClipMenu() {
+        guard openMenu == nil else {
+            needsMenuRebuild = true
+            return
+        }
         clipMenu = NSMenu(title: Constants.Application.name)
         historyMenu = NSMenu(title: Constants.Menu.history)
         snippetMenu = NSMenu(title: Constants.Menu.snippet)
 
-        addHistoryItems(clipMenu!)
-        addHistoryItems(historyMenu!)
-
-        addSnippetItems(clipMenu!, separateMenu: true, details: snippetFolderDetails)
+        historyDetails = fetchHistoryDetails()
+        clipSearchField = clipMenu?.addSearchField()
+        clipSearchField?.delegate = self
+        clipMenu?.delegate = self
+        historySearchField = historyMenu?.addSearchField()
+        historySearchField?.delegate = self
+        historyMenu?.delegate = self
+        rebuildClipMenu(clipMenu!, query: "")
+        rebuildHistoryMenu(historyMenu!, query: "")
         addSnippetItems(snippetMenu!, separateMenu: false, details: snippetFolderDetails)
 
-        clipMenu?.addItem(NSMenuItem.separator())
+        statusBarItem.menu = clipMenu
+    }
 
-        if appStorage.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
-            clipMenu?.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
+    func rebuildSearchableMenu(_ menu: NSMenu, query: String) {
+        if menu === clipMenu {
+            rebuildClipMenu(menu, query: query)
+        } else if menu === historyMenu {
+            rebuildHistoryMenu(menu, query: query)
+        }
+    }
+
+    func rebuildClipMenu(_ menu: NSMenu, query: String) {
+        removeItemsAfterSearchField(from: menu)
+        addHistoryItems(menu, query: query)
+        guard query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            menu.highlightingFirstItemIfPossible()
+            return
         }
 
-        clipMenu?.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
-        clipMenu?.addItem(NSMenuItem(title: String(localized: "Preferences"), action: #selector(AppDelegate.showPreferenceWindow)))
-        clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
+        addSnippetItems(menu, separateMenu: true, details: snippetFolderDetails)
+        menu.addItem(NSMenuItem.separator())
+        if appStorage.bool(forKey: Constants.UserDefaults.addClearHistoryMenuItem) {
+            menu.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
+        }
+        menu.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
+        menu.addItem(NSMenuItem(title: String(localized: "Preferences"), action: #selector(AppDelegate.showPreferenceWindow)))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
+    }
 
-        statusBarItem.menu = clipMenu
+    func rebuildHistoryMenu(_ menu: NSMenu, query: String) {
+        removeItemsAfterSearchField(from: menu)
+        addHistoryItems(menu, query: query)
+        if !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            menu.highlightingFirstItemIfPossible()
+        }
+    }
+
+    func removeItemsAfterSearchField(from menu: NSMenu) {
+        while menu.numberOfItems > 1 {
+            menu.removeItem(at: 1)
+        }
+    }
+
+    func searchField(for menu: NSMenu) -> NSSearchField? {
+        if menu === clipMenu {
+            return clipSearchField
+        }
+        if menu === historyMenu {
+            return historySearchField
+        }
+        return nil
     }
 
     func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
@@ -228,10 +303,10 @@ private extension MenuManager {
 
 // MARK: - Clips
 private extension MenuManager {
-    func addHistoryItems(_ menu: NSMenu) {
+    func addHistoryItems(_ menu: NSMenu, query: String) {
         let placeInLine = appStorage.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInline)
         let placeInsideFolder = appStorage.integer(forKey: Constants.UserDefaults.numberOfItemsPlaceInsideFolder)
-        let maxHistory = appStorage.integer(forKey: Constants.UserDefaults.maxHistorySize)
+        let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
 
         // History title
         let labelItem = NSMenuItem(title: String(localized: "History"), action: nil)
@@ -242,29 +317,32 @@ private extension MenuManager {
         let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = placeInLine
-        var subMenuIndex = 1 + placeInLine
+        var currentSubMenu: NSMenu?
 
-        let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
-        let isShowImage = appStorage.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
-        let isShowColorCode = appStorage.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
-        let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
-            sortsByCreatedAt: !reorderClipsAfterPasting,
-            includesThumbnailAsset: isShowImage || isShowColorCode,
-            limit: maxHistory
-        )
-        let currentSize = historyDetails.count
+        let filteredHistoryDetails = normalizedQuery.isEmpty
+            ? historyDetails
+            : historyDetails.filter { $0.history.matchesSearch(normalizedQuery) }
+        if filteredHistoryDetails.isEmpty, !normalizedQuery.isEmpty {
+            let noMatchesItem = NSMenuItem(title: String(localized: "No Matching Clipboard Items"), action: nil)
+            noMatchesItem.isEnabled = false
+            menu.addItem(noMatchesItem)
+            return
+        }
+
+        let currentSize = filteredHistoryDetails.count
         var i = 0
-        historyDetails.forEach { historyDetail in
-            if placeInLine < 1 || placeInLine - 1 < i {
+        filteredHistoryDetails.forEach { historyDetail in
+            if normalizedQuery.isEmpty && (placeInLine < 1 || placeInLine - 1 < i) {
                 // Folder
                 if i == subMenuCount {
                     let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder)
                     menu.addItem(subMenuItem)
+                    currentSubMenu = subMenuItem.submenu
                     listNumber = firstIndex
                 }
 
                 // Clip
-                if let subMenu = menu.item(at: subMenuIndex)?.submenu {
+                if let subMenu = currentSubMenu {
                     let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
                     subMenu.addItem(menuItem)
                     listNumber += 1
@@ -279,9 +357,19 @@ private extension MenuManager {
             i += 1
             if i == subMenuCount + placeInsideFolder {
                 subMenuCount += placeInsideFolder
-                subMenuIndex += 1
             }
         }
+    }
+
+    func fetchHistoryDetails() -> [PasteboardHistoryDetail] {
+        let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
+        let isShowImage = appStorage.bool(forKey: Constants.UserDefaults.showImageInTheMenu)
+        let isShowColorCode = appStorage.bool(forKey: Constants.UserDefaults.showColorPreviewInTheMenu)
+        return pasteboardHistoryRepository.fetchHistoryDetails(
+            sortsByCreatedAt: !reorderClipsAfterPasting,
+            includesThumbnailAsset: isShowImage || isShowColorCode,
+            limit: appStorage.integer(forKey: Constants.UserDefaults.maxHistorySize)
+        )
     }
 
     func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int) -> NSMenuItem {

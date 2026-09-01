@@ -141,17 +141,37 @@ struct PasteboardHistoryExtensionsTests {
             #expect(history.toolTip == nil)
         }
     }
+
+    @Test
+    func searchMatchesTitleIgnoringCaseAndDiacritics() {
+        let history = Self.pasteboardHistory(title: "R\u{00E9}sum\u{00E9} from Clipboard", pasteboardTypes: [.string])
+
+        #expect(history.matchesSearch("resume clipboard"))
+        #expect(!history.matchesSearch("resume image"))
+    }
+
+    @Test
+    func searchMatchesOCRText() {
+        let history = Self.pasteboardHistory(
+            title: "",
+            ocrText: "Invoice number 12345",
+            pasteboardTypes: [.png]
+        )
+
+        #expect(history.matchesSearch("invoice 12345"))
+    }
 }
 
 private extension PasteboardHistoryExtensionsTests {
     static func pasteboardHistory(
         title: String,
+        ocrText: String? = nil,
         pasteboardTypes: [NSPasteboard.PasteboardType]
     ) -> PasteboardHistory {
         PasteboardHistory(
             id: PasteboardHistory.ID(rawValue: UUID().uuidString),
             title: title,
-            ocrText: nil,
+            ocrText: ocrText,
             pasteboardTypes: pasteboardTypes,
             createdAt: 1,
             updateAt: 1,
