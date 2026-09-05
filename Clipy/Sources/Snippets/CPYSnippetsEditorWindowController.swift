@@ -18,6 +18,15 @@ import AEXML
 
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
+    private enum XML {
+        static let rootElement = "folders"
+        static let folderElement = "folder"
+        static let snippetElement = "snippet"
+        static let titleElement = "title"
+        static let snippetsElement = "snippets"
+        static let contentElement = "content"
+    }
+
     // MARK: - Properties
     static let sharedController = CPYSnippetsEditorWindowController(windowNibName: "CPYSnippetsEditorWindowController")
     @IBOutlet private weak var splitView: CPYSplitView!
@@ -150,7 +159,7 @@ extension CPYSnippetsEditorWindowController {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
-        panel.allowedFileTypes = [Constants.Xml.fileType]
+        panel.allowedContentTypes = [.xml]
         let returnCode = panel.runModal()
 
         if returnCode != NSApplication.ModalResponse.OK { return }
@@ -163,13 +172,13 @@ extension CPYSnippetsEditorWindowController {
             var options = AEXMLOptions()
             options.parserSettings.shouldTrimWhitespace = false
             let xmlDocument = try AEXMLDocument(xml: data, options: options)
-            let folders = xmlDocument[Constants.Xml.rootElement]
+            let folders = xmlDocument[XML.rootElement]
                 .children
                 .map { folderElement in
-                    let title = folderElement[Constants.Xml.titleElement].value ?? "untitled folder"
-                    let snippets = folderElement[Constants.Xml.snippetsElement][Constants.Xml.snippetElement]
+                    let title = folderElement[XML.titleElement].value ?? "untitled folder"
+                    let snippets = folderElement[XML.snippetsElement][XML.snippetElement]
                         .all?
-                        .map { (title: $0[Constants.Xml.titleElement].value ?? "untitled snippet", content: $0[Constants.Xml.contentElement].value ?? "") } ?? []
+                        .map { (title: $0[XML.titleElement].value ?? "untitled snippet", content: $0[XML.contentElement].value ?? "") } ?? []
                     return (title: title, snippets: snippets)
                 }
             guard let folderDetails = snippetRepository.insertFolders(folders) else {
@@ -185,26 +194,26 @@ extension CPYSnippetsEditorWindowController {
 
     @IBAction private func exportSnippetButtonTapped(_ sender: AnyObject) {
         let xmlDocument = AEXMLDocument()
-        let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
+        let rootElement = xmlDocument.addChild(name: XML.rootElement)
 
         folders.forEach { folder in
-            let folderElement = rootElement.addChild(name: Constants.Xml.folderElement)
+            let folderElement = rootElement.addChild(name: XML.folderElement)
 
-            folderElement.addChild(name: Constants.Xml.titleElement, value: folder.title)
+            folderElement.addChild(name: XML.titleElement, value: folder.title)
 
-            let snippetsElement = folderElement.addChild(name: Constants.Xml.snippetsElement)
+            let snippetsElement = folderElement.addChild(name: XML.snippetsElement)
             folder.snippets
                 .forEach { snippet in
-                    let snippetElement = snippetsElement.addChild(name: Constants.Xml.snippetElement)
-                    snippetElement.addChild(name: Constants.Xml.titleElement, value: snippet.title)
-                    snippetElement.addChild(name: Constants.Xml.contentElement, value: snippet.content)
+                    let snippetElement = snippetsElement.addChild(name: XML.snippetElement)
+                    snippetElement.addChild(name: XML.titleElement, value: snippet.title)
+                    snippetElement.addChild(name: XML.contentElement, value: snippet.content)
                 }
         }
 
         let panel = NSSavePanel()
         panel.accessoryView = nil
         panel.canSelectHiddenExtension = true
-        panel.allowedFileTypes = [Constants.Xml.fileType]
+        panel.allowedContentTypes = [.xml]
         panel.allowsOtherFileTypes = false
         panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
         panel.nameFieldStringValue = "snippets"
