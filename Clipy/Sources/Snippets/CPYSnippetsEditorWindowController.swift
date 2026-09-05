@@ -40,7 +40,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     @IBOutlet private weak var outlineView: NSOutlineView! {
         didSet {
             // Enable Drag and Drop
-            outlineView.registerForDraggedTypes([NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)])
+            outlineView.registerForDraggedTypes([DraggedData.pasteboardType])
         }
     }
 
@@ -291,12 +291,12 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
         if let folder = item as? EditorSnippetFolder, let index = folders.firstIndex(where: { $0.id == folder.id }) {
             let draggedData = DraggedData(type: .folder, folderID: folder.id, snippetID: nil, index: index)
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true) else { return nil }
-            pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            pasteboardItem.setData(data, forType: DraggedData.pasteboardType)
         } else if let snippet = item as? EditorSnippet, let folder = outlineView.parent(forItem: snippet) as? EditorSnippetFolder {
             guard let index = folder.snippets.firstIndex(where: { $0.id == snippet.id }) else { return nil }
             let draggedData = DraggedData(type: .snippet, folderID: folder.id, snippetID: snippet.id, index: index)
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true) else { return nil }
-            pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            pasteboardItem.setData(data, forType: DraggedData.pasteboardType)
         } else {
             return nil
         }
@@ -305,7 +305,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         let pasteboard = info.draggingPasteboard
-        guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return NSDragOperation() }
+        guard let data = pasteboard.data(forType: DraggedData.pasteboardType) else { return NSDragOperation() }
         guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return NSDragOperation() }
 
         switch draggedData.type {
@@ -330,7 +330,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         let pasteboard = info.draggingPasteboard
-        guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return false }
+        guard let data = pasteboard.data(forType: DraggedData.pasteboardType) else { return false }
         guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return false }
 
         switch draggedData.type {

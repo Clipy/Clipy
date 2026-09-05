@@ -22,15 +22,6 @@ struct Constants {
         #endif
     }
 
-    struct Common {
-        static let index = "index"
-        static let title = "title"
-        static let snippets = "snippets"
-        static let content = "content"
-        static let selector = "selector"
-        static let draggedDataType = "public.data"
-    }
-
     struct Xml {
         static let fileType = "xml"
         static let type = "type"

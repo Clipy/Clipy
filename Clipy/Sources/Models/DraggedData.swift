@@ -10,10 +10,11 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
-import Foundation
+import AppKit
 
 final class DraggedData: NSObject, NSSecureCoding {
     // MARK: - Properties
+    static let pasteboardType = NSPasteboard.PasteboardType(rawValue: "public.data")
     static let supportsSecureCoding: Bool = true
 
     let type: DragType
