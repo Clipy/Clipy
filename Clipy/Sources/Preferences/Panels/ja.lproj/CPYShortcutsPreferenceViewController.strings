@@ -16,3 +16,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Clear History:"; ObjectID = "f3b-Ht-X5w"; */
 "f3b-Ht-X5w.title" = "履歴をクリア:";
+
+/* Class = "NSTextFieldCell"; title = "Edit Snippets:"; ObjectID = "EdS-Lb-C01"; */
+"EdS-Lb-C01.title" = "スニペットを編集:";

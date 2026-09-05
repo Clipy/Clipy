@@ -16,3 +16,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Snippets:"; ObjectID = "fXr-ry-5ds"; */
 "fXr-ry-5ds.title" = "片断：";
+
+/* Class = "NSTextFieldCell"; title = "Edit Snippets:"; ObjectID = "EdS-Lb-C01"; */
+"EdS-Lb-C01.title" = "编辑片断：";
