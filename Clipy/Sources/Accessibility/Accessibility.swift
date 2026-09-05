@@ -48,8 +48,8 @@ enum Accessibility {
     static func showAccessibilityAuthenticationAlert() {
         let alert = NSAlert()
         alert.messageText = String(localized: "Please allow Accessibility")
-        alert.informativeText = String(localized: "To do this action please allow Accessibility in Security Privacy preferences located in System Preferences")
-        alert.addButton(withTitle: String(localized: "Open System Preferences"))
+        alert.informativeText = String(localized: "Allow Clipy in System Settings > Privacy & Security > Accessibility.")
+        alert.addButton(withTitle: String(localized: "Open System Settings"))
         NSApp.activate(ignoringOtherApps: true)
 
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
