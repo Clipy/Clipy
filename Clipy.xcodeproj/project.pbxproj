@@ -1507,7 +1507,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-sharing";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.8.0;
+				minimumVersion = 2.10.0;
 			};
 		};
 		C5700B4A2FC5C3D500C8F965 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
@@ -1515,7 +1515,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.15.0;
+				minimumVersion = 1.17.1;
 			};
 			traits = (
 				Clocks,
@@ -1527,7 +1527,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 12.17.0;
+				minimumVersion = 12.18.0;
 			};
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
@@ -1535,7 +1535,7 @@
 			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.10.0;
+				minimumVersion = 1.11.2;
 			};
 			traits = (
 				Tagged,
@@ -1546,7 +1546,7 @@
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.65.0;
+				minimumVersion = 0.65.1;
 			};
 		};
 		C5A6BA722FBC5A6E00C8B9EB /* XCRemoteSwiftPackageReference "Sparkle" */ = {
