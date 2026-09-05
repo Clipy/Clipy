@@ -192,8 +192,8 @@ private extension MenuManager {
 private extension MenuManager {
      func createClipMenu() {
         clipMenu = NSMenu(title: Constants.Application.name)
-        historyMenu = NSMenu(title: Constants.Menu.history)
-        snippetMenu = NSMenu(title: Constants.Menu.snippet)
+        historyMenu = NSMenu(title: MenuType.history.rawValue)
+        snippetMenu = NSMenu(title: MenuType.snippet.rawValue)
 
         addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)

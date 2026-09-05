@@ -22,12 +22,6 @@ struct Constants {
         #endif
     }
 
-    struct Menu {
-        static let clip = "ClipMenu"
-        static let history = "HistoryMenu"
-        static let snippet = "SnippetsMenu"
-    }
-
     struct Common {
         static let index = "index"
         static let title = "title"
