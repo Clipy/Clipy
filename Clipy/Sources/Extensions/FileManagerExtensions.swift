@@ -14,8 +14,9 @@ import Foundation
 
 extension FileManager {
     func removeLegacyHistoryCacheDirectory() throws {
+        guard let appName = Bundle.main.appName else { return }
         let url = try url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
-            .appending(path: Constants.Application.name, directoryHint: .isDirectory)
+            .appending(path: appName, directoryHint: .isDirectory)
         try removeItem(at: url)
     }
 }

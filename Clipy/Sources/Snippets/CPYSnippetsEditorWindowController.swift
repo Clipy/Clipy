@@ -18,6 +18,15 @@ import AEXML
 
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
+    private enum XML {
+        static let rootElement = "folders"
+        static let folderElement = "folder"
+        static let snippetElement = "snippet"
+        static let titleElement = "title"
+        static let snippetsElement = "snippets"
+        static let contentElement = "content"
+    }
+
     // MARK: - Properties
     static let sharedController = CPYSnippetsEditorWindowController(windowNibName: "CPYSnippetsEditorWindowController")
     @IBOutlet private weak var splitView: CPYSplitView!
@@ -40,7 +49,7 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     @IBOutlet private weak var outlineView: NSOutlineView! {
         didSet {
             // Enable Drag and Drop
-            outlineView.registerForDraggedTypes([NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)])
+            outlineView.registerForDraggedTypes([DraggedData.pasteboardType])
         }
     }
 
@@ -150,7 +159,7 @@ extension CPYSnippetsEditorWindowController {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
-        panel.allowedFileTypes = [Constants.Xml.fileType]
+        panel.allowedContentTypes = [.xml]
         let returnCode = panel.runModal()
 
         if returnCode != NSApplication.ModalResponse.OK { return }
@@ -163,13 +172,13 @@ extension CPYSnippetsEditorWindowController {
             var options = AEXMLOptions()
             options.parserSettings.shouldTrimWhitespace = false
             let xmlDocument = try AEXMLDocument(xml: data, options: options)
-            let folders = xmlDocument[Constants.Xml.rootElement]
+            let folders = xmlDocument[XML.rootElement]
                 .children
                 .map { folderElement in
-                    let title = folderElement[Constants.Xml.titleElement].value ?? "untitled folder"
-                    let snippets = folderElement[Constants.Xml.snippetsElement][Constants.Xml.snippetElement]
+                    let title = folderElement[XML.titleElement].value ?? "untitled folder"
+                    let snippets = folderElement[XML.snippetsElement][XML.snippetElement]
                         .all?
-                        .map { (title: $0[Constants.Xml.titleElement].value ?? "untitled snippet", content: $0[Constants.Xml.contentElement].value ?? "") } ?? []
+                        .map { (title: $0[XML.titleElement].value ?? "untitled snippet", content: $0[XML.contentElement].value ?? "") } ?? []
                     return (title: title, snippets: snippets)
                 }
             guard let folderDetails = snippetRepository.insertFolders(folders) else {
@@ -185,26 +194,26 @@ extension CPYSnippetsEditorWindowController {
 
     @IBAction private func exportSnippetButtonTapped(_ sender: AnyObject) {
         let xmlDocument = AEXMLDocument()
-        let rootElement = xmlDocument.addChild(name: Constants.Xml.rootElement)
+        let rootElement = xmlDocument.addChild(name: XML.rootElement)
 
         folders.forEach { folder in
-            let folderElement = rootElement.addChild(name: Constants.Xml.folderElement)
+            let folderElement = rootElement.addChild(name: XML.folderElement)
 
-            folderElement.addChild(name: Constants.Xml.titleElement, value: folder.title)
+            folderElement.addChild(name: XML.titleElement, value: folder.title)
 
-            let snippetsElement = folderElement.addChild(name: Constants.Xml.snippetsElement)
+            let snippetsElement = folderElement.addChild(name: XML.snippetsElement)
             folder.snippets
                 .forEach { snippet in
-                    let snippetElement = snippetsElement.addChild(name: Constants.Xml.snippetElement)
-                    snippetElement.addChild(name: Constants.Xml.titleElement, value: snippet.title)
-                    snippetElement.addChild(name: Constants.Xml.contentElement, value: snippet.content)
+                    let snippetElement = snippetsElement.addChild(name: XML.snippetElement)
+                    snippetElement.addChild(name: XML.titleElement, value: snippet.title)
+                    snippetElement.addChild(name: XML.contentElement, value: snippet.content)
                 }
         }
 
         let panel = NSSavePanel()
         panel.accessoryView = nil
         panel.canSelectHiddenExtension = true
-        panel.allowedFileTypes = [Constants.Xml.fileType]
+        panel.allowedContentTypes = [.xml]
         panel.allowsOtherFileTypes = false
         panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
         panel.nameFieldStringValue = "snippets"
@@ -291,12 +300,12 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
         if let folder = item as? EditorSnippetFolder, let index = folders.firstIndex(where: { $0.id == folder.id }) {
             let draggedData = DraggedData(type: .folder, folderID: folder.id, snippetID: nil, index: index)
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true) else { return nil }
-            pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            pasteboardItem.setData(data, forType: DraggedData.pasteboardType)
         } else if let snippet = item as? EditorSnippet, let folder = outlineView.parent(forItem: snippet) as? EditorSnippetFolder {
             guard let index = folder.snippets.firstIndex(where: { $0.id == snippet.id }) else { return nil }
             let draggedData = DraggedData(type: .snippet, folderID: folder.id, snippetID: snippet.id, index: index)
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: draggedData, requiringSecureCoding: true) else { return nil }
-            pasteboardItem.setData(data, forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType))
+            pasteboardItem.setData(data, forType: DraggedData.pasteboardType)
         } else {
             return nil
         }
@@ -305,7 +314,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
         let pasteboard = info.draggingPasteboard
-        guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return NSDragOperation() }
+        guard let data = pasteboard.data(forType: DraggedData.pasteboardType) else { return NSDragOperation() }
         guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return NSDragOperation() }
 
         switch draggedData.type {
@@ -330,7 +339,7 @@ extension CPYSnippetsEditorWindowController: NSOutlineViewDataSource {
 
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
         let pasteboard = info.draggingPasteboard
-        guard let data = pasteboard.data(forType: NSPasteboard.PasteboardType(rawValue: Constants.Common.draggedDataType)) else { return false }
+        guard let data = pasteboard.data(forType: DraggedData.pasteboardType) else { return false }
         guard let draggedData = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [DraggedData.self, NSUUID.self], from: data) as? DraggedData else { return false }
 
         switch draggedData.type {

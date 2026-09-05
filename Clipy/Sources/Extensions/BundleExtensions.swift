@@ -1,5 +1,5 @@
 //
-//  NSBundle+Version.swift
+//  BundleExtensions.swift
 //
 //  Clipy
 //  GitHub: https://github.com/clipy
@@ -13,6 +13,15 @@
 import Foundation
 
 extension Bundle {
+    var appName: String? {
+        guard let name = infoDictionary?["CFBundleName"] as? String else { return nil }
+        #if DEBUG
+        return name + "DEBUG"
+        #else
+        return name
+        #endif
+    }
+
     var appVersion: String? {
         return infoDictionary?["CFBundleShortVersionString"] as? String
     }
