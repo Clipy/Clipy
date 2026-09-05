@@ -11,22 +11,18 @@
 //
 
 import AppKit
-import Dependencies
 import Sharing
 
 extension String {
     var trimmedMenuTitle: String {
-        @Dependency(\.defaultAppStorage) var appStorage
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength
 
         var title = trimmingCharacters(in: .whitespacesAndNewlines)
         let firstLineEnd = title.firstIndex(where: \.isNewline) ?? title.endIndex
         title = String(title[..<firstLineEnd])
 
         let shortenSymbol = "..."
-        let maxMenuItemTitleLength = Swift.max(
-            appStorage.integer(forKey: Constants.UserDefaults.maxMenuItemTitleLength),
-            shortenSymbol.count
-        )
+        let maxMenuItemTitleLength = Swift.max(maximumMenuItemTitleLength, shortenSymbol.count)
         guard title.count > maxMenuItemTitleLength else {
             return title
         }

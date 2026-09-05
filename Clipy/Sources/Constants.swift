@@ -37,51 +37,6 @@ struct Constants {
         static let draggedDataType = "public.data"
     }
 
-    struct UserDefaults {
-        static let menuIconSize = "kCPYPrefMenuIconSizeKey"
-        static let maxHistorySize = "kCPYPrefMaxHistorySizeKey"
-        static let inputPasteCommand = "kCPYPrefInputPasteCommandKey"
-        static let showIconInTheMenu = "kCPYPrefShowIconInTheMenuKey"
-        static let numberOfItemsPlaceInline = "kCPYPrefNumberOfItemsPlaceInlineKey"
-        static let numberOfItemsPlaceInsideFolder  = "kCPYPrefNumberOfItemsPlaceInsideFolderKey"
-        static let maxMenuItemTitleLength = "kCPYPrefMaxMenuItemTitleLengthKey"
-        static let menuItemsTitleStartWithZero = "kCPYPrefMenuItemsTitleStartWithZeroKey"
-        static let reorderClipsAfterPasting = "kCPYPrefReorderClipsAfterPasting"
-        static let addClearHistoryMenuItem = "kCPYPrefAddClearHistoryMenuItemKey"
-        static let showAlertBeforeClearHistory = "kCPYPrefShowAlertBeforeClearHistoryKey"
-        static let menuItemsAreMarkedWithNumbers = "menuItemsAreMarkedWithNumbers"
-        static let showToolTipOnMenuItem = "showToolTipOnMenuItem"
-        static let showImageInTheMenu = "showImageInTheMenu"
-        static let addNumericKeyEquivalents = "addNumericKeyEquivalents"
-        static let maxLengthOfToolTip = "maxLengthOfToolTipKey"
-        static let loginItem = "loginItem"
-        static let suppressAlertForLoginItem = "suppressAlertForLoginItem"
-        static let showStatusItem = "kCPYPrefShowStatusItemKey"
-        static let thumbnailWidth = "thumbnailWidth"
-        static let thumbnailHeight = "thumbnailHeight"
-        static let overwriteSameHistory = "kCPYPrefOverwriteSameHistroy"
-        static let copySameHistory = "kCPYPrefCopySameHistroy"
-        static let suppressAlertForDeleteSnippet = "kCPYSuppressAlertForDeleteSnippet"
-        static let collectCrashReport = "kCPYCollectCrashReport"
-        static let showColorPreviewInTheMenu = "kCPYPrefShowColorPreviewInTheMenu"
-        static let ignoreConcealedPasteboardType = "kCPYPrefIgnoreConcealedPasteboardType"
-    }
-
-    struct Beta {
-        static let pastePlainText = "kCPYBetaPastePlainText"
-        static let pastePlainTextModifier = "kCPYBetaPastePlainTextModifier"
-        static let deleteHistory = "kCPYBetaDeleteHistory"
-        static let deleteHistoryModifier = "kCPYBetaDeleteHistoryModifier"
-        static let pasteAndDeleteHistory = "kCPYBetaPasteAndDeleteHistory"
-        static let pasteAndDeleteHistoryModifier = "kCPYBetapasteAndDeleteHistoryModifier"
-        static let observerScreenshot = "kCPYBetaObserveScreenshot"
-    }
-
-    struct Update {
-        static let enableAutomaticCheck = "kCPYEnableAutomaticCheckKey"
-        static let checkInterval = "kCPYUpdateCheckIntervalKey"
-    }
-
     struct Xml {
         static let fileType = "xml"
         static let type = "type"

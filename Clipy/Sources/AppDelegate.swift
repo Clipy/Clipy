@@ -12,10 +12,9 @@
 
 import Cocoa
 import Clocks
+import Combine
 import Dependencies
 import Magnet
-import RxCocoa
-import RxSwift
 import Screeen
 import ServiceManagement
 import Sharing
@@ -24,12 +23,12 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver(searchDirectoryPaths: AppDelegate.screenshotSearchDirectoryPaths())
-    private let disposeBag = DisposeBag()
+    private var cancellables: Set<AnyCancellable> = []
 
     @Dependency(\.context)
     var context
-    @Dependency(\.defaultAppStorage)
-    var appStorage
+    @Dependency(\.mainQueue)
+    private var mainQueue
     @Dependency(\.excludeAppService)
     private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
@@ -48,6 +47,19 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var menuManager
     @Dependency(\.sparkle)
     private var sparkle
+
+    @Shared(.isLaunchAtLogin)
+    private var isLaunchAtLogin
+    @Shared(.suppressesLoginItemAlert)
+    private var suppressesLoginItemAlert
+    @Shared(.pastesAutomatically)
+    private var pastesAutomatically
+    @Shared(.maximumHistoryCount)
+    private var maximumHistoryCount
+    @Shared(.reordersClipsAfterPasting)
+    private var reordersClipsAfterPasting
+    @Shared(.observesScreenshots)
+    private var observesScreenshots
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -110,13 +122,11 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
         //  Launch on system startup
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
-            appStorage.set(true, forKey: Constants.UserDefaults.loginItem)
-            appStorage.synchronize()
+            $isLaunchAtLogin.withLock { $0 = true }
         }
         // Do not show this message again
         if alert.suppressionButton?.state == NSControl.StateValue.on {
-            appStorage.set(true, forKey: Constants.UserDefaults.suppressAlertForLoginItem)
-            appStorage.synchronize()
+            $suppressesLoginItemAlert.withLock { $0 = true }
         }
     }
 }
@@ -125,22 +135,20 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // UserDefaults
-        CPYUtilities.registerUserDefaultKeys(appStorage)
+        guard !isTesting else { return }
 
-        guard context != .test else { return }
-
+        AppStorageValues.register()
         AppMigrator().run()
 
         // SDKs
         firebase.configure()
         // Check Accessibility Permission
-        if appStorage.bool(forKey: Constants.UserDefaults.inputPasteCommand) {
+        if pastesAutomatically {
             Accessibility.isAccessibilityEnabled(isPrompt: true)
         }
 
         // Show Login Item
-        if !appStorage.bool(forKey: Constants.UserDefaults.loginItem) && !appStorage.bool(forKey: Constants.UserDefaults.suppressAlertForLoginItem) {
+        if !isLaunchAtLogin && !suppressesLoginItemAlert {
             promptToAddLoginItems()
         }
 
@@ -166,11 +174,9 @@ extension AppDelegate: NSApplicationDelegate {
 
             for await _ in continuousClock.timer(interval: .seconds(60)) {
                 guard let self else { return }
-                let maxHistorySize = appStorage.integer(forKey: Constants.UserDefaults.maxHistorySize)
-                let reorderClipsAfterPasting = appStorage.bool(forKey: Constants.UserDefaults.reorderClipsAfterPasting)
                 pasteboardHistoryRepository.deleteOverflowingHistories(
-                    sortsByCreatedAt: !reorderClipsAfterPasting,
-                    maxHistorySize: maxHistorySize
+                    sortsByCreatedAt: !reordersClipsAfterPasting,
+                    maxHistorySize: maximumHistoryCount
                 )
             }
         }
@@ -182,18 +188,17 @@ extension AppDelegate: NSApplicationDelegate {
 private extension AppDelegate {
     func bind() {
         // Accessibility Permission
-        appStorage.rx.observe(Bool.self, Constants.UserDefaults.inputPasteCommand, options: [.new], retainSelf: false)
-            .compactMap { $0 }
-            .distinctUntilChanged()
+        $pastesAutomatically.changes()
             .filter { $0 }
-            .subscribe(onNext: { _ in
+            .receive(on: mainQueue)
+            .sink { _ in
                 Accessibility.isAccessibilityEnabled(isPrompt: true)
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
         // Login Item
-        appStorage.rx.observe(Bool.self, Constants.UserDefaults.loginItem, retainSelf: false)
-            .compactMap { $0 }
-            .subscribe(onNext: { isEnabled in
+        $isLaunchAtLogin.changes(includingInitialValue: true)
+            .receive(on: mainQueue)
+            .sink { isEnabled in
                 if isEnabled {
                     guard SMAppService.mainApp.status != .enabled else { return }
                     try? SMAppService.mainApp.register()
@@ -201,24 +206,23 @@ private extension AppDelegate {
                     guard SMAppService.mainApp.status != .notRegistered else { return }
                     try? SMAppService.mainApp.unregister()
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
         // Observe Screenshot
-        let observerScreenshot = appStorage.rx.observe(Bool.self, Constants.Beta.observerScreenshot, retainSelf: false)
-            .compactMap { $0 }
-            .share(replay: 1)
-        observerScreenshot
-            .subscribe(onNext: { [weak self] enabled in
+        $observesScreenshots.changes(includingInitialValue: true)
+            .receive(on: mainQueue)
+            .sink { [weak self] enabled in
                 self?.screenshotObserver.isEnabled = enabled
-            })
-            .disposed(by: disposeBag)
-        observerScreenshot
+            }
+            .store(in: &cancellables)
+        $observesScreenshots.changes(includingInitialValue: true)
             .filter { $0 }
-            .take(1)
-            .subscribe(onNext: { [weak self] _ in
+            .first()
+            .receive(on: mainQueue)
+            .sink { [weak self] _ in
                 self?.screenshotObserver.start()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
     }
 }
 

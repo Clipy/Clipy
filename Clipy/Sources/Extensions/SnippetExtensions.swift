@@ -11,16 +11,15 @@
 //
 
 import AppKit
-import Dependencies
 import Sharing
 
 extension Snippet {
     var toolTip: String? {
-        @Dependency(\.defaultAppStorage) var appStorage
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems
+        @Shared(.maximumToolTipLength) var maximumToolTipLength
 
-        guard appStorage.bool(forKey: Constants.UserDefaults.showToolTipOnMenuItem) else { return nil }
+        guard showsToolTipsOnMenuItems else { return nil }
 
-        let maxLengthOfToolTip = appStorage.integer(forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        return String(content.prefix(maxLengthOfToolTip))
+        return String(content.prefix(maximumToolTipLength))
     }
 }

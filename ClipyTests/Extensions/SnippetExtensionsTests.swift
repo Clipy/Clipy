@@ -29,31 +29,24 @@ struct SnippetExtensionsTests {
 
     @Test
     func toolTipShowsFullContentWhenEnabled() {
-        withDependencies {
-            $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        } operation: {
-            #expect(snippet.toolTip == "Snippet content")
-        }
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems = true
+        @Shared(.maximumToolTipLength) var maximumToolTipLength = 20
+
+        #expect(snippet.toolTip == "Snippet content")
     }
 
     @Test
     func toolTipShortensWhenEnabled() {
-        withDependencies {
-            $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-            $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        } operation: {
-            #expect(snippet.toolTip == "Snippet c")
-        }
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems = true
+        @Shared(.maximumToolTipLength) var maximumToolTipLength = 9
+
+        #expect(snippet.toolTip == "Snippet c")
     }
 
     @Test
     func toolTipIsNilWhenDisabled() {
-        withDependencies {
-            $0.defaultAppStorage.set(false, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-            $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        } operation: {
-            #expect(snippet.toolTip == nil)
-        }
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems = false
+
+        #expect(snippet.toolTip == nil)
     }
 }
