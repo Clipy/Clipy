@@ -1610,7 +1610,7 @@
 			repositoryURL = "https://github.com/Clipy/Screeen";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.1.0;
+				minimumVersion = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Clipy/Screeen",
       "state" : {
-        "revision" : "357a72be0060765a8e93b9a70b283fc63c75f4a9",
-        "version" : "2.1.0"
+        "revision" : "f8f4bfa6cb38cb69ec1ee104fb5ad949a92b2ae3",
+        "version" : "3.0.0"
       }
     },
     {
