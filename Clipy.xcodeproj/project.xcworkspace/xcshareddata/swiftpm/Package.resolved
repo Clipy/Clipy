@@ -1,5 +1,5 @@
 {
-  "originHash" : "4a084032b1efd705db1e8abff8c52bae24b34e8f68dedc5fe5fe57a734277718",
+  "originHash" : "3d18214ed5f6677424556e4a9d8a8162d382c86fafad9f33b7738e8d20e60773",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -197,6 +197,15 @@
       "state" : {
         "revision" : "f8f4bfa6cb38cb69ec1ee104fb5ad949a92b2ae3",
         "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "settings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Settings",
+      "state" : {
+        "revision" : "f41475771f65379ca10852c95119a7f53f0de5a5",
+        "version" : "3.1.2"
       }
     },
     {

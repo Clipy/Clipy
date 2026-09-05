@@ -50,6 +50,7 @@
 		C576AD7C2FBD345000B71213 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C576AD7B2FBD345000B71213 /* Localizable.xcstrings */; };
 		C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = C587AF502FBF4E040043D5E7 /* SQLiteData */; };
 		C58E0A822FDAB5B100B3A901 /* ClipyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58E0A812FDAB5B100B3A901 /* ClipyApp.swift */; };
+		C58E0AA12FDB000000000001 /* Settings in Frameworks */ = {isa = PBXBuildFile; productRef = C58E0AA32FDB000000000001 /* Settings */; };
 		C599B2323015B12600F563A6 /* Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C599B2313015B12300F563A6 /* Sparkle.swift */; };
 		C5A10002303A000100000001 /* SharedExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A10001303A000100000001 /* SharedExtensions.swift */; };
 		C5A10004303A000100000001 /* SharedExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A10003303A000100000001 /* SharedExtensionsTests.swift */; };
@@ -331,6 +332,7 @@
 		FAC43DC31B35D8B100C06102 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				C58E0AA12FDB000000000001 /* Settings in Frameworks */,
 				C5A67BCC2FED00E10015A0DE /* DependenciesMacros in Frameworks */,
 				C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */,
 				C5E3D0512FB43570005D632A /* Screeen in Frameworks */,
@@ -857,6 +859,7 @@
 			);
 			name = Clipy;
 			packageProductDependencies = (
+				C58E0AA32FDB000000000001 /* Settings */,
 				C5700B4B2FC5C3D500C8F965 /* Dependencies */,
 				C53FC6BF2FCCA1C400219A25 /* Collections */,
 				C574472B2FD13ADF000D64D3 /* FirebaseCrashlytics */,
@@ -930,6 +933,7 @@
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			packageReferences = (
+				C58E0AA22FDB000000000001 /* XCRemoteSwiftPackageReference "Settings" */,
 				C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */,
 				C5D3A75A2FB869EA00C9DCB6 /* XCRemoteSwiftPackageReference "sauce" */,
 				C5D3A75D2FB86A0200C9DCB6 /* XCRemoteSwiftPackageReference "Magnet" */,
@@ -1541,6 +1545,14 @@
 				Tagged,
 			);
 		};
+		C58E0AA22FDB000000000001 /* XCRemoteSwiftPackageReference "Settings" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Settings";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.2;
+			};
+		};
 		C5A4B2002FC9D76000B71510 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
@@ -1650,6 +1662,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */;
 			productName = SQLiteData;
+		};
+		C58E0AA32FDB000000000001 /* Settings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C58E0AA22FDB000000000001 /* XCRemoteSwiftPackageReference "Settings" */;
+			productName = Settings;
 		};
 		C5A4B2012FC9D76000B71510 /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
