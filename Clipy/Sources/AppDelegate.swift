@@ -137,7 +137,6 @@ extension AppDelegate: NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard !isTesting else { return }
 
-        AppStorageValues.register()
         AppMigrator().run()
 
         // SDKs
