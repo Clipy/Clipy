@@ -14,14 +14,6 @@ import Foundation
 
 struct Constants {
 
-    struct Application {
-        #if DEBUG
-            static let name = "ClipyDEBUG"
-        #else
-            static let name = "Clipy"
-        #endif
-    }
-
     struct Xml {
         static let fileType = "xml"
         static let type = "type"

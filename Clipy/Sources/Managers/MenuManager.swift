@@ -25,7 +25,7 @@ final class MenuManager: NSObject {
     // StatusMenu
     private lazy var statusBarItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.toolTip = "\(Constants.Application.name)\(Bundle.main.appVersion ?? "")"
+        item.button?.toolTip = Bundle.main.appName
         item.menu = clipMenu
         return item
     }()
@@ -191,7 +191,7 @@ private extension MenuManager {
 // MARK: - Menus
 private extension MenuManager {
      func createClipMenu() {
-        clipMenu = NSMenu(title: Constants.Application.name)
+        clipMenu = NSMenu(title: Bundle.main.appName ?? "")
         historyMenu = NSMenu(title: MenuType.history.rawValue)
         snippetMenu = NSMenu(title: MenuType.snippet.rawValue)
 
