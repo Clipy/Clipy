@@ -110,6 +110,7 @@ struct AppStorageValuesTests {
         @Shared(.historyKeyCombo) var historyKeyCombo
         @Shared(.snippetKeyCombo) var snippetKeyCombo
         @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
+        @Shared(.pasteSecondHistoryItemKeyCombo) var pasteSecondHistoryItemKeyCombo
         @Shared(.folderKeyCombos) var folderKeyCombos
 
         let defaultMainKeyCombo = try #require(mainKeyCombo)
@@ -125,6 +126,7 @@ struct AppStorageValuesTests {
         #expect(defaultSnippetKeyCombo.modifiers == 768)
 
         #expect(clearHistoryKeyCombo == nil)
+        #expect(pasteSecondHistoryItemKeyCombo == nil)
         #expect(folderKeyCombos.isEmpty)
     }
 

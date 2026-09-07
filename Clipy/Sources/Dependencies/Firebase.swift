@@ -23,6 +23,7 @@ struct Firebase {
     enum Event {
         case popUpMenu(MenuType)
         case popUpSnippetFolderMenu
+        case pasteSecondHistoryItem
 
         var name: String {
             switch self {
@@ -30,13 +31,15 @@ struct Firebase {
                 return "pop_up_menu"
             case .popUpSnippetFolderMenu:
                 return "pop_up_snippet_folder_menu"
+            case .pasteSecondHistoryItem:
+                return "paste_second_history_item"
             }
         }
         var parameters: [String: Any]? {
             switch self {
             case .popUpMenu(let type):
                 return ["type": type.rawValue]
-            case .popUpSnippetFolderMenu:
+            case .popUpSnippetFolderMenu, .pasteSecondHistoryItem:
                 return nil
             }
         }
