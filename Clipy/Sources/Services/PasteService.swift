@@ -28,6 +28,8 @@ final class PasteService {
 
     @Dependency(\.clipService)
     private var clipService
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
 
     @Shared(.pastesPlainTextWithModifier)
     private var pastesPlainTextWithModifier
@@ -43,6 +45,8 @@ final class PasteService {
     private var pasteAndDeleteHistoryModifier
     @Shared(.pastesAutomatically)
     private var pastesAutomatically
+    @Shared(.reordersClipsAfterPasting)
+    private var reordersClipsAfterPasting
 
     private var isPastePlainText: Bool {
         guard pastesPlainTextWithModifier else { return false }
@@ -104,6 +108,26 @@ extension PasteService {
         }
     }
 
+    /// Pastes the history item at `index` (0 = most recent) using the same ordering as the history menu.
+    /// Modifier actions (plain text, delete) are skipped because the triggering hotkey's own modifiers are still held.
+    /// Returns `false` when no item exists at `index`.
+    @discardableResult
+    func pasteHistoryItem(at index: Int) -> Bool {
+        let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
+            sortsByCreatedAt: !reordersClipsAfterPasting,
+            includesThumbnailAsset: false,
+            limit: index + 1
+        )
+        guard historyDetails.indices.contains(index),
+              let content = pasteboardHistoryRepository.fetchContent(id: historyDetails[index].history.id) else {
+            NSSound.beep()
+            return false
+        }
+        writeToPasteboard(content)
+        paste()
+        return true
+    }
+
     func copyToPasteboard(with string: String) {
         lock.lock(); defer { lock.unlock() }
 
@@ -119,6 +143,12 @@ extension PasteService {
             copyToPasteboard(with: content.stringValue ?? "")
             return
         }
+
+        writeToPasteboard(content)
+    }
+
+    private func writeToPasteboard(_ content: PasteboardContent) {
+        lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
         content.writeObjects(to: pasteboard)
