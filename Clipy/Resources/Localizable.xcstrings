@@ -322,7 +322,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Редагувати фрагменти"
+            "value" : "Редагувати сніпети"
           }
         }
       }
@@ -662,7 +662,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Введіть вміст фрагмента"
+            "value" : "Введіть вміст сніпета"
           }
         }
       }
@@ -795,7 +795,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Клавіші"
+            "value" : "Комбінація клавіш"
           }
         }
       }
@@ -835,7 +835,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Фрагмент"
+            "value" : "Сніпет"
           }
         }
       }

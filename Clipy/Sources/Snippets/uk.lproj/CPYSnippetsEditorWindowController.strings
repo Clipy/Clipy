@@ -1,8 +1,8 @@
 /* Class = "NSWindow"; title = "Clipy - Snippets Editor"; ObjectID = "QvC-M9-y7g"; */
-"QvC-M9-y7g.title" = "Clipy — Редактор фрагментів";
+"QvC-M9-y7g.title" = "Clipy — Редактор сніпетів";
 
 /* Class = "NSTextFieldCell"; title = "Add Snippet"; ObjectID = "xPC-Uv-z03"; */
-"xPC-Uv-z03.title" = "Додати фрагмент";
+"xPC-Uv-z03.title" = "Додати сніпет";
 
 /* Class = "NSTextFieldCell"; title = "Add Folder"; ObjectID = "hoO-RC-sTG"; */
 "hoO-RC-sTG.title" = "Додати папку";
@@ -26,4 +26,4 @@
 "rI9-rT-YTs.title" = "Назва папки";
 
 /* Class = "NSTextFieldCell"; title = "Shortcut"; ObjectID = "pfw-sA-4aA"; */
-"pfw-sA-4aA.title" = "Клавіші";
+"pfw-sA-4aA.title" = "Комбінація клавіш";

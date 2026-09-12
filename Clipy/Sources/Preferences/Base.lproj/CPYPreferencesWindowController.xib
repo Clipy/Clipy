@@ -71,7 +71,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="emt-MG-SUM">
                                         <rect key="frame" x="1" y="8" width="48" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="General" id="qS1-uo-9im">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.16470588235294117" green="0.51764705882352935" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -115,7 +115,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GXW-AF-We2">
                                         <rect key="frame" x="1" y="8" width="48" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Menu" id="vEM-JU-92T">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.26666666666666666" green="0.26666666666666666" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -159,7 +159,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Atd-Sw-OzP">
                                         <rect key="frame" x="1" y="8" width="48" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Type" id="avh-w8-RcC">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -203,7 +203,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xXO-mt-VmD">
                                         <rect key="frame" x="1" y="8" width="48" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Exclude" id="odU-xs-hZL">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -247,7 +247,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1CN-v1-FRq">
                                         <rect key="frame" x="1" y="8" width="56" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Shortcuts" id="qx8-Vm-eow">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -291,7 +291,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bGH-iV-ocf">
                                         <rect key="frame" x="1" y="8" width="49" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Updates" id="N5e-ba-0Q0">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -335,7 +335,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CsY-pN-2dE">
                                         <rect key="frame" x="1" y="8" width="48" height="12"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Beta" id="Fxs-BH-hPx">
-                                            <font key="font" size="9" name="HiraKakuProN-W6"/>
+                                            <font key="font" metaFont="systemBold" size="9"/>
                                             <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
