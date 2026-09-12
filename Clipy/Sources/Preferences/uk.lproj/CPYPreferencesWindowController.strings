@@ -1,0 +1,26 @@
+/* Class = "NSWindow"; title = "Clipy - Setting"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Clipy — Налаштування";
+
+/* Class = "NSTextFieldCell"; title = "No Pane is Selected."; ObjectID = "Vy6-Ui-lLf"; */
+"Vy6-Ui-lLf.title" = "Панель не вибрано.";
+
+/* Class = "NSTextFieldCell"; title = "General"; ObjectID = "qS1-uo-9im"; */
+"qS1-uo-9im.title" = "Загальні";
+
+/* Class = "NSTextFieldCell"; title = "Menu"; ObjectID = "vEM-JU-92T"; */
+"vEM-JU-92T.title" = "Меню";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "avh-w8-RcC"; */
+"avh-w8-RcC.title" = "Типи";
+
+/* Class = "NSTextFieldCell"; title = "Exclude"; ObjectID = "odU-xs-hZL"; */
+"odU-xs-hZL.title" = "Винятки";
+
+/* Class = "NSTextFieldCell"; title = "Shortcuts"; ObjectID = "qx8-Vm-eow"; */
+"qx8-Vm-eow.title" = "Клавіші";
+
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "N5e-ba-0Q0"; */
+"N5e-ba-0Q0.title" = "Оновлення";
+
+/* Class = "NSTextFieldCell"; title = "Beta"; ObjectID = "Fxs-BH-hPx"; */
+"Fxs-BH-hPx.title" = "Бета";

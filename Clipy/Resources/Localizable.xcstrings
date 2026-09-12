@@ -32,6 +32,12 @@
             "state" : "translated",
             "value" : "添加"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додати"
+          }
         }
       }
     },
@@ -65,6 +71,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "确定要删除此项？"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ви впевнені, що хочете видалити цей елемент?"
           }
         }
       }
@@ -100,6 +112,12 @@
             "state" : "translated",
             "value" : "确定想要清空剪贴板历史？"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ви впевнені, що хочете очистити історію буфера обміну?"
+          }
         }
       }
     },
@@ -133,6 +151,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "取消"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скасувати"
           }
         }
       }
@@ -168,6 +192,12 @@
             "state" : "translated",
             "value" : "清除历史"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистити історію"
+          }
         }
       }
     },
@@ -202,6 +232,12 @@
             "state" : "translated",
             "value" : "删除"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Видалити елемент"
+          }
         }
       }
     },
@@ -235,6 +271,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不要打开"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не запускати"
           }
         }
       }
@@ -275,6 +317,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑片断..."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Редагувати фрагменти"
           }
         }
       }
@@ -317,6 +365,12 @@
             "state" : "translated",
             "value" : "通用"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Загальні"
+          }
         }
       }
     },
@@ -350,6 +404,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "历史"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Історія"
           }
         }
       }
@@ -385,6 +445,12 @@
             "state" : "translated",
             "value" : "系统启动时打开 Clipy?"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускати Clipy під час запуску системи?"
+          }
         }
       }
     },
@@ -418,6 +484,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系统启动时打开"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускати разом із системою"
           }
         }
       }
@@ -460,6 +532,12 @@
             "state" : "translated",
             "value" : "菜单"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Меню"
+          }
         }
       }
     },
@@ -493,6 +571,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open System Preferences"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити системні параметри"
           }
         }
       }
@@ -534,6 +618,12 @@
             "state" : "translated",
             "value" : "Please allow Accessibility."
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надайте дозвіл на доступність"
+          }
         }
       }
     },
@@ -567,6 +657,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请填写代码段的内容"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введіть вміст фрагмента"
           }
         }
       }
@@ -608,6 +704,12 @@
             "state" : "translated",
             "value" : "偏好设置..."
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування"
+          }
         }
       }
     },
@@ -641,6 +743,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出 Clipy"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Завершити Clipy"
           }
         }
       }
@@ -683,6 +791,12 @@
             "state" : "translated",
             "value" : "快捷键"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Клавіші"
+          }
         }
       }
     },
@@ -716,6 +830,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "片断"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фрагмент"
           }
         }
       }
@@ -756,6 +876,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要执行此操作，请在“系统设置”>“隐私与安全性”>“辅助功能”中允许 Clipy 访问。\n\n如果仍显示此提示，请从列表中移除 Clipy，然后重新添加。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Для виконання цієї дії надайте Clipy дозвіл на доступність у системних параметрах безпеки й приватності."
           }
         }
       }
@@ -798,6 +924,12 @@
             "state" : "translated",
             "value" : "更新"
           }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оновлення"
+          }
         }
       }
     },
@@ -837,6 +969,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如有需要可在偏好设置中修改本设置。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цей параметр можна змінити в налаштуваннях"
           }
         }
       }
