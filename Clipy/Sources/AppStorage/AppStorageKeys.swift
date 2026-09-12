@@ -53,5 +53,6 @@ enum AppStorageKeys: String {
     case historyKeyCombo
     case snippetKeyCombo
     case clearHistoryKeyCombo
+    case pasteSecondHistoryItemKeyCombo
     case folderKeyCombos
 }
