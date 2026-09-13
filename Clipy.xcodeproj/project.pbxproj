@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DC78C62401491B956E0499 /* SettingsScrollView.swift */; };
 		8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */; };
 		8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23265781AF16C4883961248E /* SettingsNumberField.swift */; };
 		A2FFAB88C156B78D19847F20 /* ShortcutRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */; };
@@ -155,6 +156,7 @@
 		54ADE1022008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		74F0D29DD7FF0C7A6FA08459 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSettingsView.swift; sourceTree = "<group>"; };
+		82DC78C62401491B956E0499 /* SettingsScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScrollView.swift; sourceTree = "<group>"; };
 		8460049E1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		A07D83962FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutSettingsView.swift; sourceTree = "<group>"; };
@@ -368,6 +370,7 @@
 		C51491E43054F18800AAFA3F /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				82DC78C62401491B956E0499 /* SettingsScrollView.swift */,
 				F51111203040000100000001 /* SettingsGrid.swift */,
 				F51111223040000100000001 /* SettingsSection.swift */,
 				23265781AF16C4883961248E /* SettingsNumberField.swift */,
@@ -969,6 +972,7 @@
 			isa = PBXSourcesBuildPhase;
 			files = (
 				F51111213040000100000001 /* SettingsGrid.swift in Sources */,
+				3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */,
 				F51111233040000100000001 /* SettingsSection.swift in Sources */,
 				C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */,
 				FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */,

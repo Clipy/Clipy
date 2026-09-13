@@ -55,7 +55,9 @@ enum SettingsPane: String, CaseIterable {
             title: title,
             toolbarIcon: NSImage(systemSymbolName: symbol, accessibilityDescription: title)!
         ) {
-            content
+            SettingsScrollView {
+                content
+            }
         }
     }
 
