@@ -95,6 +95,7 @@
 		C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */; };
 		E5AB9965DF2E3CC8DF98D410 /* ShortcutSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */; };
 		E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */; };
+		F1753D7A92A504F63D87EC71 /* ExcludedApplicationsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85E5FFA18274CF0DFB44E1E /* ExcludedApplicationsSettingsView.swift */; };
 		F51111123040000100000001 /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F51111113040000100000001 /* Settings.xcstrings */; };
 		F51111213040000100000001 /* SettingsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51111203040000100000001 /* SettingsGrid.swift */; };
 		F51111233040000100000001 /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51111223040000100000001 /* SettingsSection.swift */; };
@@ -272,6 +273,7 @@
 		C5F1AD0230190005AA110002 /* TextRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizer.swift; sourceTree = "<group>"; };
 		C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizerTests.swift; sourceTree = "<group>"; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
+		C85E5FFA18274CF0DFB44E1E /* ExcludedApplicationsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcludedApplicationsSettingsView.swift; sourceTree = "<group>"; };
 		F51111113040000100000001 /* Settings.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Settings.xcstrings; sourceTree = "<group>"; };
 		F51111203040000100000001 /* SettingsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGrid.swift; sourceTree = "<group>"; };
 		F51111223040000100000001 /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
@@ -414,6 +416,7 @@
 				74F0D29DD7FF0C7A6FA08459 /* GeneralSettingsView.swift */,
 				7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */,
 				3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */,
+				C85E5FFA18274CF0DFB44E1E /* ExcludedApplicationsSettingsView.swift */,
 				BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */,
 				06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */,
 				22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */,
@@ -1083,6 +1086,7 @@
 				F51111233040000100000001 /* SettingsSection.swift in Sources */,
 				C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */,
 				FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */,
+				F1753D7A92A504F63D87EC71 /* ExcludedApplicationsSettingsView.swift in Sources */,
 				C38C356A970DED048CF311FF /* GeneralSettingsView.swift in Sources */,
 				8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */,
 				8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */,
