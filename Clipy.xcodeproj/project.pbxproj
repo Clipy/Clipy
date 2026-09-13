@@ -91,6 +91,7 @@
 		C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0230190005AA110002 /* TextRecognizer.swift */; };
 		C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
+		E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */; };
 		F51111123040000100000001 /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F51111113040000100000001 /* Settings.xcstrings */; };
 		F51111213040000100000001 /* SettingsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51111203040000100000001 /* SettingsGrid.swift */; };
 		F51111233040000100000001 /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51111223040000100000001 /* SettingsSection.swift */; };
@@ -153,6 +154,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSettingsView.swift; sourceTree = "<group>"; };
 		23265781AF16C4883961248E /* SettingsNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNumberField.swift; sourceTree = "<group>"; };
 		314B299D1EC49AD5004DD070 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYSnippetsEditorWindowController.xib; sourceTree = "<group>"; };
 		314B299E1EC49AEF004DD070 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
@@ -397,6 +399,7 @@
 				74F0D29DD7FF0C7A6FA08459 /* GeneralSettingsView.swift */,
 				7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */,
 				3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */,
+				06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1063,6 +1066,7 @@
 				C38C356A970DED048CF311FF /* GeneralSettingsView.swift in Sources */,
 				8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */,
 				8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */,
+				E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */,
 				C50D1A013021000100000003 /* MonospacedDigitFormatter.swift in Sources */,
 				FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */,
 				FA1DB4A61DDCB443007F95C8 /* MenuType.swift in Sources */,
