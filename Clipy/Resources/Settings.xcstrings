@@ -923,13 +923,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verlaufseinträge auf oberster Ebene:"
+            "value" : "Einträge auf oberster Ebene:"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voci della cronologia al livello principale:"
+            "value" : "Voci al livello principale:"
           }
         },
         "ja" : {
@@ -1098,13 +1098,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verlaufseinträge pro Ordner:"
+            "value" : "Einträge pro Ordner:"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voci della cronologia per cartella:"
+            "value" : "Voci per cartella:"
           }
         },
         "ja" : {
@@ -1308,13 +1308,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maximale Zeichenanzahl:"
+            "value" : "Zeichenlimit:"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Numero massimo di caratteri:"
+            "value" : "Limite di caratteri:"
           }
         },
         "ja" : {
@@ -1343,13 +1343,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maximale angezeigte Textlänge:"
+            "value" : "Max. angezeigte Zeichen:"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lunghezza massima del testo visualizzato:"
+            "value" : "Caratteri visualizzati (max.):"
           }
         },
         "ja" : {
