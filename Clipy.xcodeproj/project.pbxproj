@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */; };
 		8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23265781AF16C4883961248E /* SettingsNumberField.swift */; };
+		A2FFAB88C156B78D19847F20 /* ShortcutRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */; };
 		C38C356A970DED048CF311FF /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F0D29DD7FF0C7A6FA08459 /* GeneralSettingsView.swift */; };
 		C50767032FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */; };
 		C50D1A013021000100000001 /* MonospacedDigitFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D1A013021000100000002 /* MonospacedDigitFormatterTests.swift */; };
@@ -92,6 +93,7 @@
 		C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
 		C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */; };
+		E5AB9965DF2E3CC8DF98D410 /* ShortcutSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */; };
 		E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */; };
 		F51111123040000100000001 /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F51111113040000100000001 /* Settings.xcstrings */; };
 		F51111213040000100000001 /* SettingsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51111203040000100000001 /* SettingsGrid.swift */; };
@@ -156,6 +158,7 @@
 
 /* Begin PBXFileReference section */
 		06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSettingsView.swift; sourceTree = "<group>"; };
+		1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorder.swift; sourceTree = "<group>"; };
 		22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaSettingsView.swift; sourceTree = "<group>"; };
 		23265781AF16C4883961248E /* SettingsNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNumberField.swift; sourceTree = "<group>"; };
 		314B299D1EC49AD5004DD070 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYSnippetsEditorWindowController.xib; sourceTree = "<group>"; };
@@ -201,6 +204,7 @@
 		A07D83942FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYTypePreferenceViewController.strings"; sourceTree = "<group>"; };
 		A07D83952FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYUpdatesPreferenceViewController.strings"; sourceTree = "<group>"; };
 		A07D83962FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
+		BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutSettingsView.swift; sourceTree = "<group>"; };
 		C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataDatabase+TriggerTests.swift"; sourceTree = "<group>"; };
 		C50D1A013021000100000002 /* MonospacedDigitFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonospacedDigitFormatterTests.swift; sourceTree = "<group>"; };
 		C50D1A013021000100000004 /* MonospacedDigitFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonospacedDigitFormatter.swift; sourceTree = "<group>"; };
@@ -401,6 +405,7 @@
 				74F0D29DD7FF0C7A6FA08459 /* GeneralSettingsView.swift */,
 				7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */,
 				3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */,
+				BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */,
 				06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */,
 				22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */,
 			);
@@ -429,6 +434,7 @@
 				F51111203040000100000001 /* SettingsGrid.swift */,
 				F51111223040000100000001 /* SettingsSection.swift */,
 				23265781AF16C4883961248E /* SettingsNumberField.swift */,
+				1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1070,6 +1076,8 @@
 				C38C356A970DED048CF311FF /* GeneralSettingsView.swift in Sources */,
 				8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */,
 				8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */,
+				A2FFAB88C156B78D19847F20 /* ShortcutRecorder.swift in Sources */,
+				E5AB9965DF2E3CC8DF98D410 /* ShortcutSettingsView.swift in Sources */,
 				E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */,
 				C50D1A013021000100000003 /* MonospacedDigitFormatter.swift in Sources */,
 				FAC0DCEF1DE3255E00309C49 /* NSImage+NSColor.swift in Sources */,

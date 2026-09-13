@@ -2,13 +2,16 @@ import SwiftUI
 
 struct SettingsGrid: View {
     private let contentWidth: CGFloat
+    private let minimumTitleWidth: CGFloat?
     private let sections: [SettingsSection]
 
     init(
         contentWidth: CGFloat = 500,
+        minimumTitleWidth: CGFloat? = nil,
         @SettingsSectionBuilder content: () -> [SettingsSection]
     ) {
         self.contentWidth = contentWidth
+        self.minimumTitleWidth = minimumTitleWidth.map { min($0, contentWidth / 2) }
         sections = content()
     }
 
@@ -21,7 +24,11 @@ struct SettingsGrid: View {
                         Text(title)
                             .font(.system(size: 13))
                             .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: contentWidth / 2, alignment: .trailing)
+                            .frame(
+                                minWidth: minimumTitleWidth,
+                                maxWidth: contentWidth / 2,
+                                alignment: .trailing
+                            )
                             .fixedSize()
                     } else {
                         Color.clear
