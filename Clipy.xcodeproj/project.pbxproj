@@ -91,6 +91,7 @@
 		C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0230190005AA110002 /* TextRecognizer.swift */; };
 		C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */; };
 		C5F1B7331FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */; };
+		C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */; };
 		E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */; };
 		F51111123040000100000001 /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F51111113040000100000001 /* Settings.xcstrings */; };
 		F51111213040000100000001 /* SettingsGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51111203040000100000001 /* SettingsGrid.swift */; };
@@ -155,6 +156,7 @@
 
 /* Begin PBXFileReference section */
 		06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSettingsView.swift; sourceTree = "<group>"; };
+		22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaSettingsView.swift; sourceTree = "<group>"; };
 		23265781AF16C4883961248E /* SettingsNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNumberField.swift; sourceTree = "<group>"; };
 		314B299D1EC49AD5004DD070 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CPYSnippetsEditorWindowController.xib; sourceTree = "<group>"; };
 		314B299E1EC49AEF004DD070 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
@@ -400,6 +402,7 @@
 				7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */,
 				3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */,
 				06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */,
+				22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1062,6 +1065,7 @@
 			files = (
 				F51111213040000100000001 /* SettingsGrid.swift in Sources */,
 				F51111233040000100000001 /* SettingsSection.swift in Sources */,
+				C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */,
 				FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */,
 				C38C356A970DED048CF311FF /* GeneralSettingsView.swift in Sources */,
 				8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */,
