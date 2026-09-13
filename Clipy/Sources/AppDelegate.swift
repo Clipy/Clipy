@@ -25,10 +25,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver()
     private var cancellables: Set<AnyCancellable> = []
-    @MainActor private lazy var settingsWindowController = SettingsWindowController(
-        panes: SettingsPane.allCases.map { $0.asPanelConvertible() },
-        animated: false
-    )
+    @MainActor private lazy var settingsWindowController: SettingsWindowController = {
+        let controller = SettingsWindowController(
+            panes: SettingsPane.allCases.map { $0.asPanelConvertible() },
+            animated: false
+        )
+        controller.window?.delegate = self
+        return controller
+    }()
 
     @Dependency(\.context)
     var context
@@ -134,6 +138,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         if alert.suppressionButton?.state == NSControl.StateValue.on {
             $suppressesLoginItemAlert.withLock { $0 = true }
         }
+    }
+}
+
+// MARK: - Settings Window
+extension AppDelegate: NSWindowDelegate {
+    func windowWillClose(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow, !window.makeFirstResponder(nil) else { return }
+        window.endEditing(for: nil)
     }
 }
 
