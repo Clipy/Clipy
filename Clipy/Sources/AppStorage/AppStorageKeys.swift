@@ -38,8 +38,6 @@ enum AppStorageKeys: String {
     case collectCrashReport = "kCPYCollectCrashReport"
     case showColorPreviewInTheMenu = "kCPYPrefShowColorPreviewInTheMenu"
     case ignoreConcealedPasteboardType = "kCPYPrefIgnoreConcealedPasteboardType"
-    case enableAutomaticCheck = "kCPYEnableAutomaticCheckKey"
-    case checkInterval = "kCPYUpdateCheckIntervalKey"
     case pastePlainText = "kCPYBetaPastePlainText"
     case pastePlainTextModifier = "kCPYBetaPastePlainTextModifier"
     case deleteHistory = "kCPYBetaDeleteHistory"

@@ -83,10 +83,6 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.ignoreConcealedPasteboardType.rawValue), default: false]
     }
 
-    static var checksForUpdatesAutomatically: Self {
-        Self[.appStorage(AppStorageKeys.enableAutomaticCheck.rawValue), default: true]
-    }
-
     static var pastesPlainTextWithModifier: Self {
         Self[.appStorage(AppStorageKeys.pastePlainText.rawValue), default: true]
     }
@@ -139,10 +135,6 @@ extension SharedKey where Self == AppStorageKey<Int>.Default {
 
     static var thumbnailHeight: Self {
         Self[.appStorage(AppStorageKeys.thumbnailHeight.rawValue), default: 32]
-    }
-
-    static var updateCheckInterval: Self {
-        Self[.appStorage(AppStorageKeys.checkInterval.rawValue), default: 86_400]
     }
 
     static var plainTextPasteModifier: Self {

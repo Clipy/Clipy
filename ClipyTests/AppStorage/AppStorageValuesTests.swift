@@ -36,7 +36,6 @@ struct AppStorageValuesTests {
         @Shared(.allowsDuplicateHistory) var allowsDuplicateHistory
         @Shared(.showsColorPreviewInMenu) var showsColorPreviewInMenu
         @Shared(.ignoresConcealedPasteboardTypes) var ignoresConcealedPasteboardTypes
-        @Shared(.checksForUpdatesAutomatically) var checksForUpdatesAutomatically
         @Shared(.pastesPlainTextWithModifier) var pastesPlainTextWithModifier
         @Shared(.deletesHistoryWithModifier) var deletesHistoryWithModifier
         @Shared(.pastesAndDeletesHistoryWithModifier) var pastesAndDeletesHistoryWithModifier
@@ -59,7 +58,6 @@ struct AppStorageValuesTests {
         #expect(allowsDuplicateHistory)
         #expect(showsColorPreviewInMenu)
         #expect(!ignoresConcealedPasteboardTypes)
-        #expect(checksForUpdatesAutomatically)
         #expect(pastesPlainTextWithModifier)
         #expect(!deletesHistoryWithModifier)
         #expect(!pastesAndDeletesHistoryWithModifier)
@@ -77,7 +75,6 @@ struct AppStorageValuesTests {
         @Shared(.maximumToolTipLength) var maximumToolTipLength
         @Shared(.thumbnailWidth) var thumbnailWidth
         @Shared(.thumbnailHeight) var thumbnailHeight
-        @Shared(.updateCheckInterval) var updateCheckInterval
         @Shared(.plainTextPasteModifier) var plainTextPasteModifier
         @Shared(.historyDeletionModifier) var historyDeletionModifier
         @Shared(.pasteAndDeleteHistoryModifier) var pasteAndDeleteHistoryModifier
@@ -91,7 +88,6 @@ struct AppStorageValuesTests {
         #expect(maximumToolTipLength == 200)
         #expect(thumbnailWidth == 100)
         #expect(thumbnailHeight == 32)
-        #expect(updateCheckInterval == 86_400)
         #expect(plainTextPasteModifier == 0)
         #expect(historyDeletionModifier == 0)
         #expect(pasteAndDeleteHistoryModifier == 0)
