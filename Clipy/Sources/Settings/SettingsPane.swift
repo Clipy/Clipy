@@ -9,6 +9,7 @@ enum SettingsPane: String, CaseIterable {
     case shortcuts
     case updates
     case beta
+    case donate
 
     var title: String {
         switch self {
@@ -26,6 +27,8 @@ enum SettingsPane: String, CaseIterable {
             String(localized: .Settings.updates)
         case .beta:
             String(localized: .Settings.beta)
+        case .donate:
+            String(localized: .Settings.donate)
         }
     }
 
@@ -45,6 +48,8 @@ enum SettingsPane: String, CaseIterable {
             "arrow.triangle.2.circlepath"
         case .beta:
             "testtube.2"
+        case .donate:
+            "cup.and.saucer"
         }
     }
 
@@ -79,6 +84,8 @@ enum SettingsPane: String, CaseIterable {
             UpdateSettingsView()
         case .beta:
             BetaSettingsView()
+        case .donate:
+            DonationSettingsView()
         }
     }
 }
