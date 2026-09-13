@@ -13,13 +13,17 @@
 import Combine
 import Dependencies
 import DependenciesMacros
-import Sharing
 import Sparkle
 
 @DependencyClient
 struct Sparkle {
     var configure: () -> Void
-    var lastUpdateCheckDate: () -> AnyPublisher<Any?, Never> = { Empty().eraseToAnyPublisher() }
+    var setAutomaticallyChecksForUpdates: (_ isEnabled: Bool) -> Void
+    var setUpdateCheckInterval: (_ interval: TimeInterval) -> Void
+    var automaticallyChecksForUpdates: () -> AnyPublisher<Bool, Never> = { Just(false).eraseToAnyPublisher() }
+    var updateCheckInterval: () -> AnyPublisher<TimeInterval, Never> = { Just(TimeInterval(86_400)).eraseToAnyPublisher() }
+    var lastUpdateCheckDate: () -> AnyPublisher<Date?, Never> = { Just(nil).eraseToAnyPublisher() }
+    var canCheckForUpdates: () -> AnyPublisher<Bool, Never> = { Just(false).eraseToAnyPublisher() }
     var checkForUpdates: (_ sender: Any?) -> Void
 }
 
@@ -39,18 +43,29 @@ extension DependencyValues {
 
             return Sparkle(
                 configure: {
-                    @Shared(.checksForUpdatesAutomatically) var checksForUpdatesAutomatically
-                    @Shared(.updateCheckInterval) var updateCheckInterval
-
-                    if checksForUpdatesAutomatically {
-                        updaterController.startUpdater()
-                    }
-                    updaterController.updater.updateCheckInterval = TimeInterval(updateCheckInterval)
                     updaterController.updater.clearFeedURLFromUserDefaults()
+                    updaterController.startUpdater()
+                },
+                setAutomaticallyChecksForUpdates: { isEnabled in
+                    updaterController.updater.automaticallyChecksForUpdates = isEnabled
+                },
+                setUpdateCheckInterval: { interval in
+                    updaterController.updater.updateCheckInterval = interval
+                },
+                automaticallyChecksForUpdates: {
+                    updaterController.updater.publisher(for: \.automaticallyChecksForUpdates)
+                        .eraseToAnyPublisher()
+                },
+                updateCheckInterval: {
+                    updaterController.updater.publisher(for: \.updateCheckInterval)
+                        .eraseToAnyPublisher()
                 },
                 lastUpdateCheckDate: {
                     updaterController.updater.publisher(for: \.lastUpdateCheckDate)
-                        .compactMap { $0 }
+                        .eraseToAnyPublisher()
+                },
+                canCheckForUpdates: {
+                    updaterController.updater.publisher(for: \.canCheckForUpdates)
                         .eraseToAnyPublisher()
                 },
                 checkForUpdates: { sender in
