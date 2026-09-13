@@ -17,6 +17,7 @@ import Dependencies
 import Magnet
 import Screeen
 import ServiceManagement
+import Settings
 import Sharing
 
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -24,6 +25,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver()
     private var cancellables: Set<AnyCancellable> = []
+    @MainActor private lazy var settingsWindowController = SettingsWindowController(
+        panes: SettingsPane.allCases.map { $0.asPanelConvertible() },
+        animated: false
+    )
 
     @Dependency(\.context)
     var context
@@ -70,9 +75,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     // MARK: - Menu Actions
-    @objc func showPreferenceWindow() {
+    @MainActor @objc func showSettingsWindow() {
         NSApp.activate(ignoringOtherApps: true)
-        CPYPreferencesWindowController.sharedController.showWindow(self)
+        settingsWindowController.show()
+        settingsWindowController.window?.orderFrontRegardless()
     }
 
     @objc func showSnippetEditorWindow() {
