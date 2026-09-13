@@ -701,6 +701,83 @@
         }
       }
     },
+    "Donate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spenden"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dona"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "寄付"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捐赠"
+          }
+        }
+      }
+    },
+    "Donation message" : {
+      "comment" : "Explains that all Clipy features are free, with no plans to charge, and invites optional donations to support continued development.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Funktionen von Clipy sind kostenlos, und wir planen nicht, dies zu ändern.\n\nSpenden helfen uns, Clipy weiterzuentwickeln. Wenn du unsere Arbeit unterstützen möchtest, kannst du über eine der folgenden Möglichkeiten spenden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipy offers all of its features for free, and we have no plans to charge for them.\n\nDonations help us continue developing Clipy. If you'd like to support our work, you can contribute through either of the options below."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutte le funzionalità di Clipy sono gratuite e non abbiamo intenzione di renderle a pagamento.\n\nLe donazioni ci aiutano a continuare lo sviluppo di Clipy. Se desideri sostenere il nostro lavoro, puoi contribuire tramite una delle opzioni qui sotto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipyは、すべての機能を無料で提供しています。\n\n今後も有料化の予定はありませんが、継続的な開発を支える寄付を受け付けています。ご協力いただける方は、以下の方法でサポートをお願いいたします。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os recursos do Clipy são gratuitos e não temos planos de torná-los pagos.\n\nAs doações nos ajudam a continuar desenvolvendo o Clipy. Se quiser apoiar nosso trabalho, você pode contribuir por uma das opções abaixo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipy 的所有功能均免费提供，我们也没有收费的计划。\n\n为了持续开发 Clipy，我们接受捐赠。如果您愿意支持我们的工作，可以通过以下任一方式捐赠。"
+          }
+        }
+      }
+    },
     "Exclude" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -846,6 +923,10 @@
           }
         }
       }
+    },
+    "GitHub Sponsors" : {
+      "extractionState" : "manual",
+      "shouldTranslate" : false
     },
     "Height" : {
       "extractionState" : "manual",
@@ -1622,6 +1703,10 @@
           }
         }
       }
+    },
+    "Open Collective" : {
+      "extractionState" : "manual",
+      "shouldTranslate" : false
     },
     "Option (⌥)" : {
       "extractionState" : "manual",
@@ -2751,6 +2836,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从 0 开始编号"
+          }
+        }
+      }
+    },
+    "Support" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unterstützen"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sostieni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サポートする"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apoiar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持"
           }
         }
       }
