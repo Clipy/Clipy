@@ -20,17 +20,17 @@ struct PasteboardAvailableTypeTests {
     @Test
     func availableTypesPreservesPasteboardTypeOrder() {
         let availableTypes = PasteboardAvailableType.availableTypes(
-            from: [.pdf, .string, .fileURL, .rtf],
-            storeAvailableTypes: [.string, .rtf, .pdf, .filenames],
+            from: [.pdf, .html, .string, .fileURL, .rtf],
+            storeAvailableTypes: [.string, .rtf, .pdf, .filenames, .html],
             ignoresConcealedType: false
         )
-        #expect(availableTypes == [.pdf, .string, .fileURL, .rtf])
+        #expect(availableTypes == [.pdf, .html, .string, .fileURL, .rtf])
     }
 
     @Test
     func availableTypesFiltersDisabledStoreTypes() {
         let availableTypes = PasteboardAvailableType.availableTypes(
-            from: [.pdf, .string, .tiff, .rtf],
+            from: [.pdf, .string, .tiff, .rtf, .html],
             storeAvailableTypes: [.string, .tiff],
             ignoresConcealedType: false
         )
