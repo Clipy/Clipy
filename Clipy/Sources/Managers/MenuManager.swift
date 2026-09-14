@@ -254,11 +254,19 @@ private extension MenuManager {
         labelItem.isEnabled = false
         menu.addItem(labelItem)
 
+        menu.addItem(
+            NSMenuItem(
+                title: String(localized: "Search History"),
+                action: #selector(AppDelegate.showHistorySearchWindow),
+                keyEquivalent: ""
+            )
+        )
+
         // History
         let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = placeInLine
-        var subMenuIndex = 1 + placeInLine
+        var subMenuIndex = menu.numberOfItems + placeInLine
 
         let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
             sortsByCreatedAt: !reordersClipsAfterPasting,

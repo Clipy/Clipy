@@ -182,6 +182,83 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func searchHistoryDetailsMatchesContinuousFragments() throws {
+        let continuousContent = try #require(PasteboardContent("Alpha beta gamma"))
+        let separatedContent = try #require(PasteboardContent("Alpha beta then gamma"))
+        let newestContent = try #require(PasteboardContent("Prefix BETA GAMMA suffix"))
+        let continuousID = PasteboardHistory.ID(rawValue: continuousContent.hash)
+        let separatedID = PasteboardHistory.ID(rawValue: separatedContent.hash)
+        let newestID = PasteboardHistory.ID(rawValue: newestContent.hash)
+
+        repository.save(id: continuousID, content: continuousContent, updateAt: 1)
+        repository.save(id: separatedID, content: separatedContent, updateAt: 2)
+        repository.save(id: newestID, content: newestContent, updateAt: 3)
+
+        #expect(
+            repository
+                .searchHistoryDetails(containing: "beta gamma", includesThumbnailAsset: false, limit: 10)
+                .map(\.history.id) == [newestID, continuousID]
+        )
+    }
+
+    @Test
+    func searchHistoryDetailsHandlesShortAndQuotedFragments() throws {
+        let shortContent = try #require(PasteboardContent("Find XY here"))
+        let quotedContent = try #require(PasteboardContent("A \"quoted fragment\" here"))
+        let chineseContent = try #require(PasteboardContent("这里有一段连续片段内容"))
+        let shortID = PasteboardHistory.ID(rawValue: shortContent.hash)
+        let quotedID = PasteboardHistory.ID(rawValue: quotedContent.hash)
+        let chineseID = PasteboardHistory.ID(rawValue: chineseContent.hash)
+
+        repository.save(id: shortID, content: shortContent, updateAt: 1)
+        repository.save(id: quotedID, content: quotedContent, updateAt: 2)
+        repository.save(id: chineseID, content: chineseContent, updateAt: 3)
+
+        #expect(
+            repository
+                .searchHistoryDetails(containing: "xy", includesThumbnailAsset: false, limit: 10)
+                .map(\.history.id) == [shortID]
+        )
+        #expect(
+            repository
+                .searchHistoryDetails(containing: "\"quoted", includesThumbnailAsset: false, limit: 10)
+                .map(\.history.id) == [quotedID]
+        )
+        #expect(
+            repository
+                .searchHistoryDetails(containing: "连续片段", includesThumbnailAsset: false, limit: 10)
+                .map(\.history.id) == [chineseID]
+        )
+        #expect(repository.searchHistoryDetails(containing: "   ", includesThumbnailAsset: false, limit: 10).isEmpty)
+    }
+
+    @Test
+    func searchHistoryDetailsIncludesOCRTextAndHonorsLimit() throws {
+        let oldestContent = try #require(PasteboardContent("needle oldest"))
+        let newestContent = try #require(PasteboardContent("needle newest"))
+        let imageContent = try #require(
+            PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
+        )
+        let oldestID = PasteboardHistory.ID(rawValue: oldestContent.hash)
+        let newestID = PasteboardHistory.ID(rawValue: newestContent.hash)
+        let imageID = PasteboardHistory.ID(rawValue: imageContent.hash)
+
+        repository.save(id: oldestID, content: oldestContent, updateAt: 1)
+        repository.save(id: imageID, content: imageContent, updateAt: 2)
+        repository.updateOCRText(id: imageID, ocrText: "needle recognized in image")
+        repository.save(id: newestID, content: newestContent, updateAt: 3)
+
+        let results = repository.searchHistoryDetails(
+            containing: "needle",
+            includesThumbnailAsset: true,
+            limit: 2
+        )
+        #expect(results.map(\.history.id) == [newestID, imageID])
+        #expect(results[0].thumbnailAsset == nil)
+        #expect(results[1].thumbnailAsset?.pasteboardHistoryID == imageID)
+    }
+
+    @Test
     func updateOCRTextStoresRecognizedText() throws {
         let imageContent = try #require(
             PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
