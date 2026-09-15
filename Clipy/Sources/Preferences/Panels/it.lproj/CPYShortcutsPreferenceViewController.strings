@@ -16,3 +16,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Clear History:"; ObjectID = "f3b-Ht-X5w"; */
 "f3b-Ht-X5w.title" = "Svuota:";
+
+/* Class = "NSTextFieldCell"; title = "Edit Snippets:"; ObjectID = "EdS-Lb-C01"; */
+"EdS-Lb-C01.title" = "Modifica snippet:";

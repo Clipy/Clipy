@@ -109,6 +109,7 @@ struct AppStorageValuesTests {
         @Shared(.mainKeyCombo) var mainKeyCombo
         @Shared(.historyKeyCombo) var historyKeyCombo
         @Shared(.snippetKeyCombo) var snippetKeyCombo
+        @Shared(.editSnippetsKeyCombo) var editSnippetsKeyCombo
         @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
         @Shared(.folderKeyCombos) var folderKeyCombos
 
@@ -124,6 +125,7 @@ struct AppStorageValuesTests {
         #expect(defaultSnippetKeyCombo.QWERTYKeyCode == 11)
         #expect(defaultSnippetKeyCombo.modifiers == 768)
 
+        #expect(editSnippetsKeyCombo == nil)
         #expect(clearHistoryKeyCombo == nil)
         #expect(folderKeyCombos.isEmpty)
     }
