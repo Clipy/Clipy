@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C5D091013095000100000001 /* DonationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D091023095000100000001 /* DonationSettingsView.swift */; };
 		3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DC78C62401491B956E0499 /* SettingsScrollView.swift */; };
 		8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */; };
 		8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23265781AF16C4883961248E /* SettingsNumberField.swift */; };
@@ -145,6 +146,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C5D091023095000100000001 /* DonationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationSettingsView.swift; sourceTree = "<group>"; };
 		06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSettingsView.swift; sourceTree = "<group>"; };
 		1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorder.swift; sourceTree = "<group>"; };
 		22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaSettingsView.swift; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */,
 				06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */,
 				22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */,
+				C5D091023095000100000001 /* DonationSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -975,6 +978,7 @@
 				3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */,
 				F51111233040000100000001 /* SettingsSection.swift in Sources */,
 				C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */,
+				C5D091013095000100000001 /* DonationSettingsView.swift in Sources */,
 				FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */,
 				F1753D7A92A504F63D87EC71 /* ExcludedApplicationsSettingsView.swift in Sources */,
 				C38C356A970DED048CF311FF /* GeneralSettingsView.swift in Sources */,
