@@ -17,6 +17,7 @@ import Dependencies
 import Magnet
 import Screeen
 import ServiceManagement
+import Settings
 import Sharing
 
 class AppDelegate: NSObject, NSMenuItemValidation {
@@ -24,6 +25,14 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver()
     private var cancellables: Set<AnyCancellable> = []
+    @MainActor private lazy var settingsWindowController: SettingsWindowController = {
+        let controller = SettingsWindowController(
+            panes: SettingsPane.allCases.map { $0.asPanelConvertible() },
+            animated: false
+        )
+        controller.window?.delegate = self
+        return controller
+    }()
 
     @Dependency(\.context)
     var context
@@ -70,9 +79,10 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     // MARK: - Menu Actions
-    @objc func showPreferenceWindow() {
+    @MainActor @objc func showSettingsWindow() {
         NSApp.activate(ignoringOtherApps: true)
-        CPYPreferencesWindowController.sharedController.showWindow(self)
+        settingsWindowController.show()
+        settingsWindowController.window?.orderFrontRegardless()
     }
 
     @objc func showSnippetEditorWindow() {
@@ -114,7 +124,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private func promptToAddLoginItems() {
         let alert = NSAlert()
         alert.messageText = String(localized: "Launch Clipy on system startup?")
-        alert.informativeText = String(localized: "You can change this setting in the Preferences if you want")
+        alert.informativeText = String(localized: "You can change this later in Settings.")
         alert.addButton(withTitle: String(localized: "Launch on system startup"))
         alert.addButton(withTitle: String(localized: "Don't Launch"))
         alert.showsSuppressionButton = true
@@ -131,13 +141,20 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 }
 
+// MARK: - Settings Window
+extension AppDelegate: NSWindowDelegate {
+    func windowWillClose(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow, !window.makeFirstResponder(nil) else { return }
+        window.endEditing(for: nil)
+    }
+}
+
 // MARK: - NSApplication Delegate
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard !isTesting else { return }
 
-        AppStorageValues.register()
         AppMigrator().run()
 
         // SDKs

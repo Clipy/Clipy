@@ -19,7 +19,7 @@ import Sharing
 final class ExcludeAppService {
     // MARK: - Properties
     @Shared(.excludedApplications)
-    private(set) var applications
+    private var applications
 
     private var frontApplication: NSRunningApplication?
     private var cancellables: Set<AnyCancellable> = []
@@ -54,22 +54,6 @@ extension ExcludeAppService {
             return true
         }
         return false
-    }
-}
-
-// MARK: - Add or Delete
-extension ExcludeAppService {
-    func add(with applicationInformation: ApplicationInformation) {
-        if applications.contains(applicationInformation) { return }
-        $applications.withLock { $0.append(applicationInformation) }
-    }
-
-    func delete(with applicationInformation: ApplicationInformation) {
-        $applications.withLock { $0.removeAll { $0 == applicationInformation } }
-    }
-
-    func delete(with index: Int) {
-        delete(with: applications[index])
     }
 }
 
