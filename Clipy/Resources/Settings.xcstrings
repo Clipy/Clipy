@@ -1,47 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Add Apps…" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apps hinzufügen…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi app…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アプリを追加…"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar apps…"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Додати програми…"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加 App…"
-          }
-        }
-      }
-    },
     "Add a menu item to clear clipboard history" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -124,15 +83,50 @@
         }
       }
     },
-    "Additional history is grouped into folders. Set to 0 to group all history into folders." : {
+    "Add Apps…" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps hinzufügen…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi app…"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この件数を超える履歴はフォルダにまとめます。0にすると、すべての履歴をフォルダにまとめます。"
+            "value" : "アプリを追加…"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar apps…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додати програми…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加 App…"
+          }
+        }
+      }
+    },
+    "Additional history is grouped into folders. Set to 0 to group all history into folders." : {
+      "extractionState" : "manual",
+      "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -143,6 +137,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le voci oltre questo limite vengono raggruppate in cartelle. Imposta 0 per raggruppare tutte le voci in cartelle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この件数を超える履歴はフォルダにまとめます。0にすると、すべての履歴をフォルダにまとめます。"
           }
         },
         "pt-BR" : {
@@ -283,7 +283,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "测试功能"
+            "value" : "测试版"
           }
         }
       }
@@ -324,7 +324,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "测试功能的设置可能不会在版本更新后保留。"
+            "value" : "测试版功能的设置可能不会在版本更新后保留。"
           }
         }
       }
@@ -332,12 +332,6 @@
     "Changes take effect the next time Clipy launches. Usage logs do not include personal information or copied content." : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "変更は、次回のClipy起動時に反映されます。使用状況ログに個人情報やコピー内容は含まれません。"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -348,6 +342,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le modifiche avranno effetto al prossimo avvio di Clipy. I registri di utilizzo non includono informazioni personali né contenuti copiati."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更は、次回のClipy起動時に反映されます。使用状況ログに個人情報やコピー内容は含まれません。"
           }
         },
         "pt-BR" : {
@@ -370,43 +370,43 @@
         }
       }
     },
-    "Check Now…" : {
+    "characters" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jetzt prüfen…"
+            "value" : "Zeichen"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verifica ora…"
+            "value" : "caratteri"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今すぐ確認…"
+            "value" : "文字"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verificar agora…"
+            "value" : "caracteres"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перевірити зараз…"
+            "value" : "симв."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即检查…"
+            "value" : "字符"
           }
         }
       }
@@ -452,7 +452,49 @@
         }
       }
     },
+    "Check Now…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt prüfen…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica ora…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ確認…"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verificar agora…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевірити зараз…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即检查…"
+          }
+        }
+      }
+    },
     "Clear History:" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -490,8 +532,7 @@
             "value" : "清空历史记录："
           }
         }
-      },
-      "extractionState" : "manual"
+      }
     },
     "Clipboard History:" : {
       "extractionState" : "manual",
@@ -742,12 +783,6 @@
     "Diagnostics:" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "診断:"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -758,6 +793,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diagnostica:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "診断:"
           }
         },
         "pt-BR" : {
@@ -946,7 +987,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "编辑片段："
+            "value" : "编辑代码片段："
           }
         }
       }
@@ -1408,6 +1449,47 @@
         }
       }
     },
+    "items" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einträge"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "elementi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "項目"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "itens"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "елем."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "项"
+          }
+        }
+      }
+    },
     "Items per folder:" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1449,47 +1531,6 @@
         }
       }
     },
-    "Last Used" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zuletzt verwendet"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ultimo utilizzo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最終使用日"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Último uso"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Використанням"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "上次使用日期"
-          }
-        }
-      }
-    },
     "Last checked:" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1527,6 +1568,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上次检查："
+          }
+        }
+      }
+    },
+    "Last Used" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt verwendet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo utilizzo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最終使用日"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último uso"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Використанням"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次使用日期"
           }
         }
       }
@@ -1783,47 +1865,6 @@
         }
       }
     },
-    "Menu Items:" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メニュー項目:"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Menüeinträge:"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voci di menu:"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Itens do menu:"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пункти меню:"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "菜单项："
-          }
-        }
-      }
-    },
     "Menu bar icon:" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1861,6 +1902,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "菜单栏图标："
+          }
+        }
+      }
+    },
+    "Menu Items:" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menüeinträge:"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voci di menu:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニュー項目:"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itens do menu:"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пункти меню:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "菜单项："
           }
         }
       }
@@ -2070,47 +2152,6 @@
         }
       }
     },
-    "PDF" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PDF"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PDF"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PDF"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PDF"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PDF"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PDF"
-          }
-        }
-      }
-    },
     "Pane Type" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2281,6 +2322,47 @@
         }
       }
     },
+    "PDF" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        }
+      }
+    },
     "Plain Text" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2325,12 +2407,6 @@
     "Previews:" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プレビュー:"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2341,6 +2417,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anteprime:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレビュー:"
           }
         },
         "pt-BR" : {
@@ -2366,12 +2448,6 @@
     "Privacy:" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プライバシー:"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2382,6 +2458,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー:"
           }
         },
         "pt-BR" : {
@@ -2400,6 +2482,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隐私："
+          }
+        }
+      }
+    },
+    "px" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "像素 (px)"
           }
         }
       }
@@ -2489,12 +2612,6 @@
     "Reversed" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "反転"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2505,6 +2622,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Invertita"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反転"
           }
         },
         "pt-BR" : {
@@ -2776,12 +2899,6 @@
     "Send crash reports and usage logs" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "クラッシュレポートと使用状況ログを送信"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2792,6 +2909,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Invia resoconti di crash e registri di utilizzo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クラッシュレポートと使用状況ログを送信"
           }
         },
         "pt-BR" : {
@@ -3143,7 +3266,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "片段："
+            "value" : "代码片段："
           }
         }
       }
@@ -3192,12 +3315,6 @@
     "Some apps, such as password managers, mark sensitive content as confidential." : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "パスワードマネージャーなどの一部のアプリは、機密情報にマークを付けます。"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3208,6 +3325,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alcune app, come i gestori di password, contrassegnano i contenuti sensibili come riservati."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワードマネージャーなどの一部のアプリは、機密情報にマークを付けます。"
           }
         },
         "pt-BR" : {
@@ -3274,12 +3397,6 @@
     "Standard" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "標準"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3290,6 +3407,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標準"
           }
         },
         "pt-BR" : {
@@ -3397,12 +3520,6 @@
     "Tooltips:" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ツールチップ:"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3413,6 +3530,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suggerimenti:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールチップ:"
           }
         },
         "pt-BR" : {
@@ -3431,47 +3554,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "工具提示："
-          }
-        }
-      }
-    },
-    "URL" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL"
           }
         }
       }
@@ -3519,6 +3601,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新"
+          }
+        }
+      }
+    },
+    "URL" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
           }
         }
       }
@@ -3683,129 +3806,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "宽度"
-          }
-        }
-      }
-    },
-    "characters" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zeichen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "caratteri"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "文字"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "caracteres"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "симв."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "字符"
-          }
-        }
-      }
-    },
-    "items" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einträge"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "elementi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "項目"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "itens"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "елем."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "项"
-          }
-        }
-      }
-    },
-    "px" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
           }
         }
       }
