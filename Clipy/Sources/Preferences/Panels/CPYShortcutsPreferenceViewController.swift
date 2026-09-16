@@ -22,6 +22,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     @IBOutlet private weak var mainShortcutRecordView: RecordView!
     @IBOutlet private weak var historyShortcutRecordView: RecordView!
     @IBOutlet private weak var snippetShortcutRecordView: RecordView!
+    @IBOutlet private weak var editSnippetsShortcutRecordView: RecordView!
     @IBOutlet private weak var clearHistoryShortcutRecordView: RecordView!
 
     @Dependency(\.hotKeyService)
@@ -32,6 +33,8 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     private var historyKeyCombo
     @Shared(.snippetKeyCombo)
     private var snippetKeyCombo
+    @Shared(.editSnippetsKeyCombo)
+    private var editSnippetsKeyCombo
     @Shared(.clearHistoryKeyCombo)
     private var clearHistoryKeyCombo
 
@@ -41,6 +44,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
         mainShortcutRecordView.delegate = self
         historyShortcutRecordView.delegate = self
         snippetShortcutRecordView.delegate = self
+        editSnippetsShortcutRecordView.delegate = self
         clearHistoryShortcutRecordView.delegate = self
         prepareHotKeys()
     }
@@ -53,6 +57,7 @@ private extension CPYShortcutsPreferenceViewController {
         mainShortcutRecordView.keyCombo = mainKeyCombo
         historyShortcutRecordView.keyCombo = historyKeyCombo
         snippetShortcutRecordView.keyCombo = snippetKeyCombo
+        editSnippetsShortcutRecordView.keyCombo = editSnippetsKeyCombo
         clearHistoryShortcutRecordView.keyCombo = clearHistoryKeyCombo
     }
 }
@@ -75,6 +80,8 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
             hotKeyService.change(with: .history, keyCombo: keyCombo)
         case snippetShortcutRecordView:
             hotKeyService.change(with: .snippet, keyCombo: keyCombo)
+        case editSnippetsShortcutRecordView:
+            hotKeyService.changeEditSnippetsKeyCombo(keyCombo)
         case clearHistoryShortcutRecordView:
             hotKeyService.changeClearHistoryKeyCombo(keyCombo)
         default: break

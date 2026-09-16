@@ -12,6 +12,7 @@ final class HotKeyServiceTests {
     @Shared(.mainKeyCombo) var mainKeyCombo
     @Shared(.historyKeyCombo) var historyKeyCombo
     @Shared(.snippetKeyCombo) var snippetKeyCombo
+    @Shared(.editSnippetsKeyCombo) var editSnippetsKeyCombo
     @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
     @Shared(.folderKeyCombos) var folderKeyCombos
 
@@ -56,5 +57,22 @@ final class HotKeyServiceTests {
 
         service.changeClearHistoryKeyCombo(nil)
         #expect(clearHistoryKeyCombo == nil)
+    }
+
+    @Test
+    func addAndRemoveEditSnippetsHotkey() throws {
+        let service = HotKeyService()
+
+        #expect(editSnippetsKeyCombo == nil)
+
+        service.changeEditSnippetsKeyCombo(KeyCombo(QWERTYKeyCode: 14, carbonModifiers: cmdKey))
+
+        #expect(editSnippetsKeyCombo?.QWERTYKeyCode == 14)
+        #expect(editSnippetsKeyCombo?.modifiers == cmdKey)
+        #expect(editSnippetsKeyCombo?.doubledModifiers == false)
+        #expect(editSnippetsKeyCombo?.keyEquivalent.uppercased() == "E")
+
+        service.changeEditSnippetsKeyCombo(nil)
+        #expect(editSnippetsKeyCombo == nil)
     }
 }
