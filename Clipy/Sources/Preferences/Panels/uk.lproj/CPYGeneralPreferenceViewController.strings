@@ -1,0 +1,41 @@
+/* Class = "NSButtonCell"; title = "Launch on Login"; ObjectID = "Su3-mF-z1T"; */
+"Su3-mF-z1T.title" = "Запускати під час входу";
+
+/* Class = "NSButtonCell"; title = "Input \"⌘ + V\" after menu item selection"; ObjectID = "0yt-u0-ROt"; */
+"0yt-u0-ROt.title" = "Вставляти після вибору пункту меню (⌘ + V)";
+
+/* Class = "NSButtonCell"; title = "Send crash reports and usage logs (applies next launch)"; ObjectID = "LsC-YB-qAw"; */
+"LsC-YB-qAw.title" = "Надсилати звіти (збої й використання, після перезапуску)";
+
+/* Class = "NSTextFieldCell"; title = "Behavior"; ObjectID = "nDk-8y-89n"; */
+"nDk-8y-89n.title" = "Поведінка";
+
+/* Class = "NSTextFieldCell"; title = "Clipboard History"; ObjectID = "OOT-F5-Pal"; */
+"OOT-F5-Pal.title" = "Історія буфера обміну";
+
+/* Class = "NSTextFieldCell"; title = "items"; ObjectID = "eeq-cw-v00"; */
+"eeq-cw-v00.title" = "елем.";
+
+/* Class = "NSTextFieldCell"; title = "Max clipboard history size:"; ObjectID = "Nab-CO-ytH"; */
+"Nab-CO-ytH.title" = "Максимальний розмір історії:";
+
+/* Class = "NSTextFieldCell"; title = "Sort history order by:"; ObjectID = "Lps-06-dPB"; */
+"Lps-06-dPB.title" = "Сортувати історію за:";
+
+/* Class = "NSPopUpButtonCell"; title = "Last Used"; ObjectID = "OT4-9P-YiO"; */
+"OT4-9P-YiO.title" = "Використанням";
+
+/* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "YmS-J6-ERc"; */
+"YmS-J6-ERc.title" = "Створенням";
+
+/* Class = "NSMenuItem"; title = "Last Used"; ObjectID = "ju3-6a-6xj"; */
+"ju3-6a-6xj.title" = "Використанням";
+
+/* Class = "NSTextFieldCell"; title = "Appearance"; ObjectID = "FM4-mw-DCx"; */
+"FM4-mw-DCx.title" = "Вигляд";
+
+/* Class = "NSTextFieldCell"; title = "Status Bar icon style:"; ObjectID = "Faj-kQ-G1v"; */
+"Faj-kQ-G1v.title" = "Іконка в рядку меню:";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "aEh-u0-hQR"; */
+"aEh-u0-hQR.title" = "Без іконки";
