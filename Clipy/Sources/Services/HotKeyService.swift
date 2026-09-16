@@ -98,8 +98,8 @@ extension HotKeyService {
         // Register new hotkey
         guard let keyCombo = keyCombo else { return }
         let hotkey = HotKey(identifier: "EditSnippets", keyCombo: keyCombo) { _ in
-            guard let appDelegate = NSApp.delegate as? AppDelegate else { return }
-            appDelegate.showSnippetEditorWindow()
+            NSApp.activate(ignoringOtherApps: true)
+            CPYSnippetsEditorWindowController.sharedController.showWindow(nil)
         }
         hotkey.register()
     }
