@@ -12,6 +12,8 @@ struct ShortcutSettingsView: View {
     private var historyKeyCombo
     @Shared(.snippetKeyCombo)
     private var snippetKeyCombo
+    @Shared(.editSnippetsKeyCombo)
+    private var editSnippetsKeyCombo
     @Shared(.clearHistoryKeyCombo)
     private var clearHistoryKeyCombo
 
@@ -44,6 +46,14 @@ struct ShortcutSettingsView: View {
             SettingsSection(title: .Settings.clearHistory, verticalAlignment: .center) {
                 ShortcutRecorder(keyCombo: clearHistoryKeyCombo) {
                     hotKeyService.changeClearHistoryKeyCombo($0)
+                }
+                .frame(width: 240, height: 32)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            SettingsSection(title: .Settings.editSnippets, verticalAlignment: .center) {
+                ShortcutRecorder(keyCombo: editSnippetsKeyCombo) {
+                    hotKeyService.changeEditSnippetsKeyCombo($0)
                 }
                 .frame(width: 240, height: 32)
                 .frame(maxWidth: .infinity, alignment: .leading)
