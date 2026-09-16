@@ -3628,7 +3628,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "пікс."
+            "value" : "px"
           }
         },
         "zh-Hans" : {
