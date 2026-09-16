@@ -240,6 +240,10 @@ extension SharedKey where Self == AppStorageKey<KeyCombo?>.Default {
     static var clearHistoryKeyCombo: Self {
         Self[.appStorage(AppStorageKeys.clearHistoryKeyCombo.rawValue), default: nil]
     }
+
+    static var pasteSecondHistoryItemKeyCombo: Self {
+        Self[.appStorage(AppStorageKeys.pasteSecondHistoryItemKeyCombo.rawValue), default: nil]
+    }
 }
 
 extension SharedKey where Self == AppStorageKey<[String: KeyCombo]>.Default {

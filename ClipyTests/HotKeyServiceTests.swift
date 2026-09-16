@@ -13,6 +13,7 @@ final class HotKeyServiceTests {
     @Shared(.historyKeyCombo) var historyKeyCombo
     @Shared(.snippetKeyCombo) var snippetKeyCombo
     @Shared(.clearHistoryKeyCombo) var clearHistoryKeyCombo
+    @Shared(.pasteSecondHistoryItemKeyCombo) var pasteSecondHistoryItemKeyCombo
     @Shared(.folderKeyCombos) var folderKeyCombos
 
     @Test
@@ -56,5 +57,22 @@ final class HotKeyServiceTests {
 
         service.changeClearHistoryKeyCombo(nil)
         #expect(clearHistoryKeyCombo == nil)
+    }
+
+    @Test
+    func addAndRemovePasteSecondHistoryItemHotkey() throws {
+        let service = HotKeyService()
+
+        #expect(pasteSecondHistoryItemKeyCombo == nil)
+
+        service.changePasteSecondHistoryItemKeyCombo(KeyCombo(QWERTYKeyCode: 9, carbonModifiers: cmdKey | optionKey))
+
+        #expect(pasteSecondHistoryItemKeyCombo?.QWERTYKeyCode == 9)
+        #expect(pasteSecondHistoryItemKeyCombo?.modifiers == cmdKey | optionKey)
+        #expect(pasteSecondHistoryItemKeyCombo?.doubledModifiers == false)
+        #expect(pasteSecondHistoryItemKeyCombo?.keyEquivalent.uppercased() == "V")
+
+        service.changePasteSecondHistoryItemKeyCombo(nil)
+        #expect(pasteSecondHistoryItemKeyCombo == nil)
     }
 }

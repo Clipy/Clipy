@@ -23,6 +23,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     @IBOutlet private weak var historyShortcutRecordView: RecordView!
     @IBOutlet private weak var snippetShortcutRecordView: RecordView!
     @IBOutlet private weak var clearHistoryShortcutRecordView: RecordView!
+    @IBOutlet private weak var pasteSecondHistoryItemShortcutRecordView: RecordView!
 
     @Dependency(\.hotKeyService)
     private var hotKeyService
@@ -34,6 +35,8 @@ class CPYShortcutsPreferenceViewController: NSViewController {
     private var snippetKeyCombo
     @Shared(.clearHistoryKeyCombo)
     private var clearHistoryKeyCombo
+    @Shared(.pasteSecondHistoryItemKeyCombo)
+    private var pasteSecondHistoryItemKeyCombo
 
     // MARK: - Initialize
     override func loadView() {
@@ -42,6 +45,7 @@ class CPYShortcutsPreferenceViewController: NSViewController {
         historyShortcutRecordView.delegate = self
         snippetShortcutRecordView.delegate = self
         clearHistoryShortcutRecordView.delegate = self
+        pasteSecondHistoryItemShortcutRecordView.delegate = self
         prepareHotKeys()
     }
 
@@ -54,6 +58,7 @@ private extension CPYShortcutsPreferenceViewController {
         historyShortcutRecordView.keyCombo = historyKeyCombo
         snippetShortcutRecordView.keyCombo = snippetKeyCombo
         clearHistoryShortcutRecordView.keyCombo = clearHistoryKeyCombo
+        pasteSecondHistoryItemShortcutRecordView.keyCombo = pasteSecondHistoryItemKeyCombo
     }
 }
 
@@ -77,6 +82,8 @@ extension CPYShortcutsPreferenceViewController: RecordViewDelegate {
             hotKeyService.change(with: .snippet, keyCombo: keyCombo)
         case clearHistoryShortcutRecordView:
             hotKeyService.changeClearHistoryKeyCombo(keyCombo)
+        case pasteSecondHistoryItemShortcutRecordView:
+            hotKeyService.changePasteSecondHistoryItemKeyCombo(keyCombo)
         default: break
         }
     }

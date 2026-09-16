@@ -26,6 +26,8 @@ final class HotKeyService: NSObject {
     private var menuManager
     @Dependency(\.clipService)
     private var clipService
+    @Dependency(\.pasteService)
+    private var pasteService
 
     @Shared(.mainKeyCombo)
     private var mainKeyCombo
@@ -35,6 +37,8 @@ final class HotKeyService: NSObject {
     private var snippetKeyCombo
     @Shared(.clearHistoryKeyCombo)
     private var clearHistoryKeyCombo
+    @Shared(.pasteSecondHistoryItemKeyCombo)
+    private var pasteSecondHistoryItemKeyCombo
     @Shared(.folderKeyCombos)
     private var folderKeyCombos
 }
@@ -53,6 +57,8 @@ extension HotKeyService {
         change(with: .snippet, keyCombo: snippetKeyCombo)
         // Clear History
         changeClearHistoryKeyCombo(clearHistoryKeyCombo)
+        // Paste 2nd history item
+        changePasteSecondHistoryItemKeyCombo(pasteSecondHistoryItemKeyCombo)
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
@@ -77,13 +83,25 @@ extension HotKeyService {
 
     func changeClearHistoryKeyCombo(_ keyCombo: KeyCombo?) {
         $clearHistoryKeyCombo.withLock { $0 = keyCombo }
-        // Reset hotkey
-        HotKeyCenter.shared.unregisterHotKey(with: "ClearHistory")
-        // Register new hotkey
-        guard let keyCombo = keyCombo else { return }
-        let hotkey = HotKey(identifier: "ClearHistory", keyCombo: keyCombo) { [weak self] _ in
+        register(identifier: "ClearHistory", keyCombo: keyCombo) { [weak self] in
             self?.clipService.clearAllHistory()
         }
+    }
+
+    func changePasteSecondHistoryItemKeyCombo(_ keyCombo: KeyCombo?) {
+        $pasteSecondHistoryItemKeyCombo.withLock { $0 = keyCombo }
+        register(identifier: "PasteSecondHistoryItem", keyCombo: keyCombo) { [weak self] in
+            guard let self, pasteService.pasteHistoryItem(at: 1) else { return }
+            firebase.logEvent(event: .pasteSecondHistoryItem)
+        }
+    }
+
+    private func register(identifier: String, keyCombo: KeyCombo?, handler: @escaping () -> Void) {
+        // Reset hotkey
+        HotKeyCenter.shared.unregisterHotKey(with: identifier)
+        // Register new hotkey
+        guard let keyCombo = keyCombo else { return }
+        let hotkey = HotKey(identifier: identifier, keyCombo: keyCombo) { _ in handler() }
         hotkey.register()
     }
 }
