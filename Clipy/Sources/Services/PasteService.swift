@@ -14,6 +14,7 @@ import Cocoa
 import Dependencies
 import Foundation
 import Sauce
+import Sharing
 
 final class PasteService {
 
@@ -25,28 +26,35 @@ final class PasteService {
     }()
     private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.Pastable")
 
-    @Dependency(\.defaultAppStorage)
-    private var appStorage
     @Dependency(\.clipService)
     private var clipService
 
-    private var isPastePlainText: Bool {
-        guard appStorage.bool(forKey: Constants.Beta.pastePlainText) else { return false }
+    @Shared(.pastesPlainTextWithModifier)
+    private var pastesPlainTextWithModifier
+    @Shared(.plainTextPasteModifier)
+    private var plainTextPasteModifier
+    @Shared(.deletesHistoryWithModifier)
+    private var deletesHistoryWithModifier
+    @Shared(.historyDeletionModifier)
+    private var historyDeletionModifier
+    @Shared(.pastesAndDeletesHistoryWithModifier)
+    private var pastesAndDeletesHistoryWithModifier
+    @Shared(.pasteAndDeleteHistoryModifier)
+    private var pasteAndDeleteHistoryModifier
+    @Shared(.pastesAutomatically)
+    private var pastesAutomatically
 
-        let modifierSetting = appStorage.integer(forKey: Constants.Beta.pastePlainTextModifier)
-        return isPressedModifier(modifierSetting)
+    private var isPastePlainText: Bool {
+        guard pastesPlainTextWithModifier else { return false }
+        return isPressedModifier(plainTextPasteModifier)
     }
     private var isDeleteHistory: Bool {
-        guard appStorage.bool(forKey: Constants.Beta.deleteHistory) else { return false }
-
-        let modifierSetting = appStorage.integer(forKey: Constants.Beta.deleteHistoryModifier)
-        return isPressedModifier(modifierSetting)
+        guard deletesHistoryWithModifier else { return false }
+        return isPressedModifier(historyDeletionModifier)
     }
     private var isPasteAndDeleteHistory: Bool {
-        guard appStorage.bool(forKey: Constants.Beta.pasteAndDeleteHistory) else { return false }
-
-        let modifierSetting = appStorage.integer(forKey: Constants.Beta.pasteAndDeleteHistoryModifier)
-        return isPressedModifier(modifierSetting)
+        guard pastesAndDeletesHistoryWithModifier else { return false }
+        return isPressedModifier(pasteAndDeleteHistoryModifier)
     }
 
     // MARK: - Modifiers
@@ -120,7 +128,7 @@ extension PasteService {
 // MARK: - Paste
 extension PasteService {
     func paste() {
-        guard appStorage.bool(forKey: Constants.UserDefaults.inputPasteCommand) else { return }
+        guard pastesAutomatically else { return }
         // Check Accessibility Permission
         guard Accessibility.isAccessibilityEnabled(isPrompt: false) else {
             Accessibility.showAccessibilityAuthenticationAlert()

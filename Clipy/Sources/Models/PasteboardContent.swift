@@ -12,6 +12,7 @@
 
 import Cocoa
 import CryptoKit
+import Sharing
 import SwiftHEXColors
 
 struct PasteboardContent: Equatable {
@@ -44,11 +45,11 @@ struct PasteboardContent: Equatable {
         return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
     }
     var thumbnailImage: NSImage? {
-        let defaults = UserDefaults.standard
-        let width = defaults.integer(forKey: Constants.UserDefaults.thumbnailWidth)
-        let height = defaults.integer(forKey: Constants.UserDefaults.thumbnailHeight)
+        @Shared(.thumbnailWidth) var thumbnailWidth
+        @Shared(.thumbnailHeight) var thumbnailHeight
+
         guard let imageData else { return nil }
-        return NSImage(data: imageData)?.resizeImage(CGFloat(width), CGFloat(height))
+        return NSImage(data: imageData)?.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
     }
     var imageData: Data? {
         if let imageFileURL {

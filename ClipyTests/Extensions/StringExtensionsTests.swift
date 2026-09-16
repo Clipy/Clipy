@@ -19,28 +19,22 @@ import Testing
 struct StringExtensionsTests {
     @Test
     func trimmedMenuTitleUsesFirstTrimmedLine() {
-        withDependencies {
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect("  First line\nSecond line  ".trimmedMenuTitle == "First line")
-        }
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
+
+        #expect("  First line\nSecond line  ".trimmedMenuTitle == "First line")
     }
 
     @Test
     func trimmedMenuTitleShortensLongTitles() {
-        withDependencies {
-            $0.defaultAppStorage.set(8, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect("Clipboard title".trimmedMenuTitle == "Clipb...")
-        }
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 8
+
+        #expect("Clipboard title".trimmedMenuTitle == "Clipb...")
     }
 
     @Test(arguments: [0, 1, 2, 3])
     func trimmedMenuTitleShortensToSymbolWhenMaxLengthIsThreeOrLess(maxLength: Int) {
-        withDependencies {
-            $0.defaultAppStorage.set(maxLength, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect("Clipboard title".trimmedMenuTitle == "...")
-        }
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = maxLength
+
+        #expect("Clipboard title".trimmedMenuTitle == "...")
     }
 }

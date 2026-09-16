@@ -30,11 +30,17 @@ final class ClipService {
     private var pasteboardHistoryRepository
     @Dependency(\.textRecognizer)
     private var textRecognizer
-    @Dependency(\.defaultAppStorage)
-    private var appStorage
     @Dependency(\.defaultDatabase)
     private var database
 
+    @Shared(.showsClearHistoryAlert)
+    private var showsClearHistoryAlert
+    @Shared(.ignoresConcealedPasteboardTypes)
+    private var ignoresConcealedPasteboardTypes
+    @Shared(.allowsDuplicateHistory)
+    private var allowsDuplicateHistory
+    @Shared(.overwritesDuplicateHistory)
+    private var overwritesDuplicateHistory
     @Shared(.pasteboardTypeSettings)
     private var pasteboardTypeSettings
 
@@ -55,8 +61,7 @@ final class ClipService {
     }
 
     @objc func clearAllHistory() {
-        let isShowAlert = appStorage.bool(forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
-        if isShowAlert {
+        if showsClearHistoryAlert {
             let alert = NSAlert()
             alert.messageText = String(localized: "Clear History")
             alert.informativeText = String(localized: "Are you sure you want to clear your clipboard history?")
@@ -70,9 +75,8 @@ final class ClipService {
             if result != NSApplication.ModalResponse.alertFirstButtonReturn { return }
 
             if alert.suppressionButton?.state == NSControl.StateValue.on {
-                appStorage.set(false, forKey: Constants.UserDefaults.showAlertBeforeClearHistory)
+                $showsClearHistoryAlert.withLock { $0 = false }
             }
-            appStorage.synchronize()
         }
 
         pasteboardHistoryRepository.deleteAll()
@@ -110,7 +114,7 @@ extension ClipService {
         let types = PasteboardAvailableType.availableTypes(
             from: pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? [],
             storeAvailableTypes: pasteboardTypeSettings.enabledTypes,
-            ignoresConcealedType: appStorage.bool(forKey: Constants.UserDefaults.ignoreConcealedPasteboardType)
+            ignoresConcealedType: ignoresConcealedPasteboardTypes
         )
         guard !types.isEmpty else { return }
 
@@ -132,16 +136,14 @@ extension ClipService {
 
     private func save(_ content: PasteboardContent) {
         // Copy already copied history
-        let isCopySameHistory = appStorage.bool(forKey: Constants.UserDefaults.copySameHistory)
         let historyID = PasteboardHistory.ID(rawValue: content.hash)
-        if pasteboardHistoryRepository.fetchHistory(id: historyID) != nil, !isCopySameHistory { return }
+        if pasteboardHistoryRepository.fetchHistory(id: historyID) != nil, !allowsDuplicateHistory { return }
 
         // Don't save empty or whitespace-only text history
         if content.isBlankText { return }
 
         // Overwrite same history
-        let isOverwriteHistory = appStorage.bool(forKey: Constants.UserDefaults.overwriteSameHistory)
-        let savedHash = (isOverwriteHistory) ? content.hash : UUID().uuidString
+        let savedHash = overwritesDuplicateHistory ? content.hash : UUID().uuidString
 
         let unixTime = Int(Date().timeIntervalSince1970)
         let id = PasteboardHistory.ID(rawValue: savedHash)

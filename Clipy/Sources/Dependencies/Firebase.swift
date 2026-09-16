@@ -13,6 +13,7 @@
 import Dependencies
 import DependenciesMacros
 import Firebase
+import Sharing
 
 @DependencyClient
 struct Firebase {
@@ -52,10 +53,11 @@ extension DependencyValues {
         static let liveValue: Firebase = .init(
             configure: {
                 @Dependency(\.defaultAppStorage) var appStorage
+                @Shared(.collectsCrashReports) var collectsCrashReports
 
                 appStorage.register(defaults: ["NSApplicationCrashOnExceptions": true])
                 guard
-                    appStorage.bool(forKey: Constants.UserDefaults.collectCrashReport),
+                    collectsCrashReports,
                     let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
                     let options = FirebaseOptions(contentsOfFile: path),
                     FirebaseApp.app() == nil
@@ -64,9 +66,9 @@ extension DependencyValues {
                 FirebaseApp.configure(options: options)
             },
             logEvent: { event in
-                @Dependency(\.defaultAppStorage) var appStorage
+                @Shared(.collectsCrashReports) var collectsCrashReports
 
-                guard appStorage.bool(forKey: Constants.UserDefaults.collectCrashReport) else { return }
+                guard collectsCrashReports else { return }
 
                 Analytics.logEvent(event.name, parameters: event.parameters)
             }

@@ -11,12 +11,14 @@
 //
 
 import AppKit
+import DependenciesTestSupport
+import Sharing
 import Testing
 @testable import Clipy
 
 @MainActor
-@Suite
-struct PasteboardContentTests { // swiftlint:disable:this type_body_length
+@Suite(.dependencies)
+struct PasteboardContentTests {
     @Test
     func typesAreDerivedFromAssetsInOrder() throws {
         let content = try #require(
@@ -238,23 +240,8 @@ struct PasteboardContentTests { // swiftlint:disable:this type_body_length
 
     @Test
     func thumbnailImageIsCreatedFromStoredTiffData() {
-        let defaults = UserDefaults.standard
-        let previousWidth = defaults.object(forKey: Constants.UserDefaults.thumbnailWidth)
-        let previousHeight = defaults.object(forKey: Constants.UserDefaults.thumbnailHeight)
-        defer {
-            if let previousWidth {
-                defaults.set(previousWidth, forKey: Constants.UserDefaults.thumbnailWidth)
-            } else {
-                defaults.removeObject(forKey: Constants.UserDefaults.thumbnailWidth)
-            }
-            if let previousHeight {
-                defaults.set(previousHeight, forKey: Constants.UserDefaults.thumbnailHeight)
-            } else {
-                defaults.removeObject(forKey: Constants.UserDefaults.thumbnailHeight)
-            }
-        }
-        defaults.set(8, forKey: Constants.UserDefaults.thumbnailWidth)
-        defaults.set(6, forKey: Constants.UserDefaults.thumbnailHeight)
+        @Shared(.thumbnailWidth) var thumbnailWidth = 8
+        @Shared(.thumbnailHeight) var thumbnailHeight = 6
 
         let image = NSImage.create(with: .blue, size: NSSize(width: 20, height: 10))
         let content = PasteboardContent(image: image)

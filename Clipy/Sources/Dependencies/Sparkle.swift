@@ -39,12 +39,13 @@ extension DependencyValues {
 
             return Sparkle(
                 configure: {
-                    @Dependency(\.defaultAppStorage) var appStorage
+                    @Shared(.checksForUpdatesAutomatically) var checksForUpdatesAutomatically
+                    @Shared(.updateCheckInterval) var updateCheckInterval
 
-                    if appStorage.bool(forKey: Constants.Update.enableAutomaticCheck) {
+                    if checksForUpdatesAutomatically {
                         updaterController.startUpdater()
                     }
-                    updaterController.updater.updateCheckInterval = TimeInterval(appStorage.integer(forKey: Constants.Update.checkInterval))
+                    updaterController.updater.updateCheckInterval = TimeInterval(updateCheckInterval)
                     updaterController.updater.clearFeedURLFromUserDefaults()
                 },
                 lastUpdateCheckDate: {

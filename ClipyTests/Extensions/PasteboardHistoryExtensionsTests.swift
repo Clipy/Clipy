@@ -27,21 +27,18 @@ struct PasteboardHistoryExtensionsTests {
         .deprecatedTIFF
     ])
     func typedTitleIncludesImagePrefix(pasteboardType: NSPasteboard.PasteboardType) {
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
+
         let history = Self.pasteboardHistory(title: "  Screenshot\nMetadata  ", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
 
-        withDependencies {
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "(Image) Screenshot")
-            #expect(emptyTitleHistory.typedTitle == "(Image)")
-        }
-        withDependencies {
-            $0.defaultAppStorage.set(5, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "(Image) Sc...")
-            #expect(emptyTitleHistory.typedTitle == "(Image)")
-        }
+        #expect(history.typedTitle == "(Image) Screenshot")
+        #expect(emptyTitleHistory.typedTitle == "(Image)")
+
+        $maximumMenuItemTitleLength.withLock { $0 = 5 }
+
+        #expect(history.typedTitle == "(Image) Sc...")
+        #expect(emptyTitleHistory.typedTitle == "(Image)")
     }
 
     @Test(arguments: [
@@ -49,21 +46,18 @@ struct PasteboardHistoryExtensionsTests {
         .deprecatedPDF
     ])
     func typedTitleIncludesPDFPrefix(pasteboardType: NSPasteboard.PasteboardType) {
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
+
         let history = Self.pasteboardHistory(title: "Document", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
 
-        withDependencies {
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "(PDF) Document")
-            #expect(emptyTitleHistory.typedTitle == "(PDF)")
-        }
-        withDependencies {
-            $0.defaultAppStorage.set(5, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "(PDF) Do...")
-            #expect(emptyTitleHistory.typedTitle == "(PDF)")
-        }
+        #expect(history.typedTitle == "(PDF) Document")
+        #expect(emptyTitleHistory.typedTitle == "(PDF)")
+
+        $maximumMenuItemTitleLength.withLock { $0 = 5 }
+
+        #expect(history.typedTitle == "(PDF) Do...")
+        #expect(emptyTitleHistory.typedTitle == "(PDF)")
     }
 
     @Test(arguments: [
@@ -71,21 +65,18 @@ struct PasteboardHistoryExtensionsTests {
         .deprecatedFilenames
     ])
     func typedTitleIncludesFilesPrefix(pasteboardType: NSPasteboard.PasteboardType) {
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
+
         let history = Self.pasteboardHistory(title: "Archive", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
 
-        withDependencies {
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "(Files) Archive")
-            #expect(emptyTitleHistory.typedTitle == "(Files)")
-        }
-        withDependencies {
-            $0.defaultAppStorage.set(5, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "(Files) Ar...")
-            #expect(emptyTitleHistory.typedTitle == "(Files)")
-        }
+        #expect(history.typedTitle == "(Files) Archive")
+        #expect(emptyTitleHistory.typedTitle == "(Files)")
+
+        $maximumMenuItemTitleLength.withLock { $0 = 5 }
+
+        #expect(history.typedTitle == "(Files) Ar...")
+        #expect(emptyTitleHistory.typedTitle == "(Files)")
     }
 
     @Test(arguments: [
@@ -95,51 +86,41 @@ struct PasteboardHistoryExtensionsTests {
         .deprecatedRTF
     ])
     func typedTitleOmitsPrefix(pasteboardType: NSPasteboard.PasteboardType) {
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
+
         let history = Self.pasteboardHistory(title: "Plain text", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
 
-        withDependencies {
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "Plain text")
-            #expect(emptyTitleHistory.typedTitle == "")
-        }
-        withDependencies {
-            $0.defaultAppStorage.set(5, forKey: Constants.UserDefaults.maxMenuItemTitleLength)
-        } operation: {
-            #expect(history.typedTitle == "Pl...")
-            #expect(emptyTitleHistory.typedTitle == "")
-        }
+        #expect(history.typedTitle == "Plain text")
+        #expect(emptyTitleHistory.typedTitle == "")
+
+        $maximumMenuItemTitleLength.withLock { $0 = 5 }
+
+        #expect(history.typedTitle == "Pl...")
+        #expect(emptyTitleHistory.typedTitle == "")
     }
 
     @Test
     func toolTipShowsFullTitleWhenEnabled() {
-        withDependencies {
-            $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-            $0.defaultAppStorage.set(20, forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        } operation: {
-            #expect(history.toolTip == "Clipboard title")
-        }
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems = true
+        @Shared(.maximumToolTipLength) var maximumToolTipLength = 20
+
+        #expect(history.toolTip == "Clipboard title")
     }
 
     @Test
     func toolTipShortensWhenEnabled() {
-        withDependencies {
-            $0.defaultAppStorage.set(true, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-            $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        } operation: {
-            #expect(history.toolTip == "Clipboard")
-        }
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems = true
+        @Shared(.maximumToolTipLength) var maximumToolTipLength = 9
+
+        #expect(history.toolTip == "Clipboard")
     }
 
     @Test
     func toolTipIsNilWhenDisabled() {
-        withDependencies {
-            $0.defaultAppStorage.set(false, forKey: Constants.UserDefaults.showToolTipOnMenuItem)
-            $0.defaultAppStorage.set(9, forKey: Constants.UserDefaults.maxLengthOfToolTip)
-        } operation: {
-            #expect(history.toolTip == nil)
-        }
+        @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems = false
+
+        #expect(history.toolTip == nil)
     }
 }
 
