@@ -38,6 +38,10 @@ struct ClipboardTypeSettingsView: View {
                     .Settings.images,
                     isOn: Binding($pasteboardTypeSettings[.tiff])
                 )
+                Toggle(
+                    .Settings.html,
+                    isOn: Binding($pasteboardTypeSettings[.html])
+                )
             }
 
             SettingsSection(title: .Settings.privacy) {

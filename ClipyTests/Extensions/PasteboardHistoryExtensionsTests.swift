@@ -79,6 +79,22 @@ struct PasteboardHistoryExtensionsTests {
         #expect(emptyTitleHistory.typedTitle == "(Files)")
     }
 
+    @Test
+    func typedTitleIncludesHTMLPrefix() {
+        @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
+
+        let history = Self.pasteboardHistory(title: "  Web content\n", pasteboardTypes: [.html, .string])
+        let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [.html])
+
+        #expect(history.typedTitle == "(HTML) Web content")
+        #expect(emptyTitleHistory.typedTitle == "(HTML)")
+
+        $maximumMenuItemTitleLength.withLock { $0 = 5 }
+
+        #expect(history.typedTitle == "(HTML) We...")
+        #expect(emptyTitleHistory.typedTitle == "(HTML)")
+    }
+
     @Test(arguments: [
         NSPasteboard.PasteboardType.string,
         .deprecatedString,

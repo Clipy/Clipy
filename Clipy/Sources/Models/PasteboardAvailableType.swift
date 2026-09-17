@@ -18,6 +18,7 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
     case string = "String"
     case rtf = "RTF"
     case rtfd = "RTFD"
+    case html = "HTML"
     case pdf = "PDF"
     case filenames = "Filenames"
     case url = "URL"
@@ -75,6 +76,8 @@ private extension NSPasteboard.PasteboardType {
             return .rtf
         case .rtfd, .deprecatedRTFD:
             return .rtfd
+        case .html:
+            return .html
         case .pdf, .deprecatedPDF:
             return .pdf
         case .fileURL, .deprecatedFilenames:
