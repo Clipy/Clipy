@@ -11,6 +11,12 @@ struct GeneralSettingsView: View {
     private var maximumHistoryCount
     @Shared(.reordersClipsAfterPasting)
     private var reordersClipsAfterPasting
+    @Shared(.clearsHistoryOnQuit)
+    private var clearsHistoryOnQuit
+    @Shared(.clearsHistoryPeriodically)
+    private var clearsHistoryPeriodically
+    @Shared(.historyClearInterval)
+    private var historyClearInterval
     @Shared(.statusItemDisplayMode)
     private var statusItemDisplayMode
     @Shared(.collectsCrashReports)
@@ -36,7 +42,7 @@ struct GeneralSettingsView: View {
                 )
             }
 
-            SettingsSection(title: .Settings.sortHistoryBy) {
+            SettingsSection(title: .Settings.sortHistoryBy, bottomDivider: true) {
                 Picker(
                     .Settings.sortHistoryBy,
                     selection: Binding($reordersClipsAfterPasting)
@@ -47,6 +53,30 @@ struct GeneralSettingsView: View {
                         .tag(true)
                 }
                 .labelsHidden()
+            }
+
+            SettingsSection(title: .Settings.automaticHistoryDeletion, bottomDivider: true) {
+                Toggle(
+                    .Settings.clearHistoryWhenClipyQuits,
+                    isOn: Binding($clearsHistoryOnQuit)
+                )
+                Toggle(
+                    .Settings.clearHistoryPeriodically,
+                    isOn: Binding($clearsHistoryPeriodically)
+                )
+                Picker(
+                    .Settings.clearHistoryPeriodically,
+                    selection: Binding($historyClearInterval)
+                ) {
+                    ForEach(HistoryClearInterval.allCases, id: \.self) { interval in
+                        Text(interval.title).tag(interval)
+                    }
+                }
+                .labelsHidden()
+                .padding(.leading, 20)
+                .disabled(!clearsHistoryPeriodically)
+                Text(.Settings.historyClearIntervalDescription)
+                    .settingDescription()
             }
 
             SettingsSection(title: .Settings.menuBarIcon, bottomDivider: true) {

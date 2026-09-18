@@ -12,6 +12,7 @@
 
 import Cocoa
 import Clocks
+import Combine
 import Dependencies
 import Foundation
 import Sharing
@@ -20,9 +21,12 @@ import SQLiteData
 final class ClipService {
 
     // MARK: - Properties
-    fileprivate var cachedChangeCount = 0
-    fileprivate let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
-    fileprivate var monitoringTask: Task<Void, Never>?
+    private var cachedChangeCount = 0
+    private let lock = NSRecursiveLock(name: "com.clipy-app.Clipy.ClipUpdatable")
+    private var pasteboardMonitoringTask: Task<Void, Never>?
+    private var historyTrimmingTask: Task<Void, Never>?
+    private var historyCleanupTask: Task<Void, Never>?
+    private var cancellables: Set<AnyCancellable> = []
 
     @Dependency(\.excludeAppService)
     private var excludeAppService
@@ -32,6 +36,8 @@ final class ClipService {
     private var textRecognizer
     @Dependency(\.defaultDatabase)
     private var database
+    @Dependency(\.mainQueue)
+    private var mainQueue
 
     @Shared(.showsClearHistoryAlert)
     private var showsClearHistoryAlert
@@ -43,12 +49,20 @@ final class ClipService {
     private var overwritesDuplicateHistory
     @Shared(.pasteboardTypeSettings)
     private var pasteboardTypeSettings
+    @Shared(.maximumHistoryCount)
+    private var maximumHistoryCount
+    @Shared(.reordersClipsAfterPasting)
+    private var reordersClipsAfterPasting
+    @Shared(.clearsHistoryOnQuit)
+    private var clearsHistoryOnQuit
+    @Shared(.clearsHistoryPeriodically)
+    private var clearsHistoryPeriodically
+    @Shared(.historyClearInterval)
+    private var historyClearInterval
 
     // MARK: - Clips
     func startMonitoring() {
-        monitoringTask?.cancel()
-        // Pasteboard observe timer
-        monitoringTask = Task { @MainActor [weak self] in
+        pasteboardMonitoringTask = Task { @MainActor [weak self] in
             @Dependency(\.continuousClock) var continuousClock
 
             for await _ in continuousClock.timer(interval: .milliseconds(500)) {
@@ -58,6 +72,31 @@ final class ClipService {
                 self?.create()
             }
         }
+
+        historyTrimmingTask = Task(priority: .utility) { @MainActor [weak self] in
+            @Dependency(\.continuousClock) var continuousClock
+
+            for await _ in continuousClock.timer(interval: .seconds(60)) {
+                guard let self else { return }
+                pasteboardHistoryRepository.deleteOverflowingHistories(
+                    sortsByCreatedAt: !reordersClipsAfterPasting,
+                    maxHistorySize: maximumHistoryCount
+                )
+            }
+        }
+
+        $clearsHistoryPeriodically.changes(includingInitialValue: true)
+            .combineLatest($historyClearInterval.changes(includingInitialValue: true))
+            .receive(on: mainQueue)
+            .sink { [weak self] isEnabled, interval in
+                self?.scheduleHistoryCleanup(interval, isEnabled: isEnabled)
+            }
+            .store(in: &cancellables)
+    }
+
+    func applicationWillTerminate() {
+        guard clearsHistoryOnQuit else { return }
+        pasteboardHistoryRepository.deleteAll()
     }
 
     @objc func clearAllHistory() {
@@ -98,7 +137,35 @@ final class ClipService {
     }
 
     deinit {
-        monitoringTask?.cancel()
+        pasteboardMonitoringTask?.cancel()
+        historyTrimmingTask?.cancel()
+        historyCleanupTask?.cancel()
+    }
+}
+
+// MARK: - Automatic History Cleanup
+extension ClipService {
+    private func scheduleHistoryCleanup(_ interval: HistoryClearInterval, isEnabled: Bool) {
+        historyCleanupTask?.cancel()
+        historyCleanupTask = nil
+        guard isEnabled else { return }
+
+        historyCleanupTask = Task { @MainActor [weak self] in
+            @Dependency(\.continuousClock) var continuousClock
+
+            await withErrorReporting { [weak self] in
+                let duration = Duration.seconds(interval.rawValue)
+                let clock = AnyClock(continuousClock)
+                var nextDeadline = clock.now.advanced(by: duration)
+
+                while !Task.isCancelled {
+                    try await clock.sleep(until: nextDeadline, tolerance: nil)
+                    guard !Task.isCancelled, let self, clearsHistoryPeriodically, historyClearInterval == interval else { return }
+                    pasteboardHistoryRepository.deleteAll()
+                    nextDeadline = clock.now.advanced(by: duration)
+                }
+            }
+        }
     }
 }
 

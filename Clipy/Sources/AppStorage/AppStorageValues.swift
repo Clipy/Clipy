@@ -43,6 +43,14 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.showAlertBeforeClearHistory.rawValue), default: true]
     }
 
+    static var clearsHistoryOnQuit: Self {
+        Self[.appStorage(AppStorageKeys.clearsHistoryOnQuit.rawValue), default: false]
+    }
+
+    static var clearsHistoryPeriodically: Self {
+        Self[.appStorage(AppStorageKeys.clearsHistoryPeriodically.rawValue), default: false]
+    }
+
     static var showsClearHistoryMenuItem: Self {
         Self[.appStorage(AppStorageKeys.addClearHistoryMenuItem.rawValue), default: true]
     }
@@ -156,6 +164,12 @@ extension SharedKey where Self == AppStorageKey<PasteboardTypeSettings>.Default 
             .appStorage(AppStorageKeys.pasteboardTypeSettings.rawValue),
             default: PasteboardTypeSettings()
         ]
+    }
+}
+
+extension SharedKey where Self == AppStorageKey<HistoryClearInterval>.Default {
+    static var historyClearInterval: Self {
+        Self[.appStorage(AppStorageKeys.historyClearInterval.rawValue), default: .oneHour]
     }
 }
 
