@@ -23,6 +23,9 @@ enum AppStorageKeys: String {
     case reorderClipsAfterPasting = "kCPYPrefReorderClipsAfterPasting"
     case addClearHistoryMenuItem = "kCPYPrefAddClearHistoryMenuItemKey"
     case showAlertBeforeClearHistory = "kCPYPrefShowAlertBeforeClearHistoryKey"
+    case clearsHistoryOnQuit
+    case clearsHistoryPeriodically
+    case historyClearInterval
     case menuItemsAreMarkedWithNumbers
     case showToolTipOnMenuItem
     case showImageInTheMenu

@@ -26,6 +26,8 @@ struct AppStorageValuesTests {
         @Shared(.collectsCrashReports) var collectsCrashReports
         @Shared(.startsMenuItemTitlesAtZero) var startsMenuItemTitlesAtZero
         @Shared(.showsClearHistoryAlert) var showsClearHistoryAlert
+        @Shared(.clearsHistoryOnQuit) var clearsHistoryOnQuit
+        @Shared(.clearsHistoryPeriodically) var clearsHistoryPeriodically
         @Shared(.showsClearHistoryMenuItem) var showsClearHistoryMenuItem
         @Shared(.showsIconsInMenu) var showsIconsInMenu
         @Shared(.marksMenuItemsWithNumbers) var marksMenuItemsWithNumbers
@@ -48,6 +50,8 @@ struct AppStorageValuesTests {
         #expect(collectsCrashReports)
         #expect(!startsMenuItemTitlesAtZero)
         #expect(showsClearHistoryAlert)
+        #expect(!clearsHistoryOnQuit)
+        #expect(!clearsHistoryPeriodically)
         #expect(showsClearHistoryMenuItem)
         #expect(showsIconsInMenu)
         #expect(marksMenuItemsWithNumbers)
@@ -62,6 +66,12 @@ struct AppStorageValuesTests {
         #expect(!deletesHistoryWithModifier)
         #expect(!pastesAndDeletesHistoryWithModifier)
         #expect(!observesScreenshots)
+    }
+
+    @Test
+    func loadDefaultHistoryClearInterval() {
+        @Shared(.historyClearInterval) var historyClearInterval
+        #expect(historyClearInterval == .oneHour)
     }
 
     @Test

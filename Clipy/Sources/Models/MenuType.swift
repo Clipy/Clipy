@@ -13,7 +13,7 @@
 import Foundation
 
 enum MenuType: String {
-    case main       = "ClipMenu"
-    case history    = "HistoryMenu"
-    case snippet    = "SnippetMenu"
+    case main = "ClipMenu"
+    case history = "HistoryMenu"
+    case snippet = "SnippetMenu"
 }

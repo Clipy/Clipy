@@ -11,7 +11,6 @@
 //
 
 import Cocoa
-import Clocks
 import Combine
 import Dependencies
 import Magnet
@@ -63,10 +62,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var suppressesLoginItemAlert
     @Shared(.pastesAutomatically)
     private var pastesAutomatically
-    @Shared(.maximumHistoryCount)
-    private var maximumHistoryCount
-    @Shared(.reordersClipsAfterPasting)
-    private var reordersClipsAfterPasting
     @Shared(.observesScreenshots)
     private var observesScreenshots
 
@@ -184,21 +179,12 @@ extension AppDelegate: NSApplicationDelegate {
         menuManager.setup()
         // Screenshot
         screenshotObserver.delegate = self
-
-        // Periodically trim excess history using the current size limit and sort preference.
-        Task(priority: .utility) { [weak self] in
-            @Dependency(\.continuousClock) var continuousClock
-
-            for await _ in continuousClock.timer(interval: .seconds(60)) {
-                guard let self else { return }
-                pasteboardHistoryRepository.deleteOverflowingHistories(
-                    sortsByCreatedAt: !reordersClipsAfterPasting,
-                    maxHistorySize: maximumHistoryCount
-                )
-            }
-        }
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        guard !isTesting else { return }
+        clipService.applicationWillTerminate()
+    }
 }
 
 // MARK: - Bind
