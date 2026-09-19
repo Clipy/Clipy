@@ -37,8 +37,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     var context
     @Dependency(\.mainQueue)
     private var mainQueue
-    @Dependency(\.excludeAppService)
-    private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.snippetRepository)
@@ -172,7 +170,6 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Services
         clipService.startMonitoring()
-        excludeAppService.startMonitoring()
         hotKeyService.setupDefaultHotKeys()
 
         // Managers
