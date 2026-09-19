@@ -698,6 +698,47 @@
         }
       }
     },
+    "Content copied on other Apple devices will not be saved to history." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf anderen Apple-Geräten kopierte Inhalte werden nicht im Verlauf gespeichert."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I contenuti copiati su altri dispositivi Apple non verranno salvati nella cronologia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのAppleデバイスでコピーした内容を履歴に保存しません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O conteúdo copiado em outros dispositivos Apple não será salvo no histórico."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вміст, скопійований на інших пристроях Apple, не зберігатиметься в історії."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在其他 Apple 设备上复制的内容不会保存到历史记录。"
+          }
+        }
+      }
+    },
     "Control (⌃)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -940,6 +981,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "不将标记为机密的内容保存到历史记录"
+          }
+        }
+      }
+    },
+    "Do not save Universal Clipboard content to history" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inhalte der universellen Zwischenablage nicht im Verlauf speichern"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non salvare nella cronologia i contenuti degli Appunti universali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ユニバーサルクリップボードの内容を履歴に保存しない"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não salvar no histórico o conteúdo da Área de Transferência Universal"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не зберігати в історії вміст Універсального буфера обміну"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不将通用剪贴板的内容保存到历史记录"
           }
         }
       }
@@ -2851,47 +2933,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "预览："
-          }
-        }
-      }
-    },
-    "Privacy:" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プライバシー:"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datenschutz:"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacy:"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacidade:"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Приватність:"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐私："
           }
         }
       }

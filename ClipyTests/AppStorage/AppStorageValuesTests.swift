@@ -38,6 +38,7 @@ struct AppStorageValuesTests {
         @Shared(.allowsDuplicateHistory) var allowsDuplicateHistory
         @Shared(.showsColorPreviewInMenu) var showsColorPreviewInMenu
         @Shared(.ignoresConcealedPasteboardTypes) var ignoresConcealedPasteboardTypes
+        @Shared(.ignoresUniversalClipboard) var ignoresUniversalClipboard
         @Shared(.pastesPlainTextWithModifier) var pastesPlainTextWithModifier
         @Shared(.deletesHistoryWithModifier) var deletesHistoryWithModifier
         @Shared(.pastesAndDeletesHistoryWithModifier) var pastesAndDeletesHistoryWithModifier
@@ -62,6 +63,7 @@ struct AppStorageValuesTests {
         #expect(allowsDuplicateHistory)
         #expect(showsColorPreviewInMenu)
         #expect(!ignoresConcealedPasteboardTypes)
+        #expect(!ignoresUniversalClipboard)
         #expect(pastesPlainTextWithModifier)
         #expect(!deletesHistoryWithModifier)
         #expect(!pastesAndDeletesHistoryWithModifier)
