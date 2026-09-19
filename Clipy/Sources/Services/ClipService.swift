@@ -43,6 +43,8 @@ final class ClipService {
     private var showsClearHistoryAlert
     @Shared(.ignoresConcealedPasteboardTypes)
     private var ignoresConcealedPasteboardTypes
+    @Shared(.ignoresUniversalClipboard)
+    private var ignoresUniversalClipboard
     @Shared(.allowsDuplicateHistory)
     private var allowsDuplicateHistory
     @Shared(.overwritesDuplicateHistory)
@@ -181,7 +183,8 @@ extension ClipService {
         let types = PasteboardAvailableType.availableTypes(
             from: pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? [],
             storeAvailableTypes: pasteboardTypeSettings.enabledTypes,
-            ignoresConcealedType: ignoresConcealedPasteboardTypes
+            ignoresConcealedType: ignoresConcealedPasteboardTypes,
+            ignoresUniversalClipboard: ignoresUniversalClipboard
         )
         guard !types.isEmpty else { return }
 

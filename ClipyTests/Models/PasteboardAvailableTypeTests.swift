@@ -22,7 +22,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.pdf, .html, .string, .fileURL, .rtf],
             storeAvailableTypes: [.string, .rtf, .pdf, .filenames, .html],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.pdf, .html, .string, .fileURL, .rtf])
     }
@@ -32,7 +33,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.pdf, .string, .tiff, .rtf, .html],
             storeAvailableTypes: [.string, .tiff],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.string, .tiff])
     }
@@ -42,7 +44,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedString, .deprecatedPDF, .deprecatedURL],
             storeAvailableTypes: [.url],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.deprecatedURL])
     }
@@ -52,7 +55,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedString, .string],
             storeAvailableTypes: [.string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.string])
     }
@@ -62,7 +66,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.tiff, .deprecatedTIFF, .png],
             storeAvailableTypes: [.tiff],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.png])
     }
@@ -72,7 +77,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.tiff, .deprecatedTIFF],
             storeAvailableTypes: [.tiff],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.tiff])
     }
@@ -89,7 +95,8 @@ struct PasteboardAvailableTypeTests {
                 .pdf
             ],
             storeAvailableTypes: [.filenames, .string, .pdf],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.fileURL, .string, .pdf])
     }
@@ -99,7 +106,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF],
             storeAvailableTypes: [.filenames, .string, .pdf, .url, .tiff],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.deprecatedURL, .deprecatedFilenames, .deprecatedString, .deprecatedPDF, .deprecatedTIFF])
     }
@@ -109,7 +117,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.fileURL, .string, .universalClipboard],
             storeAvailableTypes: [.filenames, .string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes.isEmpty)
     }
@@ -119,7 +128,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.deprecatedFilenames, .string, .universalClipboard],
             storeAvailableTypes: [.filenames, .string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes.isEmpty)
     }
@@ -129,9 +139,10 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.string, .fileURL, .universalClipboard],
             storeAvailableTypes: [.filenames, .string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
-        #expect(availableTypes == [.string])
+        #expect(availableTypes == [.string, .universalClipboard])
     }
 
     @Test
@@ -139,9 +150,10 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.string, .deprecatedFilenames, .universalClipboard],
             storeAvailableTypes: [.filenames, .string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
-        #expect(availableTypes == [.string])
+        #expect(availableTypes == [.string, .universalClipboard])
     }
 
     @Test
@@ -149,7 +161,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.string, .transient],
             storeAvailableTypes: [.string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes.isEmpty)
     }
@@ -159,7 +172,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.string, .concealed],
             storeAvailableTypes: [.string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.string, .concealed])
     }
@@ -169,7 +183,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.concealed, .string],
             storeAvailableTypes: [.string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes == [.string, .concealed])
     }
@@ -179,7 +194,8 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.string, .concealed],
             storeAvailableTypes: [.string],
-            ignoresConcealedType: true
+            ignoresConcealedType: true,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes.isEmpty)
     }
@@ -189,7 +205,52 @@ struct PasteboardAvailableTypeTests {
         let availableTypes = PasteboardAvailableType.availableTypes(
             from: [.concealed],
             storeAvailableTypes: [.string],
-            ignoresConcealedType: false
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
+        )
+        #expect(availableTypes.isEmpty)
+    }
+
+    @Test
+    func availableTypesKeepsUniversalClipboardByDefault() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, .universalClipboard],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
+        )
+        #expect(availableTypes == [.string, .universalClipboard])
+    }
+
+    @Test
+    func availableTypesPlacesUniversalClipboardAfterStoredTypes() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.universalClipboard, .string],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
+        )
+        #expect(availableTypes == [.string, .universalClipboard])
+    }
+
+    @Test
+    func availableTypesIgnoresUniversalClipboardWhenEnabled() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.string, .universalClipboard],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: true
+        )
+        #expect(availableTypes.isEmpty)
+    }
+
+    @Test
+    func availableTypesDoesNotStoreOnlyUniversalClipboard() {
+        let availableTypes = PasteboardAvailableType.availableTypes(
+            from: [.universalClipboard],
+            storeAvailableTypes: [.string],
+            ignoresConcealedType: false,
+            ignoresUniversalClipboard: false
         )
         #expect(availableTypes.isEmpty)
     }

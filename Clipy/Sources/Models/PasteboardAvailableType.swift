@@ -27,20 +27,23 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
     static func availableTypes(
         from pasteboardTypes: [NSPasteboard.PasteboardType],
         storeAvailableTypes: [PasteboardAvailableType],
-        ignoresConcealedType: Bool
+        ignoresConcealedType: Bool,
+        ignoresUniversalClipboard: Bool
     ) -> [NSPasteboard.PasteboardType] {
         let uniquePasteboardTypes = OrderedSet(pasteboardTypes)
         // Do not save pasteboards marked as temporary.
         guard uniquePasteboardTypes.allSatisfy({ $0 != .transient }) else { return [] }
         // When concealed pasteboards are ignored, do not save items containing sensitive data.
-        guard !ignoresConcealedType || uniquePasteboardTypes.allSatisfy({ $0 != .concealed }) else { return [] }
+        guard !ignoresConcealedType || !uniquePasteboardTypes.contains(.concealed) else { return [] }
+        // When Universal Clipboard is ignored, do not save items copied on other Apple devices.
+        let isUniversalClipboard = uniquePasteboardTypes.contains(.universalClipboard)
+        guard !ignoresUniversalClipboard || !isUniversalClipboard else { return [] }
         // Universal Clipboard file URLs can point to Apple-managed temporary storage,
         // such as `Group Containers/group.com.apple.coreservices.useractivityd`.
         // When a non-Apple app stores and reuses that file URL, macOS may fail to
         // provide the required sandbox extension, so the paste target cannot open the
         // file. If the file URL is the primary data, do not save the history item.
         // Otherwise, drop only the file URL and keep other image or text representations.
-        let isUniversalClipboard = uniquePasteboardTypes.contains(.universalClipboard)
         if isUniversalClipboard && uniquePasteboardTypes.first?.isFileReference == true {
             return []
         }
@@ -60,10 +63,8 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
             return pasteboardType
         }
         guard !availableTypes.isEmpty else { return [] }
-        if uniquePasteboardTypes.contains(.concealed) {
-            return availableTypes + [.concealed]
-        }
-        return availableTypes
+        let metadataTypes: [NSPasteboard.PasteboardType] = [.concealed, .universalClipboard]
+        return availableTypes + metadataTypes.filter { uniquePasteboardTypes.contains($0) }
     }
 }
 

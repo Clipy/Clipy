@@ -32,7 +32,7 @@ struct SettingsGrid: View {
                             .fixedSize()
                     } else {
                         Color.clear
-                            .gridCellUnsizedAxes([.horizontal, .vertical])
+                            .frame(width: 0, height: 0)
                     }
                     section.content
                         .frame(maxWidth: .infinity, alignment: .leading)
