@@ -139,17 +139,19 @@ struct PasteboardContentTests {
     }
 
     @Test
-    func writeObjectsPreservesConcealedMarker() throws {
+    func writeObjectsPreservesUniversalClipboardAndConcealedMarkers() throws {
         let pasteboard = NSPasteboard.withUniqueName()
         defer { pasteboard.clearContents() }
 
-        let stringAsset = PasteboardContent.Asset(type: .string, data: Data("Secret".utf8))
-        let concealedAsset = PasteboardContent.Asset(type: .concealed, data: Data("concealed".utf8))
+        let stringAsset = PasteboardContent.Asset(type: .string, data: Data("Hello".utf8))
+        let concealedAsset = PasteboardContent.Asset(type: .concealed, data: Data())
+        let universalClipboardAsset = PasteboardContent.Asset(type: .universalClipboard, data: Data())
         let content = try #require(
             PasteboardContent(
                 assets: [
                     stringAsset,
-                    concealedAsset
+                    concealedAsset,
+                    universalClipboardAsset
                 ]
             )
         )
@@ -157,11 +159,14 @@ struct PasteboardContentTests {
         content.writeObjects(to: pasteboard)
 
         #expect(pasteboard.types?.contains(.concealed) == true)
-        let restoredContent = try #require(PasteboardContent(
-            pasteboard: pasteboard,
-            types: [.string, .concealed]
-        ))
-        #expect(restoredContent.assets == [stringAsset, concealedAsset])
+        #expect(pasteboard.types?.contains(.universalClipboard) == true)
+        let restoredContent = try #require(
+            PasteboardContent(
+                pasteboard: pasteboard,
+                types: [.string, .concealed, .universalClipboard]
+            )
+        )
+        #expect(restoredContent.assets == [stringAsset, concealedAsset, universalClipboardAsset])
     }
 
     @Test

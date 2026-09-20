@@ -5,6 +5,7 @@ import SwiftUI
 struct ClipboardTypeSettingsView: View {
     @Shared(.pasteboardTypeSettings) private var pasteboardTypeSettings
     @Shared(.ignoresConcealedPasteboardTypes) private var ignoresConcealedPasteboardTypes
+    @Shared(.ignoresUniversalClipboard) private var ignoresUniversalClipboard
 
     var body: some View {
         SettingsGrid {
@@ -44,12 +45,19 @@ struct ClipboardTypeSettingsView: View {
                 )
             }
 
-            SettingsSection(title: .Settings.privacy) {
+            SettingsSection {
                 Toggle(
                     .Settings.doNotSaveContentMarkedAsConfidentialToHistory,
                     isOn: Binding($ignoresConcealedPasteboardTypes)
                 )
                 Text(.Settings.someAppsSuchAsPasswordManagersMarkSensitiveContentAsConfidential)
+                    .settingDescription()
+
+                Toggle(
+                    .Settings.doNotSaveUniversalClipboardContentToHistory,
+                    isOn: Binding($ignoresUniversalClipboard)
+                )
+                Text(.Settings.contentCopiedOnOtherAppleDevicesWillNotBeSavedToHistory)
                     .settingDescription()
             }
         }

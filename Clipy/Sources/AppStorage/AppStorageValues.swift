@@ -91,6 +91,10 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.ignoreConcealedPasteboardType.rawValue), default: false]
     }
 
+    static var ignoresUniversalClipboard: Self {
+        Self[.appStorage(AppStorageKeys.ignoresUniversalClipboard.rawValue), default: false]
+    }
+
     static var pastesPlainTextWithModifier: Self {
         Self[.appStorage(AppStorageKeys.pastePlainText.rawValue), default: true]
     }
