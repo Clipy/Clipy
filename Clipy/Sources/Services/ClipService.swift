@@ -28,8 +28,6 @@ final class ClipService {
     private var historyCleanupTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = []
 
-    @Dependency(\.excludeAppService)
-    private var excludeAppService
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
     @Dependency(\.textRecognizer)
@@ -41,6 +39,8 @@ final class ClipService {
 
     @Shared(.showsClearHistoryAlert)
     private var showsClearHistoryAlert
+    @Shared(.excludedApplications)
+    private var excludedApplications
     @Shared(.ignoresConcealedPasteboardTypes)
     private var ignoresConcealedPasteboardTypes
     @Shared(.allowsDuplicateHistory)
@@ -178,17 +178,18 @@ extension ClipService {
         // Prefer the root pasteboard types because they are comprehensive and can include root-only
         // fallback types such as .deprecatedFilenames and .tiff. Fall back to item types when needed,
         // then let PasteboardAvailableType filter the storeable types.
+        let pasteboardTypes = pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? []
         let types = PasteboardAvailableType.availableTypes(
-            from: pasteboard.types ?? pasteboard.pasteboardItems?.flatMap(\.types) ?? [],
+            from: pasteboardTypes,
             storeAvailableTypes: pasteboardTypeSettings.enabledTypes,
             ignoresConcealedType: ignoresConcealedPasteboardTypes
         )
         guard !types.isEmpty else { return }
 
-        // Excluded application
-        guard !excludeAppService.frontProcessIsExcludedApplication() else { return }
-        // Special applications
-        guard !excludeAppService.copiedProcessIsExcludedApplications(pasteboard: pasteboard) else { return }
+        guard !isExcludedApplication(
+            frontmostApplicationIdentifier: NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
+            pasteboardTypes: pasteboardTypes
+        ) else { return }
 
         guard let content = PasteboardContent(pasteboard: pasteboard, types: types) else { return }
         save(content)
@@ -216,6 +217,24 @@ extension ClipService {
         let id = PasteboardHistory.ID(rawValue: savedHash)
         pasteboardHistoryRepository.save(id: id, content: content, updateAt: unixTime)
         textRecognizer.recognizeTextIfNeeded(id: id)
+    }
+}
+
+// MARK: - Excluded Applications
+extension ClipService {
+    private func isExcludedApplication(
+        frontmostApplicationIdentifier: String?,
+        pasteboardTypes: [NSPasteboard.PasteboardType]
+    ) -> Bool {
+        excludedApplications.contains { application in
+            if application.identifier == frontmostApplicationIdentifier {
+                return true
+            }
+
+            // Extensions and menu bar apps can mark copied data without taking focus.
+            // The marker can be a prefix of the installed application's bundle identifier.
+            return pasteboardTypes.contains { application.identifier.hasPrefix($0.rawValue) }
+        }
     }
 }
 
