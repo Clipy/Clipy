@@ -11,9 +11,9 @@
 //
 
 import Cocoa
+import ColorCodes
 import CryptoKit
 import Sharing
-import SwiftHEXColors
 
 struct PasteboardContent: Equatable {
     struct Asset: Equatable {
@@ -41,11 +41,13 @@ struct PasteboardContent: Equatable {
         return String(data: data, encoding: .utf8)
     }
     var colorCodeImage: NSImage? {
-        guard let stringValue, let color = NSColor(hexString: stringValue) else { return nil }
+        guard let code = stringValue?.trimmingCharacters(in: .whitespacesAndNewlines) else { return nil }
+        // Skip color parsing for long clipboard text when generating previews.
+        guard code.count <= 128, let colorCode = ColorCode(code) else { return nil }
         return NSImage(size: NSSize(width: 20, height: 20), flipped: false) { bounds in
             let circle = NSBezierPath(ovalIn: bounds.insetBy(dx: 0.5, dy: 0.5))
             circle.addClip()
-            color.drawSwatch(in: bounds)
+            colorCode.color.drawSwatch(in: bounds)
             NSColor.black.withAlphaComponent(0.15).setStroke()
             circle.lineWidth = 1
             circle.stroke()

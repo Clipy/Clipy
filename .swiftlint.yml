@@ -1,6 +1,8 @@
 included:
   - Clipy/Sources
   - ClipyTests
+  - Packages/*/Sources
+  - Packages/*/Tests
 opt_in_rules:
   - empty_count
   - explicit_init

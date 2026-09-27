@@ -222,24 +222,41 @@ struct PasteboardContentTests {
         #expect(nonStringContent.stringValue == nil)
     }
 
-    @Test
-    func colorCodeImageIsCreatedFromHexString() throws {
+    @Test(arguments: ["#ff0000", "  #f00\n", "rgb(255 0 0)", "oklch(0.627955 0.257683 29.2339)"])
+    func colorCodeImageIsCreatedFromColorString(code: String) throws {
         let colorContent = try #require(
             PasteboardContent(
                 assets: [
-                    PasteboardContent.Asset(type: .string, data: Data("#ff0000".utf8))
-                ]
-            )
-        )
-        let invalidContent = try #require(
-            PasteboardContent(
-                assets: [
-                    PasteboardContent.Asset(type: .string, data: Data("not a color".utf8))
+                    PasteboardContent.Asset(type: .string, data: Data(code.utf8))
                 ]
             )
         )
 
         #expect(colorContent.colorCodeImage?.size == NSSize(width: 20, height: 20))
+    }
+
+    @Test(arguments: [128, 129, 4096])
+    func colorCodeImageLimitsTrimmedColorLength(length: Int) throws {
+        let padding = String(repeating: " ", count: length - "rgb(255 0 0)".count)
+        let code = "\t rgb(\(padding)255 0 0) \n"
+        let content = try #require(PasteboardContent(assets: [
+            PasteboardContent.Asset(type: .string, data: Data(code.utf8))
+        ]))
+
+        #expect((content.colorCodeImage != nil) == (length <= 128))
+        #expect(content.stringValue == code)
+    }
+
+    @Test(arguments: ["not a color", "ff0000", "123456", "decade", "tomato"])
+    func colorCodeImageRejectsInvalidAndAmbiguousStrings(code: String) throws {
+        let invalidContent = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .string, data: Data(code.utf8))
+                ]
+            )
+        )
+
         #expect(invalidContent.colorCodeImage == nil)
     }
 

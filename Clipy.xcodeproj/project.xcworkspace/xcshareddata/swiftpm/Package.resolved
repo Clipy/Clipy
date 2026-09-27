@@ -344,15 +344,6 @@
       }
     },
     {
-      "identity" : "swifthexcolors",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thii/SwiftHEXColors",
-      "state" : {
-        "revision" : "1f886cb20fedda14a5ac75efd09bc99c95b43a18",
-        "version" : "1.4.1"
-      }
-    },
-    {
       "identity" : "swiftlintplugins",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",

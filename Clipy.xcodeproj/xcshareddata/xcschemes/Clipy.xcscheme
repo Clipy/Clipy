@@ -50,18 +50,12 @@
             ReferencedContainer = "container:Clipy.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FAC43DD71B35D8B100C06102"
-               BuildableName = "ClipyTests.xctest"
-               BlueprintName = "ClipyTests"
-               ReferencedContainer = "container:Clipy.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:Clipy/TestPlans/Clipy.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
