@@ -57,4 +57,6 @@ enum AppStorageKeys: String {
     case editSnippetsKeyCombo
     case clearHistoryKeyCombo
     case folderKeyCombos
+    case snippetSyncEnabled
+    case snippetSyncFolderPath
 }

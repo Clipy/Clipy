@@ -20,6 +20,7 @@ performs.
   `clipy-app.com` and diagnostics/usage measurement via Firebase.
 - Firebase Analytics / Firebase Crashlytics are enabled by default and can be
   disabled in Clipy's Preferences.
+- Optional snippet folder sync is off by default; see [Snippet Folder Sync](#snippet-folder-sync-optional).
 
 ## Data Stored Locally
 
@@ -34,6 +35,25 @@ history recording when possible.
 Clipy does not currently claim that locally stored clipboard history is
 encrypted. If your Mac contains sensitive data, we recommend enabling FileVault
 and using macOS security features appropriately.
+
+## Snippet Folder Sync (Optional)
+
+Clipy can optionally sync your snippets and snippet folders across your Macs
+by writing them to a `Clipy Snippets.json` file in a folder you choose in
+Settings. This feature is off by default and only affects snippets and
+snippet folders; clipboard history is never written to this file or synced.
+
+Clipy writes this file directly to the folder you select using the standard
+macOS file APIs. Clipy does not talk to iCloud, Google Drive, Dropbox, or any
+other provider's servers directly, and does not require or perform any
+sign-in. If you choose a folder that is itself synced by iCloud Drive or by a
+third-party cloud storage app (Google Drive, Dropbox, OneDrive, etc.), that
+provider's own software running on your Mac is responsible for syncing the
+file to your other devices, subject to that provider's own privacy policy.
+
+You can disable snippet folder sync at any time in Clipy's Preferences. This
+stops Clipy from writing to or reading the sync file; it does not delete the
+file or remove your local snippets.
 
 ## Network Communication
 

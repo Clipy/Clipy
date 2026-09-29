@@ -90,6 +90,7 @@ struct DatabaseMigration {
     private func migrateSnippets(from realm: Realm) -> ([SnippetFolder], [Snippet]) {
         var folders = [SnippetFolder]()
         var snippets = [Snippet]()
+        let migratedAt = Int(Date().timeIntervalSince1970 * 1_000)
 
         for folder in realm.objects(CPYFolder.self) {
             let id = SnippetFolder.ID(rawValue: UUID(uuidString: folder.identifier) ?? UUID())
@@ -98,7 +99,8 @@ struct DatabaseMigration {
                     id: id,
                     title: folder.title,
                     index: folder.index,
-                    isEnabled: folder.enable
+                    isEnabled: folder.enable,
+                    updatedAt: migratedAt
                 )
             )
             for snippet in folder.snippets {
@@ -109,7 +111,8 @@ struct DatabaseMigration {
                         title: snippet.title,
                         content: snippet.content,
                         index: snippet.index,
-                        isEnabled: snippet.enable
+                        isEnabled: snippet.enable,
+                        updatedAt: migratedAt
                     )
                 )
             }

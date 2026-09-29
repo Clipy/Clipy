@@ -133,6 +133,17 @@
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
 		FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */; };
+		7C52BFADACEC987E0D8E94C5 /* SQLiteDataMigrator+V5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1304B493A7C599146298FA3F /* SQLiteDataMigrator+V5.swift */; };
+		4F71851B80EAD31EB348BFDE /* SnippetSyncFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C945941E90B77B8A6043C039 /* SnippetSyncFile.swift */; };
+		F7BFFE434C2C1937F34CAEC8 /* SnippetSyncFilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBB28461CAC92F81CDB08A4 /* SnippetSyncFilePresenter.swift */; };
+		6E98B544AECE01A5664B3FC3 /* SnippetSyncFileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671BBA6B6C12F6459C54C076 /* SnippetSyncFileStore.swift */; };
+		B191B9E496B53C7497B2B412 /* SnippetSyncMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0D8A182DE34374DFB0FFE /* SnippetSyncMerger.swift */; };
+		12230D43CEAC1BAA7F234762 /* SnippetSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C76C747B6BA344AA543AEF /* SnippetSyncService.swift */; };
+		FBC697BED82FB33DF89B890A /* SQLiteDataMigratorTests+V5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F5A214AA78B1440073B7FC /* SQLiteDataMigratorTests+V5.swift */; };
+		4616F201A59E2F39B65EFA18 /* SnippetSyncFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64BED8807272A289D4348F3A /* SnippetSyncFileTests.swift */; };
+		198220CD6AD7AACACAFD42E6 /* SnippetSyncFileStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28316BAC87AC3B533CAA1F4 /* SnippetSyncFileStoreTests.swift */; };
+		40DE53EF2F1380C17717EDD7 /* SnippetSyncMergerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC7F5AED5FD7A88343F0FAB /* SnippetSyncMergerTests.swift */; };
+		A1D06B9A8B1246AAB5A9A001 /* SnippetSyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D06B9A8B1246AAB5A9A002 /* SnippetSyncIntegrationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,6 +277,17 @@
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FAE911B81DE045E2008A4BEC /* HotKeyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyService.swift; sourceTree = "<group>"; };
+		1304B493A7C599146298FA3F /* SQLiteDataMigrator+V5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigrator+V5.swift"; sourceTree = "<group>"; };
+		C945941E90B77B8A6043C039 /* SnippetSyncFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncFile.swift"; sourceTree = "<group>"; };
+		FBBB28461CAC92F81CDB08A4 /* SnippetSyncFilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncFilePresenter.swift"; sourceTree = "<group>"; };
+		671BBA6B6C12F6459C54C076 /* SnippetSyncFileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncFileStore.swift"; sourceTree = "<group>"; };
+		C0C0D8A182DE34374DFB0FFE /* SnippetSyncMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncMerger.swift"; sourceTree = "<group>"; };
+		89C76C747B6BA344AA543AEF /* SnippetSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncService.swift"; sourceTree = "<group>"; };
+		D6F5A214AA78B1440073B7FC /* SQLiteDataMigratorTests+V5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataMigratorTests+V5.swift"; sourceTree = "<group>"; };
+		64BED8807272A289D4348F3A /* SnippetSyncFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncFileTests.swift"; sourceTree = "<group>"; };
+		A28316BAC87AC3B533CAA1F4 /* SnippetSyncFileStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncFileStoreTests.swift"; sourceTree = "<group>"; };
+		BFC7F5AED5FD7A88343F0FAB /* SnippetSyncMergerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncMergerTests.swift"; sourceTree = "<group>"; };
+		A1D06B9A8B1246AAB5A9A002 /* SnippetSyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnippetSyncIntegrationTests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -495,6 +517,7 @@
 		C571000C2FCEB03000C8F965 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				84A41138608F4FD1E8C5D9AB /* SnippetSync */,
 				C522FB982FCC019100E61800 /* PasteboardAvailableTypeTests.swift */,
 				C5A900053035000100000001 /* PasteboardTypeSettingsTests.swift */,
 				C571000B2FCEB03000C8F965 /* PasteboardContentTests.swift */,
@@ -548,6 +571,7 @@
 		C5D41A012FDB4A0100EF30FB /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
+				1304B493A7C599146298FA3F /* SQLiteDataMigrator+V5.swift */,
 				C54C29D62FC3E21000EF30FB /* SQLiteDataMigrator.swift */,
 				C5D41A022FDB4A0200EF30FB /* SQLiteDataMigrator+V1.swift */,
 				C5D41A032FDB4A0300EF30FB /* SQLiteDataMigrator+V2.swift */,
@@ -560,6 +584,7 @@
 		C5D41A082FDB4A0800EF30FB /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
+				D6F5A214AA78B1440073B7FC /* SQLiteDataMigratorTests+V5.swift */,
 				C5700B482FC5C0DD00C8F965 /* SQLiteDataMigratorTests.swift */,
 				C5D41A092FDB4A0900EF30FB /* SQLiteDataMigratorTests+V1.swift */,
 				C5D41A0A2FDB4A0A00EF30FB /* SQLiteDataMigratorTests+V2.swift */,
@@ -598,6 +623,7 @@
 		FA0D5CE61DDCC5D000AC9052 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D43A6A5EB7EB2CBDEBC8492E /* SnippetSync */,
 				FA0D5CE71DDCC61600AC9052 /* ClipService.swift */,
 				FAE911B81DE045E2008A4BEC /* HotKeyService.swift */,
 				FAC0DCF01DE576F300309C49 /* PasteService.swift */,
@@ -668,6 +694,7 @@
 		FA1DB4CB1DDCB479007F95C8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				3D90355B4986F58DC4184A02 /* SnippetSync */,
 				FA1DB4A51DDCB443007F95C8 /* MenuType.swift */,
 				FA1DB4CC1DDCB479007F95C8 /* ApplicationInformation.swift */,
 				C57100062FCEB02000C8F965 /* PasteboardContent.swift */,
@@ -766,6 +793,7 @@
 		FAC43DDB1B35D8B100C06102 /* ClipyTests */ = {
 			isa = PBXGroup;
 			children = (
+				77F30437A32DE1EC4FB8FAB2 /* Services */,
 				C5348FAF30008FDF008DFEB3 /* TestSupport */,
 				C567A8913026E34C0070292B /* AppStorage */,
 				C5700B472FC5C0DB00C8F965 /* Database */,
@@ -788,6 +816,51 @@
 				FAC43DDD1B35D8B100C06102 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3D90355B4986F58DC4184A02 /* SnippetSync */ = {
+			isa = PBXGroup;
+			children = (
+				C945941E90B77B8A6043C039 /* SnippetSyncFile.swift */,
+			);
+			path = SnippetSync;
+			sourceTree = "<group>";
+		};
+		D43A6A5EB7EB2CBDEBC8492E /* SnippetSync */ = {
+			isa = PBXGroup;
+			children = (
+				FBBB28461CAC92F81CDB08A4 /* SnippetSyncFilePresenter.swift */,
+				671BBA6B6C12F6459C54C076 /* SnippetSyncFileStore.swift */,
+				C0C0D8A182DE34374DFB0FFE /* SnippetSyncMerger.swift */,
+				89C76C747B6BA344AA543AEF /* SnippetSyncService.swift */,
+			);
+			path = SnippetSync;
+			sourceTree = "<group>";
+		};
+		84A41138608F4FD1E8C5D9AB /* SnippetSync */ = {
+			isa = PBXGroup;
+			children = (
+				64BED8807272A289D4348F3A /* SnippetSyncFileTests.swift */,
+			);
+			path = SnippetSync;
+			sourceTree = "<group>";
+		};
+		16A138AE744B2B7A25163036 /* SnippetSync */ = {
+			isa = PBXGroup;
+			children = (
+				A28316BAC87AC3B533CAA1F4 /* SnippetSyncFileStoreTests.swift */,
+				BFC7F5AED5FD7A88343F0FAB /* SnippetSyncMergerTests.swift */,
+				A1D06B9A8B1246AAB5A9A002 /* SnippetSyncIntegrationTests.swift */,
+			);
+			path = SnippetSync;
+			sourceTree = "<group>";
+		};
+		77F30437A32DE1EC4FB8FAB2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				16A138AE744B2B7A25163036 /* SnippetSync */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -966,6 +1039,12 @@
 		FAC43DC21B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				7C52BFADACEC987E0D8E94C5 /* SQLiteDataMigrator+V5.swift in Sources */,
+				4F71851B80EAD31EB348BFDE /* SnippetSyncFile.swift in Sources */,
+				F7BFFE434C2C1937F34CAEC8 /* SnippetSyncFilePresenter.swift in Sources */,
+				6E98B544AECE01A5664B3FC3 /* SnippetSyncFileStore.swift in Sources */,
+				B191B9E496B53C7497B2B412 /* SnippetSyncMerger.swift in Sources */,
+				12230D43CEAC1BAA7F234762 /* SnippetSyncService.swift in Sources */,
 				CD914C51AD052A55DEDD71A2 /* HistoryClearInterval.swift in Sources */,
 				F51111213040000100000001 /* SettingsGrid.swift in Sources */,
 				3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */,
@@ -1042,6 +1121,11 @@
 		FAC43DD41B35D8B100C06102 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				FBC697BED82FB33DF89B890A /* SQLiteDataMigratorTests+V5.swift in Sources */,
+				4616F201A59E2F39B65EFA18 /* SnippetSyncFileTests.swift in Sources */,
+				198220CD6AD7AACACAFD42E6 /* SnippetSyncFileStoreTests.swift in Sources */,
+				40DE53EF2F1380C17717EDD7 /* SnippetSyncMergerTests.swift in Sources */,
+				A1D06B9A8B1246AAB5A9A001 /* SnippetSyncIntegrationTests.swift in Sources */,
 				C50D1A013021000100000001 /* MonospacedDigitFormatterTests.swift in Sources */,
 				C52D2133301DB500009D832A /* AppMigratorTests.swift in Sources */,
 				C5700B502FD106000C8F965 /* DatabaseMigrationTests.swift in Sources */,

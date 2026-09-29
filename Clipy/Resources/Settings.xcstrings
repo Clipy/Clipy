@@ -165,6 +165,17 @@
         }
       }
     },
+    "Any synced folder works, such as iCloud Drive, Google Drive, or Dropbox." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Drive、Google Drive、Dropboxなど、同期フォルダであれば利用できます。"
+          }
+        }
+      }
+    },
     "Automatic History Deletion" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -489,6 +500,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "检查间隔"
+          }
+        }
+      }
+    },
+    "Choose Folder…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダを選択…"
           }
         }
       }
@@ -2603,6 +2625,17 @@
         }
       }
     },
+    "No Folder Selected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダが選択されていません"
+          }
+        }
+      }
+    },
     "Option (⌥)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3640,6 +3673,28 @@
         }
       }
     },
+    "Snippet Sync" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スニペットの同期"
+          }
+        }
+      }
+    },
+    "Snippets and snippet folders are kept in sync with your other Macs through the folder below. Clipboard history is not synced." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スニペットとスニペットフォルダは、以下のフォルダを通じて他のMacと同期されます。クリップボードの履歴は同期されません。"
+          }
+        }
+      }
+    },
     "Snippets:" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3923,6 +3978,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "支持"
+          }
+        }
+      }
+    },
+    "Sync Snippets Through a Shared Folder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有フォルダでスニペットを同期"
           }
         }
       }

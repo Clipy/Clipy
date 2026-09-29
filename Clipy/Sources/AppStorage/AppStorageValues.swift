@@ -110,6 +110,10 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
     static var observesScreenshots: Self {
         Self[.appStorage(AppStorageKeys.observerScreenshot.rawValue), default: false]
     }
+
+    static var isSnippetSyncEnabled: Self {
+        Self[.appStorage(AppStorageKeys.snippetSyncEnabled.rawValue), default: false]
+    }
 }
 
 extension SharedKey where Self == AppStorageKey<Int>.Default {
@@ -208,6 +212,12 @@ extension SharedKey where Self == AppStorageKey<KeyCombo?>.Default {
 
     static var clearHistoryKeyCombo: Self {
         Self[.appStorage(AppStorageKeys.clearHistoryKeyCombo.rawValue), default: nil]
+    }
+}
+
+extension SharedKey where Self == AppStorageKey<String?>.Default {
+    static var snippetSyncFolderPath: Self {
+        Self[.appStorage(AppStorageKeys.snippetSyncFolderPath.rawValue), default: nil]
     }
 }
 
