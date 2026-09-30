@@ -223,4 +223,10 @@ extension SharedKey where Self == AppStorageKey<[ApplicationInformation]>.Defaul
     }
 }
 
+extension SharedKey where Self == AppStorageKey<String>.Default {
+    static var snippetExportDirectoryPath: Self {
+        Self[.appStorage(AppStorageKeys.snippetExportDirectoryPath.rawValue), default: ""]
+    }
+}
+
 extension KeyCombo: @retroactive @unchecked Sendable {}

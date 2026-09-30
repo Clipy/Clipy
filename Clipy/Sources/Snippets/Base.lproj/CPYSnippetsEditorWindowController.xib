@@ -64,8 +64,42 @@
                                     <constraint firstAttribute="trailing" secondItem="hUJ-Hh-chK" secondAttribute="trailing" constant="3" id="zLH-8b-uNL"/>
                                 </constraints>
                             </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="DUP-vw-001">
+                                <rect key="frame" x="76" y="0.0" width="70" height="56"/>
+                                <subviews>
+                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DUP-lb-001">
+                                        <rect key="frame" x="1" y="8" width="68" height="12"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Duplicate" id="DUP-lc-001">
+                                            <font key="font" metaFont="systemBold" size="9"/>
+                                            <color key="textColor" red="0.2666666667" green="0.2666666667" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DUP-bt-001">
+                                        <rect key="frame" x="0.0" y="0.0" width="70" height="72"/>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="snippets_add_snippet" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="DUP-bc-001">
+                                            <behavior key="behavior" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="duplicateSnippetButtonTapped:" target="-2" id="DUP-ac-001"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="DUP-lb-001" secondAttribute="bottom" constant="8" id="DUP-c1-001"/>
+                                    <constraint firstAttribute="trailing" secondItem="DUP-lb-001" secondAttribute="trailing" constant="3" id="DUP-c2-001"/>
+                                    <constraint firstItem="DUP-lb-001" firstAttribute="top" secondItem="DUP-vw-001" secondAttribute="top" constant="36" id="DUP-c3-001"/>
+                                    <constraint firstItem="DUP-lb-001" firstAttribute="leading" secondItem="DUP-vw-001" secondAttribute="leading" constant="3" id="DUP-c4-001"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="DUP-c5-001"/>
+                                    <constraint firstItem="DUP-bt-001" firstAttribute="leading" secondItem="DUP-vw-001" secondAttribute="leading" id="DUP-c6-001"/>
+                                    <constraint firstAttribute="trailing" secondItem="DUP-bt-001" secondAttribute="trailing" id="DUP-c7-001"/>
+                                    <constraint firstItem="DUP-bt-001" firstAttribute="top" secondItem="DUP-vw-001" secondAttribute="top" constant="-16" id="DUP-c8-001"/>
+                                    <constraint firstAttribute="bottom" secondItem="DUP-bt-001" secondAttribute="bottom" id="DUP-c9-001"/>
+                                </constraints>
+                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="d8L-7n-Wnd">
-                                <rect key="frame" x="76" y="0.0" width="64" height="56"/>
+                                <rect key="frame" x="146" y="0.0" width="64" height="56"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dtH-80-DW2">
                                         <rect key="frame" x="1" y="8" width="62" height="12"/>
@@ -99,7 +133,7 @@
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="bca-eH-ThD">
-                                <rect key="frame" x="140" y="0.0" width="60" height="56"/>
+                                <rect key="frame" x="210" y="0.0" width="60" height="56"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="23h-6g-Hxb">
                                         <rect key="frame" x="1" y="8" width="58" height="12"/>
@@ -133,7 +167,7 @@
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ai4-Gz-mok">
-                                <rect key="frame" x="200" y="0.0" width="83" height="56"/>
+                                <rect key="frame" x="270" y="0.0" width="83" height="56"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qoe-eu-eli">
                                         <rect key="frame" x="1" y="8" width="81" height="12"/>
@@ -167,7 +201,7 @@
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="JVZ-wd-QzO">
-                                <rect key="frame" x="283" y="0.0" width="60" height="56"/>
+                                <rect key="frame" x="353" y="0.0" width="60" height="56"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yKE-95-cH9">
                                         <rect key="frame" x="1" y="8" width="58" height="12"/>
@@ -201,7 +235,7 @@
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="bOl-V3-RiP">
-                                <rect key="frame" x="343" y="0.0" width="60" height="56"/>
+                                <rect key="frame" x="413" y="0.0" width="60" height="56"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wP4-W7-bDr">
                                         <rect key="frame" x="1" y="8" width="58" height="12"/>
@@ -254,7 +288,7 @@
                             <constraint firstItem="d8L-7n-Wnd" firstAttribute="top" secondItem="0FR-y9-W1U" secondAttribute="top" id="9V1-44-WTq"/>
                             <constraint firstItem="Ai4-Gz-mok" firstAttribute="leading" secondItem="bca-eH-ThD" secondAttribute="trailing" id="DGi-SQ-Gib"/>
                             <constraint firstAttribute="height" constant="56" id="GGd-g7-9F9"/>
-                            <constraint firstItem="d8L-7n-Wnd" firstAttribute="leading" secondItem="iha-Jy-er7" secondAttribute="trailing" id="LPk-XT-GaH"/>
+                            <constraint firstItem="d8L-7n-Wnd" firstAttribute="leading" secondItem="DUP-vw-001" secondAttribute="trailing" id="LPk-XT-GaH"/>
                             <constraint firstItem="bca-eH-ThD" firstAttribute="leading" secondItem="d8L-7n-Wnd" secondAttribute="trailing" id="O7n-um-E60"/>
                             <constraint firstAttribute="bottom" secondItem="d8L-7n-Wnd" secondAttribute="bottom" id="S36-QL-uEj"/>
                             <constraint firstAttribute="trailing" secondItem="Pj1-QF-bGu" secondAttribute="trailing" id="V02-8C-5oN"/>
@@ -263,6 +297,9 @@
                             <constraint firstItem="Pj1-QF-bGu" firstAttribute="leading" secondItem="0FR-y9-W1U" secondAttribute="leading" id="duk-jh-xd7"/>
                             <constraint firstItem="iha-Jy-er7" firstAttribute="leading" secondItem="0FR-y9-W1U" secondAttribute="leading" constant="5" id="e2T-ei-TJm"/>
                             <constraint firstItem="bOl-V3-RiP" firstAttribute="leading" secondItem="JVZ-wd-QzO" secondAttribute="trailing" id="f9u-DZ-z02"/>
+                            <constraint firstItem="DUP-vw-001" firstAttribute="leading" secondItem="iha-Jy-er7" secondAttribute="trailing" id="DUP-o1-001"/>
+                            <constraint firstItem="DUP-vw-001" firstAttribute="top" secondItem="0FR-y9-W1U" secondAttribute="top" id="DUP-o2-001"/>
+                            <constraint firstAttribute="bottom" secondItem="DUP-vw-001" secondAttribute="bottom" id="DUP-o3-001"/>
                             <constraint firstAttribute="bottom" secondItem="bOl-V3-RiP" secondAttribute="bottom" id="lvg-z5-hZu"/>
                             <constraint firstAttribute="trailing" secondItem="Pj1-QF-bGu" secondAttribute="trailing" id="o6t-B8-e9C"/>
                             <constraint firstItem="Pj1-QF-bGu" firstAttribute="leading" secondItem="0FR-y9-W1U" secondAttribute="leading" id="rwy-e1-sti"/>

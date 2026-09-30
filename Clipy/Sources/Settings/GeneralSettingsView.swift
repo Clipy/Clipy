@@ -1,3 +1,4 @@
+import AppKit
 import Settings
 import Sharing
 import SwiftUI
@@ -21,6 +22,8 @@ struct GeneralSettingsView: View {
     private var statusItemDisplayMode
     @Shared(.collectsCrashReports)
     private var collectsCrashReports
+    @Shared(.snippetExportDirectoryPath)
+    private var snippetExportDirectoryPath
 
     var body: some View {
         SettingsGrid {
@@ -96,6 +99,20 @@ struct GeneralSettingsView: View {
                 .labelsHidden()
             }
 
+            SettingsSection(title: .Settings.snippets, bottomDivider: true) {
+                HStack {
+                    Text(snippetExportDirectoryPath.isEmpty ? "—" : snippetExportDirectoryPath)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button {
+                        chooseSnippetExportDirectory()
+                    } label: {
+                        Image(systemName: "folder")
+                    }
+                }
+            }
+
             SettingsSection(title: .Settings.diagnostics) {
                 Toggle(
                     .Settings.sendCrashReportsAndUsageLogs,
@@ -105,5 +122,19 @@ struct GeneralSettingsView: View {
                     .settingDescription()
             }
         }
+    }
+
+    private func chooseSnippetExportDirectory() {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = false
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        if !snippetExportDirectoryPath.isEmpty {
+            panel.directoryURL = URL(fileURLWithPath: snippetExportDirectoryPath, isDirectory: true)
+        }
+
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        $snippetExportDirectoryPath.withLock { $0 = url.path }
     }
 }
