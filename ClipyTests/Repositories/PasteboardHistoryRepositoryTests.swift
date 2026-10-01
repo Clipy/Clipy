@@ -328,3 +328,46 @@ private extension PasteboardHistory {
         )
     }
 }
+
+@MainActor
+@Suite(.dependencies { try $0.bootstrapDatabase() })
+struct HistoryMenuSearchTests {
+    @Test func searchesLiteralTextAndOCRWithBoundedResults() throws {
+        let repository = PasteboardHistoryRepository()
+        let store = HistoryMenuSearchStore()
+        let first = try #require(PasteboardContent("Alpha 100%_value"))
+        let second = try #require(PasteboardContent("Alpha other"))
+        let firstID = PasteboardHistory.ID(rawValue: first.hash)
+        let secondID = PasteboardHistory.ID(rawValue: second.hash)
+        repository.save(id: firstID, content: first, updateAt: 1)
+        repository.save(id: secondID, content: second, updateAt: 2)
+        repository.updateOCRText(id: firstID, ocrText: "Receipt 12345")
+        #expect(try store.search(query: "alpha", sortsByCreatedAt: false, limit: 1).map(\.id) == [secondID])
+        #expect(try store.search(query: "%_", sortsByCreatedAt: false, limit: 10).map(\.id) == [firstID])
+        #expect(try store.search(query: "receipt 123", sortsByCreatedAt: false, limit: 10).map(\.id) == [firstID])
+        #expect(try store.search(query: "other receipt", sortsByCreatedAt: false, limit: 10).isEmpty)
+        #expect(try store.search(query: "  ", sortsByCreatedAt: false, limit: 10).isEmpty)
+    }
+
+    @Test func clearingQueryPreservesOriginalMenuObjects() {
+        let menu = NSMenu()
+        let search = HistoryMenuSearchView()
+        search.owningMenu = menu
+        let header = NSMenuItem()
+        header.view = search
+        let history = NSMenuItem(title: "History", action: nil, keyEquivalent: "")
+        let folder = NSMenuItem(title: "1–30", action: nil, keyEquivalent: "")
+        folder.submenu = NSMenu()
+        let snippets = NSMenuItem(title: "Snippets", action: nil, keyEquivalent: "")
+        [header, history, folder, snippets].forEach(menu.addItem)
+        search.historyItems = [history, folder]
+        for _ in 0..<20 {
+            search.searchField.stringValue = "alpha"
+            search.controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
+            search.searchField.stringValue = ""
+            search.controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
+            #expect(menu.items.map(ObjectIdentifier.init) == [header, history, folder, snippets].map(ObjectIdentifier.init))
+            #expect(folder.isEnabled)
+        }
+    }
+}

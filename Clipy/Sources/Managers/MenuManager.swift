@@ -15,7 +15,24 @@ import Combine
 import Dependencies
 import Sharing
 
-final class MenuManager: NSObject {
+final class MenuManager: NSObject, NSMenuDelegate {
+    private weak var trackingMenu: NSMenu?
+    private var rebuildAfterTracking = false
+
+    func menuWillOpen(_ menu: NSMenu) {
+        trackingMenu = menu
+        (menu.items.first?.view as? HistoryMenuSearchView)?.reset()
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        trackingMenu = nil
+        (menu.items.first?.view as? HistoryMenuSearchView)?.stop()
+        if rebuildAfterTracking {
+            rebuildAfterTracking = false
+            createClipMenu()
+        }
+    }
+
 
     // MARK: - Properties
     // Menus
@@ -110,7 +127,7 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.highlightingFirstItemIfPossible()
+        if type == .snippet { menu?.highlightingFirstItemIfPossible() }
         menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
@@ -191,12 +208,17 @@ private extension MenuManager {
 // MARK: - Menus
 private extension MenuManager {
      func createClipMenu() {
+        guard trackingMenu == nil else {
+            rebuildAfterTracking = true
+            return
+        }
         clipMenu = NSMenu(title: Bundle.main.appName ?? "")
         historyMenu = NSMenu(title: MenuType.history.rawValue)
         snippetMenu = NSMenu(title: MenuType.snippet.rawValue)
 
-        addHistoryItems(clipMenu!)
-        addHistoryItems(historyMenu!)
+        addSearchableHistory(to: clipMenu!)
+        addSearchableHistory(to: historyMenu!)
+        snippetMenu?.delegate = self
 
         addSnippetItems(clipMenu!, separateMenu: true, details: snippetFolderDetails)
         addSnippetItems(snippetMenu!, separateMenu: false, details: snippetFolderDetails)
@@ -213,6 +235,26 @@ private extension MenuManager {
         clipMenu?.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
 
         statusBarItem.menu = clipMenu
+    }
+
+    func addSearchableHistory(to menu: NSMenu) {
+        menu.delegate = self
+        let header = NSMenuItem()
+        let search = HistoryMenuSearchView()
+        search.owningMenu = menu
+        header.view = search
+        menu.addItem(header)
+        let start = menu.numberOfItems
+        addHistoryItems(menu)
+        search.historyItems = Array(menu.items.dropFirst(start))
+        // Plain numeric equivalents otherwise intercept digits intended for search.
+        func removePlainKeyEquivalents(_ items: [NSMenuItem]) {
+            for item in items {
+                item.keyEquivalent = ""
+                if let submenu = item.submenu { removePlainKeyEquivalents(submenu.items) }
+            }
+        }
+        removePlainKeyEquivalents(search.historyItems)
     }
 
     func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
@@ -245,6 +287,7 @@ private extension MenuManager {
 // MARK: - Clips
 private extension MenuManager {
     func addHistoryItems(_ menu: NSMenu) {
+        let historyStart = menu.numberOfItems
         let placeInLine = inlineMenuItemLimit
         let placeInsideFolder = folderMenuItemLimit
         let maxHistory = maximumHistoryCount
@@ -258,7 +301,7 @@ private extension MenuManager {
         let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = placeInLine
-        var subMenuIndex = 1 + placeInLine
+        var subMenuIndex = historyStart + 1 + placeInLine
 
         let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
             sortsByCreatedAt: !reordersClipsAfterPasting,
