@@ -6,6 +6,8 @@ final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
     let searchField = NSSearchField()
     weak var owningMenu: NSMenu?
     var historyItems = [NSMenuItem]()
+    @Shared(.showsToolTipsOnMenuItems) private var showsToolTipsOnMenuItems
+    @Shared(.maximumToolTipLength) private var maximumToolTipLength
     @Shared(.maximumMenuItemTitleLength) private var maximumMenuItemTitleLength
     @Shared(.reordersClipsAfterPasting) private var reordersClipsAfterPasting
     private let store = HistoryMenuSearchStore()
@@ -136,6 +138,9 @@ final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
                                                   action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: "")
                             item.target = NSApp.delegate
                             item.representedObject = entry.id
+                            if self.showsToolTipsOnMenuItems {
+                                item.toolTip = String(entry.label.prefix(max(1, self.maximumToolTipLength)))
+                            }
                             items.append(item)
                         }
                         if entries.isEmpty {
