@@ -13,6 +13,7 @@
 import AppKit
 import Combine
 import DependenciesTestSupport
+import Sharing
 import SQLiteData
 import Testing
 @testable import Clipy
@@ -330,7 +331,7 @@ private extension PasteboardHistory {
 }
 
 @MainActor
-@Suite(.dependencies { try $0.bootstrapDatabase() })
+@Suite(.serialized, .dependencies { try $0.bootstrapDatabase() })
 struct HistoryMenuSearchTests {
     @Test func searchesLiteralTextAndOCRWithBoundedResults() throws {
         let repository = PasteboardHistoryRepository()
@@ -342,7 +343,7 @@ struct HistoryMenuSearchTests {
         repository.save(id: firstID, content: first, updateAt: 1)
         repository.save(id: secondID, content: second, updateAt: 2)
         repository.updateOCRText(id: firstID, ocrText: "Receipt 12345")
-        #expect(try store.search(query: "alpha", sortsByCreatedAt: false, limit: 1).map(\.id) == [secondID])
+        #expect(try store.search(query: "alpha", sortsByCreatedAt: false, limit: 1, sort: .original).map(\.id) == [secondID])
         #expect(try store.search(query: "%_", sortsByCreatedAt: false, limit: 10).map(\.id) == [firstID])
         #expect(try store.search(query: "receipt 123", sortsByCreatedAt: false, limit: 10).map(\.id) == [firstID])
         #expect(try store.search(query: "other receipt", sortsByCreatedAt: false, limit: 10).isEmpty)
@@ -359,15 +360,97 @@ struct HistoryMenuSearchTests {
         let folder = NSMenuItem(title: "1–30", action: nil, keyEquivalent: "")
         folder.submenu = NSMenu()
         let snippets = NSMenuItem(title: "Snippets", action: nil, keyEquivalent: "")
-        [header, history, folder, snippets].forEach(menu.addItem)
+        menu.addItem(header)
+        search.installSortControl(in: menu)
+        let sort = search.sortItem!
+        [history, folder, snippets].forEach(menu.addItem)
+        #expect(sort.isHidden)
         search.historyItems = [history, folder]
         for _ in 0..<20 {
             search.searchField.stringValue = "alpha"
             search.controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
+            #expect(!sort.isHidden)
             search.searchField.stringValue = ""
             search.controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
-            #expect(menu.items.map(ObjectIdentifier.init) == [header, history, folder, snippets].map(ObjectIdentifier.init))
+            #expect(menu.items.map(ObjectIdentifier.init) == [header, sort, history, folder, snippets].map(ObjectIdentifier.init))
             #expect(folder.isEnabled)
+            #expect(sort.isHidden)
         }
     }
+    @Test func menuFieldEditorShowsInsertionPointInNonKeyWindow() async throws {
+        let field = HistoryMenuSearchView().searchField
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 320, height: 40),
+                              styleMask: [.borderless], backing: .buffered, defer: false)
+        window.contentView?.addSubview(field)
+        #expect(window.makeFirstResponder(field))
+        let editor = try #require(field.currentEditor() as? HistoryMenuFieldEditor)
+        #expect(!window.isKeyWindow)
+        #expect(editor.isFieldEditor)
+        try await Task.sleep(for: .milliseconds(100))
+        let caret = try #require(editor.subviews.first { $0 is HistoryMenuInsertionPoint })
+        #expect(!caret.isHidden)
+        #expect(caret.frame.width > 0 && caret.frame.height > 0)
+        #expect(editor.isMenuInsertionPointActive)
+        editor.string = "Search query"
+        editor.setSelectedRange(NSRange(location: 0, length: 6))
+        #expect(!editor.isMenuInsertionPointActive)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(caret.isHidden)
+        editor.setSelectedRange(NSRange(location: 6, length: 0))
+        #expect(editor.isMenuInsertionPointActive)
+        (field.cell as? HistoryMenuSearchCell)?.endMenuTracking()
+        try await Task.sleep(for: .milliseconds(650))
+        #expect(caret.isHidden)
+        #expect(!editor.isMenuInsertionPointActive)
+        window.makeFirstResponder(nil)
+        field.stringValue = ""
+        #expect(window.makeFirstResponder(field))
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(editor.isMenuInsertionPointActive)
+        #expect(!caret.isHidden)
+        window.makeFirstResponder(nil)
+        #expect(!editor.isMenuInsertionPointActive)
+    }
+
+    @Test func searchRankingAndSortDoNotAlterNormalHistoryPreferences() throws {
+        let repository = PasteboardHistoryRepository()
+        let store = HistoryMenuSearchStore()
+        var ids = [PasteboardHistory.ID]()
+        for (index, text) in ["alpha beta", "alpha beta suffix", "before alpha beta", "alpha between beta", "OCR only"].enumerated() {
+            let content = try #require(PasteboardContent(text))
+            let id = PasteboardHistory.ID(rawValue: content.hash)
+            repository.save(id: id, content: content, updateAt: index + 1)
+            ids.append(id)
+        }
+        repository.updateOCRText(id: ids[4], ocrText: "alpha beta")
+        #expect(try store.search(query: "alpha beta", sortsByCreatedAt: false, limit: 31).map(\.id) == ids)
+        #expect(try store.search(query: "alpha absent", sortsByCreatedAt: false, limit: 31).isEmpty)
+        for sort in HistoryMenuSearchStore.Sort.allCases {
+            let complete = try store.search(query: "alpha beta", sortsByCreatedAt: false, limit: 100, sort: sort)
+            #expect(try store.search(query: "alpha beta", sortsByCreatedAt: false, limit: 2, sort: sort).map(\.id) == complete.prefix(2).map(\.id))
+        }
+        let oldContent = try #require(PasteboardContent("alpha beta"))
+        repository.save(id: ids[0], content: oldContent, updateAt: 99)
+        #expect(try store.search(query: "alpha beta", sortsByCreatedAt: false, limit: 1, sort: .original).first?.id == ids[0])
+        #expect(try store.search(query: "alpha beta", sortsByCreatedAt: false, limit: 1, sort: .newest).first?.id == ids[4])
+        #expect(try store.search(query: "alpha beta", sortsByCreatedAt: false, limit: 1, sort: .oldest).first?.id == ids[0])
+
+        @Shared(.historySearchSort) var searchSort
+        @Shared(.reordersClipsAfterPasting) var reorder
+        let previousSort = searchSort
+        let previousReorder = reorder
+        defer { $searchSort.withLock { $0 = previousSort } }
+        let historyBefore = repository.fetchHistoryDetails(sortsByCreatedAt: !reorder, includesThumbnailAsset: false, limit: 100).map(\.history.id)
+        let menu = NSMenu()
+        let view = HistoryMenuSearchView()
+        view.installSortControl(in: menu)
+        for item in view.sortItem?.submenu?.items ?? [] {
+            let action = try #require(item.action)
+            #expect(NSApp.sendAction(action, to: item.target, from: item))
+            #expect(searchSort.rawValue == item.representedObject as? String)
+            #expect(reorder == previousReorder)
+            #expect(repository.fetchHistoryDetails(sortsByCreatedAt: !reorder, includesThumbnailAsset: false, limit: 100).map(\.history.id) == historyBefore)
+        }
+    }
+
 }

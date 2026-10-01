@@ -3,7 +3,18 @@ import Sharing
 
 /// Search is a header in the original NSMenu; every result is a native menu item.
 final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
-    let searchField = NSSearchField()
+    let searchField: NSSearchField = {
+        let field = NSSearchField()
+        field.cell = HistoryMenuSearchCell(textCell: "")
+        field.isEditable = true
+        field.isSelectable = true
+        field.isBezeled = true
+        field.focusRingType = .exterior
+        field.cell?.isScrollable = true
+        return field
+    }()
+    weak var sortItem: NSMenuItem?
+    @Shared(.historySearchSort) private var searchSort
     weak var owningMenu: NSMenu?
     var historyItems = [NSMenuItem]()
     @Shared(.showsToolTipsOnMenuItems) private var showsToolTipsOnMenuItems
@@ -45,10 +56,19 @@ final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
         searching = false
     }
 
+    func endMenuTracking() {
+        (searchField.cell as? HistoryMenuSearchCell)?.endMenuTracking()
+        if let window = searchField.window, let editor = searchField.currentEditor(), window.firstResponder === editor {
+            window.makeFirstResponder(nil)
+        }
+        stop()
+    }
+
     func reset() {
         stop()
         searchField.stringValue = ""
         restoreHistory()
+        updateSortVisibility()
     }
 
     private func restoreHistory() {
@@ -101,7 +121,37 @@ final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
         publish([item])
     }
 
+    func installSortControl(in menu: NSMenu) {
+        let item = NSMenuItem(title: String(localized: "Sort Search Results"), action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        for sort in HistoryMenuSearchStore.Sort.allCases {
+            let option = NSMenuItem(title: sort.title, action: #selector(changeSearchSort(_:)), keyEquivalent: "")
+            option.target = self
+            option.representedObject = sort.rawValue
+            submenu.addItem(option)
+        }
+        item.submenu = submenu
+        menu.addItem(item)
+        sortItem = item
+        updateSortVisibility()
+    }
+
+    @objc private func changeSearchSort(_ sender: NSMenuItem) {
+        guard let value = sender.representedObject as? String,
+              let sort = HistoryMenuSearchStore.Sort(rawValue: value) else { return }
+        $searchSort.withLock { $0 = sort }
+        controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
+    }
+
+    private func updateSortVisibility() {
+        sortItem?.isHidden = searchField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        for item in sortItem?.submenu?.items ?? [] {
+            item.state = (item.representedObject as? String) == searchSort.rawValue ? .on : .off
+        }
+    }
+
     func controlTextDidChange(_ obj: Notification) {
+        updateSortVisibility()
         stop()
         let query = searchField.stringValue
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -117,10 +167,11 @@ final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
         }
         let request = generation
         let byCreation = !reordersClipsAfterPasting
+        let sort = searchSort
         let titleLimit = max(10, maximumMenuItemTitleLength)
         let store = self.store
         let work = DispatchWorkItem { [weak self] in
-            let matches = Result { try store.search(query: query, sortsByCreatedAt: byCreation, limit: 31) }
+            let matches = Result { try store.search(query: query, sortsByCreatedAt: byCreation, limit: 31, sort: sort) }
                 RunLoop.main.perform(inModes: [.eventTracking, .default]) { [weak self] in
                     guard let self, self.generation == request else { return }
                     self.searching = false
@@ -178,4 +229,111 @@ final class HistoryMenuSearchView: NSView, NSSearchFieldDelegate {
         }
         return false
     }
+}
+
+final class HistoryMenuFieldEditor: NSTextView {
+    private let insertionPoint = HistoryMenuInsertionPoint()
+    private var blinkTimer: Timer?
+    private var blinkOn = true
+    private var caretEnabled = false
+    private var refreshQueued = false
+
+    var isMenuInsertionPointActive: Bool {
+        caretEnabled && isEditable && selectedRange().length == 0 && window?.firstResponder === self
+    }
+
+    // AppKit suppresses its shared insertion-point timer in non-key menu
+    // windows. Draw just the caret locally; all editing stays in NSTextView.
+    override var shouldDrawInsertionPoint: Bool { false }
+
+    override func becomeFirstResponder() -> Bool {
+        let accepted = super.becomeFirstResponder()
+        if accepted {
+            caretEnabled = true
+            if insertionPoint.superview == nil { addSubview(insertionPoint) }
+            blinkTimer?.invalidate()
+            let timer = Timer(timeInterval: 0.55, repeats: true) { [weak self] _ in
+                guard let self else { return }
+                self.blinkOn.toggle()
+                self.refreshInsertionPoint()
+            }
+            blinkTimer = timer
+            RunLoop.main.add(timer, forMode: .default)
+            RunLoop.main.add(timer, forMode: .eventTracking)
+            queueInsertionPointRefresh()
+        }
+        return accepted
+    }
+
+    override func resignFirstResponder() -> Bool {
+        let accepted = super.resignFirstResponder()
+        if accepted { stopInsertionPoint() }
+        return accepted
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if window == nil { stopInsertionPoint() }
+    }
+
+    override func updateInsertionPointStateAndRestartTimer(_ restartFlag: Bool) {
+        super.updateInsertionPointStateAndRestartTimer(restartFlag)
+        queueInsertionPointRefresh()
+    }
+
+    private func queueInsertionPointRefresh() {
+        blinkOn = true
+        guard !refreshQueued else { return }
+        refreshQueued = true
+        RunLoop.main.perform(inModes: [.default, .eventTracking]) { [weak self] in
+            guard let self else { return }
+            self.refreshQueued = false
+            self.refreshInsertionPoint()
+        }
+    }
+
+    private func refreshInsertionPoint() {
+        guard isMenuInsertionPointActive, let window else {
+            insertionPoint.isHidden = true
+            return
+        }
+        let range = NSRange(location: min(selectedRange().location, string.utf16.count), length: 0)
+        let screenRect = firstRect(forCharacterRange: range, actualRange: nil)
+        var rect = convert(window.convertFromScreen(screenRect), from: nil)
+        rect.size.width = 1.5
+        insertionPoint.frame = rect
+        insertionPoint.isHidden = !blinkOn || rect.height <= 0
+        insertionPoint.needsDisplay = true
+    }
+
+    fileprivate func stopInsertionPoint() {
+        caretEnabled = false
+        blinkTimer?.invalidate()
+        blinkTimer = nil
+        insertionPoint.isHidden = true
+    }
+
+    deinit { blinkTimer?.invalidate() }
+}
+
+final class HistoryMenuInsertionPoint: NSView {
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+    override func draw(_ dirtyRect: NSRect) {
+        NSColor.labelColor.setFill()
+        bounds.fill()
+    }
+}
+
+final class HistoryMenuSearchCell: NSSearchFieldCell {
+    private lazy var editor: NSTextView = {
+        let editor = HistoryMenuFieldEditor()
+        editor.isFieldEditor = true
+        editor.isRichText = false
+        editor.insertionPointColor = .labelColor
+        return editor
+    }()
+
+    override func fieldEditor(for controlView: NSView) -> NSTextView? { editor }
+
+    func endMenuTracking() { (editor as? HistoryMenuFieldEditor)?.stopInsertionPoint() }
 }

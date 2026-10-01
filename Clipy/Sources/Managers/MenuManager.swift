@@ -26,7 +26,7 @@ final class MenuManager: NSObject, NSMenuDelegate {
 
     func menuDidClose(_ menu: NSMenu) {
         trackingMenu = nil
-        (menu.items.first?.view as? HistoryMenuSearchView)?.stop()
+        (menu.items.first?.view as? HistoryMenuSearchView)?.endMenuTracking()
         if rebuildAfterTracking {
             rebuildAfterTracking = false
             createClipMenu()
@@ -244,6 +244,7 @@ private extension MenuManager {
         search.owningMenu = menu
         header.view = search
         menu.addItem(header)
+        search.installSortControl(in: menu)
         let start = menu.numberOfItems
         addHistoryItems(menu)
         search.historyItems = Array(menu.items.dropFirst(start))
