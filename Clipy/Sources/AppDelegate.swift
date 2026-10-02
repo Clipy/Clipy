@@ -62,6 +62,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var pastesAutomatically
     @Shared(.observesScreenshots)
     private var observesScreenshots
+    @Shared(.appearanceMode)
+    private var appearanceMode
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -187,6 +189,20 @@ extension AppDelegate: NSApplicationDelegate {
 // MARK: - Bind
 private extension AppDelegate {
     func bind() {
+        // Appearance
+        $appearanceMode.changes(includingInitialValue: true)
+            .receive(on: mainQueue)
+            .sink { appearanceMode in
+                switch appearanceMode {
+                case .system:
+                    NSApp.appearance = nil
+                case .light:
+                    NSApp.appearance = NSAppearance(named: .aqua)
+                case .dark:
+                    NSApp.appearance = NSAppearance(named: .darkAqua)
+                }
+            }
+            .store(in: &cancellables)
         // Accessibility Permission
         $pastesAutomatically.changes()
             .filter { $0 }

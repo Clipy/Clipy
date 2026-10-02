@@ -24,6 +24,8 @@ struct GeneralSettingsView: View {
     private var collectsCrashReports
     @Shared(.snippetExportDirectoryPath)
     private var snippetExportDirectoryPath
+    @Shared(.appearanceMode)
+    private var appearanceMode
 
     var body: some View {
         SettingsGrid {
@@ -36,6 +38,19 @@ struct GeneralSettingsView: View {
                     .Settings.pasteAutomaticallyAfterSelection,
                     isOn: Binding($pastesAutomatically)
                 )
+            }
+
+            SettingsSection(title: .Settings.appearance, bottomDivider: true) {
+                Picker(
+                    .Settings.appearance,
+                    selection: Binding($appearanceMode)
+                ) {
+                    ForEach(AppearanceMode.allCases, id: \.self) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.segmented)
             }
 
             SettingsSection(title: .Settings.historyLimit) {

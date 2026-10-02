@@ -79,6 +79,12 @@ struct AppStorageValuesTests {
     }
 
     @Test
+    func loadDefaultAppearanceMode() {
+        @Shared(.appearanceMode) var appearanceMode
+        #expect(appearanceMode == .system)
+    }
+
+    @Test
     func loadDefaultIntegerSettings() {
         @Shared(.maximumHistoryCount) var maximumHistoryCount
         @Shared(.statusItemDisplayMode) var statusItemDisplayMode

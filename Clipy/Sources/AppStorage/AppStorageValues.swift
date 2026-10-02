@@ -14,6 +14,20 @@ import Foundation
 import Magnet
 import Sharing
 
+enum AppearanceMode: Int, CaseIterable {
+    case system
+    case light
+    case dark
+
+    var title: LocalizedStringResource {
+        switch self {
+        case .system: .Settings.system
+        case .light: .Settings.light
+        case .dark: .Settings.dark
+        }
+    }
+}
+
 extension SharedKey where Self == AppStorageKey<Bool>.Default {
     static var isLaunchAtLogin: Self {
         Self[.appStorage(AppStorageKeys.loginItem.rawValue), default: false]
@@ -178,6 +192,12 @@ extension SharedKey where Self == AppStorageKey<PasteboardTypeSettings>.Default 
 extension SharedKey where Self == AppStorageKey<HistoryClearInterval>.Default {
     static var historyClearInterval: Self {
         Self[.appStorage(AppStorageKeys.historyClearInterval.rawValue), default: .oneHour]
+    }
+}
+
+extension SharedKey where Self == AppStorageKey<AppearanceMode>.Default {
+    static var appearanceMode: Self {
+        Self[.appStorage(AppStorageKeys.appearanceMode.rawValue), default: .system]
     }
 }
 
