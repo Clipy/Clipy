@@ -224,3 +224,9 @@ extension SharedKey where Self == AppStorageKey<[ApplicationInformation]>.Defaul
 }
 
 extension KeyCombo: @retroactive @unchecked Sendable {}
+
+extension SharedKey where Self == AppStorageKey<HistoryMenuSearchStore.Sort>.Default {
+    static var historySearchSort: Self {
+        Self[.appStorage(AppStorageKeys.historySearchSort.rawValue), default: .bestMatch]
+    }
+}

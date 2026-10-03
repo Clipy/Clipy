@@ -133,6 +133,8 @@
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
 		FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */; };
+		AB1234567890123456789002 /* HistoryMenuSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1234567890123456789001; };
+		AB1234567890123456789012 /* HistoryMenuSearchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1234567890123456789011; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,6 +268,8 @@
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FAE911B81DE045E2008A4BEC /* HotKeyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyService.swift; sourceTree = "<group>"; };
+		AB1234567890123456789001 /* HistoryMenuSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryMenuSearchView.swift; sourceTree = "<group>"; };
+		AB1234567890123456789011 /* HistoryMenuSearchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryMenuSearchStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -660,6 +664,8 @@
 		FA1DB4BE1DDCB460007F95C8 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				AB1234567890123456789001 /* HistoryMenuSearchView.swift */,
+				AB1234567890123456789011 /* HistoryMenuSearchStore.swift */,
 				FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */,
 			);
 			path = Managers;
@@ -1010,6 +1016,8 @@
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
 				C5CC3FD430392F7000875CFE /* DeviceIdentifier.swift in Sources */,
 				C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */,
+				AB1234567890123456789002 /* HistoryMenuSearchView.swift in Sources */,
+				AB1234567890123456789012 /* HistoryMenuSearchStore.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
 				FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */,
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,

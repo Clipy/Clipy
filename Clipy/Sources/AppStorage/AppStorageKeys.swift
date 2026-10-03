@@ -26,6 +26,7 @@ enum AppStorageKeys: String {
     case clearsHistoryOnQuit
     case clearsHistoryPeriodically
     case historyClearInterval
+    case historySearchSort
     case menuItemsAreMarkedWithNumbers
     case showToolTipOnMenuItem
     case showImageInTheMenu
