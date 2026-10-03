@@ -112,8 +112,7 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.highlightingFirstItemIfPossible()
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        menu?.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
@@ -131,8 +130,7 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
-        folderMenu.highlightingFirstItemIfPossible()
-        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        folderMenu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 }
 
