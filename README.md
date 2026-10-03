@@ -19,6 +19,19 @@ __Distribution Site__ : <https://clipy-app.com>
 
 <img src="http://clipy-app.com/img/screenshot1.png" width="400">
 
+### Keyboard Shortcuts
+
+Use these default shortcuts while Clipy is running:
+
+| Action | Default shortcut | Usage |
+| --- | --- | --- |
+| Main menu | ⇧⌘V (Shift + Command + V) | Open the main menu to access clipboard history, snippets, and settings. |
+| History | ⌃⌘V (Control + Command + V) | Open clipboard history to select a previously copied item. |
+| Snippets | ⇧⌘B (Shift + Command + B) | Open the snippets menu to select a saved snippet. |
+| Settings | ⌃⌥⇧⌘V (Control + Option + Shift + Command + V) | Open Settings, including when the menu bar icon is hidden or you cannot open the menu. |
+
+You can change these shortcuts in **Settings > Shortcuts**. The Settings shortcut can be changed but cannot be removed, so you can still access Settings after removing the other shortcuts.
+
 ### Development Environment
 * macOS 26 Tahoe
 * Xcode 26.5

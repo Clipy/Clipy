@@ -16,6 +16,8 @@ struct ShortcutSettingsView: View {
     private var editSnippetsKeyCombo
     @Shared(.clearHistoryKeyCombo)
     private var clearHistoryKeyCombo
+    @Shared(.settingsKeyCombo)
+    private var settingsKeyCombo
 
     var body: some View {
         SettingsGrid(minimumTitleWidth: 150) {
@@ -51,12 +53,24 @@ struct ShortcutSettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            SettingsSection(title: .Settings.editSnippets, verticalAlignment: .center) {
+            SettingsSection(title: .Settings.editSnippets, bottomDivider: true, verticalAlignment: .center) {
                 ShortcutRecorder(keyCombo: editSnippetsKeyCombo) {
                     hotKeyService.changeEditSnippetsKeyCombo($0)
                 }
                 .frame(width: 240, height: 32)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            SettingsSection(title: .Settings.openSettings, verticalAlignment: .center) {
+                ShortcutRecorder(keyCombo: settingsKeyCombo, clearButtonMode: .never) {
+                    hotKeyService.changeSettingsKeyCombo($0)
+                }
+                .frame(width: 240, height: 32)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            SettingsSection {
+                Text(.Settings.toKeepSettingsAccessibleEvenIfYouCannotOpenTheMenuThisShortcutCanBeChangedButCannotBeRemoved)
+                    .settingDescription()
             }
         }
     }

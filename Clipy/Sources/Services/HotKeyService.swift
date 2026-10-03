@@ -27,6 +27,8 @@ final class HotKeyService: NSObject {
     @Dependency(\.clipService)
     private var clipService
 
+    @Shared(.settingsKeyCombo)
+    private var settingsKeyCombo
     @Shared(.mainKeyCombo)
     private var mainKeyCombo
     @Shared(.historyKeyCombo)
@@ -46,7 +48,6 @@ extension HotKeyService {
     func setupDefaultHotKeys() {
         // Snippet hotkey
         setupSnippetHotKeys()
-
         // Main menu
         change(with: .main, keyCombo: mainKeyCombo)
         // History menu
@@ -57,6 +58,8 @@ extension HotKeyService {
         changeEditSnippetsKeyCombo(editSnippetsKeyCombo)
         // Clear History
         changeClearHistoryKeyCombo(clearHistoryKeyCombo)
+        // Settings
+        changeSettingsKeyCombo(settingsKeyCombo)
     }
 
     func change(with type: MenuType, keyCombo: KeyCombo?) {
@@ -102,6 +105,16 @@ extension HotKeyService {
             CPYSnippetsEditorWindowController.sharedController.showWindow(nil)
         }
         hotkey.register()
+    }
+
+    func changeSettingsKeyCombo(_ keyCombo: KeyCombo?) {
+        guard let keyCombo = keyCombo else { return }
+        $settingsKeyCombo.withLock { $0 = keyCombo }
+        HotKeyCenter.shared.unregisterHotKey(with: "Settings")
+        let hotKey = HotKey(identifier: "Settings", keyCombo: keyCombo) { _ in
+            NSApp.sendAction(#selector(AppDelegate.showSettingsWindow), to: NSApp.delegate, from: nil)
+        }
+        hotKey.register()
     }
 }
 

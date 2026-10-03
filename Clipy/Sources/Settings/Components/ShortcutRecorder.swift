@@ -4,6 +4,7 @@ import SwiftUI
 
 struct ShortcutRecorder: NSViewRepresentable {
     let keyCombo: KeyCombo?
+    var clearButtonMode: RecordView.ClearButtonMode = .whenRecorded
     let didChange: (KeyCombo?) -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -18,12 +19,13 @@ struct ShortcutRecorder: NSViewRepresentable {
         view.borderColor = .separatorColor
         view.borderWidth = 1
         view.cornerRadius = 8
-        view.clearButtonMode = .whenRecorded
+        view.clearButtonMode = clearButtonMode
         return view
     }
 
     func updateNSView(_ nsView: RecordView, context: Context) {
         context.coordinator.didChange = didChange
+        nsView.clearButtonMode = clearButtonMode
         if !nsView.isRecording, nsView.keyCombo != keyCombo {
             nsView.keyCombo = keyCombo
         }
