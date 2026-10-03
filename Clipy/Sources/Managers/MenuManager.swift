@@ -202,18 +202,17 @@ private extension MenuManager {
         statusBarItem.menu = clipMenu
     }
 
-    func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
-        var count = count
-        if start == 0 {
-            count -= 1
-        }
-        var lastNumber = count + numberOfItems
-        if end < lastNumber {
-            lastNumber = end
-        }
+    func makeSubmenuItem(
+        itemOffset: Int,
+        firstItemNumber: Int,
+        maximumItemCount: Int,
+        totalItemCount: Int
+    ) -> NSMenuItem {
+        let firstNumber = firstItemNumber + itemOffset
+        let itemCount = min(maximumItemCount, totalItemCount - itemOffset)
         let menuItemTitle = MonospacedDigitFormatter.rangeTitle(
-            firstNumber: count + 1,
-            lastNumber: lastNumber
+            firstNumber: firstNumber,
+            lastNumber: firstNumber + itemCount - 1
         )
         let subMenuItem = makeSubmenuItem(menuItemTitle.string)
         subMenuItem.attributedTitle = menuItemTitle
@@ -284,7 +283,12 @@ private extension MenuManager {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
                 if i == subMenuCount {
-                    let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder)
+                    let subMenuItem = makeSubmenuItem(
+                        itemOffset: subMenuCount,
+                        firstItemNumber: firstIndex,
+                        maximumItemCount: placeInsideFolder,
+                        totalItemCount: currentSize
+                    )
                     menu.addItem(subMenuItem)
                     listNumber = firstIndex
                 }
