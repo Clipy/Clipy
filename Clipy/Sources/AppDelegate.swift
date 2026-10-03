@@ -53,6 +53,8 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var menuManager
     @Dependency(\.sparkle)
     private var sparkle
+    @Dependency(\.snippetSyncService)
+    private var snippetSyncService
 
     @Shared(.isLaunchAtLogin)
     private var isLaunchAtLogin
@@ -174,6 +176,8 @@ extension AppDelegate: NSApplicationDelegate {
 
         // Managers
         menuManager.setup()
+        // Snippet Sync
+        snippetSyncService.start()
         // Screenshot
         screenshotObserver.delegate = self
     }

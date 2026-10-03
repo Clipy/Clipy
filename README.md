@@ -9,7 +9,10 @@
 [![OpenCollective](https://opencollective.com/clipy/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/clipy/sponsors/badge.svg)](#sponsors)
 
-Clipy is a Clipboard extension app for macOS.
+Clipy is a Clipboard extension app for macOS. It can also optionally sync
+snippets and snippet folders across Macs through a folder you choose; clipboard
+history is not synced. Enable this in Preferences. See the [privacy policy](./PRIVACY.md#snippet-folder-sync-optional)
+for details.
 
 ---
 

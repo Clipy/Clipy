@@ -12,6 +12,7 @@
 
 import Combine
 import Dependencies
+import Foundation
 import SQLiteData
 
 protocol SnippetRepositoryProtocol {
@@ -34,6 +35,13 @@ protocol SnippetRepositoryProtocol {
     func updateSnippetIndexes(_ snippetIDs: [Snippet.ID])
     func moveSnippet(_ id: Snippet.ID, to folderID: SnippetFolder.ID, snippetIDs: [Snippet.ID])
     func deleteSnippet(_ id: Snippet.ID)
+
+    func applySyncChanges(
+        folderUpserts: [SnippetFolder],
+        folderDeletions: [SnippetFolder.ID],
+        snippetUpserts: [Snippet],
+        snippetDeletions: [Snippet.ID]
+    )
 }
 
 final class SnippetRepository: SnippetRepositoryProtocol {
@@ -84,7 +92,8 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                 let folder = SnippetFolder.Draft(
                     title: "untitled folder",
                     index: lastIndex + 1,
-                    isEnabled: true
+                    isEnabled: true,
+                    updatedAt: Self.now()
                 )
                 return try SnippetFolder.insert { folder }.returning(\.self).fetchOne(database)
             }
@@ -97,12 +106,14 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                 let lastIndex = try SnippetFolder.order { $0.index.desc() }
                     .select { $0.index }
                     .fetchOne(database) ?? -1
+                let now = Self.now()
                 var details = [SnippetFolderDetail]()
                 try folders.enumerated().forEach { index, folders in
                     let folder = SnippetFolder.Draft(
                         title: folders.title,
                         index: lastIndex + index + 1,
-                        isEnabled: true
+                        isEnabled: true,
+                        updatedAt: now
                     )
                     guard let insertedFolder = try SnippetFolder.insert(values: { folder }).returning(\.self).fetchOne(database) else {
                         return
@@ -113,7 +124,8 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                             title: snippet.title,
                             content: snippet.content,
                             index: snippetIndex,
-                            isEnabled: true
+                            isEnabled: true,
+                            updatedAt: now
                         )
                     }
                     let insertedSnippets = try Snippet.insert { snippets }.returning(\.self).fetchAll(database)
@@ -128,7 +140,10 @@ final class SnippetRepository: SnippetRepositoryProtocol {
         withErrorReporting {
             try database.write { database in
                 try SnippetFolder.where { $0.id.eq(id) }
-                    .update { $0.title = title }
+                    .update {
+                        $0.title = title
+                        $0.updatedAt = Self.now()
+                    }
                     .execute(database)
             }
         }
@@ -138,7 +153,10 @@ final class SnippetRepository: SnippetRepositoryProtocol {
         withErrorReporting {
             try database.write { database in
                 try SnippetFolder.where { $0.id.eq(id) }
-                    .update { $0.isEnabled = isEnabled }
+                    .update {
+                        $0.isEnabled = isEnabled
+                        $0.updatedAt = Self.now()
+                    }
                     .execute(database)
             }
         }
@@ -147,9 +165,13 @@ final class SnippetRepository: SnippetRepositoryProtocol {
     func updateFolderIndexes(_ folderIDs: [SnippetFolder.ID]) {
         withErrorReporting {
             try database.write { database in
+                let now = Self.now()
                 try folderIDs.enumerated().forEach { index, folderID in
                     try SnippetFolder.where { $0.id.eq(folderID) }
-                        .update { $0.index = index }
+                        .update {
+                            $0.index = index
+                            $0.updatedAt = now
+                        }
                         .execute(database)
                 }
             }
@@ -184,7 +206,8 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                     title: "untitled snippet",
                     content: "",
                     index: lastIndex + 1,
-                    isEnabled: true
+                    isEnabled: true,
+                    updatedAt: Self.now()
                 )
                 return try Snippet.insert { snippet }.returning(\.self).fetchOne(database)
             }
@@ -195,7 +218,10 @@ final class SnippetRepository: SnippetRepositoryProtocol {
         withErrorReporting {
             try database.write { database in
                 try Snippet.where { $0.id.eq(id) }
-                    .update { $0.title = title }
+                    .update {
+                        $0.title = title
+                        $0.updatedAt = Self.now()
+                    }
                     .execute(database)
             }
         }
@@ -205,7 +231,10 @@ final class SnippetRepository: SnippetRepositoryProtocol {
         withErrorReporting {
             try database.write { database in
                 try Snippet.where { $0.id.eq(id) }
-                    .update { $0.content = content }
+                    .update {
+                        $0.content = content
+                        $0.updatedAt = Self.now()
+                    }
                     .execute(database)
             }
         }
@@ -215,7 +244,10 @@ final class SnippetRepository: SnippetRepositoryProtocol {
         withErrorReporting {
             try database.write { database in
                 try Snippet.where { $0.id.eq(id) }
-                    .update { $0.isEnabled = isEnabled }
+                    .update {
+                        $0.isEnabled = isEnabled
+                        $0.updatedAt = Self.now()
+                    }
                     .execute(database)
             }
         }
@@ -224,9 +256,13 @@ final class SnippetRepository: SnippetRepositoryProtocol {
     func updateSnippetIndexes(_ snippetIDs: [Snippet.ID]) {
         withErrorReporting {
             try database.write { database in
+                let now = Self.now()
                 try snippetIDs.enumerated().forEach { index, snippetID in
                     try Snippet.where { $0.id.eq(snippetID) }
-                        .update { $0.index = index }
+                        .update {
+                            $0.index = index
+                            $0.updatedAt = now
+                        }
                         .execute(database)
                 }
             }
@@ -236,12 +272,19 @@ final class SnippetRepository: SnippetRepositoryProtocol {
     func moveSnippet(_ id: Snippet.ID, to folderID: SnippetFolder.ID, snippetIDs: [Snippet.ID]) {
         withErrorReporting {
             try database.write { database in
+                let now = Self.now()
                 try Snippet.where { $0.id.eq(id) }
-                    .update { $0.folderID = folderID }
+                    .update {
+                        $0.folderID = folderID
+                        $0.updatedAt = now
+                    }
                     .execute(database)
                 try snippetIDs.enumerated().forEach { index, snippetID in
                     try Snippet.where { $0.id.eq(snippetID) }
-                        .update { $0.index = index }
+                        .update {
+                            $0.index = index
+                            $0.updatedAt = now
+                        }
                         .execute(database)
                 }
             }
@@ -255,9 +298,37 @@ final class SnippetRepository: SnippetRepositoryProtocol {
             }
         }
     }
+
+    func applySyncChanges(
+        folderUpserts: [SnippetFolder],
+        folderDeletions: [SnippetFolder.ID],
+        snippetUpserts: [Snippet],
+        snippetDeletions: [Snippet.ID]
+    ) {
+        withErrorReporting {
+            try database.write { database in
+                if !folderUpserts.isEmpty {
+                    try SnippetFolder.upsert { folderUpserts }.execute(database)
+                }
+                if !folderDeletions.isEmpty {
+                    try SnippetFolder.delete().where { $0.id.in(folderDeletions) }.execute(database)
+                }
+                if !snippetUpserts.isEmpty {
+                    try Snippet.upsert { snippetUpserts }.execute(database)
+                }
+                if !snippetDeletions.isEmpty {
+                    try Snippet.delete().where { $0.id.in(snippetDeletions) }.execute(database)
+                }
+            }
+        }
+    }
 }
 
 private extension SnippetRepository {
+    static func now() -> Int {
+        Int(Date().timeIntervalSince1970 * 1_000)
+    }
+
     static func folderDetails(folders: [SnippetFolder], snippets: [Snippet]) -> [SnippetFolderDetail] {
         let snippetsByFolderID = Dictionary(grouping: snippets, by: \.folderID)
         return folders.map { folder in

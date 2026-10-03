@@ -24,7 +24,8 @@ struct SnippetExtensionsTests {
         title: "Snippet",
         content: "Snippet content",
         index: 0,
-        isEnabled: true
+        isEnabled: true,
+        updatedAt: 0
     )
 
     @Test

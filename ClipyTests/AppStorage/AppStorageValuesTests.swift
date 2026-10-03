@@ -44,6 +44,7 @@ struct AppStorageValuesTests {
         @Shared(.deletesHistoryWithModifier) var deletesHistoryWithModifier
         @Shared(.pastesAndDeletesHistoryWithModifier) var pastesAndDeletesHistoryWithModifier
         @Shared(.observesScreenshots) var observesScreenshots
+        @Shared(.isSnippetSyncEnabled) var isSnippetSyncEnabled
 
         #expect(!isLaunchAtLogin)
         #expect(!suppressesLoginItemAlert)
@@ -70,6 +71,13 @@ struct AppStorageValuesTests {
         #expect(!deletesHistoryWithModifier)
         #expect(!pastesAndDeletesHistoryWithModifier)
         #expect(!observesScreenshots)
+        #expect(!isSnippetSyncEnabled)
+    }
+
+    @Test
+    func loadDefaultSnippetSyncFolderPath() {
+        @Shared(.snippetSyncFolderPath) var snippetSyncFolderPath
+        #expect(snippetSyncFolderPath == nil)
     }
 
     @Test

@@ -83,6 +83,7 @@ struct SnippetFolder: Identifiable, Equatable {
     let title: String
     let index: Int
     let isEnabled: Bool
+    let updatedAt: Int
 }
 
 @Table
@@ -96,6 +97,7 @@ struct Snippet: Identifiable, Equatable {
     let content: String
     let index: Int
     let isEnabled: Bool
+    let updatedAt: Int
 }
 
 @Table

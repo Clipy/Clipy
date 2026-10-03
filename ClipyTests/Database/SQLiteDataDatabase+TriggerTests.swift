@@ -132,7 +132,8 @@ struct SQLiteDataDatabaseTriggerTests {
                     id: folderID,
                     title: "Folder",
                     index: 0,
-                    isEnabled: true
+                    isEnabled: true,
+                    updatedAt: 0
                 )
             }
             .execute(database)
@@ -144,7 +145,8 @@ struct SQLiteDataDatabaseTriggerTests {
                     title: "Xqa Snippet Start",
                     content: "nuv package",
                     index: 0,
-                    isEnabled: true
+                    isEnabled: true,
+                    updatedAt: 0
                 )
             }
             .execute(database)

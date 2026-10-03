@@ -131,33 +131,31 @@ final class DatabaseMigrationTests {
             realm.add(folder)
         }
 
+        let before = Int(Date().timeIntervalSince1970 * 1_000)
         migration.migrateFromRealmToSQLiteData()
+        let after = Int(Date().timeIntervalSince1970 * 1_000)
 
         try database.read { database in
             let folders = try SnippetFolder.all.fetchAll(database)
             let snippets = try Snippet.all.fetchAll(database)
-            #expect(
-                folders == [
-                    SnippetFolder(
-                        id: SnippetFolder.ID(rawValue: folderID),
-                        title: "Folder",
-                        index: 2,
-                        isEnabled: false
-                    )
-                ]
-            )
-            #expect(
-                snippets == [
-                    Snippet(
-                        id: Snippet.ID(rawValue: snippetID),
-                        folderID: SnippetFolder.ID(rawValue: folderID),
-                        title: "Snippet",
-                        content: "Content",
-                        index: 1,
-                        isEnabled: false
-                    )
-                ]
-            )
+
+            let folder = try #require(folders.first)
+            #expect(folders.count == 1)
+            #expect(folder.id == SnippetFolder.ID(rawValue: folderID))
+            #expect(folder.title == "Folder")
+            #expect(folder.index == 2)
+            #expect(!folder.isEnabled)
+            #expect((before...after).contains(folder.updatedAt))
+
+            let snippet = try #require(snippets.first)
+            #expect(snippets.count == 1)
+            #expect(snippet.id == Snippet.ID(rawValue: snippetID))
+            #expect(snippet.folderID == SnippetFolder.ID(rawValue: folderID))
+            #expect(snippet.title == "Snippet")
+            #expect(snippet.content == "Content")
+            #expect(snippet.index == 1)
+            #expect(!snippet.isEnabled)
+            #expect((before...after).contains(snippet.updatedAt))
         }
     }
 }

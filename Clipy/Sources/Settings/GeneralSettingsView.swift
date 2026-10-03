@@ -1,6 +1,7 @@
 import Settings
 import Sharing
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct GeneralSettingsView: View {
     @Shared(.isLaunchAtLogin)
@@ -21,6 +22,25 @@ struct GeneralSettingsView: View {
     private var statusItemDisplayMode
     @Shared(.collectsCrashReports)
     private var collectsCrashReports
+    @Shared(.isSnippetSyncEnabled)
+    private var isSnippetSyncEnabled
+    @Shared(.snippetSyncFolderPath)
+    private var snippetSyncFolderPath
+
+    @State
+    private var isChoosingSyncFolder = false
+
+    private var syncToggleBinding: Binding<Bool> {
+        Binding(
+            get: { isSnippetSyncEnabled },
+            set: { newValue in
+                if newValue, snippetSyncFolderPath == nil, let defaultURL = Self.defaultSyncFolderURL {
+                    $snippetSyncFolderPath.withLock { $0 = defaultURL.path }
+                }
+                $isSnippetSyncEnabled.withLock { $0 = newValue }
+            }
+        )
+    }
 
     var body: some View {
         SettingsGrid {
@@ -96,6 +116,32 @@ struct GeneralSettingsView: View {
                 .labelsHidden()
             }
 
+            SettingsSection(title: .Settings.snippetSync, bottomDivider: true) {
+                Toggle(
+                    .Settings.syncSnippetsThroughASharedFolder,
+                    isOn: syncToggleBinding
+                )
+                Text(.Settings.snippetsAndSnippetFoldersAreKeptInSyncWithYourOtherMacsThroughTheFolderBelowClipboardHistoryIsNotSynced)
+                    .settingDescription()
+
+                HStack {
+                    Image(systemName: "folder")
+                        .foregroundStyle(.secondary)
+                    Text(snippetSyncFolderPath ?? String(localized: .Settings.noFolderSelected))
+                        .foregroundStyle(snippetSyncFolderPath == nil ? Color.secondary : Color.primary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Spacer()
+                    Button(.Settings.chooseFolder) {
+                        isChoosingSyncFolder = true
+                    }
+                }
+                .padding(.leading, 20)
+                .disabled(!isSnippetSyncEnabled)
+                Text(.Settings.anySyncedFolderWorksSuchAsICloudDriveGoogleDriveOrDropbox)
+                    .settingDescription()
+            }
+
             SettingsSection(title: .Settings.diagnostics) {
                 Toggle(
                     .Settings.sendCrashReportsAndUsageLogs,
@@ -105,5 +151,28 @@ struct GeneralSettingsView: View {
                     .settingDescription()
             }
         }
+        .fileImporter(
+            isPresented: $isChoosingSyncFolder,
+            allowedContentTypes: [.folder],
+            allowsMultipleSelection: false,
+            onCompletion: handleSyncFolderSelection
+        )
+    }
+}
+
+private extension GeneralSettingsView {
+    static var defaultSyncFolderURL: URL? {
+        let url = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Mobile Documents/com~apple~CloudDocs", isDirectory: true)
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            return nil
+        }
+        return url
+    }
+
+    func handleSyncFolderSelection(_ result: Result<[URL], Error>) {
+        guard case let .success(urls) = result, let url = urls.first else { return }
+        $snippetSyncFolderPath.withLock { $0 = url.path }
     }
 }
