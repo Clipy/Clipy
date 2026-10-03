@@ -211,6 +211,15 @@ extension SharedKey where Self == AppStorageKey<KeyCombo?>.Default {
     }
 }
 
+extension SharedKey where Self == AppStorageKey<KeyCombo>.Default {
+    static var settingsKeyCombo: Self {
+        Self[
+            .appStorage(AppStorageKeys.settingsKeyCombo.rawValue),
+            default: KeyCombo(key: .v, cocoaModifiers: [.control, .option, .shift, .command])
+        ]
+    }
+}
+
 extension SharedKey where Self == AppStorageKey<[String: KeyCombo]>.Default {
     static var folderKeyCombos: Self {
         Self[.appStorage(AppStorageKeys.folderKeyCombos.rawValue), default: [:]]

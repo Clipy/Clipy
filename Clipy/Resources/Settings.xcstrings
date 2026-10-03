@@ -2732,6 +2732,100 @@
         }
       }
     },
+    "To keep Settings accessible even if you cannot open the menu, this shortcut can be changed but cannot be removed." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit Sie die Einstellungen auch dann öffnen können, wenn sich das Menü nicht mehr öffnen lässt, kann dieser Kurzbefehl geändert, aber nicht entfernt werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To keep Settings accessible even if you cannot open the menu, this shortcut can be changed but cannot be removed."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per consentire di aprire le impostazioni anche quando non è possibile aprire il menu, questa scorciatoia può essere modificata, ma non rimossa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューが開けなくなっても設定を開けるようにするため、このショートカットは変更できますが、削除できません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para que você possa abrir os ajustes mesmo quando não conseguir abrir o menu, este atalho pode ser alterado, mas não removido."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб ви могли відкрити налаштування, навіть якщо меню не відкривається, це клавіатурне скорочення можна змінити, але не можна видалити."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为确保菜单无法打开时仍能打开设置，此快捷键可以更改，但不能删除。"
+          }
+        }
+      }
+    },
+    "Open Settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri le impostazioni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定画面を開く"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir ajustes"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити налаштування"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        }
+      }
+    },
     "Paste and delete from history" : {
       "extractionState" : "manual",
       "localizations" : {
