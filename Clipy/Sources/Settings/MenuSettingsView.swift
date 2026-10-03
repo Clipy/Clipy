@@ -21,6 +21,8 @@ struct MenuSettingsView: View {
     private var startsMenuItemTitlesAtZero
     @Shared(.addsNumericKeyEquivalents)
     private var addsNumericKeyEquivalents
+    @Shared(.showsSnippetsAboveHistory)
+    private var showsSnippetsAboveHistory
     @Shared(.showsClearHistoryMenuItem)
     private var showsClearHistoryMenuItem
     @Shared(.showsClearHistoryAlert)
@@ -95,6 +97,10 @@ struct MenuSettingsView: View {
                 Toggle(
                     .Settings.useNumberKeysAsShortcuts,
                     isOn: Binding($addsNumericKeyEquivalents)
+                )
+                Toggle(
+                    .Settings.showSnippetsAboveHistory,
+                    isOn: Binding($showsSnippetsAboveHistory)
                 )
             }
 

@@ -53,6 +53,8 @@ final class MenuManager: NSObject {
     private var maximumHistoryCount
     @Shared(.showsIconsInMenu)
     private var showsIconsInMenu
+    @Shared(.showsSnippetsAboveHistory)
+    private var showsSnippetsAboveHistory
     @Shared(.inlineMenuItemLimit)
     private var inlineMenuItemLimit
     @Shared(.folderMenuItemLimit)
@@ -110,8 +112,7 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.highlightingFirstItemIfPossible()
-        menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        menu?.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
@@ -129,8 +130,7 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
-        folderMenu.highlightingFirstItemIfPossible()
-        folderMenu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        folderMenu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 }
 
@@ -168,6 +168,7 @@ private extension MenuManager {
                 $showsClearHistoryMenuItem.changeEvents(),
                 $maximumHistoryCount.changeEvents(),
                 $showsIconsInMenu.changeEvents(),
+                $showsSnippetsAboveHistory.changeEvents(),
                 $inlineMenuItemLimit.changeEvents(),
                 $folderMenuItemLimit.changeEvents(),
                 $maximumMenuItemTitleLength.changeEvents(),
@@ -190,43 +191,28 @@ private extension MenuManager {
 
 // MARK: - Menus
 private extension MenuManager {
-     func createClipMenu() {
-        clipMenu = NSMenu(title: Bundle.main.appName ?? "")
+    func createClipMenu() {
+        clipMenu = makeMainMenu(details: snippetFolderDetails)
         historyMenu = NSMenu(title: MenuType.history.rawValue)
         snippetMenu = NSMenu(title: MenuType.snippet.rawValue)
 
-        addHistoryItems(clipMenu!)
         addHistoryItems(historyMenu!)
-
-        addSnippetItems(clipMenu!, separateMenu: true, details: snippetFolderDetails)
-        addSnippetItems(snippetMenu!, separateMenu: false, details: snippetFolderDetails)
-
-        clipMenu?.addItem(NSMenuItem.separator())
-
-        if showsClearHistoryMenuItem {
-            clipMenu?.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
-        }
-
-        clipMenu?.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
-        clipMenu?.addItem(NSMenuItem(title: String(localized: "Settings…"), action: #selector(AppDelegate.showSettingsWindow), keyEquivalent: ","))
-        clipMenu?.addItem(NSMenuItem.separator())
-        clipMenu?.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
+        addSnippetItems(snippetMenu!, details: snippetFolderDetails)
 
         statusBarItem.menu = clipMenu
     }
 
-    func makeSubmenuItem(_ count: Int, start: Int, end: Int, numberOfItems: Int) -> NSMenuItem {
-        var count = count
-        if start == 0 {
-            count -= 1
-        }
-        var lastNumber = count + numberOfItems
-        if end < lastNumber {
-            lastNumber = end
-        }
+    func makeSubmenuItem(
+        itemOffset: Int,
+        firstItemNumber: Int,
+        maximumItemCount: Int,
+        totalItemCount: Int
+    ) -> NSMenuItem {
+        let firstNumber = firstItemNumber + itemOffset
+        let itemCount = min(maximumItemCount, totalItemCount - itemOffset)
         let menuItemTitle = MonospacedDigitFormatter.rangeTitle(
-            firstNumber: count + 1,
-            lastNumber: lastNumber
+            firstNumber: firstNumber,
+            lastNumber: firstNumber + itemCount - 1
         )
         let subMenuItem = makeSubmenuItem(menuItemTitle.string)
         subMenuItem.attributedTitle = menuItemTitle
@@ -239,6 +225,32 @@ private extension MenuManager {
         subMenuItem.submenu = subMenu
         subMenuItem.image = showsIconsInMenu ? folderIcon : nil
         return subMenuItem
+    }
+}
+
+extension MenuManager {
+    func makeMainMenu(details: [SnippetFolderDetail]) -> NSMenu {
+        let menu = NSMenu(title: Bundle.main.appName ?? "")
+
+        if showsSnippetsAboveHistory {
+            addSnippetItems(menu, details: details)
+            menu.addItem(NSMenuItem.separator())
+        }
+        addHistoryItems(menu)
+        if !showsSnippetsAboveHistory {
+            menu.addItem(NSMenuItem.separator())
+            addSnippetItems(menu, details: details)
+        }
+
+        menu.addItem(NSMenuItem.separator())
+        if showsClearHistoryMenuItem {
+            menu.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
+        }
+        menu.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
+        menu.addItem(NSMenuItem(title: String(localized: "Settings…"), action: #selector(AppDelegate.showSettingsWindow), keyEquivalent: ","))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
+        return menu
     }
 }
 
@@ -258,7 +270,7 @@ private extension MenuManager {
         let firstIndex = firstIndexOfMenuItems()
         var listNumber = firstIndex
         var subMenuCount = placeInLine
-        var subMenuIndex = 1 + placeInLine
+        var subMenuIndex = menu.numberOfItems + placeInLine
 
         let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
             sortsByCreatedAt: !reordersClipsAfterPasting,
@@ -271,7 +283,12 @@ private extension MenuManager {
             if placeInLine < 1 || placeInLine - 1 < i {
                 // Folder
                 if i == subMenuCount {
-                    let subMenuItem = makeSubmenuItem(subMenuCount, start: firstIndex, end: currentSize, numberOfItems: placeInsideFolder)
+                    let subMenuItem = makeSubmenuItem(
+                        itemOffset: subMenuCount,
+                        firstItemNumber: firstIndex,
+                        maximumItemCount: placeInsideFolder,
+                        totalItemCount: currentSize
+                    )
                     menu.addItem(subMenuItem)
                     listNumber = firstIndex
                 }
@@ -327,12 +344,8 @@ private extension MenuManager {
 
 // MARK: - Snippets
 private extension MenuManager {
-    func addSnippetItems(_ menu: NSMenu, separateMenu: Bool, details: [SnippetFolderDetail]) {
+    func addSnippetItems(_ menu: NSMenu, details: [SnippetFolderDetail]) {
         guard !details.isEmpty else { return }
-
-        if separateMenu {
-            menu.addItem(NSMenuItem.separator())
-        }
 
         // Snippet title
         let labelItem = NSMenuItem(title: String(localized: "Snippet"), action: nil)
