@@ -59,6 +59,10 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.showIconInTheMenu.rawValue), default: true]
     }
 
+    static var showsSnippetsAboveHistory: Self {
+        Self[.appStorage(AppStorageKeys.showsSnippetsAboveHistory.rawValue), default: false]
+    }
+
     static var marksMenuItemsWithNumbers: Self {
         Self[.appStorage(AppStorageKeys.menuItemsAreMarkedWithNumbers.rawValue), default: true]
     }
