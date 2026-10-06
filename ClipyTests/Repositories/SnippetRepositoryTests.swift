@@ -182,6 +182,39 @@ struct SnippetRepositoryTests {
     }
 
     @Test
+    func duplicateSnippetCopiesDataAndInsertsAfterSource() throws {
+        let folder = try #require(repository.insertFolder())
+        let first = try #require(repository.insertSnippet(to: folder.id))
+        let source = try #require(repository.insertSnippet(to: folder.id))
+        let last = try #require(repository.insertSnippet(to: folder.id))
+
+        repository.updateSnippetTitle(source.id, title: "Source")
+        repository.updateSnippetContent(source.id, content: "Source Content")
+        repository.updateSnippetIsEnabled(source.id, isEnabled: false)
+        let updatedSource = try #require(repository.fetchSnippet(id: source.id))
+
+        let duplicate = try #require(repository.duplicateSnippet(source.id))
+
+        #expect(duplicate.id != updatedSource.id)
+        #expect(duplicate.folderID == updatedSource.folderID)
+        #expect(duplicate.title == updatedSource.title)
+        #expect(duplicate.content == updatedSource.content)
+        #expect(duplicate.isEnabled == updatedSource.isEnabled)
+
+        let persisted = SnippetRepository().fetchFolderDetail(id: folder.id)
+        #expect(persisted?.snippets.map(\.id) == [first.id, updatedSource.id, duplicate.id, last.id])
+        #expect(persisted?.snippets.map(\.index) == [0, 1, 2, 3])
+
+        repository.updateSnippetTitle(duplicate.id, title: "Duplicate")
+        repository.updateSnippetContent(duplicate.id, content: "Duplicate Content")
+        repository.updateSnippetIsEnabled(duplicate.id, isEnabled: true)
+
+        #expect(repository.fetchSnippet(id: updatedSource.id)?.title == "Source")
+        #expect(repository.fetchSnippet(id: updatedSource.id)?.content == "Source Content")
+        #expect(repository.fetchSnippet(id: updatedSource.id)?.isEnabled == false)
+    }
+
+    @Test
     func moveSnippet() throws {
         let folder = try #require(repository.insertFolder())
         let snippet = try #require(repository.insertSnippet(to: folder.id))
