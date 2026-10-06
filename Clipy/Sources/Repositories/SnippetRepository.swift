@@ -28,6 +28,7 @@ protocol SnippetRepositoryProtocol {
 
     func fetchSnippet(id: Snippet.ID) -> Snippet?
     func insertSnippet(to id: SnippetFolder.ID) -> Snippet?
+    func duplicateSnippet(_ id: Snippet.ID) -> Snippet?
     func updateSnippetTitle(_ id: Snippet.ID, title: String)
     func updateSnippetContent(_ id: Snippet.ID, content: String)
     func updateSnippetIsEnabled(_ id: Snippet.ID, isEnabled: Bool)
@@ -187,6 +188,40 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                     isEnabled: true
                 )
                 return try Snippet.insert { snippet }.returning(\.self).fetchOne(database)
+            }
+        }
+    }
+
+    func duplicateSnippet(_ id: Snippet.ID) -> Snippet? {
+        withErrorReporting {
+            try database.write { database in
+                guard let source = try Snippet.find(id).fetchOne(database) else {
+                    return nil
+                }
+                let siblings = try Snippet.where { $0.folderID.eq(source.folderID) }
+                    .order(by: \.index)
+                    .fetchAll(database)
+                guard let sourceIndex = siblings.firstIndex(where: { $0.id == source.id }) else {
+                    return nil
+                }
+                let duplicateDraft = Snippet.Draft(
+                    folderID: source.folderID,
+                    title: source.title,
+                    content: source.content,
+                    index: sourceIndex + 1,
+                    isEnabled: source.isEnabled
+                )
+                guard let duplicate = try Snippet.insert { duplicateDraft }.returning(\.self).fetchOne(database) else {
+                    return nil
+                }
+                var orderedIDs = siblings.map(\.id)
+                orderedIDs.insert(duplicate.id, at: sourceIndex + 1)
+                try orderedIDs.enumerated().forEach { index, snippetID in
+                    try Snippet.where { $0.id.eq(snippetID) }
+                        .update { $0.index = index }
+                        .execute(database)
+                }
+                return duplicate
             }
         }
     }

@@ -14,6 +14,20 @@ import Foundation
 import Magnet
 import Sharing
 
+enum AppearanceMode: Int, CaseIterable {
+    case system
+    case light
+    case dark
+
+    var title: LocalizedStringResource {
+        switch self {
+        case .system: .Settings.system
+        case .light: .Settings.light
+        case .dark: .Settings.dark
+        }
+    }
+}
+
 extension SharedKey where Self == AppStorageKey<Bool>.Default {
     static var isLaunchAtLogin: Self {
         Self[.appStorage(AppStorageKeys.loginItem.rawValue), default: false]
@@ -181,6 +195,12 @@ extension SharedKey where Self == AppStorageKey<HistoryClearInterval>.Default {
     }
 }
 
+extension SharedKey where Self == AppStorageKey<AppearanceMode>.Default {
+    static var appearanceMode: Self {
+        Self[.appStorage(AppStorageKeys.appearanceMode.rawValue), default: .system]
+    }
+}
+
 extension SharedKey where Self == AppStorageKey<KeyCombo?>.Default {
     static var mainKeyCombo: Self {
         Self[
@@ -233,6 +253,12 @@ extension SharedKey where Self == AppStorageKey<[String: KeyCombo]>.Default {
 extension SharedKey where Self == AppStorageKey<[ApplicationInformation]>.Default {
     static var excludedApplications: Self {
         Self[.appStorage(AppStorageKeys.excludedApplications.rawValue), default: []]
+    }
+}
+
+extension SharedKey where Self == AppStorageKey<String>.Default {
+    static var snippetExportDirectoryPath: Self {
+        Self[.appStorage(AppStorageKeys.snippetExportDirectoryPath.rawValue), default: ""]
     }
 }
 

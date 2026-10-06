@@ -79,6 +79,12 @@ struct AppStorageValuesTests {
     }
 
     @Test
+    func loadDefaultAppearanceMode() {
+        @Shared(.appearanceMode) var appearanceMode
+        #expect(appearanceMode == .system)
+    }
+
+    @Test
     func loadDefaultIntegerSettings() {
         @Shared(.maximumHistoryCount) var maximumHistoryCount
         @Shared(.statusItemDisplayMode) var statusItemDisplayMode
@@ -145,5 +151,19 @@ struct AppStorageValuesTests {
         @Shared(.excludedApplications) var excludedApplications
 
         #expect(excludedApplications.isEmpty)
+    }
+
+    @Test
+    func saveSnippetExportDirectoryPath() {
+        @Shared(.snippetExportDirectoryPath) var snippetExportDirectoryPath
+        let originalValue = snippetExportDirectoryPath
+        defer {
+            $snippetExportDirectoryPath.withLock { $0 = originalValue }
+        }
+
+        $snippetExportDirectoryPath.withLock { $0 = "/tmp/ClipyExports" }
+        @Shared(.snippetExportDirectoryPath) var reloadedSnippetExportDirectoryPath
+
+        #expect(reloadedSnippetExportDirectoryPath == "/tmp/ClipyExports")
     }
 }
