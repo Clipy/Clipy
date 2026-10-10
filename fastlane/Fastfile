@@ -1,0 +1,63 @@
+default_platform(:mac)
+
+platform :mac do
+  desc "Sync macOS development certificates and profiles (read-only by default)"
+  desc "Use force:true to allow certificate creation and regenerate provisioning profiles"
+  desc "API key options key_id, issuer_id, and key_content override ENV; key_content must be Base64 encoded"
+  lane :sync_development_signing do |options|
+    force = options[:force] || false
+    api_key = load_signing_api_key(options) if force
+
+    match(
+      api_key: api_key,
+      type: 'development',
+      app_identifier: ['com.clipy-app.Clipy.debug'],
+      force: force,
+      readonly: !force
+    )
+  end
+
+  desc "Sync Developer ID certificates and profiles for production distribution (read-only by default)"
+  desc "Use force:true to regenerate provisioning profiles using a valid imported certificate"
+  desc "API key options key_id, issuer_id, and key_content override ENV; key_content must be Base64 encoded"
+  lane :sync_developer_id_signing do |options|
+    # Only Developer ID certificate creation is unavailable via the App Store Connect API; profiles can be created.
+    # Certificates are created manually and registered with match import before running this lane.
+    force = options[:force] || false
+    api_key = load_signing_api_key(options) if force
+
+    match(
+      api_key: api_key,
+      type: 'developer_id',
+      app_identifier: ['com.clipy-app.Clipy'],
+      skip_provisioning_profiles: false,
+      force: force,
+      readonly: !force
+    )
+  end
+
+  desc "Import a manually created Developer ID certificate and private key into match storage"
+  desc "Prompts for the .cer and .p12 paths and an optional provisioning profile"
+  desc "API key options key_id, issuer_id, and key_content override ENV; key_content must be Base64 encoded"
+  lane :import_developer_id_signing do |options|
+    require "match/importer"
+
+    api_key = load_signing_api_key(options)
+    params = FastlaneCore::Configuration.create(Match::Options.available_options, {
+      api_key: api_key,
+      type: 'developer_id',
+      platform: 'macos'
+    })
+    params.load_configuration_file("Matchfile")
+    Match::Importer.new.import_cert(params)
+  end
+
+  private_lane :load_signing_api_key do |options|
+    app_store_connect_api_key(
+      key_id: options[:key_id] || ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
+      issuer_id: options[:issuer_id] || ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      key_content: options[:key_content] || ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true,
+    )
+  end
+end
