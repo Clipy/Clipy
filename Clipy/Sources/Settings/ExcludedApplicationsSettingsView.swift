@@ -60,6 +60,7 @@ struct ExcludedApplicationsSettingsView: View {
                 .disabled(!canRemoveSelection)
             }
             .labelStyle(.iconOnly)
+            .fixedSize(horizontal: true, vertical: false)
         }
         .frame(width: 500)
         .padding(.vertical, 20)
