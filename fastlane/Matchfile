@@ -1,0 +1,4 @@
+git_url("https://github.com/Clipy/certificates")
+storage_mode("git")
+type("development")
+team_id("BBCHAJ584H")
