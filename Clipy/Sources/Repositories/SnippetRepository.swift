@@ -186,7 +186,10 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                     index: lastIndex + 1,
                     isEnabled: true
                 )
-                return try Snippet.insert { snippet }.returning(\.self).fetchOne(database)
+                // On macOS 13, fetchOne caused snippet insertion to fail with "Transaction was aborted".
+                // Use fetchAll to consume the RETURNING result completely before committing.
+                // https://github.com/Clipy/Clipy/issues/660
+                return try Snippet.insert { snippet }.returning(\.self).fetchAll(database).first
             }
         }
     }
