@@ -53,6 +53,7 @@ struct GeneralSettingsView: View {
                         .tag(true)
                 }
                 .labelsHidden()
+                .fixedSize(horizontal: true, vertical: false)
             }
 
             SettingsSection(title: .Settings.automaticHistoryDeletion, bottomDivider: true) {
@@ -73,6 +74,7 @@ struct GeneralSettingsView: View {
                     }
                 }
                 .labelsHidden()
+                .fixedSize(horizontal: true, vertical: false)
                 .padding(.leading, 20)
                 .disabled(!clearsHistoryPeriodically)
                 Text(.Settings.historyClearIntervalDescription)
@@ -94,6 +96,7 @@ struct GeneralSettingsView: View {
                         .tag(0)
                 }
                 .labelsHidden()
+                .fixedSize(horizontal: true, vertical: false)
             }
 
             SettingsSection(title: .Settings.diagnostics) {
