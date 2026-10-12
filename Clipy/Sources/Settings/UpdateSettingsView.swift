@@ -40,6 +40,7 @@ struct UpdateSettingsView: View {
                             .tag(TimeInterval(2_592_000))
                     }
                     .labelsHidden()
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding(.leading, 20)
                     .disabled(!automaticallyChecksForUpdates)
                 }

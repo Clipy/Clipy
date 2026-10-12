@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct DonationSettingsView: View {
+    @Environment(\.openURL)
+    private var openURL
+
     var body: some View {
         VStack(spacing: 24) {
             Text(.Settings.donationMessage)
@@ -41,9 +44,11 @@ struct DonationSettingsView: View {
                 Text(verbatim: title)
             }
 
-            Link(.Settings.support, destination: destination)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+            Button(.Settings.support) {
+                openURL(destination)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
         }
         .frame(maxWidth: .infinity)
         .foregroundStyle(.primary)
