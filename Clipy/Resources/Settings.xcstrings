@@ -10,6 +10,12 @@
             "value" : "Apps hinzufügen…"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افزودن برنامه‌ها…"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49,6 +55,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menüeintrag zum Löschen des Verlaufs hinzufügen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افزودن گزینه‌ای به منو برای پاک کردن تاریخچهٔ کلیپ‌بورد"
           }
         },
         "it" : {
@@ -92,6 +104,12 @@
             "value" : "Füge Apps hinzu, deren Zwischenablage nicht im Verlauf gespeichert werden soll."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "یک برنامه اضافه کنید تا ذخیرهٔ تاریخچهٔ کلیپ‌بورد آن متوقف شود."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -127,6 +145,12 @@
     "Additional history is grouped into folders. Set to 0 to group all history into folders." : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخچهٔ اضافی در پوشه‌ها گروه‌بندی می‌شود. برای گروه‌بندی تمام تاریخچه در پوشه‌ها، آن را روی 0 تنظیم کنید."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -174,6 +198,12 @@
             "value" : "Automatisches Löschen des Verlaufs"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حذف خودکار تاریخچه"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -213,6 +243,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automatisch nach Updates suchen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بررسی خودکار به‌روزرسانی‌ها"
           }
         },
         "it" : {
@@ -256,6 +292,12 @@
             "value" : "Verhalten:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رفتار:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -295,6 +337,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Beta"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بتا"
           }
         },
         "it" : {
@@ -338,6 +386,12 @@
             "value" : "Einstellungen für Beta-Funktionen werden nach einem Update möglicherweise nicht beibehalten."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ممکن است تنظیمات ویژگی‌های بتا پس از به‌روزرسانی حفظ نشوند."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -373,6 +427,12 @@
     "Changes take effect the next time Clipy launches. Usage logs do not include personal information or copied content." : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تغییرات در راه‌اندازی بعدی Clipy اعمال می‌شوند. گزارش‌های استفاده شامل اطلاعات شخصی یا محتوای کپی‌شده نیستند."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -420,6 +480,12 @@
             "value" : "Jetzt prüfen…"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بررسی اکنون…"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -459,6 +525,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prüfintervall"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بازهٔ زمانی بررسی"
           }
         },
         "it" : {
@@ -502,6 +574,12 @@
             "value" : "Verlauf regelmäßig löschen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پاک کردن دوره‌ای تاریخچه"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -540,6 +618,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verlauf löschen:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پاک کردن تاریخچه:"
           }
         },
         "it" : {
@@ -584,6 +668,12 @@
             "value" : "Verlauf beim Beenden von Clipy löschen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پاک کردن تاریخچه هنگام خروج از Clipy"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -625,6 +715,12 @@
             "value" : "Zwischenablageverlauf:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخچهٔ کلیپ‌بورد:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -661,6 +757,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Command (⌘)"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Command (⌘)"
@@ -707,6 +809,12 @@
             "value" : "Auf anderen Apple-Geräten kopierte Inhalte werden nicht im Verlauf gespeichert."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محتوای کپی‌شده در دستگاه‌های دیگر Apple در تاریخچه ذخیره نخواهد شد."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -743,6 +851,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control (⌃)"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Control (⌃)"
@@ -789,6 +903,12 @@
             "value" : "Täglich"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "روزانه"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -828,6 +948,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erstellungsdatum"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخ ایجاد"
           }
         },
         "it" : {
@@ -871,6 +997,12 @@
             "value" : "Aus dem Verlauf löschen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حذف از تاریخچه"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -906,6 +1038,12 @@
     "Diagnostics:" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عیب‌یابی:"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -953,6 +1091,12 @@
             "value" : "Als vertraulich markierte Inhalte nicht im Verlauf speichern"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محتوای علامت‌گذاری‌شده به‌عنوان محرمانه در تاریخچه ذخیره نشود"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -994,6 +1138,12 @@
             "value" : "Inhalte der universellen Zwischenablage nicht im Verlauf speichern"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محتوای Universal Clipboard در تاریخچه ذخیره نشود"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1033,6 +1183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spenden"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حمایت مالی"
           }
         },
         "it" : {
@@ -1083,6 +1239,12 @@
             "value" : "Clipy offers all of its features for free, and we have no plans to charge for them.\n\nDonations help us continue developing Clipy. If you'd like to support our work, you can contribute through either of the options below."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipy تمام ویژگی‌های خود را به‌صورت رایگان ارائه می‌دهد و هیچ برنامه‌ای برای دریافت هزینه بابت آن‌ها نداریم.\n\nحمایت‌های مالی به ما در ادامهٔ توسعهٔ Clipy کمک می‌کند. اگر مایل به حمایت از کار ما هستید، می‌توانید از طریق هر یک از گزینه‌های زیر کمک کنید."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1122,6 +1284,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Textbausteine bearbeiten:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ویرایش قطعه‌متن‌ها:"
           }
         },
         "it" : {
@@ -1165,6 +1333,12 @@
             "value" : "Alle 3 Tage"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ۳ روز"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1204,6 +1378,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alle 30 Minuten"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ۳۰ دقیقه"
           }
         },
         "it" : {
@@ -1247,6 +1427,12 @@
             "value" : "Alle 4 Stunden"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ۴ ساعت"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1286,6 +1472,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alle 5 Minuten"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ۵ دقیقه"
           }
         },
         "it" : {
@@ -1329,6 +1521,12 @@
             "value" : "Alle 7 Tage"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ۷ روز"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1368,6 +1566,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alle 8 Stunden"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ۸ ساعت"
           }
         },
         "it" : {
@@ -1411,6 +1615,12 @@
             "value" : "Jeden Tag"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر روز"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1450,6 +1660,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Jede Stunde"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هر ساعت"
           }
         },
         "it" : {
@@ -1493,6 +1709,12 @@
             "value" : "Ausschließen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استثناها"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1534,6 +1756,12 @@
             "value" : "Ausgeschlossene Apps"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "برنامه‌های مستثنا"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1573,6 +1801,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dateien"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فایل‌ها"
           }
         },
         "it" : {
@@ -1622,6 +1856,12 @@
             "value" : "General"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عمومی"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1661,6 +1901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Höhe"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ارتفاع"
           }
         },
         "it" : {
@@ -1704,6 +1950,12 @@
             "value" : "Ausgeblendet"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پنهان"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1743,6 +1995,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einträge auf oberster Ebene:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موارد تاریخچهٔ نمایش‌داده‌شده در بالاترین سطح:"
           }
         },
         "it" : {
@@ -1786,6 +2044,12 @@
             "value" : "Maximale Anzahl gespeicherter Einträge:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محدودیت تاریخچه:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1825,6 +2089,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verlauf:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخچه:"
           }
         },
         "it" : {
@@ -1868,6 +2138,12 @@
             "value" : "Halte beim Auswählen eines Verlaufseintrags die festgelegte Taste gedrückt, um die zugehörige Aktion auszuführen."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هنگام انتخاب موردی از تاریخچه، کلید انتخاب‌شده را نگه دارید تا این اقدام انجام شود."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1904,6 +2180,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTML"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "HTML"
@@ -1950,6 +2232,12 @@
             "value" : "Bilder"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تصاویر"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1989,6 +2277,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einträge pro Ordner:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعداد موارد در هر پوشه:"
           }
         },
         "it" : {
@@ -2032,6 +2326,12 @@
             "value" : "Zuletzt verwendet"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آخرین استفاده"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2071,6 +2371,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zuletzt geprüft:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آخرین بررسی:"
           }
         },
         "it" : {
@@ -2114,6 +2420,12 @@
             "value" : "Bei der Anmeldung starten"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اجرا هنگام ورود"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2153,6 +2465,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hauptmenü:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "منوی اصلی:"
           }
         },
         "it" : {
@@ -2196,6 +2514,12 @@
             "value" : "Menüeinträgen Nummern voranstellen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "شماره‌گذاری موارد منو"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2237,6 +2561,12 @@
             "value" : "Zeichenlimit:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حداکثر نویسه‌ها:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2276,6 +2606,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Max. angezeigte Zeichen:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حداکثر طول متن نمایشی:"
           }
         },
         "it" : {
@@ -2325,6 +2661,12 @@
             "value" : "Menu"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "منو"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2360,6 +2702,12 @@
     "Menu Items:" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "موارد منو:"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2407,6 +2755,12 @@
             "value" : "Menüleistensymbol:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آیکون نوار منو:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2446,6 +2800,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sondertastenaktionen:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عملکرد کلید‌های تغییر‌دهنده:"
           }
         },
         "it" : {
@@ -2489,6 +2849,12 @@
             "value" : "Monatlich"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ماهانه"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2528,6 +2894,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noch nie"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هرگز"
           }
         },
         "it" : {
@@ -2571,6 +2943,12 @@
             "value" : "Keine ausgeschlossenen Apps"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هیچ برنامهٔ مستثنایی وجود ندارد"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2612,6 +2990,12 @@
             "value" : "Option (⌥)"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option (⌥)"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2648,6 +3032,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "PDF"
@@ -2700,6 +3090,12 @@
             "value" : "Type"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نوع"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2745,6 +3141,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To keep Settings accessible even if you cannot open the menu, this shortcut can be changed but cannot be removed."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "برای در دسترس ماندن تنظیمات حتی اگر نتوانید منو را باز کنید، این میانبر قابل تغییر است اما قابل حذف نیست."
           }
         },
         "it" : {
@@ -2794,6 +3196,12 @@
             "value" : "Open Settings"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "باز کردن تنظیمات"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2833,6 +3241,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einfügen und aus dem Verlauf löschen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جای‌گذاری و حذف از تاریخچه"
           }
         },
         "it" : {
@@ -2876,6 +3290,12 @@
             "value" : "Als reinen Text einfügen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جای‌گذاری به‌صورت متن ساده"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2915,6 +3335,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nach der Auswahl automatisch einfügen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جای‌گذاری خودکار پس از انتخاب"
           }
         },
         "it" : {
@@ -2958,6 +3384,12 @@
             "value" : "Reiner Text"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متن ساده"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2993,6 +3425,12 @@
     "Previews:" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پیش‌نمایش‌ها:"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3040,6 +3478,12 @@
             "value" : "Entfernen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حذف"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3081,6 +3525,12 @@
             "value" : "Den vorherigen Eintrag ersetzen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جایگزینی مورد قبلی"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3116,6 +3566,12 @@
     "Reversed" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "معکوس"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3163,6 +3619,12 @@
             "value" : "Rich Text Format (RTF)"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rich Text Format (RTF)"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3199,6 +3661,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rich Text Format Directory (RTFD)"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rich Text Format Directory (RTFD)"
@@ -3245,6 +3713,12 @@
             "value" : "Erneut kopierte Inhalte im Verlauf speichern"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ذخیرهٔ محتوای تکراری کلیپ‌بورد"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3284,6 +3758,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bildschirmfotos im Verlauf speichern"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ذخیرهٔ اسکرین‌شات‌ها در تاریخچه"
           }
         },
         "it" : {
@@ -3327,6 +3807,12 @@
             "value" : "Im Verlauf speichern:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ذخیره در تاریخچه:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3368,6 +3854,12 @@
             "value" : "Bildschirmfoto:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اسکرین‌شات:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3403,6 +3895,12 @@
     "Send crash reports and usage logs" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ارسال گزارش‌های خرابی و گزارش‌های استفاده"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3448,6 +3946,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Umschalt (⇧)"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shift (⇧)"
           }
         },
         "it" : {
@@ -3497,6 +4001,12 @@
             "value" : "Shortcuts"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "میانبرها"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3536,6 +4046,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vor dem Löschen des Verlaufs eine Warnung anzeigen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش هشدار پیش از پاک کردن تاریخچه"
           }
         },
         "it" : {
@@ -3579,6 +4095,12 @@
             "value" : "Vorschau für Farbcodes anzeigen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش پیش‌نمایش کد رنگ"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3618,6 +4140,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Symbole in Menüeinträgen anzeigen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش آیکون‌ها در موارد منو"
           }
         },
         "it" : {
@@ -3661,6 +4189,12 @@
             "value" : "Bilder anzeigen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش تصاویر"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3700,6 +4234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Textbausteine über dem Verlauf anzeigen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش قطعه‌متن‌ها بالای تاریخچه"
           }
         },
         "it" : {
@@ -3743,6 +4283,12 @@
             "value" : "Kurzinfos für Menüeinträge anzeigen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش راهنمای ابزار روی موارد منو"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3782,6 +4328,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Textbausteine:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قطعه‌متن‌ها:"
           }
         },
         "it" : {
@@ -3825,6 +4377,12 @@
             "value" : "Softwareupdate:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "به‌روزرسانی نرم‌افزار:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3860,6 +4418,12 @@
     "Some apps, such as password managers, mark sensitive content as confidential." : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "برخی از برنامه‌ها، مانند برنامه‌های مدیریت رمز عبور، محتوای حساس را محرمانه علامت‌گذاری می‌کنند."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3907,6 +4471,12 @@
             "value" : "Verlauf sortieren nach:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مرتب‌سازی تاریخچه بر اساس:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3942,6 +4512,12 @@
     "Standard" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استاندارد"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3989,6 +4565,12 @@
             "value" : "Nummerierung bei 0 beginnen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "شروع شماره‌گذاری از 0"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4030,6 +4612,12 @@
             "value" : "Unterstützen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پشتیبانی"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4065,6 +4653,12 @@
     "Tooltips:" : {
       "extractionState" : "manual",
       "localizations" : {
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "راهنمای ابزار:"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4107,6 +4701,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "URL"
@@ -4159,6 +4759,12 @@
             "value" : "Updates"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "به‌روزرسانی‌ها"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4198,6 +4804,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kurzbefehle mit Zifferntasten aktivieren"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استفاده از کلیدهای عددی به‌عنوان میانبر"
           }
         },
         "it" : {
@@ -4241,6 +4853,12 @@
             "value" : "Version:"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نسخه:"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4280,6 +4898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wöchentlich"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هفتگی"
           }
         },
         "it" : {
@@ -4323,6 +4947,12 @@
             "value" : "Breite"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عرض"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4362,6 +4992,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zeichen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نویسه"
           }
         },
         "it" : {
@@ -4411,6 +5047,12 @@
             "value" : "Clears all history at the selected interval while Clipy is running. Snippets are not deleted."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "در حین اجرای Clipy، تمام تاریخچه در بازهٔ زمانی انتخاب‌شده پاک می‌شود. قطعه‌متن‌ها حذف نمی‌شوند."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4452,6 +5094,12 @@
             "value" : "Einträge"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مورد"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4488,6 +5136,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "px"

@@ -15,6 +15,12 @@
             "value" : "To perform this action, allow Clipy in System Settings > Privacy & Security > Accessibility.\n\nIf this message still appears, remove Clipy from the list and add it again."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "برای انجام این اقدام، به Clipy در System Settings > Privacy & Security > Accessibility اجازه دهید.\n\nاگر این پیام همچنان نمایش داده می‌شود، Clipy را از فهرست حذف کرده و دوباره اضافه کنید."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -53,6 +59,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Möchten sie diesen Eintrag wirklich löschen?"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آیا از حذف این مورد اطمینان دارید؟"
           }
         },
         "it" : {
@@ -95,6 +107,12 @@
             "value" : "Möchten sie den Verlauf ihrer Zwischenablage wirklich löschen?"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آیا از پاک کردن تاریخچهٔ کلیپ‌بورد اطمینان دارید؟"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -133,6 +151,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbrechen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لغو"
           }
         },
         "it" : {
@@ -175,6 +199,12 @@
             "value" : "Verlauf löschen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پاک کردن تاریخچه"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -215,6 +245,12 @@
             "value" : "Einträge löschen"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حذف مورد"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -253,6 +289,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nicht starten"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اجرا نشود"
           }
         },
         "it" : {
@@ -301,6 +343,12 @@
             "value" : "Edit Snippets..."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ویرایش قطعه‌متن‌ها..."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -339,6 +387,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verlauf"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تاریخچه"
           }
         },
         "it" : {
@@ -381,6 +435,12 @@
             "value" : "Clipy beim Starten öffnen?"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آیا Clipy هنگام راه‌اندازی سیستم اجرا شود؟"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -419,6 +479,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anwendung automatisch starten"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اجرا هنگام راه‌اندازی سیستم"
           }
         },
         "it" : {
@@ -467,6 +533,12 @@
             "value" : "Open System Settings"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "باز کردن System Settings"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -513,6 +585,12 @@
             "value" : "Please allow Accessibility."
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لطفاً به Accessibility اجازه دهید."
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -553,6 +631,12 @@
             "value" : "Bitte geben Sie den Inhalt des Snippets ein"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لطفاً محتوای قطعه‌متن را وارد کنید"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -591,6 +675,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Clipy beenden"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خروج از Clipy"
           }
         },
         "it" : {
@@ -639,6 +729,12 @@
             "value" : "Settings…"
           }
         },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تنظیمات…"
+          }
+        },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
@@ -677,6 +773,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Snippet"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قطعه‌متن"
           }
         },
         "it" : {
@@ -723,6 +825,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You can change this later in Settings."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "می‌توانید بعداً این را در تنظیمات تغییر دهید."
           }
         },
         "it" : {
