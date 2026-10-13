@@ -154,6 +154,7 @@
 		314B299E1EC49AEF004DD070 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		31ACA9F81EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		38E5CBCA217F58CD972E80D0 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
+		86A713D49D5F5DEC6CBC3D88 /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fa; path = fa.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTypeSettingsView.swift; sourceTree = "<group>"; };
 		54ADE1022008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		647E212B366446A64D41D182 /* HistoryClearInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryClearInterval.swift; sourceTree = "<group>"; };
@@ -884,6 +885,7 @@
 				"zh-Hans",
 				"pt-BR",
 				uk,
+				fa,
 			);
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			packageReferences = (
@@ -1096,6 +1098,7 @@
 				314B299E1EC49AEF004DD070 /* ja */,
 				31ACA9F81EC5B85C00BD34C0 /* it */,
 				38E5CBCA217F58CD972E80D0 /* uk */,
+				86A713D49D5F5DEC6CBC3D88 /* fa */,
 				8460049E1FD5511A00BA733E /* de */,
 				54ADE1022008F64100239852 /* zh-Hans */,
 				A07D83962FC384F100390DB2 /* pt-BR */,
