@@ -80,26 +80,27 @@ struct PasteboardHistoryExtensionsTests {
     }
 
     @Test
-    func typedTitleIncludesHTMLPrefix() {
+    func typedTitleOmitsHTMLPrefix() {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
 
         let history = Self.pasteboardHistory(title: "  Web content\n", pasteboardTypes: [.html, .string])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [.html])
 
-        #expect(history.typedTitle == "(HTML) Web content")
-        #expect(emptyTitleHistory.typedTitle == "(HTML)")
+        #expect(history.typedTitle == "Web content")
+        #expect(emptyTitleHistory.typedTitle == "")
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.typedTitle == "(HTML) We...")
-        #expect(emptyTitleHistory.typedTitle == "(HTML)")
+        #expect(history.typedTitle == "We...")
+        #expect(emptyTitleHistory.typedTitle == "")
     }
 
     @Test(arguments: [
         NSPasteboard.PasteboardType.string,
         .deprecatedString,
         .rtf,
-        .deprecatedRTF
+        .deprecatedRTF,
+        .html
     ])
     func typedTitleOmitsPrefix(pasteboardType: NSPasteboard.PasteboardType) {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
