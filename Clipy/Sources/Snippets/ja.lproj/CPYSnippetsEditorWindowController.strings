@@ -34,3 +34,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Coming Soon"; ObjectID = "yzF-k8-xUT"; */
 "yzF-k8-xUT.title" = "Coming Soon";
+
+/* Class = "NSTextFieldCell"; title = "Duplicate"; ObjectID = "DUP-lc-001"; */
+"DUP-lc-001.title" = "複製";

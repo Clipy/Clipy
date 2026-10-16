@@ -147,4 +147,18 @@ struct AppStorageValuesTests {
 
         #expect(excludedApplications.isEmpty)
     }
+
+    @Test
+    func saveSnippetExportDirectoryPath() {
+        @Shared(.snippetExportDirectoryPath) var snippetExportDirectoryPath
+        let originalValue = snippetExportDirectoryPath
+        defer {
+            $snippetExportDirectoryPath.withLock { $0 = originalValue }
+        }
+
+        $snippetExportDirectoryPath.withLock { $0 = "/tmp/ClipyExports" }
+        @Shared(.snippetExportDirectoryPath) var reloadedSnippetExportDirectoryPath
+
+        #expect(reloadedSnippetExportDirectoryPath == "/tmp/ClipyExports")
+    }
 }
