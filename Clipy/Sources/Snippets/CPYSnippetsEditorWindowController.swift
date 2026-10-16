@@ -15,6 +15,7 @@ import Dependencies
 import KeyHolder
 import Magnet
 import AEXML
+import Sharing
 
 final class CPYSnippetsEditorWindowController: NSWindowController {
 
@@ -57,6 +58,8 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     private var snippetRepository
     @Dependency(\.hotKeyService)
     private var hotKeyService
+    @Shared(.snippetExportDirectoryPath)
+    private var snippetExportDirectoryPath
     private var folders = [EditorSnippetFolder]()
     private var selectedFolder: EditorSnippetFolder? {
         guard let item = outlineView.item(atRow: outlineView.selectedRow) else { return nil }
@@ -66,9 +69,6 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
     // MARK: - Window Life Cycle
     override func windowDidLoad() {
         super.windowDidLoad()
-        // Temporarily disable Dark Mode until this window is migrated to SwiftUI.
-        self.window?.appearance = NSAppearance(named: .aqua)
-        self.window?.backgroundColor = NSColor(white: 0.99, alpha: 1)
         self.window?.titlebarAppearsTransparent = true
         folders = snippetRepository.fetchFolderDetails().map(EditorSnippetFolder.init)
         outlineView.reloadData()
@@ -109,6 +109,22 @@ extension CPYSnippetsEditorWindowController {
         folders.append(editorFolder)
         outlineView.reloadData()
         outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: editorFolder)), byExtendingSelection: false)
+        changeItemFocus()
+    }
+
+    @IBAction private func duplicateSnippetButtonTapped(_ sender: AnyObject) {
+        guard let snippet = outlineView.item(atRow: outlineView.selectedRow) as? EditorSnippet,
+              let folder = outlineView.parent(forItem: snippet) as? EditorSnippetFolder,
+              let sourceIndex = folder.snippets.firstIndex(where: { $0.id == snippet.id }),
+              let duplicate = snippetRepository.duplicateSnippet(snippet.id) else {
+            NSSound.beep()
+            return
+        }
+        let editorSnippet = EditorSnippet(snippet: duplicate)
+        folder.snippets.insert(editorSnippet, at: sourceIndex + 1)
+        outlineView.reloadData()
+        outlineView.expandItem(folder)
+        outlineView.selectRowIndexes(IndexSet(integer: outlineView.row(forItem: editorSnippet)), byExtendingSelection: false)
         changeItemFocus()
     }
 
@@ -158,7 +174,9 @@ extension CPYSnippetsEditorWindowController {
     @IBAction private func importSnippetButtonTapped(_ sender: AnyObject) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
-        panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
+        panel.directoryURL = snippetExportDirectoryPath.isEmpty
+            ? URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
+            : URL(fileURLWithPath: snippetExportDirectoryPath, isDirectory: true)
         panel.allowedContentTypes = [.xml]
         let returnCode = panel.runModal()
 
@@ -210,19 +228,48 @@ extension CPYSnippetsEditorWindowController {
                 }
         }
 
-        let panel = NSSavePanel()
-        panel.accessoryView = nil
-        panel.canSelectHiddenExtension = true
-        panel.allowedContentTypes = [.xml]
-        panel.allowsOtherFileTypes = false
-        panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory())
-        panel.nameFieldStringValue = "snippets"
-        let returnCode = panel.runModal()
-
-        if returnCode != NSApplication.ModalResponse.OK { return }
-
         guard let data = xmlDocument.xml.data(using: String.Encoding.utf8) else { return }
-        guard let url = panel.url else { return }
+
+        let directoryURL: URL
+        if snippetExportDirectoryPath.isEmpty {
+            let panel = NSOpenPanel()
+            panel.allowsMultipleSelection = false
+            panel.canChooseFiles = false
+            panel.canChooseDirectories = true
+            panel.canCreateDirectories = true
+            panel.directoryURL = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
+            guard panel.runModal() == .OK, let selectedDirectoryURL = panel.url else { return }
+            directoryURL = selectedDirectoryURL
+        } else {
+            directoryURL = URL(fileURLWithPath: snippetExportDirectoryPath, isDirectory: true)
+        }
+
+        writeSnippetExport(data, to: directoryURL.appendingPathComponent(Self.snippetExportFileName()))
+    }
+}
+
+extension CPYSnippetsEditorWindowController {
+    static func snippetExportFileName(for date: Date = Date(), timeZone: TimeZone = .current) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = timeZone
+        formatter.dateFormat = "yyyyMMdd"
+        return "snippets_\(formatter.string(from: date)).xml"
+    }
+}
+
+private extension CPYSnippetsEditorWindowController {
+    func writeSnippetExport(_ data: Data, to url: URL) {
+        if FileManager.default.fileExists(atPath: url.path) {
+            let alert = NSAlert()
+            alert.messageText = String(localized: "Replace Existing Export?")
+            alert.informativeText = String(localized: "An export file with today's name already exists. Do you want to replace it?")
+            alert.addButton(withTitle: String(localized: "Replace"))
+            alert.addButton(withTitle: String(localized: "Cancel"))
+            NSApp.activate(ignoringOtherApps: true)
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+        }
 
         do {
             try data.write(to: url, options: .atomic)
