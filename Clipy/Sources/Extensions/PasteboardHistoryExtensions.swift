@@ -23,8 +23,6 @@ extension PasteboardHistory {
             prefix = "(PDF)"
         } else if primaryType == .fileURL || primaryType == .deprecatedFilenames {
             prefix = "(Files)"
-        } else if primaryType == .html {
-            prefix = "(HTML)"
         } else {
             prefix = nil
         }

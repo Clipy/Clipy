@@ -16,11 +16,11 @@ import Testing
 
 struct PasteboardTypeSettingsTests {
     @Test
-    func enablesTypesWithoutStoredValues() {
+    func disablesHTMLAndEnablesOtherTypesWithoutStoredValues() {
         let settings = PasteboardTypeSettings()
 
-        #expect(PasteboardAvailableType.allCases.allSatisfy { settings[$0] })
-        #expect(settings.enabledTypes == PasteboardAvailableType.allCases)
+        #expect(!settings[.html])
+        #expect(settings.enabledTypes == PasteboardAvailableType.allCases.filter { $0 != .html })
     }
 
     @Test
@@ -35,7 +35,7 @@ struct PasteboardTypeSettingsTests {
     }
 
     @Test
-    func codableRoundTripPreservesValuesAndDefaultsMissingTypesToEnabled() throws {
+    func codableRoundTripPreservesValuesAndDefaultsMissingTypes() throws {
         let settings = PasteboardTypeSettings(
             values: [PasteboardAvailableType.pdf.rawValue: false]
         )
@@ -46,5 +46,18 @@ struct PasteboardTypeSettingsTests {
         #expect(decodedSettings == settings)
         #expect(!decodedSettings[.pdf])
         #expect(decodedSettings[.string])
+        #expect(!decodedSettings[.html])
+    }
+
+    @Test(arguments: [true, false])
+    func preservesExplicitHTMLPreference(isEnabled: Bool) throws {
+        var settings = PasteboardTypeSettings()
+        settings[.html] = isEnabled
+
+        let data = try JSONEncoder().encode(settings)
+        let decodedSettings = try JSONDecoder().decode(PasteboardTypeSettings.self, from: data)
+
+        #expect(decodedSettings[.html] == isEnabled)
+        #expect(decodedSettings.enabledTypes.contains(.html) == isEnabled)
     }
 }
