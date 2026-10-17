@@ -33,8 +33,8 @@ Use these default shortcuts while Clipy is running:
 You can change these shortcuts in **Settings > Shortcuts**. The Settings shortcut can be changed but cannot be removed, so you can still access Settings after removing the other shortcuts.
 
 ### Development Environment
-* macOS 26 Tahoe
-* Xcode 26.5
+* macOS 26.6 Tahoe or later
+* Xcode 27.0
 
 ### How to Build
 macOS checks Accessibility permission by the app's code signature. If Clipy is built without a stable signing certificate, macOS may ask for Accessibility permission again for every build.

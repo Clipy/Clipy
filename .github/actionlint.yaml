@@ -1,0 +1,4 @@
+paths:
+  .github/workflows/CI.yml:
+    ignore:
+      - '^label "xcode-27" is unknown\.'

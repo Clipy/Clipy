@@ -18,6 +18,8 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     
+    # CodeQL's Swift build tracer does not support macOS 27 or Xcode 27 yet.
+    # https://github.com/github/codeql/issues/22742
     runs-on: ${{ (matrix.language == 'swift' && 'macos-26') || 'ubuntu-latest' }}
     
     permissions:
