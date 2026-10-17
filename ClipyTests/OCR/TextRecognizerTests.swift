@@ -46,7 +46,11 @@ struct TextRecognizerTests {
         textRecognizer.recognizeTextIfNeeded(id: id)
 
         try await waitUntil { self.repository.fetchHistory(id: id)?.ocrText != nil }
-        #expect(repository.fetchHistory(id: id)?.ocrText?.contains("12345") == true)
+        withKnownIssue("Vision OCR fails on macOS 27.") {
+            #expect(repository.fetchHistory(id: id)?.ocrText?.contains("12345") == true)
+        } when: {
+            ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
+        }
     }
 
     @Test(.timeLimit(.minutes(1)))
