@@ -9,13 +9,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
 
 jobs:
   test:
     # branch protection requires the "test" status check; keep this name in sync
     name: test
-    runs-on: macos-26
+    runs-on: xcode-27
     permissions:
       contents: read
     steps:

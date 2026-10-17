@@ -18,7 +18,7 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-26') || 'ubuntu-latest' }}
+    runs-on: ${{ (matrix.language == 'swift' && 'xcode-27') || 'ubuntu-latest' }}
     
     permissions:
       security-events: write # required to upload CodeQL analysis results
@@ -56,7 +56,7 @@ jobs:
     - name: Run manual build steps
       if: matrix.build-mode == 'manual'
       run: |
-        /Applications/Xcode_26.5.app/Contents/Developer/usr/bin/xcodebuild \
+        /Applications/Xcode_27.0.app/Contents/Developer/usr/bin/xcodebuild \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \

@@ -1,4 +1,5 @@
 import Dependencies
+import Magnet
 import Sharing
 import SwiftUI
 
