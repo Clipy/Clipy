@@ -67,7 +67,7 @@ struct ExcludedApplicationsSettingsView: View {
         .padding(.horizontal, 30)
         .fileImporter(
             isPresented: $isImporting,
-            allowedContentTypes: [.applicationBundle],
+            allowedContentTypes: [.application],
             allowsMultipleSelection: true,
             onCompletion: handleImport
         )
