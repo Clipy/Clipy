@@ -24,11 +24,16 @@ enum MonospacedDigitFormatter {
         showsNumber: Bool,
         font: NSFont = NSFont.menuFont(ofSize: 0)
     ) -> NSAttributedString {
-        guard showsNumber else { return NSAttributedString(string: title) }
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byTruncatingTail
 
         let text = NSMutableAttributedString()
-        text.append(monospacedDigits(listNumber, font: font))
-        text.append(NSAttributedString(string: ". \(title)"))
+        if showsNumber {
+            text.append(monospacedDigits(listNumber, font: font))
+            text.append(NSAttributedString(string: ". "))
+        }
+        text.append(NSAttributedString(string: title))
+        text.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.length))
         return text
     }
 
@@ -41,10 +46,14 @@ enum MonospacedDigitFormatter {
         lastNumber: Int,
         font: NSFont = NSFont.menuFont(ofSize: 0)
     ) -> NSAttributedString {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+
         let text = NSMutableAttributedString()
         text.append(monospacedDigits(firstNumber, font: font))
         text.append(NSAttributedString(string: " - "))
         text.append(monospacedDigits(lastNumber, font: font))
+        text.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.length))
         return text
     }
 
