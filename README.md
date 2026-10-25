@@ -17,7 +17,7 @@ __Requirement__: macOS 13 Ventura or later
 
 __Distribution Site__ : <https://clipy-app.com>
 
-<img src="http://clipy-app.com/img/screenshot1.png" width="400">
+<img src="https://clipy-app.com/static/clipboard-history.png" width="400">
 
 ### Keyboard Shortcuts
 
