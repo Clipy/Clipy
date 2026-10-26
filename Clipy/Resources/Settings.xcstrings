@@ -5091,19 +5091,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Turn off to move to the last item with the Up Arrow key."
+            "value" : "Turn off to let the Up Arrow key move to the last item."
           }
         },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "برای رفتن به آخرین مورد با کلید جهت‌نمای بالا، آن را غیرفعال کنید."
+            "value" : "آن را غیرفعال کنید تا بتوانید با کلید جهت‌نمای بالا به آخرین مورد بروید."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disattiva per passare all’ultima voce con il tasto Freccia su."
+            "value" : "Disattiva per poter passare all’ultima voce con il tasto Freccia su."
           }
         },
         "ja" : {
@@ -5115,13 +5115,13 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desative para ir até o último item com a tecla de seta para cima."
+            "value" : "Desative para que a tecla de seta para cima leve ao último item."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вимкніть, щоб переходити до останнього пункту клавішею зі стрілкою вгору."
+            "value" : "Вимкніть, щоб клавішею зі стрілкою вгору можна було перейти до останнього пункту."
           }
         },
         "zh-Hans" : {
