@@ -23,6 +23,8 @@ struct MenuSettingsView: View {
     private var addsNumericKeyEquivalents
     @Shared(.showsSnippetsAboveHistory)
     private var showsSnippetsAboveHistory
+    @Shared(.highlightsFirstItemOnPopUp)
+    private var highlightsFirstItemOnPopUp
     @Shared(.showsClearHistoryMenuItem)
     private var showsClearHistoryMenuItem
     @Shared(.showsClearHistoryAlert)
@@ -102,6 +104,12 @@ struct MenuSettingsView: View {
                     .Settings.showSnippetsAboveHistory,
                     isOn: Binding($showsSnippetsAboveHistory)
                 )
+                Toggle(
+                    .Settings.highlightTheFirstItemWhenOpeningTheMenuWithAShortcut,
+                    isOn: Binding($highlightsFirstItemOnPopUp)
+                )
+                Text(.Settings.firstItemHighlightDescription)
+                    .settingDescription()
             }
 
             SettingsSection(title: .Settings.clearHistory, bottomDivider: true) {

@@ -63,6 +63,10 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.showsSnippetsAboveHistory.rawValue), default: false]
     }
 
+    static var highlightsFirstItemOnPopUp: Self {
+        Self[.appStorage(AppStorageKeys.highlightsFirstItemOnPopUp.rawValue), default: true]
+    }
+
     static var marksMenuItemsWithNumbers: Self {
         Self[.appStorage(AppStorageKeys.menuItemsAreMarkedWithNumbers.rawValue), default: true]
     }

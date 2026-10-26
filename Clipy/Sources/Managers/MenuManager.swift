@@ -55,6 +55,8 @@ final class MenuManager: NSObject {
     private var showsIconsInMenu
     @Shared(.showsSnippetsAboveHistory)
     private var showsSnippetsAboveHistory
+    @Shared(.highlightsFirstItemOnPopUp)
+    private var highlightsFirstItemOnPopUp
     @Shared(.inlineMenuItemLimit)
     private var inlineMenuItemLimit
     @Shared(.folderMenuItemLimit)
@@ -112,7 +114,8 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        menu?.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        guard let menu else { return }
+        popUp(menu)
     }
 
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
@@ -130,7 +133,15 @@ extension MenuManager {
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
-        folderMenu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        popUp(folderMenu)
+    }
+
+    private func popUp(_ menu: NSMenu) {
+        if highlightsFirstItemOnPopUp {
+            menu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        } else {
+            menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+        }
     }
 }
 

@@ -31,6 +31,7 @@ struct AppStorageValuesTests {
         @Shared(.showsClearHistoryMenuItem) var showsClearHistoryMenuItem
         @Shared(.showsIconsInMenu) var showsIconsInMenu
         @Shared(.showsSnippetsAboveHistory) var showsSnippetsAboveHistory
+        @Shared(.highlightsFirstItemOnPopUp) var highlightsFirstItemOnPopUp
         @Shared(.marksMenuItemsWithNumbers) var marksMenuItemsWithNumbers
         @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems
         @Shared(.showsImagesInMenu) var showsImagesInMenu
@@ -57,6 +58,7 @@ struct AppStorageValuesTests {
         #expect(showsClearHistoryMenuItem)
         #expect(showsIconsInMenu)
         #expect(!showsSnippetsAboveHistory)
+        #expect(highlightsFirstItemOnPopUp)
         #expect(marksMenuItemsWithNumbers)
         #expect(showsToolTipsOnMenuItems)
         #expect(showsImagesInMenu)
