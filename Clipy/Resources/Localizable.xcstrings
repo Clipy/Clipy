@@ -813,6 +813,23 @@
         }
       }
     },
+    "Type Clipboard as Keyboard Input" : {
+      "comment" : "Menu action that types the current clipboard text using keyboard events.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type Clipboard as Keyboard Input"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟键盘输入剪贴板内容"
+          }
+        }
+      }
+    },
     "You can change this later in Settings." : {
       "localizations" : {
         "de" : {

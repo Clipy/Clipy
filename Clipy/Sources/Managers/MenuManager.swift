@@ -243,6 +243,7 @@ extension MenuManager {
         }
 
         menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: String(localized: "Type Clipboard as Keyboard Input"), action: #selector(AppDelegate.typeClipboardAsKeyboardInput)))
         if showsClearHistoryMenuItem {
             menu.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
         }

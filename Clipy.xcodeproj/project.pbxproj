@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C5A10005303A000100000001 /* KeyboardTypingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A10006303A000100000001 /* KeyboardTypingService.swift */; };
+		C5A10007303A000100000001 /* KeyboardTypingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A10008303A000100000001 /* KeyboardTypingServiceTests.swift */; };
 		3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DC78C62401491B956E0499 /* SettingsScrollView.swift */; };
 		8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */; };
 		8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23265781AF16C4883961248E /* SettingsNumberField.swift */; };
@@ -146,6 +148,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C5A10006303A000100000001 /* KeyboardTypingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardTypingService.swift; sourceTree = "<group>"; };
+		C5A10008303A000100000001 /* KeyboardTypingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardTypingServiceTests.swift; sourceTree = "<group>"; };
 		06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSettingsView.swift; sourceTree = "<group>"; };
 		1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorder.swift; sourceTree = "<group>"; };
 		22E5C2EB7E570E8AB6E6EF2D /* BetaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaSettingsView.swift; sourceTree = "<group>"; };
@@ -602,6 +606,7 @@
 				FA0D5CE71DDCC61600AC9052 /* ClipService.swift */,
 				FAE911B81DE045E2008A4BEC /* HotKeyService.swift */,
 				FAC0DCF01DE576F300309C49 /* PasteService.swift */,
+				C5A10006303A000100000001 /* KeyboardTypingService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -777,6 +782,7 @@
 				C571000C2FCEB03000C8F965 /* Models */,
 				C5700B4F2FC5C8C800C8F965 /* Repositories */,
 				FA08EDF71D1FED7D000D1D13 /* HotKeyServiceTests.swift */,
+				C5A10008303A000100000001 /* KeyboardTypingServiceTests.swift */,
 				FA6167931D3ACCB90049FA14 /* DraggedDataTests.swift */,
 				FAC43DDC1B35D8B100C06102 /* Supporting Files */,
 			);
@@ -990,6 +996,7 @@
 				C57447272FD09FD9000D64D3 /* RealmConfiguration.swift in Sources */,
 				C54C29D52FC3E20000EF30FB /* SQLiteDataDatabase.swift in Sources */,
 				FAC0DCF11DE576F300309C49 /* PasteService.swift in Sources */,
+				C5A10005303A000100000001 /* KeyboardTypingService.swift in Sources */,
 				FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */,
 				C57235112FF24ADE002158F7 /* NSMenuExtensions.swift in Sources */,
 				C5700B412FC40ABF00C8F965 /* SnippetFolderDetail.swift in Sources */,
@@ -1057,6 +1064,7 @@
 				C5348FB130008FE4008DFEB3 /* WaitUntil.swift in Sources */,
 				C567A8A23026E9510070292B /* UserDefaultsCodableMigrationTests.swift in Sources */,
 				FA08EDF81D1FED7D000D1D13 /* HotKeyServiceTests.swift in Sources */,
+				C5A10007303A000100000001 /* KeyboardTypingServiceTests.swift in Sources */,
 				C5F1AD0430190005AA110004 /* TextRecognizerTests.swift in Sources */,
 				FA6167941D3ACCB90049FA14 /* DraggedDataTests.swift in Sources */,
 				C571000A2FCEB03000C8F965 /* PasteboardContentTests.swift in Sources */,
