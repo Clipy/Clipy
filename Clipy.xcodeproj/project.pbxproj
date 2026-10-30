@@ -1358,9 +1358,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
-				kind = versionRange;
+				kind = upToNextMinorVersion;
 				minimumVersion = 1.7.4;
-				maximumVersion = 1.7.5;
 			};
 		};
 		C567A88E3026DF030070292B /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
@@ -1375,9 +1374,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
-				kind = versionRange;
+				kind = upToNextMinorVersion;
 				minimumVersion = 1.17.1;
-				maximumVersion = 1.17.2;
 			};
 			traits = (
 				Clocks,
