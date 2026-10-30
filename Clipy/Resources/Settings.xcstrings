@@ -1988,6 +1988,53 @@
         }
       }
     },
+    "Highlight the first item when opening the menu with a shortcut" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Öffnen des Menüs per Kurzbefehl den ersten Eintrag hervorheben"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "برجسته کردن اولین مورد هنگام باز کردن منو با میانبر"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evidenzia la prima voce quando apri il menu con una scorciatoia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカットでメニューを開いたときに先頭の項目を選択状態にする"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destacar o primeiro item ao abrir o menu com um atalho"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виділяти перший пункт під час відкриття меню клавіатурним скороченням"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用快捷键打开菜单时高亮第一项"
+          }
+        }
+      }
+    },
     "History items shown at the top level:" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5028,6 +5075,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "字符"
+          }
+        }
+      }
+    },
+    "firstItemHighlightDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn deaktiviert, springt die Taste „Pfeil nach oben“ zum letzten Eintrag."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off to let the Up Arrow key move to the last item."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آن را غیرفعال کنید تا بتوانید با کلید جهت‌نمای بالا به آخرین مورد بروید."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disattiva per poter passare all’ultima voce con il tasto Freccia su."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフにすると、上矢印キーで一番下の項目に移動できます。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desative para que a tecla de seta para cima leve ao último item."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкніть, щоб клавішею зі стрілкою вгору можна було перейти до останнього пункту."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭后，按上箭头键可移到最后一项。"
           }
         }
       }

@@ -17,6 +17,7 @@ enum AppStorageKeys: String {
     case inputPasteCommand = "kCPYPrefInputPasteCommandKey"
     case showIconInTheMenu = "kCPYPrefShowIconInTheMenuKey"
     case showsSnippetsAboveHistory
+    case highlightsFirstItemOnPopUp
     case numberOfItemsPlaceInline = "kCPYPrefNumberOfItemsPlaceInlineKey"
     case numberOfItemsPlaceInsideFolder = "kCPYPrefNumberOfItemsPlaceInsideFolderKey"
     case maxMenuItemTitleLength = "kCPYPrefMaxMenuItemTitleLengthKey"
