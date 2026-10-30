@@ -114,7 +114,6 @@ extension MenuManager {
         case .snippet:
             menu = snippetMenu
         }
-        guard let menu else { return }
         popUp(menu)
     }
 
@@ -136,11 +135,11 @@ extension MenuManager {
         popUp(folderMenu)
     }
 
-    private func popUp(_ menu: NSMenu) {
+    private func popUp(_ menu: NSMenu?) {
         if highlightsFirstItemOnPopUp {
-            menu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            menu?.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         } else {
-            menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         }
     }
 }
