@@ -111,8 +111,7 @@ struct AppStorageValuesTests {
     func loadDefaultPasteboardTypeSettings() {
         @Shared(.pasteboardTypeSettings) var pasteboardTypeSettings
 
-        #expect(!pasteboardTypeSettings[.html])
-        #expect(pasteboardTypeSettings.enabledTypes == PasteboardAvailableType.allCases.filter { $0 != .html })
+        #expect(PasteboardAvailableType.allCases.allSatisfy { pasteboardTypeSettings[$0] })
     }
 
     @Test

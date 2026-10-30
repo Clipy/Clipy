@@ -13,8 +13,6 @@
 import Foundation
 
 struct PasteboardTypeSettings: Codable, Equatable, Sendable {
-    private static let defaultDisabledTypes: [PasteboardAvailableType] = [.html]
-
     private var values: [String: Bool]
 
     init(values: [String: Bool] = [:]) {
@@ -22,7 +20,7 @@ struct PasteboardTypeSettings: Codable, Equatable, Sendable {
     }
 
     subscript(type: PasteboardAvailableType) -> Bool {
-        get { values[type.rawValue] ?? !Self.defaultDisabledTypes.contains(type) }
+        get { values[type.rawValue] ?? true }
         set { values[type.rawValue] = newValue }
     }
 
