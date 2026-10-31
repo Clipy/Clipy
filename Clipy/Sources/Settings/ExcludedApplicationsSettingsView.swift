@@ -71,7 +71,7 @@ struct ExcludedApplicationsSettingsView: View {
             allowsMultipleSelection: true,
             onCompletion: handleImport
         )
-        .fileDialogDefaultDirectoryIfAvailable(
+        .fileDialogDefaultDirectory(
             FileManager.default.urls(for: .applicationDirectory, in: .localDomainMask).first
         )
     }
@@ -131,16 +131,5 @@ private struct ApplicationSettingsRow: View {
             .lineLimit(1)
         }
         .padding(.vertical, 4)
-    }
-}
-
-private extension View {
-    @ViewBuilder
-    func fileDialogDefaultDirectoryIfAvailable(_ directory: URL?) -> some View {
-        if #available(macOS 14.0, *) {
-            fileDialogDefaultDirectory(directory)
-        } else {
-            self
-        }
     }
 }

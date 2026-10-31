@@ -21,18 +21,11 @@ struct SettingsScrollView<Content: View>: View {
             }
     }
 
-    @ViewBuilder
     private var scrollView: some View {
-        if #available(macOS 13.3, *) {
-            ScrollView {
-                content
-            }
-            .scrollBounceBehavior(.basedOnSize)
-        } else {
-            ScrollView {
-                content
-            }
+        ScrollView {
+            content
         }
+        .scrollBounceBehavior(.basedOnSize)
     }
 }
 
