@@ -1,4 +1,7 @@
 paths:
+  .github/workflows/codeql.yml:
+    ignore:
+      - '^label "xcode-27" is unknown\.'
   .github/workflows/CI.yml:
     ignore:
       - '^label "xcode-27" is unknown\.'
