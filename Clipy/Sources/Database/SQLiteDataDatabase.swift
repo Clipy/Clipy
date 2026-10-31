@@ -34,7 +34,6 @@ enum SQLiteDataDatabase {
         return applicationSupportDirectory.appendingPathComponent("sqlite.db")
     }
 
-    @available(macOS 14, *)
     static var isCloudKitEnabled: Bool {
         ModelConfiguration(groupContainer: .automatic).cloudKitContainerIdentifier != nil
     }
@@ -73,7 +72,7 @@ extension DependencyValues {
         try migrator.migrate(database)
 
         defaultDatabase = database
-        if #available(macOS 14, *), SQLiteDataDatabase.isCloudKitEnabled {
+        if SQLiteDataDatabase.isCloudKitEnabled {
             defaultSyncEngine = try SyncEngine(
                 for: database,
                 tables: PasteboardHistory.self, PasteboardHistoryAsset.self, PasteboardHistoryThumbnailAsset.self, SnippetFolder.self, Snippet.self,

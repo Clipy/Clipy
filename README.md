@@ -13,7 +13,7 @@ Clipy is a Clipboard extension app for macOS.
 
 ---
 
-__Requirement__: macOS 13 Ventura or later
+__Requirement__: macOS 14 Sonoma or later
 
 __Distribution Site__ : <https://clipy-app.com>
 
