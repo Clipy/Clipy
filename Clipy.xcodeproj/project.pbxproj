@@ -1359,7 +1359,7 @@
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.6.0;
+				minimumVersion = 1.7.4;
 			};
 		};
 		C567A88E3026DF030070292B /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
@@ -1387,7 +1387,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 12.18.0;
+				minimumVersion = 13.1.1;
 			};
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
@@ -1422,7 +1422,7 @@
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 2.9.6;
+				minimumVersion = 2.10.1;
 			};
 		};
 		C5D220A62FBD2655005CD45E /* XCRemoteSwiftPackageReference "realm-swift" */ = {
@@ -1462,7 +1462,7 @@
 			repositoryURL = "https://github.com/tadija/AEXML";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 4.7.0;
+				minimumVersion = 4.7.3;
 			};
 		};
 		C5D76DA92FBA9D2E0083839F /* XCRemoteSwiftPackageReference "SwiftHEXColors" */ = {
