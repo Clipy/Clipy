@@ -18,11 +18,11 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
     case string = "String"
     case rtf = "RTF"
     case rtfd = "RTFD"
-    case html = "HTML"
     case pdf = "PDF"
     case filenames = "Filenames"
     case url = "URL"
     case tiff = "TIFF"
+    case html = "HTML"
 
     static func availableTypes(
         from pasteboardTypes: [NSPasteboard.PasteboardType],
@@ -68,7 +68,26 @@ enum PasteboardAvailableType: String, Equatable, CaseIterable {
     }
 }
 
-private extension NSPasteboard.PasteboardType {
+extension PasteboardAvailableType {
+    var symbolName: String {
+        switch self {
+        case .string, .rtf, .rtfd:
+            return "text.alignleft"
+        case .html:
+            return "chevron.left.forwardslash.chevron.right"
+        case .pdf:
+            return "doc.text"
+        case .filenames:
+            return "doc"
+        case .url:
+            return "link"
+        case .tiff:
+            return "photo"
+        }
+    }
+}
+
+extension NSPasteboard.PasteboardType {
     var availableType: PasteboardAvailableType? {
         switch self {
         case .string, .deprecatedString:
@@ -91,7 +110,9 @@ private extension NSPasteboard.PasteboardType {
             return nil
         }
     }
+}
 
+private extension NSPasteboard.PasteboardType {
     var modernType: NSPasteboard.PasteboardType? {
         switch self {
         case .deprecatedString:

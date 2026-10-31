@@ -42,7 +42,15 @@ struct PasteboardContent: Equatable {
     }
     var colorCodeImage: NSImage? {
         guard let stringValue, let color = NSColor(hexString: stringValue) else { return nil }
-        return NSImage.create(with: color, size: NSSize(width: 20, height: 20))
+        return NSImage(size: NSSize(width: 20, height: 20), flipped: false) { bounds in
+            let circle = NSBezierPath(ovalIn: bounds.insetBy(dx: 0.5, dy: 0.5))
+            circle.addClip()
+            color.drawSwatch(in: bounds)
+            NSColor.black.withAlphaComponent(0.15).setStroke()
+            circle.lineWidth = 1
+            circle.stroke()
+            return true
+        }
     }
     var thumbnailImage: NSImage? {
         @Shared(.thumbnailWidth) var thumbnailWidth
