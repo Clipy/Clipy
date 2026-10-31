@@ -55,10 +55,6 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.addClearHistoryMenuItem.rawValue), default: true]
     }
 
-    static var showsIconsInMenu: Self {
-        Self[.appStorage(AppStorageKeys.showIconInTheMenu.rawValue), default: true]
-    }
-
     static var showsSnippetsAboveHistory: Self {
         Self[.appStorage(AppStorageKeys.showsSnippetsAboveHistory.rawValue), default: false]
     }

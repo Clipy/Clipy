@@ -51,8 +51,6 @@ final class MenuManager: NSObject {
     private var showsClearHistoryMenuItem
     @Shared(.maximumHistoryCount)
     private var maximumHistoryCount
-    @Shared(.showsIconsInMenu)
-    private var showsIconsInMenu
     @Shared(.showsSnippetsAboveHistory)
     private var showsSnippetsAboveHistory
     @Shared(.highlightsFirstItemOnPopUp)
@@ -177,7 +175,6 @@ private extension MenuManager {
             [
                 $showsClearHistoryMenuItem.changeEvents(),
                 $maximumHistoryCount.changeEvents(),
-                $showsIconsInMenu.changeEvents(),
                 $showsSnippetsAboveHistory.changeEvents(),
                 $inlineMenuItemLimit.changeEvents(),
                 $folderMenuItemLimit.changeEvents(),
@@ -233,7 +230,7 @@ private extension MenuManager {
         let subMenu = NSMenu(title: "")
         let subMenuItem = NSMenuItem(title: title, action: nil)
         subMenuItem.submenu = subMenu
-        subMenuItem.image = showsIconsInMenu ? folderIcon : nil
+        subMenuItem.image = folderIcon
         return subMenuItem
     }
 }
@@ -391,7 +388,7 @@ private extension MenuManager {
         menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.toolTip
-        menuItem.image = showsIconsInMenu ? snippetIcon : nil
+        menuItem.image = snippetIcon
 
         return menuItem
     }
