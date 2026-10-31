@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver()
     private var cancellables: Set<AnyCancellable> = []
+    @MainActor private lazy var keyboardTypingService = KeyboardTypingService()
     @MainActor private lazy var settingsWindowController: SettingsWindowController = {
         let controller = SettingsWindowController(
             panes: SettingsPane.allCases.map { $0.asPanelConvertible() },
@@ -65,6 +66,9 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(AppDelegate.typeClipboardAsKeyboardInput) {
+            return !(NSPasteboard.general.string(forType: .string)?.isEmpty ?? true)
+        }
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
             return pasteboardHistoryRepository.hasHistories()
         }
@@ -89,6 +93,19 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     @objc func clearAllHistory() {
         clipService.clearAllHistory()
+    }
+
+    @MainActor @objc func typeClipboardAsKeyboardInput() {
+        guard let text = NSPasteboard.general.string(forType: .string), !text.isEmpty,
+              let application = NSWorkspace.shared.frontmostApplication else {
+            NSSound.beep()
+            return
+        }
+        guard Accessibility.isAccessibilityEnabled(isPrompt: false) else {
+            Accessibility.showAccessibilityAuthenticationAlert()
+            return
+        }
+        keyboardTypingService.type(text, into: application.processIdentifier)
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
