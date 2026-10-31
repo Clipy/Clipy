@@ -15,25 +15,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
-    
-    # CodeQL's Swift build tracer does not support macOS 27 or Xcode 27 yet.
-    # https://github.com/github/codeql/issues/22742
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-26') || 'ubuntu-latest' }}
-    
+  analyze-actions:
+    name: Analyze (actions)
+    runs-on: ubuntu-latest
+
     permissions:
       security-events: write # required to upload CodeQL analysis results
       contents: read
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - language: actions
-          build-mode: none
-        - language: swift
-          build-mode: manual
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      with:
+        languages: actions
+        build-mode: none
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+      with:
+        category: "/language:actions"
+
+  analyze-swift:
+    name: Analyze (swift)
+    
+    # CodeQL's Swift build tracer does not support macOS 27 or Xcode 27 yet.
+    # https://github.com/github/codeql/issues/22742
+    # Building the current project requires Xcode 27 or later.
+    if: ${{ !always() }}
+    runs-on: xcode-27
+    
+    permissions:
+      security-events: write # required to upload CodeQL analysis results
+      contents: read
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -41,7 +58,6 @@ jobs:
         persist-credentials: false
 
     - name: Cache Swift packages
-      if: matrix.language == 'swift'
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: .spm-cache
@@ -52,13 +68,12 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
       with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+        languages: swift
+        build-mode: manual
 
     - name: Run manual build steps
-      if: matrix.build-mode == 'manual'
       run: |
-        /Applications/Xcode_26.5.app/Contents/Developer/usr/bin/xcodebuild \
+        /Applications/Xcode_27.0.app/Contents/Developer/usr/bin/xcodebuild \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
@@ -73,4 +88,4 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
       with:
-        category: "/language:${{matrix.language}}"
+        category: "/language:swift"
