@@ -30,8 +30,7 @@ final class MenuManager: NSObject {
         return item
     }()
     // Icon Cache
-    private let folderIcon = NSImage(resource: .iconFolder)
-    private let snippetIcon = NSImage(resource: .iconText)
+    private var symbolImages: [String: NSImage] = [:]
     private let kMaxKeyEquivalents = 10
 
     @Dependency(\.pasteboardHistoryRepository)
@@ -85,19 +84,9 @@ final class MenuManager: NSObject {
         case none, black, white
     }
 
-    // MARK: - Initialize
-    override init() {
-        super.init()
-        folderIcon.isTemplate = true
-        folderIcon.size = NSSize(width: 15, height: 13)
-        snippetIcon.isTemplate = true
-        snippetIcon.size = NSSize(width: 12, height: 13)
-    }
-
     func setup() {
         bind()
     }
-
 }
 
 // MARK: - Popup Menu
@@ -118,15 +107,13 @@ extension MenuManager {
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
         let folderMenu = NSMenu(title: folderDetail.folder.title)
         // Folder title
-        let labelItem = NSMenuItem(title: folderDetail.folder.title, action: nil)
-        labelItem.isEnabled = false
-        folderMenu.addItem(labelItem)
+        folderMenu.addItem(.sectionHeader(title: folderDetail.folder.title))
         // Snippets
         var index = firstIndexOfMenuItems()
         folderDetail.snippets
             .filter { $0.isEnabled }
             .forEach { snippet in
-                let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index)
+                let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index, font: folderMenu.font)
                 folderMenu.addItem(subMenuItem)
                 index += 1
             }
@@ -213,7 +200,8 @@ private extension MenuManager {
         itemOffset: Int,
         firstItemNumber: Int,
         maximumItemCount: Int,
-        totalItemCount: Int
+        totalItemCount: Int,
+        font: NSFont
     ) -> NSMenuItem {
         let firstNumber = firstItemNumber + itemOffset
         let itemCount = min(maximumItemCount, totalItemCount - itemOffset)
@@ -221,16 +209,17 @@ private extension MenuManager {
             firstNumber: firstNumber,
             lastNumber: firstNumber + itemCount - 1
         )
-        let subMenuItem = makeSubmenuItem(menuItemTitle.string)
+        let subMenuItem = makeSubmenuItem(menuItemTitle.string, font: font)
         subMenuItem.attributedTitle = menuItemTitle
         return subMenuItem
     }
 
-    func makeSubmenuItem(_ title: String) -> NSMenuItem {
+    func makeSubmenuItem(_ title: String, font: NSFont) -> NSMenuItem {
         let subMenu = NSMenu(title: "")
         let subMenuItem = NSMenuItem(title: title, action: nil)
         subMenuItem.submenu = subMenu
-        subMenuItem.image = folderIcon
+        subMenuItem.image = symbolImage("folder", font: font)
+        subMenuItem.preferVisibleImage()
         return subMenuItem
     }
 }
@@ -269,9 +258,7 @@ private extension MenuManager {
         let maxHistory = maximumHistoryCount
 
         // History title
-        let labelItem = NSMenuItem(title: String(localized: "History"), action: nil)
-        labelItem.isEnabled = false
-        menu.addItem(labelItem)
+        menu.addItem(.sectionHeader(title: String(localized: "History")))
 
         // History
         let firstIndex = firstIndexOfMenuItems()
@@ -294,7 +281,8 @@ private extension MenuManager {
                         itemOffset: subMenuCount,
                         firstItemNumber: firstIndex,
                         maximumItemCount: placeInsideFolder,
-                        totalItemCount: currentSize
+                        totalItemCount: currentSize,
+                        font: menu.font
                     )
                     menu.addItem(subMenuItem)
                     listNumber = firstIndex
@@ -302,13 +290,13 @@ private extension MenuManager {
 
                 // Clip
                 if let subMenu = menu.item(at: subMenuIndex)?.submenu {
-                    let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
+                    let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber, font: subMenu.font)
                     subMenu.addItem(menuItem)
                     listNumber += 1
                 }
             } else {
                 // Clip
-                let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber)
+                let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber, font: menu.font)
                 menu.addItem(menuItem)
                 listNumber += 1
             }
@@ -321,7 +309,7 @@ private extension MenuManager {
         }
     }
 
-    func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int) -> NSMenuItem {
+    func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int, font: NSFont) -> NSMenuItem {
         let history = historyDetail.history
         var keyEquivalent = ""
         if addsNumericKeyEquivalents && (index < kMaxKeyEquivalents) {
@@ -332,19 +320,27 @@ private extension MenuManager {
             keyEquivalent = "\(shortCutNumber)"
         }
 
-        let titleWithMark = MonospacedDigitFormatter.numberedTitle(history.typedTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
+        let titleWithMark = MonospacedDigitFormatter.numberedTitle(history.menuTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
         let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
         menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = history.id
         menuItem.toolTip = history.toolTip
 
-        if showsImagesInMenu || showsColorPreviewInMenu,
-           let thumbnailAsset = historyDetail.thumbnailAsset,
-           let image = NSImage(data: thumbnailAsset.data),
-           (thumbnailAsset.kind == .image && showsImagesInMenu) || (thumbnailAsset.kind == .colorCode && showsColorPreviewInMenu) {
-            menuItem.image = image.aspectFitImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
+        if let thumbnailAsset = historyDetail.thumbnailAsset, let image = NSImage(data: thumbnailAsset.data) {
+            switch thumbnailAsset.kind {
+            case .image where showsImagesInMenu:
+                menuItem.image = image.aspectFitImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
+            case .colorCode where showsColorPreviewInMenu:
+                let previewSize: CGFloat = 18
+                menuItem.image = image.aspectFitImage(previewSize, previewSize)
+            default:
+                break
+            }
         }
-
+        if menuItem.image == nil {
+            menuItem.image = symbolImage(history.primaryAvailableType?.symbolName, font: font)
+        }
+        menuItem.preferVisibleImage()
         return menuItem
     }
 }
@@ -355,9 +351,7 @@ private extension MenuManager {
         guard !details.isEmpty else { return }
 
         // Snippet title
-        let labelItem = NSMenuItem(title: String(localized: "Snippet"), action: nil)
-        labelItem.isEnabled = false
-        menu.addItem(labelItem)
+        menu.addItem(.sectionHeader(title: String(localized: "Snippet")))
 
         var subMenuIndex = menu.numberOfItems - 1
         let firstIndex = firstIndexOfMenuItems()
@@ -365,7 +359,7 @@ private extension MenuManager {
             .filter { $0.folder.isEnabled }
             .forEach { detail in
                 let folderTitle = detail.folder.title
-                let subMenuItem = makeSubmenuItem(folderTitle)
+                let subMenuItem = makeSubmenuItem(folderTitle, font: menu.font)
                 menu.addItem(subMenuItem)
                 subMenuIndex += 1
 
@@ -373,8 +367,8 @@ private extension MenuManager {
                 detail.snippets
                     .filter { $0.isEnabled }
                     .forEach { snippet in
-                        let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i)
                         if let subMenu = menu.item(at: subMenuIndex)?.submenu {
+                            let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i, font: subMenu.font)
                             subMenu.addItem(subMenuItem)
                             i += 1
                         }
@@ -382,13 +376,14 @@ private extension MenuManager {
             }
     }
 
-    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int) -> NSMenuItem {
+    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int, font: NSFont) -> NSMenuItem {
         let titleWithMark = MonospacedDigitFormatter.numberedTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
         let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
         menuItem.attributedTitle = titleWithMark
         menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.toolTip
-        menuItem.image = snippetIcon
+        menuItem.image = symbolImage("text.quote", font: font)
+        menuItem.preferVisibleImage()
 
         return menuItem
     }
@@ -414,10 +409,34 @@ private extension MenuManager {
     }
 }
 
-// MARK: - Settings
+private extension MenuManager {
+    func symbolImage(_ name: String?, font: NSFont) -> NSImage? {
+        guard let name else { return nil }
+        if let image = symbolImages[name] {
+            return image
+        }
+        let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .regular)
+        guard let symbol = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration) else {
+            return nil
+        }
+        let image = symbol
+        image.isTemplate = true
+        symbolImages[name] = image
+        return image
+    }
+}
+
 private extension MenuManager {
     func firstIndexOfMenuItems() -> NSInteger {
         return startsMenuItemTitlesAtZero ? 0 : 1
+    }
+}
+
+private extension NSMenuItem {
+    func preferVisibleImage() {
+        guard #available(macOS 27, *), image != nil else { return }
+        preferredImageVisibility = .visible
     }
 }
 

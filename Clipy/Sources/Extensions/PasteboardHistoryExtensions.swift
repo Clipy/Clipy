@@ -14,22 +14,15 @@ import AppKit
 import Sharing
 
 extension PasteboardHistory {
-    var typedTitle: String {
-        let primaryType = pasteboardTypes.first
-        let prefix: String?
-        if primaryType == .png || primaryType == .tiff || primaryType == .deprecatedTIFF {
-            prefix = "(Image)"
-        } else if primaryType == .pdf || primaryType == .deprecatedPDF {
-            prefix = "(PDF)"
-        } else if primaryType == .fileURL || primaryType == .deprecatedFilenames {
-            prefix = "(Files)"
-        } else {
-            prefix = nil
+    var primaryAvailableType: PasteboardAvailableType? {
+        pasteboardTypes.first?.availableType
+    }
+    var menuTitle: String {
+        let trimmedTitle = title.trimmedMenuTitle
+        guard !trimmedTitle.isEmpty else {
+            return primaryAvailableType?.fallbackTitle.map { "(\($0))" } ?? ""
         }
-        return [prefix, title.trimmedMenuTitle]
-            .compactMap { $0 }
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
+        return trimmedTitle
     }
     var toolTip: String? {
         @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems
@@ -38,5 +31,20 @@ extension PasteboardHistory {
         guard showsToolTipsOnMenuItems else { return nil }
 
         return String(title.prefix(maximumToolTipLength))
+    }
+}
+
+private extension PasteboardAvailableType {
+    var fallbackTitle: String? {
+        switch self {
+        case .filenames:
+            return "Files"
+        case .tiff:
+            return "Image"
+        case .pdf:
+            return "PDF"
+        case .string, .rtf, .rtfd, .html, .url:
+            return nil
+        }
     }
 }

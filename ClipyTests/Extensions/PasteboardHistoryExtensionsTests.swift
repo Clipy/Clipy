@@ -11,7 +11,6 @@
 //
 
 import AppKit
-import Dependencies
 import DependenciesTestSupport
 import Sharing
 import Testing
@@ -26,57 +25,66 @@ struct PasteboardHistoryExtensionsTests {
         .tiff,
         .deprecatedTIFF
     ])
-    func typedTitleIncludesImagePrefix(pasteboardType: NSPasteboard.PasteboardType) {
+    func menuTitleUsesImageFallbackWhenEmpty(pasteboardType: NSPasteboard.PasteboardType) {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
 
         let history = Self.pasteboardHistory(title: "  Screenshot\nMetadata  ", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
+        let whitespaceTitleHistory = Self.pasteboardHistory(title: " \t\n ", pasteboardTypes: [pasteboardType])
 
-        #expect(history.typedTitle == "(Image) Screenshot")
-        #expect(emptyTitleHistory.typedTitle == "(Image)")
+        #expect(history.menuTitle == "Screenshot")
+        #expect(emptyTitleHistory.menuTitle == "(Image)")
+        #expect(whitespaceTitleHistory.menuTitle == "(Image)")
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.typedTitle == "(Image) Sc...")
-        #expect(emptyTitleHistory.typedTitle == "(Image)")
+        #expect(history.menuTitle == "Sc...")
+        #expect(emptyTitleHistory.menuTitle == "(Image)")
+        #expect(whitespaceTitleHistory.menuTitle == "(Image)")
     }
 
     @Test(arguments: [
         NSPasteboard.PasteboardType.pdf,
         .deprecatedPDF
     ])
-    func typedTitleIncludesPDFPrefix(pasteboardType: NSPasteboard.PasteboardType) {
+    func menuTitleUsesPDFFallbackWhenEmpty(pasteboardType: NSPasteboard.PasteboardType) {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
 
         let history = Self.pasteboardHistory(title: "Document", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
+        let whitespaceTitleHistory = Self.pasteboardHistory(title: " \t\n ", pasteboardTypes: [pasteboardType])
 
-        #expect(history.typedTitle == "(PDF) Document")
-        #expect(emptyTitleHistory.typedTitle == "(PDF)")
+        #expect(history.menuTitle == "Document")
+        #expect(emptyTitleHistory.menuTitle == "(PDF)")
+        #expect(whitespaceTitleHistory.menuTitle == "(PDF)")
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.typedTitle == "(PDF) Do...")
-        #expect(emptyTitleHistory.typedTitle == "(PDF)")
+        #expect(history.menuTitle == "Do...")
+        #expect(emptyTitleHistory.menuTitle == "(PDF)")
+        #expect(whitespaceTitleHistory.menuTitle == "(PDF)")
     }
 
     @Test(arguments: [
         NSPasteboard.PasteboardType.fileURL,
         .deprecatedFilenames
     ])
-    func typedTitleIncludesFilesPrefix(pasteboardType: NSPasteboard.PasteboardType) {
+    func menuTitleUsesFilesFallbackWhenEmpty(pasteboardType: NSPasteboard.PasteboardType) {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
 
         let history = Self.pasteboardHistory(title: "Archive", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
+        let whitespaceTitleHistory = Self.pasteboardHistory(title: " \t\n ", pasteboardTypes: [pasteboardType])
 
-        #expect(history.typedTitle == "(Files) Archive")
-        #expect(emptyTitleHistory.typedTitle == "(Files)")
+        #expect(history.menuTitle == "Archive")
+        #expect(emptyTitleHistory.menuTitle == "(Files)")
+        #expect(whitespaceTitleHistory.menuTitle == "(Files)")
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.typedTitle == "(Files) Ar...")
-        #expect(emptyTitleHistory.typedTitle == "(Files)")
+        #expect(history.menuTitle == "Ar...")
+        #expect(emptyTitleHistory.menuTitle == "(Files)")
+        #expect(whitespaceTitleHistory.menuTitle == "(Files)")
     }
 
     @Test(arguments: [
@@ -84,21 +92,28 @@ struct PasteboardHistoryExtensionsTests {
         .deprecatedString,
         .rtf,
         .deprecatedRTF,
+        .rtfd,
+        .deprecatedRTFD,
+        .URL,
+        .deprecatedURL,
         .html
     ])
-    func typedTitleOmitsPrefix(pasteboardType: NSPasteboard.PasteboardType) {
+    func menuTitleOmitsPrefix(pasteboardType: NSPasteboard.PasteboardType) {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 20
 
         let history = Self.pasteboardHistory(title: "Plain text", pasteboardTypes: [pasteboardType])
         let emptyTitleHistory = Self.pasteboardHistory(title: "", pasteboardTypes: [pasteboardType])
+        let whitespaceTitleHistory = Self.pasteboardHistory(title: " \t\n ", pasteboardTypes: [pasteboardType])
 
-        #expect(history.typedTitle == "Plain text")
-        #expect(emptyTitleHistory.typedTitle == "")
+        #expect(history.menuTitle == "Plain text")
+        #expect(emptyTitleHistory.menuTitle == "")
+        #expect(whitespaceTitleHistory.menuTitle == "")
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.typedTitle == "Pl...")
-        #expect(emptyTitleHistory.typedTitle == "")
+        #expect(history.menuTitle == "Pl...")
+        #expect(emptyTitleHistory.menuTitle == "")
+        #expect(whitespaceTitleHistory.menuTitle == "")
     }
 
     @Test
