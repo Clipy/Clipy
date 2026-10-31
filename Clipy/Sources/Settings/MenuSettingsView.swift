@@ -13,8 +13,6 @@ struct MenuSettingsView: View {
     private var allowsDuplicateHistory
     @Shared(.overwritesDuplicateHistory)
     private var overwritesDuplicateHistory
-    @Shared(.showsIconsInMenu)
-    private var showsIconsInMenu
     @Shared(.marksMenuItemsWithNumbers)
     private var marksMenuItemsWithNumbers
     @Shared(.startsMenuItemTitlesAtZero)
@@ -82,10 +80,6 @@ struct MenuSettingsView: View {
             }
 
             SettingsSection(title: .Settings.menuItems, bottomDivider: true) {
-                Toggle(
-                    .Settings.showIconsInMenuItems,
-                    isOn: Binding($showsIconsInMenu)
-                )
                 Toggle(
                     .Settings.markMenuItemsWithNumbers,
                     isOn: Binding($marksMenuItemsWithNumbers)
