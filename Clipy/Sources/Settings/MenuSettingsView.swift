@@ -39,6 +39,10 @@ struct MenuSettingsView: View {
     private var thumbnailHeight
     @Shared(.showsColorPreviewInMenu)
     private var showsColorPreviewInMenu
+    @Shared(.parsesColorCodesWithoutHash)
+    private var parsesColorCodesWithoutHash
+    @Shared(.parsesCSSColorNames)
+    private var parsesCSSColorNames
 
     var body: some View {
         SettingsGrid {
@@ -161,6 +165,21 @@ struct MenuSettingsView: View {
                     .Settings.showColorCodePreview,
                     isOn: Binding($showsColorPreviewInMenu)
                 )
+                Toggle(
+                    .Settings.parseColorCodesWithoutHash,
+                    isOn: Binding($parsesColorCodesWithoutHash)
+                )
+                .padding(.leading, 20)
+                .disabled(!showsColorPreviewInMenu)
+                Toggle(
+                    .Settings.parseCSSColorNames,
+                    isOn: Binding($parsesCSSColorNames)
+                )
+                .padding(.leading, 20)
+                .disabled(!showsColorPreviewInMenu)
+                Text(.Settings.colorCodeParsingDescription)
+                    .settingDescription()
+                    .padding(.leading, 20)
             }
         }
     }

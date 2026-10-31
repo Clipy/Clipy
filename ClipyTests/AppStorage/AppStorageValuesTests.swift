@@ -38,6 +38,8 @@ struct AppStorageValuesTests {
         @Shared(.overwritesDuplicateHistory) var overwritesDuplicateHistory
         @Shared(.allowsDuplicateHistory) var allowsDuplicateHistory
         @Shared(.showsColorPreviewInMenu) var showsColorPreviewInMenu
+        @Shared(.parsesColorCodesWithoutHash) var parsesColorCodesWithoutHash
+        @Shared(.parsesCSSColorNames) var parsesCSSColorNames
         @Shared(.ignoresConcealedPasteboardTypes) var ignoresConcealedPasteboardTypes
         @Shared(.ignoresUniversalClipboard) var ignoresUniversalClipboard
         @Shared(.pastesPlainTextWithModifier) var pastesPlainTextWithModifier
@@ -64,6 +66,8 @@ struct AppStorageValuesTests {
         #expect(overwritesDuplicateHistory)
         #expect(allowsDuplicateHistory)
         #expect(showsColorPreviewInMenu)
+        #expect(parsesColorCodesWithoutHash)
+        #expect(!parsesCSSColorNames)
         #expect(!ignoresConcealedPasteboardTypes)
         #expect(!ignoresUniversalClipboard)
         #expect(pastesPlainTextWithModifier)

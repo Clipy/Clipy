@@ -41,9 +41,16 @@ struct PasteboardContent: Equatable {
         return String(data: data, encoding: .utf8)
     }
     var colorCodeImage: NSImage? {
+        @Shared(.parsesColorCodesWithoutHash) var parsesColorCodesWithoutHash
+        @Shared(.parsesCSSColorNames) var parsesCSSColorNames
+
         guard let code = stringValue?.trimmingCharacters(in: .whitespacesAndNewlines) else { return nil }
         // Skip color parsing for long clipboard text when generating previews.
-        guard code.count <= 128, let colorCode = ColorCode(code) else { return nil }
+        guard code.count <= 128 else { return nil }
+        var options: ColorCode.ParseOptions = []
+        if parsesColorCodesWithoutHash { options.insert(.bareHex) }
+        if parsesCSSColorNames { options.insert(.cssKeyword) }
+        guard let colorCode = ColorCode(code, options: options) else { return nil }
         return NSImage(size: NSSize(width: 20, height: 20), flipped: false) { bounds in
             let circle = NSBezierPath(ovalIn: bounds.insetBy(dx: 0.5, dy: 0.5))
             circle.addClip()

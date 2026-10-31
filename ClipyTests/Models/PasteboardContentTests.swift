@@ -222,7 +222,7 @@ struct PasteboardContentTests {
         #expect(nonStringContent.stringValue == nil)
     }
 
-    @Test(arguments: ["#ff0000", "  #f00\n", "rgb(255 0 0)", "oklch(0.627955 0.257683 29.2339)"])
+    @Test(arguments: ["#ff0000", "  #f00\n", "ff0000", "123456", "decade", "rgb(255 0 0)", "oklch(0.627955 0.257683 29.2339)"])
     func colorCodeImageIsCreatedFromColorString(code: String) throws {
         let colorContent = try #require(
             PasteboardContent(
@@ -248,7 +248,10 @@ struct PasteboardContentTests {
     }
 
     @Test(arguments: ["not a color", "ff0000", "123456", "decade", "tomato"])
-    func colorCodeImageRejectsInvalidAndAmbiguousStrings(code: String) throws {
+    func colorCodeImageRejectsInvalidAndAmbiguousStringsWhenOptionsAreDisabled(code: String) throws {
+        @Shared(.parsesColorCodesWithoutHash) var parsesColorCodesWithoutHash = false
+        @Shared(.parsesCSSColorNames) var parsesCSSColorNames = false
+
         let invalidContent = try #require(
             PasteboardContent(
                 assets: [

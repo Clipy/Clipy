@@ -5032,6 +5032,59 @@
         }
       }
     },
+    "colorCodeParsingDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorschauen werden mit den Erkennungseinstellungen zum Zeitpunkt des Kopierens erstellt. Gespeicherte Vorschauen bleiben bei Einstellungsänderungen unverändert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previews use the recognition settings in effect when content is copied. Changing these settings does not affect saved previews."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پیش‌نمایش‌ها با تنظیمات تشخیص هنگام کپی محتوا ساخته می‌شوند. تغییر این تنظیمات بر پیش‌نمایش‌های ذخیره‌شده تأثیری ندارد."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le anteprime usano le impostazioni di riconoscimento attive al momento della copia. Modificare queste impostazioni non influisce sulle anteprime salvate."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレビューはコピー時の認識設定で作成されます。設定を変更しても、保存済みのプレビューは変わりません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As prévias usam as configurações de reconhecimento vigentes no momento da cópia. Alterar essas configurações não afeta as prévias salvas."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попередні перегляди створюються з налаштуваннями розпізнавання, чинними під час копіювання. Зміна цих налаштувань не впливає на збережені попередні перегляди."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预览使用复制内容时的识别设置生成。更改这些设置不会影响已保存的预览。"
+          }
+        }
+      }
+    },
     "firstItemHighlightDescription" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5181,6 +5234,112 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "项"
+          }
+        }
+      }
+    },
+    "parseCSSColorNames" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSS-Farbnamen erkennen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recognize CSS color names"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تشخیص نام‌های رنگ CSS"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riconosci i nomi dei colori CSS"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSSカラー名を認識"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconhecer nomes de cores CSS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розпізнавати назви кольорів CSS"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "识别 CSS 颜色名称"
+          }
+        }
+      }
+    },
+    "parseColorCodesWithoutHash" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farbcodes ohne # erkennen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recognize color codes without #"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تشخیص کدهای رنگ بدون #"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riconosci i codici colore senza #"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#のないカラーコードを認識"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconhecer códigos de cor sem #"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розпізнавати коди кольорів без #"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "识别不含 # 的颜色代码"
           }
         }
       }

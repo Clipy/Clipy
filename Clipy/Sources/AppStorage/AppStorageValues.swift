@@ -91,6 +91,14 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.showColorPreviewInTheMenu.rawValue), default: true]
     }
 
+    static var parsesColorCodesWithoutHash: Self {
+        Self[.appStorage(AppStorageKeys.parsesColorCodesWithoutHash.rawValue), default: true]
+    }
+
+    static var parsesCSSColorNames: Self {
+        Self[.appStorage(AppStorageKeys.parsesCSSColorNames.rawValue), default: false]
+    }
+
     static var ignoresConcealedPasteboardTypes: Self {
         Self[.appStorage(AppStorageKeys.ignoreConcealedPasteboardType.rawValue), default: false]
     }
