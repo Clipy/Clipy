@@ -32,6 +32,11 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         controller.window?.delegate = self
         return controller
     }()
+    @MainActor private lazy var snippetsEditorWindowController: SnippetsEditorWindowController = {
+        let controller = SnippetsEditorWindowController()
+        controller.window?.delegate = self
+        return controller
+    }()
 
     @Dependency(\.context)
     var context
@@ -138,9 +143,9 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 }
 
-// MARK: - Settings Window
+// MARK: - Window Delegate
 extension AppDelegate: NSWindowDelegate {
-    func windowWillClose(_ notification: Notification) {
+    @MainActor func windowWillClose(_ notification: Notification) {
         guard let window = notification.object as? NSWindow, !window.makeFirstResponder(nil) else { return }
         window.endEditing(for: nil)
     }
@@ -253,7 +258,7 @@ private extension AppDelegate {
         case .settings:
             settingsWindowController.show()
         case .snippetEditor:
-            CPYSnippetsEditorWindowController.sharedController.showWindow(self)
+            snippetsEditorWindowController.showWindow(self)
         }
     }
 }
