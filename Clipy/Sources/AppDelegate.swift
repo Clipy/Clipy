@@ -63,6 +63,13 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     @Shared(.observesScreenshots)
     private var observesScreenshots
 
+    fileprivate enum URLSchemeDestination: String {
+        case settings
+        case snippetEditor
+
+        static let scheme = "clipy"
+    }
+
     // MARK: - NSMenuItem Validation
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(AppDelegate.clearAllHistory) {
@@ -73,14 +80,11 @@ class AppDelegate: NSObject, NSMenuItemValidation {
 
     // MARK: - Menu Actions
     @MainActor @objc func showSettingsWindow() {
-        NSApp.activate(ignoringOtherApps: true)
-        settingsWindowController.show()
-        settingsWindowController.window?.orderFrontRegardless()
+        openWindow(.settings)
     }
 
-    @objc func showSnippetEditorWindow() {
-        NSApp.activate(ignoringOtherApps: true)
-        CPYSnippetsEditorWindowController.sharedController.showWindow(self)
+    @MainActor @objc func showSnippetEditorWindow() {
+        openWindow(.snippetEditor)
     }
 
     @objc func terminate() {
@@ -144,6 +148,11 @@ extension AppDelegate: NSWindowDelegate {
 
 // MARK: - NSApplication Delegate
 extension AppDelegate: NSApplicationDelegate {
+    @MainActor func application(_ application: NSApplication, open urls: [URL]) {
+        guard let url = urls.first(where: { $0.scheme?.lowercased() == URLSchemeDestination.scheme }) else { return }
+        guard let destination = URLSchemeDestination(rawValue: url.host() ?? "") else { return }
+        open(destination)
+    }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard !isTesting else { return }
@@ -216,13 +225,36 @@ private extension AppDelegate {
             }
             .store(in: &cancellables)
         $observesScreenshots.changes(includingInitialValue: true)
-            .filter { $0 }
-            .first()
+            .first(where: { $0 })
             .receive(on: mainQueue)
             .sink { [weak self] _ in
                 self?.screenshotObserver.start()
             }
             .store(in: &cancellables)
+    }
+}
+
+// MARK: - Windows
+private extension AppDelegate {
+    /// Opens the window through a URL scheme because forcing window activation
+    /// in a status bar application can be unreliable.
+    ///
+    /// ref: https://stackoverflow.com/questions/79710850/macos-cocoa-app-doesnt-become-active-focussed-despite-using-nsapp-activate#comment140612492_79710850
+    @MainActor private func openWindow(_ destination: URLSchemeDestination) {
+        guard let url = URL(string: "\(URLSchemeDestination.scheme)://\(destination.rawValue)") else { return }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        configuration.allowsRunningApplicationSubstitution = false
+        NSWorkspace.shared.open([url], withApplicationAt: Bundle.main.bundleURL, configuration: configuration)
+    }
+
+    @MainActor func open(_ destination: URLSchemeDestination) {
+        switch destination {
+        case .settings:
+            settingsWindowController.show()
+        case .snippetEditor:
+            CPYSnippetsEditorWindowController.sharedController.showWindow(self)
+        }
     }
 }
 
