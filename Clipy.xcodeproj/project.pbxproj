@@ -1389,6 +1389,8 @@
 				kind = upToNextMinorVersion;
 				minimumVersion = 13.1.1;
 			};
+			traits = (
+			);
 		};
 		C587AF4F2FBF4E040043D5E7 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
 			isa = XCRemoteSwiftPackageReference;
