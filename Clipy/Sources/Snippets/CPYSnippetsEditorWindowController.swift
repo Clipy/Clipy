@@ -78,11 +78,6 @@ final class CPYSnippetsEditorWindowController: NSWindowController {
             changeItemFocus()
         }
     }
-
-    override func showWindow(_ sender: Any?) {
-        super.showWindow(sender)
-        window?.orderFrontRegardless()
-    }
 }
 
 // MARK: - IBActions
