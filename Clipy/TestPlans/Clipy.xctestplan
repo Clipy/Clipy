@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "1B880237-A294-4DA5-B9D0-5C68CD889B32",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Clipy.xcodeproj",
+      "identifier" : "FAC43DC51B35D8B100C06102",
+      "name" : "Clipy"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Clipy.xcodeproj",
+        "identifier" : "FAC43DD71B35D8B100C06102",
+        "name" : "ClipyTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Packages\/ColorCodes",
+        "identifier" : "ColorCodesTests",
+        "name" : "ColorCodesTests"
+      }
+    }
+  ],
+  "version" : 1
+}

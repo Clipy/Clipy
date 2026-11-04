@@ -155,3 +155,7 @@ build-iPhoneSimulator/
 
 # Firebase
 GoogleService-Info.plist
+
+# Local Swift Package
+Packages/*/.swiftpm/
+Packages/*/Package.resolved
