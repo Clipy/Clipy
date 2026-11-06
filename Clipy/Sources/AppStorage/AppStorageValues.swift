@@ -15,6 +15,10 @@ import Magnet
 import Sharing
 
 extension SharedKey where Self == AppStorageKey<Bool>.Default {
+    static var allowsAgentHistoryAccess: Self {
+        Self[.appStorage(AppStorageKeys.allowsAgentHistoryAccess.rawValue), default: false]
+    }
+
     static var isLaunchAtLogin: Self {
         Self[.appStorage(AppStorageKeys.loginItem.rawValue), default: false]
     }

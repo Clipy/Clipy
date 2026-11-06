@@ -12,6 +12,7 @@
 
 /// These case names are persisted as UserDefaults keys. Do not rename or reuse them without a migration.
 enum AppStorageKeys: String {
+    case allowsAgentHistoryAccess
     case menuIconSize = "kCPYPrefMenuIconSizeKey"
     case maxHistorySize = "kCPYPrefMaxHistorySizeKey"
     case inputPasteCommand = "kCPYPrefInputPasteCommandKey"

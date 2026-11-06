@@ -3,6 +3,9 @@ import Sharing
 import SwiftUI
 
 struct BetaSettingsView: View {
+    @Shared(.allowsAgentHistoryAccess)
+    private var allowsAgentHistoryAccess
+
     @Shared(.pastesPlainTextWithModifier)
     private var pastesPlainTextWithModifier
     @Shared(.plainTextPasteModifier)
@@ -26,6 +29,12 @@ struct BetaSettingsView: View {
                 .padding(.top, 20)
 
             SettingsGrid {
+                SettingsSection(title: "AI agent access", bottomDivider: true) {
+                    Toggle("Allow agents to query text history", isOn: Binding($allowsAgentHistoryAccess))
+                    Text("The optional local MCP bridge reads saved text history. Your agent may share it with its AI provider. Only connect trusted clients: copied text can contain passwords and private data. Disabling access stops future queries but cannot recall shared data.")
+                        .settingDescription()
+                }
+
                 SettingsSection(title: .Settings.modifierKeyActions, bottomDivider: true) {
                     Toggle(
                         .Settings.pasteAsPlainText,

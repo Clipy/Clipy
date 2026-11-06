@@ -32,6 +32,12 @@ Use these default shortcuts while Clipy is running:
 
 You can change these shortcuts in **Settings > Shortcuts**. The Settings shortcut can be changed but cannot be removed, so you can still access Settings after removing the other shortcuts.
 
+### Optional AI agent access
+
+An experimental, default-off [local MCP bridge](Tools/AgentBridge/README.md) lets
+compatible agents search saved text history. Enable it in **Settings > Beta**
+only after reviewing the privacy warning and configuring a trusted client.
+
 ### Development Environment
 * macOS 26.6 Tahoe or later
 * Xcode 27.0
