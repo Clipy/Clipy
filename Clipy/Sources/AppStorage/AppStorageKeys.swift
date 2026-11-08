@@ -12,7 +12,6 @@
 
 /// These case names are persisted as UserDefaults keys. Do not rename or reuse them without a migration.
 enum AppStorageKeys: String {
-    case allowsAgentHistoryAccess
     case menuIconSize = "kCPYPrefMenuIconSizeKey"
     case maxHistorySize = "kCPYPrefMaxHistorySizeKey"
     case inputPasteCommand = "kCPYPrefInputPasteCommandKey"
@@ -53,6 +52,7 @@ enum AppStorageKeys: String {
     case pasteAndDeleteHistory = "kCPYBetaPasteAndDeleteHistory"
     case pasteAndDeleteHistoryModifier = "kCPYBetapasteAndDeleteHistoryModifier"
     case observerScreenshot = "kCPYBetaObserveScreenshot"
+    case allowsAgentHistoryAccess
     case pasteboardTypeSettings
     case excludedApplications
     case mainKeyCombo
