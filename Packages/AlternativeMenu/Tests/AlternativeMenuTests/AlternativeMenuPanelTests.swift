@@ -6,6 +6,14 @@ import Testing
 
 @MainActor
 struct AlternativeMenuPanelTests {
+    @Test(arguments: [false, true])
+    func keepsMenuPanelsAboveTheMenuBar(acceptsKeyboard: Bool) {
+        _ = NSApplication.shared
+        let panel = AlternativeMenuPanel(acceptsKeyboard: acceptsKeyboard)
+
+        #expect(panel.level == .popUpMenu)
+    }
+
     @Test
     func capsUpdatedWidthToItsScreen() throws {
         let panel = try makePanel(minimumWidth: 100_000)

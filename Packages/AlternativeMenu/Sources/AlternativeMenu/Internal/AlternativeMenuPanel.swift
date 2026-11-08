@@ -51,8 +51,9 @@ final class AlternativeMenuPanel: NSPanel {
             backing: .buffered,
             defer: false
         )
-        level = .popUpMenu
         isFloatingPanel = true
+        // Setting isFloatingPanel resets the level; restore it above the menu bar.
+        level = .popUpMenu
         collectionBehavior = [.auxiliary, .stationary, .moveToActiveSpace, .fullScreenAuxiliary]
         animationBehavior = .none
         isOpaque = false
