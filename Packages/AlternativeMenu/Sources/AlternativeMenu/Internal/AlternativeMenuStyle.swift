@@ -34,7 +34,10 @@ enum AlternativeMenuStyle {
     static let minimumKeyEquivalentColumnWidth: CGFloat = 32
     // Space beside the measured shortcut, whose width already includes modifier spacing.
     static let keyEquivalentGap: CGFloat = 18
-    @MainActor static let menuFont = NSFont.menuFont(ofSize: 0)
-    @MainActor static let keyEquivalentFont = CTFontCreateUIFontForLanguage(.menuItemCmdKey, 0, nil).map { $0 as NSFont } ?? menuFont
-    @MainActor static let headerFont = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize, weight: .semibold)
+    @MainActor
+    static let menuFont = NSFont.menuFont(ofSize: 0)
+    @MainActor
+    static let keyEquivalentFont = CTFontCreateUIFontForLanguage(.menuItemCmdKey, 0, nil).map { $0 as NSFont } ?? menuFont
+    @MainActor
+    static let headerFont = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize, weight: .semibold)
 }

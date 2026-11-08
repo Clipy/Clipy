@@ -11,9 +11,9 @@ import SwiftUI
 private struct AlternativeMenuBackground: View {
     let cornerRadius: CGFloat
 
-    @SwiftUI.Environment(\.accessibilityReduceTransparency)
+    @Environment(\.accessibilityReduceTransparency)
     private var reducesTransparency
-    @SwiftUI.Environment(\.colorScheme)
+    @Environment(\.colorScheme)
     private var colorScheme
 
     var body: some View {

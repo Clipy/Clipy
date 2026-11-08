@@ -53,10 +53,13 @@ struct AlternativeMenuRoot: View {
                 let row = state.highlightedRow
                 // Move one material view between rows so its backdrop does not
                 // have to be recreated on every hover change.
-                AlternativeMenuVisualEffectView(material: .selection, cornerRadius: AlternativeMenuStyle.cornerRadius - AlternativeMenuStyle.padding)
-                    .frame(height: row?.rowHeight ?? 0)
-                    .padding(.top, row?.verticalRange.lowerBound ?? 0)
-                    .allowsHitTesting(false)
+                AlternativeMenuVisualEffectView(
+                    material: .selection,
+                    cornerRadius: AlternativeMenuStyle.cornerRadius - AlternativeMenuStyle.padding
+                )
+                .frame(height: row?.rowHeight ?? 0)
+                .padding(.top, row?.verticalRange.lowerBound ?? 0)
+                .allowsHitTesting(false)
             }
             .introspectScrollView { scrollView in
                 scrollView?.hasVerticalScroller = false

@@ -135,7 +135,9 @@ public final class AlternativeMenuSession {
     ) {
         dismiss()
         // The dismissal callback may have opened another menu on this session.
-        guard !isPresented else { return }
+        guard !isPresented else {
+            return
+        }
         isPresented = true
         lastPointer = NSEvent.mouseLocation
         keyEquivalentMatcher.updateItems(menu.items)
@@ -168,7 +170,9 @@ public final class AlternativeMenuSession {
     ///     or submenu parent. When `false`, selection is cleared and scrolling resets
     ///     to the top. When no item is enabled, nothing is selected.
     public func updateItems(_ items: [AlternativeMenuItem], highlightsFirstItem: Bool = false) {
-        guard isPresented, dismissalTask == nil else { return }
+        guard isPresented, dismissalTask == nil else {
+            return
+        }
         guard root.menuView.hasHeader || !items.isEmpty else {
             dismiss()
             return
@@ -192,7 +196,9 @@ public final class AlternativeMenuSession {
     /// new menu on this session, so the session is not necessarily hidden when this
     /// method returns. Calling this method while inactive has no effect.
     public func dismiss() {
-        guard isPresented else { return }
+        guard isPresented else {
+            return
+        }
         isPresented = false
         dismissalTask?.cancel()
         dismissalTask = nil
@@ -219,7 +225,9 @@ private extension AlternativeMenuSession {
             self?.animateDismissal()
         }
         panel.menuView.onActivateRow = { [weak self, weak panel] index in
-            guard let self, let panel else { return }
+            guard let self, let panel else {
+                return
+            }
             stopPointerTimers()
             activateRow(index, in: panel, modifiers: NSEvent.modifierFlags, fromKeyboard: true)
         }
@@ -227,7 +235,9 @@ private extension AlternativeMenuSession {
 
     /// Returns the chain index immediately after a parent; the root's first child is zero.
     func childIndex(after panel: AlternativeMenuPanel) -> Int {
-        if panel === root { return 0 }
+        if panel === root {
+            return 0
+        }
         return submenus.firstIndex { $0.panel === panel }.map { $0 + 1 } ?? submenus.count
     }
 
@@ -238,7 +248,9 @@ private extension AlternativeMenuSession {
     /// Closes descendants deepest first, keeping the parent visible and clearing its expansion state.
     func closeSubmenus(after panel: AlternativeMenuPanel) {
         let index = childIndex(after: panel)
-        if index < submenus.count { typingSelection.reset() }
+        if index < submenus.count {
+            typingSelection.reset()
+        }
         while submenus.count > index {
             let child = submenus.removeLast().panel
             if hoveredPanel === child {
@@ -257,20 +269,29 @@ private extension AlternativeMenuSession {
     /// the deepest open menu while the root retains header editing and IME state.
     func openSubmenu(of panel: AlternativeMenuPanel, row: Int, highlightsFirstItem: Bool) {
         guard panel.items.indices.contains(row), panel.items[row].isEnabled,
-              let menu = panel.items[row].submenu, let rowFrame = panel.menuView.rowScreenFrame(row) else { return }
+            let menu = panel.items[row].submenu, let rowFrame = panel.menuView.rowScreenFrame(row)
+        else {
+            return
+        }
         if let child = child(of: panel), child.parentRow == row {
-            if highlightsFirstItem, child.panel.selection == nil { child.panel.moveSelection(by: 1) }
+            if highlightsFirstItem, child.panel.selection == nil {
+                child.panel.moveSelection(by: 1)
+            }
             return
         }
         closeSubmenus(after: panel)
         typingSelection.reset()
-        guard !menu.items.isEmpty else { return }
+        guard !menu.items.isEmpty else {
+            return
+        }
         let childPanel = AlternativeMenuPanel(minimumSymbolColumnWidth: panel.minimumSymbolColumnWidth, acceptsKeyboard: false)
         let path = submenus.map(\.parentRow) + [row]
         childPanel.setItems(menu.items, highlightsFirstItem: highlightsFirstItem) { keyEquivalentMatcher.display(at: path + [$0]) }
         configureAccessibility(for: childPanel)
         childPanel.openSubmenu(beside: panel, rowFrame: rowFrame, prefersLeft: root.isRightToLeft)
-        guard childPanel.isVisible else { return }
+        guard childPanel.isVisible else {
+            return
+        }
         panel.toolTip.hide()
         panel.menuView.setExpandedRow(row)
         submenus.append(Submenu(panel: childPanel, parentRow: row))
@@ -279,7 +300,9 @@ private extension AlternativeMenuSession {
     /// Confirms an action or enters a submenu for pointer, keyboard, and accessibility input.
     /// Activating an empty parent dismisses by pointer but leaves the menu open from the keyboard.
     func activateRow(_ index: Int, in panel: AlternativeMenuPanel, modifiers: NSEvent.ModifierFlags, fromKeyboard: Bool) {
-        guard isPresented, dismissalTask == nil, panel.items.indices.contains(index), panel.items[index].isEnabled else { return }
+        guard isPresented, dismissalTask == nil, panel.items.indices.contains(index), panel.items[index].isEnabled else {
+            return
+        }
         switch panel.items[index].kind {
         case .submenu(let menu, _):
             if menu.items.isEmpty, !fromKeyboard {
@@ -296,8 +319,12 @@ private extension AlternativeMenuSession {
     }
 
     /// Reveals the chosen row and captures its action and modifiers until confirmation finishes.
-    func confirm(_ index: Int, in panel: AlternativeMenuPanel, modifiers: NSEvent.ModifierFlags,
-                 perform: @escaping @MainActor (NSEvent.ModifierFlags) -> Void) {
+    func confirm(
+        _ index: Int,
+        in panel: AlternativeMenuPanel,
+        modifiers: NSEvent.ModifierFlags,
+        perform: @escaping @MainActor (NSEvent.ModifierFlags) -> Void
+    ) {
         panel.selectRow(index, scroll: true)
         animateDismissal(confirming: panel) { perform(modifiers) }
     }
@@ -306,12 +333,16 @@ private extension AlternativeMenuSession {
     /// Completion runs after `dismiss()` and its callback. External dismissal before
     /// the animation finishes cancels the pending completion.
     func animateDismissal(confirming panel: AlternativeMenuPanel? = nil, completion: @escaping @MainActor () -> Void = {}) {
-        guard isPresented, dismissalTask == nil else { return }
+        guard isPresented, dismissalTask == nil else {
+            return
+        }
         stopPointerTimers()
         let panels = [root] + submenus.map(\.panel)
         panels.forEach { $0.toolTip.hide() }
         dismissalTask = (panel ?? root).animateDismissal(fading: panels, blinksSelection: panel != nil) { [weak self] in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             // Release keyboard focus before pasting or presenting another menu.
             dismiss()
             completion()
@@ -329,13 +360,17 @@ private extension AlternativeMenuSession {
     ///
     /// - Returns: `true` when the local event monitor should consume the event.
     func handleKey(_ event: NSEvent) -> Bool {
-        guard dismissalTask == nil else { return true }
+        guard dismissalTask == nil else {
+            return true
+        }
         hoveredPanel?.toolTip.hide()
         if root.isHeaderControlFocused || root.hasMarkedText {
             typingSelection.reset()
         }
         // Leave candidate navigation and cancellation to the input method while composing.
-        guard !root.hasMarkedText else { return false }
+        guard !root.hasMarkedText else {
+            return false
+        }
         stopPointerTimers()
         let modifiers = event.modifierFlags.intersection([.command, .option, .control, .shift])
         let key = event.charactersIgnoringModifiers
@@ -376,10 +411,14 @@ private extension AlternativeMenuSession {
                 panel.moveSelection(by: 1)
                 return true
             }
-            guard let selection = panel.selection, panel.items[selection].submenu != nil else { return false }
+            guard let selection = panel.selection, panel.items[selection].submenu != nil else {
+                return false
+            }
             openSubmenu(of: panel, row: selection, highlightsFirstItem: true)
         case closes:
-            guard panel !== root else { return false }
+            guard panel !== root else {
+                return false
+            }
             closeSubmenus(after: submenus.dropLast().last?.panel ?? root)
         case .downArrow:
             panel.moveSelection(by: 1)
@@ -399,7 +438,9 @@ private extension AlternativeMenuSession {
                 panel.menuView.scrollRowToVisible(selection, alignsTallRowAtBottom: true)
             }
         default:
-            if handlesKeyEquivalent, handleKeyEquivalent(event) { return true }
+            if handlesKeyEquivalent, handleKeyEquivalent(event) {
+                return true
+            }
             return selectByTyping(event, in: panel)
         }
         typingSelection.reset()
@@ -408,9 +449,13 @@ private extension AlternativeMenuSession {
 
     /// Applies native title-prefix selection only when no header control has focus.
     func selectByTyping(_ event: NSEvent, in panel: AlternativeMenuPanel) -> Bool {
-        guard !root.isHeaderControlFocused else { return false }
+        guard !root.isHeaderControlFocused else {
+            return false
+        }
         let result = typingSelection.select(event, in: panel.items)
-        if let index = result.index { panel.selectRow(index, scroll: true) }
+        if let index = result.index {
+            panel.selectRow(index, scroll: true)
+        }
         return result.handled
     }
 
@@ -419,7 +464,9 @@ private extension AlternativeMenuSession {
     /// A handled native match consumes the event even if it produces no action.
     func handleKeyEquivalent(_ event: NSEvent) -> Bool {
         let result = keyEquivalentMatcher.match(event)
-        guard result.handled else { return false }
+        guard result.handled else {
+            return false
+        }
         if let item = result.item, let path = result.path, case .action(_, let perform) = item.kind {
             let depth = path.count - 1
             if depth <= submenus.count, path.dropLast().elementsEqual(submenus.prefix(depth).map(\.parentRow)) {
@@ -447,23 +494,35 @@ private extension AlternativeMenuSession {
         let mouseDown: NSEvent.EventTypeMask = [.leftMouseDown, .rightMouseDown, .otherMouseDown]
         let pointerEvents: NSEvent.EventTypeMask = [mouseDown, .mouseMoved, .leftMouseDragged, .leftMouseUp]
         let local = NSEvent.addLocalMonitorForEvents(matching: [pointerEvents, .keyDown, .scrollWheel]) { [weak self] event in
-            guard let self, isPresented else { return event }
-            if dismissalTask != nil, let panel = event.window as? AlternativeMenuPanel, contains(panel) { return nil }
+            guard let self, isPresented else {
+                return event
+            }
+            if dismissalTask != nil, let panel = event.window as? AlternativeMenuPanel, contains(panel) {
+                return nil
+            }
             switch event.type {
             case .keyDown:
                 return root.isKeyWindow && handleKey(event) ? nil : event
             case .scrollWheel:
-                guard let panel = event.window as? AlternativeMenuPanel, contains(panel) else { return event }
-                if passesScrollWheelToHeader, panel.menuView.isInHeader(at: event.locationInWindow) { return event }
+                guard let panel = event.window as? AlternativeMenuPanel, contains(panel) else {
+                    return event
+                }
+                if passesScrollWheelToHeader, panel.menuView.isInHeader(at: event.locationInWindow) {
+                    return event
+                }
                 stopPointerTimers()
-                if panel.scrollWheelByEvent(event) { closeSubmenus(after: panel) }
+                if panel.scrollWheelByEvent(event) {
+                    closeSubmenus(after: panel)
+                }
                 return nil
             default:
                 return handleMouse(event, isLocal: true) ? nil : event
             }
         }
         let global = NSEvent.addGlobalMonitorForEvents(matching: pointerEvents) { [weak self] event in
-            guard let self, isPresented else { return }
+            guard let self, isPresented else {
+                return
+            }
             _ = handleMouse(event, isLocal: false)
         }
         eventMonitors.append(contentsOf: [local, global].compactMap { $0 })
@@ -488,14 +547,18 @@ private extension AlternativeMenuSession {
     ///
     /// - Returns: Whether to consume the event when called by the local monitor.
     func handleMouse(_ event: NSEvent, isLocal: Bool) -> Bool {
-        guard dismissalTask == nil else { return false }
+        guard dismissalTask == nil else {
+            return false
+        }
         let point = event.window?.convertPoint(toScreen: event.locationInWindow) ?? event.locationInWindow
         let panel = panel(at: point)
         switch event.type {
         case .mouseMoved, .leftMouseDragged:
             if point != lastPointer {
                 typingSelection.reset()
-                if event.type == .leftMouseDragged { isOpeningMousePress = false }
+                if event.type == .leftMouseDragged {
+                    isOpeningMousePress = false
+                }
                 let previous = lastPointer
                 lastPointer = point
                 updateHover(in: panel, at: point, previous: previous, showsToolTip: event.type == .mouseMoved)
@@ -507,21 +570,29 @@ private extension AlternativeMenuSession {
             hoveredPanel?.toolTip.hide()
             guard isLocal, let window = event.window as? AlternativeMenuPanel, contains(window), let panel else {
                 // The input method's candidate window can be owned by another process.
-                if isLocal || !root.hasMarkedText { dismiss() }
+                if isLocal || !root.hasMarkedText {
+                    dismiss()
+                }
                 return false
             }
-            guard event.type == .leftMouseDown else { return false }
+            guard event.type == .leftMouseDown else {
+                return false
+            }
             if panel.edgeScrollDirection(at: point) != 0 {
                 lastPointer = point
                 updateHover(in: panel, at: point, previous: nil, showsToolTip: false)
                 return true
             }
-            guard let index = panel.rowIndex(at: point) else { return false }
+            guard let index = panel.rowIndex(at: point) else {
+                return false
+            }
             selectHoveredRow(index, in: panel)
             trackingRowPress = true
             return true
         case .leftMouseUp:
-            guard trackingRowPress else { return false }
+            guard trackingRowPress else {
+                return false
+            }
             trackingRowPress = false
             if isOpeningMousePress {
                 isOpeningMousePress = false
@@ -551,9 +622,12 @@ private extension AlternativeMenuSession {
     func updateHover(in panel: AlternativeMenuPanel?, at point: NSPoint, previous: NSPoint?, showsToolTip: Bool) {
         let index = panel?.rowIndex(at: point)
         if let previous, let parent = panel ?? hoveredPanel, let child = child(of: parent), child.parentRow != index,
-           AlternativeMenuSubmenuGeometry.isMovingTowardSubmenu(
-               from: previous, to: point, submenuFrame: child.panel.frame, opensLeft: child.panel.frame.minX < parent.frame.minX
-           ) {
+            AlternativeMenuSubmenuGeometry.isMovingTowardSubmenu(
+                from: previous,
+                to: point,
+                submenuFrame: child.panel.frame,
+                opensLeft: child.panel.frame.minX < parent.frame.minX
+            ) {
             scheduleHover(.aim, after: .milliseconds(500))
             return
         }
@@ -592,15 +666,21 @@ private extension AlternativeMenuSession {
     /// Keeps one pending hover transition without restarting its delay for the same target.
     /// Revalidates the pointer location before opening a child or applying deferred selection.
     private func scheduleHover(_ transition: HoverTransition, after delay: Duration) {
-        guard pendingHover?.transition != transition else { return }
+        guard pendingHover?.transition != transition else {
+            return
+        }
         cancelHover()
         let task = Task { [weak self] in
             try? await Task.sleep(for: delay)
-            guard !Task.isCancelled, let self, isPresented else { return }
+            guard !Task.isCancelled, let self, isPresented else {
+                return
+            }
             pendingHover = nil
             switch transition {
             case let .open(panel, row):
-                guard self.panel(at: lastPointer) === panel, panel.rowIndex(at: lastPointer) == row else { return }
+                guard self.panel(at: lastPointer) === panel, panel.rowIndex(at: lastPointer) == row else {
+                    return
+                }
                 openSubmenu(of: panel, row: row, highlightsFirstItem: false)
             case .aim:
                 updateHover(in: panel(at: lastPointer), at: lastPointer, previous: nil, showsToolTip: !trackingRowPress)
@@ -622,7 +702,9 @@ private extension AlternativeMenuSession {
     /// Scrolls while the last tracked pointer position remains over a scroll arrow.
     /// Each tick recomputes availability because scrolling can also grow the popup.
     func startEdgeScrolling(in panel: AlternativeMenuPanel) {
-        guard edgeScrollTask == nil else { return }
+        guard edgeScrollTask == nil else {
+            return
+        }
         edgeScrollTask = Task { [weak self, weak panel] in
             while !Task.isCancelled, let self, let panel {
                 let direction = panel.edgeScrollDirection(at: lastPointer)
@@ -632,7 +714,7 @@ private extension AlternativeMenuSession {
                     return
                 }
                 // NSMenu advances one standard menu line every 60 ms while hovering an arrow.
-                panel.menuView.scrollMenuItems(by: direction * 24)
+                panel.menuView.scrollMenuItems(by: direction * AlternativeMenuStyle.minimumRowHeight)
                 try? await Task.sleep(for: .milliseconds(60))
             }
         }

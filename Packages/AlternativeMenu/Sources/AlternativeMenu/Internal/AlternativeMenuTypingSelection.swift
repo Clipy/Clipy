@@ -31,8 +31,8 @@ final class AlternativeMenuTypingSelection {
 
     init() {
         let options = UCCollateOptions(
-            kUCCollateCaseInsensitiveMask | kUCCollatePunctuationSignificantMask |
-            kUCCollateDigitsOverrideMask | kUCCollateDigitsAsNumberMask
+            kUCCollateCaseInsensitiveMask | kUCCollatePunctuationSignificantMask | kUCCollateDigitsOverrideMask
+                | kUCCollateDigitsAsNumberMask
         )
         UCTypeSelectCreateSelector(nil, 0, options, &selector)
     }
@@ -56,8 +56,9 @@ final class AlternativeMenuTypingSelection {
     ///   leaves the current selection unchanged, even when the event was handled.
     func select(_ event: NSEvent, in items: [AlternativeMenuItem]) -> (handled: Bool, index: Int?) {
         guard let selector, event.type == .keyDown,
-              event.modifierFlags.isDisjoint(with: [.command, .option, .control]),
-              let key = event.characters, let first = key.unicodeScalars.first else {
+            event.modifierFlags.isDisjoint(with: [.command, .option, .control]),
+            let key = event.characters, let first = key.unicodeScalars.first
+        else {
             return (false, nil)
         }
         let deletes = event.specialKey == .delete || event.specialKey == .backspace
@@ -71,26 +72,41 @@ final class AlternativeMenuTypingSelection {
             reset()
             return (false, nil)
         }
-        guard updatesSelection.boolValue else { return (true, nil) }
+        guard updatesSelection.boolValue else {
+            return (true, nil)
+        }
         return (true, closestItem(in: items, using: selector))
     }
 
     private func closestItem(in items: [AlternativeMenuItem], using selector: UCTypeSelectRef) -> Int? {
-        guard !items.isEmpty else { return nil }
+        guard !items.isEmpty else {
+            return nil
+        }
         var match: UInt32 = 0
         let status = items.withUnsafeBufferPointer { items in
-            UCTypeSelectFindItem(selector, UInt32(items.count), UnsafeMutableRawPointer(mutating: items.baseAddress), nil, { index, rows, _, title, options in
-                guard let rows else { return false }
-                let item = rows.assumingMemoryBound(to: AlternativeMenuItem.self)[Int(index)]
-                title?.pointee = item.isEnabled ? Unmanaged.passRetained(item.title as CFString) : nil
-                // NSMenu uses undocumented bit 0x4 to prefer the first prefix match
-                // in menu order, while still prioritizing exact matches.
-                options?.pointee = UCTypeSelectOptions(kUCTSOptionsReleaseStringMask | 0x4)
-                return true
-            }, &match)
+            UCTypeSelectFindItem(
+                selector,
+                UInt32(items.count),
+                UnsafeMutableRawPointer(mutating: items.baseAddress),
+                nil,
+                { index, rows, _, title, options in
+                    guard let rows else {
+                        return false
+                    }
+                    let item = rows.assumingMemoryBound(to: AlternativeMenuItem.self)[Int(index)]
+                    title?.pointee = item.isEnabled ? Unmanaged.passRetained(item.title as CFString) : nil
+                    // NSMenu uses undocumented bit 0x4 to prefer the first prefix match
+                    // in menu order, while still prioritizing exact matches.
+                    options?.pointee = UCTypeSelectOptions(kUCTSOptionsReleaseStringMask | 0x4)
+                    return true
+                },
+                &match
+            )
         }
         let index = Int(match)
-        guard status == noErr, items.indices.contains(index), items[index].isEnabled else { return nil }
+        guard status == noErr, items.indices.contains(index), items[index].isEnabled else {
+            return nil
+        }
         return index
     }
 }

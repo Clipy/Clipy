@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -50,7 +51,9 @@ struct AlternativeMenuAccessibilityViewTests {
         let view = AlternativeMenuView(header: nil)
         let window = UnorderedWindow(
             contentRect: NSRect(x: 0, y: 0, width: 240, height: 100),
-            styleMask: .borderless, backing: .buffered, defer: false
+            styleMask: .borderless,
+            backing: .buffered,
+            defer: false
         )
         window.contentView = view
         let menu = view.menuAccessibilityView
@@ -92,7 +95,9 @@ struct AlternativeMenuAccessibilityViewTests {
         let view = AlternativeMenuView(header: nil)
         let window = UnorderedWindow(
             contentRect: NSRect(x: 0, y: 0, width: 240, height: 100),
-            styleMask: .borderless, backing: .buffered, defer: false
+            styleMask: .borderless,
+            backing: .buffered,
+            defer: false
         )
         window.contentView = view
         window.reportsVisible = true

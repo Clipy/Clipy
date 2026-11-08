@@ -46,7 +46,9 @@ enum AlternativeMenuSubmenuGeometry {
         let nearEdge = opensLeft ? submenuFrame.maxX : submenuFrame.minX
         let edgeDistance = (nearEdge - start.x) * direction
         let advance = (point.x - start.x) * direction
-        guard !submenuFrame.isEmpty, advance > 0, advance <= edgeDistance else { return false }
+        guard !submenuFrame.isEmpty, advance > 0, advance <= edgeDistance else {
+            return false
+        }
 
         // Allow the same 15-degree margin around the submenu edge as NSMenu.
         let margin = CGFloat.pi / 12

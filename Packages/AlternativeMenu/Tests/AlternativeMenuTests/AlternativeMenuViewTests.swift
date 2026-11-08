@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -69,11 +70,11 @@ struct AlternativeMenuViewTests {
 
         init(items: [AlternativeMenuItem]) throws {
             let viewport = NSRect(x: 0, y: 0, width: 300, height: 500)
-            view = AlternativeMenuView(header: nil)
+            self.view = AlternativeMenuView(header: nil)
             view.frame = NSRect(origin: .zero, size: NSSize(width: viewport.width, height: viewport.height + view.viewportTopInset))
             view.setRows(items, selectedIndex: nil)
 
-            scroll = NSScrollView(frame: viewport)
+            self.scroll = NSScrollView(frame: viewport)
             var documentFrame = viewport
             documentFrame.size.height = view.preferredHeight - view.viewportTopInset
             scroll.documentView = FlippedDocument(frame: documentFrame)

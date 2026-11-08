@@ -15,7 +15,8 @@ struct AlternativeMenuRow: View {
     let trailingColumnWidth: CGFloat
     let keyColumnWidth: CGFloat
 
-    @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.layoutDirection)
+    private var layoutDirection
 
     private var textColor: Color {
         if isSelected {

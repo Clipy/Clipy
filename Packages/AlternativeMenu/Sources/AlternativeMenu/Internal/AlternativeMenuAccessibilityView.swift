@@ -8,7 +8,7 @@
 import AppKit
 import SwiftUI
 
-/// Exposes the SwiftUI results as a menu without participating in pointer input.
+/// Exposes the SwiftUI menu items as a menu without participating in pointer input.
 final class AlternativeMenuAccessibilityView: NSView {
     weak var menuView: AlternativeMenuView?
     private var elements: [Row?] = []
@@ -37,29 +37,40 @@ final class AlternativeMenuAccessibilityView: NSView {
     }
 
     override func accessibilitySelectedChildren() -> [Any]? {
-        guard let index = menuView?.selection, elements.indices.contains(index), let element = elements[index] else { return [] }
+        guard let index = menuView?.selection, elements.indices.contains(index), let element = elements[index] else {
+            return []
+        }
         return [element]
     }
 
     nonisolated override func accessibilityHitTest(_ point: NSPoint) -> Any? {
-        guard Thread.isMainThread else { return self }
+        guard Thread.isMainThread else {
+            return self
+        }
         let row = MainActor.assumeIsolated { () -> Row? in
             guard let menuView, let window = menuView.window,
-                  let index = menuView.rowIndex(at: window.convertPoint(fromScreen: point)),
-                  elements.indices.contains(index) else { return nil }
+                let index = menuView.rowIndex(at: window.convertPoint(fromScreen: point)),
+                elements.indices.contains(index)
+            else {
+                return nil
+            }
             return elements[index]
         }
         return row ?? self as Any
     }
 
     override func accessibilityPerformCancel() -> Bool {
-        guard let menuView, menuView.window?.isVisible == true, let cancel = menuView.onCancelMenu else { return false }
+        guard let menuView, menuView.window?.isVisible == true, let cancel = menuView.onCancelMenu else {
+            return false
+        }
         cancel()
         return true
     }
 
     private func containsRow(at index: Int, identity: ObjectIdentifier) -> Bool {
-        guard elements.indices.contains(index), let row = elements[index] else { return false }
+        guard elements.indices.contains(index), let row = elements[index] else {
+            return false
+        }
         return ObjectIdentifier(row) == identity
     }
 
@@ -71,8 +82,8 @@ final class AlternativeMenuAccessibilityView: NSView {
         @MainActor
         init(_ row: AlternativeMenuRowData, index: Int, menu: AlternativeMenuAccessibilityView) {
             self.index = index
-            owner = { [weak menu] in menu }
-            hasSubmenu = row.hasSubmenu
+            self.owner = { [weak menu] in menu }
+            self.hasSubmenu = row.hasSubmenu
             super.init()
             setAccessibilityElement(true)
             setAccessibilityRole(row.kind == .header ? .staticText : .menuItem)
@@ -111,10 +122,15 @@ final class AlternativeMenuAccessibilityView: NSView {
         }
 
         override func accessibilityPerformPress() -> Bool {
-            guard isAccessibilityEnabled() else { return false }
+            guard isAccessibilityEnabled() else {
+                return false
+            }
             return withCurrentMenu(false) { menu, index in
                 guard let menuView = menu.menuView, menuView.window?.isVisible == true,
-                      let activate = menuView.onActivateRow else { return false }
+                    let activate = menuView.onActivateRow
+                else {
+                    return false
+                }
                 activate(index)
                 return true
             }
@@ -128,12 +144,16 @@ final class AlternativeMenuAccessibilityView: NSView {
             _ fallback: Result,
             _ action: @MainActor (AlternativeMenuAccessibilityView, Int) -> Result
         ) -> Result {
-            guard Thread.isMainThread else { return fallback }
+            guard Thread.isMainThread else {
+                return fallback
+            }
             let owner = owner
             let index = index
             let identity = ObjectIdentifier(self)
             return MainActor.assumeIsolated {
-                guard let menu = owner(), menu.containsRow(at: index, identity: identity) else { return fallback }
+                guard let menu = owner(), menu.containsRow(at: index, identity: identity) else {
+                    return fallback
+                }
                 return action(menu, index)
             }
         }

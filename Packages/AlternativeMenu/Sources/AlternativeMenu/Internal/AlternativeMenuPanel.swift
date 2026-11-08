@@ -44,7 +44,7 @@ final class AlternativeMenuPanel: NSPanel {
     ) {
         self.minimumSymbolColumnWidth = minimumSymbolColumnWidth
         self.acceptsKeyboard = acceptsKeyboard
-        menuView = AlternativeMenuView(header: header, minimumSymbolColumnWidth: minimumSymbolColumnWidth)
+        self.menuView = AlternativeMenuView(header: header, minimumSymbolColumnWidth: minimumSymbolColumnWidth)
         super.init(
             contentRect: .zero,
             styleMask: [.borderless, .nonactivatingPanel],
@@ -72,17 +72,23 @@ final class AlternativeMenuPanel: NSPanel {
     }
 
     func open(at point: NSPoint) {
-        guard let screen = NSScreen.screens.first(where: { $0.frame.contains(point) }) ?? NSScreen.main else { return }
-        guard menuView.hasHeader || !items.isEmpty else { return }
+        guard let screen = NSScreen.screens.first(where: { $0.frame.contains(point) }) ?? NSScreen.main else {
+            return
+        }
+        guard menuView.hasHeader || !items.isEmpty else {
+            return
+        }
         anchorY = point.y
-        fitResults(on: screen, openingAt: point)
+        fitMenu(on: screen, openingAt: point)
         menuView.resetScrollPosition()
         makeKeyAndOrderFront(nil)
         layoutAndRevealSelection()
     }
 
     func openSubmenu(beside parent: AlternativeMenuPanel, rowFrame: NSRect, prefersLeft: Bool) {
-        guard let screen = parent.screen else { return }
+        guard let screen = parent.screen else {
+            return
+        }
         let inset = AlternativeMenuStyle.screenEdgeInset
         let bounds = screen.frame.insetBy(dx: inset, dy: inset)
         let size = NSSize(
@@ -90,9 +96,15 @@ final class AlternativeMenuPanel: NSPanel {
             height: ceil(menuView.preferredHeight)
         )
         let frame = AlternativeMenuSubmenuGeometry.frame(
-            preferredSize: size, parentFrame: parent.frame, rowFrame: rowFrame, bounds: bounds, prefersLeft: prefersLeft
+            preferredSize: size,
+            parentFrame: parent.frame,
+            rowFrame: rowFrame,
+            bounds: bounds,
+            prefersLeft: prefersLeft
         )
-        guard !frame.isEmpty else { return }
+        guard !frame.isEmpty else {
+            return
+        }
         setFrame(frame, display: false)
         menuView.resetScrollPosition()
         orderFrontRegardless()
@@ -164,7 +176,9 @@ final class AlternativeMenuPanel: NSPanel {
         keyEquivalent: (Int) -> AlternativeMenuKeyEquivalent.Display? = { _ in nil }
     ) {
         setItems(items, highlightsFirstItem: highlightsFirstItem, keyEquivalent: keyEquivalent)
-        if let screen { fitResults(on: screen) }
+        if let screen {
+            fitMenu(on: screen)
+        }
         menuView.resetScrollPosition()
         layoutAndRevealSelection()
     }
@@ -180,13 +194,16 @@ final class AlternativeMenuPanel: NSPanel {
     func selectRow(_ index: Int?, scroll: Bool = false) {
         let index = index.flatMap { items.indices.contains($0) && items[$0].isEnabled ? $0 : nil }
         menuView.setSelection(index)
-        if scroll, let index { menuView.scrollRowToVisible(index) }
+        if scroll, let index {
+            menuView.scrollRowToVisible(index)
+        }
     }
 
     func moveSelection(by direction: Int) {
         let current = selection
         let isEnabled: (Int) -> Bool = { self.items[$0].isEnabled }
-        let adjacent = direction > 0
+        let adjacent =
+            direction > 0
             ? items.indices.dropFirst((current ?? -1) + 1).first(where: isEnabled)
             : items.indices.prefix(current ?? items.count).last(where: isEnabled)
         if let next = adjacent ?? current {
@@ -204,21 +221,26 @@ final class AlternativeMenuPanel: NSPanel {
             movement = distance * lineHeight
         } else {
             // NSMenu accumulates a trackpad gesture and moves in whole menu lines.
-            if event.phase == .began || event.phase == .cancelled { wheelScrollRemainder = 0 }
+            if event.phase == .began || event.phase == .cancelled {
+                wheelScrollRemainder = 0
+            }
             wheelScrollRemainder += distance
             movement = (wheelScrollRemainder / lineHeight).rounded(.towardZero) * lineHeight
             wheelScrollRemainder -= movement
         }
 
         let pointer = convertPoint(toScreen: event.locationInWindow)
-        guard movement != 0, menuView.scrollMenuItems(by: movement) else { return false }
+        guard movement != 0, menuView.scrollMenuItems(by: movement) else {
+            return false
+        }
         selectRow(rowIndex(at: pointer))
         return true
     }
 
     func updateToolTip(for index: Int?) {
         guard let index, let text = items[index].toolTip, !text.isEmpty,
-              let rowFrame = menuView.rowScreenFrame(index) else {
+            let rowFrame = menuView.rowScreenFrame(index)
+        else {
             toolTip.hide(resetDelay: false)
             return
         }
@@ -239,10 +261,12 @@ private extension AlternativeMenuPanel {
 
     func layoutAndRevealSelection() {
         menuView.layoutSubtreeIfNeeded()
-        if let selection { menuView.scrollRowToVisible(selection) }
+        if let selection {
+            menuView.scrollRowToVisible(selection)
+        }
     }
 
-    func fitResults(on screen: NSScreen, openingAt point: NSPoint? = nil) {
+    func fitMenu(on screen: NSScreen, openingAt point: NSPoint? = nil) {
         let bounds = menuBounds(on: screen)
         let previousFrame = frame
         let anchorBottom = min(max(anchorY, bounds.minY), bounds.maxY)
@@ -254,7 +278,7 @@ private extension AlternativeMenuPanel {
             opensAbove = false
             leadingEdge = point.x
             preferredWidth = menuView.preferredWidth
-            top = min(max(point.y + 5, bounds.minY), bounds.maxY)
+            top = min(max(point.y + AlternativeMenuStyle.padding, bounds.minY), bounds.maxY)
             bottom = anchorBottom
         } else {
             leadingEdge = isRightToLeft ? previousFrame.maxX : previousFrame.minX
@@ -266,11 +290,12 @@ private extension AlternativeMenuPanel {
         let preferredHeight = ceil(menuView.preferredHeight)
         let spaceBelow = top - bounds.minY
         // Prefer below when the content fits or at least four rows can be seen.
-        if !opensAbove, spaceBelow < min(preferredHeight, menuView.viewportTopInset + 96), bounds.maxY - anchorBottom > spaceBelow {
+        if !opensAbove, spaceBelow < min(preferredHeight, menuView.viewportTopInset + AlternativeMenuStyle.minimumRowHeight * 4),
+            bounds.maxY - anchorBottom > spaceBelow {
             opensAbove = true
             bottom = anchorBottom
         }
-        // Keep the edge nearest the pointer fixed as the results change.
+        // Keep the edge nearest the pointer fixed as the menu items change.
         let availableHeight = opensAbove ? bounds.maxY - bottom : spaceBelow
         let height = min(preferredHeight, availableHeight)
         let width = fittedWidth(
@@ -291,23 +316,32 @@ private extension AlternativeMenuPanel {
     }
 
     func growMenuHeight(by distance: CGFloat) -> CGFloat {
-        guard distance > 0, let screen else { return 0 }
+        guard distance > 0, let screen else {
+            return 0
+        }
         let oldFrame = frame
         let bounds = menuBounds(on: screen)
         let needed = min(distance, ceil(menuView.preferredHeight) - oldFrame.height)
-        guard needed > 0 else { return 0 }
+        guard needed > 0 else {
+            return 0
+        }
         // The bottom stays in place while the popup can grow upward. A
         // bottom-anchored popup can reclaim the gap below once it hits the top.
         let above = min(needed, max(0, bounds.maxY - oldFrame.maxY))
         let below = min(needed - above, max(0, oldFrame.minY - bounds.minY))
-        guard above + below > 0 else { return 0 }
+        guard above + below > 0 else {
+            return 0
+        }
         toolTip.hide()
-        setFrame(NSRect(
-            x: oldFrame.minX,
-            y: oldFrame.minY - below,
-            width: oldFrame.width,
-            height: oldFrame.height + above + below
-        ), display: true)
+        setFrame(
+            NSRect(
+                x: oldFrame.minX,
+                y: oldFrame.minY - below,
+                width: oldFrame.width,
+                height: oldFrame.height + above + below
+            ),
+            display: true
+        )
         menuView.layoutSubtreeIfNeeded()
         return frame.height - oldFrame.height
     }

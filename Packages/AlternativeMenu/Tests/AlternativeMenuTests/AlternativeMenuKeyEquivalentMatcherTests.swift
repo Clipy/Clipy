@@ -1,6 +1,7 @@
 import AppKit
 import Carbon
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -35,9 +36,12 @@ struct AlternativeMenuKeyEquivalentMatcherTests {
     func searchesUnopenedSubmenusInMenuOrder(rootFirst: Bool) throws {
         let matcher = AlternativeMenuKeyEquivalentMatcher()
         let root = AlternativeMenuItem.action("Root", keyEquivalent: "q") { _ in }
-        let submenu = AlternativeMenuItem.submenu("Parent", menu: .init(items: [
-            .submenu("Nested", menu: .init(items: [.action("Grandchild", keyEquivalent: "q") { _ in }]))
-        ]))
+        let submenu = AlternativeMenuItem.submenu(
+            "Parent",
+            menu: .init(items: [
+                .submenu("Nested", menu: .init(items: [.action("Grandchild", keyEquivalent: "q") { _ in }]))
+            ])
+        )
         matcher.updateItems(rootFirst ? [root, submenu] : [submenu, root])
 
         let result = matcher.match(try keyEvent("q", code: kVK_ANSI_Q))
@@ -67,7 +71,9 @@ struct AlternativeMenuKeyEquivalentMatcherTests {
         let matcher = AlternativeMenuKeyEquivalentMatcher()
         let modifiers: NSEvent.ModifierFlags = usesImplicitShift ? .command : [.command, .shift]
         let item = AlternativeMenuItem.action(
-            "Shifted", keyEquivalent: usesImplicitShift ? "A" : "a", keyEquivalentModifierMask: modifiers
+            "Shifted",
+            keyEquivalent: usesImplicitShift ? "A" : "a",
+            keyEquivalentModifierMask: modifiers
         ) { _ in }
         matcher.updateItems([item])
 
@@ -87,9 +93,11 @@ struct AlternativeMenuKeyEquivalentMatcherTests {
         // Drain AppKit's temporary references from performing the key equivalent.
         let retainsOldAction = autoreleasepool {
             let token = NSObject()
-            matcher.updateItems([.action("Old", keyEquivalent: "o") { [token] _ in
-                withExtendedLifetime(token) {}
-            }])
+            matcher.updateItems([
+                .action("Old", keyEquivalent: "o") { [token] _ in
+                    withExtendedLifetime(token) {}
+                }
+            ])
             #expect(matcher.match(oldKey).item?.title == "Old")
             return { [weak token] in token != nil }
         }
@@ -142,7 +150,9 @@ struct AlternativeMenuKeyEquivalentMatcherTests {
     }
 
     private func keyEvent(
-        _ characters: String, code: Int, modifiers: NSEvent.ModifierFlags = .command
+        _ characters: String,
+        code: Int,
+        modifiers: NSEvent.ModifierFlags = .command
     ) throws -> NSEvent {
         try #require(
             NSEvent.keyEvent(
@@ -176,7 +186,8 @@ struct AlternativeMenuKeyEquivalentMatcherTests {
     private final class NativeReceiver: NSObject {
         private(set) var title: String?
 
-        @objc func record(_ item: NSMenuItem) {
+        @objc
+        func record(_ item: NSMenuItem) {
             title = item.title
         }
     }

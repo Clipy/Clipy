@@ -37,7 +37,9 @@ final class AlternativeMenuToolTip {
         }
 
         let target = Target(text: text, rowFrame: rowFrame)
-        guard self.target != target else { return }
+        guard self.target != target else {
+            return
+        }
         hide(resetDelay: false)
         self.target = target
         if hasShown {
@@ -45,7 +47,9 @@ final class AlternativeMenuToolTip {
         } else {
             pending = Task { [weak self, weak menu] in
                 try? await Task.sleep(for: Self.initialDelay)
-                guard !Task.isCancelled, let self, let menu else { return }
+                guard !Task.isCancelled, let self, let menu else {
+                    return
+                }
                 show(target, beside: menu)
             }
         }
@@ -56,15 +60,20 @@ final class AlternativeMenuToolTip {
         pending = nil
         target = nil
         nativeToolTip?.hide()
-        if resetDelay { hasShown = false }
+        if resetDelay {
+            hasShown = false
+        }
     }
 
     private func show(_ target: Target, beside menu: NSWindow) {
         pending = nil
         self.target = nil
         guard menu.isVisible,
-              target.rowFrame.contains(NSEvent.mouseLocation),
-              nativeToolTip?.show(target.text, beside: menu, rowFrame: target.rowFrame) == true else { return }
+            target.rowFrame.contains(NSEvent.mouseLocation),
+            nativeToolTip?.show(target.text, beside: menu, rowFrame: target.rowFrame) == true
+        else {
+            return
+        }
         self.target = target
         hasShown = true
     }
@@ -80,17 +89,22 @@ private final class NativeMenuToolTip {
     init?() {
         let shared = NSSelectorFromString("sharedToolTipManager")
         guard let type = NSClassFromString("_NSMenuToolTipManager") as? NSObject.Type,
-              type.responds(to: shared),
-              let manager = type.perform(shared)?.takeUnretainedValue() as? NSObject,
-              manager.responds(to: Self.showSelector),
-              manager.responds(to: Self.hideSelector) else { return nil }
+            type.responds(to: shared),
+            let manager = type.perform(shared)?.takeUnretainedValue() as? NSObject,
+            manager.responds(to: Self.showSelector),
+            manager.responds(to: Self.hideSelector)
+        else {
+            return nil
+        }
         self.manager = manager
         anchor.isHidden = true
     }
 
     // Returns whether a display request was submitted to AppKit.
     func show(_ text: String, beside menu: NSWindow, rowFrame: NSRect) -> Bool {
-        guard let content = menu.contentView else { return false }
+        guard let content = menu.contentView else {
+            return false
+        }
         hide()
         var frame = content.convert(menu.convertFromScreen(rowFrame), from: nil)
         frame.origin.x = content.bounds.minX
@@ -107,7 +121,9 @@ private final class NativeMenuToolTip {
     }
 
     func hide() {
-        guard anchor.superview != nil else { return }
+        guard anchor.superview != nil else {
+            return
+        }
         typealias Hide = @convention(c) (AnyObject, Selector, NSView) -> Void
         let invoke = unsafeBitCast(manager.method(for: Self.hideSelector), to: Hide.self)
         invoke(manager, Self.hideSelector, anchor)

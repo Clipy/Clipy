@@ -78,7 +78,9 @@ final class AlternativeMenuView: NSView {
     }
 
     func setSelection(_ index: Int?) {
-        guard state.selection != index else { return }
+        guard state.selection != index else {
+            return
+        }
         state.selection = index
         if window?.isVisible == true {
             NSAccessibility.post(element: menuAccessibilityView, notification: .selectedChildrenChanged)
@@ -96,30 +98,45 @@ final class AlternativeMenuView: NSView {
 
     func rowIndex(at windowPoint: NSPoint) -> Int? {
         guard let viewportPosition = viewportPosition(at: windowPoint),
-              edgeScrollDirection(at: windowPoint) == 0 else { return nil }
+            edgeScrollDirection(at: windowPoint) == 0
+        else {
+            return nil
+        }
         let rowPosition = state.offset + viewportPosition
         return state.rows.firstIndex { $0.verticalRange.contains(rowPosition) }
     }
 
     func rowScreenFrame(_ index: Int) -> NSRect? {
-        guard let window, state.rows.indices.contains(index) else { return nil }
+        guard let window, state.rows.indices.contains(index) else {
+            return nil
+        }
         let verticalRange = state.rows[index].verticalRange
         let availability = state.scrollAvailability(viewportHeight: viewportHeight)
         let top = max(verticalRange.lowerBound - state.offset, availability.topInset)
         let bottom = min(verticalRange.upperBound - state.offset, viewportHeight - availability.bottomInset)
-        guard bottom > top else { return nil }
+        guard bottom > top else {
+            return nil
+        }
         let rect = NSRect(
-            x: AlternativeMenuStyle.padding, y: viewportTopInset + top,
-            width: bounds.width - AlternativeMenuStyle.padding * 2, height: bottom - top
+            x: AlternativeMenuStyle.padding,
+            y: viewportTopInset + top,
+            width: bounds.width - AlternativeMenuStyle.padding * 2,
+            height: bottom - top
         )
         return window.convertToScreen(convert(rect, to: nil))
     }
 
     func edgeScrollDirection(at windowPoint: NSPoint) -> CGFloat {
-        guard let viewportPosition = viewportPosition(at: windowPoint) else { return 0 }
+        guard let viewportPosition = viewportPosition(at: windowPoint) else {
+            return 0
+        }
         let availability = state.scrollAvailability(viewportHeight: viewportHeight)
-        if viewportPosition < availability.topInset { return -1 }
-        if viewportPosition >= viewportHeight - availability.bottomInset { return 1 }
+        if viewportPosition < availability.topInset {
+            return -1
+        }
+        if viewportPosition >= viewportHeight - availability.bottomInset {
+            return 1
+        }
         return 0
     }
 
@@ -139,7 +156,7 @@ final class AlternativeMenuView: NSView {
         // that row cannot be selected. Scroll it into view before returning it.
         let targetPosition = down ? currentTop + pageHeight * 2 - indicatorHeight : currentTop - pageHeight + indicatorHeight
         if hasAdjacentPage, pageHeight > indicatorHeight,
-           let target = state.rows.firstIndex(where: { $0.verticalRange.contains(targetPosition) }) {
+            let target = state.rows.firstIndex(where: { $0.verticalRange.contains(targetPosition) }) {
             if state.rows[target].rowHeight > pageHeight {
                 // Revealing the whole row would jump to one edge of it.
                 scrollMenuItems(by: pageOffset)
@@ -151,18 +168,24 @@ final class AlternativeMenuView: NSView {
         scrollMenuItems(by: pageOffset)
         let availability = state.scrollAvailability(viewportHeight: viewportHeight)
         let (top, bottom) = visibleRowBounds(for: availability)
-        guard top < bottom else { return nil }
+        guard top < bottom else {
+            return nil
+        }
         let visible = top..<bottom
         let isVisible: (AlternativeMenuRowData) -> Bool = {
             $0.kind == .item && $0.verticalRange.overlaps(visible)
         }
         let target = down ? state.rows.lastIndex(where: isVisible) : state.rows.firstIndex(where: isVisible)
-        if let target { scrollRowToVisible(target) }
+        if let target {
+            scrollRowToVisible(target)
+        }
         return target
     }
 
     func scrollRowToVisible(_ index: Int, alignsTallRowAtBottom: Bool = false) {
-        guard state.rows.indices.contains(index) else { return }
+        guard state.rows.indices.contains(index) else {
+            return
+        }
         let availability = state.scrollAvailability(viewportHeight: viewportHeight)
         let verticalRange = state.rows[index].verticalRange
         let (top, bottom) = visibleRowBounds(for: availability)
@@ -196,13 +219,18 @@ final class AlternativeMenuView: NSView {
         let point = convert(windowPoint, from: nil)
         let yInList = point.y - viewportTopInset
         guard yInList >= 0, yInList < viewportHeight,
-              point.x >= AlternativeMenuStyle.padding, point.x < bounds.width - AlternativeMenuStyle.padding else { return nil }
+            point.x >= AlternativeMenuStyle.padding, point.x < bounds.width - AlternativeMenuStyle.padding
+        else {
+            return nil
+        }
         return yInList
     }
 
     @discardableResult
     private func scrollMenuItems(to offset: CGFloat) -> Bool {
-        guard let scrollView = state.scrollView, let document = scrollView.documentView else { return false }
+        guard let scrollView = state.scrollView, let document = scrollView.documentView else {
+            return false
+        }
         let clip = scrollView.contentView
         let target = max(0, min(offset, state.contentHeight - viewportHeight))
         let distance = target - state.offset
@@ -210,11 +238,15 @@ final class AlternativeMenuView: NSView {
         // scrolling its document. Growth consumes part of this scroll.
         let growth = distance > 0 ? growMenuHeightBy?(distance) ?? 0 : 0
         let delta = max(0, min(target - growth, state.contentHeight - viewportHeight)) - state.offset
-        guard delta != 0 else { return growth > 0 }
+        guard delta != 0 else {
+            return growth > 0
+        }
         var origin = clip.bounds.origin
         origin.y += document.isFlipped ? delta : -delta
         let targetOrigin = clip.constrainBoundsRect(NSRect(origin: origin, size: clip.bounds.size)).origin
-        guard targetOrigin != clip.bounds.origin else { return growth > 0 }
+        guard targetOrigin != clip.bounds.origin else {
+            return growth > 0
+        }
         clip.scroll(to: targetOrigin)
         scrollView.reflectScrolledClipView(clip)
         return true

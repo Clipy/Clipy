@@ -10,7 +10,8 @@ import CoreText
 
 enum AlternativeMenuKeyEquivalent {
     struct Display: Equatable {
-        @MainActor static let empty = Self(modifierSymbols: "", keyName: "", keyGlyphs: "", keyFont: AlternativeMenuStyle.keyEquivalentFont)
+        @MainActor
+        static let empty = Self(modifierSymbols: "", keyName: "", keyGlyphs: "", keyFont: AlternativeMenuStyle.keyEquivalentFont)
 
         let accessibilityText: String
         let attributedText: NSAttributedString
@@ -20,9 +21,10 @@ enum AlternativeMenuKeyEquivalent {
 
         @MainActor
         init(modifierSymbols: String, keyName: String, keyGlyphs: String, keyFont: NSFont) {
-            accessibilityText = modifierSymbols + keyName
+            self.accessibilityText = modifierSymbols + keyName
             // Long localized key names keep their own width instead of shifting the other keys.
-            usesSharedKeyColumn = keyName.count == 1 || keyGlyphs.unicodeScalars.contains { $0.properties.generalCategory == .privateUse }
+            self.usesSharedKeyColumn =
+                keyName.count == 1 || keyGlyphs.unicodeScalars.contains { $0.properties.generalCategory == .privateUse }
 
             let modifierFont = AlternativeMenuStyle.keyEquivalentFont
             let text = NSMutableAttributedString(string: modifierSymbols, attributes: [.font: modifierFont, .kern: 1])
@@ -32,7 +34,7 @@ enum AlternativeMenuKeyEquivalent {
                 let spaceWidth = CTLineGetTypographicBounds(CTLineCreateWithAttributedString(space), nil, nil, nil)
                 text.append(NSAttributedString(string: " ", attributes: [.font: modifierFont, .kern: gap - spaceWidth]))
             }
-            modifierWidth = CTLineGetTypographicBounds(CTLineCreateWithAttributedString(text), nil, nil, nil)
+            self.modifierWidth = CTLineGetTypographicBounds(CTLineCreateWithAttributedString(text), nil, nil, nil)
 
             let paragraph = NSMutableParagraphStyle()
             paragraph.alignment = .left
@@ -43,13 +45,13 @@ enum AlternativeMenuKeyEquivalent {
             let key = NSAttributedString(string: keyText, attributes: [.font: keyFont, .paragraphStyle: paragraph])
             text.append(key)
             text.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: text.length))
-            attributedText = NSAttributedString(attributedString: text)
+            self.attributedText = NSAttributedString(attributedString: text)
 
             let keyLine = CTLineCreateWithAttributedString(key)
             let advance = CTLineGetTypographicBounds(keyLine, nil, nil, nil)
             // Function-key ligatures have zero advance but still occupy visible space.
             let bounds = CTLineGetBoundsWithOptions(keyLine, .useGlyphPathBounds)
-            keyWidth = ceil(max(advance, bounds.isNull ? 0 : bounds.maxX))
+            self.keyWidth = ceil(max(advance, bounds.isNull ? 0 : bounds.maxX))
         }
 
         func width(sharedKeyColumnWidth: CGFloat) -> CGFloat {
@@ -58,30 +60,27 @@ enum AlternativeMenuKeyEquivalent {
     }
 
     @MainActor
-    static func display(for key: String, modifiers: NSEvent.ModifierFlags) -> Display {
-        guard !key.isEmpty else { return .empty }
-        let item = NSMenuItem(title: "", action: nil, keyEquivalent: key)
-        item.keyEquivalentModifierMask = modifiers
-        return display(for: item)
-    }
-
-    @MainActor
     static func display(for item: NSMenuItem) -> Display {
         let key = item.keyEquivalent
         guard !key.isEmpty,
-              let shortcut = object(item, getter: "_keyboardShortcut"),
-              let modifierSymbols = object(shortcut, getter: "localizedModifierMaskDisplayName") as? String,
-              let localizedKeyName = object(shortcut, getter: "localizedKeyEquivalentDisplayName") as? String,
-              let drawing = drawing(for: item) else { return .empty }
-        // Keep readable names for accessibility; drawing uses AppKit's unmodified glyphs.
-        let keyName = drawing.text.unicodeScalars.contains { $0.properties.generalCategory == .privateUse } ? localizedKeyName : drawing.text
-        let keyGlyphs = switch key {
-        case "\u{f700}": "▲"
-        case "\u{f701}": "▼"
-        case "\u{f702}": "◀"
-        case "\u{f703}": "▶"
-        default: drawing.text
+            let shortcut = object(item, getter: "_keyboardShortcut"),
+            let modifierSymbols = object(shortcut, getter: "localizedModifierMaskDisplayName") as? String,
+            let localizedKeyName = object(shortcut, getter: "localizedKeyEquivalentDisplayName") as? String,
+            let drawing = drawing(for: item)
+        else {
+            return .empty
         }
+        // Keep readable names for accessibility; drawing uses AppKit's unmodified glyphs.
+        let keyName =
+            drawing.text.unicodeScalars.contains { $0.properties.generalCategory == .privateUse } ? localizedKeyName : drawing.text
+        let keyGlyphs =
+            switch key {
+            case "\u{f700}": "▲"
+            case "\u{f701}": "▼"
+            case "\u{f702}": "◀"
+            case "\u{f703}": "▶"
+            default: drawing.text
+            }
         return Display(modifierSymbols: modifierSymbols, keyName: keyName, keyGlyphs: keyGlyphs, keyFont: drawing.font)
     }
 
@@ -90,26 +89,37 @@ enum AlternativeMenuKeyEquivalent {
         let selector = NSSelectorFromString("keyEquivalentStringForItem:withFontPtr:")
         let fontSelector = NSSelectorFromString("menuItemCommandKeyFont")
         guard let type = NSClassFromString("NSContextMenuItemView") as? NSObject.Type,
-              type.responds(to: fontSelector),
-              let defaultFont = type.perform(fontSelector)?.takeUnretainedValue() as? NSFont,
-              let method = class_getClassMethod(type, selector) else { return nil }
-        typealias Read = @convention(c) (
-            AnyClass, Selector, NSMenuItem, UnsafeMutablePointer<Unmanaged<NSFont>?>
-        ) -> Unmanaged<NSString>?
+            type.responds(to: fontSelector),
+            let defaultFont = type.perform(fontSelector)?.takeUnretainedValue() as? NSFont,
+            let method = class_getClassMethod(type, selector)
+        else {
+            return nil
+        }
+        typealias Read =
+            @convention(c) (
+                AnyClass, Selector, NSMenuItem, UnsafeMutablePointer<Unmanaged<NSFont>?>
+            ) -> Unmanaged<NSString>?
         let invoke = unsafeBitCast(method_getImplementation(method), to: Read.self)
         // This is an in/out argument: AppKit keeps the default or replaces it for the key.
         var font: Unmanaged<NSFont>? = .passUnretained(defaultFont)
         guard var name = invoke(type, selector, item, &font)?.takeUnretainedValue() as String?,
-              let font = font?.takeUnretainedValue() else { return nil }
+            let font = font?.takeUnretainedValue()
+        else {
+            return nil
+        }
         // The view already isolates shortcut direction; omit AppKit's leading left-to-right mark.
-        if name.unicodeScalars.first?.value == 0x200E { name.unicodeScalars.removeFirst() }
+        if name.unicodeScalars.first?.value == 0x200E {
+            name.unicodeScalars.removeFirst()
+        }
         return (name, font)
     }
 
     @MainActor
     private static func object(_ receiver: NSObject, getter: String) -> NSObject? {
         let selector = NSSelectorFromString(getter)
-        guard receiver.responds(to: selector) else { return nil }
+        guard receiver.responds(to: selector) else {
+            return nil
+        }
         return receiver.perform(selector)?.takeUnretainedValue() as? NSObject
     }
 }

@@ -1,6 +1,7 @@
 import AppKit
 import CoreText
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -61,11 +62,12 @@ struct AlternativeMenuKeyEquivalentTests {
         let scalar = try #require(UnicodeScalar(0xF704 + number - 1))
         let display = AlternativeMenuKeyEquivalent.display(for: String(scalar), modifiers: .command)
         #expect(display.accessibilityText == "⌘F\(number)")
-        let expected = switch number {
-        case 1...9: "\u{f860}F\(number)"
-        case 10...20: "\u{f861}F\(number)"
-        default: String(scalar)
-        }
+        let expected =
+            switch number {
+            case 1...9: "\u{f860}F\(number)"
+            case 10...20: "\u{f861}F\(number)"
+            default: String(scalar)
+            }
         #expect(display.attributedText.string == "⌘ \u{2066}\(expected)\u{2069}")
         let glyphRange = (display.attributedText.string as NSString).range(of: expected)
         try #require(glyphRange.location != NSNotFound)

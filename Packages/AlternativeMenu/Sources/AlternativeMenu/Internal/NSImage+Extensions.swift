@@ -1,5 +1,5 @@
 //
-//  NSImage+Extnsions.swift
+//  NSImage+Extensions.swift
 //  AlternativeMenu
 //
 //  Copyright © 2015-2026 Clipy Project.

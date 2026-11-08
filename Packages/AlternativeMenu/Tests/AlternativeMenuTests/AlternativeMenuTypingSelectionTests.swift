@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -133,10 +134,19 @@ struct AlternativeMenuTypingSelectionTests {
     }
 
     private func key(_ characters: String, at timestamp: TimeInterval = 10, modifiers: NSEvent.ModifierFlags = []) throws -> NSEvent {
-        try #require(NSEvent.keyEvent(
-            with: .keyDown, location: .zero, modifierFlags: modifiers, timestamp: timestamp,
-            windowNumber: 0, context: nil, characters: characters, charactersIgnoringModifiers: characters,
-            isARepeat: false, keyCode: 0
-        ))
+        try #require(
+            NSEvent.keyEvent(
+                with: .keyDown,
+                location: .zero,
+                modifierFlags: modifiers,
+                timestamp: timestamp,
+                windowNumber: 0,
+                context: nil,
+                characters: characters,
+                charactersIgnoringModifiers: characters,
+                isARepeat: false,
+                keyCode: 0
+            )
+        )
     }
 }

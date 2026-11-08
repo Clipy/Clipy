@@ -42,11 +42,12 @@ struct AlternativeMenuRowData {
         }
         self.hasSubmenu = item.submenu != nil
         self.font = kind == .header ? AlternativeMenuStyle.headerFont : AlternativeMenuStyle.menuFont
-        let configuration = if kind == .header {
-            NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
-        } else {
-            NSImage.SymbolConfiguration(scale: .small)
-        }
+        let configuration =
+            if kind == .header {
+                NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
+            } else {
+                NSImage.SymbolConfiguration(scale: .small)
+            }
         self.image = item.image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
         self.isSymbolImage = image?.isSymbolImage ?? false
         self.toolTip = item.toolTip
@@ -82,18 +83,19 @@ struct AlternativeMenuRowData {
 
         let size = image?.size ?? .zero
         // Include baseline offsets in addition to the font and image bounds.
-        let rowHeight: CGFloat = if kind == .separator {
-            AlternativeMenuStyle.separatorRowHeight
-        } else {
-            ceil(
-                max(
-                    AlternativeMenuStyle.minimumRowHeight,
-                    size.height + AlternativeMenuStyle.rowContentVerticalPadding,
-                    lineHeight.rounded() + AlternativeMenuStyle.rowFontHeightAdjustment,
-                    titleSize.height + AlternativeMenuStyle.rowContentVerticalPadding
+        let rowHeight: CGFloat =
+            if kind == .separator {
+                AlternativeMenuStyle.separatorRowHeight
+            } else {
+                ceil(
+                    max(
+                        AlternativeMenuStyle.minimumRowHeight,
+                        size.height + AlternativeMenuStyle.rowContentVerticalPadding,
+                        lineHeight.rounded() + AlternativeMenuStyle.rowFontHeightAdjustment,
+                        titleSize.height + AlternativeMenuStyle.rowContentVerticalPadding
+                    )
                 )
-            )
-        }
+            }
         self.verticalRange = verticalOffset..<(verticalOffset + rowHeight)
         self.titleWidthWithInsets = ceil(titleSize.width) + AlternativeMenuStyle.rowTextInset * 2
     }

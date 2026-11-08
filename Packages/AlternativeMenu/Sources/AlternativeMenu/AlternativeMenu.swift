@@ -49,7 +49,9 @@ public struct AlternativeMenuItem {
         }
     }
     public var submenu: AlternativeMenu? {
-        if case .submenu(let menu, _) = kind { return menu }
+        if case .submenu(let menu, _) = kind {
+            return menu
+        }
         return nil
     }
 
@@ -64,12 +66,13 @@ public struct AlternativeMenuItem {
         toolTip: String? = nil,
         kind: Kind
     ) {
-        self.titleContent = switch title {
-        case .plain:
-            title
-        case .attributed(let value):
-            .attributed(NSAttributedString(attributedString: value))
-        }
+        self.titleContent =
+            switch title {
+            case .plain:
+                title
+            case .attributed(let value):
+                .attributed(NSAttributedString(attributedString: value))
+            }
         self.keyEquivalent = keyEquivalent
         self.keyEquivalentModifierMask = keyEquivalentModifierMask
         self.image = image

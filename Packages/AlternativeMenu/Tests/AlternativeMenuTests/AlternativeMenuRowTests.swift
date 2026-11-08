@@ -2,13 +2,14 @@ import AppKit
 import CoreText
 import SwiftUI
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
 struct AlternativeMenuRowTests {
     @Test(arguments: [LayoutDirection.leftToRight, .rightToLeft])
     func alignsRowKeyOriginsAndBaselinesAcrossModifierCountsAndGlyphWidths(_ direction: LayoutDirection) throws {
-        let state = rows([
+        let state = makeState([
             .action("Title", keyEquivalent: "i", keyEquivalentModifierMask: []) { _ in },
             .action("Title", keyEquivalent: "a") { _ in },
             .action("Title", keyEquivalent: "w", keyEquivalentModifierMask: [.control, .option, .shift, .command]) { _ in },
@@ -17,10 +18,17 @@ struct AlternativeMenuRowTests {
             .action("Title", keyEquivalent: "\u{f717}", keyEquivalentModifierMask: [.shift, .command]) { _ in }
         ])
         let hosts = state.rows.map { row in
-            let host = NSHostingView(rootView: AnyView(AlternativeMenuRow(
-                row: row, isSelected: false, iconWidth: 0,
-                trailingColumnWidth: state.trailingColumnWidth, keyColumnWidth: state.keyColumnWidth
-            ).environment(\.layoutDirection, direction)))
+            let host = NSHostingView(
+                rootView: AnyView(
+                    AlternativeMenuRow(
+                        row: row,
+                        isSelected: false,
+                        iconWidth: 0,
+                        trailingColumnWidth: state.trailingColumnWidth,
+                        keyColumnWidth: state.keyColumnWidth
+                    ).environment(\.layoutDirection, direction)
+                )
+            )
             host.frame = NSRect(x: 0, y: 0, width: 240, height: 24)
             host.layoutSubtreeIfNeeded()
             return host
@@ -28,10 +36,13 @@ struct AlternativeMenuRowTests {
         let origins = try hosts.map { host in
             let field = try onlyTextField(in: host)
             let baseline = field.firstBaselineOffsetFromTop
-            return field.convert(NSPoint(
-                x: try keyDrawingOffset(in: field),
-                y: field.isFlipped ? baseline : field.bounds.height - baseline
-            ), to: host)
+            return field.convert(
+                NSPoint(
+                    x: try keyDrawingOffset(in: field),
+                    y: field.isFlipped ? baseline : field.bounds.height - baseline
+                ),
+                to: host
+            )
         }
         let reference = try #require(origins.first)
         let bounds = try #require(hosts.first).bounds
@@ -43,19 +54,23 @@ struct AlternativeMenuRowTests {
         }
     }
 
-    private func rows(_ items: [AlternativeMenuItem]) -> AlternativeMenuViewState {
+    private func makeState(_ items: [AlternativeMenuItem]) -> AlternativeMenuViewState {
         let state = AlternativeMenuViewState()
         let matcher = AlternativeMenuKeyEquivalentMatcher()
         matcher.updateItems(items)
-        state.setRows(items.enumerated().map { index, item in
-            AlternativeMenuRowData(item: item, verticalOffset: 0, keyEquivalent: matcher.display(at: [index]))
-        })
+        state.setRows(
+            items.enumerated().map { index, item in
+                AlternativeMenuRowData(item: item, verticalOffset: 0, keyEquivalent: matcher.display(at: [index]))
+            }
+        )
         return state
     }
 
     private func onlyTextField(in view: NSView) throws -> NSTextField {
         func descendants(_ view: NSView) -> [NSTextField] {
-            if let field = view as? NSTextField { return [field] }
+            if let field = view as? NSTextField {
+                return [field]
+            }
             return view.subviews.flatMap(descendants)
         }
         let fields = descendants(view)

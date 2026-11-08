@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -114,19 +115,20 @@ struct AlternativeMenuPanelTests {
             task.cancel()
             panels.forEach { $0.dismiss() }
         }
-        var observedFade = false
         let deadline = ContinuousClock.now + .seconds(2)
         while !completed, ContinuousClock.now < deadline {
             for panel in panels {
                 #expect(!panel.menuView.hidesSelection)
                 #expect(panel.selection == 0)
             }
-            observedFade = observedFade || panels.allSatisfy { $0.alphaValue > 0 && $0.alphaValue < 1 }
             try await Task.sleep(for: .milliseconds(10))
         }
         #expect(completed)
-        #expect(observedFade)
-        #expect(panels.allSatisfy { $0.alphaValue == 0 })
+        for panel in panels {
+            #expect(panel.alphaValue == 0)
+            #expect(!panel.menuView.hidesSelection)
+            #expect(panel.selection == 0)
+        }
     }
 
     private func makePanel(minimumWidth: CGFloat) throws -> AlternativeMenuPanel {

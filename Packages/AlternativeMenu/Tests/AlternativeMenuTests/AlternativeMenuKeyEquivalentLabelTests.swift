@@ -2,6 +2,7 @@ import AppKit
 import CoreText
 import SwiftUI
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -71,13 +72,17 @@ struct AlternativeMenuKeyEquivalentLabelTests {
     }
 
     private func content(_ display: AlternativeMenuKeyEquivalent.Display, keyColumnWidth: CGFloat, color: NSColor) -> AnyView {
-        AnyView(AlternativeMenuKeyEquivalentLabel(display: display, keyColumnWidth: keyColumnWidth, color: color)
-            .frame(width: 240, height: 24, alignment: .trailing))
+        AnyView(
+            AlternativeMenuKeyEquivalentLabel(display: display, keyColumnWidth: keyColumnWidth, color: color)
+                .frame(width: 240, height: 24, alignment: .trailing)
+        )
     }
 
     private func onlyTextField(in view: NSView) throws -> NSTextField {
         func descendants(_ view: NSView) -> [NSTextField] {
-            if let field = view as? NSTextField { return [field] }
+            if let field = view as? NSTextField {
+                return [field]
+            }
             return view.subviews.flatMap(descendants)
         }
         let fields = descendants(view)

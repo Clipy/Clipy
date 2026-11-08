@@ -25,7 +25,7 @@ struct AlternativeMenuScrollAvailability: Equatable {
     }
 
     init(offset: CGFloat, contentHeight: CGFloat, viewportHeight: CGFloat) {
-        canScrollUp = offset > Self.scrollThreshold
-        canScrollDown = offset + viewportHeight < contentHeight - Self.scrollThreshold
+        self.canScrollUp = offset > Self.scrollThreshold
+        self.canScrollDown = offset + viewportHeight < contentHeight - Self.scrollThreshold
     }
 }

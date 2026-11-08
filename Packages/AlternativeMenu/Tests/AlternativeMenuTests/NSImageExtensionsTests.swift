@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -14,11 +15,20 @@ struct NSImageExtensionsTests {
 
     @Test(arguments: [false, true])
     func doesNotIdentifyBitmapsAsSymbols(isTemplate: Bool) throws {
-        let representation = try #require(NSBitmapImageRep(
-            bitmapDataPlanes: nil, pixelsWide: 16, pixelsHigh: 16, bitsPerSample: 8,
-            samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
-            bytesPerRow: 0, bitsPerPixel: 0
-        ))
+        let representation = try #require(
+            NSBitmapImageRep(
+                bitmapDataPlanes: nil,
+                pixelsWide: 16,
+                pixelsHigh: 16,
+                bitsPerSample: 8,
+                samplesPerPixel: 4,
+                hasAlpha: true,
+                isPlanar: false,
+                colorSpaceName: .deviceRGB,
+                bytesPerRow: 0,
+                bitsPerPixel: 0
+            )
+        )
         let image = NSImage(size: representation.size)
         image.addRepresentation(representation)
         image.isTemplate = isTemplate

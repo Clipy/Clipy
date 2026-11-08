@@ -1,5 +1,6 @@
 import AppKit
 import Testing
+
 @testable import AlternativeMenu
 
 @MainActor
@@ -40,18 +41,24 @@ struct AlternativeMenuRowDataTests {
 
     @Test(arguments: [false, true])
     func preservesTitleAttributesAndOnlyLightensExplicitDisabledForeground(isEnabled: Bool) throws {
-        let source = NSMutableAttributedString(string: "Styled plain", attributes: [
-            .backgroundColor: NSColor.yellow, .kern: 2,
-            .underlineStyle: NSUnderlineStyle.single.rawValue,
-            .strikethroughStyle: NSUnderlineStyle.single.rawValue, .baselineOffset: 3
-        ])
+        let source = NSMutableAttributedString(
+            string: "Styled plain",
+            attributes: [
+                .backgroundColor: NSColor.yellow, .kern: 2,
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+                .strikethroughStyle: NSUnderlineStyle.single.rawValue, .baselineOffset: 3
+            ]
+        )
         let styledRange = NSRange(location: 0, length: 6)
         let color = NSColor(calibratedRed: 0.2, green: 0.4, blue: 0.6, alpha: 1)
         source.addAttributes([.font: NSFont.systemFont(ofSize: 24), .foregroundColor: color], range: styledRange)
         let row = AlternativeMenuRowData(item: .action(attributedTitle: source, isEnabled: isEnabled) { _ in }, verticalOffset: 0)
         let expected = NSMutableAttributedString(attributedString: source)
-        expected.addAttribute(.font, value: AlternativeMenuStyle.menuFont,
-                              range: NSRange(location: styledRange.upperBound, length: source.length - styledRange.upperBound))
+        expected.addAttribute(
+            .font,
+            value: AlternativeMenuStyle.menuFont,
+            range: NSRange(location: styledRange.upperBound, length: source.length - styledRange.upperBound)
+        )
         if !isEnabled {
             let disabledColor = try #require(color.blended(withFraction: 0.5, of: .white))
             expected.addAttribute(.foregroundColor, value: disabledColor, range: styledRange)
@@ -104,8 +111,10 @@ struct AlternativeMenuRowDataTests {
         let secondLine = "Hidden second line"
         let text = firstLine + lineBreak + secondLine
         let styled = NSMutableAttributedString(string: text)
-        styled.addAttributes([.font: NSFont.systemFont(ofSize: 48), .baselineOffset: 50],
-                             range: (text as NSString).range(of: secondLine))
+        styled.addAttributes(
+            [.font: NSFont.systemFont(ofSize: 48), .baselineOffset: 50],
+            range: (text as NSString).range(of: secondLine)
+        )
         let singleLine = AlternativeMenuRowData(item: .action(firstLine) { _ in }, verticalOffset: 0)
         let rows = [
             AlternativeMenuRowData(item: .action(text) { _ in }, verticalOffset: 0),

@@ -47,12 +47,16 @@ final class AlternativeMenuKeyEquivalentMatcher: NSObject {
     }
 
     func display(at path: [Int]) -> AlternativeMenuKeyEquivalent.Display? {
-        guard let item = itemsByPath[path] else { return nil }
+        guard let item = itemsByPath[path] else {
+            return nil
+        }
         return AlternativeMenuKeyEquivalent.display(for: item)
     }
 
     func match(_ event: NSEvent) -> Match {
-        guard event.type == .keyDown, let menu else { return .init(handled: false, item: nil, path: nil) }
+        guard event.type == .keyDown, let menu else {
+            return .init(handled: false, item: nil, path: nil)
+        }
         matchedItem = nil
         defer { matchedItem = nil }
         let handled = menu.performKeyEquivalent(with: event)
@@ -66,7 +70,9 @@ final class AlternativeMenuKeyEquivalentMatcher: NSObject {
                 append(submenu.items, under: parentPath + [index], to: menu, ancestorsAreEnabled: isEnabled)
                 continue
             }
-            guard !item.keyEquivalent.isEmpty else { continue }
+            guard !item.keyEquivalent.isEmpty else {
+                continue
+            }
             // The title is unused: this menu is never shown or registered in the menu bar.
             let nativeItem = NSMenuItem(title: "", action: #selector(recordMatch(_:)), keyEquivalent: item.keyEquivalent)
             nativeItem.keyEquivalentModifierMask = item.keyEquivalentModifierMask
@@ -80,9 +86,13 @@ final class AlternativeMenuKeyEquivalentMatcher: NSObject {
         }
     }
 
-    @objc private func recordMatch(_ sender: NSMenuItem) {
+    @objc
+    private func recordMatch(_ sender: NSMenuItem) {
         guard sender.menu === menu, let item = sender.representedObject as? AlternativeMenuItem,
-              let path = itemsByPath.first(where: { $0.value === sender })?.key else { return }
+            let path = itemsByPath.first(where: { $0.value === sender })?.key
+        else {
+            return
+        }
         matchedItem = (item, path)
     }
 }
