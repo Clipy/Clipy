@@ -34,7 +34,7 @@ struct AlternativeMenuRoot: View {
     }
 
     private func menuItems(viewportHeight: CGFloat) -> some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             // Keep exact positions for every row, including large images.
             // Lazy height estimates can select a different row than the one hit.
             VStack(spacing: 0) {
@@ -63,8 +63,6 @@ struct AlternativeMenuRoot: View {
                 .allowsHitTesting(false)
             }
             .introspectScrollView { scrollView in
-                scrollView?.hasVerticalScroller = false
-                scrollView?.hasHorizontalScroller = false
                 scrollView?.verticalScrollElasticity = .none
                 scrollView?.setAccessibilityElement(false)
                 state.scrollView = scrollView
