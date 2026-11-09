@@ -26,7 +26,7 @@ final class AlternativeMenuPanel: NSPanel {
     override var canBecomeMain: Bool { false }
 
     override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
-        // Placement already fits the physical screen; let the panel cover the menu bar area.
+        // Placement already reserves the bottom Dock; let the panel cover the menu bar area.
         frameRect
     }
 
@@ -90,8 +90,7 @@ final class AlternativeMenuPanel: NSPanel {
         guard let screen = parent.screen else {
             return
         }
-        let inset = AlternativeMenuStyle.screenEdgeInset
-        let bounds = screen.frame.insetBy(dx: inset, dy: inset)
+        let bounds = menuBounds(on: screen)
         let size = NSSize(
             width: fittedWidth(menuView.preferredWidth, screenWidth: screen.frame.width, availableWidth: bounds.width),
             height: ceil(menuView.preferredHeight)
@@ -348,7 +347,11 @@ private extension AlternativeMenuPanel {
     }
 
     func menuBounds(on screen: NSScreen) -> NSRect {
+        var bounds = screen.frame
+        // NSMenu avoids the bottom Dock, but can overlap a side Dock and the menu bar.
+        bounds.origin.y = screen.visibleFrame.minY
+        bounds.size.height = screen.frame.maxY - bounds.minY
         let inset = AlternativeMenuStyle.screenEdgeInset
-        return screen.frame.insetBy(dx: inset, dy: inset)
+        return bounds.insetBy(dx: inset, dy: inset)
     }
 }

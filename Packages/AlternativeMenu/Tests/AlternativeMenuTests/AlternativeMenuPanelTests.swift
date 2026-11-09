@@ -20,13 +20,15 @@ struct AlternativeMenuPanelTests {
         defer { panel.dismiss() }
         let screen = try #require(panel.screen)
         let inset = AlternativeMenuStyle.screenEdgeInset
-        let availableFrame = screen.frame.insetBy(dx: inset, dy: inset)
-        let limit = min(screen.frame.width * 0.6, availableFrame.width)
+        let limit = min(screen.frame.width * 0.6, screen.frame.width - inset * 2)
 
         panel.updateItems([.action("Item") { _ in }], highlightsFirstItem: false)
 
         #expect((floor(limit)...ceil(limit)).contains(panel.frame.width))
-        #expect(availableFrame.contains(panel.frame))
+        #expect(panel.frame.minX >= screen.frame.minX + inset)
+        #expect(panel.frame.maxX <= screen.frame.maxX - inset)
+        #expect(panel.frame.minY >= screen.visibleFrame.minY + inset)
+        #expect(panel.frame.maxY <= screen.frame.maxY - inset)
     }
 
     @Test
@@ -42,7 +44,7 @@ struct AlternativeMenuPanelTests {
     }
 
     @Test(arguments: [false, true])
-    func growsToPhysicalScreenEdgesAndKeepsItsFrameAfterUpdating(hasHeader: Bool) throws {
+    func growsIntoTheMenuBarWithoutEnteringTheDockAndKeepsItsFrameAfterUpdating(hasHeader: Bool) throws {
         _ = NSApplication.shared
         let screen = try #require(NSScreen.main)
         let header = hasHeader ? AlternativeMenuHeader(height: 30, minimumWidth: 240) { EmptyView() } : nil
@@ -57,7 +59,7 @@ struct AlternativeMenuPanelTests {
         let growth = grow(screen.frame.height)
         let expandedFrame = panel.frame
         let inset = AlternativeMenuStyle.screenEdgeInset
-        #expect(expandedFrame.minY == screen.frame.minY + inset)
+        #expect(expandedFrame.minY == screen.visibleFrame.minY + inset)
         #expect(expandedFrame.maxY == screen.frame.maxY - inset)
         #expect(growth == expandedFrame.height - initialFrame.height)
         #expect(grow(screen.frame.height) == 0)

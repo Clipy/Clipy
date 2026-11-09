@@ -12,7 +12,7 @@ import CoreText
 /// The current values are based on the native menu style in macOS 26.
 enum AlternativeMenuStyle {
     static let padding: CGFloat = 5
-    // Minimum inset between the menu window and physical screen edges.
+    // Minimum inset from screen edges and the area reserved for a bottom Dock.
     static let screenEdgeInset: CGFloat = 6
     static let cornerRadius: CGFloat = 12
     // Minimum item-row height measured in NSMenu on macOS 26.
