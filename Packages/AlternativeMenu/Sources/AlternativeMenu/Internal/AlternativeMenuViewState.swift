@@ -20,7 +20,7 @@ final class AlternativeMenuViewState {
     private(set) var contentWidth: CGFloat = 0
     var selection: Int?
     var hidesSelection = false
-    var scrollAvailability = AlternativeMenuScrollAvailability(offset: 0, contentHeight: 0, viewportHeight: 0)
+    var scrollAvailability = AlternativeMenuScrollAvailability(offset: 0, contentHeight: 0, viewportHeight: 0, topPadding: 0)
     @ObservationIgnored
     weak var scrollView: NSScrollView?
 
@@ -89,7 +89,7 @@ final class AlternativeMenuViewState {
         self.contentWidth = contentWidth
     }
 
-    func scrollAvailability(viewportHeight: CGFloat) -> AlternativeMenuScrollAvailability {
-        AlternativeMenuScrollAvailability(offset: offset, contentHeight: contentHeight, viewportHeight: viewportHeight)
+    func scrollAvailability(viewportHeight: CGFloat, topPadding: CGFloat) -> AlternativeMenuScrollAvailability {
+        AlternativeMenuScrollAvailability(offset: offset, contentHeight: contentHeight, viewportHeight: viewportHeight, topPadding: topPadding)
     }
 }

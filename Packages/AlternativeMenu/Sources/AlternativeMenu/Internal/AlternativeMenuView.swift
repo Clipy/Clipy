@@ -111,7 +111,7 @@ final class AlternativeMenuView: NSView {
             return nil
         }
         let verticalRange = state.rows[index].verticalRange
-        let availability = state.scrollAvailability(viewportHeight: viewportHeight)
+        let availability = scrollAvailability
         let top = max(verticalRange.lowerBound - state.offset, availability.topInset)
         let bottom = min(verticalRange.upperBound - state.offset, viewportHeight - availability.bottomInset)
         guard bottom > top else {
@@ -127,11 +127,15 @@ final class AlternativeMenuView: NSView {
     }
 
     func edgeScrollDirection(at windowPoint: NSPoint) -> CGFloat {
-        guard let viewportPosition = viewportPosition(at: windowPoint) else {
+        let point = convert(windowPoint, from: nil)
+        guard point.y >= (hasHeader ? viewportTopInset : 0), point.y < bounds.height,
+            point.x >= AlternativeMenuStyle.padding, point.x < bounds.width - AlternativeMenuStyle.padding
+        else {
             return 0
         }
-        let availability = state.scrollAvailability(viewportHeight: viewportHeight)
-        if viewportPosition < availability.topInset {
+        let viewportPosition = point.y - viewportTopInset
+        let availability = scrollAvailability
+        if availability.canScrollUp, viewportPosition < availability.topInset {
             return -1
         }
         if viewportPosition >= viewportHeight - availability.bottomInset {
@@ -146,8 +150,8 @@ final class AlternativeMenuView: NSView {
     }
 
     func scrollPage(down: Bool) -> Int? {
-        let indicatorHeight = AlternativeMenuStyle.scrollIndicatorHeight
-        let currentAvailability = state.scrollAvailability(viewportHeight: viewportHeight)
+        let indicatorHeight = AlternativeMenuStyle.minimumRowHeight
+        let currentAvailability = scrollAvailability
         let pageHeight = max(0, viewportHeight - currentAvailability.topInset - currentAvailability.bottomInset)
         let pageOffset = down ? pageHeight : -pageHeight
         let currentTop = state.offset + currentAvailability.topInset
@@ -166,7 +170,7 @@ final class AlternativeMenuView: NSView {
             return target
         }
         scrollMenuItems(by: pageOffset)
-        let availability = state.scrollAvailability(viewportHeight: viewportHeight)
+        let availability = scrollAvailability
         let (top, bottom) = visibleRowBounds(for: availability)
         guard top < bottom else {
             return nil
@@ -186,7 +190,7 @@ final class AlternativeMenuView: NSView {
         guard state.rows.indices.contains(index) else {
             return
         }
-        let availability = state.scrollAvailability(viewportHeight: viewportHeight)
+        let availability = scrollAvailability
         let verticalRange = state.rows[index].verticalRange
         let (top, bottom) = visibleRowBounds(for: availability)
         if state.rows[index].rowHeight > bottom - top {
@@ -204,6 +208,10 @@ final class AlternativeMenuView: NSView {
 
     func resetScrollPosition() {
         scrollMenuItems(to: 0)
+    }
+
+    private var scrollAvailability: AlternativeMenuScrollAvailability {
+        state.scrollAvailability(viewportHeight: viewportHeight, topPadding: hasHeader ? 0 : viewportTopInset)
     }
 
     private var viewportHeight: CGFloat {

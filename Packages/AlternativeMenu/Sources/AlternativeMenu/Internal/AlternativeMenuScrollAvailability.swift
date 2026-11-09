@@ -16,16 +16,15 @@ struct AlternativeMenuScrollAvailability: Equatable {
 
     let canScrollUp: Bool
     let canScrollDown: Bool
-
-    var topInset: CGFloat {
-        canScrollUp ? AlternativeMenuStyle.scrollIndicatorHeight : 0
-    }
+    let topInset: CGFloat
     var bottomInset: CGFloat {
-        canScrollDown ? AlternativeMenuStyle.scrollIndicatorHeight : 0
+        canScrollDown ? AlternativeMenuStyle.minimumRowHeight : 0
     }
 
-    init(offset: CGFloat, contentHeight: CGFloat, viewportHeight: CGFloat) {
+    init(offset: CGFloat, contentHeight: CGFloat, viewportHeight: CGFloat, topPadding: CGFloat) {
         self.canScrollUp = offset > Self.scrollThreshold
         self.canScrollDown = offset + viewportHeight < contentHeight - Self.scrollThreshold
+        // The padding above the viewport already occupies part of the scroll indicator's area.
+        self.topInset = canScrollUp ? max(0, AlternativeMenuStyle.minimumRowHeight - topPadding) : 0
     }
 }

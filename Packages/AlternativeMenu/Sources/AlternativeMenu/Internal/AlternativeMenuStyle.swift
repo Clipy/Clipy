@@ -15,8 +15,13 @@ enum AlternativeMenuStyle {
     // Minimum inset from screen edges and the area reserved for a bottom Dock.
     static let screenEdgeInset: CGFloat = 6
     static let cornerRadius: CGFloat = 12
-    // Minimum item-row height measured in NSMenu on macOS 26.
-    static let minimumRowHeight: CGFloat = 24
+    // Measured minimum item-row height in NSMenu, also used for the scroll arrow area.
+    static let minimumRowHeight: CGFloat = {
+        if #available(macOS 26, *) {
+            return 24
+        }
+        return 22
+    }()
     // Full separator-row height measured in NSMenu, including space around the line.
     static let separatorRowHeight: CGFloat = 11
     // Total vertical allowance for image and measured title bounds, fitted to native row heights.
@@ -25,8 +30,6 @@ enum AlternativeMenuStyle {
     // Added to rounded font line metrics to approximate native row heights.
     // This empirical correction can still differ by about 1 pt for some fonts or mixed-font titles.
     static let rowFontHeightAdjustment: CGFloat = 7
-    // The native scroll target occupies one normal menu row.
-    static let scrollIndicatorHeight: CGFloat = 24
     static let rowTextInset: CGFloat = 11
     static let iconSpacing: CGFloat = 6
     // Native menus share trailing space between submenu arrows and key equivalents.

@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 import Testing
 
 @testable import AlternativeMenu
@@ -50,10 +51,39 @@ struct AlternativeMenuViewTests {
         let items: [AlternativeMenuItem] = (0..<80).map { index in .action("Row \(index)") { _ in } }
         let fixture = try ScrollFixture(items: items)
 
-        #expect(fixture.view.scrollPage(down: true) == 38)
-        #expect(fixture.view.scrollPage(down: true) == 56)
-        #expect(fixture.view.scrollPage(down: false) == 20)
-        #expect(fixture.view.scrollPage(down: false) == 2)
+        let expectedTargets: [Int]
+        if #available(macOS 26, *) {
+            expectedTargets = [38, 57, 20, 1]
+        } else {
+            expectedTargets = [42, 62, 22, 2]
+        }
+        for (down, expected) in zip([true, true, false, false], expectedTargets) {
+            #expect(fixture.view.scrollPage(down: down) == expected)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func keepsScrollHitTestingAtTheVisibleRowBoundary(hasHeader: Bool) throws {
+        let header = hasHeader ? AlternativeMenuHeader(height: 40, minimumWidth: 240) { EmptyView() } : nil
+        let items: [AlternativeMenuItem] = (0..<80).map { index in .action("Row \(index)") { _ in } }
+        let fixture = try ScrollFixture(items: items, header: header)
+        #expect(fixture.view.scrollMenuItems(by: 100))
+
+        let top = header?.height ?? 0
+        let boundary = top + AlternativeMenuStyle.minimumRowHeight
+        for y in [top + 1, boundary - 0.5] {
+            let point = fixture.view.convert(NSPoint(x: 150, y: y), to: nil)
+            #expect(fixture.view.edgeScrollDirection(at: point) == -1)
+            #expect(fixture.view.rowIndex(at: point) == nil)
+        }
+        let visiblePoint = fixture.view.convert(NSPoint(x: 150, y: boundary), to: nil)
+        #expect(fixture.view.edgeScrollDirection(at: visiblePoint) == 0)
+        #expect(fixture.view.rowIndex(at: visiblePoint) != nil)
+        if hasHeader {
+            let headerPoint = fixture.view.convert(NSPoint(x: 150, y: top - 1), to: nil)
+            #expect(fixture.view.edgeScrollDirection(at: headerPoint) == 0)
+            #expect(fixture.view.rowIndex(at: headerPoint) == nil)
+        }
     }
 
     private var tallItem: AlternativeMenuItem {
@@ -68,9 +98,9 @@ struct AlternativeMenuViewTests {
         var offset: CGFloat { scroll.documentVisibleRect.minY }
         var maximumOffset: CGFloat { view.preferredHeight - view.bounds.height }
 
-        init(items: [AlternativeMenuItem]) throws {
+        init(items: [AlternativeMenuItem], header: AlternativeMenuHeader? = nil) throws {
             let viewport = NSRect(x: 0, y: 0, width: 300, height: 500)
-            self.view = AlternativeMenuView(header: nil)
+            self.view = AlternativeMenuView(header: header)
             view.frame = NSRect(origin: .zero, size: NSSize(width: viewport.width, height: viewport.height + view.viewportTopInset))
             view.setRows(items, selectedIndex: nil)
 

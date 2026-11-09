@@ -68,11 +68,12 @@ struct AlternativeMenuRoot: View {
                 scrollView?.setAccessibilityElement(false)
                 state.scrollView = scrollView
             }
-            .onGeometryChange(for: AlternativeMenuScrollAvailability.self) { [contentHeight = state.contentHeight] geometry in
+            .onGeometryChange(for: AlternativeMenuScrollAvailability.self) { [contentHeight = state.contentHeight, topPadding = header == nil ? AlternativeMenuStyle.padding : 0] geometry in
                 AlternativeMenuScrollAvailability(
                     offset: max(0, -geometry.frame(in: .named(menuItemsCoordinateSpace)).minY),
                     contentHeight: contentHeight,
-                    viewportHeight: viewportHeight
+                    viewportHeight: viewportHeight,
+                    topPadding: topPadding
                 )
             } action: {
                 state.scrollAvailability = $0
@@ -87,6 +88,8 @@ struct AlternativeMenuRoot: View {
         .overlay(alignment: .top) {
             if state.scrollAvailability.canScrollUp {
                 scrollIndicator("chevron.up")
+                    // The menu's top padding belongs to its rows, not the scroll arrow.
+                    .offset(y: header == nil ? -AlternativeMenuStyle.padding : 0)
             }
         }
         .overlay(alignment: .bottom) {
@@ -103,7 +106,7 @@ struct AlternativeMenuRoot: View {
             .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(.secondary)
             .imageScale(.small)
-            .frame(height: AlternativeMenuStyle.scrollIndicatorHeight)
+            .frame(height: AlternativeMenuStyle.minimumRowHeight)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }
