@@ -85,17 +85,17 @@ struct AlternativeMenuRowData {
         // Include baseline offsets in addition to the font and image bounds.
         let rowHeight: CGFloat =
             if kind == .separator {
-                AlternativeMenuStyle.separatorRowHeight
+                AlternativeMenuStyle.current.separatorRowHeight
             } else {
                 ceil(
                     max(
-                        AlternativeMenuStyle.minimumRowHeight,
-                        max(size.height, titleSize.height, maximumFontLineHeight) + AlternativeMenuStyle.rowContentVerticalPadding
+                        AlternativeMenuStyle.current.minimumRowHeight,
+                        max(size.height, titleSize.height, maximumFontLineHeight) + AlternativeMenuStyle.current.rowContentVerticalPadding
                     )
                 )
             }
         self.verticalRange = verticalOffset..<(verticalOffset + rowHeight)
-        self.titleWidthWithInsets = ceil(titleSize.width) + AlternativeMenuStyle.rowTextInset * 2
+        self.titleWidthWithInsets = ceil(titleSize.width) + AlternativeMenuStyle.current.rowTextInset * 2
     }
 
     func iconWidth(symbolColumnWidth: CGFloat) -> CGFloat {
@@ -107,14 +107,14 @@ struct AlternativeMenuRowData {
 
     func trailingWidth(keyColumnWidth: CGFloat) -> CGFloat {
         if hasSubmenu {
-            return AlternativeMenuStyle.submenuColumnWidth
+            return AlternativeMenuStyle.current.submenuColumnWidth
         }
         guard keyEquivalent.attributedText.length > 0 else {
             return 0
         }
         return max(
-            AlternativeMenuStyle.minimumKeyEquivalentColumnWidth,
-            ceil(keyEquivalent.width(sharedKeyColumnWidth: keyColumnWidth)) + AlternativeMenuStyle.keyEquivalentGap
+            AlternativeMenuStyle.current.minimumKeyEquivalentColumnWidth,
+            ceil(keyEquivalent.width(sharedKeyColumnWidth: keyColumnWidth)) + AlternativeMenuStyle.current.keyEquivalentGap
         )
     }
 

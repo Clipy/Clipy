@@ -16,7 +16,7 @@ enum AlternativeMenuSubmenuGeometry {
         prefersLeft: Bool
     ) -> NSRect {
         // The menu edges overlap by the same amount as the top row inset.
-        let inset = AlternativeMenuStyle.padding
+        let inset = AlternativeMenuStyle.current.padding
         let leftEdge = min(parentFrame.minX + inset, bounds.maxX)
         let rightEdge = max(parentFrame.maxX - inset, bounds.minX)
         let leftSpace = max(0, leftEdge - bounds.minX)

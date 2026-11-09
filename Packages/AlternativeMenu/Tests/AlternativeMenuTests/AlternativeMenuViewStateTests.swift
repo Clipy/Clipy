@@ -104,7 +104,7 @@ struct AlternativeMenuViewStateTests {
         let width = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
 
         #expect(state.iconWidths == [0, 0, width, width, width, 0, 0, 56, 0, width, width])
-        #expect(state.contentWidth == state.rows[0].titleWidthWithInsets + width + AlternativeMenuStyle.iconSpacing)
+        #expect(state.contentWidth == state.rows[0].titleWidthWithInsets + width + AlternativeMenuStyle.current.iconSpacing)
     }
 
     @Test
@@ -132,7 +132,7 @@ struct AlternativeMenuViewStateTests {
         let htmlItem = AlternativeMenuItem.action("Title", image: html) { _ in }
         let minimumWidth = try #require(html.withSymbolConfiguration(.init(scale: .small))).size.width
         let state = makeState([textItem, htmlItem], minimumSymbolColumnWidth: minimumWidth)
-        let contentWidth = state.rows[0].titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.iconSpacing
+        let contentWidth = state.rows[0].titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.current.iconSpacing
 
         #expect(state.iconWidths == [minimumWidth, minimumWidth])
         #expect(state.contentWidth == contentWidth)
@@ -200,7 +200,7 @@ struct AlternativeMenuViewStateTests {
         #expect(state.keyColumnWidth == 0)
         #expect(state.trailingColumnWidth == 0)
         #expect(state.iconWidths == [0])
-        #expect(state.contentWidth == plain.titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.iconSpacing)
+        #expect(state.contentWidth == plain.titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.current.iconSpacing)
         #expect(state.contentWidth < decoratedWidth)
 
         state.setRows([decorated])
@@ -226,7 +226,7 @@ struct AlternativeMenuViewStateTests {
         let narrowWidth = makeStateWithKeyEquivalents([longTitle, narrowShortcut]).contentWidth
         let wideWidth = makeStateWithKeyEquivalents([longTitle, wideShortcut]).contentWidth
 
-        #expect(narrowWidth == baseWidth + AlternativeMenuStyle.minimumKeyEquivalentColumnWidth)
+        #expect(narrowWidth == baseWidth + AlternativeMenuStyle.current.minimumKeyEquivalentColumnWidth)
         #expect(wideWidth > narrowWidth)
         let combined = makeStateWithKeyEquivalents([longTitle, narrowShortcut, wideShortcut, submenu])
         #expect(combined.contentWidth == wideWidth)

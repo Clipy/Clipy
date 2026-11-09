@@ -37,7 +37,7 @@ final class AlternativeMenuViewState {
         return rows[index]
     }
     var contentHeight: CGFloat {
-        (rows.last?.verticalRange.upperBound ?? 0) + AlternativeMenuStyle.padding
+        (rows.last?.verticalRange.upperBound ?? 0) + AlternativeMenuStyle.current.padding
     }
     var offset: CGFloat {
         guard let scrollView, let document = scrollView.documentView else {
@@ -80,7 +80,7 @@ final class AlternativeMenuViewState {
         let contentWidth =
             (rows.lazy.map { row in
                 let iconWidth = row.iconWidth(symbolColumnWidth: symbolColumnWidth)
-                return row.titleWidthWithInsets + (iconWidth > 0 ? iconWidth + AlternativeMenuStyle.iconSpacing : 0)
+                return row.titleWidthWithInsets + (iconWidth > 0 ? iconWidth + AlternativeMenuStyle.current.iconSpacing : 0)
             }.max() ?? 0) + trailingColumnWidth
 
         self.rows = rows
@@ -91,6 +91,11 @@ final class AlternativeMenuViewState {
     }
 
     func scrollAvailability(viewportHeight: CGFloat, topPadding: CGFloat) -> AlternativeMenuScrollAvailability {
-        AlternativeMenuScrollAvailability(offset: offset, contentHeight: contentHeight, viewportHeight: viewportHeight, topPadding: topPadding)
+        AlternativeMenuScrollAvailability(
+            offset: offset,
+            contentHeight: contentHeight,
+            viewportHeight: viewportHeight,
+            topPadding: topPadding
+        )
     }
 }

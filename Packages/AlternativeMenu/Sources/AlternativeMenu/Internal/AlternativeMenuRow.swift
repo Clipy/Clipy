@@ -36,13 +36,13 @@ struct AlternativeMenuRow: View {
                 label
             }
         }
-        .padding(.horizontal, AlternativeMenuStyle.rowTextInset)
+        .padding(.horizontal, AlternativeMenuStyle.current.rowTextInset)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: row.rowHeight)
     }
 
     private var label: some View {
-        HStack(spacing: AlternativeMenuStyle.iconSpacing) {
+        HStack(spacing: AlternativeMenuStyle.current.iconSpacing) {
             if let image = row.image {
                 Image(nsImage: image)
                     .renderingMode(image.isTemplate ? .template : .original)
@@ -73,7 +73,7 @@ struct AlternativeMenuRow: View {
                     color: isEmphasized ? .selectedMenuItemTextColor : .tertiaryLabelColor
                 )
                 .frame(
-                    width: max(0, trailingColumnWidth - AlternativeMenuStyle.keyEquivalentGap),
+                    width: max(0, trailingColumnWidth - AlternativeMenuStyle.current.keyEquivalentGap),
                     alignment: .trailing
                 )
                 // Match NSMenu's left-to-right shortcut order in RTL menus.

@@ -12,7 +12,7 @@ struct AlternativeMenuRowDataTests {
 
         #expect(plain.title.string.isEmpty)
         #expect(attributed.title.string.isEmpty)
-        #expect(plain.titleWidthWithInsets == AlternativeMenuStyle.rowTextInset * 2)
+        #expect(plain.titleWidthWithInsets == AlternativeMenuStyle.current.rowTextInset * 2)
         #expect(attributed.titleWidthWithInsets == plain.titleWidthWithInsets)
         #expect(attributed.verticalRange == plain.verticalRange)
     }
@@ -76,7 +76,7 @@ struct AlternativeMenuRowDataTests {
         let plain = AlternativeMenuRowData(item: .action(title, isEnabled: false) { _ in }, verticalOffset: 0)
         let row = AlternativeMenuRowData(item: .action(attributedTitle: kerned, isEnabled: false) { _ in }, verticalOffset: 0)
 
-        #expect(row.titleWidthWithInsets == ceil(kerned.size().width) + AlternativeMenuStyle.rowTextInset * 2)
+        #expect(row.titleWidthWithInsets == ceil(kerned.size().width) + AlternativeMenuStyle.current.rowTextInset * 2)
         #expect(row.titleWidthWithInsets != plain.titleWidthWithInsets)
     }
 
@@ -89,7 +89,7 @@ struct AlternativeMenuRowDataTests {
         let row = AlternativeMenuRowData(item: .action(attributedTitle: styled, isEnabled: false) { _ in }, verticalOffset: 0)
 
         #expect(row.titleWidthWithInsets > plain.titleWidthWithInsets)
-        #expect(row.titleWidthWithInsets == ceil(styled.size().width) + AlternativeMenuStyle.rowTextInset * 2)
+        #expect(row.titleWidthWithInsets == ceil(styled.size().width) + AlternativeMenuStyle.current.rowTextInset * 2)
         #expect(row.rowHeight > plain.rowHeight)
         #expect(row.rowHeight >= ceil(styled.size().height))
     }
@@ -135,7 +135,7 @@ struct AlternativeMenuRowDataTests {
 
         #expect(row.kind == (isEnabled ? .item : .disabled))
         #expect(row.hasSubmenu)
-        #expect(row.trailingWidth(keyColumnWidth: 0) == AlternativeMenuStyle.submenuColumnWidth)
+        #expect(row.trailingWidth(keyColumnWidth: 0) == AlternativeMenuStyle.current.submenuColumnWidth)
     }
 
     @Test(arguments: ["\n", "\r\n", "\u{2028}", "\u{2029}"])

@@ -19,7 +19,7 @@ struct AlternativeMenuPanelTests {
         let panel = try makePanel(minimumWidth: 100_000)
         defer { panel.dismiss() }
         let screen = try #require(panel.screen)
-        let inset = AlternativeMenuStyle.screenEdgeInset
+        let inset = AlternativeMenuStyle.current.screenEdgeInset
         let limit = min(screen.frame.width * 0.6, screen.frame.width - inset * 2)
 
         panel.updateItems([.action("Item") { _ in }], highlightsFirstItem: false)
@@ -58,7 +58,7 @@ struct AlternativeMenuPanelTests {
 
         let growth = grow(screen.frame.height)
         let expandedFrame = panel.frame
-        let inset = AlternativeMenuStyle.screenEdgeInset
+        let inset = AlternativeMenuStyle.current.screenEdgeInset
         #expect(expandedFrame.minY == screen.visibleFrame.minY + inset)
         #expect(expandedFrame.maxY == screen.frame.maxY - inset)
         #expect(growth == expandedFrame.height - initialFrame.height)

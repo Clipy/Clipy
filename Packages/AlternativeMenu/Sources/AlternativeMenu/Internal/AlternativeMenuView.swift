@@ -30,7 +30,7 @@ final class AlternativeMenuView: NSView {
     }
     private(set) var expandedRow: Int?
     var preferredWidth: CGFloat {
-        max(minimumWidth, state.contentWidth + AlternativeMenuStyle.padding * 2)
+        max(minimumWidth, state.contentWidth + AlternativeMenuStyle.current.padding * 2)
     }
     var preferredHeight: CGFloat {
         viewportTopInset + state.contentHeight
@@ -41,7 +41,7 @@ final class AlternativeMenuView: NSView {
     init(header: AlternativeMenuHeader?, minimumSymbolColumnWidth: CGFloat = 0) {
         self.state = AlternativeMenuViewState(minimumSymbolColumnWidth: minimumSymbolColumnWidth)
         self.hasHeader = header != nil
-        self.viewportTopInset = header?.height ?? AlternativeMenuStyle.padding
+        self.viewportTopInset = header?.height ?? AlternativeMenuStyle.current.padding
         self.minimumWidth = header?.minimumWidth ?? 0
         super.init(frame: .zero)
         menuAccessibilityView.menuView = self
@@ -123,9 +123,9 @@ final class AlternativeMenuView: NSView {
             return nil
         }
         let rect = NSRect(
-            x: AlternativeMenuStyle.padding,
+            x: AlternativeMenuStyle.current.padding,
             y: viewportTopInset + top,
-            width: bounds.width - AlternativeMenuStyle.padding * 2,
+            width: bounds.width - AlternativeMenuStyle.current.padding * 2,
             height: bottom - top
         )
         return window.convertToScreen(convert(rect, to: nil))
@@ -134,7 +134,7 @@ final class AlternativeMenuView: NSView {
     func edgeScrollDirection(at windowPoint: NSPoint) -> CGFloat {
         let point = convert(windowPoint, from: nil)
         guard point.y >= (hasHeader ? viewportTopInset : 0), point.y < bounds.height,
-            point.x >= AlternativeMenuStyle.padding, point.x < bounds.width - AlternativeMenuStyle.padding
+            point.x >= AlternativeMenuStyle.current.padding, point.x < bounds.width - AlternativeMenuStyle.current.padding
         else {
             return 0
         }
@@ -155,7 +155,7 @@ final class AlternativeMenuView: NSView {
     }
 
     func scrollPage(down: Bool) -> Int? {
-        let indicatorHeight = AlternativeMenuStyle.minimumRowHeight
+        let indicatorHeight = AlternativeMenuStyle.current.minimumRowHeight
         let currentAvailability = scrollAvailability
         let pageHeight = max(0, viewportHeight - currentAvailability.topInset - currentAvailability.bottomInset)
         let pageOffset = down ? pageHeight : -pageHeight
@@ -232,7 +232,7 @@ final class AlternativeMenuView: NSView {
         let point = convert(windowPoint, from: nil)
         let yInList = point.y - viewportTopInset
         guard yInList >= 0, yInList < viewportHeight,
-            point.x >= AlternativeMenuStyle.padding, point.x < bounds.width - AlternativeMenuStyle.padding
+            point.x >= AlternativeMenuStyle.current.padding, point.x < bounds.width - AlternativeMenuStyle.current.padding
         else {
             return nil
         }

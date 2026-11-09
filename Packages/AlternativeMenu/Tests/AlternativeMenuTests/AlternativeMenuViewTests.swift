@@ -13,7 +13,7 @@ struct AlternativeMenuViewTests {
         let row = AlternativeMenuRowData(item: item, verticalOffset: 0)
 
         view.setRows([item], selectedIndex: nil)
-        #expect(view.preferredWidth == row.titleWidthWithInsets + AlternativeMenuStyle.padding * 2)
+        #expect(view.preferredWidth == row.titleWidthWithInsets + AlternativeMenuStyle.current.padding * 2)
     }
 
     @Test
@@ -66,7 +66,7 @@ struct AlternativeMenuViewTests {
 
         fixture.view.scrollRowToVisible(0, alignsTallRowAtBottom: true)
         #expect(fixture.offset > 0)
-        #expect(fixture.maximumOffset - fixture.offset <= AlternativeMenuStyle.padding)
+        #expect(fixture.maximumOffset - fixture.offset <= AlternativeMenuStyle.current.padding)
 
         fixture.view.resetScrollPosition()
         fixture.view.scrollRowToVisible(0)
@@ -97,7 +97,7 @@ struct AlternativeMenuViewTests {
         #expect(fixture.view.scrollMenuItems(by: 100))
 
         let top = header?.height ?? 0
-        let boundary = top + AlternativeMenuStyle.minimumRowHeight
+        let boundary = top + AlternativeMenuStyle.current.minimumRowHeight
         for y in [top + 1, boundary - 0.5] {
             let point = fixture.view.convert(NSPoint(x: 150, y: y), to: nil)
             #expect(fixture.view.edgeScrollDirection(at: point) == -1)

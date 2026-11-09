@@ -737,7 +737,7 @@ private extension AlternativeMenuSession {
                     return
                 }
                 // NSMenu advances one standard menu line every 60 ms while hovering an arrow.
-                panel.menuView.scrollMenuItems(by: direction * AlternativeMenuStyle.minimumRowHeight)
+                panel.menuView.scrollMenuItems(by: direction * AlternativeMenuStyle.current.minimumRowHeight)
                 try? await Task.sleep(for: .milliseconds(60))
             }
         }

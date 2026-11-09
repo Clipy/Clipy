@@ -213,7 +213,7 @@ final class AlternativeMenuPanel: NSPanel {
 
     func scrollWheelByEvent(_ event: NSEvent) -> Bool {
         toolTip.hide()
-        let lineHeight = AlternativeMenuStyle.minimumRowHeight
+        let lineHeight = AlternativeMenuStyle.current.minimumRowHeight
         let distance = -event.scrollingDeltaY
         let movement: CGFloat
         if event.phase.isEmpty && event.momentumPhase.isEmpty {
@@ -278,7 +278,7 @@ private extension AlternativeMenuPanel {
             opensAbove = false
             leadingEdge = point.x
             preferredWidth = menuView.preferredWidth
-            top = min(max(point.y + AlternativeMenuStyle.padding, bounds.minY), bounds.maxY)
+            top = min(max(point.y + AlternativeMenuStyle.current.padding, bounds.minY), bounds.maxY)
             bottom = anchorBottom
         } else {
             leadingEdge = isRightToLeft ? previousFrame.maxX : previousFrame.minX
@@ -290,7 +290,7 @@ private extension AlternativeMenuPanel {
         let preferredHeight = ceil(menuView.preferredHeight)
         let spaceBelow = top - bounds.minY
         // Prefer below when the content fits or at least four rows can be seen.
-        if !opensAbove, spaceBelow < min(preferredHeight, menuView.viewportTopInset + AlternativeMenuStyle.minimumRowHeight * 4),
+        if !opensAbove, spaceBelow < min(preferredHeight, menuView.viewportTopInset + AlternativeMenuStyle.current.minimumRowHeight * 4),
             bounds.maxY - anchorBottom > spaceBelow {
             opensAbove = true
             bottom = anchorBottom
@@ -351,7 +351,7 @@ private extension AlternativeMenuPanel {
         // NSMenu avoids the bottom Dock, but can overlap a side Dock and the menu bar.
         bounds.origin.y = screen.visibleFrame.minY
         bounds.size.height = screen.frame.maxY - bounds.minY
-        let inset = AlternativeMenuStyle.screenEdgeInset
+        let inset = AlternativeMenuStyle.current.screenEdgeInset
         return bounds.insetBy(dx: inset, dy: inset)
     }
 }
