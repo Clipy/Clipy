@@ -19,6 +19,7 @@ final class AlternativeMenuViewState {
     private(set) var iconWidths: [CGFloat] = []
     private(set) var contentWidth: CGFloat = 0
     var selection: Int?
+    var isSelectionEmphasized = true
     var hidesSelection = false
     var scrollAvailability = AlternativeMenuScrollAvailability(offset: 0, contentHeight: 0, viewportHeight: 0, topPadding: 0)
     @ObservationIgnored

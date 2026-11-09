@@ -17,6 +17,33 @@ struct AlternativeMenuViewTests {
     }
 
     @Test
+    func sharesSelectionEmphasisAndResetsItWhenRowsAreReplaced() throws {
+        let view = AlternativeMenuView(header: nil)
+        let items: [AlternativeMenuItem] = [
+            .submenu("Parent", menu: AlternativeMenu(items: [.action("Child") { _ in }])),
+            .action("Other") { _ in }
+        ]
+        let state = try #require(Mirror(reflecting: view).descendant("state") as? AlternativeMenuViewState)
+        view.setRows(items, selectedIndex: 0)
+        #expect(state.isSelectionEmphasized)
+
+        view.setExpandedRow(0)
+        view.isSelectionEmphasized = false
+        #expect(state.highlightedRowIndex == 0)
+        #expect(!state.isSelectionEmphasized)
+
+        view.setExpandedRow(nil)
+        view.isSelectionEmphasized = true
+        #expect(state.isSelectionEmphasized)
+
+        view.setExpandedRow(0)
+        view.isSelectionEmphasized = false
+        view.setRows(items, selectedIndex: 0)
+        #expect(view.expandedRow == nil)
+        #expect(state.isSelectionEmphasized)
+    }
+
+    @Test
     func pagesThroughATallRowInBothDirections() throws {
         let fixture = try ScrollFixture(items: [tallItem, .action("Next") { _ in }])
 

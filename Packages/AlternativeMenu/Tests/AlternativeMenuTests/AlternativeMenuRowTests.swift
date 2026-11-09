@@ -22,7 +22,7 @@ struct AlternativeMenuRowTests {
                 rootView: AnyView(
                     AlternativeMenuRow(
                         row: row,
-                        isSelected: false,
+                        isEmphasized: false,
                         iconWidth: 0,
                         trailingColumnWidth: state.trailingColumnWidth,
                         keyColumnWidth: state.keyColumnWidth

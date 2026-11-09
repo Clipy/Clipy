@@ -245,6 +245,13 @@ private extension AlternativeMenuSession {
         submenus.dropFirst(childIndex(after: panel)).first
     }
 
+    /// Keeps ancestor selections visible, emphasizing only the menu receiving input.
+    func emphasizeSelection(in activePanel: AlternativeMenuPanel) {
+        for panel in [root] + submenus.map(\.panel) {
+            panel.menuView.isSelectionEmphasized = panel === activePanel
+        }
+    }
+
     /// Closes descendants deepest first, keeping the parent visible and clearing its expansion state.
     func closeSubmenus(after panel: AlternativeMenuPanel) {
         let index = childIndex(after: panel)
@@ -260,6 +267,7 @@ private extension AlternativeMenuSession {
             child.dismiss()
         }
         panel.menuView.setExpandedRow(nil)
+        emphasizeSelection(in: panel)
     }
 
     /// Opens an enabled parent's nonempty submenu, or enters an already open child.
@@ -277,6 +285,7 @@ private extension AlternativeMenuSession {
             if highlightsFirstItem, child.panel.selection == nil {
                 child.panel.moveSelection(by: 1)
             }
+            emphasizeSelection(in: highlightsFirstItem ? child.panel : panel)
             return
         }
         closeSubmenus(after: panel)
@@ -295,6 +304,7 @@ private extension AlternativeMenuSession {
         panel.toolTip.hide()
         panel.menuView.setExpandedRow(row)
         submenus.append(Submenu(panel: childPanel, parentRow: row))
+        emphasizeSelection(in: highlightsFirstItem ? childPanel : panel)
     }
 
     /// Confirms an action or enters a submenu for pointer, keyboard, and accessibility input.
@@ -326,6 +336,7 @@ private extension AlternativeMenuSession {
         perform: @escaping @MainActor (NSEvent.ModifierFlags) -> Void
     ) {
         panel.selectRow(index, scroll: true)
+        emphasizeSelection(in: panel)
         animateDismissal(confirming: panel) { perform(modifiers) }
     }
 
@@ -409,6 +420,7 @@ private extension AlternativeMenuSession {
             // Enter a submenu that was opened by hovering over its parent.
             if panel !== root, panel.selection == nil {
                 panel.moveSelection(by: 1)
+                emphasizeSelection(in: panel)
                 return true
             }
             guard let selection = panel.selection, panel.items[selection].submenu != nil else {
@@ -443,6 +455,7 @@ private extension AlternativeMenuSession {
             }
             return selectByTyping(event, in: panel)
         }
+        emphasizeSelection(in: submenus.last?.panel ?? root)
         typingSelection.reset()
         return true
     }
@@ -455,6 +468,7 @@ private extension AlternativeMenuSession {
         let result = typingSelection.select(event, in: panel.items)
         if let index = result.index {
             panel.selectRow(index, scroll: true)
+            emphasizeSelection(in: panel)
         }
         return result.handled
     }
@@ -610,10 +624,19 @@ private extension AlternativeMenuSession {
     }
 
     func selectHoveredRow(_ index: Int?, in panel: AlternativeMenuPanel) {
-        if let child = child(of: panel), child.parentRow != index {
-            closeSubmenus(after: panel)
+        if let child = child(of: panel) {
+            if child.parentRow != index {
+                closeSubmenus(after: panel)
+            } else {
+                // Returning to a parent keeps its child open without a selected child row.
+                if self.child(of: child.panel) != nil {
+                    closeSubmenus(after: child.panel)
+                }
+                child.panel.selectRow(nil)
+            }
         }
         panel.selectRow(index)
+        emphasizeSelection(in: panel)
     }
 
     /// Updates selection, submenu delays, tooltips, and edge scrolling from actual pointer movement.

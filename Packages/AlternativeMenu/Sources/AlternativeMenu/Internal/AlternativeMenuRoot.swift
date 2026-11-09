@@ -41,7 +41,7 @@ struct AlternativeMenuRoot: View {
                 ForEach(Array(state.rows.enumerated()), id: \.offset) { index, row in
                     AlternativeMenuRow(
                         row: row,
-                        isSelected: state.highlightedRowIndex == index,
+                        isEmphasized: state.highlightedRowIndex == index && state.isSelectionEmphasized,
                         iconWidth: state.iconWidths[index],
                         trailingColumnWidth: state.trailingColumnWidth,
                         keyColumnWidth: state.keyColumnWidth
@@ -54,8 +54,9 @@ struct AlternativeMenuRoot: View {
                 // Move one material view between rows so its backdrop does not
                 // have to be recreated on every hover change.
                 AlternativeMenuVisualEffectView(
-                    material: .selection,
-                    cornerRadius: AlternativeMenuStyle.cornerRadius - AlternativeMenuStyle.padding
+                    material: AlternativeMenuVisualEffectView.menuSelectionMaterial,
+                    cornerRadius: AlternativeMenuStyle.cornerRadius - AlternativeMenuStyle.padding,
+                    isEmphasized: state.isSelectionEmphasized
                 )
                 .frame(height: row?.rowHeight ?? 0)
                 .padding(.top, row?.verticalRange.lowerBound ?? 0)

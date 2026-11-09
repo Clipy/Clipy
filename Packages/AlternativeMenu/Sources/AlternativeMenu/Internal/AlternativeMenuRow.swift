@@ -10,7 +10,7 @@ import SwiftUI
 
 struct AlternativeMenuRow: View {
     let row: AlternativeMenuRowData
-    let isSelected: Bool
+    let isEmphasized: Bool
     let iconWidth: CGFloat
     let trailingColumnWidth: CGFloat
     let keyColumnWidth: CGFloat
@@ -19,7 +19,7 @@ struct AlternativeMenuRow: View {
     private var layoutDirection
 
     private var textColor: Color {
-        if isSelected {
+        if isEmphasized {
             return Color(nsColor: .selectedMenuItemTextColor)
         }
         if row.kind == .header {
@@ -70,7 +70,7 @@ struct AlternativeMenuRow: View {
                 AlternativeMenuKeyEquivalentLabel(
                     display: row.keyEquivalent,
                     keyColumnWidth: keyColumnWidth,
-                    color: isSelected ? .selectedMenuItemTextColor : .tertiaryLabelColor
+                    color: isEmphasized ? .selectedMenuItemTextColor : .tertiaryLabelColor
                 )
                 .frame(
                     width: max(0, trailingColumnWidth - AlternativeMenuStyle.keyEquivalentGap),

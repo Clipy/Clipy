@@ -24,6 +24,10 @@ final class AlternativeMenuView: NSView {
         get { state.hidesSelection }
         set { state.hidesSelection = newValue }
     }
+    var isSelectionEmphasized: Bool {
+        get { state.isSelectionEmphasized }
+        set { state.isSelectionEmphasized = newValue }
+    }
     private(set) var expandedRow: Int?
     var preferredWidth: CGFloat {
         max(minimumWidth, state.contentWidth + AlternativeMenuStyle.padding * 2)
@@ -67,6 +71,7 @@ final class AlternativeMenuView: NSView {
         state.setRows(rows)
         state.selection = selectedIndex
         state.hidesSelection = false
+        state.isSelectionEmphasized = true
         menuAccessibilityView.setRows(state.rows)
         if window?.isVisible == true {
             NSAccessibility.post(

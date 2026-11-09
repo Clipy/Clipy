@@ -27,7 +27,7 @@ private struct AlternativeMenuBackground: View {
                     // The extra material is closer in Dark Mode, but washes out light glass.
                     .background(Material.ultraThin.materialActiveAppearance(.active).opacity(colorScheme == .dark ? 0.3 : 0))
             } else {
-                AlternativeMenuVisualEffectView(material: .menu, cornerRadius: cornerRadius)
+                AlternativeMenuVisualEffectView(material: .menu, cornerRadius: cornerRadius, isEmphasized: false)
             }
         }
         .clipShape(shape)

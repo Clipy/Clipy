@@ -9,15 +9,19 @@ import AppKit
 import SwiftUI
 
 struct AlternativeMenuVisualEffectView: NSViewRepresentable {
+    // NSMenu's private highlight material also preserves the backdrop in unemphasized rows.
+    static let menuSelectionMaterial = NSVisualEffectView.Material(rawValue: 36) ?? .selection
+
     let material: NSVisualEffectView.Material
     let cornerRadius: CGFloat
+    let isEmphasized: Bool
 
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = material
         view.blendingMode = .behindWindow
         view.state = .active
-        view.isEmphasized = material == .selection
+        view.isEmphasized = isEmphasized
         view.wantsLayer = true
         view.layer?.cornerRadius = cornerRadius
         view.layer?.cornerCurve = .continuous
@@ -26,5 +30,7 @@ struct AlternativeMenuVisualEffectView: NSViewRepresentable {
         return view
     }
 
-    func updateNSView(_ view: NSVisualEffectView, context: Context) {}
+    func updateNSView(_ view: NSVisualEffectView, context: Context) {
+        view.isEmphasized = isEmphasized
+    }
 }
