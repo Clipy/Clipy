@@ -54,7 +54,7 @@ struct AlternativeMenuRowData {
 
         self.keyEquivalent = keyEquivalent ?? .empty
         let titleSize: NSSize
-        var lineHeight = font.ascender - font.descender + font.leading
+        var maximumFontLineHeight = Self.lineHeight(for: font)
         switch item.titleContent {
         case .plain(let value):
             self.title = .plain(value)
@@ -73,7 +73,7 @@ struct AlternativeMenuRowData {
                 }
                 measured.addAttributes(attributes, range: range)
                 if range.location < lineEnd, let runFont = attributes[.font] as? NSFont {
-                    lineHeight = max(lineHeight, runFont.ascender - runFont.descender + runFont.leading)
+                    maximumFontLineHeight = max(maximumFontLineHeight, Self.lineHeight(for: runFont))
                 }
             }
             self.title = .attributed(measured)
@@ -90,9 +90,7 @@ struct AlternativeMenuRowData {
                 ceil(
                     max(
                         AlternativeMenuStyle.minimumRowHeight,
-                        size.height + AlternativeMenuStyle.rowContentVerticalPadding,
-                        lineHeight.rounded() + AlternativeMenuStyle.rowFontHeightAdjustment,
-                        titleSize.height + AlternativeMenuStyle.rowContentVerticalPadding
+                        max(size.height, titleSize.height, maximumFontLineHeight) + AlternativeMenuStyle.rowContentVerticalPadding
                     )
                 )
             }
@@ -118,5 +116,10 @@ struct AlternativeMenuRowData {
             AlternativeMenuStyle.minimumKeyEquivalentColumnWidth,
             ceil(keyEquivalent.width(sharedKeyColumnWidth: keyColumnWidth)) + AlternativeMenuStyle.keyEquivalentGap
         )
+    }
+
+    private static func lineHeight(for font: NSFont) -> CGFloat {
+        // Round ascent and descent separately to match measured native single-font row heights.
+        ceil(font.ascender) + ceil(-font.descender) + font.leading
     }
 }

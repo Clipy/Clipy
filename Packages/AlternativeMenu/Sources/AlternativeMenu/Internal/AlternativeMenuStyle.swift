@@ -24,12 +24,9 @@ enum AlternativeMenuStyle {
     }()
     // Full separator-row height measured in NSMenu, including space around the line.
     static let separatorRowHeight: CGFloat = 11
-    // Total vertical allowance for image and measured title bounds, fitted to native row heights.
+    // Total vertical allowance for font metrics, title bounds, and images, fitted to native row heights.
     // This is an empirical adjustment, not a measured pair of top and bottom insets.
     static let rowContentVerticalPadding: CGFloat = 6
-    // Added to rounded font line metrics to approximate native row heights.
-    // This empirical correction can still differ by about 1 pt for some fonts or mixed-font titles.
-    static let rowFontHeightAdjustment: CGFloat = 7
     static let rowTextInset: CGFloat = 11
     static let iconSpacing: CGFloat = 6
     // Native menus share trailing space between submenu arrows and key equivalents.

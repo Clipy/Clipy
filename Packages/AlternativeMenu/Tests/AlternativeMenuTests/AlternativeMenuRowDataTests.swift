@@ -94,6 +94,39 @@ struct AlternativeMenuRowDataTests {
         #expect(row.rowHeight >= ceil(styled.size().height))
     }
 
+    @Test(arguments: [
+        (CGFloat(18), CGFloat(28)), (20, 31), (22, 33), (24, 36), (26, 38),
+        (28, 40), (30, 43), (32, 44), (36, 49), (40, 54)
+    ])
+    func matchesMeasuredNativeHeightsForUniformFonts(_ sample: (fontSize: CGFloat, rowHeight: CGFloat)) {
+        let title = NSAttributedString(string: "Uniform title", attributes: [.font: NSFont.systemFont(ofSize: sample.fontSize)])
+        let row = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
+
+        #expect(row.rowHeight == sample.rowHeight)
+    }
+
+    @Test(arguments: [false, true])
+    func keepsMaximumFontHeightForMixedTitles(largerFontFirst: Bool) {
+        let text = "Mixed 13 pt and 28 pt"
+        let title = NSMutableAttributedString(string: text, attributes: [.font: NSFont.systemFont(ofSize: largerFontFirst ? 28 : 13)])
+        title.addAttribute(.font, value: NSFont.systemFont(ofSize: largerFontFirst ? 13 : 28), range: (text as NSString).range(of: "28 pt"))
+        let row = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
+
+        // Retain maximum-font sizing; NSMenu's mixed-title layout is 1 pt shorter here.
+        #expect(row.rowHeight == 40)
+    }
+
+    @Test
+    func keepsBaselineAndImageHeightContributions() {
+        let title = NSAttributedString(string: "Raised title", attributes: [.font: NSFont.systemFont(ofSize: 24), .baselineOffset: 4])
+        let raised = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
+        let image = NSImage(size: NSSize(width: 16, height: 56))
+        let withImage = AlternativeMenuRowData(item: .action("Large image", image: image) { _ in }, verticalOffset: 0)
+
+        #expect(raised.rowHeight == 38)
+        #expect(withImage.rowHeight == 62)
+    }
+
     @Test(arguments: [false, true], [false, true])
     func showsSubmenuArrowsRegardlessOfContentsAndEnabledState(isEnabled: Bool, hasChildren: Bool) {
         let children: [AlternativeMenuItem] = hasChildren ? [.action("Child") { _ in }] : []
