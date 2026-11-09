@@ -25,6 +25,9 @@ final class AlternativeMenuPanel: NSPanel {
     override var canBecomeKey: Bool { acceptsKeyboard }
     override var canBecomeMain: Bool { false }
 
+    // NSMenu keeps glass active even when a submenu does not have key focus.
+    @objc private func _hasActiveAppearanceIgnoringKeyFocus() -> Bool { true }
+
     override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
         // Placement already reserves the bottom Dock; let the panel cover the menu bar area.
         frameRect

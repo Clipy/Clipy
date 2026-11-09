@@ -21,6 +21,8 @@ private struct AlternativeMenuBackground: View {
         Group {
             if reducesTransparency {
                 Color(nsColor: .windowBackgroundColor)
+            } else if #available(macOS 27.0, *) {
+                MenuGlassEffectView(cornerRadius: cornerRadius)
             } else if #available(macOS 26.0, *) {
                 MenuGlassEffectView(cornerRadius: cornerRadius)
                     // Measured against NSMenu over colored and neutral backdrops.
