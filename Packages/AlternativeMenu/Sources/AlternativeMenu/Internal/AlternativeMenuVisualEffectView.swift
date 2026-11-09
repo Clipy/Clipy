@@ -24,7 +24,7 @@ struct AlternativeMenuVisualEffectView: NSViewRepresentable {
         view.isEmphasized = isEmphasized
         view.wantsLayer = true
         view.layer?.cornerRadius = cornerRadius
-        view.layer?.cornerCurve = .continuous
+        view.layer?.cornerCurve = material == .menu ? .circular : .continuous
         view.layer?.masksToBounds = true
         view.setAccessibilityElement(false)
         return view

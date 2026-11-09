@@ -55,7 +55,7 @@ struct AlternativeMenuRoot: View {
                 // have to be recreated on every hover change.
                 AlternativeMenuVisualEffectView(
                     material: AlternativeMenuVisualEffectView.menuSelectionMaterial,
-                    cornerRadius: AlternativeMenuStyle.cornerRadius - AlternativeMenuStyle.padding,
+                    cornerRadius: AlternativeMenuStyle.selectionCornerRadius,
                     isEmphasized: state.isSelectionEmphasized
                 )
                 .frame(height: row?.rowHeight ?? 0)

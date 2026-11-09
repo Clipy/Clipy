@@ -14,7 +14,19 @@ enum AlternativeMenuStyle {
     static let padding: CGFloat = 5
     // Minimum inset from screen edges and the area reserved for a bottom Dock.
     static let screenEdgeInset: CGFloat = 6
-    static let cornerRadius: CGFloat = 12
+    static let cornerRadius: CGFloat = {
+        if #available(macOS 26, *) {
+            return 12
+        }
+        return 6
+    }()
+    // The native selection radius is independent of the outer radius and menu padding.
+    static let selectionCornerRadius: CGFloat = {
+        if #available(macOS 26, *) {
+            return 7
+        }
+        return 4
+    }()
     // Measured minimum item-row height in NSMenu, also used for the scroll arrow area.
     static let minimumRowHeight: CGFloat = {
         if #available(macOS 26, *) {
