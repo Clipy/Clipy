@@ -222,6 +222,34 @@ struct PasteboardContentTests {
         #expect(nonStringContent.stringValue == nil)
     }
 
+    @Test
+    func stringValueUsesURLWhenStringIsMissing() throws {
+        let url = "https://example.com/"
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .URL, data: Data(url.utf8))
+                ]
+            )
+        )
+
+        #expect(content.stringValue == url)
+    }
+
+    @Test
+    func stringValuePrefersStringOverURL() throws {
+        let content = try #require(
+            PasteboardContent(
+                assets: [
+                    PasteboardContent.Asset(type: .URL, data: Data("https://example.com/".utf8)),
+                    PasteboardContent.Asset(type: .string, data: Data("Shared link title".utf8))
+                ]
+            )
+        )
+
+        #expect(content.stringValue == "Shared link title")
+    }
+
     @Test(arguments: ["#ff0000", "  #f00\n", "ff0000", "123456", "decade", "rgb(255 0 0)", "oklch(0.627955 0.257683 29.2339)"])
     func colorCodeImageIsCreatedFromColorString(code: String) throws {
         let colorContent = try #require(

@@ -37,7 +37,14 @@ struct PasteboardContent: Equatable {
         return stringValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     var stringValue: String? {
-        guard let data = data(for: .string) ?? data(for: .deprecatedString) else { return nil }
+        guard
+            let data = data(for: .string) ?? data(for: .deprecatedString) ??
+                // Links copied from share sheets may only provide URL data,
+                // so read it as text when no string representation is available.
+                data(for: .URL) ?? data(for: .deprecatedURL)
+        else {
+            return nil
+        }
         return String(data: data, encoding: .utf8)
     }
     var colorCodeImage: NSImage? {
