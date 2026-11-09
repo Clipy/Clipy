@@ -62,6 +62,13 @@ final class AlternativeMenuViewState {
             minimumSymbolColumnWidth,
             rows.lazy.filter(\.isSymbolImage).compactMap { $0.image?.size.width }.max() ?? 0
         )
+        let measuredSymbolColumnWidth: CGFloat
+        if #available(macOS 27, *), !rows.contains(where: { $0.kind != .header && $0.isSymbolImage }) {
+            // A symbol confined to section headers no longer widens imageless rows.
+            measuredSymbolColumnWidth = minimumSymbolColumnWidth
+        } else {
+            measuredSymbolColumnWidth = symbolColumnWidth
+        }
         var iconWidths = Array(repeating: CGFloat.zero, count: rows.count)
         var start = 0
         for end in rows.indices where rows[end].kind == .separator || rows[end].kind == .header || end == rows.count - 1 {
@@ -83,11 +90,15 @@ final class AlternativeMenuViewState {
             }
             start = end + 1
         }
-        // NSMenu measures its overall width using the global symbol column,
-        // even when a row's group does not reserve that column while drawing.
+        // Width measurement reserves the shared column even for unindented groups and headers.
         let contentWidth =
             (rows.lazy.map { row in
-                let iconWidth = row.iconWidth(symbolColumnWidth: symbolColumnWidth)
+                let iconWidth: CGFloat
+                if #available(macOS 26, *), row.image == nil {
+                    iconWidth = measuredSymbolColumnWidth
+                } else {
+                    iconWidth = row.iconWidth(symbolColumnWidth: symbolColumnWidth)
+                }
                 return row.titleWidthWithInsets + (iconWidth > 0 ? iconWidth + AlternativeMenuStyle.current.iconSpacing : 0)
             }.max() ?? 0) + trailingColumnWidth
 

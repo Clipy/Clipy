@@ -105,6 +105,73 @@ struct AlternativeMenuViewStateTests {
         }
     }
 
+    @Test(arguments: [false, true])
+    func reservesBodySymbolWidthForALongImagelessHeader(headerFirst: Bool) throws {
+        let image = try symbol("doc")
+        let header = AlternativeMenuItem.sectionHeader("A deliberately long section header controls the menu width")
+        let item = AlternativeMenuItem.action("Item", image: image) { _ in }
+        let state = makeState(headerFirst ? [header, item] : [item, header])
+        let headerIndex = headerFirst ? 0 : 1
+        let width = try #require(image.withSymbolConfiguration(.init(scale: .small))).size.width
+
+        #expect(state.iconWidths[headerIndex] == 0)
+        if #available(macOS 26, *) {
+            #expect(state.contentWidth == state.rows[headerIndex].titleWidthWithInsets + width + AlternativeMenuStyle.current.iconSpacing)
+        } else {
+            #expect(state.contentWidth == state.rows[headerIndex].titleWidthWithInsets)
+        }
+    }
+
+    @Test(arguments: [CGFloat(0), CGFloat(24)])
+    func measuresImagelessRowsBesideHeaderOnlySymbols(_ minimumWidth: CGFloat) throws {
+        let image = try symbol("chevron.left.forwardslash.chevron.right")
+        let state = makeState(
+            [
+                .sectionHeader("Header", image: image),
+                .action("A deliberately long imageless item controls the menu width") { _ in }
+            ],
+            minimumSymbolColumnWidth: minimumWidth
+        )
+        let headerWidth = try headerSymbolSize(image).width
+        if minimumWidth > 0 {
+            try #require(minimumWidth > headerWidth)
+        }
+        let reservedWidth: CGFloat
+        if #available(macOS 27, *) {
+            reservedWidth = minimumWidth
+        } else if #available(macOS 26, *) {
+            reservedWidth = max(minimumWidth, headerWidth)
+        } else {
+            reservedWidth = 0
+        }
+
+        #expect(state.iconWidths[0] == max(minimumWidth, headerWidth))
+        #expect(state.iconWidths[1] == 0)
+        #expect(state.contentWidth == state.rows[1].titleWidthWithInsets + (reservedWidth > 0 ? reservedWidth + AlternativeMenuStyle.current.iconSpacing : 0))
+    }
+
+    @Test
+    func includesWiderHeaderSymbolsInTheSharedWidthWhenABodySymbolExists() throws {
+        let headerImage = try symbol("chevron.left.forwardslash.chevron.right")
+        let itemImage = try symbol("doc")
+        let headerWidth = try headerSymbolSize(headerImage).width
+        let itemWidth = try #require(itemImage.withSymbolConfiguration(.init(scale: .small))).size.width
+        try #require(headerWidth > itemWidth)
+        let state = makeState([
+            .sectionHeader("Header", image: headerImage),
+            .action("Item", image: itemImage) { _ in },
+            .action("A deliberately long imageless item controls the menu width") { _ in }
+        ])
+
+        #expect(state.iconWidths[0] == headerWidth)
+        #expect(state.iconWidths[1] == headerWidth)
+        if #available(macOS 26, *) {
+            #expect(state.contentWidth == state.rows[2].titleWidthWithInsets + headerWidth + AlternativeMenuStyle.current.iconSpacing)
+        } else {
+            #expect(state.contentWidth == state.rows[2].titleWidthWithInsets)
+        }
+    }
+
     @Test
     func indentsSymbolGroupsAndReservesWidthAcrossTheWholeMenu() throws {
         let narrow = try symbol("doc")
