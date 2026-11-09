@@ -63,9 +63,9 @@ enum AlternativeMenuKeyEquivalent {
     static func display(for item: NSMenuItem) -> Display {
         let key = item.keyEquivalent
         guard !key.isEmpty,
-            let shortcut = object(item, getter: "_keyboardShortcut"),
-            let modifierSymbols = object(shortcut, getter: "localizedModifierMaskDisplayName") as? String,
-            let localizedKeyName = object(shortcut, getter: "localizedKeyEquivalentDisplayName") as? String,
+            let shortcut = shortcut(for: item),
+            let modifierSymbols = string(shortcut, getter: "localizedModifierMaskDisplayName"),
+            let localizedKeyName = string(shortcut, getter: "localizedKeyEquivalentDisplayName"),
             let drawing = drawing(for: item)
         else {
             return .empty
@@ -82,6 +82,20 @@ enum AlternativeMenuKeyEquivalent {
             default: drawing.text
             }
         return Display(modifierSymbols: modifierSymbols, keyName: keyName, keyGlyphs: keyGlyphs, keyFont: drawing.font)
+    }
+
+    @MainActor
+    private static func shortcut(for item: NSMenuItem) -> NSObject? {
+        let selector = NSSelectorFromString("shortcutWithKeyEquivalent:modifierMask:")
+        guard let type = NSClassFromString("NSKeyboardShortcut"),
+            let method = class_getClassMethod(type, selector)
+        else {
+            return nil
+        }
+        typealias Create = @convention(c) (AnyClass, Selector, NSString, UInt) -> Unmanaged<NSObject>?
+        let create = unsafeBitCast(method_getImplementation(method), to: Create.self)
+        // Derive display names from the same prepared values used for native key matching.
+        return create(type, selector, item.keyEquivalent as NSString, item.keyEquivalentModifierMask.rawValue)?.takeUnretainedValue()
     }
 
     @MainActor
@@ -115,11 +129,11 @@ enum AlternativeMenuKeyEquivalent {
     }
 
     @MainActor
-    private static func object(_ receiver: NSObject, getter: String) -> NSObject? {
+    private static func string(_ receiver: NSObject, getter: String) -> String? {
         let selector = NSSelectorFromString(getter)
         guard receiver.responds(to: selector) else {
             return nil
         }
-        return receiver.perform(selector)?.takeUnretainedValue() as? NSObject
+        return receiver.perform(selector)?.takeUnretainedValue() as? String
     }
 }
