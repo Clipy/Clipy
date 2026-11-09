@@ -49,6 +49,8 @@ struct AlternativeMenuRow: View {
             if let image = row.image {
                 Image(nsImage: image)
                     .renderingMode(image.isTemplate ? .template : .original)
+                    .resizable()
+                    .frame(width: image.size.width, height: image.size.height)
                     .frame(width: iconWidth)
             } else if iconWidth > 0 {
                 Color.clear
