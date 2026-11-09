@@ -16,6 +16,64 @@ struct AlternativeMenuViewTests {
         #expect(view.preferredWidth == row.titleWidthWithInsets + AlternativeMenuStyle.current.padding * 2)
     }
 
+    @Test(arguments: [
+        ("-A", [Int]()),
+        ("A-", []),
+        ("--A--", []),
+        ("A--B", [1]),
+        ("---", []),
+        ("-H-D--B-", [2, 4])
+    ])
+    func collapsesSeparatorsWithoutChangingRowIndexes(_ sample: (pattern: String, visibleSeparators: [Int])) throws {
+        let items: [AlternativeMenuItem] = sample.pattern.map { character in
+            switch character {
+            case "-": .separator
+            case "H": .sectionHeader("Header")
+            case "D": .action("Disabled", isEnabled: false) { _ in }
+            default: .action(String(character)) { _ in }
+            }
+        }
+        let view = AlternativeMenuView(header: nil)
+        let selectedIndex = items.lastIndex(where: \.isEnabled)
+        view.setRows(items, selectedIndex: selectedIndex)
+        view.frame = NSRect(x: 0, y: 0, width: 300, height: view.preferredHeight)
+        let state = try #require(Mirror(reflecting: view).descendant("state") as? AlternativeMenuViewState)
+        try #require(state.rows.count == items.count)
+
+        var accumulatedHeight: CGFloat = 0
+        for (index, item) in items.enumerated() {
+            let expectedHeight: CGFloat = item.isSeparator
+                ? (sample.visibleSeparators.contains(index) ? AlternativeMenuStyle.current.separatorRowHeight : 0)
+                : AlternativeMenuStyle.current.minimumRowHeight
+            #expect(state.rows[index].verticalRange == accumulatedHeight..<(accumulatedHeight + expectedHeight))
+            if expectedHeight > 0 {
+                let point = view.convert(NSPoint(x: 150, y: view.viewportTopInset + accumulatedHeight + expectedHeight / 2), to: nil)
+                #expect(view.rowIndex(at: point) == index)
+            }
+            accumulatedHeight += expectedHeight
+        }
+        #expect(view.preferredHeight == accumulatedHeight + AlternativeMenuStyle.current.padding * 2)
+        let accessibilityRows = try #require(view.menuAccessibilityView.accessibilityChildren() as? [NSAccessibilityElement])
+        #expect(accessibilityRows.map { $0.accessibilityTitle() } == items.filter { !$0.isSeparator }.map(\.title))
+        if let selectedIndex {
+            let selected = try #require(view.menuAccessibilityView.accessibilitySelectedChildren()?.first as? NSAccessibilityElement)
+            #expect(selected.accessibilityTitle() == items[selectedIndex].title)
+        }
+    }
+
+    @Test
+    func treatsOnlySeparatorsAsEmptyHeaderContents() {
+        let header = AlternativeMenuHeader(height: 30, minimumWidth: 0) { EmptyView() }
+        let view = AlternativeMenuView(header: header)
+        view.setRows([], selectedIndex: nil)
+        let emptySize = NSSize(width: view.preferredWidth, height: view.preferredHeight)
+
+        view.setRows([.separator, .separator], selectedIndex: nil)
+
+        #expect(NSSize(width: view.preferredWidth, height: view.preferredHeight) == emptySize)
+        #expect(view.menuAccessibilityView.accessibilityChildren()?.isEmpty == true)
+    }
+
     @Test
     func sharesSelectionEmphasisAndResetsItWhenRowsAreReplaced() throws {
         let view = AlternativeMenuView(header: nil)

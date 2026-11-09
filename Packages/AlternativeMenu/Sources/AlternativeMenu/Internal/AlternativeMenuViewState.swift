@@ -92,7 +92,7 @@ final class AlternativeMenuViewState {
         }
         // Width measurement reserves the shared column even for unindented groups and headers.
         let contentWidth =
-            (rows.lazy.map { row in
+            (rows.lazy.filter { $0.rowHeight > 0 }.map { row in
                 let iconWidth: CGFloat
                 if #available(macOS 26, *), row.image == nil {
                     iconWidth = measuredSymbolColumnWidth

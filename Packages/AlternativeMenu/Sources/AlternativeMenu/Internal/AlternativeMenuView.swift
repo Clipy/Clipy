@@ -63,8 +63,17 @@ final class AlternativeMenuView: NSView {
     ) {
         expandedRow = nil
         var accumulatedHeight: CGFloat = 0
+        let lastVisibleItemIndex = items.lastIndex { !$0.isSeparator } ?? -1
         let rows = items.enumerated().map { index, item in
-            let row = AlternativeMenuRowData(item: item, verticalOffset: accumulatedHeight, keyEquivalent: keyEquivalent(index))
+            // Keep original indices for selection, shortcuts, and accessibility while
+            // omitting edge separators and all but the first separator in each run.
+            let hidesSeparator = item.isSeparator && (index == 0 || items[index - 1].isSeparator || index > lastVisibleItemIndex)
+            let row = AlternativeMenuRowData(
+                item: item,
+                verticalOffset: accumulatedHeight,
+                keyEquivalent: keyEquivalent(index),
+                hidesSeparator: hidesSeparator
+            )
             accumulatedHeight = row.verticalRange.upperBound
             return row
         }

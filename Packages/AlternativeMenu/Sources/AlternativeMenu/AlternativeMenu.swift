@@ -58,6 +58,13 @@ public struct AlternativeMenuItem {
     let titleContent: Title
     let kind: Kind
 
+    var isSeparator: Bool {
+        if case .separator = kind {
+            return true
+        }
+        return false
+    }
+
     private init(
         _ title: Title,
         keyEquivalent: String = "",

@@ -31,7 +31,9 @@ struct AlternativeMenuRow: View {
     var body: some View {
         Group {
             if row.kind == .separator {
-                Divider()
+                if row.rowHeight > 0 {
+                    Divider()
+                }
             } else {
                 label
             }

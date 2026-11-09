@@ -76,7 +76,7 @@ final class AlternativeMenuPanel: NSPanel {
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(point) }) ?? NSScreen.main else {
             return
         }
-        guard menuView.hasHeader || !items.isEmpty else {
+        guard menuView.hasHeader || items.contains(where: { !$0.isSeparator }) else {
             return
         }
         anchorY = point.y
@@ -278,7 +278,9 @@ private extension AlternativeMenuPanel {
             opensAbove = false
             leadingEdge = point.x
             preferredWidth = menuView.preferredWidth
-            top = min(max(point.y + AlternativeMenuStyle.current.padding, bounds.minY), bounds.maxY)
+            // NSMenu anchors its outer top edge at the point when the first item is a hidden separator.
+            let topPadding = !menuView.hasHeader && items.first?.isSeparator == true ? 0 : AlternativeMenuStyle.current.padding
+            top = min(max(point.y + topPadding, bounds.minY), bounds.maxY)
             bottom = anchorBottom
         } else {
             leadingEdge = isRightToLeft ? previousFrame.maxX : previousFrame.minX

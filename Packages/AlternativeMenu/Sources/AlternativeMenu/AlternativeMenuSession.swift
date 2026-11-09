@@ -111,9 +111,9 @@ public final class AlternativeMenuSession {
     /// and its `onDismiss` callback runs. If that callback leaves another menu open
     /// on this session, that presentation takes precedence and this call stops.
     ///
-    /// An empty menu is shown only when the session has a custom header. Otherwise,
-    /// or if no screen is available, the presentation ends and calls `onDismiss`
-    /// even though no popup became visible.
+    /// An empty or separator-only menu is shown only with a custom header.
+    /// Otherwise, or if no screen is available, the presentation ends and calls
+    /// `onDismiss` even though no popup became visible.
     ///
     /// - Parameters:
     ///   - point: An anchor in AppKit's global screen coordinates, in points.
@@ -159,9 +159,9 @@ public final class AlternativeMenuSession {
     /// The custom header, if any, is retained. The popup can widen to fit new items
     /// but does not shrink in width during a presentation, subject to screen bounds.
     ///
-    /// Passing an empty array dismisses a menu without a header; a menu with a header
-    /// remains open. Calls while inactive or during a confirmation/dismissal
-    /// animation are ignored, not queued for later.
+    /// Passing an empty array or only separators dismisses a menu without a header;
+    /// a menu with a header remains open. Calls while inactive or during a
+    /// confirmation/dismissal animation are ignored, not queued for later.
     ///
     /// - Parameters:
     ///   - items: The complete replacement contents. The caller supplies each item's
@@ -173,7 +173,7 @@ public final class AlternativeMenuSession {
         guard isPresented, dismissalTask == nil else {
             return
         }
-        guard root.menuView.hasHeader || !items.isEmpty else {
+        guard root.menuView.hasHeader || items.contains(where: { !$0.isSeparator }) else {
             dismiss()
             return
         }
@@ -290,7 +290,7 @@ private extension AlternativeMenuSession {
         }
         closeSubmenus(after: panel)
         typingSelection.reset()
-        guard !menu.items.isEmpty else {
+        guard menu.items.contains(where: { !$0.isSeparator }) else {
             return
         }
         let childPanel = AlternativeMenuPanel(minimumSymbolColumnWidth: panel.minimumSymbolColumnWidth, acceptsKeyboard: false)
@@ -315,6 +315,7 @@ private extension AlternativeMenuSession {
         }
         switch panel.items[index].kind {
         case .submenu(let menu, _):
+            // Unlike an empty submenu, a separator-only submenu keeps its parent open on click.
             if menu.items.isEmpty, !fromKeyboard {
                 dismiss()
             } else {

@@ -32,7 +32,12 @@ struct AlternativeMenuRowData {
         verticalRange.upperBound - verticalRange.lowerBound
     }
 
-    init(item: AlternativeMenuItem, verticalOffset: CGFloat, keyEquivalent: AlternativeMenuKeyEquivalent.Display? = nil) {
+    init(
+        item: AlternativeMenuItem,
+        verticalOffset: CGFloat,
+        keyEquivalent: AlternativeMenuKeyEquivalent.Display? = nil,
+        hidesSeparator: Bool = false
+    ) {
         switch item.kind {
         case .sectionHeader:
             self.kind = .header
@@ -87,7 +92,7 @@ struct AlternativeMenuRowData {
         // Include baseline offsets in addition to the font and image bounds.
         let rowHeight: CGFloat =
             if kind == .separator {
-                AlternativeMenuStyle.current.separatorRowHeight
+                hidesSeparator ? 0 : AlternativeMenuStyle.current.separatorRowHeight
             } else {
                 ceil(
                     max(
