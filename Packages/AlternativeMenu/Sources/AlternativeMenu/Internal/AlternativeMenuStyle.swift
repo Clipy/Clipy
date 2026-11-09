@@ -16,13 +16,15 @@ struct AlternativeMenuStyle: Sendable {
             Self(
                 cornerRadius: 12,
                 selectionCornerRadius: 7,
-                minimumRowHeight: 24
+                minimumRowHeight: 24,
+                imagelessRowTextInset: 11
             )
         } else {
             Self(
                 cornerRadius: 6,
                 selectionCornerRadius: 4,
-                minimumRowHeight: 22
+                minimumRowHeight: 22,
+                imagelessRowTextInset: 9
             )
         }
     }()
@@ -41,6 +43,8 @@ struct AlternativeMenuStyle: Sendable {
     // This is an empirical adjustment, not a measured pair of top and bottom insets.
     let rowContentVerticalPadding: CGFloat = 6
     let rowTextInset: CGFloat = 11
+    // Before macOS 26, imageless titles begin 14 pt from the menu edge, including padding.
+    let imagelessRowTextInset: CGFloat
     let iconSpacing: CGFloat = 6
     // Native menus share trailing space between submenu arrows and key equivalents.
     let submenuColumnWidth: CGFloat = 31

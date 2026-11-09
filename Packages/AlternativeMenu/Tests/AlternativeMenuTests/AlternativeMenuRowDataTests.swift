@@ -12,9 +12,26 @@ struct AlternativeMenuRowDataTests {
 
         #expect(plain.title.string.isEmpty)
         #expect(attributed.title.string.isEmpty)
-        #expect(plain.titleWidthWithInsets == AlternativeMenuStyle.current.rowTextInset * 2)
+        #expect(plain.titleWidthWithInsets == AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
         #expect(attributed.titleWidthWithInsets == plain.titleWidthWithInsets)
         #expect(attributed.verticalRange == plain.verticalRange)
+    }
+
+    @Test
+    func accountsForImagelessLeadingInsetInMeasuredWidth() {
+        let title = "Menu item"
+        let plain = AlternativeMenuRowData(item: .action(title) { _ in }, verticalOffset: 0)
+        let image = NSImage(size: NSSize(width: 16, height: 16))
+        let withImage = AlternativeMenuRowData(item: .action(title, image: image) { _ in }, verticalOffset: 0)
+        let insetDifference: CGFloat
+        if #available(macOS 26, *) {
+            insetDifference = 0
+        } else {
+            insetDifference = 2
+        }
+
+        #expect(withImage.leadingInset - plain.leadingInset == insetDifference)
+        #expect(withImage.titleWidthWithInsets - plain.titleWidthWithInsets == insetDifference)
     }
 
     @Test
@@ -76,7 +93,7 @@ struct AlternativeMenuRowDataTests {
         let plain = AlternativeMenuRowData(item: .action(title, isEnabled: false) { _ in }, verticalOffset: 0)
         let row = AlternativeMenuRowData(item: .action(attributedTitle: kerned, isEnabled: false) { _ in }, verticalOffset: 0)
 
-        #expect(row.titleWidthWithInsets == ceil(kerned.size().width) + AlternativeMenuStyle.current.rowTextInset * 2)
+        #expect(row.titleWidthWithInsets == ceil(kerned.size().width) + AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
         #expect(row.titleWidthWithInsets != plain.titleWidthWithInsets)
     }
 
@@ -89,7 +106,7 @@ struct AlternativeMenuRowDataTests {
         let row = AlternativeMenuRowData(item: .action(attributedTitle: styled, isEnabled: false) { _ in }, verticalOffset: 0)
 
         #expect(row.titleWidthWithInsets > plain.titleWidthWithInsets)
-        #expect(row.titleWidthWithInsets == ceil(styled.size().width) + AlternativeMenuStyle.current.rowTextInset * 2)
+        #expect(row.titleWidthWithInsets == ceil(styled.size().width) + AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
         #expect(row.rowHeight > plain.rowHeight)
         #expect(row.rowHeight >= ceil(styled.size().height))
     }

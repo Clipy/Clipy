@@ -65,13 +65,21 @@ final class AlternativeMenuViewState {
         var iconWidths = Array(repeating: CGFloat.zero, count: rows.count)
         var start = 0
         for end in rows.indices where rows[end].kind == .separator || rows[end].kind == .header || end == rows.count - 1 {
-            // A header's symbol belongs to the preceding group; the next row starts a new one.
+            // A header ends the preceding group; the next row starts a new one.
             let group = start...end
-            // Only groups containing a symbol reserve its column for imageless rows.
-            // Symbol-bearing groups still share the menu's widest symbol.
-            let groupSymbolWidth = group.contains { rows[$0].isSymbolImage } ? symbolColumnWidth : 0
+            let indentsImagelessRows: Bool
+            if #available(macOS 27, *) {
+                // Native menus require a strict majority of symbol-bearing items in each group.
+                // Disabled items count; headers and separators do not.
+                let items = rows[group].filter { $0.kind != .header && $0.kind != .separator }
+                indentsImagelessRows = items.filter(\.isSymbolImage).count > items.count / 2
+            } else {
+                indentsImagelessRows = group.contains { rows[$0].isSymbolImage }
+            }
             for index in group {
-                iconWidths[index] = rows[index].iconWidth(symbolColumnWidth: groupSymbolWidth)
+                // Symbols always share the widest column, even when imageless rows stay unindented.
+                let width = rows[index].image == nil && !indentsImagelessRows ? 0 : symbolColumnWidth
+                iconWidths[index] = rows[index].iconWidth(symbolColumnWidth: width)
             }
             start = end + 1
         }

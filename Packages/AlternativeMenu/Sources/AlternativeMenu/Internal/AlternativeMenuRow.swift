@@ -36,7 +36,8 @@ struct AlternativeMenuRow: View {
                 label
             }
         }
-        .padding(.horizontal, AlternativeMenuStyle.current.rowTextInset)
+        .padding(.leading, row.leadingInset)
+        .padding(.trailing, AlternativeMenuStyle.current.rowTextInset)
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: row.rowHeight)
     }

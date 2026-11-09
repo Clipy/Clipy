@@ -22,6 +22,7 @@ struct AlternativeMenuRowData {
     let toolTip: String?
     let font: NSFont
     let verticalRange: Range<CGFloat>
+    let leadingInset: CGFloat
     let titleWidthWithInsets: CGFloat
     let isSymbolImage: Bool
     let hasSubmenu: Bool
@@ -49,6 +50,7 @@ struct AlternativeMenuRowData {
                 NSImage.SymbolConfiguration(scale: .small)
             }
         self.image = item.image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
+        self.leadingInset = image == nil && kind != .separator ? AlternativeMenuStyle.current.imagelessRowTextInset : AlternativeMenuStyle.current.rowTextInset
         self.isSymbolImage = image?.isSymbolImage ?? false
         self.toolTip = item.toolTip
 
@@ -95,14 +97,18 @@ struct AlternativeMenuRowData {
                 )
             }
         self.verticalRange = verticalOffset..<(verticalOffset + rowHeight)
-        self.titleWidthWithInsets = ceil(titleSize.width) + AlternativeMenuStyle.current.rowTextInset * 2
+        self.titleWidthWithInsets = ceil(titleSize.width) + leadingInset + AlternativeMenuStyle.current.rowTextInset
     }
 
     func iconWidth(symbolColumnWidth: CGFloat) -> CGFloat {
         if let image {
             return isSymbolImage ? symbolColumnWidth : image.size.width
         }
-        return kind == .header || kind == .separator ? 0 : symbolColumnWidth
+        // Older native menus keep imageless titles at the leading inset, even beside symbols.
+        if #available(macOS 26, *), kind != .header, kind != .separator {
+            return symbolColumnWidth
+        }
+        return 0
     }
 
     func trailingWidth(keyColumnWidth: CGFloat) -> CGFloat {

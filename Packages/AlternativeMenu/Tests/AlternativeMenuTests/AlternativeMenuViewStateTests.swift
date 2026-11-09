@@ -17,7 +17,11 @@ struct AlternativeMenuViewStateTests {
         ])
         let smallWidth = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
 
-        #expect(state.iconWidths == Array(repeating: smallWidth, count: 4))
+        if #available(macOS 26, *) {
+            #expect(state.iconWidths == Array(repeating: smallWidth, count: 4))
+        } else {
+            #expect(state.iconWidths == [smallWidth, smallWidth, smallWidth, 0])
+        }
         #expect(state.rows.prefix(3).allSatisfy { $0.isSymbolImage })
         #expect(state.rows[0].image?.size == narrow.withSymbolConfiguration(.init(scale: .small))?.size)
     }
@@ -36,7 +40,13 @@ struct AlternativeMenuViewStateTests {
         #expect(!state.rows[0].isSymbolImage)
         #expect(state.rows[0].image?.size == bitmap.size)
         #expect(symbolWidth < bitmap.size.width)
-        #expect(state.iconWidths == [bitmap.size.width, symbolWidth, symbolWidth])
+        if #available(macOS 27, *) {
+            #expect(state.iconWidths == [bitmap.size.width, symbolWidth, 0])
+        } else if #available(macOS 26, *) {
+            #expect(state.iconWidths == [bitmap.size.width, symbolWidth, symbolWidth])
+        } else {
+            #expect(state.iconWidths == [bitmap.size.width, symbolWidth, 0])
+        }
 
         let withoutSymbol = makeState([.action("Title", image: bitmap) { _ in }, .action("Title") { _ in }])
         #expect(withoutSymbol.iconWidths == [56, 0])
@@ -53,7 +63,7 @@ struct AlternativeMenuViewStateTests {
     }
 
     @Test
-    func headerSymbolsIndentThePrecedingGroupsAtTheSharedWidth() throws {
+    func sharesHeaderSymbolWidthsAndAppliesNativeGroupIndentation() throws {
         let narrow = try symbol("doc")
         let wide = try symbol("chevron.left.forwardslash.chevron.right")
         let state = makeState([
@@ -65,7 +75,13 @@ struct AlternativeMenuViewStateTests {
         ])
         let width = try headerSymbolSize(wide).width
 
-        #expect(state.iconWidths == [width, width, width, width, 0])
+        if #available(macOS 27, *) {
+            #expect(state.iconWidths == [0, width, 0, width, 0])
+        } else if #available(macOS 26, *) {
+            #expect(state.iconWidths == [width, width, width, width, 0])
+        } else {
+            #expect(state.iconWidths == [0, width, 0, width, 0])
+        }
     }
 
     @Test
@@ -80,7 +96,13 @@ struct AlternativeMenuViewStateTests {
         ])
         let width = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
 
-        #expect(state.iconWidths == [width, width, width, width])
+        if #available(macOS 27, *) {
+            #expect(state.iconWidths == [0, width, 0, width])
+        } else if #available(macOS 26, *) {
+            #expect(state.iconWidths == [width, width, width, width])
+        } else {
+            #expect(state.iconWidths == [0, width, 0, width])
+        }
     }
 
     @Test
@@ -103,8 +125,50 @@ struct AlternativeMenuViewStateTests {
         ])
         let width = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
 
-        #expect(state.iconWidths == [0, 0, width, width, width, 0, 0, 56, 0, width, width])
-        #expect(state.contentWidth == state.rows[0].titleWidthWithInsets + width + AlternativeMenuStyle.current.iconSpacing)
+        if #available(macOS 27, *) {
+            #expect(state.iconWidths == [0, 0, 0, width, 0, 0, 0, 56, 0, width, 0])
+            #expect(state.contentWidth == state.rows[0].titleWidthWithInsets + width + AlternativeMenuStyle.current.iconSpacing)
+        } else if #available(macOS 26, *) {
+            #expect(state.iconWidths == [0, 0, width, width, width, 0, 0, 56, 0, width, width])
+            #expect(state.contentWidth == state.rows[0].titleWidthWithInsets + width + AlternativeMenuStyle.current.iconSpacing)
+        } else {
+            #expect(state.iconWidths == [0, 0, 0, width, 0, 0, 0, 56, 0, width, 0])
+            #expect(state.contentWidth == state.rows[0].titleWidthWithInsets)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func appliesNativeSymbolGroupingRulesRegardlessOfEnabledState(isEnabled: Bool) throws {
+        let image = try symbol("doc")
+        let symbolItem = AlternativeMenuItem.action("Symbol", isEnabled: isEnabled, image: image) { _ in }
+        let plain = AlternativeMenuItem.action("Plain", isEnabled: isEnabled) { _ in }
+        let bitmap = AlternativeMenuItem.action("Bitmap", isEnabled: isEnabled, image: NSImage(size: NSSize(width: 16, height: 16))) { _ in }
+        let header = AlternativeMenuItem.sectionHeader("Header", image: image)
+        let width = try #require(image.withSymbolConfiguration(.init(scale: .small))).size.width
+        let cases: [(items: [AlternativeMenuItem], plainIndex: Int, indentsOn27: Bool)] = [
+            ([symbolItem, plain], 1, false),
+            ([symbolItem, symbolItem, plain], 2, true),
+            ([symbolItem, symbolItem, plain, plain], 2, false),
+            ([symbolItem, symbolItem, symbolItem, plain, plain], 3, true),
+            ([symbolItem, symbolItem, bitmap, plain], 3, false),
+            ([symbolItem, symbolItem, symbolItem, bitmap, plain], 4, true),
+            ([symbolItem, plain, header], 1, false),
+            ([symbolItem, symbolItem, plain, header], 2, true),
+            ([symbolItem, symbolItem, plain, .sectionHeader("Header")], 2, true),
+            ([symbolItem, symbolItem, plain, .separator], 2, true)
+        ]
+
+        for testCase in cases {
+            let state = makeState(testCase.items)
+            #expect(state.iconWidths[0] == width)
+            if #available(macOS 27, *) {
+                #expect(state.iconWidths[testCase.plainIndex] == (testCase.indentsOn27 ? width : 0))
+            } else if #available(macOS 26, *) {
+                #expect(state.iconWidths[testCase.plainIndex] == width)
+            } else {
+                #expect(state.iconWidths[testCase.plainIndex] == 0)
+            }
+        }
     }
 
     @Test
@@ -118,7 +182,13 @@ struct AlternativeMenuViewStateTests {
         #expect(state.iconWidths == [0, 0, width])
 
         state.setRows(makeState([plain, icon]).rows)
-        #expect(state.iconWidths == [width, width])
+        if #available(macOS 27, *) {
+            #expect(state.iconWidths == [0, width])
+        } else if #available(macOS 26, *) {
+            #expect(state.iconWidths == [width, width])
+        } else {
+            #expect(state.iconWidths == [0, width])
+        }
 
         state.setRows(makeState([plain]).rows)
         #expect(state.iconWidths == [0])
@@ -161,7 +231,13 @@ struct AlternativeMenuViewStateTests {
         )
 
         #expect(state.rows[3].image?.size == size)
-        #expect(state.iconWidths == [0, bitmap.size.width, 0, size.width, size.width])
+        if #available(macOS 27, *) {
+            #expect(state.iconWidths == [0, bitmap.size.width, 0, size.width, 0])
+        } else if #available(macOS 26, *) {
+            #expect(state.iconWidths == [0, bitmap.size.width, 0, size.width, size.width])
+        } else {
+            #expect(state.iconWidths == [0, bitmap.size.width, 0, size.width, 0])
+        }
 
         state.setRows(Array(state.rows.prefix(2)))
 
@@ -200,7 +276,11 @@ struct AlternativeMenuViewStateTests {
         #expect(state.keyColumnWidth == 0)
         #expect(state.trailingColumnWidth == 0)
         #expect(state.iconWidths == [0])
-        #expect(state.contentWidth == plain.titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.current.iconSpacing)
+        if #available(macOS 26, *) {
+            #expect(state.contentWidth == plain.titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.current.iconSpacing)
+        } else {
+            #expect(state.contentWidth == plain.titleWidthWithInsets)
+        }
         #expect(state.contentWidth < decoratedWidth)
 
         state.setRows([decorated])
