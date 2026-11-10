@@ -59,6 +59,8 @@ struct AlternativeMenuStyle: Sendable {
     // This is an empirical adjustment, not a measured pair of top and bottom insets.
     let rowContentVerticalPadding: CGFloat = 6
     let rowTextInset: CGFloat
+    // Extra width reserved by native menus for each nonempty attributed title.
+    let attributedTitleWidthPadding: CGFloat = 2
     // Before macOS 26, imageless titles begin 14 pt from the menu edge, including padding.
     let imagelessRowTextInset: CGFloat
     let iconSpacing: CGFloat = 6

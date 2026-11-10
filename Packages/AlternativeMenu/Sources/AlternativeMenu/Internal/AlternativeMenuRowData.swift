@@ -61,12 +61,15 @@ struct AlternativeMenuRowData {
 
         self.keyEquivalent = keyEquivalent ?? .empty
         let titleSize: NSSize
+        let titleWidthPadding: CGFloat
         var maximumFontLineHeight = Self.lineHeight(for: font)
         switch item.titleContent {
         case .plain(let value):
             self.title = .plain(value)
+            titleWidthPadding = 0
             titleSize = (value as NSString).boundingRect(with: .zero, options: [], attributes: [.font: font]).size
         case .attributed(let source):
+            titleWidthPadding = source.length > 0 ? AlternativeMenuStyle.current.attributedTitleWidthPadding : 0
             let measured = NSMutableAttributedString(string: source.string, attributes: [.font: AlternativeMenuStyle.menuFont])
             let isDisabled = kind == .disabled
             let lineEnd = (source.string as NSString).rangeOfCharacter(from: .newlines).location
@@ -111,7 +114,7 @@ struct AlternativeMenuRowData {
                 )
             }
         self.verticalRange = verticalOffset..<(verticalOffset + rowHeight)
-        self.titleWidthWithInsets = ceil(titleSize.width) + leadingInset + AlternativeMenuStyle.current.rowTextInset
+        self.titleWidthWithInsets = ceil(titleSize.width) + titleWidthPadding + leadingInset + AlternativeMenuStyle.current.rowTextInset
     }
 
     func iconWidth(symbolColumnWidth: CGFloat) -> CGFloat {

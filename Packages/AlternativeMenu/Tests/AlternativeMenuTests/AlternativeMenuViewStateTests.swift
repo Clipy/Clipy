@@ -408,6 +408,17 @@ struct AlternativeMenuViewStateTests {
         #expect(expanded.contentWidth > original.contentWidth)
     }
 
+    @Test
+    func appliesAttributedTitleWidthOnlyToItsOwnRow() {
+        let plain = AlternativeMenuItem.action("Hello") { _ in }
+        let shorter = AlternativeMenuItem.action(attributedTitle: NSAttributedString(string: "A")) { _ in }
+        let sameLength = AlternativeMenuItem.action(attributedTitle: NSAttributedString(string: "Hello")) { _ in }
+        let plainWidth = makeState([plain]).contentWidth
+
+        #expect(makeState([plain, shorter]).contentWidth == plainWidth)
+        #expect(makeState([plain, sameLength]).contentWidth == plainWidth + 2)
+    }
+
     private func makeStateWithKeyEquivalents(_ items: [AlternativeMenuItem]) -> AlternativeMenuViewState {
         let state = AlternativeMenuViewState()
         let matcher = AlternativeMenuKeyEquivalentMatcher()

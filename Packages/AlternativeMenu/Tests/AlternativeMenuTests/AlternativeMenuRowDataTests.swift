@@ -17,6 +17,22 @@ struct AlternativeMenuRowDataTests {
         #expect(attributed.verticalRange == plain.verticalRange)
     }
 
+    @Test(arguments: ["A", " ", "Hello", "e\u{0301}"])
+    func reservesNativeWidthForNonemptyAttributedTitles(_ text: String) {
+        let plain = AlternativeMenuRowData(item: .action(text) { _ in }, verticalOffset: 0)
+        let titles = [
+            NSAttributedString(string: text),
+            NSAttributedString(string: text, attributes: [.font: AlternativeMenuStyle.menuFont])
+        ]
+
+        for title in titles {
+            let attributed = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
+            #expect(attributed.titleWidthWithInsets == plain.titleWidthWithInsets + 2)
+            #expect(attributed.leadingInset == plain.leadingInset)
+            #expect(attributed.rowHeight == plain.rowHeight)
+        }
+    }
+
     @Test
     func accountsForImagelessLeadingInsetInMeasuredWidth() {
         let title = "Menu item"
@@ -86,7 +102,7 @@ struct AlternativeMenuRowDataTests {
         let plain = AlternativeMenuRowData(item: .action(title, isEnabled: false) { _ in }, verticalOffset: 0)
         let row = AlternativeMenuRowData(item: .action(attributedTitle: kerned, isEnabled: false) { _ in }, verticalOffset: 0)
 
-        #expect(row.titleWidthWithInsets == ceil(kerned.size().width) + AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
+        #expect(row.titleWidthWithInsets == ceil(kerned.size().width) + AlternativeMenuStyle.current.attributedTitleWidthPadding + AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
         #expect(row.titleWidthWithInsets != plain.titleWidthWithInsets)
     }
 
@@ -99,7 +115,7 @@ struct AlternativeMenuRowDataTests {
         let row = AlternativeMenuRowData(item: .action(attributedTitle: styled, isEnabled: false) { _ in }, verticalOffset: 0)
 
         #expect(row.titleWidthWithInsets > plain.titleWidthWithInsets)
-        #expect(row.titleWidthWithInsets == ceil(styled.size().width) + AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
+        #expect(row.titleWidthWithInsets == ceil(styled.size().width) + AlternativeMenuStyle.current.attributedTitleWidthPadding + AlternativeMenuStyle.current.imagelessRowTextInset + AlternativeMenuStyle.current.rowTextInset)
         #expect(row.rowHeight > plain.rowHeight)
         #expect(row.rowHeight >= ceil(styled.size().height))
     }
@@ -171,13 +187,14 @@ struct AlternativeMenuRowDataTests {
             [.font: NSFont.systemFont(ofSize: 48), .baselineOffset: 50],
             range: (text as NSString).range(of: secondLine)
         )
-        let singleLine = AlternativeMenuRowData(item: .action(firstLine) { _ in }, verticalOffset: 0)
+        let plainSingleLine = AlternativeMenuRowData(item: .action(firstLine) { _ in }, verticalOffset: 0)
+        let attributedSingleLine = AlternativeMenuRowData(item: .action(attributedTitle: NSAttributedString(string: firstLine)) { _ in }, verticalOffset: 0)
         let rows = [
-            AlternativeMenuRowData(item: .action(text) { _ in }, verticalOffset: 0),
-            AlternativeMenuRowData(item: .action(attributedTitle: styled) { _ in }, verticalOffset: 0)
+            (AlternativeMenuRowData(item: .action(text) { _ in }, verticalOffset: 0), plainSingleLine),
+            (AlternativeMenuRowData(item: .action(attributedTitle: styled) { _ in }, verticalOffset: 0), attributedSingleLine)
         ]
 
-        for row in rows {
+        for (row, singleLine) in rows {
             #expect(row.titleWidthWithInsets == singleLine.titleWidthWithInsets)
             #expect(row.verticalRange == singleLine.verticalRange)
         }
