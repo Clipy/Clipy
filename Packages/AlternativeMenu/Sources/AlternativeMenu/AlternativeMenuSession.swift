@@ -291,6 +291,8 @@ private extension AlternativeMenuSession {
         closeSubmenus(after: panel)
         typingSelection.reset()
         guard menu.items.contains(where: { !$0.isSeparator }) else {
+            // Keyboard entry de-emphasizes the parent even when its child has no visible rows.
+            panel.menuView.isSelectionEmphasized = !highlightsFirstItem
             return
         }
         let childPanel = AlternativeMenuPanel(minimumSymbolColumnWidth: panel.minimumSymbolColumnWidth, acceptsKeyboard: false)
@@ -428,7 +430,13 @@ private extension AlternativeMenuSession {
                 return false
             }
             openSubmenu(of: panel, row: selection, highlightsFirstItem: true)
+            return true
         case closes:
+            if panel.selection != nil, !panel.menuView.isSelectionEmphasized {
+                // Return from an empty or separator-only child without closing its parent.
+                emphasizeSelection(in: panel)
+                return true
+            }
             guard panel !== root else {
                 return false
             }
