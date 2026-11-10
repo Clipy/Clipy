@@ -23,15 +23,8 @@ struct AlternativeMenuRowDataTests {
         let plain = AlternativeMenuRowData(item: .action(title) { _ in }, verticalOffset: 0)
         let image = NSImage(size: NSSize(width: 16, height: 16))
         let withImage = AlternativeMenuRowData(item: .action(title, image: image) { _ in }, verticalOffset: 0)
-        let insetDifference: CGFloat
-        if #available(macOS 26, *) {
-            insetDifference = 0
-        } else {
-            insetDifference = 2
-        }
-
-        #expect(withImage.leadingInset - plain.leadingInset == insetDifference)
-        #expect(withImage.titleWidthWithInsets - plain.titleWidthWithInsets == insetDifference)
+        #expect(withImage.leadingInset == plain.leadingInset)
+        #expect(withImage.titleWidthWithInsets == plain.titleWidthWithInsets)
     }
 
     @Test
