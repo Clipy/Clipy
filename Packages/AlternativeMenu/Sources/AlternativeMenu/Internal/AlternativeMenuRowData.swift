@@ -151,7 +151,7 @@ struct AlternativeMenuRowData {
         return 0
     }
 
-    func trailingWidth(keyColumnWidth: CGFloat) -> CGFloat {
+    var trailingWidth: CGFloat {
         if hasSubmenu {
             return AlternativeMenuStyle.current.submenuColumnWidth
         }
@@ -160,7 +160,7 @@ struct AlternativeMenuRowData {
         }
         return max(
             AlternativeMenuStyle.current.minimumKeyEquivalentColumnWidth,
-            ceil(keyEquivalent.width(sharedKeyColumnWidth: keyColumnWidth)) + AlternativeMenuStyle.current.keyEquivalentGap
+            keyEquivalent.minimumWidth
         )
     }
 

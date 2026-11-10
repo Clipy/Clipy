@@ -14,6 +14,7 @@ struct AlternativeMenuRow: View {
     let iconWidth: CGFloat
     let trailingColumnWidth: CGFloat
     let keyColumnWidth: CGFloat
+    let modifierColumnWidth: CGFloat
 
     @Environment(\.layoutDirection)
     private var layoutDirection
@@ -96,17 +97,29 @@ struct AlternativeMenuRow: View {
                 AlternativeMenuKeyEquivalentLabel(
                     display: row.keyEquivalent,
                     keyColumnWidth: keyColumnWidth,
+                    layoutDirection: layoutDirection,
                     color: isEmphasized ? .selectedMenuItemTextColor : .tertiaryLabelColor
                 )
                 .frame(
-                    width: max(0, trailingColumnWidth - AlternativeMenuStyle.current.keyEquivalentGap),
+                    width: layoutDirection == .rightToLeft
+                        ? modifierColumnWidth + keyColumnWidth
+                        : max(0, trailingColumnWidth - AlternativeMenuStyle.current.keyEquivalentGap),
                     alignment: .trailing
+                )
+                // In RTL menus, long key names start at the shared key column and extend rightward.
+                // NSMenu draws modifiers as images; this view uses text with its measured widths.
+                // A small RTL position difference (about 2 pt for some modifier combinations) is accepted.
+                .offset(
+                    x: layoutDirection == .rightToLeft
+                        ? AlternativeMenuStyle.current.keyEquivalentRightToLeftOffset
+                            + (row.keyEquivalent.usesSharedKeyColumn ? 0
+                                : row.keyEquivalent.keyWidth + AlternativeMenuStyle.current.longKeyEquivalentPadding
+                                    + AlternativeMenuStyle.current.longKeyEquivalentLeadingInset - keyColumnWidth)
+                        : 0
                 )
                 // Match NSMenu's left-to-right shortcut order in RTL menus.
                 .environment(\.layoutDirection, .leftToRight)
-                // NSMenu draws modifiers as images; this view uses text with its measured widths.
-                // A small RTL position difference (about 2 pt for some modifier combinations) is accepted.
-                .padding(.trailing, layoutDirection == .rightToLeft ? -5 : -1)
+                .padding(.trailing, layoutDirection == .rightToLeft ? 0 : AlternativeMenuStyle.current.keyEquivalentTrailingPadding)
                 .allowsHitTesting(false)
             }
         }

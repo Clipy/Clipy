@@ -19,10 +19,17 @@ struct AlternativeMenuStyle: Sendable {
                 minimumRowHeight: 24,
                 rowTextInset: 11,
                 imagelessRowTextInset: 11,
+                centersKeyEquivalents: true,
+                centeredModifierLeadingInset: 2,
+                keyEquivalentTrailingPadding: 3,
+                keyEquivalentRightToLeftOffset: -1,
+                longKeyEquivalentPadding: 2,
+                longKeyEquivalentLeadingInset: 2,
                 submenuArrowTrailingPadding: 3.5,
                 submenuArrowRightToLeftTrailingPadding: 3.5,
                 headerBaselineOffset: 2,
-                imageHorizontalOffset: -1
+                imageHorizontalOffset: -1,
+                functionKeyBaselineOffset: 1
             )
         } else if #available(macOS 26, *) {
             return Self(
@@ -31,10 +38,17 @@ struct AlternativeMenuStyle: Sendable {
                 minimumRowHeight: 24,
                 rowTextInset: 11,
                 imagelessRowTextInset: 11,
+                centersKeyEquivalents: false,
+                centeredModifierLeadingInset: 0,
+                keyEquivalentTrailingPadding: 0,
+                keyEquivalentRightToLeftOffset: -3,
+                longKeyEquivalentPadding: 4,
+                longKeyEquivalentLeadingInset: 0,
                 submenuArrowTrailingPadding: 0.5,
                 submenuArrowRightToLeftTrailingPadding: -2.5,
                 headerBaselineOffset: 2,
-                imageHorizontalOffset: 0
+                imageHorizontalOffset: 0,
+                functionKeyBaselineOffset: 0
             )
         } else {
             return Self(
@@ -43,10 +57,17 @@ struct AlternativeMenuStyle: Sendable {
                 minimumRowHeight: 22,
                 rowTextInset: 9,
                 imagelessRowTextInset: 9,
+                centersKeyEquivalents: false,
+                centeredModifierLeadingInset: 0,
+                keyEquivalentTrailingPadding: 0,
+                keyEquivalentRightToLeftOffset: -1,
+                longKeyEquivalentPadding: 8,
+                longKeyEquivalentLeadingInset: 0,
                 submenuArrowTrailingPadding: 0.5,
                 submenuArrowRightToLeftTrailingPadding: -0.5,
                 headerBaselineOffset: 1,
-                imageHorizontalOffset: 0
+                imageHorizontalOffset: 0,
+                functionKeyBaselineOffset: 0
             )
         }
     }()
@@ -75,10 +96,27 @@ struct AlternativeMenuStyle: Sendable {
     let minimumKeyEquivalentColumnWidth: CGFloat = 32
     // Space beside the measured shortcut, whose width already includes modifier spacing.
     let keyEquivalentGap: CGFloat = 18
+    // Native minimum width adds this margin to the item's own key and modifier image widths.
+    let keyEquivalentSizingPadding: CGFloat = 23
+    let centersKeyEquivalents: Bool
+    // Native modifier images start farther inward than text beside the centered key column.
+    let centeredModifierLeadingInset: CGFloat
+    let keyEquivalentTrailingPadding: CGFloat
+    // Align the RTL label frame with native modifier and key columns, independently of menu sizing.
+    let keyEquivalentRightToLeftOffset: CGFloat
+    let longKeyEquivalentPadding: CGFloat
+    // Native left-aligned key names retain a text inset beside centered key columns.
+    let longKeyEquivalentLeadingInset: CGFloat
     let submenuArrowTrailingPadding: CGFloat
     let submenuArrowRightToLeftTrailingPadding: CGFloat
     let headerBaselineOffset: CGFloat
     let imageHorizontalOffset: CGFloat
+    let functionKeyBaselineOffset: CGFloat
+    let keyEquivalentDrawingInset: CGFloat = 4
+    let modifierToKeySpacing: CGFloat = 1.5
+    let legacySymbolKeyLeadingInset: CGFloat = 2
+    // Older AppKit versions reserve a fixed column for function-key ligatures despite returning zero advance.
+    let legacyFunctionKeyColumnWidth: CGFloat = 15
     @MainActor
     static let menuFont = NSFont.menuFont(ofSize: 0)
     @MainActor

@@ -17,6 +17,7 @@ final class AlternativeMenuViewState {
     private let minimumSymbolColumnWidth: CGFloat
     private(set) var rows: [AlternativeMenuRowData] = []
     private(set) var keyColumnWidth: CGFloat = 0
+    private(set) var modifierColumnWidth: CGFloat = 0
     private(set) var trailingColumnWidth: CGFloat = 0
     private(set) var iconWidths: [CGFloat] = []
     private(set) var contentWidth: CGFloat = 0
@@ -59,7 +60,8 @@ final class AlternativeMenuViewState {
 
     func setRows(_ rows: [AlternativeMenuRowData]) {
         let keyColumnWidth = rows.lazy.map(\.keyEquivalent).filter(\.usesSharedKeyColumn).map(\.keyWidth).max() ?? 0
-        let trailingColumnWidth = rows.lazy.map { $0.trailingWidth(keyColumnWidth: keyColumnWidth) }.max() ?? 0
+        let modifierColumnWidth = rows.lazy.map(\.keyEquivalent.modifierColumnWidth).max() ?? 0
+        let trailingColumnWidth = rows.lazy.map(\.trailingWidth).max() ?? 0
         var imageColumnWidth = rows.lazy.filter(\.isSymbolImage).map(\.imageLayoutSize.width).max() ?? 0
         let bitmapWidths = rows.lazy.filter { !$0.isSymbolImage }.compactMap { $0.image?.size.width }
         if let maximum = bitmapWidths.max(), let minimum = bitmapWidths.min(),
@@ -111,6 +113,7 @@ final class AlternativeMenuViewState {
 
         self.rows = rows
         self.keyColumnWidth = keyColumnWidth
+        self.modifierColumnWidth = modifierColumnWidth
         self.trailingColumnWidth = trailingColumnWidth
         self.iconWidths = iconWidths
         self.contentWidth = contentWidth

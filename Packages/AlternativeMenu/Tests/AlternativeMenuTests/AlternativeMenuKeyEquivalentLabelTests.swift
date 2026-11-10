@@ -36,13 +36,59 @@ struct AlternativeMenuKeyEquivalentLabelTests {
         #expect(field.bounds.width - (try keyDrawingOffset(in: field)) >= bounds.maxX)
     }
 
+    @Test(arguments: ["\t", "\u{19}", "\r", "\u{1b}", "\u{08}", "\u{f728}", "\u{f746}"], [CGFloat(0), 32])
+    func keepsBareSpecialKeysInsideTheDrawingBounds(_ key: String, keyColumnWidth: CGFloat) throws {
+        let display = AlternativeMenuKeyEquivalent.display(for: key, modifiers: [])
+        for direction in [LayoutDirection.leftToRight, .rightToLeft] {
+            let host = hosting(display, keyColumnWidth: keyColumnWidth, layoutDirection: direction)
+            let field = try onlyTextField(in: host)
+            let bounds = CTLineGetBoundsWithOptions(try keyLine(in: field), .useGlyphPathBounds)
+            try #require(!bounds.isNull)
+            let origin = try keyDrawingOffset(in: field)
+
+            #expect(origin + bounds.minX >= field.bounds.minX)
+            #expect(origin + bounds.maxX <= field.bounds.maxX)
+        }
+    }
+
+    @Test(arguments: ["\t", "\r", "\u{f703}"], [LayoutDirection.leftToRight, .rightToLeft])
+    func keepsSpecialKeyOriginsStableAcrossModifierCounts(_ key: String, direction: LayoutDirection) throws {
+        let modifiers: [NSEvent.ModifierFlags] = [[], .command, [.shift, .command], [.control, .option]]
+        let hosts = modifiers.map {
+            hosting(AlternativeMenuKeyEquivalent.display(for: key, modifiers: $0), keyColumnWidth: 32, layoutDirection: direction)
+        }
+        let origins = try hosts.map { host in
+            let field = try onlyTextField(in: host)
+            return field.convert(NSPoint(x: try keyDrawingOffset(in: field), y: 0), to: host).x
+        }
+        let reference = try #require(origins.first)
+
+        for origin in origins.dropFirst() {
+            #expect(abs(origin - reference) <= 0.5)
+        }
+    }
+
+    @Test(arguments: ["\t", "\r", "\u{f703}"])
+    func alignsImageKeyCentersWithTheMenuDirection(_ key: String) throws {
+        let display = AlternativeMenuKeyEquivalent.display(for: key, modifiers: .command)
+        let columnWidth: CGFloat = 32
+        let left = hosting(display, keyColumnWidth: columnWidth, layoutDirection: .leftToRight)
+        let right = hosting(display, keyColumnWidth: columnWidth, layoutDirection: .rightToLeft)
+        let leftField = try onlyTextField(in: left)
+        let rightField = try onlyTextField(in: right)
+        let leftCenter = try keyDrawingOffset(in: leftField) + CTLineGetTypographicBounds(keyLine(in: leftField), nil, nil, nil) / 2
+        let rightCenter = try keyDrawingOffset(in: rightField) + CTLineGetTypographicBounds(keyLine(in: rightField), nil, nil, nil) / 2
+
+        #expect(abs(rightCenter - leftCenter - (columnWidth - display.keyWidth)) <= 0.001)
+    }
+
     @Test
     func updatesTheWholeShortcutColorWithoutChangingTheNativeGlyphsOrFont() throws {
         let display = AlternativeMenuKeyEquivalent.display(for: " ", modifiers: .command)
         let host = hosting(display, color: .tertiaryLabelColor)
         let original = try onlyTextField(in: host).attributedStringValue
 
-        host.rootView = content(display, keyColumnWidth: 0, color: .selectedMenuItemTextColor)
+        host.rootView = content(display, keyColumnWidth: 0, layoutDirection: .leftToRight, color: .selectedMenuItemTextColor)
         host.layoutSubtreeIfNeeded()
         let field = try onlyTextField(in: host)
         let updated = field.attributedStringValue
@@ -63,17 +109,20 @@ struct AlternativeMenuKeyEquivalentLabelTests {
     private func hosting(
         _ display: AlternativeMenuKeyEquivalent.Display,
         keyColumnWidth: CGFloat = 0,
+        layoutDirection: LayoutDirection = .leftToRight,
         color: NSColor = .tertiaryLabelColor
     ) -> NSHostingView<AnyView> {
-        let host = NSHostingView(rootView: content(display, keyColumnWidth: keyColumnWidth, color: color))
+        let host = NSHostingView(rootView: content(display, keyColumnWidth: keyColumnWidth, layoutDirection: layoutDirection, color: color))
         host.frame = NSRect(x: 0, y: 0, width: 240, height: 24)
         host.layoutSubtreeIfNeeded()
         return host
     }
 
-    private func content(_ display: AlternativeMenuKeyEquivalent.Display, keyColumnWidth: CGFloat, color: NSColor) -> AnyView {
+    private func content(
+        _ display: AlternativeMenuKeyEquivalent.Display, keyColumnWidth: CGFloat, layoutDirection: LayoutDirection, color: NSColor
+    ) -> AnyView {
         AnyView(
-            AlternativeMenuKeyEquivalentLabel(display: display, keyColumnWidth: keyColumnWidth, color: color)
+            AlternativeMenuKeyEquivalentLabel(display: display, keyColumnWidth: keyColumnWidth, layoutDirection: layoutDirection, color: color)
                 .frame(width: 240, height: 24, alignment: .trailing)
         )
     }
@@ -107,7 +156,12 @@ struct AlternativeMenuKeyEquivalentLabelTests {
     private func keyDrawingOffset(in field: NSTextField) throws -> CGFloat {
         // Caret offsets include half of the preceding kern; glyph drawing starts at the modifier advance.
         let line = CTLineCreateWithAttributedString(field.attributedStringValue)
-        return CTLineGetTypographicBounds(line, nil, nil, nil)
+        let paragraph = try #require(
+            field.attributedStringValue.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle
+        )
+        let cell = try #require(field.cell)
+        return cell.drawingRect(forBounds: field.bounds).minX + paragraph.firstLineHeadIndent
+            + CTLineGetTypographicBounds(line, nil, nil, nil)
             - CTLineGetTypographicBounds(try keyLine(in: field), nil, nil, nil)
     }
 }

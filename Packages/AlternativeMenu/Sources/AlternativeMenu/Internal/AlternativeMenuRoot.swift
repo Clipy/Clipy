@@ -47,7 +47,8 @@ struct AlternativeMenuRoot: View {
                         isEmphasized: state.highlightedRowIndex == index && state.isSelectionEmphasized,
                         iconWidth: state.iconWidths[index],
                         trailingColumnWidth: state.trailingColumnWidth,
-                        keyColumnWidth: state.keyColumnWidth
+                        keyColumnWidth: state.keyColumnWidth,
+                        modifierColumnWidth: state.modifierColumnWidth
                     )
                 }
             }

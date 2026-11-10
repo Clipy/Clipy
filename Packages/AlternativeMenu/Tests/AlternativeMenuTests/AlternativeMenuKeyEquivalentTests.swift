@@ -76,12 +76,9 @@ struct AlternativeMenuKeyEquivalentTests {
         #expect(display.keyWidth > 0)
 
         let line = CTLineCreateWithAttributedString(display.attributedText.attributedSubstring(from: glyphRange))
-        let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
-        try #require(!bounds.isNull)
-        #expect(display.keyWidth >= bounds.maxX)
         if number <= 20 {
             #expect(CTLineGetTypographicBounds(line, nil, nil, nil) == 0)
-            #expect(display.keyWidth - bounds.maxX < 1)
+            #expect(!CTLineGetBoundsWithOptions(line, .useGlyphPathBounds).isNull)
         }
     }
 
@@ -92,7 +89,67 @@ struct AlternativeMenuKeyEquivalentTests {
         #expect(display.accessibilityText.isEmpty)
         #expect(display.attributedText.length == 0)
         #expect(display.keyWidth == 0)
+        #expect(display.minimumWidth == 0)
         #expect(display.width(sharedKeyColumnWidth: 32) == 0)
+    }
+
+    @Test
+    func nativeModifierMeasurementOnlyAffectsMenuSizing() {
+        let measured = AlternativeMenuKeyEquivalent.Display(
+            modifierSymbols: "⌘", keyName: "O", keyGlyphs: "O", keyFont: AlternativeMenuStyle.keyEquivalentFont,
+            nativeKeyWidth: 11, nativeModifierWidth: 13, isSymbolKey: false
+        )
+        let fallback = AlternativeMenuKeyEquivalent.Display(
+            modifierSymbols: "⌘", keyName: "O", keyGlyphs: "O", keyFont: AlternativeMenuStyle.keyEquivalentFont,
+            nativeKeyWidth: 11, nativeModifierWidth: nil, isSymbolKey: false
+        )
+
+        #expect(measured.minimumWidth == 47)
+        #expect(measured.attributedText == fallback.attributedText)
+        #expect(measured.text(sharedKeyColumnWidth: 32, isRightToLeft: false) == fallback.text(sharedKeyColumnWidth: 32, isRightToLeft: false))
+        #expect(measured.width(sharedKeyColumnWidth: 32) == fallback.width(sharedKeyColumnWidth: 32))
+        #expect(fallback.minimumWidth > measured.minimumWidth)
+    }
+
+    @Test(arguments: [CGFloat.nan, .infinity, -1])
+    func invalidNativeMeasurementsFallBackToText(_ width: CGFloat) {
+        let fallback = AlternativeMenuKeyEquivalent.Display(
+            modifierSymbols: "⌘", keyName: "O", keyGlyphs: "O", keyFont: AlternativeMenuStyle.keyEquivalentFont,
+            nativeKeyWidth: nil, nativeModifierWidth: nil, isSymbolKey: false
+        )
+        let invalid = AlternativeMenuKeyEquivalent.Display(
+            modifierSymbols: "⌘", keyName: "O", keyGlyphs: "O", keyFont: AlternativeMenuStyle.keyEquivalentFont,
+            nativeKeyWidth: width, nativeModifierWidth: width, isSymbolKey: false
+        )
+
+        #expect(invalid == fallback)
+        #expect(invalid.minimumWidth.isFinite)
+        #expect(invalid.minimumWidth > 0)
+    }
+
+    @Test
+    func emptyDrawingNameKeepsModifierText() {
+        let display = AlternativeMenuKeyEquivalent.Display(
+            modifierSymbols: "⌘", keyName: "A", keyGlyphs: "", keyFont: AlternativeMenuStyle.keyEquivalentFont,
+            nativeKeyWidth: nil, nativeModifierWidth: nil, isSymbolKey: true
+        )
+
+        #expect(display.text(sharedKeyColumnWidth: 32, isRightToLeft: false).string == "⌘ ")
+    }
+
+    @Test(arguments: ["\r", "\n"])
+    func mirrorsReturnForRightToLeftMenusWithoutChangingItsAccessibleName(_ key: String) throws {
+        let display = AlternativeMenuKeyEquivalent.display(for: key, modifiers: .command)
+        let left = display.text(sharedKeyColumnWidth: 32, isRightToLeft: false)
+        let right = display.text(sharedKeyColumnWidth: 32, isRightToLeft: true)
+
+        #expect(left.string == "⌘ \u{2066}⏎\u{2069}")
+        #expect(right.string == "⌘ \u{2066}↪\u{2069}")
+        #expect(display.attributedText.string == left.string)
+        #expect(display.accessibilityText == "⌘↩")
+        let index = (right.string as NSString).range(of: "↪").location
+        try #require(index != NSNotFound)
+        #expect(left.attribute(.font, at: index, effectiveRange: nil) as? NSFont == right.attribute(.font, at: index, effectiveRange: nil) as? NSFont)
     }
 
     @Test(arguments: ["\u{01}", "\u{200b}", "\u{feff}"])

@@ -382,6 +382,7 @@ struct AlternativeMenuViewStateTests {
         let minimumWidth: CGFloat = 8
         let state = AlternativeMenuViewState(minimumSymbolColumnWidth: minimumWidth)
         #expect(state.keyColumnWidth == 0)
+        #expect(state.modifierColumnWidth == 0)
         #expect(state.trailingColumnWidth == 0)
         #expect(state.contentWidth == 0)
         #expect(state.iconWidths.isEmpty)
@@ -400,6 +401,7 @@ struct AlternativeMenuViewStateTests {
         try #require(decorated.keyEquivalent.keyWidth > 0)
         state.setRows([decorated])
         #expect(state.keyColumnWidth == decorated.keyEquivalent.keyWidth)
+        #expect(state.modifierColumnWidth == decorated.keyEquivalent.modifierColumnWidth)
         #expect(state.trailingColumnWidth > 0)
         #expect(state.iconWidths == [symbolWidth])
         let decoratedWidth = state.contentWidth
@@ -407,6 +409,7 @@ struct AlternativeMenuViewStateTests {
         let plain = AlternativeMenuRowData(item: .action("Title") { _ in }, verticalOffset: 0)
         state.setRows([plain])
         #expect(state.keyColumnWidth == 0)
+        #expect(state.modifierColumnWidth == 0)
         #expect(state.trailingColumnWidth == 0)
         #expect(state.iconWidths == [0])
         if #available(macOS 26, *) {
@@ -420,6 +423,7 @@ struct AlternativeMenuViewStateTests {
         state.setRows([])
         #expect(state.rows.isEmpty)
         #expect(state.keyColumnWidth == 0)
+        #expect(state.modifierColumnWidth == 0)
         #expect(state.trailingColumnWidth == 0)
         #expect(state.contentWidth == 0)
         #expect(state.iconWidths.isEmpty)
@@ -460,7 +464,7 @@ struct AlternativeMenuViewStateTests {
     }
 
     @Test(arguments: ["w", "\u{f70f}"])
-    func reservesMoreTrailingSpaceWhenABareKeyWidensTheSharedColumn(_ key: String) {
+    func keepsMenuWidthIndependentOfTheSharedDrawingColumn(_ key: String) {
         let modified = AlternativeMenuItem.action(
             "Title",
             keyEquivalent: "a",
@@ -470,8 +474,8 @@ struct AlternativeMenuViewStateTests {
         let expanded = makeStateWithKeyEquivalents([modified, .action("Title", keyEquivalent: key, keyEquivalentModifierMask: []) { _ in }])
 
         #expect(expanded.keyColumnWidth > original.keyColumnWidth)
-        #expect(expanded.trailingColumnWidth > original.trailingColumnWidth)
-        #expect(expanded.contentWidth > original.contentWidth)
+        #expect(expanded.trailingColumnWidth == original.trailingColumnWidth)
+        #expect(expanded.contentWidth == original.contentWidth)
     }
 
     @Test

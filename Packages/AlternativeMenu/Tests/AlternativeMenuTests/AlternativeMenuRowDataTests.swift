@@ -299,7 +299,7 @@ struct AlternativeMenuRowDataTests {
 
         #expect(row.kind == (isEnabled ? .item : .disabled))
         #expect(row.hasSubmenu)
-        #expect(row.trailingWidth(keyColumnWidth: 0) == AlternativeMenuStyle.current.submenuColumnWidth)
+        #expect(row.trailingWidth == AlternativeMenuStyle.current.submenuColumnWidth)
     }
 
     @Test(arguments: ["\n", "\r\n", "\u{2028}", "\u{2029}"])
