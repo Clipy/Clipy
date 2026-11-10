@@ -131,6 +131,16 @@ struct AlternativeMenuViewTests {
         #expect(fixture.offset == 0)
     }
 
+    @Test(arguments: [CGFloat(0), 2])
+    func ignoresFooterOnlyOverflowButScrollsWhenActualRowsExtendPastTheViewport(_ rowOverflow: CGFloat) throws {
+        let imageHeight = 500 + rowOverflow - AlternativeMenuStyle.current.rowContentVerticalPadding
+        let item = AlternativeMenuItem.action("Item", image: NSImage(size: NSSize(width: 16, height: imageHeight))) { _ in }
+        let fixture = try ScrollFixture(items: [item])
+
+        #expect(fixture.view.scrollMenuItems(by: 10) == (rowOverflow > 0))
+        #expect(fixture.offset == (rowOverflow > 0 ? rowOverflow + AlternativeMenuStyle.current.padding : 0))
+    }
+
     @Test
     func retainsPageTargetsForStandardRows() throws {
         let items: [AlternativeMenuItem] = (0..<80).map { index in .action("Row \(index)") { _ in } }

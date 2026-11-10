@@ -69,6 +69,30 @@ struct AlternativeMenuPanelTests {
         #expect(panel.frame == expandedFrame)
     }
 
+    @Test(arguments: [CGFloat(-1), 0, 1, 4, 5, 6], [false, true])
+    func offsetsOnlyAnchorsAtOrBelowTheVisibleScreenBottom(_ offset: CGFloat, hasHeader: Bool) throws {
+        _ = NSApplication.shared
+        let screen = try #require(NSScreen.main)
+        let header = hasHeader ? AlternativeMenuHeader(height: 30, minimumWidth: 240) { EmptyView() } : nil
+        let panel = AlternativeMenuPanel(header: header)
+        defer { panel.dismiss() }
+        let inset = AlternativeMenuStyle.current.screenEdgeInset
+        let padding = offset <= 0 ? AlternativeMenuStyle.current.padding : 0
+        let expectedBottom = screen.visibleFrame.minY + max(offset, inset + padding)
+        panel.setItems([.action("First") { _ in }], highlightsFirstItem: false)
+
+        panel.open(at: NSPoint(x: screen.frame.midX, y: screen.visibleFrame.minY + offset))
+
+        #expect(panel.frame.minY == expectedBottom)
+        panel.updateItems([.action("First") { _ in }, .action("Last") { _ in }], highlightsFirstItem: false)
+        #expect(panel.frame.minY == expectedBottom)
+
+        panel.dismiss()
+        panel.setItems([.action("First") { _ in }], highlightsFirstItem: false)
+        panel.open(at: NSPoint(x: screen.frame.midX, y: screen.visibleFrame.minY + inset))
+        #expect(panel.frame.minY == screen.visibleFrame.minY + inset)
+    }
+
     @Test(arguments: [false, true], [false, true])
     func cancellationCannotChangeTheNextPresentation(duringFade: Bool, blinksSelection: Bool) async throws {
         _ = NSApplication.shared
@@ -110,6 +134,44 @@ struct AlternativeMenuPanelTests {
             #expect(panel.items.first?.title == "Next")
             #expect(panel.selection == 0)
         }
+    }
+
+    @Test(arguments: [CGFloat(0), 1, 4, 5, 6])
+    func keepsClippedBottomPaddingThroughScrollingAndUpdatesThenResetsOnReopening(_ topClearance: CGFloat) throws {
+        _ = NSApplication.shared
+        let screen = try #require(NSScreen.main)
+        let panel = AlternativeMenuPanel()
+        defer { panel.dismiss() }
+        let padding = AlternativeMenuStyle.current.padding
+        let clippedPadding = max(0, padding - topClearance)
+        let point = NSPoint(
+            x: screen.frame.midX,
+            y: screen.frame.maxY - AlternativeMenuStyle.current.screenEdgeInset - topClearance
+        )
+        var items = [AlternativeMenuItem.action("First") { _ in }, .action("Last") { _ in }]
+        panel.setItems(items, highlightsFirstItem: false)
+        panel.open(at: point)
+        let initialFrame = panel.frame
+        let state = try #require(Mirror(reflecting: panel.menuView).descendant("state") as? AlternativeMenuViewState)
+        _ = try #require(state.scrollView)
+        let grow = try #require(panel.menuView.growMenuHeightBy)
+
+        #expect(initialFrame.height == panel.menuView.preferredHeight - clippedPadding)
+        #expect(!panel.menuView.scrollMenuItems(by: padding * 2))
+        #expect(state.offset == 0)
+        #expect(grow(padding) == 0)
+        #expect(panel.frame == initialFrame)
+
+        items.append(.action("Added") { _ in })
+        panel.updateItems(items, highlightsFirstItem: false)
+        #expect(panel.frame.height == panel.menuView.preferredHeight - clippedPadding)
+        #expect(panel.frame.maxY == initialFrame.maxY)
+        #expect(state.offset == 0)
+
+        panel.dismiss()
+        panel.setItems(items, highlightsFirstItem: false)
+        panel.open(at: NSPoint(x: screen.visibleFrame.midX, y: screen.visibleFrame.midY))
+        #expect(panel.frame.height == panel.menuView.preferredHeight)
     }
 
     @Test

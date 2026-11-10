@@ -21,7 +21,7 @@ struct AlternativeMenuScrollAvailability: Equatable {
 
     init(offset: CGFloat, contentHeight: CGFloat, viewportHeight: CGFloat, topPadding: CGFloat) {
         self.canScrollUp = offset > Self.scrollThreshold
-        self.canScrollDown = offset + viewportHeight < contentHeight - Self.scrollThreshold
+        self.canScrollDown = offset + viewportHeight < contentHeight - AlternativeMenuStyle.current.padding - Self.scrollThreshold
         // The padding above the viewport already occupies part of the scroll indicator's area.
         self.topInset = canScrollUp ? max(0, AlternativeMenuStyle.current.minimumRowHeight - topPadding) : 0
         self.bottomInset = canScrollDown ? AlternativeMenuStyle.current.minimumRowHeight : 0

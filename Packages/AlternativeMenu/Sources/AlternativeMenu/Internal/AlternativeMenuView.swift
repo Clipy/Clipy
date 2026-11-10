@@ -236,6 +236,12 @@ final class AlternativeMenuView: NSView {
         max(0, bounds.height - viewportTopInset)
     }
 
+    private var maximumScrollOffset: CGFloat {
+        let overflow = state.contentHeight - viewportHeight
+        // A clipped footer alone must not scroll the first row beneath an up arrow.
+        return overflow <= AlternativeMenuStyle.current.padding ? 0 : overflow
+    }
+
     private func visibleRowBounds(for availability: AlternativeMenuScrollAvailability) -> (top: CGFloat, bottom: CGFloat) {
         let offset = state.offset
         return (offset + availability.topInset, offset + viewportHeight - availability.bottomInset)
@@ -258,12 +264,12 @@ final class AlternativeMenuView: NSView {
             return false
         }
         let clip = scrollView.contentView
-        let target = max(0, min(offset, state.contentHeight - viewportHeight))
+        let target = max(0, min(offset, maximumScrollOffset))
         let distance = target - state.offset
         // A native popup reveals more rows by growing the window before
         // scrolling its document. Growth consumes part of this scroll.
         let growth = distance > 0 ? growMenuHeightBy?(distance) ?? 0 : 0
-        let delta = max(0, min(target - growth, state.contentHeight - viewportHeight)) - state.offset
+        let delta = max(0, min(target - growth, maximumScrollOffset)) - state.offset
         guard delta != 0 else {
             return growth > 0
         }

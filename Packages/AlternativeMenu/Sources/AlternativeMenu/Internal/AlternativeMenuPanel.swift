@@ -252,6 +252,15 @@ final class AlternativeMenuPanel: NSPanel {
 }
 
 private extension AlternativeMenuPanel {
+    func clippedBottomPadding(in bounds: NSRect) -> CGFloat {
+        guard acceptsKeyboard, !menuView.hasHeader, items.first?.isSeparator != true else {
+            return 0
+        }
+        let padding = AlternativeMenuStyle.current.padding
+        // Constraining the proposed top edge clips trailing padding, not the menu's rows.
+        return min(padding, max(0, anchorY + padding - bounds.maxY))
+    }
+
     func fittedWidth(_ preferredWidth: CGFloat, screenWidth: CGFloat, availableWidth: CGFloat) -> CGFloat {
         // NSMenu caps the width at 60% of the display, in points.
         let limit = screenWidth * 0.6
@@ -272,7 +281,8 @@ private extension AlternativeMenuPanel {
     func fitMenu(on screen: NSScreen, openingAt point: NSPoint? = nil) {
         let bounds = menuBounds(on: screen)
         let previousFrame = frame
-        let anchorBottom = min(max(anchorY, bounds.minY), bounds.maxY)
+        let minimumBottom = bounds.minY + (anchorY <= screen.visibleFrame.minY ? AlternativeMenuStyle.current.padding : 0)
+        let anchorBottom = min(max(anchorY, minimumBottom), bounds.maxY)
         let leadingEdge: CGFloat
         let preferredWidth: CGFloat
         let top: CGFloat
@@ -302,7 +312,7 @@ private extension AlternativeMenuPanel {
         }
         // Keep the edge nearest the pointer fixed as the menu items change.
         let availableHeight = opensAbove ? bounds.maxY - bottom : spaceBelow
-        let height = min(preferredHeight, availableHeight)
+        let height = min(preferredHeight - clippedBottomPadding(in: bounds), availableHeight)
         let width = fittedWidth(
             preferredWidth,
             screenWidth: screen.frame.width,
@@ -326,7 +336,7 @@ private extension AlternativeMenuPanel {
         }
         let oldFrame = frame
         let bounds = menuBounds(on: screen)
-        let needed = min(distance, ceil(menuView.preferredHeight) - oldFrame.height)
+        let needed = min(distance, ceil(menuView.preferredHeight) - clippedBottomPadding(in: bounds) - oldFrame.height)
         guard needed > 0 else {
             return 0
         }
