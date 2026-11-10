@@ -170,9 +170,13 @@ final class AlternativeMenuView: NSView {
         let pageOffset = down ? pageHeight : -pageHeight
         let currentTop = state.offset + currentAvailability.topInset
         let hasAdjacentPage = down ? currentAvailability.canScrollDown : currentAvailability.canScrollUp
+        let initialTopPadding = !hasHeader && !currentAvailability.canScrollUp ? viewportTopInset : 0
         // Native menus target a row one line inside the next page, even if
         // that row cannot be selected. Scroll it into view before returning it.
-        let targetPosition = down ? currentTop + pageHeight * 2 - indicatorHeight : currentTop - pageHeight + indicatorHeight
+        // The initial native viewport includes the padding outside our headerless ScrollView.
+        let targetPosition = down
+            ? currentTop + pageHeight * 2 - indicatorHeight + initialTopPadding
+            : currentTop - pageHeight + indicatorHeight
         if hasAdjacentPage, pageHeight > indicatorHeight,
             let target = state.rows.firstIndex(where: { $0.verticalRange.contains(targetPosition) }) {
             if state.rows[target].rowHeight > pageHeight {

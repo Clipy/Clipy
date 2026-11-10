@@ -148,6 +148,19 @@ struct AlternativeMenuViewTests {
     }
 
     @Test(arguments: [false, true])
+    func includesInitialTopPaddingWhenPagingAcrossARowBoundary(previousItemIsEnabled: Bool) throws {
+        let items = (0..<120).map { index in
+            AlternativeMenuItem.action("Row \(index)", isEnabled: previousItemIsEnabled || index != 84) { _ in }
+        }
+        let fixture = try ScrollFixture(
+            items: items,
+            viewportHeight: AlternativeMenuStyle.current.minimumRowHeight * 44 - 2
+        )
+
+        #expect(fixture.view.scrollPage(down: true) == 85)
+    }
+
+    @Test(arguments: [false, true])
     func keepsScrollHitTestingAtTheVisibleRowBoundary(hasHeader: Bool) throws {
         let header = hasHeader ? AlternativeMenuHeader(height: 40, minimumWidth: 240) { EmptyView() } : nil
         let items: [AlternativeMenuItem] = (0..<80).map { index in .action("Row \(index)") { _ in } }
@@ -183,8 +196,8 @@ struct AlternativeMenuViewTests {
         var offset: CGFloat { scroll.documentVisibleRect.minY }
         var maximumOffset: CGFloat { view.preferredHeight - view.bounds.height }
 
-        init(items: [AlternativeMenuItem], header: AlternativeMenuHeader? = nil) throws {
-            let viewport = NSRect(x: 0, y: 0, width: 300, height: 500)
+        init(items: [AlternativeMenuItem], header: AlternativeMenuHeader? = nil, viewportHeight: CGFloat = 500) throws {
+            let viewport = NSRect(x: 0, y: 0, width: 300, height: viewportHeight)
             self.view = AlternativeMenuView(header: header)
             view.frame = NSRect(origin: .zero, size: NSSize(width: viewport.width, height: viewport.height + view.viewportTopInset))
             view.setRows(items, selectedIndex: nil)
