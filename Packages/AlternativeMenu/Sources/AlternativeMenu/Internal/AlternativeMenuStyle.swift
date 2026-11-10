@@ -12,21 +12,35 @@ import CoreText
 /// The current values are based on the native menu style in macOS 26.
 struct AlternativeMenuStyle: Sendable {
     static let current: Self = {
-        if #available(macOS 26, *) {
-            Self(
+        if #available(macOS 27, *) {
+            return Self(
                 cornerRadius: 12,
                 selectionCornerRadius: 7,
                 minimumRowHeight: 24,
                 rowTextInset: 11,
-                imagelessRowTextInset: 11
+                imagelessRowTextInset: 11,
+                submenuArrowTrailingPadding: 3.5,
+                submenuArrowRightToLeftTrailingPadding: 3.5
+            )
+        } else if #available(macOS 26, *) {
+            return Self(
+                cornerRadius: 12,
+                selectionCornerRadius: 7,
+                minimumRowHeight: 24,
+                rowTextInset: 11,
+                imagelessRowTextInset: 11,
+                submenuArrowTrailingPadding: 0.5,
+                submenuArrowRightToLeftTrailingPadding: -2.5
             )
         } else {
-            Self(
+            return Self(
                 cornerRadius: 6,
                 selectionCornerRadius: 4,
                 minimumRowHeight: 22,
                 rowTextInset: 9,
-                imagelessRowTextInset: 9
+                imagelessRowTextInset: 9,
+                submenuArrowTrailingPadding: 0.5,
+                submenuArrowRightToLeftTrailingPadding: -0.5
             )
         }
     }()
@@ -53,6 +67,8 @@ struct AlternativeMenuStyle: Sendable {
     let minimumKeyEquivalentColumnWidth: CGFloat = 32
     // Space beside the measured shortcut, whose width already includes modifier spacing.
     let keyEquivalentGap: CGFloat = 18
+    let submenuArrowTrailingPadding: CGFloat
+    let submenuArrowRightToLeftTrailingPadding: CGFloat
     @MainActor
     static let menuFont = NSFont.menuFont(ofSize: 0)
     @MainActor

@@ -70,7 +70,12 @@ struct AlternativeMenuRow: View {
                 Image(systemName: "chevron.forward")
                     .font(.system(size: AlternativeMenuStyle.menuFont.pointSize, weight: .bold))
                     .imageScale(.small)
-                    .padding(.trailing, layoutDirection == .rightToLeft ? -2.5 : 0.5)
+                    .padding(
+                        .trailing,
+                        layoutDirection == .rightToLeft
+                            ? AlternativeMenuStyle.current.submenuArrowRightToLeftTrailingPadding
+                            : AlternativeMenuStyle.current.submenuArrowTrailingPadding
+                    )
             } else if row.keyEquivalent.attributedText.length > 0 {
                 AlternativeMenuKeyEquivalentLabel(
                     display: row.keyEquivalent,
