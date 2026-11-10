@@ -115,6 +115,19 @@ struct AlternativeMenuRowDataTests {
         #expect(row.rowHeight == sample.rowHeight)
     }
 
+    @Test(arguments: [CGFloat(0), CGFloat(4)])
+    func measuresImplicitHeaderFontsBeforeApplyingTheHeaderFont(_ baselineOffset: CGFloat) throws {
+        let title = NSAttributedString(string: "A Long Implicit Attributed Header", attributes: [.baselineOffset: baselineOffset])
+        let header = AlternativeMenuRowData(item: .sectionHeader(attributedTitle: title), verticalOffset: 0)
+        let body = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
+        let displayed = try attributedTitle(header.title)
+
+        #expect(header.titleWidthWithInsets == body.titleWidthWithInsets)
+        #expect(header.rowHeight == body.rowHeight)
+        #expect(displayed.attribute(.font, at: 0, effectiveRange: nil) as? NSFont == AlternativeMenuStyle.headerFont)
+        #expect(title.attribute(.font, at: 0, effectiveRange: nil) == nil)
+    }
+
     @Test(arguments: [false, true])
     func keepsMaximumFontHeightForMixedTitles(largerFontFirst: Bool) {
         let text = "Mixed 13 pt and 28 pt"

@@ -67,7 +67,7 @@ struct AlternativeMenuRowData {
             self.title = .plain(value)
             titleSize = (value as NSString).boundingRect(with: .zero, options: [], attributes: [.font: font]).size
         case .attributed(let source):
-            let measured = NSMutableAttributedString(string: source.string, attributes: [.font: font])
+            let measured = NSMutableAttributedString(string: source.string, attributes: [.font: AlternativeMenuStyle.menuFont])
             let isDisabled = kind == .disabled
             let lineEnd = (source.string as NSString).rangeOfCharacter(from: .newlines).location
             source.enumerateAttributes(in: NSRange(location: 0, length: source.length)) { attributes, range, _ in
@@ -79,13 +79,22 @@ struct AlternativeMenuRowData {
                     attributes[.foregroundColor] = color.blended(withFraction: 0.5, of: .white) ?? color
                 }
                 measured.addAttributes(attributes, range: range)
-                if range.location < lineEnd, let runFont = attributes[.font] as? NSFont {
+                if range.location < lineEnd {
+                    let runFont = attributes[.font] as? NSFont ?? AlternativeMenuStyle.menuFont
                     maximumFontLineHeight = max(maximumFontLineHeight, Self.lineHeight(for: runFont))
                 }
             }
-            self.title = .attributed(measured)
             // Measure as a single line to match Text.lineLimit(1).
             titleSize = measured.boundingRect(with: .zero, options: []).size
+            if kind == .header {
+                // Native headers measure unspecified fonts as menu text, then draw them with the header font.
+                source.enumerateAttribute(.font, in: NSRange(location: 0, length: source.length)) { [font] value, range, _ in
+                    if value == nil {
+                        measured.addAttribute(.font, value: font, range: range)
+                    }
+                }
+            }
+            self.title = .attributed(measured)
         }
 
         let size = image?.size ?? .zero
