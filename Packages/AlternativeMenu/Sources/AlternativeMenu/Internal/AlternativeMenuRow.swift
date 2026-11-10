@@ -76,7 +76,8 @@ struct AlternativeMenuRow: View {
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .multilineTextAlignment(.leading)
-                .offset(y: row.kind == .header ? 2 : 0)
+                .frame(minHeight: row.minimumTitleHeight, alignment: .top)
+                .offset(y: row.titleBaselineOffset)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.trailing, trailingColumnWidth)

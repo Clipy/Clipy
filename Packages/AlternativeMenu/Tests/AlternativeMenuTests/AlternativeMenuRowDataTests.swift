@@ -171,6 +171,82 @@ struct AlternativeMenuRowDataTests {
         #expect(row.rowHeight == sample.rowHeight)
     }
 
+    @Test(arguments: [
+        BaselineExpectation(fontSize: 10, modernOffset: 0, macOS15Offset: 0, legacyOffset: 0),
+        BaselineExpectation(fontSize: 13, modernOffset: 0, macOS15Offset: 0, legacyOffset: 0),
+        BaselineExpectation(fontSize: 14, modernOffset: 0.5, macOS15Offset: 0, legacyOffset: 0),
+        BaselineExpectation(fontSize: 20, modernOffset: 0.5, macOS15Offset: 0.5, legacyOffset: -0.5),
+        BaselineExpectation(fontSize: 24, modernOffset: 1, macOS15Offset: 1, legacyOffset: -1),
+        BaselineExpectation(fontSize: 28, modernOffset: 0.5, macOS15Offset: 0.5, legacyOffset: -0.5),
+        BaselineExpectation(fontSize: 32, modernOffset: 0, macOS15Offset: 0, legacyOffset: 0)
+    ])
+    private func placesUniformTitlesAtMeasuredNativeBaselines(_ sample: BaselineExpectation) {
+        let title = NSAttributedString(string: "Uniform title", attributes: [.font: NSFont.systemFont(ofSize: sample.fontSize)])
+        let row = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
+
+        #expect(row.titleBaselineOffset == sample.expectedOffset)
+    }
+
+    @Test
+    func keepsDefaultFontTitlesCenteredBesideTallImages() {
+        let image = NSImage(size: NSSize(width: 56, height: 56))
+        let text = "Default font"
+        let items: [AlternativeMenuItem] = [
+            .action(text, image: image) { _ in },
+            .action(attributedTitle: NSAttributedString(string: text), image: image) { _ in },
+            .action(attributedTitle: NSAttributedString(string: text, attributes: [.font: AlternativeMenuStyle.menuFont]), image: image) { _ in }
+        ]
+
+        for item in items {
+            let row = AlternativeMenuRowData(item: item, verticalOffset: 0)
+            #expect(row.titleBaselineOffset == 0)
+            #expect(row.rowHeight == 62)
+        }
+    }
+
+    @Test(arguments: [
+        BaselineExpectation(fontSize: 14, modernOffset: 19.5, macOS15Offset: 19.5, legacyOffset: 19.5),
+        BaselineExpectation(fontSize: 24, modernOffset: 14, macOS15Offset: 14, legacyOffset: 12),
+        BaselineExpectation(fontSize: 32, modernOffset: 9, macOS15Offset: 9, legacyOffset: 9)
+    ])
+    private func alignsLargerTitlesAtTheNativeInsetBesideTallImages(_ sample: BaselineExpectation) {
+        let title = NSAttributedString(string: "Large font", attributes: [.font: NSFont.systemFont(ofSize: sample.fontSize)])
+        let image = NSImage(size: NSSize(width: 56, height: 56))
+        let row = AlternativeMenuRowData(item: .action(attributedTitle: title, image: image) { _ in }, verticalOffset: 0)
+
+        #expect(row.rowHeight == 62)
+        #expect(row.titleBaselineOffset == sample.expectedOffset)
+    }
+
+    @Test(arguments: [false, true])
+    func preservesUniformFontPlacementAcrossDecorationsAndHiddenLines(hasHiddenLine: Bool) {
+        let visible = NSAttributedString(string: "Uniform title", attributes: [.font: NSFont.systemFont(ofSize: 24)])
+        let decorated = NSMutableAttributedString(attributedString: visible)
+        decorated.addAttributes([.foregroundColor: NSColor.red, .underlineStyle: NSUnderlineStyle.single.rawValue], range: NSRange(location: 0, length: 7))
+        if hasHiddenLine {
+            decorated.append(NSAttributedString(string: "\nHidden title", attributes: [.font: NSFont.systemFont(ofSize: 48)]))
+        }
+        let plain = AlternativeMenuRowData(item: .action(attributedTitle: visible) { _ in }, verticalOffset: 0)
+        let row = AlternativeMenuRowData(item: .action(attributedTitle: decorated) { _ in }, verticalOffset: 0)
+
+        #expect(row.titleBaselineOffset == plain.titleBaselineOffset)
+        #expect(row.rowHeight == plain.rowHeight)
+    }
+
+    @Test(arguments: [
+        HeaderBaselineExpectation(fontSize: 11, imageHeight: 0, modernOffset: 2, macOS15Offset: 1, legacyOffset: 1),
+        HeaderBaselineExpectation(fontSize: 13, imageHeight: 0, modernOffset: 1, macOS15Offset: 0, legacyOffset: 0),
+        HeaderBaselineExpectation(fontSize: 24, imageHeight: 0, modernOffset: 1, macOS15Offset: 1, legacyOffset: -1),
+        HeaderBaselineExpectation(fontSize: 24, imageHeight: 56, modernOffset: 14, macOS15Offset: 14, legacyOffset: 12)
+    ])
+    private func placesUniformHeadersAtMeasuredNativeBaselines(_ sample: HeaderBaselineExpectation) {
+        let title = NSAttributedString(string: "Header", attributes: [.font: NSFont.systemFont(ofSize: sample.fontSize)])
+        let image = sample.imageHeight > 0 ? NSImage(size: NSSize(width: 56, height: sample.imageHeight)) : nil
+        let row = AlternativeMenuRowData(item: .sectionHeader(attributedTitle: title, image: image), verticalOffset: 0)
+
+        #expect(row.titleBaselineOffset == sample.expectedOffset)
+    }
+
     @Test(arguments: [CGFloat(0), CGFloat(4)])
     func measuresImplicitHeaderFontsBeforeApplyingTheHeaderFont(_ baselineOffset: CGFloat) throws {
         let title = NSAttributedString(string: "A Long Implicit Attributed Header", attributes: [.baselineOffset: baselineOffset])
@@ -180,8 +256,14 @@ struct AlternativeMenuRowDataTests {
 
         #expect(header.titleWidthWithInsets == body.titleWidthWithInsets)
         #expect(header.rowHeight == body.rowHeight)
+        #expect(header.minimumTitleHeight == 16 + baselineOffset)
         #expect(displayed.attribute(.font, at: 0, effectiveRange: nil) as? NSFont == AlternativeMenuStyle.headerFont)
         #expect(title.attribute(.font, at: 0, effectiveRange: nil) == nil)
+        if #available(macOS 26, *) {
+            #expect(header.titleBaselineOffset == (baselineOffset == 0 ? 1 : 0))
+        } else {
+            #expect(header.titleBaselineOffset == 0)
+        }
     }
 
     @Test(arguments: [false, true])
@@ -193,6 +275,7 @@ struct AlternativeMenuRowDataTests {
 
         // Retain maximum-font sizing; NSMenu's mixed-title layout is 1 pt shorter here.
         #expect(row.rowHeight == 40)
+        #expect(row.titleBaselineOffset == 0)
     }
 
     @Test
@@ -204,6 +287,8 @@ struct AlternativeMenuRowDataTests {
 
         #expect(raised.rowHeight == 38)
         #expect(withImage.rowHeight == 62)
+        #expect(raised.titleBaselineOffset == 0)
+        #expect(withImage.titleBaselineOffset == 0)
     }
 
     @Test(arguments: [false, true], [false, true])
@@ -245,5 +330,40 @@ struct AlternativeMenuRowDataTests {
             return title
         }
         return try #require(nil as NSAttributedString?)
+    }
+}
+
+private struct BaselineExpectation {
+    let fontSize: CGFloat
+    let modernOffset: CGFloat
+    let macOS15Offset: CGFloat
+    let legacyOffset: CGFloat
+
+    var expectedOffset: CGFloat {
+        if #available(macOS 26, *) {
+            modernOffset
+        } else if #available(macOS 15, *) {
+            macOS15Offset
+        } else {
+            legacyOffset
+        }
+    }
+}
+
+private struct HeaderBaselineExpectation {
+    let fontSize: CGFloat
+    let imageHeight: CGFloat
+    let modernOffset: CGFloat
+    let macOS15Offset: CGFloat
+    let legacyOffset: CGFloat
+
+    var expectedOffset: CGFloat {
+        if #available(macOS 26, *) {
+            modernOffset
+        } else if #available(macOS 15, *) {
+            macOS15Offset
+        } else {
+            legacyOffset
+        }
     }
 }

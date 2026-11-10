@@ -22,6 +22,8 @@ struct AlternativeMenuRowData {
     let imageLayoutSize: NSSize
     let toolTip: String?
     let font: NSFont
+    let minimumTitleHeight: CGFloat
+    let titleBaselineOffset: CGFloat
     let verticalRange: Range<CGFloat>
     let leadingInset: CGFloat
     let titleWidthWithInsets: CGFloat
@@ -49,6 +51,7 @@ struct AlternativeMenuRowData {
         }
         self.hasSubmenu = item.submenu != nil
         self.font = kind == .header ? AlternativeMenuStyle.headerFont : AlternativeMenuStyle.menuFont
+        var minimumTitleHeight = Self.lineHeight(for: font)
         let configuredImage = Self.configuredImage(item.image, font: font, isHeader: kind == .header)
         self.image = configuredImage.image
         self.imageLayoutSize = configuredImage.layoutSize
@@ -59,7 +62,8 @@ struct AlternativeMenuRowData {
         self.keyEquivalent = keyEquivalent ?? .empty
         let titleSize: NSSize
         let titleWidthPadding: CGFloat
-        var maximumFontLineHeight = Self.lineHeight(for: font)
+        var maximumFontLineHeight = minimumTitleHeight
+        var hasUniformFont = true
         switch item.titleContent {
         case .plain(let value):
             self.title = .plain(value)
@@ -94,8 +98,18 @@ struct AlternativeMenuRowData {
                     }
                 }
             }
+            let firstLineRange = NSRange(location: 0, length: min(source.length, lineEnd))
+            if firstLineRange.length > 0 {
+                var fontRange = NSRange()
+                _ = measured.attribute(.font, at: 0, longestEffectiveRange: &fontRange, in: firstLineRange)
+                hasUniformFont = fontRange == firstLineRange
+            }
             self.title = .attributed(measured)
         }
+        if kind == .header, hasUniformFont {
+            minimumTitleHeight = max(minimumTitleHeight, titleSize.height)
+        }
+        self.minimumTitleHeight = minimumTitleHeight
 
         // Include baseline offsets in addition to the font and image bounds.
         let rowHeight: CGFloat =
@@ -109,6 +123,19 @@ struct AlternativeMenuRowData {
                     )
                 )
             }
+        if hasUniformFont, kind == .header || maximumFontLineHeight > minimumTitleHeight {
+            let titleFrameHeight = max(minimumTitleHeight, titleSize.height)
+            // Native headers and larger-font titles keep the bottom inset even beside a taller image.
+            let baselineOffset = (rowHeight - titleFrameHeight - AlternativeMenuStyle.current.rowContentVerticalPadding) / 2
+            if #available(macOS 15, *) {
+                self.titleBaselineOffset = baselineOffset
+            } else {
+                // macOS 14 title fields retain the rounded font box, with text at its top.
+                self.titleBaselineOffset = baselineOffset - max(0, maximumFontLineHeight - titleFrameHeight)
+            }
+        } else {
+            self.titleBaselineOffset = kind == .header ? AlternativeMenuStyle.current.headerBaselineOffset : 0
+        }
         self.verticalRange = verticalOffset..<(verticalOffset + rowHeight)
         self.titleWidthWithInsets = ceil(titleSize.width) + titleWidthPadding + leadingInset + AlternativeMenuStyle.current.rowTextInset
     }

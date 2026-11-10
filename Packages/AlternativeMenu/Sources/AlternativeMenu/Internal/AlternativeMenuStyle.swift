@@ -21,6 +21,7 @@ struct AlternativeMenuStyle: Sendable {
                 imagelessRowTextInset: 11,
                 submenuArrowTrailingPadding: 3.5,
                 submenuArrowRightToLeftTrailingPadding: 3.5,
+                headerBaselineOffset: 2,
                 imageHorizontalOffset: -1
             )
         } else if #available(macOS 26, *) {
@@ -32,6 +33,7 @@ struct AlternativeMenuStyle: Sendable {
                 imagelessRowTextInset: 11,
                 submenuArrowTrailingPadding: 0.5,
                 submenuArrowRightToLeftTrailingPadding: -2.5,
+                headerBaselineOffset: 2,
                 imageHorizontalOffset: 0
             )
         } else {
@@ -43,6 +45,7 @@ struct AlternativeMenuStyle: Sendable {
                 imagelessRowTextInset: 9,
                 submenuArrowTrailingPadding: 0.5,
                 submenuArrowRightToLeftTrailingPadding: -0.5,
+                headerBaselineOffset: 1,
                 imageHorizontalOffset: 0
             )
         }
@@ -74,6 +77,7 @@ struct AlternativeMenuStyle: Sendable {
     let keyEquivalentGap: CGFloat = 18
     let submenuArrowTrailingPadding: CGFloat
     let submenuArrowRightToLeftTrailingPadding: CGFloat
+    let headerBaselineOffset: CGFloat
     let imageHorizontalOffset: CGFloat
     @MainActor
     static let menuFont = NSFont.menuFont(ofSize: 0)
