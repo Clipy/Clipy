@@ -30,6 +30,10 @@ private struct AlternativeMenuBackground: View {
                     .background(Material.ultraThin.materialActiveAppearance(.active).opacity(colorScheme == .dark ? 0.3 : 0))
             } else {
                 AlternativeMenuVisualEffectView(material: .menu, cornerRadius: cornerRadius, isEmphasized: false)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .circular)
+                            .strokeBorder(.white.opacity(colorScheme == .dark ? 0.20 : 0.10), lineWidth: colorScheme == .dark ? 1 : 0.5)
+                    }
             }
         }
         .clipShape(shape)
