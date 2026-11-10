@@ -13,6 +13,9 @@ struct AlternativeMenuRoot: View {
     let header: AlternativeMenuHeader?
     let menuAccessibilityView: AlternativeMenuAccessibilityView
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     private let menuItemsCoordinateSpace = "AlternativeMenuRoot.menuItems"
 
     var body: some View {
@@ -102,10 +105,17 @@ struct AlternativeMenuRoot: View {
         .padding(.horizontal, AlternativeMenuStyle.current.padding)
     }
 
+    private var scrollIndicatorColor: Color {
+        if #available(macOS 26, *) {
+            return .secondary
+        }
+        return colorScheme == .dark ? .white.opacity(0.9) : Color(nsColor: .labelColor)
+    }
+
     private func scrollIndicator(_ symbol: String) -> some View {
         Image(systemName: symbol)
             .font(.system(size: 13, weight: .semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(scrollIndicatorColor)
             .imageScale(.small)
             .frame(height: AlternativeMenuStyle.current.minimumRowHeight)
             .allowsHitTesting(false)
