@@ -43,6 +43,30 @@ struct AlternativeMenuRowDataTests {
         #expect(withImage.titleWidthWithInsets == plain.titleWidthWithInsets)
     }
 
+    @Test(arguments: [false, true])
+    func appliesNativeSymbolSizingWithoutChangingTheSuppliedImage(isHeader: Bool) throws {
+        let symbol = try #require(NSImage(systemSymbolName: "doc.text", accessibilityDescription: nil))
+        let image = try #require(symbol.withSymbolConfiguration(.init(pointSize: 20, weight: .bold, scale: .large)))
+        let originalSize = image.size
+        let item: AlternativeMenuItem =
+            if isHeader {
+                .sectionHeader("Header", image: image)
+            } else {
+                .action("Title", image: image) { _ in }
+            }
+        let row = AlternativeMenuRowData(item: item, verticalOffset: 0)
+
+        if #available(macOS 26, *) {
+            let pointSize = isHeader ? AlternativeMenuStyle.headerFont.pointSize : AlternativeMenuStyle.menuFont.pointSize
+            let configured = try #require(image.withSymbolConfiguration(.init(pointSize: pointSize, weight: .semibold, scale: .small)))
+            #expect(row.image?.size == configured.size)
+            #expect(row.image?.size != originalSize)
+        } else {
+            #expect(row.image?.size == originalSize)
+        }
+        #expect(image.size == originalSize)
+    }
+
     @Test
     func preservesOriginalLegacyHeaderSymbols() throws {
         let source = try #require(NSImage(systemSymbolName: "chevron.left.forwardslash.chevron.right", accessibilityDescription: nil))

@@ -138,20 +138,18 @@ struct AlternativeMenuRowData {
     }
 
     private static func configuredImage(_ image: NSImage?, font: NSFont, isHeader: Bool) -> (image: NSImage?, layoutSize: NSSize) {
-        if #unavailable(macOS 26), isHeader {
-            let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .medium)
-            let layoutSize = image.flatMap { $0.withSymbolConfiguration(configuration.applying($0.symbolConfiguration)) ?? $0 }?.size ?? .zero
-            // Fit the original image after the shared icon column width is known.
-            return (image, layoutSize)
+        if #available(macOS 26, *) {
+            let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
+            let configured = image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
+            return (configured, configured?.size ?? .zero)
         }
-        let configuration =
-            if isHeader {
-                NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
-            } else {
-                NSImage.SymbolConfiguration(scale: .small)
-            }
-        let configured = image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
-        return (configured, configured?.size ?? .zero)
+        guard isHeader else {
+            return (image, image?.size ?? .zero)
+        }
+        let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .medium)
+        let layoutSize = image.flatMap { $0.withSymbolConfiguration(configuration.applying($0.symbolConfiguration)) ?? $0 }?.size ?? .zero
+        // Fit the original image after the shared icon column width is known.
+        return (image, layoutSize)
     }
 
     private static func lineHeight(for font: NSFont) -> CGFloat {

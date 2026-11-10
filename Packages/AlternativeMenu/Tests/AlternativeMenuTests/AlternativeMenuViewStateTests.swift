@@ -15,15 +15,15 @@ struct AlternativeMenuViewStateTests {
             .action("Title", isEnabled: false, image: narrow) { _ in },
             .action("Title") { _ in }
         ])
-        let smallWidth = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
+        let width = try bodySymbolSize(wide).width
 
         if #available(macOS 26, *) {
-            #expect(state.iconWidths == Array(repeating: smallWidth, count: 4))
+            #expect(state.iconWidths == Array(repeating: width, count: 4))
         } else {
-            #expect(state.iconWidths == [smallWidth, smallWidth, smallWidth, 0])
+            #expect(state.iconWidths == [width, width, width, 0])
         }
         #expect(state.rows.prefix(3).allSatisfy { $0.isSymbolImage })
-        #expect(state.rows[0].image?.size == narrow.withSymbolConfiguration(.init(scale: .small))?.size)
+        #expect(state.rows[0].image?.size == (try bodySymbolSize(narrow)))
     }
 
     @Test(arguments: [false, true])
@@ -36,7 +36,7 @@ struct AlternativeMenuViewStateTests {
             .action("Title", image: image) { _ in },
             .action("Title") { _ in }
         ])
-        let symbolWidth = try #require(image.withSymbolConfiguration(.init(scale: .small))).size.width
+        let symbolWidth = try bodySymbolSize(image).width
         #expect(!state.rows[0].isSymbolImage)
         #expect(state.rows[0].image?.size == bitmap.size)
         #expect(symbolWidth < bitmap.size.width)
@@ -107,7 +107,7 @@ struct AlternativeMenuViewStateTests {
             .action("After the header") { _ in },
             .action("Wide symbol", image: wide) { _ in }
         ])
-        let width = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
+        let width = try bodySymbolSize(wide).width
 
         if #available(macOS 27, *) {
             #expect(state.iconWidths == [0, width, 0, width])
@@ -125,7 +125,7 @@ struct AlternativeMenuViewStateTests {
         let item = AlternativeMenuItem.action("Item", image: image) { _ in }
         let state = makeState(headerFirst ? [header, item] : [item, header])
         let headerIndex = headerFirst ? 0 : 1
-        let width = try #require(image.withSymbolConfiguration(.init(scale: .small))).size.width
+        let width = try bodySymbolSize(image).width
 
         #expect(state.iconWidths[headerIndex] == 0)
         if #available(macOS 26, *) {
@@ -168,7 +168,7 @@ struct AlternativeMenuViewStateTests {
         let headerImage = try symbol("chevron.left.forwardslash.chevron.right")
         let itemImage = try symbol("doc")
         let headerWidth = try headerSymbolSize(headerImage).width
-        let itemWidth = try #require(itemImage.withSymbolConfiguration(.init(scale: .small))).size.width
+        let itemWidth = try bodySymbolSize(itemImage).width
         try #require(headerWidth > itemWidth)
         let state = makeState([
             .sectionHeader("Header", image: headerImage),
@@ -203,7 +203,7 @@ struct AlternativeMenuViewStateTests {
             .action("Wide symbol", image: wide) { _ in },
             .action("Indented") { _ in }
         ])
-        let width = try #require(wide.withSymbolConfiguration(.init(scale: .small))).size.width
+        let width = try bodySymbolSize(wide).width
 
         if #available(macOS 27, *) {
             #expect(state.iconWidths == [0, 0, 0, width, 0, 0, 0, 56, 0, width, 0])
@@ -224,7 +224,7 @@ struct AlternativeMenuViewStateTests {
         let plain = AlternativeMenuItem.action("Plain", isEnabled: isEnabled) { _ in }
         let bitmap = AlternativeMenuItem.action("Bitmap", isEnabled: isEnabled, image: NSImage(size: NSSize(width: 16, height: 16))) { _ in }
         let header = AlternativeMenuItem.sectionHeader("Header", image: image)
-        let width = try #require(image.withSymbolConfiguration(.init(scale: .small))).size.width
+        let width = try bodySymbolSize(image).width
         let cases: [(items: [AlternativeMenuItem], plainIndex: Int, indentsOn27: Bool)] = [
             ([symbolItem, plain], 1, false),
             ([symbolItem, symbolItem, plain], 2, true),
@@ -258,7 +258,7 @@ struct AlternativeMenuViewStateTests {
         let plain = AlternativeMenuItem.action("Plain") { _ in }
         let icon = AlternativeMenuItem.action("Symbol", image: image) { _ in }
         let state = makeState([plain, .separator, icon])
-        let width = try #require(image.withSymbolConfiguration(.init(scale: .small))).size.width
+        let width = try bodySymbolSize(image).width
 
         #expect(state.iconWidths == [0, 0, width])
 
@@ -281,7 +281,7 @@ struct AlternativeMenuViewStateTests {
         let html = try symbol("chevron.left.forwardslash.chevron.right")
         let textItem = AlternativeMenuItem.action("Title", image: text) { _ in }
         let htmlItem = AlternativeMenuItem.action("Title", image: html) { _ in }
-        let minimumWidth = try #require(html.withSymbolConfiguration(.init(scale: .small))).size.width
+        let minimumWidth = try bodySymbolSize(html).width
         let state = makeState([textItem, htmlItem], minimumSymbolColumnWidth: minimumWidth)
         let contentWidth = state.rows[0].titleWidthWithInsets + minimumWidth + AlternativeMenuStyle.current.iconSpacing
 
@@ -297,7 +297,7 @@ struct AlternativeMenuViewStateTests {
     @Test
     func accommodatesWiderSymbolsAndKeepsOtherGroupsUnindented() throws {
         let image = try symbol("chevron.left.forwardslash.chevron.right")
-        let size = try #require(image.withSymbolConfiguration(.init(scale: .small))).size
+        let size = try bodySymbolSize(image)
         let bitmap = NSImage(size: NSSize(width: 56, height: 32))
         let plain = AlternativeMenuItem.action("Title") { _ in }
         let state = makeState(
@@ -448,6 +448,18 @@ struct AlternativeMenuViewStateTests {
     private func symbol(_ name: String, scale: NSImage.SymbolScale = .medium) throws -> NSImage {
         let image = try #require(NSImage(systemSymbolName: name, accessibilityDescription: nil))
         return try #require(image.withSymbolConfiguration(.init(pointSize: 13, weight: .regular, scale: scale)))
+    }
+
+    private func bodySymbolSize(_ image: NSImage) throws -> NSSize {
+        if #available(macOS 26, *) {
+            let configuration = NSImage.SymbolConfiguration(
+                pointSize: AlternativeMenuStyle.menuFont.pointSize,
+                weight: .semibold,
+                scale: .small
+            )
+            return try #require(image.withSymbolConfiguration(configuration)).size
+        }
+        return image.size
     }
 
     private func headerSymbolSize(_ image: NSImage) throws -> NSSize {

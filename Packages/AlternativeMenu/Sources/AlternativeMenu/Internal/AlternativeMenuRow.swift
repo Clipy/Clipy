@@ -66,6 +66,7 @@ struct AlternativeMenuRow: View {
                     }
                 }
                 .frame(width: iconWidth, height: row.imageLayoutSize.height)
+                .offset(x: AlternativeMenuStyle.current.imageHorizontalOffset)
             } else if iconWidth > 0 {
                 Color.clear
                     .frame(width: iconWidth, height: 0)
