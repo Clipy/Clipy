@@ -12,6 +12,8 @@ import Observation
 @MainActor
 @Observable
 final class AlternativeMenuViewState {
+    private static let maximumBitmapToSymbolWidthRatio: CGFloat = 1.5
+    private static let maximumBitmapWidthDifference: CGFloat = 5
     private let minimumSymbolColumnWidth: CGFloat
     private(set) var rows: [AlternativeMenuRowData] = []
     private(set) var keyColumnWidth: CGFloat = 0
@@ -58,10 +60,15 @@ final class AlternativeMenuViewState {
     func setRows(_ rows: [AlternativeMenuRowData]) {
         let keyColumnWidth = rows.lazy.map(\.keyEquivalent).filter(\.usesSharedKeyColumn).map(\.keyWidth).max() ?? 0
         let trailingColumnWidth = rows.lazy.map { $0.trailingWidth(keyColumnWidth: keyColumnWidth) }.max() ?? 0
-        let symbolColumnWidth = max(
-            minimumSymbolColumnWidth,
-            rows.lazy.filter(\.isSymbolImage).map(\.imageLayoutSize.width).max() ?? 0
-        )
+        var imageColumnWidth = rows.lazy.filter(\.isSymbolImage).map(\.imageLayoutSize.width).max() ?? 0
+        let bitmapWidths = rows.lazy.filter { !$0.isSymbolImage }.compactMap { $0.image?.size.width }
+        if let maximum = bitmapWidths.max(), let minimum = bitmapWidths.min(),
+            maximum <= imageColumnWidth * Self.maximumBitmapToSymbolWidthRatio,
+            maximum - minimum <= Self.maximumBitmapWidthDifference {
+            // Native menus share similarly sized bitmaps with symbols, but leave larger thumbnails independent.
+            imageColumnWidth = max(imageColumnWidth, maximum)
+        }
+        let symbolColumnWidth = max(minimumSymbolColumnWidth, imageColumnWidth)
         let measuredSymbolColumnWidth: CGFloat
         if #available(macOS 27, *), !rows.contains(where: { $0.kind != .header && $0.isSymbolImage }) {
             // A symbol confined to section headers no longer widens imageless rows.
@@ -86,7 +93,7 @@ final class AlternativeMenuViewState {
             for index in group {
                 // Symbols always share the widest column, even when imageless rows stay unindented.
                 let width = rows[index].image == nil && !indentsImagelessRows ? 0 : symbolColumnWidth
-                iconWidths[index] = rows[index].iconWidth(symbolColumnWidth: width)
+                iconWidths[index] = rows[index].iconWidth(symbolColumnWidth: width, bitmapColumnWidth: imageColumnWidth)
             }
             start = end + 1
         }
@@ -97,7 +104,7 @@ final class AlternativeMenuViewState {
                 if #available(macOS 26, *), row.image == nil {
                     iconWidth = measuredSymbolColumnWidth
                 } else {
-                    iconWidth = row.iconWidth(symbolColumnWidth: symbolColumnWidth)
+                    iconWidth = row.iconWidth(symbolColumnWidth: symbolColumnWidth, bitmapColumnWidth: imageColumnWidth)
                 }
                 return row.titleWidthWithInsets + (iconWidth > 0 ? iconWidth + AlternativeMenuStyle.current.iconSpacing : 0)
             }.max() ?? 0) + trailingColumnWidth

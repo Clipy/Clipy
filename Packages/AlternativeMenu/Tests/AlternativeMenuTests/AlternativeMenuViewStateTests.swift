@@ -27,7 +27,7 @@ struct AlternativeMenuViewStateTests {
     }
 
     @Test(arguments: [false, true])
-    func keepsBitmapWidthsIndependentOfTheSymbolColumn(isTemplate: Bool) throws {
+    func appliesNativeColumnSharingToSymbolsAndBitmaps(isTemplate: Bool) throws {
         let bitmap = NSImage(size: NSSize(width: 56, height: 32))
         bitmap.isTemplate = isTemplate
         let image = try symbol("doc")
@@ -50,6 +50,58 @@ struct AlternativeMenuViewStateTests {
 
         let withoutSymbol = makeState([.action("Title", image: bitmap) { _ in }, .action("Title") { _ in }])
         #expect(withoutSymbol.iconWidths == [56, 0])
+    }
+
+    @Test(arguments: [CGFloat(0), CGFloat(0.5)])
+    func sharesBitmapWidthOnlyWithinTheNativeSymbolRatio(_ excess: CGFloat) throws {
+        let image = try symbol("folder")
+        let symbolWidth = try bodySymbolSize(image).width
+        let bitmapWidth = symbolWidth * 1.5 + excess
+        let bitmap = NSImage(size: NSSize(width: bitmapWidth, height: 40))
+        let state = makeState([
+            .action("Symbol", image: image) { _ in },
+            .separator,
+            .action("Bitmap", image: bitmap) { _ in }
+        ])
+
+        #expect(state.iconWidths == [excess == 0 ? bitmapWidth : symbolWidth, 0, bitmapWidth])
+    }
+
+    @Test(arguments: [CGFloat(5), CGFloat(5.1)])
+    func sharesBitmapWidthsOnlyWhenTheirSpreadFitsTheNativeTolerance(_ difference: CGFloat) throws {
+        let image = try symbol("chevron.left.forwardslash.chevron.right")
+        let symbolWidth = try bodySymbolSize(image).width
+        let narrowerWidth = symbolWidth + 1
+        let widerWidth = narrowerWidth + difference
+        let state = makeState([
+            .action("Symbol", image: image) { _ in },
+            .action("Narrow bitmap", image: NSImage(size: NSSize(width: narrowerWidth, height: 8))) { _ in },
+            .action("Wide bitmap", image: NSImage(size: NSSize(width: widerWidth, height: 40))) { _ in }
+        ])
+
+        #expect(state.iconWidths == (difference == 5 ? Array(repeating: widerWidth, count: 3) : [symbolWidth, narrowerWidth, widerWidth]))
+    }
+
+    @Test
+    func includesNarrowerBitmapsInTheColumnSharingDecision() throws {
+        let image = try symbol("doc")
+        let symbolWidth = try bodySymbolSize(image).width
+        let narrow = AlternativeMenuItem.action("Narrow", image: NSImage(size: NSSize(width: 8, height: 16))) { _ in }
+        let wide = AlternativeMenuItem.action("Wide", image: NSImage(size: NSSize(width: 16, height: 16))) { _ in }
+        let state = makeState([.action("Symbol", image: image) { _ in }, narrow, wide])
+
+        #expect(state.iconWidths == [symbolWidth, symbolWidth, 16])
+        #expect(makeState([narrow, wide]).iconWidths == [8, 16])
+    }
+
+    @Test
+    func keepsTheSymbolMinimumFromWideningBitmaps() throws {
+        let image = try symbol("doc")
+        let bitmap = AlternativeMenuItem.action("Bitmap", image: NSImage(size: NSSize(width: 16, height: 16))) { _ in }
+        let state = makeState([.action("Symbol", image: image) { _ in }, bitmap], minimumSymbolColumnWidth: 32)
+
+        #expect(state.iconWidths == [32, 16])
+        #expect(makeState([bitmap], minimumSymbolColumnWidth: 32).iconWidths == [16])
     }
 
     @Test
@@ -240,12 +292,12 @@ struct AlternativeMenuViewStateTests {
 
         for testCase in cases {
             let state = makeState(testCase.items)
-            let headerWidth = try state.rows.filter { $0.kind == .header }.compactMap(\.image).map { try headerSymbolSize($0).width }.max() ?? 0
-            #expect(state.iconWidths[0] == max(width, headerWidth))
+            let expectedWidth = max(width, testCase.items.contains { $0.image?.isSymbolImage == false } ? 16 : 0)
+            #expect(state.iconWidths[0] == expectedWidth)
             if #available(macOS 27, *) {
-                #expect(state.iconWidths[testCase.plainIndex] == (testCase.indentsOn27 ? width : 0))
+                #expect(state.iconWidths[testCase.plainIndex] == (testCase.indentsOn27 ? expectedWidth : 0))
             } else if #available(macOS 26, *) {
-                #expect(state.iconWidths[testCase.plainIndex] == width)
+                #expect(state.iconWidths[testCase.plainIndex] == expectedWidth)
             } else {
                 #expect(state.iconWidths[testCase.plainIndex] == 0)
             }

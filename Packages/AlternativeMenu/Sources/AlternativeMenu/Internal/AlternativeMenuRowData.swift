@@ -113,9 +113,9 @@ struct AlternativeMenuRowData {
         self.titleWidthWithInsets = ceil(titleSize.width) + titleWidthPadding + leadingInset + AlternativeMenuStyle.current.rowTextInset
     }
 
-    func iconWidth(symbolColumnWidth: CGFloat) -> CGFloat {
+    func iconWidth(symbolColumnWidth: CGFloat, bitmapColumnWidth: CGFloat) -> CGFloat {
         if let image {
-            return isSymbolImage ? symbolColumnWidth : image.size.width
+            return isSymbolImage ? symbolColumnWidth : max(bitmapColumnWidth, image.size.width)
         }
         // Older native menus keep imageless titles at the leading inset, even beside symbols.
         if #available(macOS 26, *), kind != .header, kind != .separator {
