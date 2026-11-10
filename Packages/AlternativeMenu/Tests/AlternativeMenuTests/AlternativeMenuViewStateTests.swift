@@ -58,8 +58,21 @@ struct AlternativeMenuViewStateTests {
         let state = makeState([.sectionHeader("Header", image: image), .action("Title") { _ in }])
         let size = try headerSymbolSize(image)
 
-        #expect(state.rows[0].image?.size == size)
+        #expect(state.rows[0].imageLayoutSize == size)
         #expect(state.iconWidths == [size.width, 0])
+    }
+
+    @Test
+    func measuresHeaderSymbolLayoutIndependentlyOfItsSourceSize() throws {
+        let image = try #require(NSImage(systemSymbolName: "chevron.left.forwardslash.chevron.right", accessibilityDescription: nil))
+        let state = makeState([.sectionHeader("Header", image: image), .action("Title") { _ in }])
+        let row = try #require(state.rows.first)
+
+        #expect(row.imageLayoutSize == (try headerSymbolSize(image)))
+        #expect(state.iconWidths == [row.imageLayoutSize.width, 0])
+        if #unavailable(macOS 26) {
+            #expect(row.imageLayoutSize != image.size)
+        }
     }
 
     @Test
@@ -227,7 +240,8 @@ struct AlternativeMenuViewStateTests {
 
         for testCase in cases {
             let state = makeState(testCase.items)
-            #expect(state.iconWidths[0] == width)
+            let headerWidth = try state.rows.filter { $0.kind == .header }.compactMap(\.image).map { try headerSymbolSize($0).width }.max() ?? 0
+            #expect(state.iconWidths[0] == max(width, headerWidth))
             if #available(macOS 27, *) {
                 #expect(state.iconWidths[testCase.plainIndex] == (testCase.indentsOn27 ? width : 0))
             } else if #available(macOS 26, *) {
@@ -437,11 +451,16 @@ struct AlternativeMenuViewStateTests {
     }
 
     private func headerSymbolSize(_ image: NSImage) throws -> NSSize {
-        let configuration = NSImage.SymbolConfiguration(
-            pointSize: AlternativeMenuStyle.headerFont.pointSize,
-            weight: .semibold,
-            scale: .small
-        )
+        let configuration: NSImage.SymbolConfiguration
+        if #available(macOS 26, *) {
+            configuration = .init(pointSize: AlternativeMenuStyle.headerFont.pointSize, weight: .semibold, scale: .small)
+        } else {
+            configuration = NSImage.SymbolConfiguration(
+                pointSize: AlternativeMenuStyle.headerFont.pointSize,
+                weight: .semibold,
+                scale: .medium
+            ).applying(image.symbolConfiguration)
+        }
         return try #require(image.withSymbolConfiguration(configuration)).size
     }
 

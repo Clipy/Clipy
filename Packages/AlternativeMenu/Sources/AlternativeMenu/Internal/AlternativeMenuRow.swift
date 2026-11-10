@@ -47,11 +47,25 @@ struct AlternativeMenuRow: View {
     private var label: some View {
         HStack(spacing: AlternativeMenuStyle.current.iconSpacing) {
             if let image = row.image {
-                Image(nsImage: image)
+                let fitsHeaderImage: Bool =
+                    if #available(macOS 26, *) {
+                        false
+                    } else {
+                        row.kind == .header && image.size.width > 0 && image.size.height > 0
+                    }
+                let content = Image(nsImage: image)
                     .renderingMode(image.isTemplate ? .template : .original)
                     .resizable()
-                    .frame(width: image.size.width, height: image.size.height)
-                    .frame(width: iconWidth)
+                Group {
+                    if fitsHeaderImage {
+                        content
+                            .aspectRatio(image.size.width / image.size.height, contentMode: .fit)
+                            .frame(width: iconWidth, height: row.imageLayoutSize.height)
+                    } else {
+                        content.frame(width: image.size.width, height: image.size.height)
+                    }
+                }
+                .frame(width: iconWidth, height: row.imageLayoutSize.height)
             } else if iconWidth > 0 {
                 Color.clear
                     .frame(width: iconWidth, height: 0)

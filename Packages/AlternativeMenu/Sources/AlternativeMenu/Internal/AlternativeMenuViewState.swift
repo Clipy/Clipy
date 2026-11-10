@@ -60,7 +60,7 @@ final class AlternativeMenuViewState {
         let trailingColumnWidth = rows.lazy.map { $0.trailingWidth(keyColumnWidth: keyColumnWidth) }.max() ?? 0
         let symbolColumnWidth = max(
             minimumSymbolColumnWidth,
-            rows.lazy.filter(\.isSymbolImage).compactMap { $0.image?.size.width }.max() ?? 0
+            rows.lazy.filter(\.isSymbolImage).map(\.imageLayoutSize.width).max() ?? 0
         )
         let measuredSymbolColumnWidth: CGFloat
         if #available(macOS 27, *), !rows.contains(where: { $0.kind != .header && $0.isSymbolImage }) {

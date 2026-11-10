@@ -44,6 +44,22 @@ struct AlternativeMenuRowDataTests {
     }
 
     @Test
+    func preservesOriginalLegacyHeaderSymbols() throws {
+        let source = try #require(NSImage(systemSymbolName: "chevron.left.forwardslash.chevron.right", accessibilityDescription: nil))
+        let originalSize = source.size
+        let row = AlternativeMenuRowData(item: .sectionHeader("Header", image: source), verticalOffset: 0)
+        let image = try #require(row.image)
+
+        if #available(macOS 26, *) {
+            #expect(image.size == row.imageLayoutSize)
+        } else {
+            #expect(image.size == originalSize)
+            #expect(image.symbolConfiguration == source.symbolConfiguration)
+        }
+        #expect(source.size == originalSize)
+    }
+
+    @Test
     func removesParagraphFormattingWithoutChangingTheOriginalTitle() throws {
         let expected = NSAttributedString(string: "Paragraph title", attributes: [.font: AlternativeMenuStyle.menuFont, .kern: 2])
         let paragraph = NSMutableParagraphStyle()

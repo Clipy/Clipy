@@ -19,6 +19,7 @@ struct AlternativeMenuRowData {
     let kind: Kind
     let title: AlternativeMenuItem.Title
     let image: NSImage?
+    let imageLayoutSize: NSSize
     let toolTip: String?
     let font: NSFont
     let verticalRange: Range<CGFloat>
@@ -48,13 +49,9 @@ struct AlternativeMenuRowData {
         }
         self.hasSubmenu = item.submenu != nil
         self.font = kind == .header ? AlternativeMenuStyle.headerFont : AlternativeMenuStyle.menuFont
-        let configuration =
-            if kind == .header {
-                NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
-            } else {
-                NSImage.SymbolConfiguration(scale: .small)
-            }
-        self.image = item.image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
+        let configuredImage = Self.configuredImage(item.image, font: font, isHeader: kind == .header)
+        self.image = configuredImage.image
+        self.imageLayoutSize = configuredImage.layoutSize
         self.leadingInset = image == nil && kind != .separator ? AlternativeMenuStyle.current.imagelessRowTextInset : AlternativeMenuStyle.current.rowTextInset
         self.isSymbolImage = image?.isSymbolImage ?? false
         self.toolTip = item.toolTip
@@ -100,7 +97,6 @@ struct AlternativeMenuRowData {
             self.title = .attributed(measured)
         }
 
-        let size = image?.size ?? .zero
         // Include baseline offsets in addition to the font and image bounds.
         let rowHeight: CGFloat =
             if kind == .separator {
@@ -109,7 +105,7 @@ struct AlternativeMenuRowData {
                 ceil(
                     max(
                         AlternativeMenuStyle.current.minimumRowHeight,
-                        max(size.height, titleSize.height, maximumFontLineHeight) + AlternativeMenuStyle.current.rowContentVerticalPadding
+                        max(imageLayoutSize.height, titleSize.height, maximumFontLineHeight) + AlternativeMenuStyle.current.rowContentVerticalPadding
                     )
                 )
             }
@@ -139,6 +135,23 @@ struct AlternativeMenuRowData {
             AlternativeMenuStyle.current.minimumKeyEquivalentColumnWidth,
             ceil(keyEquivalent.width(sharedKeyColumnWidth: keyColumnWidth)) + AlternativeMenuStyle.current.keyEquivalentGap
         )
+    }
+
+    private static func configuredImage(_ image: NSImage?, font: NSFont, isHeader: Bool) -> (image: NSImage?, layoutSize: NSSize) {
+        if #unavailable(macOS 26), isHeader {
+            let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .medium)
+            let layoutSize = image.flatMap { $0.withSymbolConfiguration(configuration.applying($0.symbolConfiguration)) ?? $0 }?.size ?? .zero
+            // Fit the original image after the shared icon column width is known.
+            return (image, layoutSize)
+        }
+        let configuration =
+            if isHeader {
+                NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
+            } else {
+                NSImage.SymbolConfiguration(scale: .small)
+            }
+        let configured = image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
+        return (configured, configured?.size ?? .zero)
     }
 
     private static func lineHeight(for font: NSFont) -> CGFloat {
