@@ -71,9 +71,7 @@ struct AlternativeMenuRoot: View {
                 scrollView?.setAccessibilityElement(false)
                 state.scrollView = scrollView
             }
-            .onGeometryChange(for: AlternativeMenuScrollAvailability.self) {
-                [contentHeight = state.contentHeight,
-                 topPadding = header == nil ? AlternativeMenuStyle.current.padding : 0] geometry in
+            .onGeometryChange(for: AlternativeMenuScrollAvailability.self) { [contentHeight = state.contentHeight, topPadding = header == nil ? AlternativeMenuStyle.current.padding : 0] geometry in
                 AlternativeMenuScrollAvailability(
                     offset: max(0, -geometry.frame(in: .named(menuItemsCoordinateSpace)).minY),
                     contentHeight: contentHeight,

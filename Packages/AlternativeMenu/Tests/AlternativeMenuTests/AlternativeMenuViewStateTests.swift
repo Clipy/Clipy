@@ -277,17 +277,17 @@ struct AlternativeMenuViewStateTests {
         let bitmap = AlternativeMenuItem.action("Bitmap", isEnabled: isEnabled, image: NSImage(size: NSSize(width: 16, height: 16))) { _ in }
         let header = AlternativeMenuItem.sectionHeader("Header", image: image)
         let width = try bodySymbolSize(image).width
-        let cases: [(items: [AlternativeMenuItem], plainIndex: Int, indentsOn27: Bool)] = [
-            ([symbolItem, plain], 1, false),
-            ([symbolItem, symbolItem, plain], 2, true),
-            ([symbolItem, symbolItem, plain, plain], 2, false),
-            ([symbolItem, symbolItem, symbolItem, plain, plain], 3, true),
-            ([symbolItem, symbolItem, bitmap, plain], 3, false),
-            ([symbolItem, symbolItem, symbolItem, bitmap, plain], 4, true),
-            ([symbolItem, plain, header], 1, false),
-            ([symbolItem, symbolItem, plain, header], 2, true),
-            ([symbolItem, symbolItem, plain, .sectionHeader("Header")], 2, true),
-            ([symbolItem, symbolItem, plain, .separator], 2, true)
+        let cases: [SymbolGroupingExpectation] = [
+            .init(items: [symbolItem, plain], plainIndex: 1, indentsOn27: false),
+            .init(items: [symbolItem, symbolItem, plain], plainIndex: 2, indentsOn27: true),
+            .init(items: [symbolItem, symbolItem, plain, plain], plainIndex: 2, indentsOn27: false),
+            .init(items: [symbolItem, symbolItem, symbolItem, plain, plain], plainIndex: 3, indentsOn27: true),
+            .init(items: [symbolItem, symbolItem, bitmap, plain], plainIndex: 3, indentsOn27: false),
+            .init(items: [symbolItem, symbolItem, symbolItem, bitmap, plain], plainIndex: 4, indentsOn27: true),
+            .init(items: [symbolItem, plain, header], plainIndex: 1, indentsOn27: false),
+            .init(items: [symbolItem, symbolItem, plain, header], plainIndex: 2, indentsOn27: true),
+            .init(items: [symbolItem, symbolItem, plain, .sectionHeader("Header")], plainIndex: 2, indentsOn27: true),
+            .init(items: [symbolItem, symbolItem, plain, .separator], plainIndex: 2, indentsOn27: true)
         ]
 
         for testCase in cases {
@@ -537,4 +537,10 @@ struct AlternativeMenuViewStateTests {
         state.setRows(items.map { AlternativeMenuRowData(item: $0, verticalOffset: 0) })
         return state
     }
+}
+
+private struct SymbolGroupingExpectation {
+    let items: [AlternativeMenuItem]
+    let plainIndex: Int
+    let indentsOn27: Bool
 }

@@ -179,8 +179,8 @@ struct AlternativeMenuViewTests {
 
         let top = header?.height ?? 0
         let boundary = top + AlternativeMenuStyle.current.minimumRowHeight
-        for y in [top + 1, boundary - 0.5] {
-            let point = fixture.view.convert(NSPoint(x: 150, y: y), to: nil)
+        for verticalPosition in [top + 1, boundary - 0.5] {
+            let point = fixture.view.convert(NSPoint(x: 150, y: verticalPosition), to: nil)
             #expect(fixture.view.edgeScrollDirection(at: point) == -1)
             #expect(fixture.view.rowIndex(at: point) == nil)
         }
