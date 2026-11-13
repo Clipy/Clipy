@@ -19,6 +19,9 @@ struct AlternativeMenuRow: View {
     @Environment(\.layoutDirection)
     private var layoutDirection
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     private var textColor: Color {
         if isEmphasized {
             return Color(nsColor: .selectedMenuItemTextColor)
@@ -34,6 +37,7 @@ struct AlternativeMenuRow: View {
             if row.kind == .separator {
                 if row.rowHeight > 0 {
                     Divider()
+                        .foregroundStyle(colorScheme == .dark ? AnyShapeStyle(Color.white.opacity(0.8)) : AnyShapeStyle(.primary))
                 }
             } else {
                 label
