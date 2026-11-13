@@ -86,6 +86,12 @@ struct SnippetFolder: Identifiable, Equatable {
 }
 
 @Table
+struct SnippetFolderSearch: FTS5, Equatable {
+    let id: SnippetFolder.ID
+    let title: String
+}
+
+@Table
 struct Snippet: Identifiable, Equatable {
     typealias ID = Tagged<Self, UUID>
 

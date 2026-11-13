@@ -122,6 +122,83 @@ struct SQLiteDataDatabaseTriggerTests {
     }
 
     @Test
+    func snippetFolderSearchesIndexIsUpdatedByTriggers() throws {
+        let folderID = SnippetFolder.ID(rawValue: UUID())
+
+        try database.write { database in
+            try SnippetFolder.insert {
+                SnippetFolder(
+                    id: folderID,
+                    title: "Xqa Folder Start",
+                    index: 0,
+                    isEnabled: true
+                )
+            }
+            .execute(database)
+        }
+
+        try database.read { database in
+            let folderIDs = try snippetFolders(matching: "xqa", database: database)
+                .map { $0?.id }
+            #expect(folderIDs == [folderID])
+        }
+
+        try database.write { database in
+            try SnippetFolder.where { $0.id.eq(folderID) }
+                .update { $0.title = "Gamma Delta" }
+                .execute(database)
+        }
+
+        try database.read { database in
+            let oldFolderIDs = try snippetFolders(matching: "xqa", database: database)
+                .map { $0?.id }
+            #expect(oldFolderIDs == [])
+
+            let updatedFolderIDs = try snippetFolders(matching: "mma", database: database)
+                .map { $0?.id }
+            #expect(updatedFolderIDs == [folderID])
+        }
+
+        let updatedFolderID = SnippetFolder.ID(rawValue: UUID())
+        try database.write { database in
+            try SnippetFolder.where { $0.id.eq(folderID) }
+                .update {
+                    $0.id = updatedFolderID
+                    $0.title = "Rpb Folder Finish"
+                }
+                .execute(database)
+        }
+
+        try database.read { database in
+            let oldFolderIDs = try snippetFolders(matching: "mma", database: database)
+                .map { $0?.id }
+            #expect(oldFolderIDs == [])
+
+            let updatedFolderIDs = try snippetFolders(matching: "rpb", database: database)
+                .map { $0?.id }
+            #expect(updatedFolderIDs == [updatedFolderID])
+        }
+
+        try database.write { database in
+            try SnippetFolder.delete()
+                .where { $0.id.eq(updatedFolderID) }
+                .execute(database)
+        }
+
+        try database.read { database in
+            let folderCount = try #sql(
+                """
+                SELECT count(*)
+                FROM "snippetFolderSearches"
+                """,
+                as: Int.self
+            )
+            .fetchOne(database)
+            #expect(folderCount == 0)
+        }
+    }
+
+    @Test
     func snippetSearchesIndexIsUpdatedByTriggers() throws {
         let folderID = SnippetFolder.ID(rawValue: UUID())
         let snippetID = Snippet.ID(rawValue: UUID())
@@ -228,6 +305,17 @@ private extension SQLiteDataDatabaseTriggerTests {
             .leftJoin(PasteboardHistory.all) { $0.id.eq($1.id) }
             .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($2.pasteboardHistoryID) }
             .select { PasteboardHistorySearchResult.Columns(history: $1, thumbnailAsset: $2) }
+            .fetchAll(database)
+    }
+
+    private func snippetFolders(
+        matching query: String,
+        database: Database
+    ) throws -> [SnippetFolder?] {
+        try SnippetFolderSearch
+            .where { $0.match(query) }
+            .leftJoin(SnippetFolder.all) { $0.id.eq($1.id) }
+            .select { $1 }
             .fetchAll(database)
     }
 
