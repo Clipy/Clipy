@@ -19,6 +19,7 @@ import Testing
 struct AppStorageValuesTests {
     @Test
     func loadDefaultBooleanSettings() {
+        @Shared(.allowsAgentHistoryAccess) var allowsAgentHistoryAccess
         @Shared(.isLaunchAtLogin) var isLaunchAtLogin
         @Shared(.suppressesLoginItemAlert) var suppressesLoginItemAlert
         @Shared(.pastesAutomatically) var pastesAutomatically
@@ -47,6 +48,7 @@ struct AppStorageValuesTests {
         @Shared(.pastesAndDeletesHistoryWithModifier) var pastesAndDeletesHistoryWithModifier
         @Shared(.observesScreenshots) var observesScreenshots
 
+        #expect(!allowsAgentHistoryAccess)
         #expect(!isLaunchAtLogin)
         #expect(!suppressesLoginItemAlert)
         #expect(pastesAutomatically)

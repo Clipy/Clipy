@@ -52,6 +52,7 @@ enum AppStorageKeys: String {
     case pasteAndDeleteHistory = "kCPYBetaPasteAndDeleteHistory"
     case pasteAndDeleteHistoryModifier = "kCPYBetapasteAndDeleteHistoryModifier"
     case observerScreenshot = "kCPYBetaObserveScreenshot"
+    case allowsAgentHistoryAccess
     case pasteboardTypeSettings
     case excludedApplications
     case mainKeyCombo

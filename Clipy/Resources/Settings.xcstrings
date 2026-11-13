@@ -4985,6 +4985,165 @@
         }
       }
     },
+    "agentHistoryAccess" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KI-Agenten-Zugriff:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Agent Access:"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "دسترسی عامل هوش مصنوعی:"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesso degli agenti IA:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AIエージェントのアクセス:"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acesso de agentes de IA:"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступ агентів ШІ:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理访问："
+          }
+        }
+      }
+    },
+    "agentHistoryAccessDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ermöglicht der optionalen lokalen MCP-Bridge, den gespeicherten Textverlauf zu lesen. Verbinde nur vertrauenswürdige Clients: Agenten können Ergebnisse an ihren KI-Anbieter weitergeben, und kopierter Text kann Passwörter enthalten. Das Deaktivieren stoppt neue Abfragen, kann bereits geteilte Daten aber nicht zurückholen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lets the optional local MCP bridge read saved text history. Connect only trusted clients: agents may share results with their AI provider, and copied text can include passwords. Turning this off stops new queries but cannot recall shared data."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "به پل MCP محلیِ اختیاری اجازه می‌دهد تاریخچهٔ متن ذخیره‌شده را بخواند. فقط کلاینت‌های مورد اعتماد را متصل کنید: عامل‌ها ممکن است نتایج را با ارائه‌دهندهٔ هوش مصنوعی خود به اشتراک بگذارند و متن کپی‌شده ممکن است شامل گذرواژه باشد. خاموش کردن این گزینه جلوی پرس‌وجوهای جدید را می‌گیرد اما داده‌های به‌اشتراک‌گذاشته‌شده را بازنمی‌گرداند."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consente al bridge MCP locale opzionale di leggere la cronologia del testo salvata. Collega solo client attendibili: gli agenti possono condividere i risultati con il proprio fornitore di IA e il testo copiato può contenere password. Disattivando l'opzione si bloccano le nuove richieste, ma i dati già condivisi non possono essere recuperati."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オプションのローカル MCP ブリッジが保存済みのテキスト履歴を読み取れるようにします。信頼できるクライアントのみ接続してください。エージェントは結果を AI プロバイダに送信する場合があり、コピーしたテキストにはパスワードが含まれることがあります。オフにすると以降の検索は停止しますが、共有済みのデータは取り消せません。"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permite que a ponte MCP local opcional leia o histórico de texto salvo. Conecte apenas clientes confiáveis: os agentes podem compartilhar os resultados com o provedor de IA, e o texto copiado pode conter senhas. Desativar interrompe novas consultas, mas não recupera dados já compartilhados."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дозволяє необов’язковому локальному мосту MCP читати збережену історію тексту. Під’єднуйте лише довірені клієнти: агенти можуть передавати результати своєму постачальнику ШІ, а скопійований текст може містити паролі. Вимкнення зупиняє нові запити, але не повертає вже передані дані."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许可选的本地 MCP 桥接读取已保存的文本历史记录。请仅连接可信的客户端：代理可能会将结果发送给其 AI 服务提供商，且复制的文本可能包含密码。关闭后将停止新的查询，但无法撤回已共享的数据。"
+          }
+        }
+      }
+    },
+    "allowAgentHistoryQueries" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agenten das Durchsuchen des Textverlaufs erlauben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow agents to query text history"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اجازه به عامل‌ها برای جست‌وجو در تاریخچهٔ متن"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consenti agli agenti di cercare nella cronologia del testo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントによるテキスト履歴の検索を許可"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir que agentes consultem o histórico de texto"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дозволити агентам шукати в історії тексту"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许代理查询文本历史记录"
+          }
+        }
+      }
+    },
     "characters" : {
       "extractionState" : "manual",
       "localizations" : {
