@@ -32,6 +32,7 @@ public final class AlternativeMenuSession {
         let panel: AlternativeMenuPanel
         /// The row in the preceding panel that owns this child menu.
         let parentRow: Int
+        var hasBeenHovered = false
     }
 
     /// A delayed submenu opening or a grace period for moving diagonally into a child.
@@ -652,6 +653,9 @@ private extension AlternativeMenuSession {
     /// Moving toward an open child temporarily preserves its parent selection; a nil
     /// previous point applies the current hit immediately after that grace period ends.
     func updateHover(in panel: AlternativeMenuPanel?, at point: NSPoint, previous: NSPoint?, showsToolTip: Bool) {
+        if let index = submenus.firstIndex(where: { $0.panel === panel }) {
+            submenus[index].hasBeenHovered = true
+        }
         let index = panel?.rowIndex(at: point)
         if let previous, let parent = panel ?? hoveredPanel, let child = child(of: parent), child.parentRow != index,
             AlternativeMenuSubmenuGeometry.isMovingTowardSubmenu(
@@ -671,8 +675,10 @@ private extension AlternativeMenuSession {
         }
         guard let panel else {
             cancelHover()
-            closeSubmenus(after: root)
-            root.selectRow(nil)
+            // Once entered, a submenu stays open when the pointer leaves the menu chain.
+            let retainedPanel = submenus.last(where: \.hasBeenHovered)?.panel ?? root
+            closeSubmenus(after: retainedPanel)
+            retainedPanel.selectRow(nil)
             return
         }
 
