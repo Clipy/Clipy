@@ -59,14 +59,17 @@ final class PasteService {
 
     // MARK: - Modifiers
     private func isPressedModifier(_ flag: Int) -> Bool {
+        // NSEvent.modifierFlags only follows events delivered to Clipy, so it misses modifiers
+        // held while choosing a menu item with the keyboard. Read the hardware state as well.
         let flags = NSEvent.modifierFlags
-        if flag == 0 && flags.contains(.command) {
+        let hardwareFlags = CGEventSource.flagsState(.hidSystemState)
+        if flag == 0 && (flags.contains(.command) || hardwareFlags.contains(.maskCommand)) {
             return true
-        } else if flag == 1 && flags.contains(.shift) {
+        } else if flag == 1 && (flags.contains(.shift) || hardwareFlags.contains(.maskShift)) {
             return true
-        } else if flag == 2 && flags.contains(.control) {
+        } else if flag == 2 && (flags.contains(.control) || hardwareFlags.contains(.maskControl)) {
             return true
-        } else if flag == 3 && flags.contains(.option) {
+        } else if flag == 3 && (flags.contains(.option) || hardwareFlags.contains(.maskAlternate)) {
             return true
         }
         return false
