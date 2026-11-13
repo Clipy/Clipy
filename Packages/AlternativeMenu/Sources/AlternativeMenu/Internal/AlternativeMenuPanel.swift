@@ -70,6 +70,13 @@ final class AlternativeMenuPanel: NSPanel {
         acceptsMouseMovedEvents = true
         allowsToolTipsWhenApplicationIsInactive = true
         contentView = menuView
+        // Match the glass menu's window shadow; earlier menus round only their background view.
+        let cornerRadiusSelector = NSSelectorFromString("_setCornerRadius:")
+        if #available(macOS 26.0, *), responds(to: cornerRadiusSelector) {
+            typealias SetCornerRadius = @convention(c) (AnyObject, Selector, CGFloat) -> Void
+            let invoke = unsafeBitCast(method(for: cornerRadiusSelector), to: SetCornerRadius.self)
+            invoke(self, cornerRadiusSelector, AlternativeMenuStyle.current.cornerRadius)
+        }
         menuView.growMenuHeightBy = { [weak self] distance in
             self?.growMenuHeight(by: distance) ?? 0
         }
