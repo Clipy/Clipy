@@ -167,7 +167,7 @@ struct AlternativeMenuRowData {
     private static func configuredImage(_ image: NSImage?, font: NSFont, isHeader: Bool) -> (image: NSImage?, layoutSize: NSSize) {
         if #available(macOS 26, *) {
             let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .semibold, scale: .small)
-            let configured = image.flatMap { $0.withSymbolConfiguration(configuration) ?? $0 }
+            let configured = image.flatMap { $0.withSymbolConfiguration($0.symbolConfiguration.applying(configuration)) ?? $0 }
             return (configured, configured?.size ?? .zero)
         }
         guard isHeader else {

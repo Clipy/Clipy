@@ -46,8 +46,13 @@ struct AlternativeMenuRowDataTests {
     @Test(arguments: [false, true])
     func appliesNativeSymbolSizingWithoutChangingTheSuppliedImage(isHeader: Bool) throws {
         let symbol = try #require(NSImage(systemSymbolName: "doc.text", accessibilityDescription: nil))
-        let image = try #require(symbol.withSymbolConfiguration(.init(pointSize: 20, weight: .bold, scale: .large)))
+        let palette = NSImage.SymbolConfiguration(paletteColors: [.systemBlue])
+        let image = try #require(symbol.withSymbolConfiguration(
+            NSImage.SymbolConfiguration(pointSize: 20, weight: .bold, scale: .large).applying(palette)
+        ))
+        image.isTemplate = false
         let originalSize = image.size
+        let originalConfiguration = image.symbolConfiguration
         let item: AlternativeMenuItem =
             if isHeader {
                 .sectionHeader("Header", image: image)
@@ -58,13 +63,19 @@ struct AlternativeMenuRowDataTests {
 
         if #available(macOS 26, *) {
             let pointSize = isHeader ? AlternativeMenuStyle.headerFont.pointSize : AlternativeMenuStyle.menuFont.pointSize
-            let configured = try #require(image.withSymbolConfiguration(.init(pointSize: pointSize, weight: .semibold, scale: .small)))
+            let configured = try #require(image.withSymbolConfiguration(
+                NSImage.SymbolConfiguration(pointSize: pointSize, weight: .semibold, scale: .small).applying(palette)
+            ))
             #expect(row.image?.size == configured.size)
             #expect(row.image?.size != originalSize)
+            #expect(row.image?.symbolConfiguration == configured.symbolConfiguration)
         } else {
             #expect(row.image?.size == originalSize)
+            #expect(row.image?.symbolConfiguration == originalConfiguration)
         }
+        #expect(row.image?.isTemplate == false)
         #expect(image.size == originalSize)
+        #expect(image.symbolConfiguration == originalConfiguration)
     }
 
     @Test
