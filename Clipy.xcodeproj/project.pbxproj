@@ -68,6 +68,7 @@
 		C5A900043035000100000001 /* PasteboardTypeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A900033035000100000001 /* PasteboardTypeSettings.swift */; };
 		C5A900063035000100000001 /* PasteboardTypeSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A900053035000100000001 /* PasteboardTypeSettingsTests.swift */; };
 		C5C010AA309A000100000003 /* ColorCodes in Frameworks */ = {isa = PBXBuildFile; productRef = C5C010AA309A000100000001 /* ColorCodes */; };
+		C5C010AA309A000200000003 /* AlternativeMenu in Frameworks */ = {isa = PBXBuildFile; productRef = C5C010AA309A000200000001 /* AlternativeMenu */; };
 		C5CC3FD2303929E400875CFE /* FileManagerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */; };
 		C5CC3FD430392F7000875CFE /* DeviceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CC3FD330392F6F00875CFE /* DeviceIdentifier.swift */; };
 		C5D091013095000100000001 /* DonationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D091023095000100000001 /* DonationSettingsView.swift */; };
@@ -217,6 +218,7 @@
 		C5A900033035000100000001 /* PasteboardTypeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardTypeSettings.swift; sourceTree = "<group>"; };
 		C5A900053035000100000001 /* PasteboardTypeSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardTypeSettingsTests.swift; sourceTree = "<group>"; };
 		C5C010AA309A000100000004 /* ColorCodes */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ColorCodes; sourceTree = "<group>"; };
+		C5C010AA309A000200000004 /* AlternativeMenu */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AlternativeMenu; sourceTree = "<group>"; };
 		C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerExtensions.swift; sourceTree = "<group>"; };
 		C5CC3FD330392F6F00875CFE /* DeviceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentifier.swift; sourceTree = "<group>"; };
 		C5D091023095000100000001 /* DonationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationSettingsView.swift; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				C5C010AA309A000100000003 /* ColorCodes in Frameworks */,
+				C5C010AA309A000200000003 /* AlternativeMenu in Frameworks */,
 				C58E0AA12FDB000000000001 /* Settings in Frameworks */,
 				C5A67BCC2FED00E10015A0DE /* DependenciesMacros in Frameworks */,
 				C587AF512FBF4E040043D5E7 /* SQLiteData in Frameworks */,
@@ -563,6 +566,7 @@
 			isa = PBXGroup;
 			children = (
 				C5C010AA309A000100000004 /* ColorCodes */,
+				C5C010AA309A000200000004 /* AlternativeMenu */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
@@ -839,6 +843,7 @@
 			name = Clipy;
 			packageProductDependencies = (
 				C5C010AA309A000100000001 /* ColorCodes */,
+				C5C010AA309A000200000001 /* AlternativeMenu */,
 				C58E0AA32FDB000000000001 /* Settings */,
 				C5700B4B2FC5C3D500C8F965 /* Dependencies */,
 				C53FC6BF2FCCA1C400219A25 /* Collections */,
@@ -916,6 +921,7 @@
 			mainGroup = FAC43DBD1B35D8B100C06102;
 			packageReferences = (
 				C5C010AA309A000100000002 /* XCLocalSwiftPackageReference "Packages/ColorCodes" */,
+				C5C010AA309A000200000002 /* XCLocalSwiftPackageReference "Packages/AlternativeMenu" */,
 				C58E0AA22FDB000000000001 /* XCRemoteSwiftPackageReference "Settings" */,
 				C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */,
 				C5D3A75A2FB869EA00C9DCB6 /* XCRemoteSwiftPackageReference "sauce" */,
@@ -1387,6 +1393,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/ColorCodes;
 		};
+		C5C010AA309A000200000002 /* XCLocalSwiftPackageReference "Packages/AlternativeMenu" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AlternativeMenu;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1573,6 +1583,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C5C010AA309A000100000002 /* XCLocalSwiftPackageReference "Packages/ColorCodes" */;
 			productName = ColorCodes;
+		};
+		C5C010AA309A000200000001 /* AlternativeMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5C010AA309A000200000002 /* XCLocalSwiftPackageReference "Packages/AlternativeMenu" */;
+			productName = AlternativeMenu;
 		};
 		C5D220A72FBD2655005CD45E /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
