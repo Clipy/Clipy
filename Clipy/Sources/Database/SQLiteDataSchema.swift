@@ -68,12 +68,6 @@ struct PasteboardHistorySearch: FTS5, Equatable {
     let ocrText: String
 }
 
-@Selection
-struct PasteboardHistorySearchResult: Equatable {
-    let history: PasteboardHistory?
-    let thumbnailAsset: PasteboardHistoryThumbnailAsset?
-}
-
 @Table
 struct SnippetFolder: Identifiable, Equatable {
     typealias ID = Tagged<Self, UUID>
@@ -112,8 +106,9 @@ struct SnippetSearch: FTS5, Equatable {
 }
 
 @Selection
-struct SnippetSearchResult: Equatable {
-    let snippet: Snippet?
+struct SnippetSearchResult {
+    let folderTitle: String
+    let snippet: Snippet
 }
 
 extension NSPasteboard.PasteboardType: @retroactive SQLiteType {}

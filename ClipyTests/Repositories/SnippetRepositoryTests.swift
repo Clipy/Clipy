@@ -111,6 +111,62 @@ struct SnippetRepositoryTests {
     }
 
     @Test
+    func searchUsesNormalizedTitleContentAndFolderNames() throws {
+        let details = try #require(repository.insertFolders([
+            (title: "か\u{3099}きく Folder \"OR\"", snippets: [
+                (title: "は\u{309A}ひふ GitHub", content: "Α\u{345}\u{301} 100%_ \"AND\" café")
+            ])
+        ]))
+        let snippet = try #require(details.first?.snippets.first)
+        for query in ["が", "がきく", "\"OR\"", "ぱ", "ぱひふ", "g", "gi", "GITHUB", "άι", "%_", "\"AND\"", "café"] {
+            let matches = repository.searchSnippets(query: query, folderID: nil, limit: 10)
+            #expect(matches.map(\.snippet.id) == [snippet.id], "Query: \(query)")
+        }
+        for query in ["missing", "かきく", "はひふ", "cafe", "\0", " \n "] {
+            #expect(repository.searchSnippets(query: query, folderID: nil, limit: 10).isEmpty, "Query: \(query)")
+        }
+        #expect(repository.searchSnippets(query: "GitHub", folderID: nil, limit: 0).isEmpty)
+    }
+
+    @Test(arguments: ["ma", "match"])
+    func searchPrioritizesDirectMatchesBeforeFolderMatchesAndLimiting(query: String) throws {
+        let details = try #require(repository.insertFolders([
+            (title: "Match first", snippets: [(title: "Match A", content: ""), (title: "B", content: "")]),
+            (title: "Second", snippets: [(title: "C", content: "Match"), (title: "Match D", content: "")]),
+            (title: "Match disabled", snippets: [(title: "Match E", content: "")])
+        ]))
+        let first = details[0], second = details[1], disabled = details[2]
+        repository.updateFolderIsEnabled(disabled.folder.id, isEnabled: false)
+        repository.updateSnippetIsEnabled(second.snippets[1].id, isEnabled: false)
+        repository.updateFolderIndexes([second.folder.id, first.folder.id, disabled.folder.id])
+        repository.updateSnippetIndexes([first.snippets[1].id, first.snippets[0].id])
+        let matches = repository.searchSnippets(query: query, folderID: nil, limit: 3)
+        #expect(matches.map(\.snippet.id) == [second.snippets[0].id, first.snippets[0].id, first.snippets[1].id])
+        #expect(matches.map(\.folderTitle) == ["Second", "Match first", "Match first"])
+        #expect(repository.searchSnippets(query: query, folderID: nil, limit: 2).map(\.snippet.id)
+            == [second.snippets[0].id, first.snippets[0].id])
+        #expect(repository.searchSnippets(query: query, folderID: first.folder.id, limit: 10).map(\.snippet.id)
+            == [first.snippets[0].id, first.snippets[1].id])
+        #expect(repository.searchSnippets(query: query, folderID: disabled.folder.id, limit: 10).isEmpty)
+    }
+
+    @Test(arguments: ["ma", "match"])
+    func searchKeepsTitleAndContentMatchesWhenFolderMatchesExceedTheLimit(query: String) throws {
+        let folderOnlySnippets = (0..<20).map { (title: "Saved \($0)", content: "Content") }
+        let details = try #require(repository.insertFolders([
+            (title: "Match folder", snippets: folderOnlySnippets),
+            (title: "Other folder", snippets: [
+                (title: "Match title", content: ""),
+                (title: "Saved text", content: "Match content")
+            ])
+        ]))
+
+        let matches = repository.searchSnippets(query: query, folderID: nil, limit: 2)
+
+        #expect(matches.map(\.snippet.id) == details[1].snippets.map(\.id))
+    }
+
+    @Test
     func insertFolders() throws {
         let inserted = try #require(
             repository.insertFolders([

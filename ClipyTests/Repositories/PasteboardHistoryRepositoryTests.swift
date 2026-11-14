@@ -182,6 +182,88 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func searchTreatsQueriesAsLiteralSubstrings() throws {
+        let content = try #require(PasteboardContent("こんにちは世界 ÄPFEL 100%_ \"AND\""))
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+        repository.save(id: id, content: content, updateAt: 1)
+        let newerContent = try #require(PasteboardContent("Unrelated"))
+        repository.save(id: PasteboardHistory.ID(rawValue: newerContent.hash), content: newerContent, updateAt: 2)
+
+        for query in ["  にちは  ", "世界", "ä", "äpfel", "%_", "\"AND\""] {
+            let matches = repository.searchHistoryDetails(
+                query: query, sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 1
+            )
+            #expect(matches.map(\.history.id) == [id], "Query: \(query)")
+        }
+
+        for query in ["", " \n ", "missing", "\\", "Ä\0PFEL"] {
+            let matches = repository.searchHistoryDetails(
+                query: query, sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 1
+            )
+            #expect(matches.isEmpty, "Query: \(query)")
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func searchSortsBeforeLimitingMatches(includesThumbnailAsset: Bool) throws {
+        let first = try #require(PasteboardContent("Clipy first"))
+        let second = try #require(PasteboardContent("Clipy second"))
+        let firstID = PasteboardHistory.ID(rawValue: first.hash)
+        let secondID = PasteboardHistory.ID(rawValue: second.hash)
+        repository.save(id: firstID, content: first, updateAt: 1)
+        repository.save(id: secondID, content: second, updateAt: 2)
+        repository.save(id: firstID, content: first, updateAt: 3)
+
+        for (sortsByCreatedAt, expectedID) in [(false, firstID), (true, secondID)] {
+            let matches = repository.searchHistoryDetails(
+                query: "Clipy", sortsByCreatedAt: sortsByCreatedAt, includesThumbnailAsset: includesThumbnailAsset, limit: 1
+            )
+            #expect(matches.map(\.history.id) == [expectedID])
+        }
+    }
+
+    @Test
+    func searchMatchesOCRAndIncludesThumbnailsOnRequest() throws {
+        let content = try #require(PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20))))
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+        repository.save(id: id, content: content, updateAt: 1)
+        repository.updateOCRText(id: id, ocrText: "Test screenshot with 短文")
+
+        let matches = repository.searchHistoryDetails(
+            query: "screenshot", sortsByCreatedAt: false, includesThumbnailAsset: true, limit: 1
+        )
+        #expect(matches.map(\.history.id) == [id])
+        #expect(matches.first?.thumbnailAsset?.kind == .image)
+
+        let matchesWithoutThumbnails = repository.searchHistoryDetails(
+            query: "短文", sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 1
+        )
+        #expect(matchesWithoutThumbnails.map(\.history.id) == [id])
+        #expect(matchesWithoutThumbnails.first?.thumbnailAsset == nil)
+    }
+
+    @Test
+    func searchMatchesCanonicalUnicodeAndCaseVariants() throws {
+        let content = try #require(PasteboardContent("ας 12 か\u{3099}きく"))
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+        repository.save(id: id, content: content, updateAt: 1)
+        repository.updateOCRText(id: id, ocrText: "は\u{309A}ひふ")
+
+        for query in ["Σ", "σ", "ς", "σ 1", "が", "がきく", "か\u{3099}きく", "ぱ", "ぱひふ"] {
+            let matches = repository.searchHistoryDetails(
+                query: query, sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 1
+            )
+            #expect(matches.map(\.history.id) == [id], "Query: \(query)")
+        }
+        for query in ["か", "かきく", "は", "はひふ"] {
+            let matches = repository.searchHistoryDetails(
+                query: query, sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 1
+            )
+            #expect(matches.isEmpty, "Query: \(query)")
+        }
+    }
+
+    @Test
     func updateOCRTextStoresRecognizedText() throws {
         let imageContent = try #require(
             PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))

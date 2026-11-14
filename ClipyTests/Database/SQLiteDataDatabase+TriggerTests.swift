@@ -299,12 +299,12 @@ private extension SQLiteDataDatabaseTriggerTests {
     private func pasteboardHistories(
         matching query: String,
         database: Database
-    ) throws -> [PasteboardHistorySearchResult] {
+    ) throws -> [PasteboardHistorySearchTestResult] {
         try PasteboardHistorySearch
             .where { $0.match(query) }
             .leftJoin(PasteboardHistory.all) { $0.id.eq($1.id) }
             .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($2.pasteboardHistoryID) }
-            .select { PasteboardHistorySearchResult.Columns(history: $1, thumbnailAsset: $2) }
+            .select { PasteboardHistorySearchTestResult.Columns(history: $1, thumbnailAsset: $2) }
             .fetchAll(database)
     }
 
@@ -322,11 +322,22 @@ private extension SQLiteDataDatabaseTriggerTests {
     private func snippets(
         matching query: String,
         database: Database
-    ) throws -> [SnippetSearchResult] {
+    ) throws -> [SnippetSearchTestResult] {
         try SnippetSearch
             .where { $0.match(query) }
             .leftJoin(Snippet.all) { $0.id.eq($1.id) }
-            .select { SnippetSearchResult.Columns(snippet: $1) }
+            .select { SnippetSearchTestResult.Columns(snippet: $1) }
             .fetchAll(database)
     }
+}
+
+@Selection
+private struct PasteboardHistorySearchTestResult: Equatable {
+    let history: PasteboardHistory?
+    let thumbnailAsset: PasteboardHistoryThumbnailAsset?
+}
+
+@Selection
+private struct SnippetSearchTestResult: Equatable {
+    let snippet: Snippet?
 }

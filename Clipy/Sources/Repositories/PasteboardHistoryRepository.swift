@@ -23,6 +23,12 @@ protocol PasteboardHistoryRepositoryProtocol {
         includesThumbnailAsset: Bool,
         limit: Int,
     ) -> [PasteboardHistoryDetail]
+    func searchHistoryDetails(
+        query: String,
+        sortsByCreatedAt: Bool,
+        includesThumbnailAsset: Bool,
+        limit: Int
+    ) -> [PasteboardHistoryDetail]
     func fetchHistory(id: PasteboardHistory.ID) -> PasteboardHistory?
     func fetchContent(id: PasteboardHistory.ID) -> PasteboardContent?
 
@@ -84,6 +90,53 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                 return try histories
                     .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($1.pasteboardHistoryID) }
                     .select { PasteboardHistoryDetail.Columns(history: $0, thumbnailAsset: $1) }
+                    .fetchAll(database)
+            }
+        } ?? []
+    }
+
+    func searchHistoryDetails(
+        query: String,
+        sortsByCreatedAt: Bool,
+        includesThumbnailAsset: Bool,
+        limit: Int
+    ) -> [PasteboardHistoryDetail] {
+        let query = SQLiteDataDatabase.normalizeSearchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        guard !query.isEmpty, !query.utf8.contains(0) else {
+            return []
+        }
+
+        return withErrorReporting {
+            try database.read { database in
+                let matches = PasteboardHistorySearch.where { columns in
+                    if query.unicodeScalars.count >= 3 {
+                        let phrase = "\"\(query.replacingOccurrences(of: "\"", with: "\"\""))\""
+                        columns.match(phrase)
+                    } else {
+                        // Trigram MATCH requires three scalars. Search the same normalized text for shorter queries.
+                        columns.title.instr(query) > 0 || columns.ocrText.instr(query) > 0
+                    }
+                }
+                .join(PasteboardHistory.all) { $0.id.eq($1.id) }
+                .order { _, histories in
+                    if sortsByCreatedAt {
+                        histories.createdAt.desc()
+                    } else {
+                        histories.updateAt.desc()
+                    }
+                }
+                .limit(limit)
+
+                guard includesThumbnailAsset else {
+                    return try matches
+                        .select { $1 }
+                        .fetchAll(database)
+                        .map { PasteboardHistoryDetail(history: $0, thumbnailAsset: nil) }
+                }
+
+                return try matches
+                    .leftJoin(PasteboardHistoryThumbnailAsset.all) { $1.id.eq($2.pasteboardHistoryID) }
+                    .select { PasteboardHistoryDetail.Columns(history: $1, thumbnailAsset: $2) }
                     .fetchAll(database)
             }
         } ?? []
