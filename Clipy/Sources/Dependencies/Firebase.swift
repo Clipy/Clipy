@@ -21,20 +21,20 @@ struct Firebase {
     var logEvent: (_ event: Event) -> Void
 
     enum Event {
-        case popUpMenu(MenuType)
-        case popUpSnippetFolderMenu
+        case popUpMenu(MenuType, withSearch: Bool)
+        case popUpSnippetFolderMenu(withSearch: Bool)
 
         var name: String {
             switch self {
-            case .popUpMenu:
-                return "pop_up_menu"
-            case .popUpSnippetFolderMenu:
-                return "pop_up_snippet_folder_menu"
+            case .popUpMenu(_, let withSearch):
+                return "pop_up_menu" + (withSearch ? "_with_search" : "")
+            case .popUpSnippetFolderMenu(let withSearch):
+                return "pop_up_snippet_folder_menu" + (withSearch ? "_with_search" : "")
             }
         }
         var parameters: [String: Any]? {
             switch self {
-            case .popUpMenu(let type):
+            case .popUpMenu(let type, _):
                 return ["type": type.rawValue]
             case .popUpSnippetFolderMenu:
                 return nil

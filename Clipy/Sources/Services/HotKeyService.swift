@@ -41,6 +41,8 @@ final class HotKeyService: NSObject {
     private var clearHistoryKeyCombo
     @Shared(.folderKeyCombos)
     private var folderKeyCombos
+    @Shared(.showsSearchBar)
+    private var showsSearchBar
 }
 
 // MARK: - Setup
@@ -78,7 +80,7 @@ extension HotKeyService {
         let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.menuManager.popUpMenu(type)
-                self?.firebase.logEvent(event: .popUpMenu(type))
+                self?.firebase.logEvent(event: .popUpMenu(type, withSearch: self?.showsSearchBar ?? false))
             }
         }
         hotKey.register()
@@ -140,7 +142,7 @@ extension HotKeyService {
             guard folderDetail.folder.isEnabled else { return }
             MainActor.assumeIsolated {
                 self.menuManager.popUpSnippetFolder(folderDetail)
-                self.firebase.logEvent(event: .popUpSnippetFolderMenu)
+                self.firebase.logEvent(event: .popUpSnippetFolderMenu(withSearch: self.showsSearchBar))
             }
         }
         hotKey.register()
