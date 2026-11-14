@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18BEECEE03EB48DA8046CE39 /* MenuSearchScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE6DE532F23946A186321038 /* MenuSearchScope.swift */; };
 		3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DC78C62401491B956E0499 /* SettingsScrollView.swift */; };
 		8AA4F6ACDD775CF0C29E69F3 /* MenuSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8B8CBCA2A18E704175716 /* MenuSettingsView.swift */; };
 		8CF74F044CD75E9CB210F85D /* SettingsNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23265781AF16C4883961248E /* SettingsNumberField.swift */; };
@@ -169,6 +170,7 @@
 		8460049E1FD5511A00BA733E /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		86A713D49D5F5DEC6CBC3D88 /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fa; path = fa.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		A07D83962FC384F100390DB2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
+		AE6DE532F23946A186321038 /* MenuSearchScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSearchScope.swift; sourceTree = "<group>"; };
 		BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutSettingsView.swift; sourceTree = "<group>"; };
 		BF65353D62780EF2D86B2B42 /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; };
 		C50767022FDA7B52004EF448 /* SQLiteDataDatabase+TriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SQLiteDataDatabase+TriggerTests.swift"; sourceTree = "<group>"; };
@@ -703,6 +705,7 @@
 			isa = PBXGroup;
 			children = (
 				FA1DB4A51DDCB443007F95C8 /* MenuType.swift */,
+				AE6DE532F23946A186321038 /* MenuSearchScope.swift */,
 				FA1DB4CC1DDCB479007F95C8 /* ApplicationInformation.swift */,
 				C57100062FCEB02000C8F965 /* PasteboardContent.swift */,
 				C522FB942FCBD69A00E61800 /* PasteboardAvailableType.swift */,
@@ -1061,6 +1064,7 @@
 				C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
 				FC12098A36B73A0000000092 /* NSMenuBuilder.swift in Sources */,
+				18BEECEE03EB48DA8046CE39 /* MenuSearchScope.swift in Sources */,
 				FC12098A36B73A000000008A /* AlternativeMenuExtensions.swift in Sources */,
 				FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */,
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,
