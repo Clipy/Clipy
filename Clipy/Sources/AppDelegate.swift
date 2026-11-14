@@ -19,7 +19,7 @@ import ServiceManagement
 import Settings
 import Sharing
 
-class AppDelegate: NSObject, NSMenuItemValidation {
+class AppDelegate: NSObject {
 
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver()
@@ -46,8 +46,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     var context
     @Dependency(\.mainQueue)
     private var mainQueue
-    @Dependency(\.pasteboardHistoryRepository)
-    private var pasteboardHistoryRepository
     @Dependency(\.firebase)
     private var firebase
     @Dependency(\.clipService)
@@ -75,14 +73,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         case snippetEditor
 
         static let scheme = "clipy"
-    }
-
-    // MARK: - NSMenuItem Validation
-    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            return pasteboardHistoryRepository.hasHistories()
-        }
-        return true
     }
 
     // MARK: - Menu Actions

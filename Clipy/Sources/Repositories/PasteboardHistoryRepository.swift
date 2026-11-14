@@ -17,7 +17,6 @@ import SQLiteData
 
 protocol PasteboardHistoryRepositoryProtocol {
     func observeHistories() -> AnyPublisher<[PasteboardHistory], Never>
-    func hasHistories() -> Bool
     func fetchHistoryDetails(
         sortsByCreatedAt: Bool,
         includesThumbnailAsset: Bool,
@@ -50,17 +49,6 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
 
     func observeHistories() -> AnyPublisher<[PasteboardHistory], Never> {
         _histories.publisher.eraseToAnyPublisher()
-    }
-
-    func hasHistories() -> Bool {
-        withErrorReporting {
-            try database.read { database in
-                try PasteboardHistory
-                    .select { $0.id }
-                    .limit(1)
-                    .fetchOne(database) != nil
-            }
-        } ?? false
     }
 
     func fetchHistoryDetails(

@@ -65,7 +65,7 @@ struct PasteboardHistoryRepositoryTests {
 
     @Test
     func saveAndFetchHistory() throws {
-        #expect(!repository.hasHistories())
+        #expect(repository.fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10).isEmpty)
 
         let content = try #require(PasteboardContent("Hello"))
         let id = PasteboardHistory.ID(rawValue: content.hash)
@@ -73,7 +73,6 @@ struct PasteboardHistoryRepositoryTests {
 
         repository.save(id: id, content: content, updateAt: 1)
 
-        #expect(repository.hasHistories())
         #expect(repository.fetchHistory(id: id) == history)
         #expect(repository.fetchContent(id: id) == content)
         #expect(
@@ -335,11 +334,11 @@ struct PasteboardHistoryRepositoryTests {
 
         repository.save(id: id, content: content, updateAt: 1)
         repository.save(id: id2, content: content2, updateAt: 2)
-        #expect(repository.hasHistories())
+        #expect(repository.fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10).count == 2)
 
         repository.deleteAll()
 
-        #expect(!repository.hasHistories())
+        #expect(repository.fetchHistoryDetails(sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 10).isEmpty)
     }
 
     @Test
@@ -379,7 +378,7 @@ struct PasteboardHistoryRepositoryTests {
         #expect(repository.fetchHistory(id: id) == nil)
 
         repository.deleteOverflowingHistories(sortsByCreatedAt: true, maxHistorySize: 0)
-        #expect(!repository.hasHistories())
+        #expect(repository.fetchHistoryDetails(sortsByCreatedAt: true, includesThumbnailAsset: false, limit: 10).isEmpty)
     }
 }
 

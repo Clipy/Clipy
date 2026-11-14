@@ -76,8 +76,10 @@ extension HotKeyService {
         // Register new hotkey
         guard let keyCombo = keyCombo else { return }
         let hotKey = HotKey(identifier: type.rawValue, keyCombo: keyCombo) { [weak self] _ in
-            self?.menuManager.popUpMenu(type)
-            self?.firebase.logEvent(event: .popUpMenu(type))
+            MainActor.assumeIsolated {
+                self?.menuManager.popUpMenu(type)
+                self?.firebase.logEvent(event: .popUpMenu(type))
+            }
         }
         hotKey.register()
     }
@@ -136,8 +138,10 @@ extension HotKeyService {
                 return
             }
             guard folderDetail.folder.isEnabled else { return }
-            menuManager.popUpSnippetFolder(folderDetail)
-            firebase.logEvent(event: .popUpSnippetFolderMenu)
+            MainActor.assumeIsolated {
+                self.menuManager.popUpSnippetFolder(folderDetail)
+                self.firebase.logEvent(event: .popUpSnippetFolderMenu)
+            }
         }
         hotKey.register()
         // Save key combos

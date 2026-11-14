@@ -12,7 +12,7 @@
 
 import Foundation
 
-enum MenuType: String {
+enum MenuType: String, Sendable {
     case main = "ClipMenu"
     case history = "HistoryMenu"
     case snippet = "SnippetMenu"
