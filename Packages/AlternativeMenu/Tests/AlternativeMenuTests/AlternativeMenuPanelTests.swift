@@ -94,7 +94,7 @@ struct AlternativeMenuPanelTests {
     }
 
     @Test(arguments: [false, true], [false, true])
-    func cancellationCannotChangeTheNextPresentation(duringFade: Bool, blinksSelection: Bool) async throws {
+    func cancellationCannotChangeTheNextPresentation(duringFade: Bool, blinksSelection: Bool) async {
         _ = NSApplication.shared
         let root = AlternativeMenuPanel()
         let child = AlternativeMenuPanel(acceptsKeyboard: false)
@@ -103,19 +103,33 @@ struct AlternativeMenuPanelTests {
             panel.setItems([.action("Previous") { _ in }], highlightsFirstItem: true)
         }
         var completed = false
-        let task = child.animateDismissal(fading: panels, blinksSelection: blinksSelection) { completed = true }
+        let fadeStarted = AsyncStream<Void>.makeStream()
+        var finishFade: CheckedContinuation<Void, Never>?
+        let task = child.animateDismissal(
+            fading: panels,
+            blinksSelection: blinksSelection,
+            fade: { fadingPanels in
+                fadingPanels.forEach { $0.alphaValue = 0.5 }
+                await withCheckedContinuation { continuation in
+                    finishFade = continuation
+                    fadeStarted.continuation.yield()
+                }
+            },
+            completion: { completed = true }
+        )
         defer {
             task.cancel()
+            finishFade?.resume()
+            fadeStarted.continuation.finish()
             panels.forEach { $0.dismiss() }
         }
 
         if duringFade {
-            let deadline = ContinuousClock.now + .seconds(2)
-            while child.alphaValue == 1, ContinuousClock.now < deadline {
-                try await Task.sleep(for: .milliseconds(10))
-            }
-            try #require(child.alphaValue < 1)
-            #expect(root.alphaValue < 1)
+            var starts = fadeStarted.stream.makeAsyncIterator()
+            _ = await starts.next()
+            #expect(child.alphaValue == 0.5)
+            #expect(root.alphaValue == 0.5)
+            #expect(!child.menuView.hidesSelection)
             #expect(child.selection == 0)
         }
 
@@ -124,8 +138,10 @@ struct AlternativeMenuPanelTests {
             panel.dismiss()
             panel.setItems([.action("Next") { _ in }], highlightsFirstItem: true)
         }
+        // Deliver the old animation's completion only after the panels have been reused.
+        finishFade?.resume()
+        finishFade = nil
         await task.value
-        try await Task.sleep(for: .milliseconds(300))
 
         #expect(!completed)
         for panel in panels {
@@ -175,7 +191,7 @@ struct AlternativeMenuPanelTests {
     }
 
     @Test
-    func cancellationFadesTheMenuChainWithoutBlinking() async throws {
+    func cancellationFadesTheMenuChainWithoutBlinking() async {
         _ = NSApplication.shared
         let panels = [AlternativeMenuPanel(), AlternativeMenuPanel(acceptsKeyboard: false)]
         for panel in panels {
@@ -187,14 +203,7 @@ struct AlternativeMenuPanelTests {
             task.cancel()
             panels.forEach { $0.dismiss() }
         }
-        let deadline = ContinuousClock.now + .seconds(2)
-        while !completed, ContinuousClock.now < deadline {
-            for panel in panels {
-                #expect(!panel.menuView.hidesSelection)
-                #expect(panel.selection == 0)
-            }
-            try await Task.sleep(for: .milliseconds(10))
-        }
+        await task.value
         #expect(completed)
         for panel in panels {
             #expect(panel.alphaValue == 0)
