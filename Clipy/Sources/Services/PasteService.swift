@@ -28,6 +28,10 @@ final class PasteService {
 
     @Dependency(\.clipService)
     private var clipService
+    @Dependency(\.pasteboardHistoryRepository)
+    private var pasteboardHistoryRepository
+    @Dependency(\.snippetRepository)
+    private var snippetRepository
 
     @Shared(.pastesPlainTextWithModifier)
     private var pastesPlainTextWithModifier
@@ -44,42 +48,37 @@ final class PasteService {
     @Shared(.pastesAutomatically)
     private var pastesAutomatically
 
-    private var isPastePlainText: Bool {
-        guard pastesPlainTextWithModifier else { return false }
-        return isPressedModifier(plainTextPasteModifier)
-    }
-    private var isDeleteHistory: Bool {
-        guard deletesHistoryWithModifier else { return false }
-        return isPressedModifier(historyDeletionModifier)
-    }
-    private var isPasteAndDeleteHistory: Bool {
-        guard pastesAndDeletesHistoryWithModifier else { return false }
-        return isPressedModifier(pasteAndDeleteHistoryModifier)
-    }
-
     // MARK: - Modifiers
-    private func isPressedModifier(_ flag: Int) -> Bool {
-        let flags = NSEvent.modifierFlags
-        if flag == 0 && flags.contains(.command) {
-            return true
-        } else if flag == 1 && flags.contains(.shift) {
-            return true
-        } else if flag == 2 && flags.contains(.control) {
-            return true
-        } else if flag == 3 && flags.contains(.option) {
-            return true
+    private func isPressedModifier(_ setting: Int, in flags: NSEvent.ModifierFlags) -> Bool {
+        switch setting {
+        case 0:
+            flags.contains(.command)
+        case 1:
+            flags.contains(.shift)
+        case 2:
+            flags.contains(.control)
+        case 3:
+            flags.contains(.option)
+        default:
+            false
         }
-        return false
     }
 }
 
 // MARK: - Copy
 extension PasteService {
-    func paste(id: PasteboardHistory.ID, content: PasteboardContent) {
+    func paste(
+        id: PasteboardHistory.ID,
+        modifierFlags: NSEvent.ModifierFlags = NSEvent.modifierFlags
+    ) {
+        guard let content = pasteboardHistoryRepository.fetchContent(id: id) else {
+            NSSound.beep()
+            return
+        }
         // Handling modifier actions
-        let isPastePlainText = self.isPastePlainText
-        let isPasteAndDeleteHistory = self.isPasteAndDeleteHistory
-        let isDeleteHistory = self.isDeleteHistory
+        let isPastePlainText = pastesPlainTextWithModifier && isPressedModifier(plainTextPasteModifier, in: modifierFlags)
+        let isPasteAndDeleteHistory = pastesAndDeletesHistoryWithModifier && isPressedModifier(pasteAndDeleteHistoryModifier, in: modifierFlags)
+        let isDeleteHistory = deletesHistoryWithModifier && isPressedModifier(historyDeletionModifier, in: modifierFlags)
         guard isPastePlainText || isPasteAndDeleteHistory || isDeleteHistory else {
             copyToPasteboard(with: content)
             paste()
@@ -104,7 +103,16 @@ extension PasteService {
         }
     }
 
-    func copyToPasteboard(with string: String) {
+    func paste(id: Snippet.ID) {
+        guard let snippet = snippetRepository.fetchSnippet(id: id), snippet.isEnabled else {
+            NSSound.beep()
+            return
+        }
+        copyToPasteboard(with: snippet.content)
+        paste()
+    }
+
+    private func copyToPasteboard(with string: String) {
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
@@ -114,11 +122,6 @@ extension PasteService {
 
     private func copyToPasteboard(with content: PasteboardContent) {
         lock.lock(); defer { lock.unlock() }
-
-        if isPastePlainText {
-            copyToPasteboard(with: content.stringValue ?? "")
-            return
-        }
 
         let pasteboard = NSPasteboard.general
         content.writeObjects(to: pasteboard)

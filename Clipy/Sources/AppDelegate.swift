@@ -48,8 +48,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     private var mainQueue
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
-    @Dependency(\.snippetRepository)
-    private var snippetRepository
     @Dependency(\.firebase)
     private var firebase
     @Dependency(\.clipService)
@@ -105,21 +103,19 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
-        guard let id = sender.representedObject as? PasteboardHistory.ID, let content = pasteboardHistoryRepository.fetchContent(id: id) else {
+        guard let id = sender.representedObject as? PasteboardHistory.ID else {
             NSSound.beep()
             return
         }
-
-        pasteService.paste(id: id, content: content)
+        pasteService.paste(id: id)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        guard let id = sender.representedObject as? Snippet.ID, let snippet = snippetRepository.fetchSnippet(id: id) else {
+        guard let id = sender.representedObject as? Snippet.ID else {
             NSSound.beep()
             return
         }
-        pasteService.copyToPasteboard(with: snippet.content)
-        pasteService.paste()
+        pasteService.paste(id: id)
     }
 
     func terminateApplication() {
