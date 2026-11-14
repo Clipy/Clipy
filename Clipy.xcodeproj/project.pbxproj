@@ -102,6 +102,7 @@
 		CD914C51AD052A55DEDD71A2 /* HistoryClearInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647E212B366446A64D41D182 /* HistoryClearInterval.swift */; };
 		E5AB9965DF2E3CC8DF98D410 /* ShortcutSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC2D2A9B7104D06EC75B8CD /* ShortcutSettingsView.swift */; };
 		E682BF3D08CFCF6005D83C86 /* UpdateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C40C3662B1685B37D32C9E /* UpdateSettingsView.swift */; };
+		EDF1B70A411D49EC87C03090 /* AlternativeMenuSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E46F859637D49D9A7DC4D46 /* AlternativeMenuSearchBar.swift */; };
 		F1753D7A92A504F63D87EC71 /* ExcludedApplicationsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85E5FFA18274CF0DFB44E1E /* ExcludedApplicationsSettingsView.swift */; };
 		F43C614742DA570B4E026CC1 /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF65353D62780EF2D86B2B42 /* SettingsPane.swift */; };
 		F51111123040000100000001 /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F51111113040000100000001 /* Settings.xcstrings */; };
@@ -137,6 +138,7 @@
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
 		FB01940CA022463B9732232F /* NewBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53756C0B7E640E9BDA0118C /* NewBadge.swift */; };
+		FC12098A36B73A0000000082 /* AlternaiveSearchMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000081 /* AlternaiveSearchMenu.swift */; };
 		FC12098A36B73A000000008A /* AlternativeMenuExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */; };
 		FC12098A36B73A0000000092 /* NSMenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000091 /* NSMenuBuilder.swift */; };
 		FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */; };
@@ -162,6 +164,7 @@
 		31ACA9F81EC5B85C00BD34C0 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		38E5CBCA217F58CD972E80D0 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/CPYSnippetsEditorWindowController.strings; sourceTree = "<group>"; };
 		3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTypeSettingsView.swift; sourceTree = "<group>"; };
+		3E46F859637D49D9A7DC4D46 /* AlternativeMenuSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativeMenuSearchBar.swift; sourceTree = "<group>"; };
 		54ADE1022008F64100239852 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CPYSnippetsEditorWindowController.strings"; sourceTree = "<group>"; };
 		647E212B366446A64D41D182 /* HistoryClearInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryClearInterval.swift; sourceTree = "<group>"; };
 		74F0D29DD7FF0C7A6FA08459 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
@@ -280,6 +283,7 @@
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FAE911B81DE045E2008A4BEC /* HotKeyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyService.swift; sourceTree = "<group>"; };
+		FC12098A36B73A0000000081 /* AlternaiveSearchMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternaiveSearchMenu.swift; sourceTree = "<group>"; };
 		FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativeMenuExtensions.swift; sourceTree = "<group>"; };
 		FC12098A36B73A0000000091 /* NSMenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSMenuBuilder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -357,6 +361,14 @@
 				FAC43E221B35DFC800C06102 /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		415382B7E742473691E935CA /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				3E46F859637D49D9A7DC4D46 /* AlternativeMenuSearchBar.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		AD1B91DD401D4ABD966EF5E0 /* Settings */ = {
@@ -832,7 +844,9 @@
 		FC12098A36B73A0000000090 /* Menus */ = {
 			isa = PBXGroup;
 			children = (
+				415382B7E742473691E935CA /* Components */,
 				FC12098A36B73A0000000091 /* NSMenuBuilder.swift */,
+				FC12098A36B73A0000000081 /* AlternaiveSearchMenu.swift */,
 			);
 			path = Menus;
 			sourceTree = "<group>";
@@ -1064,6 +1078,8 @@
 				C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
 				FC12098A36B73A0000000092 /* NSMenuBuilder.swift in Sources */,
+				FC12098A36B73A0000000082 /* AlternaiveSearchMenu.swift in Sources */,
+				EDF1B70A411D49EC87C03090 /* AlternativeMenuSearchBar.swift in Sources */,
 				18BEECEE03EB48DA8046CE39 /* MenuSearchScope.swift in Sources */,
 				FC12098A36B73A000000008A /* AlternativeMenuExtensions.swift in Sources */,
 				FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */,
