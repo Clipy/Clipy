@@ -20,7 +20,9 @@ struct AlternativeMenuRowTests {
         let hosts = state.rows.map { makeHost(row: $0, state: state, direction: direction) }
         let origins = try hosts.map { host in
             let field = try onlyTextField(in: host)
-            let baseline = field.firstBaselineOffsetFromTop
+            // Include the attributed function-key offset when measuring the glyph baseline.
+            let keyBaselineOffset = field.attributedStringValue.attribute(.baselineOffset, at: try keyStart(in: field), effectiveRange: nil) as? CGFloat ?? 0
+            let baseline = field.firstBaselineOffsetFromTop - keyBaselineOffset
             var anchor = try keyDrawingOffset(in: field)
             if #available(macOS 27, *) {
                 let line = try keyLine(in: field)

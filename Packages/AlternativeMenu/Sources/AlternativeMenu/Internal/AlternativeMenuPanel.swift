@@ -135,6 +135,16 @@ final class AlternativeMenuPanel: NSPanel {
     func animateDismissal(
         fading panels: [AlternativeMenuPanel],
         blinksSelection: Bool,
+        fade: @escaping @MainActor ([AlternativeMenuPanel]) async -> Void = { panels in
+            await withCheckedContinuation { continuation in
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.25
+                    panels.forEach { $0.animator().alphaValue = 0 }
+                } completionHandler: {
+                    continuation.resume()
+                }
+            }
+        },
         completion: @escaping @MainActor () -> Void
     ) -> Task<Void, Never> {
         Task {
@@ -147,14 +157,7 @@ final class AlternativeMenuPanel: NSPanel {
                     menuView.hidesSelection = false
                     try await Task.sleep(for: .milliseconds(33))
                 }
-                await withCheckedContinuation { continuation in
-                    NSAnimationContext.runAnimationGroup { context in
-                        context.duration = 0.25
-                        panels.forEach { $0.animator().alphaValue = 0 }
-                    } completionHandler: {
-                        continuation.resume()
-                    }
-                }
+                await fade(panels)
                 try Task.checkCancellation()
                 completion()
             } catch {

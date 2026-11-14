@@ -63,6 +63,10 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
         Self[.appStorage(AppStorageKeys.highlightsFirstItemOnPopUp.rawValue), default: true]
     }
 
+    static var showsSearchBar: Self {
+        Self[.appStorage(AppStorageKeys.showsSearchBar.rawValue), default: false]
+    }
+
     static var marksMenuItemsWithNumbers: Self {
         Self[.appStorage(AppStorageKeys.menuItemsAreMarkedWithNumbers.rawValue), default: true]
     }
@@ -125,6 +129,10 @@ extension SharedKey where Self == AppStorageKey<Bool>.Default {
 }
 
 extension SharedKey where Self == AppStorageKey<Int>.Default {
+    static var searchSettingsViewCount: Self {
+        Self[.appStorage(AppStorageKeys.searchSettingsViewCount.rawValue), default: 0]
+    }
+
     static var maximumHistoryCount: Self {
         Self[.appStorage(AppStorageKeys.maxHistorySize.rawValue), default: 30]
     }

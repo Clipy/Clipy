@@ -79,6 +79,9 @@ struct AlternativeMenuKeyEquivalentTests {
         if number <= 20 {
             #expect(CTLineGetTypographicBounds(line, nil, nil, nil) == 0)
             #expect(!CTLineGetBoundsWithOptions(line, .useGlyphPathBounds).isNull)
+            let baselineOffset = display.attributedText.attribute(.baselineOffset, at: glyphRange.location, effectiveRange: nil) as? CGFloat ?? 0
+            let expectedOffset: CGFloat = if #available(macOS 27, *) { 1 } else { 0 }
+            #expect(baselineOffset == expectedOffset)
         }
     }
 
@@ -153,14 +156,16 @@ struct AlternativeMenuKeyEquivalentTests {
     }
 
     @Test(arguments: ["\u{01}", "\u{200b}", "\u{feff}"])
-    func invisibleKeysReserveOnlyTheirModifiers(_ key: String) {
+    func invisibleKeysKeepTheNativeColumnWidth(_ key: String) {
         let bare = AlternativeMenuKeyEquivalent.display(for: key, modifiers: [])
         let modified = AlternativeMenuKeyEquivalent.display(for: key, modifiers: .command)
+        // AppKit reserves a 2 pt key column for these invisible characters on macOS 27.
+        let expectedKeyWidth: CGFloat = if #available(macOS 27, *) { 2 } else { 0 }
 
-        #expect(bare.keyWidth == 0)
-        #expect(bare.width(sharedKeyColumnWidth: 0) == 0)
-        #expect(modified.keyWidth == 0)
-        #expect(modified.width(sharedKeyColumnWidth: 0) > 0)
+        #expect(bare.keyWidth == expectedKeyWidth)
+        #expect(bare.width(sharedKeyColumnWidth: 0) == expectedKeyWidth)
+        #expect(modified.keyWidth == expectedKeyWidth)
+        #expect(modified.width(sharedKeyColumnWidth: 0) > bare.width(sharedKeyColumnWidth: 0))
     }
 
     @Test(arguments: [NSEvent.ModifierFlags(), .shift, .command, [.shift, .command]])

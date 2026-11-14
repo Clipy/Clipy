@@ -10,6 +10,7 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
+import AlternativeMenu
 import Cocoa
 import Combine
 import Dependencies
@@ -18,20 +19,15 @@ import Sharing
 final class MenuManager: NSObject {
 
     // MARK: - Properties
-    // Menus
-    private var clipMenu: NSMenu?
-    private var historyMenu: NSMenu?
-    private var snippetMenu: NSMenu?
-    // StatusMenu
-    private lazy var statusBarItem: NSStatusItem = {
+    @MainActor private var preparedMenus: [MenuType: NSMenu] = [:]
+    @MainActor private var searchMenu: AlternaiveSearchMenu?
+    @MainActor private lazy var statusBarItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.toolTip = Bundle.main.appName
-        item.menu = clipMenu
         return item
     }()
-    // Icon Cache
-    private var symbolImages: [String: NSImage] = [:]
-    private let kMaxKeyEquivalents = 10
+    private let nativeBuilder: NSMenuBuilder
+    private let alternativeBuilder: AlternativeMenuBuilder
 
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
@@ -42,48 +38,34 @@ final class MenuManager: NSObject {
     private var cancellables: Set<AnyCancellable> = []
     private var snippetFolderDetails = [SnippetFolderDetail]()
 
-    @Shared(.statusItemDisplayMode)
-    private var statusItemDisplayMode
     @Shared(.reordersClipsAfterPasting)
     private var reordersClipsAfterPasting
     @Shared(.showsClearHistoryMenuItem)
     private var showsClearHistoryMenuItem
     @Shared(.maximumHistoryCount)
     private var maximumHistoryCount
-    @Shared(.showsSnippetsAboveHistory)
-    private var showsSnippetsAboveHistory
     @Shared(.highlightsFirstItemOnPopUp)
     private var highlightsFirstItemOnPopUp
-    @Shared(.inlineMenuItemLimit)
-    private var inlineMenuItemLimit
-    @Shared(.folderMenuItemLimit)
-    private var folderMenuItemLimit
-    @Shared(.maximumMenuItemTitleLength)
-    private var maximumMenuItemTitleLength
-    @Shared(.startsMenuItemTitlesAtZero)
-    private var startsMenuItemTitlesAtZero
-    @Shared(.marksMenuItemsWithNumbers)
-    private var marksMenuItemsWithNumbers
-    @Shared(.showsToolTipsOnMenuItems)
-    private var showsToolTipsOnMenuItems
+    @Shared(.showsSearchBar)
+    private var showsSearchBar
     @Shared(.showsImagesInMenu)
     private var showsImagesInMenu
-    @Shared(.addsNumericKeyEquivalents)
-    private var addsNumericKeyEquivalents
-    @Shared(.maximumToolTipLength)
-    private var maximumToolTipLength
     @Shared(.showsColorPreviewInMenu)
     private var showsColorPreviewInMenu
-    @Shared(.thumbnailWidth)
-    private var thumbnailWidth
-    @Shared(.thumbnailHeight)
-    private var thumbnailHeight
 
     // MARK: - Enum Values
     enum StatusType: Int {
         case none, black, white
     }
 
+    override init() {
+        let nativeBuilder = NSMenuBuilder()
+        self.nativeBuilder = nativeBuilder
+        self.alternativeBuilder = AlternativeMenuBuilder(nativeBuilder: nativeBuilder)
+        super.init()
+    }
+
+    @MainActor
     func setup() {
         bind()
     }
@@ -91,306 +73,124 @@ final class MenuManager: NSObject {
 
 // MARK: - Popup Menu
 extension MenuManager {
+    @MainActor
     func popUpMenu(_ type: MenuType) {
-        let menu: NSMenu?
-        switch type {
-        case .main:
-            menu = clipMenu
-        case .history:
-            menu = historyMenu
-        case .snippet:
-            menu = snippetMenu
-        }
-        popUp(menu)
+        popUpMenu(preparedMenus[type], scope: .menu(type))
     }
 
+    @MainActor
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
-        let folderMenu = NSMenu(title: folderDetail.folder.title)
-        // Folder title
-        folderMenu.addItem(.sectionHeader(title: folderDetail.folder.title))
-        // Snippets
-        var index = firstIndexOfMenuItems()
-        folderDetail.snippets
-            .filter { $0.isEnabled }
-            .forEach { snippet in
-                let subMenuItem = makeSnippetMenuItem(snippet, listNumber: index, font: folderMenu.font)
-                folderMenu.addItem(subMenuItem)
-                index += 1
-            }
-        popUp(folderMenu)
+        let menu = nativeBuilder.makeSnippetFolderMenu(detail: folderDetail)
+        popUpMenu(menu, scope: .snippetFolder(folderDetail.folder.id))
     }
 
-    private func popUp(_ menu: NSMenu?) {
+    @MainActor
+    private func popUpMenu(_ menu: NSMenu?, scope: MenuSearchScope) {
+        guard let menu else { return }
+        guard showsSearchBar else {
+            popUp(menu)
+            return
+        }
+        if searchMenu?.scope != scope {
+            searchMenu?.dismiss()
+            searchMenu = AlternaiveSearchMenu(scope: scope, builder: alternativeBuilder)
+        }
+        searchMenu?.present(initialItems: alternativeBuilder.makeItems(from: menu.items))
+    }
+
+    @MainActor
+    private func popUp(_ menu: NSMenu) {
         if highlightsFirstItemOnPopUp {
-            menu?.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            menu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         } else {
-            menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         }
     }
 }
 
 // MARK: - Binding
 private extension MenuManager {
+    @MainActor
     func bind() {
         pasteboardHistoryRepository.observeHistories()
             .receive(on: mainQueue)
-            .sink { [weak self] _ in self?.createClipMenu() }
+            .sink { [weak self] _ in self?.updateMenus() }
             .store(in: &cancellables)
         snippetRepository.observeFolderDetails()
             .receive(on: mainQueue)
             .sink { [weak self] folderDetails in
                 self?.snippetFolderDetails = folderDetails
-                self?.createClipMenu()
+                self?.updateMenus()
             }
             .store(in: &cancellables)
         // Menu icon
-        $statusItemDisplayMode.changes(includingInitialValue: true)
+        Shared(.statusItemDisplayMode).changes(includingInitialValue: true)
             .receive(on: mainQueue)
             .sink { [weak self] key in
                 self?.changeStatusItem(StatusType(rawValue: key) ?? .black)
             }
             .store(in: &cancellables)
-        // Sort clips
-        $reordersClipsAfterPasting.changes()
-            .receive(on: mainQueue)
-            .sink { [weak self] _ in
-                self?.createClipMenu()
-            }
-            .store(in: &cancellables)
         // Observe change preference settings
         Publishers.MergeMany(
             [
+                $reordersClipsAfterPasting.changeEvents(),
                 $showsClearHistoryMenuItem.changeEvents(),
                 $maximumHistoryCount.changeEvents(),
-                $showsSnippetsAboveHistory.changeEvents(),
-                $inlineMenuItemLimit.changeEvents(),
-                $folderMenuItemLimit.changeEvents(),
-                $maximumMenuItemTitleLength.changeEvents(),
-                $startsMenuItemTitlesAtZero.changeEvents(),
-                $marksMenuItemsWithNumbers.changeEvents(),
-                $showsToolTipsOnMenuItems.changeEvents(),
+                Shared(.showsSnippetsAboveHistory).changeEvents(),
+                Shared(.inlineMenuItemLimit).changeEvents(),
+                Shared(.folderMenuItemLimit).changeEvents(),
+                Shared(.maximumMenuItemTitleLength).changeEvents(),
+                Shared(.startsMenuItemTitlesAtZero).changeEvents(),
+                Shared(.marksMenuItemsWithNumbers).changeEvents(),
+                Shared(.showsToolTipsOnMenuItems).changeEvents(),
                 $showsImagesInMenu.changeEvents(),
-                $addsNumericKeyEquivalents.changeEvents(),
-                $maximumToolTipLength.changeEvents(),
-                $showsColorPreviewInMenu.changeEvents()
+                Shared(.addsNumericKeyEquivalents).changeEvents(),
+                Shared(.maximumToolTipLength).changeEvents(),
+                $showsColorPreviewInMenu.changeEvents(),
+                Shared(.thumbnailWidth).changeEvents(),
+                Shared(.thumbnailHeight).changeEvents()
             ]
         )
         .throttle(for: .seconds(1), scheduler: mainQueue, latest: true)
         .sink { [weak self] in
-            self?.createClipMenu()
+            self?.updateMenus()
         }
         .store(in: &cancellables)
     }
 }
 
 // MARK: - Menus
-private extension MenuManager {
-    func createClipMenu() {
-        clipMenu = makeMainMenu(details: snippetFolderDetails)
-        historyMenu = NSMenu(title: MenuType.history.rawValue)
-        snippetMenu = NSMenu(title: MenuType.snippet.rawValue)
-
-        addHistoryItems(historyMenu!)
-        addSnippetItems(snippetMenu!, details: snippetFolderDetails)
-
-        statusBarItem.menu = clipMenu
-    }
-
-    func makeSubmenuItem(
-        itemOffset: Int,
-        firstItemNumber: Int,
-        maximumItemCount: Int,
-        totalItemCount: Int,
-        font: NSFont
-    ) -> NSMenuItem {
-        let firstNumber = firstItemNumber + itemOffset
-        let itemCount = min(maximumItemCount, totalItemCount - itemOffset)
-        let menuItemTitle = MonospacedDigitFormatter.rangeTitle(
-            firstNumber: firstNumber,
-            lastNumber: firstNumber + itemCount - 1
-        )
-        let subMenuItem = makeSubmenuItem(menuItemTitle.string, font: font)
-        subMenuItem.attributedTitle = menuItemTitle
-        return subMenuItem
-    }
-
-    func makeSubmenuItem(_ title: String, font: NSFont) -> NSMenuItem {
-        let subMenu = NSMenu(title: "")
-        let subMenuItem = NSMenuItem(title: title, action: nil)
-        subMenuItem.submenu = subMenu
-        subMenuItem.image = symbolImage("folder", font: font)
-        subMenuItem.preferVisibleImage()
-        return subMenuItem
-    }
-}
-
 extension MenuManager {
-    func makeMainMenu(details: [SnippetFolderDetail]) -> NSMenu {
-        let menu = NSMenu(title: Bundle.main.appName ?? "")
-
-        if showsSnippetsAboveHistory {
-            addSnippetItems(menu, details: details)
-            menu.addItem(NSMenuItem.separator())
-        }
-        addHistoryItems(menu)
-        if !showsSnippetsAboveHistory {
-            menu.addItem(NSMenuItem.separator())
-            addSnippetItems(menu, details: details)
-        }
-
-        menu.addItem(NSMenuItem.separator())
-        if showsClearHistoryMenuItem {
-            menu.addItem(NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory)))
-        }
-        menu.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
-        menu.addItem(NSMenuItem(title: String(localized: "Settings…"), action: #selector(AppDelegate.showSettingsWindow), keyEquivalent: ","))
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
-        return menu
+    @MainActor
+    func updateMenus() {
+        let histories = fetchHistoryDetails()
+        let main = nativeBuilder.makeMainMenu(
+            histories: histories,
+            folders: snippetFolderDetails
+        )
+        preparedMenus = [
+            .main: main,
+            .history: nativeBuilder.makeHistoryMenu(details: histories),
+            .snippet: nativeBuilder.makeSnippetMenu(details: snippetFolderDetails)
+        ]
+        statusBarItem.menu = main
     }
 }
 
 // MARK: - Clips
 private extension MenuManager {
-    func addHistoryItems(_ menu: NSMenu) {
-        let placeInLine = inlineMenuItemLimit
-        let placeInsideFolder = folderMenuItemLimit
-        let maxHistory = maximumHistoryCount
-
-        // History title
-        menu.addItem(.sectionHeader(title: String(localized: "History")))
-
-        // History
-        let firstIndex = firstIndexOfMenuItems()
-        var listNumber = firstIndex
-        var subMenuCount = placeInLine
-        var subMenuIndex = menu.numberOfItems + placeInLine
-
-        let historyDetails = pasteboardHistoryRepository.fetchHistoryDetails(
+    func fetchHistoryDetails() -> [PasteboardHistoryDetail] {
+        pasteboardHistoryRepository.fetchHistoryDetails(
             sortsByCreatedAt: !reordersClipsAfterPasting,
             includesThumbnailAsset: showsImagesInMenu || showsColorPreviewInMenu,
-            limit: maxHistory
+            limit: maximumHistoryCount
         )
-        let currentSize = historyDetails.count
-        var i = 0
-        historyDetails.forEach { historyDetail in
-            if placeInLine < 1 || placeInLine - 1 < i {
-                // Folder
-                if i == subMenuCount {
-                    let subMenuItem = makeSubmenuItem(
-                        itemOffset: subMenuCount,
-                        firstItemNumber: firstIndex,
-                        maximumItemCount: placeInsideFolder,
-                        totalItemCount: currentSize,
-                        font: menu.font
-                    )
-                    menu.addItem(subMenuItem)
-                    listNumber = firstIndex
-                }
-
-                // Clip
-                if let subMenu = menu.item(at: subMenuIndex)?.submenu {
-                    let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber, font: subMenu.font)
-                    subMenu.addItem(menuItem)
-                    listNumber += 1
-                }
-            } else {
-                // Clip
-                let menuItem = makeClipMenuItem(historyDetail, index: i, listNumber: listNumber, font: menu.font)
-                menu.addItem(menuItem)
-                listNumber += 1
-            }
-
-            i += 1
-            if i == subMenuCount + placeInsideFolder {
-                subMenuCount += placeInsideFolder
-                subMenuIndex += 1
-            }
-        }
-    }
-
-    func makeClipMenuItem(_ historyDetail: PasteboardHistoryDetail, index: Int, listNumber: Int, font: NSFont) -> NSMenuItem {
-        let history = historyDetail.history
-        var keyEquivalent = ""
-        if addsNumericKeyEquivalents && (index < kMaxKeyEquivalents) {
-            var shortCutNumber = startsMenuItemTitlesAtZero ? index : index + 1
-            if shortCutNumber == kMaxKeyEquivalents {
-                shortCutNumber = 0
-            }
-            keyEquivalent = "\(shortCutNumber)"
-        }
-
-        let titleWithMark = MonospacedDigitFormatter.numberedTitle(history.menuTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
-        let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectClipMenuItem(_:)), keyEquivalent: keyEquivalent)
-        menuItem.attributedTitle = titleWithMark
-        menuItem.representedObject = history.id
-        menuItem.toolTip = history.toolTip
-
-        if let thumbnailAsset = historyDetail.thumbnailAsset, let image = NSImage(data: thumbnailAsset.data) {
-            switch thumbnailAsset.kind {
-            case .image where showsImagesInMenu:
-                menuItem.image = image.aspectFitImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
-            case .colorCode where showsColorPreviewInMenu:
-                let previewSize: CGFloat = 18
-                menuItem.image = image.aspectFitImage(previewSize, previewSize)
-            default:
-                break
-            }
-        }
-        if menuItem.image == nil {
-            menuItem.image = symbolImage(history.primaryAvailableType?.symbolName, font: font)
-        }
-        menuItem.preferVisibleImage()
-        return menuItem
-    }
-}
-
-// MARK: - Snippets
-private extension MenuManager {
-    func addSnippetItems(_ menu: NSMenu, details: [SnippetFolderDetail]) {
-        guard !details.isEmpty else { return }
-
-        // Snippet title
-        menu.addItem(.sectionHeader(title: String(localized: "Snippet")))
-
-        var subMenuIndex = menu.numberOfItems - 1
-        let firstIndex = firstIndexOfMenuItems()
-        details
-            .filter { $0.folder.isEnabled }
-            .forEach { detail in
-                let folderTitle = detail.folder.title
-                let subMenuItem = makeSubmenuItem(folderTitle, font: menu.font)
-                menu.addItem(subMenuItem)
-                subMenuIndex += 1
-
-                var i = firstIndex
-                detail.snippets
-                    .filter { $0.isEnabled }
-                    .forEach { snippet in
-                        if let subMenu = menu.item(at: subMenuIndex)?.submenu {
-                            let subMenuItem = makeSnippetMenuItem(snippet, listNumber: i, font: subMenu.font)
-                            subMenu.addItem(subMenuItem)
-                            i += 1
-                        }
-                    }
-            }
-    }
-
-    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int, font: NSFont) -> NSMenuItem {
-        let titleWithMark = MonospacedDigitFormatter.numberedTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber, showsNumber: marksMenuItemsWithNumbers)
-        let menuItem = NSMenuItem(title: titleWithMark.string, action: #selector(AppDelegate.selectSnippetMenuItem(_:)), keyEquivalent: "")
-        menuItem.attributedTitle = titleWithMark
-        menuItem.representedObject = snippet.id
-        menuItem.toolTip = snippet.toolTip
-        menuItem.image = symbolImage("text.quote", font: font)
-        menuItem.preferVisibleImage()
-
-        return menuItem
     }
 }
 
 // MARK: - Status Item
 private extension MenuManager {
+    @MainActor
     func changeStatusItem(_ type: StatusType) {
         switch type {
         case .black:
@@ -406,37 +206,6 @@ private extension MenuManager {
         case .none:
             statusBarItem.isVisible = false
         }
-    }
-}
-
-private extension MenuManager {
-    func symbolImage(_ name: String?, font: NSFont) -> NSImage? {
-        guard let name else { return nil }
-        if let image = symbolImages[name] {
-            return image
-        }
-        let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .regular)
-        guard let symbol = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
-            .withSymbolConfiguration(configuration) else {
-            return nil
-        }
-        let image = symbol
-        image.isTemplate = true
-        symbolImages[name] = image
-        return image
-    }
-}
-
-private extension MenuManager {
-    func firstIndexOfMenuItems() -> NSInteger {
-        return startsMenuItemTitlesAtZero ? 0 : 1
-    }
-}
-
-private extension NSMenuItem {
-    func preferVisibleImage() {
-        guard #available(macOS 27, *), image != nil else { return }
-        preferredImageVisibility = .visible
     }
 }
 

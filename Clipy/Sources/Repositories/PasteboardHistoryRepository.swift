@@ -17,11 +17,16 @@ import SQLiteData
 
 protocol PasteboardHistoryRepositoryProtocol {
     func observeHistories() -> AnyPublisher<[PasteboardHistory], Never>
-    func hasHistories() -> Bool
     func fetchHistoryDetails(
         sortsByCreatedAt: Bool,
         includesThumbnailAsset: Bool,
         limit: Int,
+    ) -> [PasteboardHistoryDetail]
+    func searchHistoryDetails(
+        query: String,
+        sortsByCreatedAt: Bool,
+        includesThumbnailAsset: Bool,
+        limit: Int
     ) -> [PasteboardHistoryDetail]
     func fetchHistory(id: PasteboardHistory.ID) -> PasteboardHistory?
     func fetchContent(id: PasteboardHistory.ID) -> PasteboardContent?
@@ -44,17 +49,6 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
 
     func observeHistories() -> AnyPublisher<[PasteboardHistory], Never> {
         _histories.publisher.eraseToAnyPublisher()
-    }
-
-    func hasHistories() -> Bool {
-        withErrorReporting {
-            try database.read { database in
-                try PasteboardHistory
-                    .select { $0.id }
-                    .limit(1)
-                    .fetchOne(database) != nil
-            }
-        } ?? false
     }
 
     func fetchHistoryDetails(
@@ -84,6 +78,55 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
                 return try histories
                     .leftJoin(PasteboardHistoryThumbnailAsset.all) { $0.id.eq($1.pasteboardHistoryID) }
                     .select { PasteboardHistoryDetail.Columns(history: $0, thumbnailAsset: $1) }
+                    .fetchAll(database)
+            }
+        } ?? []
+    }
+
+    func searchHistoryDetails(
+        query: String,
+        sortsByCreatedAt: Bool,
+        includesThumbnailAsset: Bool,
+        limit: Int
+    ) -> [PasteboardHistoryDetail] {
+        let terms = SQLiteDataDatabase.normalizeSearchText(query).split(whereSeparator: \.isWhitespace).map(String.init)
+        guard !terms.isEmpty, !query.utf8.contains(0) else {
+            return []
+        }
+
+        return withErrorReporting {
+            try database.read { database in
+                let matches = PasteboardHistorySearch.where { columns in
+                    for term in terms {
+                        if term.unicodeScalars.count >= 3 {
+                            let phrase = "\"\(term.replacingOccurrences(of: "\"", with: "\"\""))\""
+                            columns.match(phrase)
+                        } else {
+                            // Trigram MATCH requires three scalars. Search the same normalized text for shorter terms.
+                            columns.title.instr(term) > 0 || columns.ocrText.instr(term) > 0
+                        }
+                    }
+                }
+                .join(PasteboardHistory.all) { $0.id.eq($1.id) }
+                .order { _, histories in
+                    if sortsByCreatedAt {
+                        histories.createdAt.desc()
+                    } else {
+                        histories.updateAt.desc()
+                    }
+                }
+                .limit(limit)
+
+                guard includesThumbnailAsset else {
+                    return try matches
+                        .select { $1 }
+                        .fetchAll(database)
+                        .map { PasteboardHistoryDetail(history: $0, thumbnailAsset: nil) }
+                }
+
+                return try matches
+                    .leftJoin(PasteboardHistoryThumbnailAsset.all) { $1.id.eq($2.pasteboardHistoryID) }
+                    .select { PasteboardHistoryDetail.Columns(history: $1, thumbnailAsset: $2) }
                     .fetchAll(database)
             }
         } ?? []

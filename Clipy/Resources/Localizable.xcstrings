@@ -39,16 +39,16 @@
             "value" : "Para realizar esta ação, permita o acesso do Clipy em Ajustes do Sistema > Privacidade e Segurança > Acessibilidade.\n\nSe a mensagem continuar aparecendo, remova o Clipy da lista e adicione-o novamente."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "要执行此操作，请在“系统设置”>“隐私与安全性”>“辅助功能”中允许 Clipy 访问。\n\n如果仍显示此提示，请从列表中移除 Clipy，然后重新添加。"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Для виконання цієї дії відкрийте «Системні параметри» > «Приватність і безпека» > «Доступність» і надайте Clipy дозвіл.\n\nЯкщо це повідомлення з’являється знову, видаліть Clipy зі списку та додайте його повторно."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要执行此操作，请在“系统设置”>“隐私与安全性”>“辅助功能”中允许 Clipy 访问。\n\n如果仍显示此提示，请从列表中移除 Clipy，然后重新添加。"
           }
         }
       }
@@ -85,16 +85,16 @@
             "value" : "Tem certeza de que deseja excluir este item?"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "确定要删除此项？"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ви впевнені, що хочете видалити цей елемент?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除此项？"
           }
         }
       }
@@ -131,16 +131,16 @@
             "value" : "Tem certeza de que deseja limpar seu histórico da área de transferência?"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "确定想要清空剪贴板历史？"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ви впевнені, що хочете очистити історію буфера обміну?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定想要清空剪贴板历史？"
           }
         }
       }
@@ -177,16 +177,16 @@
             "value" : "Cancelar"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скасувати"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -223,16 +223,64 @@
             "value" : "Limpar Histórico"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистити історію"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除历史"
           }
+        }
+      }
+    },
+    "Clear Search" : {
+      "comment" : "Accessibility label for the button that clears the search text.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche löschen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "پاک کردن جستجو"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancella ricerca"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索をクリア"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpar busca"
+          }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Очистити історію"
+            "value" : "Очистити пошук"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除搜索"
           }
         }
       }
@@ -269,16 +317,16 @@
             "value" : "Excluir Item"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Видалити елемент"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
           }
         }
       }
@@ -315,16 +363,16 @@
             "value" : "Não Iniciar"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不要打开"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Не запускати"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要打开"
           }
         }
       }
@@ -367,16 +415,16 @@
             "value" : "Editar Snippets..."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑片断..."
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Редагувати сніпети"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑片断..."
           }
         }
       }
@@ -413,16 +461,16 @@
             "value" : "Histórico"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "历史"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Історія"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "历史"
           }
         }
       }
@@ -459,16 +507,16 @@
             "value" : "Iniciar o Clipy ao iniciar o sistema?"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "系统启动时打开 Clipy?"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Запускати Clipy під час запуску системи?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统启动时打开 Clipy?"
           }
         }
       }
@@ -505,16 +553,63 @@
             "value" : "Iniciar com o sistema"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запускати разом із системою"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "系统启动时打开"
           }
+        }
+      }
+    },
+    "No Search Results" : {
+      "comment" : "Message shown when a clipboard menu search finds no matching items.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Suchergebnisse"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هیچ نتیجه‌ای برای جستجو یافت نشد"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun risultato di ricerca"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索結果がありません"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum resultado de pesquisa"
+          }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Запускати разом із системою"
+            "value" : "Немає результатів пошуку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无搜索结果"
           }
         }
       }
@@ -557,16 +652,16 @@
             "value" : "Abrir Ajustes do Sistema"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开系统设置"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Відкрити системні параметри"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开系统设置"
           }
         }
       }
@@ -609,16 +704,16 @@
             "value" : "Por favor, permita Acessibilidade"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please allow Accessibility."
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Надайте дозвіл на доступність"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please allow Accessibility."
           }
         }
       }
@@ -655,16 +750,16 @@
             "value" : "Por favor, preencha o conteúdo do snippet"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请填写代码段的内容"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Введіть вміст сніпета"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请填写代码段的内容"
           }
         }
       }
@@ -701,16 +796,63 @@
             "value" : "Encerrar Clipy"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Завершити Clipy"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "退出 Clipy"
           }
+        }
+      }
+    },
+    "Search" : {
+      "comment" : "Placeholder and accessibility label for the clipboard menu search field.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جستجو"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar"
+          }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Завершити Clipy"
+            "value" : "Пошук"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索"
           }
         }
       }
@@ -753,16 +895,16 @@
             "value" : "Ajustes…"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置…"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Налаштування…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置…"
           }
         }
       }
@@ -799,16 +941,16 @@
             "value" : "Snippet"
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "片断"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сніпет"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "片断"
           }
         }
       }
@@ -851,16 +993,16 @@
             "value" : "Você pode alterar isso depois nos Ajustes."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "你可以稍后在“设置”中更改此选项。"
-          }
-        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Цей параметр можна змінити в налаштуваннях"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你可以稍后在“设置”中更改此选项。"
           }
         }
       }

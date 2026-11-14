@@ -29,6 +29,13 @@
         "identifier" : "ColorCodesTests",
         "name" : "ColorCodesTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Packages\/AlternativeMenu",
+        "identifier" : "AlternativeMenuTests",
+        "name" : "AlternativeMenuTests"
+      }
     }
   ],
   "version" : 1
