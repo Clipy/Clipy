@@ -141,6 +141,7 @@
 		FC12098A36B73A0000000082 /* AlternaiveSearchMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000081 /* AlternaiveSearchMenu.swift */; };
 		FC12098A36B73A000000008A /* AlternativeMenuExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */; };
 		FC12098A36B73A0000000092 /* NSMenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000091 /* NSMenuBuilder.swift */; };
+		FC12098A36B73A0000000094 /* AlternativeMenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000093 /* AlternativeMenuBuilder.swift */; };
 		FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -286,6 +287,7 @@
 		FC12098A36B73A0000000081 /* AlternaiveSearchMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternaiveSearchMenu.swift; sourceTree = "<group>"; };
 		FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativeMenuExtensions.swift; sourceTree = "<group>"; };
 		FC12098A36B73A0000000091 /* NSMenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSMenuBuilder.swift; sourceTree = "<group>"; };
+		FC12098A36B73A0000000093 /* AlternativeMenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativeMenuBuilder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -846,6 +848,7 @@
 			children = (
 				415382B7E742473691E935CA /* Components */,
 				FC12098A36B73A0000000091 /* NSMenuBuilder.swift */,
+				FC12098A36B73A0000000093 /* AlternativeMenuBuilder.swift */,
 				FC12098A36B73A0000000081 /* AlternaiveSearchMenu.swift */,
 			);
 			path = Menus;
@@ -1077,6 +1080,7 @@
 				C5CC3FD430392F7000875CFE /* DeviceIdentifier.swift in Sources */,
 				C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
+				FC12098A36B73A0000000094 /* AlternativeMenuBuilder.swift in Sources */,
 				FC12098A36B73A0000000092 /* NSMenuBuilder.swift in Sources */,
 				FC12098A36B73A0000000082 /* AlternaiveSearchMenu.swift in Sources */,
 				EDF1B70A411D49EC87C03090 /* AlternativeMenuSearchBar.swift in Sources */,

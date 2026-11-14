@@ -8,7 +8,7 @@
 import AppKit
 import Sharing
 
-/// Builds native menus and their items.
+/// Builds native menus and the item presentation shared by both menu implementations.
 @MainActor
 final class NSMenuBuilder {
     private var symbolImages: [String: NSImage] = [:]
@@ -107,14 +107,35 @@ extension NSMenuBuilder {
         )
     }
 
-    func makeSnippetMenuItem(_ snippet: Snippet, listNumber: Int, font: NSFont) -> NSMenuItem {
-        NSMenuItem(
-            attributedTitle: numberedMenuTitle(snippet.title.trimmedMenuTitle, listNumber: listNumber),
+    func makeSnippetMenuItem(
+        _ snippet: Snippet,
+        folderTitle: String? = nil,
+        listNumber: Int,
+        font: NSFont
+    ) -> NSMenuItem {
+        let title = folderTitle.map { snippet.title.trimmedSearchSnippetMenuTitle(folderTitle: $0) } ?? snippet.title.trimmedMenuTitle
+        return NSMenuItem(
+            attributedTitle: numberedMenuTitle(title, listNumber: listNumber),
             action: #selector(AppDelegate.selectSnippetMenuItem(_:)),
             representedObject: snippet.id,
             image: symbolImage("text.quote", font: font),
             toolTip: snippet.toolTip
         )
+    }
+
+    func symbolImage(_ name: String?, font: NSFont) -> NSImage? {
+        guard let name else { return nil }
+        if let image = symbolImages[name] {
+            return image
+        }
+        let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .regular)
+        guard let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration) else {
+            return nil
+        }
+        image.isTemplate = true
+        symbolImages[name] = image
+        return image
     }
 }
 
@@ -189,21 +210,6 @@ private extension NSMenuBuilder {
         default:
             return nil
         }
-    }
-
-    func symbolImage(_ name: String?, font: NSFont) -> NSImage? {
-        guard let name else { return nil }
-        if let image = symbolImages[name] {
-            return image
-        }
-        let configuration = NSImage.SymbolConfiguration(pointSize: font.pointSize, weight: .regular)
-        guard let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
-            .withSymbolConfiguration(configuration) else {
-            return nil
-        }
-        image.isTemplate = true
-        symbolImages[name] = image
-        return image
     }
 
     func numberedMenuTitle(_ title: String, listNumber: Int) -> NSAttributedString {

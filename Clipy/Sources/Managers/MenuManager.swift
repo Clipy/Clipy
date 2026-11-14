@@ -10,6 +10,7 @@
 //  Copyright © 2015-2018 Clipy Project.
 //
 
+import AlternativeMenu
 import Cocoa
 import Combine
 import Dependencies
@@ -19,12 +20,14 @@ final class MenuManager: NSObject {
 
     // MARK: - Properties
     @MainActor private var preparedMenus: [MenuType: NSMenu] = [:]
+    @MainActor private var searchMenu: AlternaiveSearchMenu?
     @MainActor private lazy var statusBarItem: NSStatusItem = {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.toolTip = Bundle.main.appName
         return item
     }()
-    private let nativeBuilder = NSMenuBuilder()
+    private let nativeBuilder: NSMenuBuilder
+    private let alternativeBuilder: AlternativeMenuBuilder
 
     @Dependency(\.pasteboardHistoryRepository)
     private var pasteboardHistoryRepository
@@ -43,6 +46,8 @@ final class MenuManager: NSObject {
     private var maximumHistoryCount
     @Shared(.highlightsFirstItemOnPopUp)
     private var highlightsFirstItemOnPopUp
+    @Shared(.showsSearchBar)
+    private var showsSearchBar
     @Shared(.showsImagesInMenu)
     private var showsImagesInMenu
     @Shared(.showsColorPreviewInMenu)
@@ -51,6 +56,13 @@ final class MenuManager: NSObject {
     // MARK: - Enum Values
     enum StatusType: Int {
         case none, black, white
+    }
+
+    override init() {
+        let nativeBuilder = NSMenuBuilder()
+        self.nativeBuilder = nativeBuilder
+        self.alternativeBuilder = AlternativeMenuBuilder(nativeBuilder: nativeBuilder)
+        super.init()
     }
 
     @MainActor
@@ -63,20 +75,35 @@ final class MenuManager: NSObject {
 extension MenuManager {
     @MainActor
     func popUpMenu(_ type: MenuType) {
-        popUp(preparedMenus[type])
+        popUpMenu(preparedMenus[type], scope: .menu(type))
     }
 
     @MainActor
     func popUpSnippetFolder(_ folderDetail: SnippetFolderDetail) {
-        popUp(nativeBuilder.makeSnippetFolderMenu(detail: folderDetail))
+        let menu = nativeBuilder.makeSnippetFolderMenu(detail: folderDetail)
+        popUpMenu(menu, scope: .snippetFolder(folderDetail.folder.id))
     }
 
     @MainActor
-    private func popUp(_ menu: NSMenu?) {
+    private func popUpMenu(_ menu: NSMenu?, scope: MenuSearchScope) {
+        guard let menu else { return }
+        guard showsSearchBar else {
+            popUp(menu)
+            return
+        }
+        if searchMenu?.scope != scope {
+            searchMenu?.dismiss()
+            searchMenu = AlternaiveSearchMenu(scope: scope, builder: alternativeBuilder)
+        }
+        searchMenu?.present(initialItems: alternativeBuilder.makeItems(from: menu.items))
+    }
+
+    @MainActor
+    private func popUp(_ menu: NSMenu) {
         if highlightsFirstItemOnPopUp {
-            menu?.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            menu.popUpHighlightingFirstItem(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         } else {
-            menu?.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+            menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
         }
     }
 }

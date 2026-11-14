@@ -14,7 +14,7 @@ import SwiftUI
 @MainActor
 final class AlternaiveSearchMenu {
     private let seatchState = AlternativeMenuSearchBar.State()
-    private let scope: MenuSearchScope
+    let scope: MenuSearchScope
     private let builder: AlternativeMenuBuilder
     private var initialItems: [AlternativeMenuItem] = []
     private var searchTask: Task<Void, Never>?
