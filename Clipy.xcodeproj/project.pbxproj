@@ -115,7 +115,7 @@
 		FA1DB4B41DDCB452007F95C8 /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4A91DDCB452007F95C8 /* BundleExtensions.swift */; };
 		FA1DB4B71DDCB452007F95C8 /* NSImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */; };
 		FA1DB4B81DDCB452007F95C8 /* NSLock+Clipy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */; };
-		FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */; };
+		FA1DB4B91DDCB452007F95C8 /* NSMenuItemExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4AE1DDCB452007F95C8 /* NSMenuItemExtensions.swift */; };
 		FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */; };
 		FA1DB4D21DDCB479007F95C8 /* ApplicationInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4CC1DDCB479007F95C8 /* ApplicationInformation.swift */; };
 		FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */; };
@@ -136,6 +136,7 @@
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
 		FB01940CA022463B9732232F /* NewBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53756C0B7E640E9BDA0118C /* NewBadge.swift */; };
+		FC12098A36B73A000000008A /* AlternativeMenuExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */; };
 		FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -256,7 +257,7 @@
 		FA1DB4A91DDCB452007F95C8 /* BundleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
 		FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resize.swift"; sourceTree = "<group>"; };
 		FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLock+Clipy.swift"; sourceTree = "<group>"; };
-		FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMenuItem+Initialize.swift"; sourceTree = "<group>"; };
+		FA1DB4AE1DDCB452007F95C8 /* NSMenuItemExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMenuItemExtensions.swift; sourceTree = "<group>"; };
 		FA1DB4C31DDCB460007F95C8 /* MenuManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuManager.swift; sourceTree = "<group>"; };
 		FA1DB4CC1DDCB479007F95C8 /* ApplicationInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationInformation.swift; sourceTree = "<group>"; };
 		FA1DB4DE1DDCB49C007F95C8 /* CPYDesignableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPYDesignableView.swift; sourceTree = "<group>"; };
@@ -276,6 +277,7 @@
 		FAC43E281B35DFDA00C06102 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FAC43E2A1B35DFDF00C06102 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FAE911B81DE045E2008A4BEC /* HotKeyService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HotKeyService.swift; sourceTree = "<group>"; };
+		FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativeMenuExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -676,10 +678,11 @@
 				C5CC3FD1303929DD00875CFE /* FileManagerExtensions.swift */,
 				FA1DB4A91DDCB452007F95C8 /* BundleExtensions.swift */,
 				C57235102FF24AD8002158F7 /* NSMenuExtensions.swift */,
+				FA1DB4AE1DDCB452007F95C8 /* NSMenuItemExtensions.swift */,
+				FC12098A36B73A0000000089 /* AlternativeMenuExtensions.swift */,
 				FAC0DCEE1DE3255E00309C49 /* NSImage+NSColor.swift */,
 				FA1DB4AC1DDCB452007F95C8 /* NSImage+Resize.swift */,
 				FA1DB4AD1DDCB452007F95C8 /* NSLock+Clipy.swift */,
-				FA1DB4AE1DDCB452007F95C8 /* NSMenuItem+Initialize.swift */,
 				C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */,
 			);
 			path = Extensions;
@@ -1041,11 +1044,12 @@
 				C599B2323015B12600F563A6 /* Sparkle.swift in Sources */,
 				C57100032FCEB00000C8F965 /* PasteboardHistoryRepository.swift in Sources */,
 				C5E8EE6A2FFA2A5600270F1F /* SnippetExtensions.swift in Sources */,
-				FA1DB4B91DDCB452007F95C8 /* NSMenuItem+Initialize.swift in Sources */,
+				FA1DB4B91DDCB452007F95C8 /* NSMenuItemExtensions.swift in Sources */,
 				FA0D5CE81DDCC61600AC9052 /* ClipService.swift in Sources */,
 				C5CC3FD430392F7000875CFE /* DeviceIdentifier.swift in Sources */,
 				C5F1AD0130190005AA110001 /* TextRecognizer.swift in Sources */,
 				FA1DB4C91DDCB460007F95C8 /* MenuManager.swift in Sources */,
+				FC12098A36B73A000000008A /* AlternativeMenuExtensions.swift in Sources */,
 				FA1DB4E91DDCB49C007F95C8 /* CPYSplitView.swift in Sources */,
 				FA1DB4E81DDCB49C007F95C8 /* CPYDesignableView.swift in Sources */,
 				C57100072FCEB02000C8F965 /* PasteboardContent.swift in Sources */,
