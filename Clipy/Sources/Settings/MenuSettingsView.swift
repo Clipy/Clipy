@@ -23,6 +23,10 @@ struct MenuSettingsView: View {
     private var showsSnippetsAboveHistory
     @Shared(.highlightsFirstItemOnPopUp)
     private var highlightsFirstItemOnPopUp
+    @Shared(.showsSearchBar)
+    private var showsSearchBar
+    @Shared(.searchSettingsViewCount)
+    private var searchSettingsViewCount
     @Shared(.showsClearHistoryMenuItem)
     private var showsClearHistoryMenuItem
     @Shared(.showsClearHistoryAlert)
@@ -84,6 +88,12 @@ struct MenuSettingsView: View {
             }
 
             SettingsSection(title: .Settings.menuItems, bottomDivider: true) {
+                Toggle(isOn: Binding($showsSearchBar)) {
+                    HStack(spacing: 6) {
+                        Text(.Settings.showSearchBarInShortcutMenus)
+                        NewBadge(viewCount: Binding($searchSettingsViewCount), settingValue: showsSearchBar)
+                    }
+                }
                 Toggle(
                     .Settings.markMenuItemsWithNumbers,
                     isOn: Binding($marksMenuItemsWithNumbers)

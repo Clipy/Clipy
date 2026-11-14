@@ -134,6 +134,7 @@
 		FAC43E291B35DFDA00C06102 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E281B35DFDA00C06102 /* Cocoa.framework */; };
 		FAC43E2B1B35DFDF00C06102 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC43E2A1B35DFDF00C06102 /* WebKit.framework */; };
 		FAE911B91DE045E2008A4BEC /* HotKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE911B81DE045E2008A4BEC /* HotKeyService.swift */; };
+		FB01940CA022463B9732232F /* NewBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53756C0B7E640E9BDA0118C /* NewBadge.swift */; };
 		FC67F161B362841689D6B78A /* ClipboardTypeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3953EC7B9131A8084AE65BA5 /* ClipboardTypeSettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -239,6 +240,7 @@
 		C5F1AD0530190005AA110005 /* TextRecognizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizerTests.swift; sourceTree = "<group>"; };
 		C5F1B7321FF74A2D00D2DA83 /* NSPasteboard+Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPasteboard+Deprecated.swift"; sourceTree = "<group>"; };
 		C85E5FFA18274CF0DFB44E1E /* ExcludedApplicationsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcludedApplicationsSettingsView.swift; sourceTree = "<group>"; };
+		D53756C0B7E640E9BDA0118C /* NewBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewBadge.swift; sourceTree = "<group>"; };
 		F51111113040000100000001 /* Settings.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Settings.xcstrings; sourceTree = "<group>"; };
 		F51111203040000100000001 /* SettingsGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGrid.swift; sourceTree = "<group>"; };
 		F51111223040000100000001 /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
@@ -386,6 +388,7 @@
 			children = (
 				82DC78C62401491B956E0499 /* SettingsScrollView.swift */,
 				F51111203040000100000001 /* SettingsGrid.swift */,
+				D53756C0B7E640E9BDA0118C /* NewBadge.swift */,
 				F51111223040000100000001 /* SettingsSection.swift */,
 				23265781AF16C4883961248E /* SettingsNumberField.swift */,
 				1D69CAC28579C30FFD32BC54 /* ShortcutRecorder.swift */,
@@ -994,6 +997,7 @@
 				CD914C51AD052A55DEDD71A2 /* HistoryClearInterval.swift in Sources */,
 				F51111213040000100000001 /* SettingsGrid.swift in Sources */,
 				3CF59853A5DC43C499D09C01 /* SettingsScrollView.swift in Sources */,
+				FB01940CA022463B9732232F /* NewBadge.swift in Sources */,
 				F51111233040000100000001 /* SettingsSection.swift in Sources */,
 				C63B25EA90BED5731A21FD66 /* BetaSettingsView.swift in Sources */,
 				C5D091013095000100000001 /* DonationSettingsView.swift in Sources */,

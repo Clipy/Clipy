@@ -31,6 +31,7 @@ struct AppStorageValuesTests {
         @Shared(.showsClearHistoryMenuItem) var showsClearHistoryMenuItem
         @Shared(.showsSnippetsAboveHistory) var showsSnippetsAboveHistory
         @Shared(.highlightsFirstItemOnPopUp) var highlightsFirstItemOnPopUp
+        @Shared(.showsSearchBar) var showsSearchBar
         @Shared(.marksMenuItemsWithNumbers) var marksMenuItemsWithNumbers
         @Shared(.showsToolTipsOnMenuItems) var showsToolTipsOnMenuItems
         @Shared(.showsImagesInMenu) var showsImagesInMenu
@@ -59,6 +60,7 @@ struct AppStorageValuesTests {
         #expect(showsClearHistoryMenuItem)
         #expect(!showsSnippetsAboveHistory)
         #expect(highlightsFirstItemOnPopUp)
+        #expect(!showsSearchBar)
         #expect(marksMenuItemsWithNumbers)
         #expect(showsToolTipsOnMenuItems)
         #expect(showsImagesInMenu)
@@ -84,6 +86,7 @@ struct AppStorageValuesTests {
 
     @Test
     func loadDefaultIntegerSettings() {
+        @Shared(.searchSettingsViewCount) var searchSettingsViewCount
         @Shared(.maximumHistoryCount) var maximumHistoryCount
         @Shared(.statusItemDisplayMode) var statusItemDisplayMode
         @Shared(.menuIconSize) var menuIconSize
@@ -97,6 +100,7 @@ struct AppStorageValuesTests {
         @Shared(.historyDeletionModifier) var historyDeletionModifier
         @Shared(.pasteAndDeleteHistoryModifier) var pasteAndDeleteHistoryModifier
 
+        #expect(searchSettingsViewCount == 0)
         #expect(maximumHistoryCount == 30)
         #expect(statusItemDisplayMode == 1)
         #expect(menuIconSize == 16)

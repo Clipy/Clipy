@@ -30,6 +30,15 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             animated: false
         )
         controller.window?.delegate = self
+        if #available(macOS 26.0, *) {
+            Shared(.searchSettingsViewCount).changes(includingInitialValue: true)
+                .receive(on: mainQueue)
+                .sink { [weak controller] viewCount in
+                    let item = controller?.window?.toolbar?.items.first { $0.itemIdentifier.rawValue == SettingsPane.menu.rawValue }
+                    item?.badge = viewCount == 0 ? .indicator : nil
+                }
+                .store(in: &cancellables)
+        }
         return controller
     }()
 
