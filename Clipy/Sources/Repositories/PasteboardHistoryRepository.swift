@@ -89,20 +89,22 @@ final class PasteboardHistoryRepository: PasteboardHistoryRepositoryProtocol {
         includesThumbnailAsset: Bool,
         limit: Int
     ) -> [PasteboardHistoryDetail] {
-        let query = SQLiteDataDatabase.normalizeSearchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
-        guard !query.isEmpty, !query.utf8.contains(0) else {
+        let terms = SQLiteDataDatabase.normalizeSearchText(query).split(whereSeparator: \.isWhitespace).map(String.init)
+        guard !terms.isEmpty, !query.utf8.contains(0) else {
             return []
         }
 
         return withErrorReporting {
             try database.read { database in
                 let matches = PasteboardHistorySearch.where { columns in
-                    if query.unicodeScalars.count >= 3 {
-                        let phrase = "\"\(query.replacingOccurrences(of: "\"", with: "\"\""))\""
-                        columns.match(phrase)
-                    } else {
-                        // Trigram MATCH requires three scalars. Search the same normalized text for shorter queries.
-                        columns.title.instr(query) > 0 || columns.ocrText.instr(query) > 0
+                    for term in terms {
+                        if term.unicodeScalars.count >= 3 {
+                            let phrase = "\"\(term.replacingOccurrences(of: "\"", with: "\"\""))\""
+                            columns.match(phrase)
+                        } else {
+                            // Trigram MATCH requires three scalars. Search the same normalized text for shorter terms.
+                            columns.title.instr(term) > 0 || columns.ocrText.instr(term) > 0
+                        }
                     }
                 }
                 .join(PasteboardHistory.all) { $0.id.eq($1.id) }

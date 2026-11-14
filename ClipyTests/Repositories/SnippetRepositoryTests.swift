@@ -150,6 +150,26 @@ struct SnippetRepositoryTests {
         #expect(repository.searchSnippets(query: query, folderID: disabled.folder.id, limit: 10).isEmpty)
     }
 
+    @Test
+    func searchRequiresEveryTermAcrossTitleContentAndFolderAndPrioritizesDirectMatches() throws {
+        let details = try #require(repository.insertFolders([
+            (title: "Work GitHub token 42", snippets: [(title: "Saved", content: "Other")]),
+            (title: "Work", snippets: [(title: "GitHub", content: "TOKEN 42"), (title: "GitHub", content: "Missing")]),
+            (title: "Work disabled", snippets: [(title: "GitHub", content: "token 42")])
+        ]))
+        repository.updateFolderIsEnabled(details[2].folder.id, isEnabled: false)
+        let directID = details[1].snippets[0].id
+        let folderOnlyID = details[0].snippets[0].id
+
+        for query in ["token github work", "  WORK\tgithub\n42  ", "work　token", "wo 42", "work github github token"] {
+            let results = repository.searchSnippets(query: query, folderID: nil, limit: 10)
+            #expect(results.map(\.snippet.id) == [directID, folderOnlyID], "Query: \(query)")
+            #expect(repository.searchSnippets(query: query, folderID: nil, limit: 1).map(\.snippet.id) == [directID])
+            #expect(repository.searchSnippets(query: query, folderID: details[1].folder.id, limit: 10).map(\.snippet.id) == [directID])
+        }
+        #expect(repository.searchSnippets(query: "work nonexistent", folderID: nil, limit: 10).isEmpty)
+    }
+
     @Test(arguments: ["ma", "match"])
     func searchKeepsTitleAndContentMatchesWhenFolderMatchesExceedTheLimit(query: String) throws {
         let folderOnlySnippets = (0..<20).map { (title: "Saved \($0)", content: "Content") }

@@ -78,35 +78,46 @@ final class SnippetRepository: SnippetRepositoryProtocol {
     }
 
     func searchSnippets(query: String, folderID: SnippetFolder.ID?, limit: Int) -> [SnippetSearchResult] {
-        let query = SQLiteDataDatabase.normalizeSearchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
-        guard !query.isEmpty, !query.utf8.contains(0) else {
+        let terms = SQLiteDataDatabase.normalizeSearchText(query).split(whereSeparator: \.isWhitespace).map(String.init)
+        guard !terms.isEmpty, !query.utf8.contains(0) else {
             return []
         }
 
         return withErrorReporting {
             try database.read { database in
-                let searchIDs = SnippetSearch.where { columns in
-                    if query.unicodeScalars.count >= 3 {
-                        let phrase = "\"\(query.replacingOccurrences(of: "\"", with: "\"\""))\""
-                        columns.match(phrase)
-                    } else {
-                        columns.title.instr(query) > 0 || columns.content.instr(query) > 0
+                let matches = terms.map { term in
+                    let searchIDs = SnippetSearch.where { columns in
+                        if term.unicodeScalars.count >= 3 {
+                            let phrase = "\"\(term.replacingOccurrences(of: "\"", with: "\"\""))\""
+                            columns.match(phrase)
+                        } else {
+                            columns.title.instr(term) > 0 || columns.content.instr(term) > 0
+                        }
                     }
+                    .select(\.id)
+                    let folderIDs = SnippetFolderSearch.where { columns in
+                        if term.unicodeScalars.count >= 3 {
+                            let phrase = "\"\(term.replacingOccurrences(of: "\"", with: "\"\""))\""
+                            columns.match(phrase)
+                        } else {
+                            columns.title.instr(term) > 0
+                        }
+                    }
+                    .select(\.id)
+                    return (searchIDs: searchIDs, folderIDs: folderIDs)
                 }
-                .select(\.id)
-                let folderIDs = SnippetFolderSearch.where { columns in
-                    if query.unicodeScalars.count >= 3 {
-                        let phrase = "\"\(query.replacingOccurrences(of: "\"", with: "\"\""))\""
-                        columns.match(phrase)
-                    } else {
-                        columns.title.instr(query) > 0
-                    }
+                let directMatches = matches.reduce(Snippet.none) { snippets, match in
+                    snippets.or(Snippet.where { $0.id.in(match.searchIDs) })
                 }
                 .select(\.id)
 
                 var snippets = Snippet
                     .where(\.isEnabled)
-                    .where { $0.id.in(searchIDs) || $0.folderID.in(folderIDs) }
+                    .where { columns in
+                        for match in matches {
+                            columns.id.in(match.searchIDs) || columns.folderID.in(match.folderIDs)
+                        }
+                    }
                 if let folderID {
                     snippets = snippets
                         .where { $0.folderID.eq(folderID) }
@@ -114,7 +125,7 @@ final class SnippetRepository: SnippetRepositoryProtocol {
 
                 return try snippets
                     .join(SnippetFolder.where(\.isEnabled)) { $0.folderID.eq($1.id) }
-                    .order { ($0.id.in(searchIDs).desc(), $1.index, $0.index) }
+                    .order { ($0.id.in(directMatches).desc(), $1.index, $0.index) }
                     .limit(limit)
                     .select { SnippetSearchResult.Columns(folderTitle: $1.title, snippet: $0) }
                     .fetchAll(database)

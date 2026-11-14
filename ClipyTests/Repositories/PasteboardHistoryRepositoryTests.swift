@@ -263,6 +263,23 @@ struct PasteboardHistoryRepositoryTests {
     }
 
     @Test
+    func searchRequiresEveryWhitespaceSeparatedTermAcrossTitleAndOCR() throws {
+        let content = try #require(PasteboardContent("GitHub account 仕事"))
+        let id = PasteboardHistory.ID(rawValue: content.hash)
+        repository.save(id: id, content: content, updateAt: 1)
+        repository.updateOCRText(id: id, ocrText: "TOKEN 42")
+        let partial = try #require(PasteboardContent("GitHub unrelated"))
+        repository.save(id: PasteboardHistory.ID(rawValue: partial.hash), content: partial, updateAt: 2)
+
+        for query in ["token github", "  GITHUB\t42\n仕事  ", "仕事　token", "gi 42", "github github token"] {
+            let results = repository.searchHistoryDetails(
+                query: query, sortsByCreatedAt: false, includesThumbnailAsset: false, limit: 1
+            )
+            #expect(results.map(\.history.id) == [id], "Query: \(query)")
+        }
+    }
+
+    @Test
     func updateOCRTextStoresRecognizedText() throws {
         let imageContent = try #require(
             PasteboardContent(image: NSImage.create(with: .blue, size: NSSize(width: 20, height: 20)))
