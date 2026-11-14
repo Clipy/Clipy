@@ -19,6 +19,7 @@ final class AlternaiveSearchMenu {
     private var initialItems: [AlternativeMenuItem] = []
     private var searchTask: Task<Void, Never>?
     private var query = ""
+    private var highlightsFirstSearchResult = false
     private lazy var session = makeSession()
 
     @Dependency(\.continuousClock) private var clock
@@ -47,6 +48,7 @@ final class AlternaiveSearchMenu {
         seatchState.text = ""
         seatchState.isSearching = false
         query = ""
+        highlightsFirstSearchResult = false
         self.initialItems = initialItems
         session.present(at: point, highlightsFirstItem: highlightsFirstItemOnPopUp, menu: AlternativeMenu(items: initialItems))
         guard session.isVisible else { return }
@@ -69,7 +71,7 @@ final class AlternaiveSearchMenu {
         cancelSearch()
         if query.isEmpty {
             seatchState.isSearching = false
-            session.updateItems(initialItems, highlightsFirstItem: highlightsFirstItemOnPopUp || session.hasHighlightedItem)
+            updateItems(initialItems)
             return
         }
         let needsLoadingDelay = !seatchState.isSearching
@@ -98,11 +100,16 @@ final class AlternaiveSearchMenu {
                 group.cancelAll()
                 guard !Task.isCancelled, let self, session.isVisible else { return }
                 let items = builder.makeSearchItems(histories: histories, snippets: snippets, limit: limit)
-                session.updateItems(items, highlightsFirstItem: highlightsFirstItemOnPopUp || session.hasHighlightedItem)
+                updateItems(items)
                 seatchState.isSearching = false
                 searchTask = nil
             }
         }
+    }
+
+    private func updateItems(_ items: [AlternativeMenuItem]) {
+        highlightsFirstSearchResult = highlightsFirstItemOnPopUp || session.hasHighlightedItem || highlightsFirstSearchResult
+        session.updateItems(items, highlightsFirstItem: highlightsFirstSearchResult)
     }
 
     private func cancelSearch() {
