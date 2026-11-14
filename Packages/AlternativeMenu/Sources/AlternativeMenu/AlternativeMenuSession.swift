@@ -69,6 +69,10 @@ public final class AlternativeMenuSession {
     /// are currently accepted.
     public var isVisible: Bool { root.isVisible }
 
+    /// Whether the root menu currently has a highlighted item, from keyboard or pointer input.
+    /// Returns `false` after dismissal or when selection has been cleared.
+    public var hasHighlightedItem: Bool { root.selection != nil }
+
     /// Creates a session without a custom header. Creating it does not show a menu.
     ///
     /// - Parameters:
