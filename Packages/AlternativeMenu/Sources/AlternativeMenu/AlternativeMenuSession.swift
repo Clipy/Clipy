@@ -407,7 +407,7 @@ private extension AlternativeMenuSession {
         if !modifiers.isEmpty, handlesKeyEquivalent, handleKeyEquivalent(event) {
             return true
         }
-        let activatesWithSpace = key == " " && modifiers.isEmpty && !headerIsFocused
+        let activatesWithSpace = key == " " && modifiers.isEmpty && !root.isHeaderControlFocused
         if key == "\r" || key == "\u{3}" || activatesWithSpace {
             if let selection = panel.selection {
                 activateRow(selection, in: panel, modifiers: modifiers, fromKeyboard: true)
