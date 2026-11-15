@@ -234,6 +234,7 @@ private extension MenuManager {
         let subMenuItem = NSMenuItem(title: title, action: nil)
         subMenuItem.submenu = subMenu
         subMenuItem.image = showsIconsInMenu ? folderIcon : nil
+        subMenuItem.preferVisibleImage()
         return subMenuItem
     }
 }
@@ -346,6 +347,7 @@ private extension MenuManager {
            let image = NSImage(data: thumbnailAsset.data),
            (thumbnailAsset.kind == .image && showsImagesInMenu) || (thumbnailAsset.kind == .colorCode && showsColorPreviewInMenu) {
             menuItem.image = image.aspectFitImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
+            menuItem.preferVisibleImage()
         }
 
         return menuItem
@@ -392,6 +394,7 @@ private extension MenuManager {
         menuItem.representedObject = snippet.id
         menuItem.toolTip = snippet.toolTip
         menuItem.image = showsIconsInMenu ? snippetIcon : nil
+        menuItem.preferVisibleImage()
 
         return menuItem
     }
@@ -421,6 +424,16 @@ private extension MenuManager {
 private extension MenuManager {
     func firstIndexOfMenuItems() -> NSInteger {
         return startsMenuItemTitlesAtZero ? 0 : 1
+    }
+}
+
+private extension NSMenuItem {
+    func preferVisibleImage() {
+        // CodeQL still builds with the macOS 26 SDK.
+        #if compiler(>=6.4)
+        guard #available(macOS 27, *), image != nil else { return }
+        preferredImageVisibility = .visible
+        #endif
     }
 }
 
