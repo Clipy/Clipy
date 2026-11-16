@@ -32,6 +32,12 @@ Use these default shortcuts while Clipy is running:
 
 You can change these shortcuts in **Settings > Shortcuts**. The Settings shortcut can be changed but cannot be removed, so you can still access Settings after removing the other shortcuts.
 
+### Type Clipboard as Keyboard Input
+
+For fields that block pasting, copy the text, focus the destination input, then open Clipy's main menu and choose **Type Clipboard as Keyboard Input** above **Clear History**. Clipy types the current clipboard text character by character, including Unicode text, without changing the clipboard. This action works even when automatic pasting is disabled and requires **System Settings > Privacy & Security > Accessibility** permission for Clipy.
+
+The action is disabled when the clipboard has no text. Release shortcut modifiers to start typing; press **Esc** or switch applications to stop. Compatibility depends on how the destination handles keyboard input.
+
 ### Development Environment
 * macOS 26.6 Tahoe or later
 * Xcode 27.0
