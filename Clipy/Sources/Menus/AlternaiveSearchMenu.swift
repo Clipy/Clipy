@@ -121,7 +121,7 @@ final class AlternaiveSearchMenu {
         // Match the search field in AppKit's Help menu.
         let fieldHeight: CGFloat = 24
         let topPadding: CGFloat = 10
-        let bottomPadding: CGFloat = 6
+        let bottomPadding: CGFloat = 2
         return AlternativeMenuSession(
             headerHeight: topPadding + fieldHeight + bottomPadding,
             minimumSymbolColumnWidth: builder.minimumSymbolColumnWidth,
