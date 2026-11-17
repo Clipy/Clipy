@@ -38,8 +38,10 @@ struct AlternativeMenuSearchBar: View {
 
             TextField("Search", text: $state.text)
                 .textFieldStyle(.plain)
+                .autocorrectionDisabled()
                 .focused($isFocused)
                 .accessibilityLabel(Text("Search"))
+                .accessibilityAddTraits(.isSearchField)
 
             if !state.text.isEmpty {
                 Button {

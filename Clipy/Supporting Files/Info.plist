@@ -41,6 +41,8 @@
 	<true/>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSAutoFillRequiresTextContentTypeForOneTimeCodeOnMac</key>
+	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2015年 Shunsuke Furubayashi. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
