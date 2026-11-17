@@ -71,8 +71,23 @@ struct PasteboardContent: Equatable {
         @Shared(.thumbnailWidth) var thumbnailWidth
         @Shared(.thumbnailHeight) var thumbnailHeight
 
-        guard let imageData else { return nil }
-        return NSImage(data: imageData)?.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight))
+        guard let imageData,
+              let image = NSImage(data: imageData)?.resizeImage(CGFloat(thumbnailWidth), CGFloat(thumbnailHeight)) else {
+            return nil
+        }
+        return NSImage(size: image.size, flipped: false) { bounds in
+            NSBezierPath(roundedRect: bounds, xRadius: 2, yRadius: 2).addClip()
+            image.draw(in: bounds)
+            let border = NSBezierPath(
+                roundedRect: bounds.insetBy(dx: 0.5, dy: 0.5),
+                xRadius: 1.5,
+                yRadius: 1.5
+            )
+            NSColor.black.withAlphaComponent(0.15).setStroke()
+            border.lineWidth = 1
+            border.stroke()
+            return true
+        }
     }
     var imageData: Data? {
         if let imageFileURL {
