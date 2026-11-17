@@ -19,7 +19,7 @@ import Testing
 struct SQLiteDataMigratorTests {
     @Test
     func migrationIdentifiers() throws {
-        let database = try DatabaseQueue()
+        let database = try DatabaseQueue(configuration: SQLiteDataDatabase.configuration)
         var migrator = DatabaseMigrator()
         migrator.registerMigration()
         try migrator.migrate(database)
@@ -31,7 +31,8 @@ struct SQLiteDataMigratorTests {
                     "Create initial tables",
                     "Create search indexes",
                     "Add createdAt to pasteboardHistories",
-                    "Add OCR text to history search"
+                    "Add OCR text to history search",
+                    "Normalize search text"
                 ]
             )
         }

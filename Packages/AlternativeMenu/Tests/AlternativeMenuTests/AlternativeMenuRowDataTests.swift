@@ -264,10 +264,14 @@ struct AlternativeMenuRowDataTests {
         let header = AlternativeMenuRowData(item: .sectionHeader(attributedTitle: title), verticalOffset: 0)
         let body = AlternativeMenuRowData(item: .action(attributedTitle: title) { _ in }, verticalOffset: 0)
         let displayed = try attributedTitle(header.title)
+        let measured = NSAttributedString(
+            string: title.string,
+            attributes: [.font: AlternativeMenuStyle.menuFont, .baselineOffset: baselineOffset]
+        )
 
         #expect(header.titleWidthWithInsets == body.titleWidthWithInsets)
         #expect(header.rowHeight == body.rowHeight)
-        #expect(header.minimumTitleHeight == 16 + baselineOffset)
+        #expect(header.minimumTitleHeight == measured.size().height)
         #expect(displayed.attribute(.font, at: 0, effectiveRange: nil) as? NSFont == AlternativeMenuStyle.headerFont)
         #expect(title.attribute(.font, at: 0, effectiveRange: nil) == nil)
         if #available(macOS 26, *) {

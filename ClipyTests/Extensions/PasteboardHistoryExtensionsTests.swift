@@ -38,7 +38,7 @@ struct PasteboardHistoryExtensionsTests {
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.menuTitle == "Sc...")
+        #expect(history.menuTitle == "Scree…")
         #expect(emptyTitleHistory.menuTitle == "(Image)")
         #expect(whitespaceTitleHistory.menuTitle == "(Image)")
     }
@@ -60,7 +60,7 @@ struct PasteboardHistoryExtensionsTests {
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.menuTitle == "Do...")
+        #expect(history.menuTitle == "Docum…")
         #expect(emptyTitleHistory.menuTitle == "(PDF)")
         #expect(whitespaceTitleHistory.menuTitle == "(PDF)")
     }
@@ -82,7 +82,7 @@ struct PasteboardHistoryExtensionsTests {
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.menuTitle == "Ar...")
+        #expect(history.menuTitle == "Archi…")
         #expect(emptyTitleHistory.menuTitle == "(Files)")
         #expect(whitespaceTitleHistory.menuTitle == "(Files)")
     }
@@ -111,7 +111,7 @@ struct PasteboardHistoryExtensionsTests {
 
         $maximumMenuItemTitleLength.withLock { $0 = 5 }
 
-        #expect(history.menuTitle == "Pl...")
+        #expect(history.menuTitle == "Plain…")
         #expect(emptyTitleHistory.menuTitle == "")
         #expect(whitespaceTitleHistory.menuTitle == "")
     }

@@ -34,6 +34,31 @@ enum SQLiteDataDatabase {
         return applicationSupportDirectory.appendingPathComponent("sqlite.db")
     }
 
+    static var configuration: Configuration {
+        @Dependency(\.context) var context
+
+        var configuration = Configuration()
+        configuration.prepareDatabase {
+            $0.add(function: $normalizeSearchText)
+            #if DEBUG
+            switch context {
+            case .live, .preview:
+                $0.trace { print($0.expandedDescription) }
+            case .test:
+                break
+            }
+            #endif
+        }
+        return configuration
+    }
+
+    @DatabaseFunction(isDeterministic: true)
+    static func normalizeSearchText(_ text: String?) -> String {
+        (text ?? "").precomposedStringWithCanonicalMapping
+            .folding(options: .caseInsensitive, locale: nil)
+            .precomposedStringWithCanonicalMapping
+    }
+
     static var isCloudKitEnabled: Bool {
         ModelConfiguration(groupContainer: .automatic).cloudKitContainerIdentifier != nil
     }
@@ -41,27 +66,16 @@ enum SQLiteDataDatabase {
 
 extension DependencyValues {
     mutating func bootstrapDatabase() throws {
-        @Dependency(\.context) var context
-
-        var configuration = Configuration()
-        #if DEBUG
-        configuration.prepareDatabase {
-            switch context {
-            case .live, .preview:
-                $0.trace { print($0.expandedDescription) }
-            case .test:
-                break
-            }
-        }
-        #endif
         let database = try SQLiteData.defaultDatabase(
             path: SQLiteDataDatabase.databaseURL().absoluteString,
-            configuration: configuration
+            configuration: SQLiteDataDatabase.configuration
         )
 
         var migrator = DatabaseMigrator()
         migrator.registerMigration()
+
         #if DEBUG
+        @Dependency(\.context) var context
         switch context {
         case .live, .preview:
             migrator.eraseDatabaseOnSchemaChange = true
@@ -69,6 +83,7 @@ extension DependencyValues {
             break
         }
         #endif
+
         try migrator.migrate(database)
 
         defaultDatabase = database

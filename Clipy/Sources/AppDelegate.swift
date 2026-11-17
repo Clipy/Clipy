@@ -19,7 +19,7 @@ import ServiceManagement
 import Settings
 import Sharing
 
-class AppDelegate: NSObject, NSMenuItemValidation {
+class AppDelegate: NSObject {
 
     // MARK: - Properties
     private let screenshotObserver = ScreenShotObserver()
@@ -30,6 +30,15 @@ class AppDelegate: NSObject, NSMenuItemValidation {
             animated: false
         )
         controller.window?.delegate = self
+        if #available(macOS 26.0, *) {
+            Shared(.searchSettingsViewCount).changes(includingInitialValue: true)
+                .receive(on: mainQueue)
+                .sink { [weak controller] viewCount in
+                    let item = controller?.window?.toolbar?.items.first { $0.itemIdentifier.rawValue == SettingsPane.menu.rawValue }
+                    item?.badge = viewCount == 0 ? .indicator : nil
+                }
+                .store(in: &cancellables)
+        }
         return controller
     }()
 
@@ -37,10 +46,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     var context
     @Dependency(\.mainQueue)
     private var mainQueue
-    @Dependency(\.pasteboardHistoryRepository)
-    private var pasteboardHistoryRepository
-    @Dependency(\.snippetRepository)
-    private var snippetRepository
     @Dependency(\.firebase)
     private var firebase
     @Dependency(\.clipService)
@@ -70,14 +75,6 @@ class AppDelegate: NSObject, NSMenuItemValidation {
         static let scheme = "clipy"
     }
 
-    // MARK: - NSMenuItem Validation
-    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        if menuItem.action == #selector(AppDelegate.clearAllHistory) {
-            return pasteboardHistoryRepository.hasHistories()
-        }
-        return true
-    }
-
     // MARK: - Menu Actions
     @MainActor @objc func showSettingsWindow() {
         openWindow(.settings)
@@ -96,21 +93,19 @@ class AppDelegate: NSObject, NSMenuItemValidation {
     }
 
     @objc func selectClipMenuItem(_ sender: NSMenuItem) {
-        guard let id = sender.representedObject as? PasteboardHistory.ID, let content = pasteboardHistoryRepository.fetchContent(id: id) else {
+        guard let id = sender.representedObject as? PasteboardHistory.ID else {
             NSSound.beep()
             return
         }
-
-        pasteService.paste(id: id, content: content)
+        pasteService.paste(id: id)
     }
 
     @objc func selectSnippetMenuItem(_ sender: AnyObject) {
-        guard let id = sender.representedObject as? Snippet.ID, let snippet = snippetRepository.fetchSnippet(id: id) else {
+        guard let id = sender.representedObject as? Snippet.ID else {
             NSSound.beep()
             return
         }
-        pasteService.copyToPasteboard(with: snippet.content)
-        pasteService.paste()
+        pasteService.paste(id: id)
     }
 
     func terminateApplication() {

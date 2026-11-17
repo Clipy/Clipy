@@ -69,6 +69,10 @@ public final class AlternativeMenuSession {
     /// are currently accepted.
     public var isVisible: Bool { root.isVisible }
 
+    /// Whether the root menu currently has a highlighted item, from keyboard or pointer input.
+    /// Returns `false` after dismissal or when selection has been cleared.
+    public var hasHighlightedItem: Bool { root.selection != nil }
+
     /// Creates a session without a custom header. Creating it does not show a menu.
     ///
     /// - Parameters:
@@ -120,6 +124,10 @@ public final class AlternativeMenuSession {
     ///   - point: An anchor in AppKit's global screen coordinates, in points.
     ///     Defaults to the current pointer location. Placement is adjusted to fit
     ///     the screen and may open above the anchor when space below is limited.
+    ///   - anchorsToFirstItem: Whether to align the top of the item area with the
+    ///     anchor, placing the custom header above it. Defaults to `false` and has
+    ///     no effect without a header. Screen constraints and opening above the
+    ///     anchor take precedence over this alignment. Does not change selection.
     ///   - highlightsFirstItem: Whether to select and reveal the first enabled
     ///     action or submenu parent. Defaults to no initial selection; headers,
     ///     separators, and disabled items are never selected.
@@ -130,6 +138,7 @@ public final class AlternativeMenuSession {
     ///   - menu: The root contents, including actions and nested submenu contents.
     public func present(
         at point: NSPoint = NSEvent.mouseLocation,
+        anchorsToFirstItem: Bool = false,
         highlightsFirstItem: Bool = false,
         event: NSEvent? = nil,
         menu: AlternativeMenu
@@ -143,7 +152,7 @@ public final class AlternativeMenuSession {
         lastPointer = NSEvent.mouseLocation
         keyEquivalentMatcher.updateItems(menu.items)
         root.setItems(menu.items, highlightsFirstItem: highlightsFirstItem) { keyEquivalentMatcher.display(at: [$0]) }
-        root.open(at: point)
+        root.open(at: point, anchorsToFirstItem: anchorsToFirstItem)
         guard root.isVisible else {
             dismiss()
             return
@@ -403,7 +412,7 @@ private extension AlternativeMenuSession {
         if !modifiers.isEmpty, handlesKeyEquivalent, handleKeyEquivalent(event) {
             return true
         }
-        let activatesWithSpace = key == " " && modifiers.isEmpty && !headerIsFocused
+        let activatesWithSpace = key == " " && modifiers.isEmpty && !root.isHeaderControlFocused
         if key == "\r" || key == "\u{3}" || activatesWithSpace {
             if let selection = panel.selection {
                 activateRow(selection, in: panel, modifiers: modifiers, fromKeyboard: true)

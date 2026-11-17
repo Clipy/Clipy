@@ -3175,6 +3175,60 @@
         }
       }
     },
+    "Show Search Bar in Shortcut Menus" : {
+      "comment" : "Whether menus opened by keyboard shortcuts include a search bar.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchleiste in Kurzbefehlmenüs anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Search Bar in Shortcut Menus"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نمایش نوار جستجو در منوهای میان‌بر"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra la barra di ricerca nei menu delle scorciatoie"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカットメニューに検索バーを表示"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar barra de busca nos menus de atalhos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати панель пошуку в меню клавіатурних скорочень"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在快捷键菜单中显示搜索栏"
+          }
+        }
+      }
+    },
     "To keep Settings accessible even if you cannot open the menu, this shortcut can be changed but cannot be removed." : {
       "extractionState" : "manual",
       "localizations" : {

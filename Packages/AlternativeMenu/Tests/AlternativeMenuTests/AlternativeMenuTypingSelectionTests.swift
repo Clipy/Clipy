@@ -41,7 +41,6 @@ struct AlternativeMenuTypingSelectionTests {
     @Test(arguments: [
         (["Éclair", "Eagle"], "e", 1),
         (["é", "e"], "e", 1),
-        (["Ａpple", "Apple"], "a", 0),
         (["ßeta", "sseta"], "ss", 1),
         (["10 Ten", "1 One", "11 Eleven"], "1", 0)
     ])
@@ -53,6 +52,19 @@ struct AlternativeMenuTypingSelectionTests {
             selection = typingSelection.select(try key(String(character), at: 10 + Double(index) * 0.1), in: items).index
         }
         #expect(selection == expectedIndex)
+    }
+
+    @Test
+    func followsSystemCollationForFullWidthLatinTitles() throws {
+        let typingSelection = AlternativeMenuTypingSelection()
+        let items: [AlternativeMenuItem] = [
+            .action("Ａpple") { _ in },
+            .action("Apple") { _ in }
+        ]
+        // CoreServices prefers the half-width prefix on macOS 27; earlier versions match in menu order.
+        let expectedIndex = if #available(macOS 27, *) { 1 } else { 0 }
+
+        #expect(typingSelection.select(try key("a"), in: items).index == expectedIndex)
     }
 
     @Test

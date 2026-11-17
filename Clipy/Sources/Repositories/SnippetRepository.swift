@@ -19,6 +19,8 @@ protocol SnippetRepositoryProtocol {
     func fetchFolderDetails() -> [SnippetFolderDetail]
     func fetchFolderDetail(id: SnippetFolder.ID) -> SnippetFolderDetail?
 
+    func searchSnippets(query: String, folderID: SnippetFolder.ID?, limit: Int) -> [SnippetSearchResult]
+
     func insertFolder() -> SnippetFolder?
     func insertFolders(_ folders: [(title: String, snippets: [(title: String, content: String)])]) -> [SnippetFolderDetail]?
     func updateFolderTitle(_ id: SnippetFolder.ID, title: String)
@@ -73,6 +75,62 @@ final class SnippetRepository: SnippetRepositoryProtocol {
                 return SnippetFolderDetail(folder: folder, snippets: snippets)
             }
         }
+    }
+
+    func searchSnippets(query: String, folderID: SnippetFolder.ID?, limit: Int) -> [SnippetSearchResult] {
+        let terms = SQLiteDataDatabase.normalizeSearchText(query).split(whereSeparator: \.isWhitespace).map(String.init)
+        guard !terms.isEmpty, !query.utf8.contains(0) else {
+            return []
+        }
+
+        return withErrorReporting {
+            try database.read { database in
+                let matches = terms.map { term in
+                    let searchIDs = SnippetSearch.where { columns in
+                        if term.unicodeScalars.count >= 3 {
+                            let phrase = "\"\(term.replacingOccurrences(of: "\"", with: "\"\""))\""
+                            columns.match(phrase)
+                        } else {
+                            columns.title.instr(term) > 0 || columns.content.instr(term) > 0
+                        }
+                    }
+                    .select(\.id)
+                    let folderIDs = SnippetFolderSearch.where { columns in
+                        if term.unicodeScalars.count >= 3 {
+                            let phrase = "\"\(term.replacingOccurrences(of: "\"", with: "\"\""))\""
+                            columns.match(phrase)
+                        } else {
+                            columns.title.instr(term) > 0
+                        }
+                    }
+                    .select(\.id)
+                    return (searchIDs: searchIDs, folderIDs: folderIDs)
+                }
+                let directMatches = matches.reduce(Snippet.none) { snippets, match in
+                    snippets.or(Snippet.where { $0.id.in(match.searchIDs) })
+                }
+                .select(\.id)
+
+                var snippets = Snippet
+                    .where(\.isEnabled)
+                    .where { columns in
+                        for match in matches {
+                            columns.id.in(match.searchIDs) || columns.folderID.in(match.folderIDs)
+                        }
+                    }
+                if let folderID {
+                    snippets = snippets
+                        .where { $0.folderID.eq(folderID) }
+                }
+
+                return try snippets
+                    .join(SnippetFolder.where(\.isEnabled)) { $0.folderID.eq($1.id) }
+                    .order { ($0.id.in(directMatches).desc(), $1.index, $0.index) }
+                    .limit(limit)
+                    .select { SnippetSearchResult.Columns(folderTitle: $1.title, snippet: $0) }
+                    .fetchAll(database)
+            }
+        } ?? []
     }
 
     func insertFolder() -> SnippetFolder? {

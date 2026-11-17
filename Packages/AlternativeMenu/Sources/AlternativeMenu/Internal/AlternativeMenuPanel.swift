@@ -82,7 +82,7 @@ final class AlternativeMenuPanel: NSPanel {
         }
     }
 
-    func open(at point: NSPoint) {
+    func open(at point: NSPoint, anchorsToFirstItem: Bool = false) {
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(point) }) ?? NSScreen.main else {
             return
         }
@@ -90,7 +90,7 @@ final class AlternativeMenuPanel: NSPanel {
             return
         }
         anchorY = point.y
-        fitMenu(on: screen, openingAt: point)
+        fitMenu(on: screen, openingAt: point, anchorsToFirstItem: anchorsToFirstItem)
         menuView.resetScrollPosition()
         makeKeyAndOrderFront(nil)
         layoutAndRevealSelection()
@@ -135,6 +135,16 @@ final class AlternativeMenuPanel: NSPanel {
     func animateDismissal(
         fading panels: [AlternativeMenuPanel],
         blinksSelection: Bool,
+        fade: @escaping @MainActor ([AlternativeMenuPanel]) async -> Void = { panels in
+            await withCheckedContinuation { continuation in
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.25
+                    panels.forEach { $0.animator().alphaValue = 0 }
+                } completionHandler: {
+                    continuation.resume()
+                }
+            }
+        },
         completion: @escaping @MainActor () -> Void
     ) -> Task<Void, Never> {
         Task {
@@ -147,14 +157,7 @@ final class AlternativeMenuPanel: NSPanel {
                     menuView.hidesSelection = false
                     try await Task.sleep(for: .milliseconds(33))
                 }
-                await withCheckedContinuation { continuation in
-                    NSAnimationContext.runAnimationGroup { context in
-                        context.duration = 0.25
-                        panels.forEach { $0.animator().alphaValue = 0 }
-                    } completionHandler: {
-                        continuation.resume()
-                    }
-                }
+                await fade(panels)
                 try Task.checkCancellation()
                 completion()
             } catch {
@@ -285,7 +288,7 @@ private extension AlternativeMenuPanel {
         }
     }
 
-    func fitMenu(on screen: NSScreen, openingAt point: NSPoint? = nil) {
+    func fitMenu(on screen: NSScreen, openingAt point: NSPoint? = nil, anchorsToFirstItem: Bool = false) {
         let bounds = menuBounds(on: screen)
         let previousFrame = frame
         let minimumBottom = bounds.minY + (anchorY <= screen.visibleFrame.minY ? AlternativeMenuStyle.current.padding : 0)
@@ -298,8 +301,13 @@ private extension AlternativeMenuPanel {
             opensAbove = false
             leadingEdge = point.x
             preferredWidth = menuView.preferredWidth
-            // NSMenu anchors its outer top edge at the point when the first item is a hidden separator.
-            let topPadding = !menuView.hasHeader && items.first?.isSeparator == true ? 0 : AlternativeMenuStyle.current.padding
+            let topPadding: CGFloat
+            if anchorsToFirstItem && menuView.hasHeader {
+                topPadding = menuView.viewportTopInset
+            } else {
+                // NSMenu anchors its outer top edge at the point when the first item is a hidden separator.
+                topPadding = !menuView.hasHeader && items.first?.isSeparator == true ? 0 : AlternativeMenuStyle.current.padding
+            }
             top = min(max(point.y + topPadding, bounds.minY), bounds.maxY)
             bottom = anchorBottom
         } else {

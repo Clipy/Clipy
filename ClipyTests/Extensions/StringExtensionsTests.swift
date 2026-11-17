@@ -28,13 +28,20 @@ struct StringExtensionsTests {
     func trimmedMenuTitleShortensLongTitles() {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = 8
 
-        #expect("Clipboard title".trimmedMenuTitle == "Clipb...")
+        #expect("Clipboard title".trimmedMenuTitle == "Clipboar…")
+        #expect("12345678".trimmedMenuTitle == "12345678")
+        #expect("123456789".trimmedMenuTitle == "12345678…")
     }
 
-    @Test(arguments: [0, 1, 2, 3])
-    func trimmedMenuTitleShortensToSymbolWhenMaxLengthIsThreeOrLess(maxLength: Int) {
+    @Test(arguments: [
+        (1, "A", "B", "A - B"),
+        (2, "A", "B", "A - B"),
+        (8, "Clipboard title", "Long folder", "Cl… - Lo…"),
+        (9, "Clipboard title", "Long folder", "Cli… - Lo…")
+    ])
+    func combinedTitleKeepsTheFolderEvenAtSmallLimits(maxLength: Int, title: String, folder: String, expected: String) {
         @Shared(.maximumMenuItemTitleLength) var maximumMenuItemTitleLength = maxLength
 
-        #expect("Clipboard title".trimmedMenuTitle == "...")
+        #expect(title.trimmedSearchSnippetMenuTitle(folderTitle: folder) == expected)
     }
 }
