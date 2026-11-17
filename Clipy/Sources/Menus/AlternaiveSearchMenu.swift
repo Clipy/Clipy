@@ -50,7 +50,12 @@ final class AlternaiveSearchMenu {
         query = ""
         highlightsFirstSearchResult = false
         self.initialItems = initialItems
-        session.present(at: point, highlightsFirstItem: highlightsFirstItemOnPopUp, menu: AlternativeMenu(items: initialItems))
+        session.present(
+            at: point,
+            anchorsToFirstItem: true,
+            highlightsFirstItem: highlightsFirstItemOnPopUp,
+            menu: AlternativeMenu(items: initialItems)
+        )
         guard session.isVisible else { return }
         seatchState.focusRequest = UUID()
     }
