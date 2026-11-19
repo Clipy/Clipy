@@ -117,11 +117,13 @@ final class AlternativeMenuPanel: NSPanel {
         }
         setFrame(frame, display: false)
         menuView.resetScrollPosition()
-        orderFrontRegardless()
+        // Keep the submenu in front even when a click raises its parent.
+        parent.addChildWindow(self, ordered: .above)
         layoutAndRevealSelection()
     }
 
     func dismiss() {
+        parent?.removeChildWindow(self)
         setItems([], highlightsFirstItem: false)
         orderOut(nil)
         // A zero-duration animator update stops an in-flight fade before reuse.
