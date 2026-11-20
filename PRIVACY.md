@@ -35,6 +35,21 @@ Clipy does not currently claim that locally stored clipboard history is
 encrypted. If your Mac contains sensitive data, we recommend enabling FileVault
 and using macOS security features appropriately.
 
+## Optional Local Agent Access
+
+The experimental agent bridge is disabled by default and must be configured
+separately. Enabling **Allow agents to query text history** in Settings > Beta
+allows the companion bridge to return saved text previews to locally configured
+MCP clients. It does not open a network listener or send data to Clipy servers.
+Your agent client may send these results to its AI provider or retain them.
+Only connect clients you trust. Clipboard text can include passwords and other
+private information, and the bridge does not automatically redact secrets.
+
+Disable the setting to stop future bridge queries. This cannot recall results
+already received by a client. The setting is not an operating-system access
+control: programs running as your user may already access Clipy's local files.
+See [the bridge documentation](Tools/AgentBridge/README.md) for scope and setup.
+
 ## Network Communication
 
 Clipy's intended network communication is limited to the following services:
