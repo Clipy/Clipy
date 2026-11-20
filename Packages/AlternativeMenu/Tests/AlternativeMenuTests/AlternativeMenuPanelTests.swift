@@ -7,11 +7,12 @@ import Testing
 @MainActor
 struct AlternativeMenuPanelTests {
     @Test(arguments: [false, true])
-    func keepsMenuPanelsAboveTheMenuBar(acceptsKeyboard: Bool) {
+    func keepsMenuPanelsAboveTheMenuBarAcrossSpaces(acceptsKeyboard: Bool) {
         _ = NSApplication.shared
         let panel = AlternativeMenuPanel(acceptsKeyboard: acceptsKeyboard)
 
         #expect(panel.level == .popUpMenu)
+        #expect(panel.collectionBehavior.contains([.canJoinAllSpaces, .stationary]))
     }
 
     @Test
@@ -94,14 +95,18 @@ struct AlternativeMenuPanelTests {
     }
 
     @Test(arguments: [false, true], [false, true])
-    func cancellationCannotChangeTheNextPresentation(duringFade: Bool, blinksSelection: Bool) async {
+    func cancellationCannotChangeTheNextPresentation(duringFade: Bool, blinksSelection: Bool) async throws {
         _ = NSApplication.shared
+        let screen = try #require(NSScreen.main)
+        let point = NSPoint(x: screen.visibleFrame.midX, y: screen.visibleFrame.midY)
         let root = AlternativeMenuPanel()
         let child = AlternativeMenuPanel(acceptsKeyboard: false)
         let panels = [root, child]
         for panel in panels {
             panel.setItems([.action("Previous") { _ in }], highlightsFirstItem: true)
         }
+        root.open(at: point)
+        child.openSubmenu(beside: root, rowFrame: try #require(root.menuView.rowScreenFrame(0)), prefersLeft: false)
         var completed = false
         let fadeStarted = AsyncStream<Void>.makeStream()
         var finishFade: CheckedContinuation<Void, Never>?
@@ -134,10 +139,14 @@ struct AlternativeMenuPanelTests {
         }
 
         task.cancel()
-        for panel in panels {
+        for panel in panels.reversed() {
             panel.dismiss()
+            #expect(!panel.isVisible)
+            #expect(panel.alphaValue == 0)
             panel.setItems([.action("Next") { _ in }], highlightsFirstItem: true)
         }
+        root.open(at: point)
+        child.openSubmenu(beside: root, rowFrame: try #require(root.menuView.rowScreenFrame(0)), prefersLeft: false)
         // Deliver the old animation's completion only after the panels have been reused.
         finishFade?.resume()
         finishFade = nil
@@ -145,6 +154,7 @@ struct AlternativeMenuPanelTests {
 
         #expect(!completed)
         for panel in panels {
+            #expect(panel.isVisible)
             #expect(panel.alphaValue == 1)
             #expect(!panel.menuView.hidesSelection)
             #expect(panel.items.first?.title == "Next")
@@ -191,14 +201,19 @@ struct AlternativeMenuPanelTests {
     }
 
     @Test
-    func cancellationFadesTheMenuChainWithoutBlinking() async {
+    func cancellationFadesTheMenuChainWithoutBlinking() async throws {
         _ = NSApplication.shared
-        let panels = [AlternativeMenuPanel(), AlternativeMenuPanel(acceptsKeyboard: false)]
+        let screen = try #require(NSScreen.main)
+        let root = AlternativeMenuPanel()
+        let child = AlternativeMenuPanel(acceptsKeyboard: false)
+        let panels = [root, child]
         for panel in panels {
             panel.setItems([.action("Item") { _ in }], highlightsFirstItem: true)
         }
+        root.open(at: NSPoint(x: screen.visibleFrame.midX, y: screen.visibleFrame.midY))
+        child.openSubmenu(beside: root, rowFrame: try #require(root.menuView.rowScreenFrame(0)), prefersLeft: false)
         var completed = false
-        let task = panels[0].animateDismissal(fading: panels, blinksSelection: false) { completed = true }
+        let task = root.animateDismissal(fading: panels, blinksSelection: false) { completed = true }
         defer {
             task.cancel()
             panels.forEach { $0.dismiss() }
