@@ -41,7 +41,7 @@ public final class AlternativeMenuSession {
         case aim
     }
 
-    private let root: AlternativeMenuPanel
+    private var root: AlternativeMenuPanel
     private let keyEquivalentMatcher = AlternativeMenuKeyEquivalentMatcher()
     private let typingSelection = AlternativeMenuTypingSelection()
     private let passesScrollWheelToHeader: Bool
@@ -100,8 +100,7 @@ public final class AlternativeMenuSession {
         self.passesScrollWheelToHeader = passesScrollWheelToHeader
         self.shouldHandleMenuKey = shouldHandleMenuKey
         self.onDismiss = onDismiss
-        root.onResignKey = { [weak self] in self?.dismiss() }
-        configureAccessibility(for: root)
+        configureRoot()
     }
 
     isolated deinit {
@@ -147,6 +146,11 @@ public final class AlternativeMenuSession {
         // The dismissal callback may have opened another menu on this session.
         guard !isPresented else {
             return
+        }
+        // Removing a full-screen Space can leave a hidden all-Spaces panel on its previous desktop.
+        if !root.isOnActiveSpace {
+            root = AlternativeMenuPanel(replacing: root)
+            configureRoot()
         }
         isPresented = true
         lastPointer = NSEvent.mouseLocation
@@ -229,6 +233,11 @@ public final class AlternativeMenuSession {
 // MARK: - Submenus and Activation
 
 private extension AlternativeMenuSession {
+    func configureRoot() {
+        root.onResignKey = { [weak self] in self?.dismiss() }
+        configureAccessibility(for: root)
+    }
+
     /// Routes accessibility activation and cancellation through the normal interaction paths.
     func configureAccessibility(for panel: AlternativeMenuPanel) {
         panel.menuView.onCancelMenu = { [weak self] in

@@ -40,14 +40,33 @@ final class AlternativeMenuPanel: NSPanel {
     }
     var isRightToLeft: Bool { menuView.userInterfaceLayoutDirection == .rightToLeft }
 
-    init(
+    convenience init(
         header: AlternativeMenuHeader? = nil,
         minimumSymbolColumnWidth: CGFloat = 0,
         acceptsKeyboard: Bool = true
     ) {
+        self.init(
+            menuView: AlternativeMenuView(header: header, minimumSymbolColumnWidth: minimumSymbolColumnWidth),
+            minimumSymbolColumnWidth: minimumSymbolColumnWidth,
+            acceptsKeyboard: acceptsKeyboard
+        )
+    }
+
+    /// Move the dismissed panel's hosting view so the caller's header keeps its SwiftUI state.
+    convenience init(replacing panel: AlternativeMenuPanel) {
+        panel.onResignKey = nil
+        panel.contentView = nil
+        self.init(
+            menuView: panel.menuView,
+            minimumSymbolColumnWidth: panel.minimumSymbolColumnWidth,
+            acceptsKeyboard: panel.acceptsKeyboard
+        )
+    }
+
+    private init(menuView: AlternativeMenuView, minimumSymbolColumnWidth: CGFloat, acceptsKeyboard: Bool) {
         self.minimumSymbolColumnWidth = minimumSymbolColumnWidth
         self.acceptsKeyboard = acceptsKeyboard
-        self.menuView = AlternativeMenuView(header: header, minimumSymbolColumnWidth: minimumSymbolColumnWidth)
+        self.menuView = menuView
         super.init(
             contentRect: .zero,
             styleMask: [.borderless, .nonactivatingPanel],
@@ -57,8 +76,9 @@ final class AlternativeMenuPanel: NSPanel {
         isFloatingPanel = true
         // Setting isFloatingPanel resets the level; restore it above the menu bar.
         level = .popUpMenu
-        collectionBehavior = [.auxiliary, .stationary, .moveToActiveSpace, .fullScreenAuxiliary]
+        collectionBehavior = [.auxiliary, .stationary, .canJoinAllSpaces, .fullScreenAuxiliary]
         animationBehavior = .none
+        alphaValue = 0
         isOpaque = false
         backgroundColor = .clear
         hasShadow = true
@@ -92,6 +112,7 @@ final class AlternativeMenuPanel: NSPanel {
         anchorY = point.y
         fitMenu(on: screen, openingAt: point, anchorsToFirstItem: anchorsToFirstItem)
         menuView.resetScrollPosition()
+        alphaValue = 1
         makeKeyAndOrderFront(nil)
         layoutAndRevealSelection()
     }
@@ -117,20 +138,21 @@ final class AlternativeMenuPanel: NSPanel {
         }
         setFrame(frame, display: false)
         menuView.resetScrollPosition()
+        alphaValue = 1
         // Keep the submenu in front even when a click raises its parent.
         parent.addChildWindow(self, ordered: .above)
         layoutAndRevealSelection()
     }
 
     func dismiss() {
-        parent?.removeChildWindow(self)
-        setItems([], highlightsFirstItem: false)
-        orderOut(nil)
-        // A zero-duration animator update stops an in-flight fade before reuse.
+        // Cancel any in-flight fade and keep the hidden panel transparent during Space transitions.
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0
-            animator().alphaValue = 1
+            animator().alphaValue = 0
         }
+        parent?.removeChildWindow(self)
+        orderOut(nil)
+        setItems([], highlightsFirstItem: false)
         makeFirstResponder(nil)
     }
 

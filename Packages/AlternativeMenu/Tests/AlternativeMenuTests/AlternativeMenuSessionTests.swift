@@ -26,9 +26,10 @@ struct AlternativeMenuSessionTests {
         )
         let parentItem = try #require(root.menuView.menuAccessibilityView.accessibilityChildren()?.first as? NSAccessibilityElement)
         #expect(parentItem.accessibilityPerformPress())
-        let child = try #require(NSApp.windows.compactMap { $0 as? AlternativeMenuPanel }.first {
-            $0 !== root && $0.isVisible
-        })
+        func visibleSubmenu(of parent: AlternativeMenuPanel) -> AlternativeMenuPanel? {
+            parent.childWindows?.compactMap { $0 as? AlternativeMenuPanel }.first(where: \.isVisible)
+        }
+        let child = try #require(visibleSubmenu(of: root))
         func movePointer(to point: NSPoint) throws {
             let event = try #require(NSEvent.mouseEvent(
                 with: .mouseMoved,
@@ -50,9 +51,7 @@ struct AlternativeMenuSessionTests {
         child.selectRow(0)
         let childItem = try #require(child.menuView.menuAccessibilityView.accessibilityChildren()?.first as? NSAccessibilityElement)
         #expect(childItem.accessibilityPerformPress())
-        let grandchild = try #require(NSApp.windows.compactMap { $0 as? AlternativeMenuPanel }.first {
-            $0 !== root && $0 !== child && $0.isVisible
-        })
+        let grandchild = try #require(visibleSubmenu(of: child))
         let grandchildRow = try #require(grandchild.menuView.rowScreenFrame(0))
         if enteredDepth == 2 {
             try movePointer(to: NSPoint(x: grandchildRow.midX, y: grandchildRow.midY))
