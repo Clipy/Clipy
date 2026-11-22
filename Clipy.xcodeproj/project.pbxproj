@@ -1445,7 +1445,7 @@
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.7.5;
+				minimumVersion = 1.7.6;
 			};
 		};
 		C567A88E3026DF030070292B /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
@@ -1473,7 +1473,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 13.1.1;
+				minimumVersion = 13.2.0;
 			};
 			traits = (
 			);
@@ -1483,7 +1483,7 @@
 			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.12.1;
+				minimumVersion = 1.13.0;
 			};
 			traits = (
 				Tagged,
@@ -1550,7 +1550,7 @@
 			repositoryURL = "https://github.com/tadija/AEXML";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 4.7.3;
+				minimumVersion = 4.7.4;
 			};
 		};
 		C5E3D04F2FB43570005D632A /* XCRemoteSwiftPackageReference "Screeen" */ = {

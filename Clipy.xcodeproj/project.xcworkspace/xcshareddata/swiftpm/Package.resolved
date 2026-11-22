@@ -1,13 +1,13 @@
 {
-  "originHash" : "afc79408b2746257faac20cff68fb177f46187674d3d0a1d9d299d330c7738d1",
+  "originHash" : "6e9da83a2b557c034afe5126f9ac1dc51cdd8765b71cfd0b2291ea7bfd421fd8",
   "pins" : [
     {
       "identity" : "aexml",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tadija/AEXML",
       "state" : {
-        "revision" : "dd9206de0717d658daec6a064992894fdab8ae17",
-        "version" : "4.7.3"
+        "revision" : "d2083adcf4d1383c858f5d3d0f24256459d3f59a",
+        "version" : "4.7.4"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/app-check.git",
       "state" : {
-        "revision" : "c7eb17e5545f36e43dc50e70da09c2e999714e16",
-        "version" : "12.0.0"
+        "revision" : "b7c71458b70284cc0f5a87103f66f0b1d98b1873",
+        "version" : "12.1.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
       "state" : {
-        "revision" : "dc6dfd442b1f3ec215ed62b8beb2623ffab010d6",
-        "version" : "13.1.1"
+        "revision" : "efad2b784dfae43404dc1fcfdf272981b235e71f",
+        "version" : "13.2.0"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "0208e2681ec81f8a9c81084696f60fcce26cb7ee",
-        "version" : "3.7.0"
+        "revision" : "665eb0eab22172138bf5b3ce6d75e62b82c2ab59",
+        "version" : "3.8.0"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "1a3546fb9189292e9d64db9e72add7a286c0f85a",
-        "version" : "13.0.1"
+        "revision" : "abc3a85c786aa7077d93ab7f6709dfc9e1b6d557",
+        "version" : "13.2.0"
       }
     },
     {
@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/sqlite-data",
       "state" : {
-        "revision" : "aa613accbe882b561f26e37a348a8f42e92cd398",
-        "version" : "1.12.1"
+        "revision" : "e72164ceb92a10b62407624c98e5bc2c47d8c0e1",
+        "version" : "1.13.0"
       }
     },
     {
@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
-        "version" : "1.7.5"
+        "revision" : "88754449ab766a739610b660e117762115fabc9c",
+        "version" : "1.7.6"
       }
     },
     {
