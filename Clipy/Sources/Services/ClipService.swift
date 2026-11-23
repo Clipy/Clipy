@@ -104,10 +104,10 @@ final class ClipService {
     @objc func clearAllHistory() {
         if showsClearHistoryAlert {
             let alert = NSAlert()
-            alert.messageText = String(localized: "Clear History")
-            alert.informativeText = String(localized: "Are you sure you want to clear your clipboard history?")
-            alert.addButton(withTitle: String(localized: "Clear History"))
-            alert.addButton(withTitle: String(localized: "Cancel"))
+            alert.messageText = String(localized: .clearHistory)
+            alert.informativeText = String(localized: .areYouSureYouWantToClearYourClipboardHistory)
+            alert.addButton(withTitle: String(localized: .clearHistory))
+            alert.addButton(withTitle: String(localized: .cancel))
             alert.showsSuppressionButton = true
 
             NSApp.activate(ignoringOtherApps: true)

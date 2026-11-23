@@ -36,7 +36,7 @@ final class AlternativeMenuBuilder {
             return [
                 .sectionHeader(
                     attributedTitle: NSAttributedString(
-                        string: String(localized: "No Search Results"),
+                        string: String(localized: .noSearchResults),
                         attributes: [.font: menuFont, .foregroundColor: NSColor.secondaryLabelColor]
                     )
                 )
@@ -55,8 +55,8 @@ final class AlternativeMenuBuilder {
                 match.snippet, folderTitle: match.folderTitle, listNumber: nativeBuilder.firstItemNumber + index, font: menuFont
             )
         }
-        let history = (String(localized: "History"), historyItems)
-        let snippet = (String(localized: "Snippet"), snippetItems)
+        let history = (String(localized: .history), historyItems)
+        let snippet = (String(localized: .snippet), snippetItems)
         let sections = snippetsFirst ? [snippet, history] : [history, snippet]
         var items: [AlternativeMenuItem] = []
         for (title, rows) in sections where !rows.isEmpty {

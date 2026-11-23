@@ -115,10 +115,10 @@ class AppDelegate: NSObject {
     // MARK: - Login Item Methods
     private func promptToAddLoginItems() {
         let alert = NSAlert()
-        alert.messageText = String(localized: "Launch Clipy on system startup?")
-        alert.informativeText = String(localized: "You can change this later in Settings.")
-        alert.addButton(withTitle: String(localized: "Launch on system startup"))
-        alert.addButton(withTitle: String(localized: "Don't Launch"))
+        alert.messageText = String(localized: .launchClipyOnSystemStartup)
+        alert.informativeText = String(localized: .youCanChangeThisLaterInSettings)
+        alert.addButton(withTitle: String(localized: .launchOnSystemStartup))
+        alert.addButton(withTitle: String(localized: .dontLaunch))
         alert.showsSuppressionButton = true
         NSApp.activate(ignoringOtherApps: true)
 
