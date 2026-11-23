@@ -36,18 +36,22 @@ public final class AlternativeMenuSession {
     }
 
     /// A delayed submenu opening or a grace period for moving diagonally into a child.
-    private enum HoverTransition: Equatable {
+    private enum SubmenuTransition: Equatable {
         case open(AlternativeMenuPanel, Int)
         case aim
     }
 
     private var root: AlternativeMenuPanel
+    /// Receives menu navigation even when a child is visible as a preview.
+    private var activePanel: AlternativeMenuPanel
     private let keyEquivalentMatcher = AlternativeMenuKeyEquivalentMatcher()
     private let typingSelection = AlternativeMenuTypingSelection()
     private let passesScrollWheelToHeader: Bool
     private let shouldHandleMenuKey: ((NSEvent) -> Bool)?
     private let onDismiss: (() -> Void)?
     private var submenus: [Submenu] = []
+    /// Keep one hidden submenu window for the next sibling while this presentation is open.
+    private var reusableSubmenuPanel: AlternativeMenuPanel?
     /// Marks an active presentation, including setup before the root is visible.
     private var isPresented = false
     private var eventMonitors: [Any] = []
@@ -57,7 +61,7 @@ public final class AlternativeMenuSession {
     private var trackingRowPress = false
     /// Keeps a mouse-down-opened menu visible when that press ends without dragging.
     private var isOpeningMousePress = false
-    private var pendingHover: (transition: HoverTransition, task: Task<Void, Never>)?
+    private var pendingSubmenuTransition: (transition: SubmenuTransition, task: Task<Void, Never>)?
     private var edgeScrollTask: Task<Void, Never>?
     /// Blocks menu interaction during a fade and allows reopening to cancel pending actions.
     private var dismissalTask: Task<Void, Never>?
@@ -97,6 +101,7 @@ public final class AlternativeMenuSession {
         onDismiss: (() -> Void)? = nil
     ) {
         self.root = root
+        self.activePanel = root
         self.passesScrollWheelToHeader = passesScrollWheelToHeader
         self.shouldHandleMenuKey = shouldHandleMenuKey
         self.onDismiss = onDismiss
@@ -128,8 +133,9 @@ public final class AlternativeMenuSession {
     ///     no effect without a header. Screen constraints and opening above the
     ///     anchor take precedence over this alignment. Does not change selection.
     ///   - highlightsFirstItem: Whether to select and reveal the first enabled
-    ///     action or submenu parent. Defaults to no initial selection; headers,
-    ///     separators, and disabled items are never selected.
+    ///     action or submenu parent, opening its submenu after the usual delay.
+    ///     The default leaves the menu unselected. Selection skips headers,
+    ///     separators, and disabled items.
     ///   - event: The initiating left-mouse-down event, when opening from a press.
     ///     Passing it lets the user drag into a row and release to activate it.
     ///     Releasing without dragging keeps the menu open. Other event types do
@@ -150,6 +156,7 @@ public final class AlternativeMenuSession {
         // Removing a full-screen Space can leave a hidden all-Spaces panel on its previous desktop.
         if !root.isOnActiveSpace {
             root = AlternativeMenuPanel(replacing: root)
+            activePanel = root
             configureRoot()
         }
         isPresented = true
@@ -164,6 +171,7 @@ public final class AlternativeMenuSession {
         trackingRowPress = event?.type == .leftMouseDown
         isOpeningMousePress = trackingRowPress
         startMonitoring()
+        updateSubmenuForSelection(in: root, opensSubmenu: true)
     }
 
     /// Replaces the current root contents, selection, and shortcut mappings.
@@ -181,8 +189,9 @@ public final class AlternativeMenuSession {
     ///   - items: The complete replacement contents. The caller supplies each item's
     ///     enabled state; the session does not perform responder-chain validation.
     ///   - highlightsFirstItem: Whether to select and reveal the first enabled action
-    ///     or submenu parent. When `false`, selection is cleared and scrolling resets
-    ///     to the top. When no item is enabled, nothing is selected.
+    ///     or submenu parent, opening its submenu after the usual delay.
+    ///     When `false`, selection is cleared and scrolling resets to the top.
+    ///     When no item is enabled, nothing is selected.
     public func updateItems(_ items: [AlternativeMenuItem], highlightsFirstItem: Bool = false) {
         guard isPresented, dismissalTask == nil else {
             return
@@ -191,13 +200,14 @@ public final class AlternativeMenuSession {
             dismiss()
             return
         }
-        stopPointerTimers()
+        stopInteractionTimers()
         typingSelection.reset()
         trackingRowPress = false
         isOpeningMousePress = false
         closeSubmenus(after: root)
         keyEquivalentMatcher.updateItems(items)
         root.updateItems(items, highlightsFirstItem: highlightsFirstItem) { keyEquivalentMatcher.display(at: [$0]) }
+        updateSubmenuForSelection(in: root, opensSubmenu: true)
     }
 
     /// Ends the current presentation immediately, without a dismissal animation.
@@ -218,12 +228,13 @@ public final class AlternativeMenuSession {
         dismissalTask = nil
         eventMonitors.forEach(NSEvent.removeMonitor)
         eventMonitors.removeAll()
-        stopPointerTimers()
+        stopInteractionTimers()
         typingSelection.reset()
         trackingRowPress = false
         isOpeningMousePress = false
         hoveredPanel = nil
         closeSubmenus(after: root)
+        reusableSubmenuPanel = nil
         keyEquivalentMatcher.updateItems([])
         root.dismiss()
         onDismiss?()
@@ -247,7 +258,7 @@ private extension AlternativeMenuSession {
             guard let self, let panel else {
                 return
             }
-            stopPointerTimers()
+            stopInteractionTimers()
             activateRow(index, in: panel, modifiers: NSEvent.modifierFlags, fromKeyboard: true)
         }
     }
@@ -266,6 +277,10 @@ private extension AlternativeMenuSession {
 
     /// Keeps ancestor selections visible, emphasizing only the menu receiving input.
     func emphasizeSelection(in activePanel: AlternativeMenuPanel) {
+        if self.activePanel !== activePanel {
+            typingSelection.reset()
+            self.activePanel = activePanel
+        }
         for panel in [root] + submenus.map(\.panel) {
             panel.menuView.isSelectionEmphasized = panel === activePanel
         }
@@ -274,9 +289,6 @@ private extension AlternativeMenuSession {
     /// Closes descendants deepest first, keeping the parent visible and clearing its expansion state.
     func closeSubmenus(after panel: AlternativeMenuPanel) {
         let index = childIndex(after: panel)
-        if index < submenus.count {
-            typingSelection.reset()
-        }
         while submenus.count > index {
             let child = submenus.removeLast().panel
             if hoveredPanel === child {
@@ -284,6 +296,7 @@ private extension AlternativeMenuSession {
                 stopEdgeScrolling()
             }
             child.dismiss()
+            reusableSubmenuPanel = child
         }
         panel.menuView.setExpandedRow(nil)
         emphasizeSelection(in: panel)
@@ -291,41 +304,50 @@ private extension AlternativeMenuSession {
 
     /// Opens an enabled parent's nonempty submenu, or enters an already open child.
     ///
-    /// Keyboard entry can select the first item in a child previously opened by hover.
-    /// Children do not take keyboard focus from the root; this session routes keys to
-    /// the deepest open menu while the root retains header editing and IME state.
+    /// Keyboard entry selects the first enabled item in a previewed child.
+    /// The root window retains header editing and IME focus throughout navigation.
     func openSubmenu(of panel: AlternativeMenuPanel, row: Int, highlightsFirstItem: Bool) {
         guard panel.items.indices.contains(row), panel.items[row].isEnabled,
             let menu = panel.items[row].submenu, let rowFrame = panel.menuView.rowScreenFrame(row)
         else {
             return
         }
+        let childPanel: AlternativeMenuPanel
         if let child = child(of: panel), child.parentRow == row {
-            if highlightsFirstItem, child.panel.selection == nil {
-                child.panel.moveSelection(by: 1)
+            childPanel = child.panel
+            if highlightsFirstItem, childPanel.selection == nil {
+                childPanel.moveSelection(by: 1)
             }
-            emphasizeSelection(in: highlightsFirstItem ? child.panel : panel)
-            return
+        } else {
+            closeSubmenus(after: panel)
+            guard menu.items.contains(where: { !$0.isSeparator }) else {
+                // Keyboard entry de-emphasizes the parent even when its child has no visible rows.
+                panel.menuView.isSelectionEmphasized = !highlightsFirstItem
+                if highlightsFirstItem {
+                    typingSelection.reset()
+                }
+                return
+            }
+            childPanel = reusableSubmenuPanel ?? AlternativeMenuPanel(
+                minimumSymbolColumnWidth: panel.minimumSymbolColumnWidth,
+                acceptsKeyboard: false
+            )
+            reusableSubmenuPanel = nil
+            let path = submenus.map(\.parentRow) + [row]
+            childPanel.setItems(menu.items, highlightsFirstItem: highlightsFirstItem) { keyEquivalentMatcher.display(at: path + [$0]) }
+            configureAccessibility(for: childPanel)
+            childPanel.openSubmenu(beside: panel, rowFrame: rowFrame, prefersLeft: root.isRightToLeft)
+            guard childPanel.isVisible else {
+                return
+            }
+            panel.toolTip.hide()
+            panel.menuView.setExpandedRow(row)
+            submenus.append(Submenu(panel: childPanel, parentRow: row))
         }
-        closeSubmenus(after: panel)
-        typingSelection.reset()
-        guard menu.items.contains(where: { !$0.isSeparator }) else {
-            // Keyboard entry de-emphasizes the parent even when its child has no visible rows.
-            panel.menuView.isSelectionEmphasized = !highlightsFirstItem
-            return
-        }
-        let childPanel = AlternativeMenuPanel(minimumSymbolColumnWidth: panel.minimumSymbolColumnWidth, acceptsKeyboard: false)
-        let path = submenus.map(\.parentRow) + [row]
-        childPanel.setItems(menu.items, highlightsFirstItem: highlightsFirstItem) { keyEquivalentMatcher.display(at: path + [$0]) }
-        configureAccessibility(for: childPanel)
-        childPanel.openSubmenu(beside: panel, rowFrame: rowFrame, prefersLeft: root.isRightToLeft)
-        guard childPanel.isVisible else {
-            return
-        }
-        panel.toolTip.hide()
-        panel.menuView.setExpandedRow(row)
-        submenus.append(Submenu(panel: childPanel, parentRow: row))
         emphasizeSelection(in: highlightsFirstItem ? childPanel : panel)
+        if highlightsFirstItem {
+            updateSubmenuForSelection(in: childPanel, opensSubmenu: true)
+        }
     }
 
     /// Confirms an action or enters a submenu for pointer, keyboard, and accessibility input.
@@ -341,7 +363,10 @@ private extension AlternativeMenuSession {
                 dismiss()
             } else {
                 panel.selectRow(index, scroll: fromKeyboard)
-                openSubmenu(of: panel, row: index, highlightsFirstItem: fromKeyboard)
+                // A click on the same parent keeps the original opening deadline.
+                if fromKeyboard || pendingSubmenuTransition?.transition != .open(panel, index) {
+                    openSubmenu(of: panel, row: index, highlightsFirstItem: fromKeyboard)
+                }
             }
         case .action(_, let perform):
             confirm(index, in: panel, modifiers: modifiers, perform: perform)
@@ -369,7 +394,7 @@ private extension AlternativeMenuSession {
         guard isPresented, dismissalTask == nil else {
             return
         }
-        stopPointerTimers()
+        stopInteractionTimers()
         let panels = [root] + submenus.map(\.panel)
         panels.forEach { $0.toolTip.hide() }
         dismissalTask = (panel ?? root).animateDismissal(fading: panels, blinksSelection: panel != nil) { [weak self] in
@@ -382,9 +407,26 @@ private extension AlternativeMenuSession {
         }
     }
 
+    /// Moving between siblings closes the old child immediately and opens the new
+    /// one after the submenu delay, leaving navigation in the parent.
+    func updateSubmenuForSelection(in panel: AlternativeMenuPanel, opensSubmenu: Bool) {
+        if let child = child(of: panel) {
+            guard child.parentRow != panel.selection else {
+                cancelSubmenuTransition()
+                return
+            }
+            closeSubmenus(after: panel)
+        }
+        if opensSubmenu, let row = panel.selection, panel.items[row].submenu != nil {
+            scheduleSubmenuTransition(.open(panel, row), after: .milliseconds(200))
+        } else {
+            cancelSubmenuTransition()
+        }
+    }
+
     // MARK: - Keyboard
 
-    /// Routes keys to the deepest open menu while respecting header editing and IME composition.
+    /// Routes keys to the active menu while respecting header editing and IME composition.
     ///
     /// Marked text takes precedence over all menu keys, including Escape. Otherwise,
     /// Escape and Command-period dismiss before consulting the header's key policy.
@@ -404,7 +446,6 @@ private extension AlternativeMenuSession {
         guard !root.hasMarkedText else {
             return false
         }
-        stopPointerTimers()
         let modifiers = event.modifierFlags.intersection([.command, .option, .control, .shift])
         let key = event.charactersIgnoringModifiers
         if key == "\u{1b}" || (key == "." && modifiers == .command) {
@@ -412,17 +453,23 @@ private extension AlternativeMenuSession {
             return true
         }
         let handlesMenuKey = shouldHandleMenuKey?(event)
-        let panel = submenus.last?.panel ?? root
+        let panel = activePanel
         let headerIsFocused = panel === root && root.isHeaderControlFocused
-        guard handlesMenuKey ?? !headerIsFocused else {
+        let opens = root.isRightToLeft ? NSEvent.SpecialKey.leftArrow : .rightArrow
+        let closes = root.isRightToLeft ? NSEvent.SpecialKey.rightArrow : .leftArrow
+        let entersPreview = modifiers.isEmpty && event.specialKey == opens && child(of: panel) != nil
+        stopPointerTimers()
+        guard handlesMenuKey ?? (!headerIsFocused || entersPreview) else {
             return false
         }
+        let navigatesRows = modifiers.isEmpty && (event.specialKey == .upArrow || event.specialKey == .downArrow)
         let handlesKeyEquivalent = handlesMenuKey ?? !root.isHeaderControlFocused
         if !modifiers.isEmpty, handlesKeyEquivalent, handleKeyEquivalent(event) {
             return true
         }
         let activatesWithSpace = key == " " && modifiers.isEmpty && !root.isHeaderControlFocused
         if key == "\r" || key == "\u{3}" || activatesWithSpace {
+            cancelSubmenuTransition()
             if let selection = panel.selection {
                 activateRow(selection, in: panel, modifiers: modifiers, fromKeyboard: true)
             } else if panel !== root {
@@ -435,19 +482,19 @@ private extension AlternativeMenuSession {
         guard modifiers.isEmpty else {
             return selectByTyping(event, in: panel)
         }
-        let opens = root.isRightToLeft ? NSEvent.SpecialKey.leftArrow : .rightArrow
-        let closes = root.isRightToLeft ? NSEvent.SpecialKey.rightArrow : .leftArrow
         switch event.specialKey {
         case opens:
-            // Enter a submenu that was opened by hovering over its parent.
+            // A pointer can enter a child without highlighting an enabled row.
             if panel !== root, panel.selection == nil {
                 panel.moveSelection(by: 1)
                 emphasizeSelection(in: panel)
+                updateSubmenuForSelection(in: panel, opensSubmenu: true)
                 return true
             }
             guard let selection = panel.selection, panel.items[selection].submenu != nil else {
                 return false
             }
+            cancelSubmenuTransition()
             openSubmenu(of: panel, row: selection, highlightsFirstItem: true)
             return true
         case closes:
@@ -456,10 +503,12 @@ private extension AlternativeMenuSession {
                 emphasizeSelection(in: panel)
                 return true
             }
-            guard panel !== root else {
-                return false
+            guard let index = submenus.firstIndex(where: { $0.panel === panel }) else {
+                return !headerIsFocused && child(of: panel) != nil
             }
-            closeSubmenus(after: submenus.dropLast().last?.panel ?? root)
+            cancelSubmenuTransition()
+            closeSubmenus(after: index == 0 ? root : submenus[index - 1].panel)
+            return true
         case .downArrow:
             panel.moveSelection(by: 1)
         case .upArrow:
@@ -483,7 +532,8 @@ private extension AlternativeMenuSession {
             }
             return selectByTyping(event, in: panel)
         }
-        emphasizeSelection(in: submenus.last?.panel ?? root)
+        updateSubmenuForSelection(in: panel, opensSubmenu: navigatesRows)
+        emphasizeSelection(in: panel)
         typingSelection.reset()
         return true
     }
@@ -496,6 +546,7 @@ private extension AlternativeMenuSession {
         let result = typingSelection.select(event, in: panel.items)
         if let index = result.index {
             panel.selectRow(index, scroll: true)
+            updateSubmenuForSelection(in: panel, opensSubmenu: false)
             emphasizeSelection(in: panel)
         }
         return result.handled
@@ -554,6 +605,7 @@ private extension AlternativeMenuSession {
                 }
                 stopPointerTimers()
                 if panel.scrollWheelByEvent(event) {
+                    cancelSubmenuTransition()
                     closeSubmenus(after: panel)
                 }
                 return nil
@@ -608,29 +660,31 @@ private extension AlternativeMenuSession {
             return trackingRowPress && event.type == .leftMouseDragged
         case .leftMouseDown, .rightMouseDown, .otherMouseDown:
             isOpeningMousePress = false
-            stopPointerTimers()
+            stopEdgeScrolling()
             hoveredPanel?.toolTip.hide()
             guard isLocal, let window = event.window as? AlternativeMenuPanel, contains(window), let panel else {
+                cancelSubmenuTransition()
                 // The input method's candidate window can be owned by another process.
                 if isLocal || !root.hasMarkedText {
                     dismiss()
                 }
                 return false
             }
-            guard event.type == .leftMouseDown else {
-                return false
+            if event.type == .leftMouseDown, let index = panel.rowIndex(at: point) {
+                if pendingSubmenuTransition?.transition != .open(panel, index) {
+                    cancelSubmenuTransition()
+                }
+                selectHoveredRow(index, in: panel)
+                trackingRowPress = true
+                return true
             }
-            if panel.edgeScrollDirection(at: point) != 0 {
+            cancelSubmenuTransition()
+            if event.type == .leftMouseDown, panel.edgeScrollDirection(at: point) != 0 {
                 lastPointer = point
                 updateHover(in: panel, at: point, previous: nil, showsToolTip: false)
                 return true
             }
-            guard let index = panel.rowIndex(at: point) else {
-                return false
-            }
-            selectHoveredRow(index, in: panel)
-            trackingRowPress = true
-            return true
+            return false
         case .leftMouseUp:
             guard trackingRowPress else {
                 return false
@@ -682,7 +736,7 @@ private extension AlternativeMenuSession {
                 submenuFrame: child.panel.frame,
                 opensLeft: child.panel.frame.minX < parent.frame.minX
             ) {
-            scheduleHover(.aim, after: .milliseconds(500))
+            scheduleSubmenuTransition(.aim, after: .milliseconds(500))
             return
         }
 
@@ -692,7 +746,7 @@ private extension AlternativeMenuSession {
             hoveredPanel = panel
         }
         guard let panel else {
-            cancelHover()
+            cancelSubmenuTransition()
             // Once entered, a submenu stays open when the pointer leaves the menu chain.
             let retainedPanel = submenus.last(where: \.hasBeenHovered)?.panel ?? root
             closeSubmenus(after: retainedPanel)
@@ -701,11 +755,7 @@ private extension AlternativeMenuSession {
         }
 
         selectHoveredRow(index, in: panel)
-        if let index, panel.selection == index, panel.items[index].submenu != nil, child(of: panel) == nil {
-            scheduleHover(.open(panel, index), after: .milliseconds(200))
-        } else {
-            cancelHover()
-        }
+        updateSubmenuForSelection(in: panel, opensSubmenu: true)
         let overScrollEdge = panel.edgeScrollDirection(at: point) != 0
         if showsToolTip && !overScrollEdge {
             panel.updateToolTip(for: index)
@@ -719,39 +769,49 @@ private extension AlternativeMenuSession {
         }
     }
 
-    /// Keeps one pending hover transition without restarting its delay for the same target.
-    /// Revalidates the pointer location before opening a child or applying deferred selection.
-    private func scheduleHover(_ transition: HoverTransition, after delay: Duration) {
-        guard pendingHover?.transition != transition else {
+    /// Keeps one pending submenu transition without restarting its delay for the same target.
+    /// Revalidates the pointer or selected row before applying the transition.
+    private func scheduleSubmenuTransition(_ transition: SubmenuTransition, after delay: Duration) {
+        guard pendingSubmenuTransition?.transition != transition else {
             return
         }
-        cancelHover()
+        cancelSubmenuTransition()
+        let scheduledAt = ContinuousClock.now
         let task = Task { [weak self] in
-            try? await Task.sleep(for: delay)
+            // Count the time queued on the main actor toward the submenu opening delay.
+            let start = transition == .aim ? ContinuousClock.now : scheduledAt
+            try? await Task.sleep(until: start + delay, clock: .continuous)
             guard !Task.isCancelled, let self, isPresented else {
                 return
             }
-            pendingHover = nil
+            pendingSubmenuTransition = nil
             switch transition {
             case let .open(panel, row):
-                guard self.panel(at: lastPointer) === panel, panel.rowIndex(at: lastPointer) == row else {
-                    return
+                if panel === activePanel, panel.selection == row {
+                    openSubmenu(of: panel, row: row, highlightsFirstItem: false)
                 }
-                openSubmenu(of: panel, row: row, highlightsFirstItem: false)
             case .aim:
                 updateHover(in: panel(at: lastPointer), at: lastPointer, previous: nil, showsToolTip: !trackingRowPress)
             }
         }
-        pendingHover = (transition, task)
+        pendingSubmenuTransition = (transition, task)
     }
 
-    func cancelHover() {
-        pendingHover?.task.cancel()
-        pendingHover = nil
+    func cancelSubmenuTransition() {
+        pendingSubmenuTransition?.task.cancel()
+        pendingSubmenuTransition = nil
     }
 
+    /// Stops edge scrolling and diagonal navigation grace while preserving a pending submenu opening.
     func stopPointerTimers() {
-        cancelHover()
+        stopEdgeScrolling()
+        if pendingSubmenuTransition?.transition == .aim {
+            cancelSubmenuTransition()
+        }
+    }
+
+    func stopInteractionTimers() {
+        cancelSubmenuTransition()
         stopEdgeScrolling()
     }
 

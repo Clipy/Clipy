@@ -41,10 +41,10 @@ public extension AlternativeMenuSession {
     ///     and shortcut matching even when a header control has focus; an event
     ///     the menu does not handle still continues through the responder chain.
     ///     Returning `false` leaves the event to the responder chain. With `nil`,
-    ///     a focused header receives events instead of the root menu;
-    ///     an open submenu may still receive navigation, but shortcuts remain
-    ///     disabled while a header control has focus. Typing selection also stays
-    ///     disabled during header focus, even when the policy returns `true`.
+    ///     a focused header receives root menu keys. The unmodified opening arrow
+    ///     (Right in a left-to-right layout) enters a visible child, where menu
+    ///     navigation resumes. Shortcuts require an explicit `true` while a header
+    ///     control has focus. Typing selection stays disabled during header focus.
     ///     Marked text bypasses this policy so the input method handles composition.
     ///     Otherwise, Escape and Command-period dismiss before consulting it.
     ///   - onDismiss: A callback retained by the session and called synchronously
