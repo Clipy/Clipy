@@ -54,7 +54,9 @@ Items can also include an `image`, `toolTip`, or `attributedTitle`. Action short
 Command by default; specify `keyEquivalentModifierMask` for other modifiers.
 
 Pass `at:` to choose a screen position or `highlightsFirstItem: true` to select
-the first enabled item when opening. For a menu opened on mouse-down, pass
+the first enabled item when opening. If that item has a submenu, it opens after
+the same short delay as when moving to it with the Up or Down arrow key.
+For a menu opened on mouse-down, pass
 the triggering event as `event:` to support dragging into an item to select it.
 
 Use `isVisible` to check whether the menu is open and `dismiss()` to close it.
@@ -88,9 +90,10 @@ session.updateItems([
 ])
 ```
 
-Use SwiftUI's focus management for controls in the header. Focused controls
-receive key events by default; use `shouldHandleMenuKey` when selected events,
-such as arrow keys, should navigate the menu instead.
+Use SwiftUI's focus management for controls in the header. By default, the
+focused control receives root menu keys. When a submenu is visible, the opening
+arrow (Right in a left-to-right layout) enters it. Use `shouldHandleMenuKey`
+to choose which events the menu may handle while the header has focus.
 
 ## Compatibility
 
