@@ -59,14 +59,14 @@ extension NSMenuBuilder {
 
         menu.addItem(.separator())
         if showsClearHistoryMenuItem {
-            let item = NSMenuItem(title: String(localized: "Clear History"), action: #selector(AppDelegate.clearAllHistory))
+            let item = NSMenuItem(title: String(localized: .clearHistory), action: #selector(AppDelegate.clearAllHistory))
             item.isEnabled = !histories.isEmpty
             menu.addItem(item)
         }
-        menu.addItem(NSMenuItem(title: String(localized: "Edit Snippets"), action: #selector(AppDelegate.showSnippetEditorWindow)))
-        menu.addItem(NSMenuItem(title: String(localized: "Settings…"), action: #selector(AppDelegate.showSettingsWindow), keyEquivalent: ","))
+        menu.addItem(NSMenuItem(title: String(localized: .editSnippets), action: #selector(AppDelegate.showSnippetEditorWindow)))
+        menu.addItem(NSMenuItem(title: String(localized: .settings), action: #selector(AppDelegate.showSettingsWindow), keyEquivalent: ","))
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: String(localized: "Quit Clipy"), action: #selector(AppDelegate.terminate)))
+        menu.addItem(NSMenuItem(title: String(localized: .quitClipy), action: #selector(AppDelegate.terminate)))
         return menu
     }
 
@@ -150,7 +150,7 @@ private extension NSMenuBuilder {
     }
 
     func addHistoryItems(_ menu: NSMenu, details historyDetails: [PasteboardHistoryDetail]) {
-        menu.addItem(.sectionHeader(title: String(localized: "History")))
+        menu.addItem(.sectionHeader(title: String(localized: .history)))
 
         let firstIndex = firstItemNumber
         let inlineCount = min(max(inlineMenuItemLimit, 0), historyDetails.count)
@@ -180,7 +180,7 @@ private extension NSMenuBuilder {
 
     func addSnippetItems(_ menu: NSMenu, details: [SnippetFolderDetail]) {
         guard !details.isEmpty else { return }
-        menu.addItem(.sectionHeader(title: String(localized: "Snippet")))
+        menu.addItem(.sectionHeader(title: String(localized: .snippet)))
 
         let firstIndex = firstItemNumber
         for detail in details where detail.folder.isEnabled {

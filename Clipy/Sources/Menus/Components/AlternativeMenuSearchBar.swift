@@ -36,11 +36,11 @@ struct AlternativeMenuSearchBar: View {
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
-            TextField("Search", text: $state.text)
+            TextField(.search, text: $state.text, prompt: nil)
                 .textFieldStyle(.plain)
                 .autocorrectionDisabled()
                 .focused($isFocused)
-                .accessibilityLabel(Text("Search"))
+                .accessibilityLabel(Text(.search))
                 .accessibilityAddTraits(.isSearchField)
 
             if !state.text.isEmpty {
@@ -52,7 +52,7 @@ struct AlternativeMenuSearchBar: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .accessibilityLabel(Text("Clear Search"))
+                .accessibilityLabel(Text(.clearSearch))
             }
         }
         .font(Font(NSFont.menuFont(ofSize: 0)))

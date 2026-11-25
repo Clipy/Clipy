@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Allow Clipy in System Settings > Privacy & Security > Accessibility." : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -54,6 +55,7 @@
       }
     },
     "Are you sure want to delete this item?" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -100,6 +102,7 @@
       }
     },
     "Are you sure you want to clear your clipboard history?" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -146,6 +149,7 @@
       }
     },
     "Cancel" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -192,6 +196,7 @@
       }
     },
     "Clear History" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -286,6 +291,7 @@
       }
     },
     "Delete Item" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -332,6 +338,7 @@
       }
     },
     "Don't Launch" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -378,6 +385,7 @@
       }
     },
     "Edit Snippets" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -430,6 +438,7 @@
       }
     },
     "History" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -476,6 +485,7 @@
       }
     },
     "Launch Clipy on system startup?" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -522,6 +532,7 @@
       }
     },
     "Launch on system startup" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -569,6 +580,7 @@
     },
     "No Search Results" : {
       "comment" : "Message shown when a clipboard menu search finds no matching items.",
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -615,6 +627,7 @@
       }
     },
     "Open System Settings" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -667,6 +680,7 @@
       }
     },
     "Please allow Accessibility" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -719,6 +733,7 @@
       }
     },
     "Please fill in the contents of the snippet" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -765,6 +780,7 @@
       }
     },
     "Quit Clipy" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -812,6 +828,7 @@
     },
     "Search" : {
       "comment" : "Placeholder and accessibility label for the clipboard menu search field.",
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -858,6 +875,7 @@
       }
     },
     "Settings…" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -910,6 +928,7 @@
       }
     },
     "Snippet" : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -956,6 +975,7 @@
       }
     },
     "You can change this later in Settings." : {
+      "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
