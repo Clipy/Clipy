@@ -77,6 +77,10 @@ public final class AlternativeMenuSession {
     /// Returns `false` after dismissal or when selection has been cleared.
     public var hasHighlightedItem: Bool { root.selection != nil }
 
+    /// Whether pressing Up or Down at an edge selects the opposite end of the active menu.
+    /// Key repeats always stop at the edge. Defaults to `false`.
+    public var isVerticalArrowKeyNavigationLoopingEnabled = false // swiftlint:disable:this identifier_name
+
     /// Creates a session without a custom header. Creating it does not show a menu.
     ///
     /// - Parameters:
@@ -423,9 +427,11 @@ private extension AlternativeMenuSession {
             cancelSubmenuTransition()
         }
     }
+}
 
-    // MARK: - Keyboard
+// MARK: - Keyboard
 
+extension AlternativeMenuSession {
     /// Routes keys to the active menu while respecting header editing and IME composition.
     ///
     /// Marked text takes precedence over all menu keys, including Escape. Otherwise,
@@ -509,10 +515,9 @@ private extension AlternativeMenuSession {
             cancelSubmenuTransition()
             closeSubmenus(after: index == 0 ? root : submenus[index - 1].panel)
             return true
-        case .downArrow:
-            panel.moveSelection(by: 1)
-        case .upArrow:
-            panel.moveSelection(by: -1)
+        case .downArrow, .upArrow:
+            let direction = event.specialKey == .downArrow ? 1 : -1
+            panel.moveSelection(by: direction, wrapping: isVerticalArrowKeyNavigationLoopingEnabled && !event.isARepeat)
         case .pageUp:
             panel.selectRow(panel.menuView.scrollPage(down: false))
         case .pageDown:
@@ -539,7 +544,7 @@ private extension AlternativeMenuSession {
     }
 
     /// Applies native title-prefix selection only when no header control has focus.
-    func selectByTyping(_ event: NSEvent, in panel: AlternativeMenuPanel) -> Bool {
+    private func selectByTyping(_ event: NSEvent, in panel: AlternativeMenuPanel) -> Bool {
         guard !root.isHeaderControlFocused else {
             return false
         }
@@ -555,7 +560,7 @@ private extension AlternativeMenuSession {
     /// Matches shortcuts across the entire menu, including unopened submenus.
     /// Matches in open menus use confirmation effects; other matches dismiss and run directly.
     /// A handled native match consumes the event even if it produces no action.
-    func handleKeyEquivalent(_ event: NSEvent) -> Bool {
+    private func handleKeyEquivalent(_ event: NSEvent) -> Bool {
         let result = keyEquivalentMatcher.match(event)
         guard result.handled else {
             return false

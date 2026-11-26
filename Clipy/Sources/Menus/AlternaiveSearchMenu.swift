@@ -127,7 +127,7 @@ final class AlternaiveSearchMenu {
         let fieldHeight: CGFloat = 24
         let topPadding: CGFloat = 10
         let bottomPadding: CGFloat = 2
-        return AlternativeMenuSession(
+        let session = AlternativeMenuSession(
             headerHeight: topPadding + fieldHeight + bottomPadding,
             minimumSymbolColumnWidth: builder.minimumSymbolColumnWidth,
             passesScrollWheelToHeader: false,
@@ -148,6 +148,8 @@ final class AlternaiveSearchMenu {
                     .padding(.bottom, bottomPadding)
             }
         )
+        session.isVerticalArrowKeyNavigationLoopingEnabled = true
+        return session
     }
 }
 

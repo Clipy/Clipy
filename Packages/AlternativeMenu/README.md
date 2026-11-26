@@ -61,6 +61,10 @@ the triggering event as `event:` to support dragging into an item to select it.
 
 Use `isVisible` to check whether the menu is open and `dismiss()` to close it.
 
+Set `session.isVerticalArrowKeyNavigationLoopingEnabled = true` to let Up on the first enabled item
+select the last, and Down on the last select the first. Holding an arrow key
+stops at the edge until the user releases and presses it again.
+
 ## Custom headers and updates
 
 Provide a SwiftUI view when creating the session. `headerHeight` includes any
