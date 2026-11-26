@@ -236,14 +236,17 @@ final class AlternativeMenuPanel: NSPanel {
         }
     }
 
-    func moveSelection(by direction: Int) {
+    func moveSelection(by direction: Int, wrapping: Bool = false) {
         let current = selection
         let isEnabled: (Int) -> Bool = { self.items[$0].isEnabled }
-        let adjacent =
+        var next =
             direction > 0
             ? items.indices.dropFirst((current ?? -1) + 1).first(where: isEnabled)
             : items.indices.prefix(current ?? items.count).last(where: isEnabled)
-        if let next = adjacent ?? current {
+        if next == nil, wrapping, current != nil {
+            next = direction > 0 ? items.indices.first(where: isEnabled) : items.indices.last(where: isEnabled)
+        }
+        if let next = next ?? current {
             selectRow(next, scroll: true)
         }
     }

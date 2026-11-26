@@ -1,3 +1,5 @@
+// swiftlint:disable file_length
+
 import AppKit
 import SwiftUI
 import Testing
@@ -168,6 +170,57 @@ struct AlternativeMenuSessionTests {
         #expect(root.menuView.expandedRow == (hasChildItem ? 1 : nil))
         #expect(parent.isAccessibilityExpanded() == hasChildItem)
         #expect(!root.menuView.isSelectionEmphasized)
+    }
+}
+
+extension AlternativeMenuSessionTests {
+    @Test
+    func arrowNavigationWrapsOnlyOnFreshPressesWhenEnabled() throws {
+        let items: [AlternativeMenuItem] = [
+            .sectionHeader("Results"),
+            .action("First") { _ in },
+            .separator,
+            .action("Last") { _ in },
+            .action("Disabled", isEnabled: false) { _ in }
+        ]
+        _ = NSApplication.shared
+        let root = AlternativeMenuPanel()
+        let session = AlternativeMenuSession(root: root)
+        root.setItems(items, highlightsFirstItem: true)
+
+        func press(_ key: NSEvent.SpecialKey, isARepeat: Bool = false) throws {
+            let characters = String(key.unicodeScalar)
+            let event = try #require(NSEvent.keyEvent(
+                with: .keyDown, location: .zero, modifierFlags: [], timestamp: 0,
+                windowNumber: root.windowNumber, context: nil,
+                characters: characters, charactersIgnoringModifiers: characters,
+                isARepeat: isARepeat, keyCode: key == .downArrow ? 125 : 126
+            ))
+            #expect(session.handleKey(event))
+        }
+
+        try press(.upArrow)
+        #expect(root.selection == 1)
+        session.isVerticalArrowKeyNavigationLoopingEnabled = true
+        try press(.upArrow)
+        #expect(root.selection == 3)
+        try press(.downArrow)
+        #expect(root.selection == 1)
+
+        try press(.downArrow, isARepeat: true)
+        #expect(root.selection == 3)
+        try press(.downArrow, isARepeat: true)
+        #expect(root.selection == 3)
+        try press(.upArrow, isARepeat: true)
+        #expect(root.selection == 1)
+        try press(.upArrow, isARepeat: true)
+        #expect(root.selection == 1)
+        try press(.upArrow)
+        #expect(root.selection == 3)
+
+        session.isVerticalArrowKeyNavigationLoopingEnabled = false
+        try press(.downArrow)
+        #expect(root.selection == 3)
     }
 
     @Test(arguments: [false, true])
