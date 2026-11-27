@@ -3,6 +3,9 @@ import Sharing
 import SwiftUI
 
 struct BetaSettingsView: View {
+    @Shared(.allowsAgentHistoryAccess)
+    private var allowsAgentHistoryAccess
+
     @Shared(.pastesPlainTextWithModifier)
     private var pastesPlainTextWithModifier
     @Shared(.plainTextPasteModifier)
@@ -26,6 +29,15 @@ struct BetaSettingsView: View {
                 .padding(.top, 20)
 
             SettingsGrid {
+                SettingsSection(title: .Settings.agentHistoryAccess, bottomDivider: true) {
+                    Toggle(
+                        .Settings.allowAgentHistoryQueries,
+                        isOn: Binding($allowsAgentHistoryAccess)
+                    )
+                    Text(.Settings.agentHistoryAccessDescription)
+                        .settingDescription()
+                }
+
                 SettingsSection(title: .Settings.modifierKeyActions, bottomDivider: true) {
                     Toggle(
                         .Settings.pasteAsPlainText,
