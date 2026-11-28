@@ -71,7 +71,7 @@ final class ClipService {
                 let changeCount = NSPasteboard.general.changeCount
                 guard changeCount != self?.cachedChangeCount else { continue }
                 self?.cachedChangeCount = changeCount
-                self?.create()
+                self?.create(expectedChangeCount: changeCount)
             }
         }
 
@@ -173,7 +173,7 @@ extension ClipService {
 
 // MARK: - Create Clip
 extension ClipService {
-    fileprivate func create() {
+    fileprivate func create(expectedChangeCount: Int) {
         lock.lock(); defer { lock.unlock() }
 
         let pasteboard = NSPasteboard.general
@@ -195,6 +195,7 @@ extension ClipService {
         ) else { return }
 
         guard let content = PasteboardContent(pasteboard: pasteboard, types: types) else { return }
+        guard pasteboard.changeCount == expectedChangeCount else { return }
         save(content)
     }
 
