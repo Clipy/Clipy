@@ -1,0 +1,35 @@
+/* Class = "NSTextFieldCell"; title = "Import"; ObjectID = "Ett-SG-3wO"; */
+"Ett-SG-3wO.title" = "దిగుమతి";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "J4q-sY-gcS"; */
+"J4q-sY-gcS.title" = "వచనం";
+
+/* Class = "NSTextFieldCell"; title = "Delete"; ObjectID = "Lxb-5c-zOc"; */
+"Lxb-5c-zOc.title" = "తొలగించు";
+
+/* Class = "NSWindow"; title = "Clipy - Snippets Editor"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Clipy - స్నిప్పెట్‌ల ఎడిటర్";
+
+/* Class = "NSTextFieldCell"; title = "Export"; ObjectID = "Uqj-Zh-vde"; */
+"Uqj-Zh-vde.title" = "ఎగుమతి";
+
+/* Class = "NSTextFieldCell"; title = "Enable/Disable"; ObjectID = "WZs-f9-lGW"; */
+"WZs-f9-lGW.title" = "ప్రారంభించు/నిలిపివేయు";
+
+/* Class = "NSTextFieldCell"; title = "Add Folder"; ObjectID = "hoO-RC-sTG"; */
+"hoO-RC-sTG.title" = "ఫోల్డర్‌ను జోడించు";
+
+/* Class = "NSTextFieldCell"; title = "Shortcut"; ObjectID = "pfw-sA-4aA"; */
+"pfw-sA-4aA.title" = "సత్వరమార్గం";
+
+/* Class = "NSTextFieldCell"; title = "folder title"; ObjectID = "rI9-rT-YTs"; */
+"rI9-rT-YTs.title" = "ఫోల్డర్ పేరు";
+
+/* Class = "NSTextFieldCell"; title = "Share snippets"; ObjectID = "wwo-lh-lMK"; */
+"wwo-lh-lMK.title" = "స్నిప్పెట్‌లను భాగస్వామ్యం చేయండి";
+
+/* Class = "NSTextFieldCell"; title = "Add Snippet"; ObjectID = "xPC-Uv-z03"; */
+"xPC-Uv-z03.title" = "స్నిప్పెట్‌ను జోడించు";
+
+/* Class = "NSTextFieldCell"; title = "Coming Soon"; ObjectID = "yzF-k8-xUT"; */
+"yzF-k8-xUT.title" = "త్వరలో అందుబాటులోకి వస్తుంది";
